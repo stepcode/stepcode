@@ -2168,7 +2168,7 @@ AggrTypeDescriptor::CreateAggregate()
 
 
 AggrTypeDescriptor::AggrTypeDescriptor( ) : 
-		_uniqueElements("UNKNOWN_TYPE")
+		_uniqueElements((char *)"UNKNOWN_TYPE")
 {
     _bound1 = -1;
     _bound2 = -1;

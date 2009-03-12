@@ -84,7 +84,7 @@ appinstanceC.cc: appinstance.hh appinstance.idl
 #	@echo
 
 clean:
-	rm -f sdaitypesC.o sdaitypesS.o appinstanceC.o appinstanceS.o $(SERV_LIBRARY) $(CLIENT_LIBRARY)
+	rm -f sdaitypesC.o sdaitypesS.o appinstanceC.o appinstanceS.o corbaIncludes.h $(SERV_LIBRARY) $(CLIENT_LIBRARY)
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 

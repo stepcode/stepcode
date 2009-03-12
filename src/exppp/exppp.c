@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <memory.h>
 #ifdef __STDC__
 #include <stdarg.h>

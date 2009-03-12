@@ -115,7 +115,7 @@ STEPattribute::StrToVal (const char* s, InstMgr * instances, int addFileId)
     {
       case INTEGER_TYPE:
       {
-	  valAssigned = ReadInteger(*(ptr.i), s, &_error, 0);
+	  valAssigned = ReadInteger(*(ptr.i), s, &_error, (const char *)0);
 	  break;
       }
       case REAL_TYPE:
@@ -125,7 +125,7 @@ STEPattribute::StrToVal (const char* s, InstMgr * instances, int addFileId)
       }
       case NUMBER_TYPE:
       {
-	  valAssigned = ReadNumber(*(ptr.r), s, &_error, 0);
+	  valAssigned = ReadNumber(*(ptr.r), s, &_error, (const char *)0);
 	  break;
       }
 

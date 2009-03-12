@@ -14,6 +14,7 @@
 
 #include <scl_string.h>
 #include <stdio.h>
+#include <string.h> ///?!
 /*******************************************************************/
 void 
 SCLstring::PrintContents(ostream &out) const

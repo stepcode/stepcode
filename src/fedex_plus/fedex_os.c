@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "express.h"
 #include "resolve.h"
 #include "classes.h"

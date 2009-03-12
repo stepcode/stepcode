@@ -369,7 +369,7 @@ typedef SCLP23(Application_instance)* STEPentityPtr;
 typedef SCLP23(Application_instance)* STEPentityH;
 
 extern SCLP23(Application_instance) *
-ReadEntityRef(istream &in, ErrorDescriptor *err, char *tokenList, 
+ReadEntityRef(istream &in, ErrorDescriptor *err, const char *tokenList, 
 	      InstMgr * instances, int addFileId);
 
 #define SdaiInteger SCLP23(Integer)

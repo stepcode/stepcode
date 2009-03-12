@@ -26,6 +26,7 @@ static char rcsid[] ="$Id: classes.c,v 3.0.1.11 1997/09/18 21:14:46 sauderd Exp 
 /* #define NEWDICT */
 
 #include "classes.h"
+#include <stdlib.h>
 
 char *FundamentalType(const Type t,int report_reftypes);
 

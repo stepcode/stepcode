@@ -22,6 +22,8 @@ extern int multiple_inheritance;
 ********    EXPRESS SELECT types.
 **************************************************************************/
 #include "classes.h"
+#include <stdlib.h>
+
 
 #define BASE_SELECT "SCLP23(Select)"
 

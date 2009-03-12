@@ -20,7 +20,9 @@ cat $1.flex.c \
 	-e "s/YY_BUFFER_STATE yy_create_/static YY_BUFFER_STATE yy_create_/g"\
 	-e "s/YYSTYPE/${NAME}_YYSTYPE/g"\
 	-e "s/yytext/${NAME}_yytext/g"\
+	-e "s/static\ static/static/g"\
+	-e "s/\#line/\/\/\#line/g"\
 	-e "s/^FILE \*yyin = (FILE \*) 0, \*yyout = (FILE \*) 0;$/extern FILE *yyin, *yyout;/"\
-  > $1.c
+> $1.c
 
 rm $1.flex.c

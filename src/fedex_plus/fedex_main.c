@@ -74,6 +74,7 @@ static char rcsid[] = "$Id: fedex_main.c,v 3.0.1.3 1997/11/05 23:12:18 sauderd D
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "express.h"
 #include "resolve.h"
 

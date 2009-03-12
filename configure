@@ -588,7 +588,7 @@ esac
 
 
 
-if test `domainname` = cme.nist.gov ; then
+if test `hostname` = cme.nist.gov ; then
 NIST=yes
 echo "$ac_t""we are at NIST" 1>&6
 else

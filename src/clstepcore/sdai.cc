@@ -1,6 +1,6 @@
 #include <limits>
 #include <cfloat>
-
+#include <limits.h> ///?!
 #include <sdai.h>
 
 //  The values used here to represent NULL values for numeric types come from 

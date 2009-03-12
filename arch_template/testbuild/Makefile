@@ -46,7 +46,7 @@ generate_express::
 	   cd generate_express; make all
 
 clean:
-	touch foo.o; rm *.o;
+	touch foo.o; rm *.o schema-loc;
 	cd p21read; make clean;
 	cd tstatic; make clean;
 	cd treg; make clean;

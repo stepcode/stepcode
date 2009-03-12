@@ -77,6 +77,7 @@ char *FEDEXversion(void)
 }
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include "error.h"
 #include "express.h"

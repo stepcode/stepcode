@@ -32,6 +32,7 @@
  *****************************************************************************/
 
 #include "classes.h"
+#include <stdlib.h>
 
 #define FALSE 0
 #define TRUE  1

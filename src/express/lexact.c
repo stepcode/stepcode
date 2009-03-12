@@ -52,6 +52,7 @@ static char rcsid[] = "$Id: lexact.c,v 1.10 1997/09/24 20:05:38 dar Exp $";
  */
 
 #define LEX_ACTIONS_C
+#include <stdlib.h>
 #include <ctype.h>
 /*#include <strings.h>*/
 #include "lexact.h"

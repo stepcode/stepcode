@@ -432,7 +432,32 @@ void
 exp_flex_init()
 {
 	/* yy_init is what tells flex to reinitialize its buffers */
+        /*warning mark
+	changed this from =1 to =0
+	//got the following error: 
+	Starting program: /home/mark/projects/nist/scl/scl3-2/myarch/bin/fedex_plus ../../data/example/example.exp -d 8                                                                                                             
+	Starting parse                                                                                                
+	Entering state 0                                                                                              
+	Reducing stack by rule 87 (line 872):                                                                         
+	-> $$ = nterm $@2 ()                                                                                          
+	Stack now 0                                                                                                   
+	Entering state 2                                                                                              
+	Reading a token:                                                                                              
+	Program received signal SIGSEGV, Segmentation fault.                                                          
+	0x000000000043624f in exp_yylex () at expscan.c:1645                                                          
+	1645                    *yy_cp = (yy_hold_char);                                                              
+	(gdb) bt                                                                                                      
+	#0  0x000000000043624f in exp_yylex () at expscan.c:1645                                                      
+	#1  0x00000000004309aa in exp_yyparse () at expparse.tab.c:2513                                               
+	#2  0x0000000000424a65 in PARSERrun (filename=0x6a2ad0 "../../data/example/example.exp", fp=0x6a2870)         
+	    at express.c:461                                                                                          
+	#3  0x00000000004249d0 in EXPRESSparse (model=0x6a17c0, fp=0x6a2870,                                          
+	    filename=0x6a2ad0 "../../data/example/example.exp") at express.c:439                                      
+	#4  0x0000000000430237 in main (argc=4, argv=0x7fffa9e44eb8) at fedex.c:219   
 
-	yy_init = 1;
+	Googling "*yy_cp = (yy_hold_char) sigsegv" I found a bug in dhcp6s.  The source code change was to set yy_init = 0.  The person reporting the bug was on a 64bit system, as am I.  I do not know what side effects this may have.
+http://dhcpv6.cvs.sourceforge.net/viewvc/dhcpv6/dhcp6/src/lease_token.l?r1=1.6&r2=1.7
+	*/
+	yy_init = 0;
 }
 #endif

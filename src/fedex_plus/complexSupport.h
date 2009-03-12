@@ -353,7 +353,7 @@ class ComplexCollect {
         { return ( clists ? clists->isDependent( ent ) : 0 ); }
         // One of our clists shows that ent will have to be instantiated
         // using external mapping (see Part 21, sect 11.2.5.1).
-    void write( char * );
+    void write( const char * );
 
     ComplexList *clists;
 
@@ -363,6 +363,6 @@ class ComplexCollect {
 
 // Standalone function which can be used to print out the complex info in an
 // express file (prints out CCollect, CList & EntList instant. statements):
-void print_complex( ComplexCollect &, char * );
+void print_complex( ComplexCollect &, const char * );
 
 #endif

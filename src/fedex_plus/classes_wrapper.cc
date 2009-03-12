@@ -7,6 +7,8 @@
 //}
 
 #include "complexSupport.h"
+#include <stdlib.h>
+
 extern int corba_binding;
 
 /*******************************************************************
@@ -1046,5 +1048,5 @@ print_file(Express express)
 	print_schemas_combined (express, col, &files);
     }
     print_file_trailer(express, &files);
-    print_complex(col, "compstructs.cc");
+    print_complex(col, (const char *)"compstructs.cc");
 }

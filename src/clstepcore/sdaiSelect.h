@@ -72,7 +72,8 @@ class SCLP23_NAME(Select) {
 	Severity severity() const;
 	Severity severity( Severity );
 	const char *Error();
-	void Error( char * );
+	///warning mark added const to next line
+	void Error( const char * );
 		// clears select's error  
 	void ClearError();
 		// clears error
@@ -87,7 +88,7 @@ class SCLP23_NAME(Select) {
   // from SDAI binding
         SCLP23_NAME(String) UnderlyingTypeName () const;
 	const TypeDescriptor * CurrentUnderlyingType() const;
-	int exists() const;
+	bool exists() const;
 	void nullify();
 
 	Severity SelectValidLevel(const char *attrValue, ErrorDescriptor *err, 

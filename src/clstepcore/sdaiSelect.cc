@@ -62,7 +62,8 @@ const char * SCLP23(Select)::Error()
    return _error.DetailMsg();
 }		/**  end function  **/
 
-void SCLP23(Select)::Error( char * e )
+//warning mark added const to next line
+void SCLP23(Select)::Error( const char * e )
 {		/**  fn Error  **/
    _error.DetailMsg( e );
 }		/**  end function  **/
@@ -172,9 +173,14 @@ SCLP23(Select)::SetUnderlyingType (const TypeDescriptor * td)
   return underlying_type = td;
 }
 
-int SCLP23(Select)::exists() const 
+///changed from int to long - mark - 64 bit - then again - and again...
+///const TypeDescriptor * 
+bool SCLP23(Select)::exists() const 
 {
-  return (int) underlying_type;
+  if (underlying_type == 0)
+    return false;
+  else
+    return true;
 }
 
 void SCLP23(Select)::nullify() 
