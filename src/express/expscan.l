@@ -432,8 +432,13 @@ SCANskip_to_end_schema()
 void
 exp_flex_init()
 {
+  /*    MAP 7/9/11
+  **  Changed from yy_init=1 to yy_init=0. This fixes a segfault in fedex_plus on 64-bit.
+  **  Explaination found in a patch at http://bugs.gentoo.org/show_bug.cgi?id=228587:
+  **  flex 2.5.33 flipped the polarity of this flag (sigh)
+  */
 	/* yy_init is what tells flex to reinitialize its buffers */
 
-	yy_init = 1;
+       yy_init = 0;
 }
 #endif
