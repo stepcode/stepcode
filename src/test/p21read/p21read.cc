@@ -45,14 +45,14 @@ int main(int argc, char *argv[])
   if ( argc >= 2 )
     flnm = argv[1];
   else
-    flnm = "testfile.step";
+    flnm = (char *)"testfile.step";
   sfile.ReadExchangeFile (flnm);
 
   cout << "EXAMPLE :  write file ..." << endl;
   if ( argc == 3 )
     flnm = argv[2]; 
   else
-    flnm = "file.out";
+    flnm = (char *)"file.out";
   sfile.WriteExchangeFile (flnm);
   cout << flnm << " written"  << endl;
 }

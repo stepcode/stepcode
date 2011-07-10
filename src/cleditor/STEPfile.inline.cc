@@ -83,8 +83,8 @@ STEPfile::SetFileType(FileTypeCode ft)
       {
 	case (VERSION_OLD):
 	  ENTITY_NAME_DELIM = '@';
-	  FILE_DELIM = "STEP;";
-	  END_FILE_DELIM = "ENDSTEP;";
+	  FILE_DELIM = (char *)"STEP;";
+	  END_FILE_DELIM = (char *)"ENDSTEP;";
 /*DAS
 	  if (!_headerRegistryOld) 
 	      _headerRegistryOld = 
@@ -95,13 +95,13 @@ STEPfile::SetFileType(FileTypeCode ft)
 	case (VERSION_UNKNOWN):
 	case (VERSION_CURRENT):
 	  ENTITY_NAME_DELIM = '#';
-	  FILE_DELIM = "ISO-10303-21;";
-	  END_FILE_DELIM = "END-ISO-10303-21;";
+	  FILE_DELIM = (char *)"ISO-10303-21;";
+	  END_FILE_DELIM = (char *)"END-ISO-10303-21;";
 	  break;
 	case (WORKING_SESSION):
 	  ENTITY_NAME_DELIM = '#';
-	  FILE_DELIM = "STEP_WORKING_SESSION;";
-	  END_FILE_DELIM = "END-STEP_WORKING_SESSION;";
+	  FILE_DELIM = (char *)"STEP_WORKING_SESSION;";
+	  END_FILE_DELIM = (char *)"END-STEP_WORKING_SESSION;";
 	  break;
 
 	default:
