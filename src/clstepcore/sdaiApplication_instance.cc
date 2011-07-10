@@ -882,7 +882,7 @@ SCLP23(Application_instance)::STEPread(int id,  int idIncr,
 ///////////////////////////////////////////////////////////////////////////////
 
 SCLP23(Application_instance) *
-ReadEntityRef(istream &in, ErrorDescriptor *err, char *tokenList, 
+ReadEntityRef(istream &in, ErrorDescriptor *err, const char* tokenList, 
 	      InstMgr * instances, int addFileId)
 {
     char c;
@@ -983,7 +983,7 @@ ReadEntityRef(istream &in, ErrorDescriptor *err, char *tokenList,
 ///////////////////////////////////////////////////////////////////////////////
 
 SCLP23(Application_instance) *
-ReadEntityRef(const char * s, ErrorDescriptor *err, char *tokenList, 
+ReadEntityRef(const char * s, ErrorDescriptor *err, const char* tokenList, 
 	      InstMgr * instances, int addFileId)
 {
     istringstream in((char *)s);
