@@ -64,7 +64,7 @@ typedef struct Symbol_ Symbol;
 struct Symbol_ {
 	char *name;
 	char *filename;
-	short line;
+	unsigned int line;
 	char resolved;
 };
 

@@ -79,7 +79,7 @@ struct tag {
 /* location of fulltext of algorithm in source file */
 struct FullText {
     char *filename;
-    short start, end;
+    unsigned int start, end;
 };
 
 /* 'parameters' are lists of lists of (type) expressions */
