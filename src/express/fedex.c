@@ -84,7 +84,7 @@ char *FEDEXversion(void)
 #include "express/resolve.h"
 
 #ifdef YYDEBUG
-extern int exp_yydebug;
+extern int yydebug;
 #endif /*YYDEBUG*/
 
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz";
@@ -165,7 +165,7 @@ main(int argc, char** argv)
 	      case 6:	malloc_debug_resolve = 1;	break;
 #endif /*debugging*/
 #ifdef YYDEBUG
-	      case 8:	exp_yydebug = 1;		break;
+	      case 8:	yydebug = 1;		break;
 #endif /* YYDEBUG */
 	    }
 	    break;

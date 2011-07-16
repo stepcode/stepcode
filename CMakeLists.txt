@@ -47,7 +47,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 
 # set CMake project name
 PROJECT(SCL)
-
+set ( CMAKE_BUILD_TYPE Debug )
 # build shared libs by default
 OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
