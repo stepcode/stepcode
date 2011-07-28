@@ -48,7 +48,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 # set CMake project name
 PROJECT(SCL)
 
-if( ${CMAKE_BUILD_TYPE} STREQUAL "" )
+if( CMAKE_BUILD_TYPE STREQUAL "" )
   set( CMAKE_BUILD_TYPE Debug )
 endif()
 
