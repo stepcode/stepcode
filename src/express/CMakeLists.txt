@@ -1,10 +1,11 @@
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-  add_definitions( -DYYDEBUG ) #-Ddebugging )
-  set( YACC_FLAGS "-t" )
+  add_definitions( -DYYDEBUG ) #-Ddebugging
+  message("Bison will create a graph of the scanner flow at ${SCL_BINARY_DIR}/expparse.dot")
+  set( YACC_FLAGS "-t --graph=${SCL_BINARY_DIR}/expparse.dot" )
   set( LEX_FLAGS "-l -d" )
 ELSE()
   set( LEX_FLAGS "-l" )
-  set( YACC_FLAGS "--" ) #FindYACC.cmake insists on 3, 5, or 7 args
+  set( YACC_FLAGS " " ) #FindYACC.cmake insists on 3, 5, or 7 args
 ENDIF()
 
 
