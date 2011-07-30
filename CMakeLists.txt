@@ -1,8 +1,7 @@
-#                     C M A K E L I S T S . T X T
-# SCL
+#       C M A K E L I S T S . T X T   F O R   S C L
 #
-# Copyright (c) 2010 United States Government as represented by
-# the U.S. Army Research Laboratory.
+# This file is Copyright (c) 2010 United States Government as 
+# represented by the U.S. Army Research Laboratory.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -33,11 +32,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # *******************************************************************
-# ***                 BRL-CAD's CMakeLists.txt                    ***
+# ***                   SCL's CMakeLists.txt                      ***
 # *******************************************************************
 
 # This file contains the top level CMakeLists.txt logic for the 
-# BRL-CAD software package.
+# SCL software package.
 
 # Minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
@@ -67,7 +66,7 @@ SET(SCL_VERSION "${SCL_VERSION_MAJOR}.${SCL_VERSION_MINOR}.${SCL_VERSION_PATCH}"
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
-SET(SCL_CMAKE_DIR "${SCL_SOURCE_DIR}/CMake")
+SET(SCL_CMAKE_DIR "${SCL_SOURCE_DIR}/cmake")
 SET(CMAKE_MODULE_PATH "${SCL_CMAKE_DIR};${CMAKE_MODULE_PATH}")
 
 INCLUDE(${SCL_CMAKE_DIR}/SCL_Utils.cmake)
@@ -156,11 +155,10 @@ ENDFOREACH()
 #-----------------------------------------------------------------------------
 # Configure install locations. 
 
-# The location in which to install BRLCAD. Need a good Debug location 
+# The location in which to install SCL. Need a good Debug location 
 # for Windows.  Only do this if CMAKE_INSTALL_PREFIX hasn't been set
 # already, to try and allow parent builds (if any) some control.
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-	MESSAGE("HAVE_DEFAULT_PREFIX")
 	IF(NOT WIN32)
 		IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
 			SET(CMAKE_INSTALL_PREFIX "/usr")
@@ -174,7 +172,6 @@ IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 	SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "SCL install prefix" FORCE)
 	SET(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 0)
 ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-SET(BRLCAD_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "SCL install prefix")
 
 OPTION(SCL-BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 MARK_AS_ADVANCED(SCL-BUILD_EXPRESS_ONLY)
