@@ -1,5 +1,14 @@
-YACC_TARGET(ExpParser expparse.y ${CMAKE_CURRENT_BINARY_DIR}/expparse.c)
-LEX_TARGET(ExpScanner expscan.l ${CMAKE_CURRENT_BINARY_DIR}/expscan.c COMPILE_FLAGS "-l")
+IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+  add_definitions( -DYYDEBUG ) #-Ddebugging )
+  set( YACC_FLAGS "-t" )
+  set( LEX_FLAGS "-l -d" )
+ELSE()
+  set( LEX_FLAGS "-l" )
+ENDIF()
+
+
+YACC_TARGET(ExpParser expparse.y ${CMAKE_CURRENT_BINARY_DIR}/expparse.c COMPILE_FLAGS ${YACC_FLAGS})
+LEX_TARGET(ExpScanner expscan.l ${CMAKE_CURRENT_BINARY_DIR}/expscan.c COMPILE_FLAGS ${LEX_FLAGS})
 ADD_LEX_YACC_DEPENDENCY(ExpScanner ExpParser)
 
 set(EXPRESS_SOURCES

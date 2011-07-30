@@ -48,6 +48,10 @@ ENDIF(COMMAND CMAKE_POLICY)
 # set CMake project name
 PROJECT(SCL)
 
+if( CMAKE_BUILD_TYPE STREQUAL "" )
+  set( CMAKE_BUILD_TYPE Debug )
+endif()
+
 # build shared libs by default
 OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
