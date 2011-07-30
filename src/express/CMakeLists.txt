@@ -4,6 +4,7 @@ IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   set( LEX_FLAGS "-l -d" )
 ELSE()
   set( LEX_FLAGS "-l" )
+  set( YACC_FLAGS "--" ) #FindYACC.cmake insists on 3, 5, or 7 args
 ENDIF()
 
 
