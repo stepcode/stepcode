@@ -2421,7 +2421,7 @@ MemberFunctionSign (Entity entity, FILE* file)
 /* //////////////// */
     if(corba_binding)
     {
-	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
+	fprintf(file, "\n//\t%d_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
 		ENTITYget_CORBAname(entity));
 /*
 	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tP26::Application_instance_ptr create_TIE();\n", 
@@ -2438,7 +2438,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     fprintf (file, "};\n");
     if(corba_binding)
     {
-	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%s(%s)\n", ENTITYget_CORBAname(entity), entnm);
+	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%d(%s)\n", ENTITYget_CORBAname(entity), entnm);
     }
 
     /*  Print ObjectStore Access Hook function  */
@@ -3013,7 +3013,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
     {
 
       fprintf (file, 
-	       "\n//%s_ptr \nIDL_Application_instance_ptr \n%s::create_TIE()\n{\n", 
+	       "\n//%d_ptr \nIDL_Application_instance_ptr \n%s::create_TIE()\n{\n", 
 	       ENTITYget_CORBAname(entity), entnm);
 /*
       fprintf (file, 
@@ -3026,7 +3026,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
 	       "    std::cout << \"Server creating entity: \" << markerName ");
       fprintf (file,
 	       "<< \" TIE object.\" << std::endl;\n");
-      fprintf (file, "    return new TIE_%s(%s) (this, markerName);\n",
+      fprintf (file, "    return new TIE_%d(%s) (this, markerName);\n",
 	       ENTITYget_CORBAname(entity), entnm);
       fprintf (file, "}\n");
 
@@ -3381,7 +3381,7 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
       case set_:
       case list_:
       /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-	fprintf(f,"\t%s * %s%d = new %s;\n",
+	fprintf(f,"\t%d * %s%d = new %d;\n",
 		GetTypeDescriptorName(t), TD_PREFIX, count, 
 		GetTypeDescriptorName(t) );
 
@@ -4644,7 +4644,7 @@ TYPEprint_typedefs (Type t, FILE *classes)
   externln:
     /* Print the extern statement: */
     strncpy (nm, TYPEtd_name(t), BUFSIZ);
-    fprintf( classes, "extern %s \t*%s;\n", GetTypeDescriptorName(t), nm );
+    fprintf( classes, "extern %d \t*%s;\n", GetTypeDescriptorName(t), nm );
 }
 
 /* return 1 if it is a multidimensional aggregate at the level passed in
@@ -4814,7 +4814,7 @@ TYPEprint_descriptions (const Type type, FILES* files, Schema schema)
 
 	/*  in source - declare the real definition of the pointer */
 	/*  i.e. in the .cc file                                   */
-    fprintf(files -> lib,"%s \t*%s;\n", GetTypeDescriptorName(type), tdnm);
+    fprintf(files -> lib,"%d \t*%s;\n", GetTypeDescriptorName(type), tdnm);
 
     if(isAggregateType(type)) {
       const char * ctype = TYPEget_ctype (type);
@@ -5218,7 +5218,7 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
 	  case set_:
 	  case list_:
 
-	    fprintf(create,"\n\t%s = new %s (\n",
+	    fprintf(create,"\n\t%s = new %d (\n",
 		    TYPEtd_name (type), GetTypeDescriptorName(type));
 	    
 	    /* fill in it's values	*/

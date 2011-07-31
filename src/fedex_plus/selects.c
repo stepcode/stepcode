@@ -562,7 +562,7 @@ TYPEselect_inc_print_vars( const Type type, FILE *f, Linked_List dups)
    fprintf( f, "/*  \tunion {  */\n" );  
    fprintf( f, "\t//  types in SELECT \n" );  
    LISTdo( SEL_TYPEget_items(type), t, Type )
-     fprintf( f, "\t//   %s\t--  %s\n", 
+     fprintf( f, "\t//   %s\t--  %d\n", 
 	      SEL_ITEMget_enumtype (t), FundamentalType (t));
    LISTod;
 
@@ -1508,7 +1508,7 @@ TYPEselect_lib_part21 (const Type type, FILE* f, Schema schema)
       fprintf(f, "    return _%s.ValueType();\n  else ", dm);
       break;
     default:
-      fprintf(f, "    return %s;\n  else ", FundamentalType(t,0));
+      fprintf(f, "    return %d;\n  else ", FundamentalType(t,0));
     }
   LISTod;
 
@@ -1736,19 +1736,19 @@ TYPEselect_lib_StrToVal (const Type type, FILE* f, Schema schema)
 	case enumeration_:
 	  if (!enum_cnt) {
 	    /*  if there\'s more than one enumeration they are done in Select class  */
-	    fprintf (f, "  case %s :  \n", 	FundamentalType (t, 0));
+	    fprintf (f, "  case %d :  \n", 	FundamentalType (t, 0));
 	    fprintf( f,
 		     "\treturn _%s.StrToVal (str, &_error);\n",
 		     SEL_ITEMget_dmname (t));
 	  }
 	  else {
-	    fprintf (f, "  //  case %s :  done in Select class\n", FundamentalType (t, 0));
+	    fprintf (f, "  //  case %d :  done in Select class\n", FundamentalType (t, 0));
 	  }
 	  ++enum_cnt;
 	  break;
 
 	case string_:
-	  fprintf (f, "  case %s :  \n", 	FundamentalType (t, 0));
+	  fprintf (f, "  case %d :  \n", 	FundamentalType (t, 0));
 	  fprintf( f,
 		   "\treturn _%s.StrToVal (str);\n",
 		   SEL_ITEMget_dmname (t));
@@ -1759,7 +1759,7 @@ TYPEselect_lib_StrToVal (const Type type, FILE* f, Schema schema)
 	case bag_:
 	case set_:
 	case list_:
-	  fprintf (f, "  case %s :  \n", 	FundamentalType (t, 0));
+	  fprintf (f, "  case %d :  \n", 	FundamentalType (t, 0));
 	  fprintf( f,
 		   "\treturn _%s.StrToVal (str, &_error, "
 		   "%s -> AggrElemTypeDescriptor ());\n",
@@ -1770,7 +1770,7 @@ TYPEselect_lib_StrToVal (const Type type, FILE* f, Schema schema)
 
 	default:	  
 	  /*  otherwise use StrToVal on the contents to check the format  */
-	  fprintf (f, "  case %s :  \n", 	FundamentalType (t, 0));
+	  fprintf (f, "  case %d :  \n", 	FundamentalType (t, 0));
 	  fprintf( f,
 		   "\treturn _%s -> StrToVal (str, instances);\n",
 		   SEL_ITEMget_dmname (t));
