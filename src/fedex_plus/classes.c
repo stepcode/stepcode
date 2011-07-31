@@ -4085,7 +4085,7 @@ DASBUG
 			} else {
 				if (i > 2) fprintf(files->create,", ");
 				uniqRule = EXPRto_string(v->name);
-				fprintf(files->create, uniqRule);
+				fprintf(files->create, "%s",uniqRule);
 			}
 		LISTod
 		fprintf(files->create,";\\n\");\n");

@@ -629,7 +629,7 @@ FundamentalType(const Type t,int report_reftypes) {
 	case list_:
 	{
 	    fprintf(idl_file, "typedef sequence<");
-	    fprintf(idl_file, GetAggrElemType(type));
+	    fprintf(idl_file, "%s",GetAggrElemType(type));
 	    fprintf(idl_file, "> %s;\n",
 		    TYPEget_idl_type (type));
 
@@ -724,7 +724,7 @@ FundamentalType(const Type t,int report_reftypes) {
 		    if(AddToAggrNameList(idl_type,idl_file))
 		    {
 			fprintf(idl_file, "typedef sequence<");
-			fprintf(idl_file, GetAggrElemType(VARget_type(a)));
+			fprintf(idl_file, "%s",GetAggrElemType(VARget_type(a)));
 			fprintf(idl_file, "> %s;\n", idl_type);
 		    }
 		    fprintf (idl_file, "\n");
