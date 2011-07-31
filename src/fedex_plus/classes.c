@@ -3114,18 +3114,14 @@ LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
 /* //////////// */
     list = ENTITYget_supertypes (entity);
     if (! LISTempty (list)) {
-/*
-      parentLink = list->mark->next; 
-      parentEntity = (Entity) parentLink->data;
-*/
       parentEntity = (Entity)LISTpeek_first(list);
       if(parentEntity)
       {
-	strcpy(parentnm, ENTITYget_classname (parentEntity));
-	parent = parentnm;
+        strcpy(parentnm, ENTITYget_classname (parentEntity));
+        parent = parentnm;
       }
       else
-	parent = 0; /* no parent */
+        parent = 0; /* no parent */
     }
     else
       parent = 0; /* no parent */
@@ -3486,7 +3482,7 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
  ** Status:  ok 1/15/91
  ******************************************************************/
 void
-ENTITYincode_print (Entity entity, FILE* file,Schema schema)  /*  ,FILES *files) */
+ENTITYincode_print (Entity entity, FILE* file,Schema schema)
 {
 #define entity_name	ENTITYget_name(entity)
 #define schema_name	SCHEMAget_name(schema)
@@ -3494,14 +3490,6 @@ ENTITYincode_print (Entity entity, FILE* file,Schema schema)  /*  ,FILES *files)
 	char dict_attrnm [BUFSIZ];
 	const char * super_schema;
 	char * tmp, *tmp2;
-#if 0
-	String cn_unsafe = ENTITYget_classname (entity);
-	char cn[MAX_LEN];
-
-	/* cn_unsafe points to a static buffer, grr..., so save it */
-	strcpy(cn,cn_unsafe);
-#endif
-
 
 #ifdef NEWDICT
 /* DAS New SDAI Dictionary 5/95 */
@@ -4233,9 +4221,6 @@ TYPEenum_inc_print (const Type type, FILE* inc)
 	    ++cnt;
 	    fprintf (inc,"\t%s", EnumCElementName (type, expr));
 
-/*	      printf( "WARNING: truncating values %s%s in the .h file.\n\n",
-		      "that will be used to print the enumeration ", 
-		      TYPEget_name (type));*/
         LISTod
 	
 	fprintf (inc, ",\n\t%s_unset\n};\n", EnumName(TYPEget_name(type)));
@@ -4249,11 +4234,6 @@ TYPEenum_inc_print (const Type type, FILE* inc)
 	fprintf (inc, "\nclass %s  :  public SCLP23(Enum)  {\n", n);
 
 	printAccessHookFriend( inc, n );
-/*
-    fprintf(inc,"\n#ifdef __OSTORE__\n");
-    fprintf (inc, "  friend void %s_access_hook_in(void *, \n\tenum os_access_reason, void *, void *, void *);\n", n);
-    fprintf(inc,"#endif\n");
-*/
 	fprintf (inc, "  protected:\n\tEnumTypeDescriptor *type;\n\n");
 
 	/*	constructors	*/
@@ -4361,8 +4341,6 @@ TYPEenum_lib_print (const Type type, FILE* f)
   n = TYPEget_ctype(type);
     
   /*  set up the dictionary info  */
-/*  fprintf (f, "void \t%s::Init ()  {\n", n);*/
-/*  fprintf (f, "  static const char * const l [] = {\n");*/
   
   fprintf (f, "const char * \n%s::element_at (int n) const  {\n", n);
   fprintf (f, "  switch (n)  {\n");
@@ -4375,19 +4353,12 @@ TYPEenum_lib_print (const Type type, FILE* f)
   }
   fprintf (f, "  case %s_unset\t:\n", EnumName(TYPEget_name(type)));
   fprintf (f, "  default\t\t:  return \"UNSET\";\n  }\n}\n");
-/*  fprintf (f, "\t 0\n  };\n");*/
-/*  fprintf (f, "  set_elements (l);\n  v = ENUM_NULL;\n}\n");*/
 
   /*	constructors	*/
   /*    construct with character string  */
   fprintf (f, "\n%s::%s (const char * n, EnumTypeDescriptor *et)\n"
 	      "  : type(et)\n{\n", n, n);
-/*  fprintf (f, "  Init ();\n  set_value (n);\n}\n");*/
   fprintf (f, "  set_value (n);\n}\n");
-  
-  /*    copy constructor  */
-/*  fprintf (f, "%s::%s (%s& n )  {\n", n, n, n);*/
-/*  fprintf (f, "   (l);\n");*/
   
 /*NEWENUM */
     /*  print ObjectStore Access Hook function  */
@@ -4413,9 +4384,6 @@ TYPEenum_lib_print (const Type type, FILE* f)
     fprintf(f,"\n#endif\n");
 /*NEWENUM */
 
-  /*      operator =      */
-/*  fprintf (f, "%s& \t%s::operator= (%s& x)", n, n, n);*/
-/*  fprintf (f, "\n\t{  put (x.asInt ()); return *this;   }\n");*/
 
 	/*      cast operator to an enumerated type  */
   fprintf (f, "\n%s::operator %s () const {\n", n, 
@@ -4428,20 +4396,12 @@ TYPEenum_lib_print (const Type type, FILE* f)
 	  fprintf (f, "\tcase %s\t:  ", c_enum_ele);
 	  fprintf (f, "return %s;\n", c_enum_ele);
 
-	  //fprintf (f, "%s", buf);
-	  //strncpy (c_enum_ele, EnumCElementName (type, expr), BUFSIZ);
-	  //fprintf (f, "\tcase %s\t:  ", c_enum_ele);
-	  //sprintf (buf, "return %s;\n", c_enum_ele);
 
 	}
   /*  print the last case with the default so sun c++ doesn\'t complain */
   fprintf (f, "\tcase %s_unset\t:\n", EnumName(TYPEget_name(type)));
   fprintf (f, "\tdefault\t\t:  return %s_unset;\n  }\n}\n", EnumName(TYPEget_name(type)));
 
-	//fprintf (f, "\n\tdefault\t\t:  %s  }\n}\n", buf);
-
-/*	fprintf (f, "\n\tdefault :  %s;\n  }\n}\n", buf);*/
-/*	fprintf (f, "\t\tdefault:  return 0;\n  }\n}\n");*/
 
   printEnumCreateBody( f, type );
 		 
@@ -4525,13 +4485,7 @@ strcat_bounds(TypeBody b,char *buf)
 TypeBody_Description(TypeBody body, char *buf)
 {
 	char *s;
-/* // I believe it should never go here? DAS
-	if(body->type != array_ && body->type != list_)
-	{
-	    if (body->flags.unique)	strcat(buf," UNIQUE");
-	    if (body->flags.optional)	strcat(buf," OPTIONAL");
-	}
-*/
+	
 	switch (body->type) {
 	case integer_:		strcat(buf," INTEGER");	break;
 	case real_:		strcat(buf," REAL");	break;
