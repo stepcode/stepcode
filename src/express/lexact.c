@@ -428,7 +428,7 @@ SCANprocess_string(void)
 int
 SCANprocess_encoded_string(void)
 {
-	char *s, *d;	/* source, destination */
+	char *s;	/* source */
 	int count;
 
 	/* strip off quotes */

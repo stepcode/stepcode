@@ -410,7 +410,6 @@ TYPEget_size(Type type)
     Class	class;
     int		size;
     Expression	upper;
-    Linked_List	list;
     Error	experrc;
 
     class = OBJget_class(type);
