@@ -71,7 +71,6 @@ GenNodeArray::Check (int index)
     GenericNode** newbuf;
 
     if (index >= _bufsize) {
-	int oldBufSize = _bufsize;
         _bufsize = (index+1) * 2;
         newbuf = new GenericNode*[_bufsize];
 
