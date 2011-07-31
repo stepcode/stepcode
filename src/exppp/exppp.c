@@ -150,7 +150,6 @@ va_dcl
 {
 	char *fmt;
 #endif
-	FILE *f = exppp_fp?exppp_fp:stdout;
 	char *p;
 	char buf[10000];
 	int len;
@@ -201,7 +200,6 @@ va_dcl
 {
 	char *fmt;
 #endif
-	FILE *f = exppp_fp?exppp_fp:stdout;
 	char *p;
 	char buf[10000];
 	int len;
@@ -867,7 +865,6 @@ void
 CASEout(struct Case_Statement_ *c,int level)
 {
 	int len;
-	char *string;
 	int max_indent;
 
 	raw("%*sCASE ",level,"");
