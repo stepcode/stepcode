@@ -29,8 +29,7 @@ static char rcsid[] = "$Id: STEPaggregate.cc,v 3.0.1.7 1997/11/05 21:59:28 saude
 
 /******************************************************************
 **	  Functions for manipulating aggregate attributes
-
-**  KNOWN BUGs:  
+**  FIXME KNOWN BUGs:  
 **     -- treatment of aggregates of reals or ints is inconsistent with
 **        other aggregates (there's no classes for these)
 **     -- no two- dimensional aggregates are implemented
@@ -116,7 +115,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -132,7 +130,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end paren delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -221,7 +218,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -593,7 +589,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -609,7 +604,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -704,7 +698,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -916,7 +909,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -932,7 +924,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -1005,7 +996,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -1980,12 +1970,8 @@ RealNode::asStr(SCLstring &s)
 const char *
 RealNode::STEPwrite(SCLstring &s, const char *)
 {
-    char tmp[BUFSIZ];
     if(value != S_REAL_NULL)
     {
-//	sprintf(tmp, "%.15g", value);
-//	sprintf(tmp, "%.*g", Real_Num_Precision, value);
-//	s = tmp;
 	WriteReal(value,s);
     }
     else

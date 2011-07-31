@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: yyvars.c,v 1.1 1994/05/11 21:36:48 libes dec96 $";
+
 
 /*
  * $Log: yyvars.c,v $

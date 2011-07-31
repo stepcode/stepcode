@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: dict.c,v 1.4 1997/01/21 19:19:51 dar Exp $";
+
 
 /*
  * This work was supported by the United States Government, and is
@@ -50,7 +50,7 @@ DICTprint(Dictionary dict)
 	HASHlistinit(dict,&de);
 
 	while (0 != (e = (HASHlist(&de)))) {
-		printf("key <%s>  data <%x>  line <%d>  <\"%c\" %s>  <%s>\n",
+		printf("key <%s>  data <%s>  line <%d>  <\"%c\" %s>  <%s>\n",
 			e->key,e->data,e->symbol->line,e->type,
 			OBJget_type(e->type),e->symbol->filename);
 	}

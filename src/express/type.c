@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: type.c,v 1.12 1997/01/21 19:19:51 dar Exp $";
+
 
 /************************************************************************
 ** Module:	Type
@@ -410,7 +410,6 @@ TYPEget_size(Type type)
     Class	class;
     int		size;
     Expression	upper;
-    Linked_List	list;
     Error	experrc;
 
     class = OBJget_class(type);
