@@ -1764,7 +1764,7 @@ EXPRstring(char *buffer,Expression e)
 	case self_:
 		strcpy(buffer,"SELF");
 		break;
-	funcall_:
+	case funcall_:
 		sprintf(buffer,"%s(",e->symbol.name);
 		i = 0;
 		LISTdo(e->u.funcall.list,arg,Expression)
@@ -1778,7 +1778,7 @@ EXPRstring(char *buffer,Expression e)
 	case op_:
 		EXPRop_string(buffer,&e->e);
 		break;
-	aggregate_:
+	case aggregate_:
 		strcpy(buffer,"[");
 		i = 0;
 		LISTdo(e->u.list,arg,Expression)
