@@ -659,8 +659,6 @@ STEPcomplex::WriteExtMapEntities(SCLstring &buf, const char *currSch)
 {
     
     SCLstring tmp;
-//    sprintf(instanceInfo, "%s(", (char *)StrToUpper( EntityName(), tmp ) );
-//    buf.Append(instanceInfo);
 
     buf.Append( (char *)StrToUpper(EntityName( currSch ),tmp) );
     buf.Append( '(' );

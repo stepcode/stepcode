@@ -29,8 +29,7 @@ static char rcsid[] = "$Id: STEPaggregate.cc,v 3.0.1.7 1997/11/05 21:59:28 saude
 
 /******************************************************************
 **	  Functions for manipulating aggregate attributes
-
-**  KNOWN BUGs:  
+**  FIXME KNOWN BUGs:  
 **     -- treatment of aggregates of reals or ints is inconsistent with
 **        other aggregates (there's no classes for these)
 **     -- no two- dimensional aggregates are implemented
@@ -219,7 +218,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -700,7 +698,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -999,7 +996,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == ')')
     {
 	_null = 0;
-//	validDelims = 1; // expectation for end paren delim is met
     }
     else // expectation for end paren delim has not been met
     {
@@ -1976,9 +1972,6 @@ RealNode::STEPwrite(SCLstring &s, const char *)
 {
     if(value != S_REAL_NULL)
     {
-//	sprintf(tmp, "%.15g", value);
-//	sprintf(tmp, "%.*g", Real_Num_Precision, value);
-//	s = tmp;
 	WriteReal(value,s);
     }
     else
