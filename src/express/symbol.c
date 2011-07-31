@@ -1,5 +1,5 @@
 #if !(defined(__CENTERLINE__) || defined(lint))
-static char rcsid[] = "$Id: symbol.c,v 1.6 1997/01/21 19:19:51 dar Exp $";
+
 #endif
 
 /************************************************************************
