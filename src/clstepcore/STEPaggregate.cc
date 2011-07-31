@@ -116,7 +116,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -132,7 +131,6 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end paren delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -593,7 +591,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -609,7 +606,6 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -916,7 +912,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	Empty ();  // read new values and discard existing ones
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -932,7 +927,6 @@ SelectAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     if(c == '(')
     {
 	in.get(c);
-	validDelims = 0; // signal expectation for end delim
     }
     else if(exchangeFileFormat)
     {	// error did not find opening delim
@@ -1980,7 +1974,6 @@ RealNode::asStr(SCLstring &s)
 const char *
 RealNode::STEPwrite(SCLstring &s, const char *)
 {
-    char tmp[BUFSIZ];
     if(value != S_REAL_NULL)
     {
 //	sprintf(tmp, "%.15g", value);
