@@ -1,4 +1,4 @@
-static char rcsid[] = "";
+
 
 /************************************************************************
 ** Express package manager.
@@ -657,7 +657,6 @@ static void
 connect_lists(Dictionary modeldict, Schema schema, Linked_List list)
 {
 	Rename *r;
-	Schema ref_schema;
 
 	/* translate symbols to schemas */
 	LISTdo_links(list, l)
@@ -707,8 +706,7 @@ EXPRESSresolve(Express model)
     /* comes first - DEL */
 
     Schema schema;
-    DictionaryEntry de, fg;	/* imaginative, eh? */
-    Rename *r;
+    DictionaryEntry de;	/* imaginative, eh? */
 
     jmp_buf env;
     if (setjmp(env)) return;

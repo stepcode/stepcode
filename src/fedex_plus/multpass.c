@@ -214,7 +214,6 @@ static void unsetObjs( Schema schema )
      */
 {
     DictionaryEntry de;
-    Rename *r;
 
     SCOPEdo_types(schema,t,de)
         if ( t->search_id == CANTPROCESS ) {
@@ -364,7 +363,6 @@ static int checkEnts( Schema schema )
      * repeated.)
      */
 {
-    Entity super;
     DictionaryEntry de;
     int retval = FALSE, ignore = 0;
 

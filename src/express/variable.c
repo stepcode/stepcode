@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: variable.c,v 1.7 1997/01/21 19:19:51 dar Exp $";
+
 
 /************************************************************************
 ** Module:	Variable
@@ -204,7 +204,6 @@ VARinitialize()
 extern char *
 VARget_simple_name(Variable v)
 {
-	char tmp;
 
 	Expression e = VARget_name(v);
 
