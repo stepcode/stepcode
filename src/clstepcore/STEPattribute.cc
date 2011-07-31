@@ -109,24 +109,23 @@ STEPattribute::StrToVal (const char* s, InstMgr * instances, int addFileId)
     }
 
     istringstream in ((char *)s); // sz defaults to length of s
-    int valAssigned = 0;
 
     // read in value for attribute
     switch (NonRefType())
     {
       case INTEGER_TYPE:
       {
-	  valAssigned = ReadInteger(*(ptr.i), s, &_error, 0);
+	  ReadInteger(*(ptr.i), s, &_error, 0);
 	  break;
       }
       case REAL_TYPE:
       {
-	  valAssigned = ReadReal(*(ptr.r), s, &_error, 0);
+	  ReadReal(*(ptr.r), s, &_error, 0);
 	  break;
       }
       case NUMBER_TYPE:
       {
-	  valAssigned = ReadNumber(*(ptr.r), s, &_error, 0);
+	  ReadNumber(*(ptr.r), s, &_error, 0);
 	  break;
       }
 
@@ -325,17 +324,17 @@ STEPattribute::STEPread (istream& in, InstMgr * instances, int addFileId,
     {
       case INTEGER_TYPE:
   	{
-	    int valAssigned = ReadInteger(*(ptr.i), in, &_error, ",)");
+	    ReadInteger(*(ptr.i), in, &_error, ",)");
 	    return _error.severity();
 	}
       case REAL_TYPE:
   	{
-	    int valAssigned = ReadReal(*(ptr.r), in, &_error, ",)");
+	    ReadReal(*(ptr.r), in, &_error, ",)");
 	    return _error.severity();
 	}
       case NUMBER_TYPE:
   	{
-	    int valAssigned = ReadNumber(*(ptr.r), in, &_error, ",)");
+	    ReadNumber(*(ptr.r), in, &_error, ",)");
 	    return _error.severity();
 	}
       case STRING_TYPE: 
