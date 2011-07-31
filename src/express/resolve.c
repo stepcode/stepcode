@@ -1256,7 +1256,6 @@ void
 SCOPEresolve_types(Scope s)
 {
 	Variable var;
-	Type type;
 	DictionaryEntry de;
 	Generic x;
 

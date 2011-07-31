@@ -204,7 +204,6 @@ VARinitialize()
 extern char *
 VARget_simple_name(Variable v)
 {
-	char tmp;
 
 	Expression e = VARget_name(v);
 
