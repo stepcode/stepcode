@@ -1,6 +1,6 @@
 %{
 
-static char rcsid[] = "$Id: expparse.y,v 1.23 1997/11/14 17:09:04 libes Exp $";
+
 
 /*
  * YACC grammar for Express parser.

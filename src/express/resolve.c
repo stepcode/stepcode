@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: resolve.c,v 1.14 1997/01/21 19:19:51 dar Exp $";
+
 
 /*
  * This software was developed by U.S. Government employees as part of
