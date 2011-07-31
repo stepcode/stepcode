@@ -97,7 +97,7 @@ STEPfile::ReadHeader (istream& in)
 
     InstMgr *im = new InstMgr;
     SCLP23(Application_instance)* obj;
-    Severity objsev = SEVERITY_NULL;
+    __attribute__((unused)) Severity objsev = SEVERITY_NULL;
     
     int endsec = 0;
     int userDefined = 0;
@@ -2803,7 +2803,7 @@ STEPfile::AppendFile (istream* in, int useTechCor)
     
     SetFileIdIncrement ();
     int total_insts =0,  valid_insts =0;
-    int exchange_file = -1;
+    __attribute__((unused)) int exchange_file = -1;
     
     ReadTokenSeparator(*in);
     SCLstring keywd = GetKeyword(*in, "; #", _error);
