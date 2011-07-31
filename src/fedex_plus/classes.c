@@ -2338,7 +2338,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     /* added for calling multiple_inheritance */
     Linked_List parent_attr_list;
     Linked_List parent_list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);  /*  assign entnm  */
@@ -2516,7 +2516,7 @@ LIBmemberFunctionPrint (Entity entity, FILE* file)
     /* added for calling multiple_inheritance */
     Linked_List parent_attr_list;
     Linked_List parent_list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);  /*  assign entnm */
@@ -2623,7 +2623,7 @@ LIBcopy_constructor (Entity ent, FILE* file)
     int count = attr_count;
     
     String entnm = ENTITYget_classname (ent);
-    Boolean opt;    
+    __attribute__((unused)) Boolean opt;
     String StrToLower (String word);
 
     /*mjm7/10/91 copy constructor definition  */
@@ -2757,7 +2757,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
     Entity principalSuper =0;
 
@@ -3096,7 +3096,7 @@ LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
     char attrnm [BUFSIZ];
     
     Linked_List list;
-	Entity super =0;
+	__attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     /* added for calling parents constructor if there is one */
