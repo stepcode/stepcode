@@ -118,7 +118,6 @@ const char* DirObj::RealPath (const char* path) {
 
 boolean DirObj::LoadDirectory (const char* name) {
     char buf[MAXPATHLEN+2];
-    const char* path = buf;
 
     strcpy(buf, ValidDirectories(RealPath(name)));
     return Reset(buf);
