@@ -95,7 +95,6 @@ USEREFout(Schema schema, Dictionary refdict,Linked_List reflist,char *type,FILE*
 	DictionaryEntry de;
 	struct Rename *r;
 	Linked_List list;
-	int level = 6;
 	char td_name[BUFSIZ];
 	char sch_name[BUFSIZ];
 
@@ -302,10 +301,8 @@ GetAggrElemType(const Type type)
 const char *
 TYPEget_idl_type (const Type t)
 {      
-    Class_Of_Type class, class2;
-    Type bt;
+    Class_Of_Type class;
     static char retval [BUFSIZ];
-    char *n;
 
     /*  aggregates are based on their base type  
     case TYPE_ARRAY:
@@ -931,7 +928,6 @@ ATTRprint_access_methods_get_head (const char * classnm, Variable a,
 				   FILE* file) 
 {
     Type t = VARget_type (a);
-    Class_Of_Type class = TYPEget_type(t);
     char ctype [BUFSIZ];   /*  return type of the get function  */
     char funcnm [BUFSIZ];  /*  name of member function  */
 
@@ -1706,7 +1702,6 @@ ATTRprint_access_methods  (CONST char * entnm, Variable a, FILE* file)
     Type t = VARget_type (a);
     Class_Of_Type class;
     char ctype [BUFSIZ];  /*  type of data member  */
-    char return_type [BUFSIZ];
     char attrnm [BUFSIZ];
     char membernm[BUFSIZ];
     char funcnm [BUFSIZ];  /*  name of member function  */
@@ -2162,14 +2157,10 @@ ATTRprint_access_methods  (CONST char * entnm, Variable a, FILE* file)
 void
 ENTITYhead_print (Entity entity, FILE* file,Schema schema)
 {
-    char buffer [BUFSIZ];
     char entnm [BUFSIZ];
     char attrnm [BUFSIZ];
-    char *buf = buffer;
-    char *tmp;
     Linked_List list;
     int attr_count_tmp = attr_count;
-    int super_cnt =0;
     Entity super =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);
@@ -2488,10 +2479,8 @@ MemberFunctionSign (Entity entity, FILE* file)
 void
 LIBdescribe_entity (Entity entity, FILE* file, Schema schema)  
 {
-  Linked_List list;
   int attr_count_tmp = attr_count;
   char attrnm [BUFSIZ];
-  char * tmp;
 
   fprintf(file,"EntityDescriptor *%s%s%s =0;\n",
 	  SCHEMAget_name(schema),ENT_PREFIX,ENTITYget_name(entity));
@@ -2630,9 +2619,8 @@ LIBcopy_constructor (Entity ent, FILE* file)
     Type t;
     char buffer [BUFSIZ],
              attrnm[BUFSIZ],
-      *b = buffer, *n = '\0';
+      *b = buffer;
     int count = attr_count;
-    char * tmp;    
     
     String entnm = ENTITYget_classname (ent);
     Boolean opt;    
@@ -3108,13 +3096,12 @@ LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
     char attrnm [BUFSIZ];
     
     Linked_List list;
-    Entity super =0;
+	Entity super =0;
     int super_cnt =0;
 
     /* added for calling parents constructor if there is one */
     char parentnm [BUFSIZ];
     char *parent = 0;
-    Link parentLink = 0;
     Entity parentEntity = 0;
 
     const char * entnm;
@@ -3503,7 +3490,6 @@ ENTITYincode_print (Entity entity, FILE* file,Schema schema)  /*  ,FILES *files)
 {
 #define entity_name	ENTITYget_name(entity)
 #define schema_name	SCHEMAget_name(schema)
-	const char *cn = ENTITYget_classname(entity);
 	char attrnm [BUFSIZ];
 	char dict_attrnm [BUFSIZ];
 	const char * super_schema;
@@ -4223,7 +4209,6 @@ CheckEnumSymbol (char * s)
 void
 TYPEenum_inc_print (const Type type, FILE* inc)
 {
-    DictionaryEntry de;
     Expression expr;
 
     char tdnm[BUFSIZ],
@@ -4370,7 +4355,6 @@ TYPEenum_lib_print (const Type type, FILE* f)
   DictionaryEntry de;
   Expression expr;
   const char *n;	/*  pointer to class name  */
-  char buf [BUFSIZ];
   char c_enum_ele [BUFSIZ];
     
   fprintf (f, "//////////  ENUMERATION TYPE %s\n", TYPEget_ctype (type));
@@ -4540,8 +4524,6 @@ strcat_bounds(TypeBody b,char *buf)
 
 TypeBody_Description(TypeBody body, char *buf)
 {
-	Expression expr;
-	DictionaryEntry de;
 	char *s;
 /* // I believe it should never go here? DAS
 	if(body->type != array_ && body->type != list_)
@@ -4651,7 +4633,6 @@ Type_Description(const Type t,char *buf)
 void
 TYPEprint_typedefs (Type t, FILE *classes)  
 {
-    Class_Of_Type class;
     char nm [BUFSIZ];
     Type i;
 
@@ -5081,7 +5062,6 @@ TYPEprint_init (const Type type, FILE *ifile, Schema schema)
 	case set_:
 	case list_:
 	{
-	  const char * ctype = TYPEget_ctype (type);
 
 	  if( isMultiDimAggregateType(type) ) 
 	  {
@@ -5190,8 +5170,6 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
 
     Type tmpType = TYPEget_head(type);
     Type bodyType = tmpType;
-
-    const char * ctype = TYPEget_ctype (type);
 
     /* define type definition */
     /*  in source - the real definition of the TypeDescriptor   */
