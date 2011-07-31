@@ -49,6 +49,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 PROJECT(SCL)
 
 if( CMAKE_BUILD_TYPE STREQUAL "" )
+  message( "Debug build - to override, rerun cmake with '-DCMAKE_BUILD_TYPE=Release'." )
   set( CMAKE_BUILD_TYPE Debug )
 endif()
 
@@ -206,7 +207,7 @@ CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
 
 add_definitions(
-	-DHAVE_CONFIG_H
+	-DHAVE_CONFIG_H -Wall
 	)
 
 include_directories(
