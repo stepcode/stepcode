@@ -1400,6 +1400,9 @@ TYPE_body_out(Type t, int level)
 					wrap(" OF");
 					TYPEunique_or_optional_out(tb);
 					break;
+		default:
+		  printf("Error in exppp.c, line 1407: type %d not handled by switch statement.",tb->type);
+		  abort();
 		}
 
 		TYPE_head_out(tb->base,level);

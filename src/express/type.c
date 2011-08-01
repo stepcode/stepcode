@@ -246,6 +246,8 @@ TYPEinherits_from(Type t, enum type_enum e)
 		return((tb->type == set_)?True:TYPE_inherits_from(tb->base,e));
 	case list_:
 		return((tb->type == list_)?True:TYPE_inherits_from(tb->base,e));
+	default:
+	  break;
 	}
 	return (tb->type == e);
 }

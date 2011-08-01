@@ -3318,18 +3318,22 @@ ENTITYlib_print (Entity entity, FILE* file,Schema schema)
   LIBmemberFunctionPrint (entity, file);
 }
 
+//FIXME should return bool
 /* return 1 if types are predefined by us */
 int
 TYPEis_builtin(const Type t) {
 	switch( TYPEget_body(t)->type) {/* dunno if correct*/
-	case integer_:
-	case real_:
-	case string_:
-	case binary_:
-	case boolean_:
-	case number_:
-	case logical_:
+	  case integer_:
+	  case real_:
+	  case string_:
+	  case binary_:
+	  case boolean_:
+	  case number_:
+	  case logical_:
 		return 1;
+		break;
+	  default:
+		break;
 	}
 	return 0;
 }
@@ -3750,6 +3754,9 @@ ENTITYincode_print (Entity entity, FILE* file,Schema schema)
 				TYPEget_body(v->type)->base->symbol.name);
 			    fprintf(file,"// inverse entity 3 %s\n",TYPEget_body(v->type)->base->symbol.name);
 			    break;
+			  default:
+				printf("Error in classes.c, line 3783: type %d not handled by switch statement.",TYPEget_body(v->type)->type);
+				abort();
 			}
 		    }
 		}
@@ -4522,6 +4529,9 @@ TypeBody_Description(TypeBody body, char *buf)
 					strcat(buf," OF");
 		  if (body->flags.unique)	strcat(buf," UNIQUE");
 		  break;
+		default:
+		  printf("Error in classes.c, line 4596: type %d not handled by switch statement.",body->type);
+		  abort();
 		}
 
 		Type_Description(body->base,buf);

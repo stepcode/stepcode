@@ -557,6 +557,9 @@ STEPcomplex::BuildAttrs(const char *s )
 #endif
 		    break;
 		  }
+		default:
+		  cerr << "STEPcomplex::BuildAttrs: type " << ad->NonRefType() << " not handled by switch statement. " << __FILE__ << ":" <<  __LINE__ << endl;
+		  abort();
 		}
 
 		a -> set_null ();
