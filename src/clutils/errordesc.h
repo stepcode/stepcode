@@ -23,7 +23,7 @@
 #include <OpenOODB.h>
 #endif
 
-#include <string.h>
+#include <string>
 #include <iostream>
 using namespace std;
 

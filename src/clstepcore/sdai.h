@@ -29,8 +29,8 @@ extern const char *SCLversion;
 #include <ctype.h>
 //#include <stdio.h>
 //#include <strstream.h>
+#include <string>
 
-#include <string.h>
 
 #ifdef PART26
 // Change the name of the include file defining the defs for Bool and Logical
@@ -53,7 +53,6 @@ void Application_instance_access_hook_in(void *object,
 
 #include <baseType.h>
 #include <Str.h>
-#include <string.h>
 #include <errordesc.h>
 
 typedef std::string Express_id;
