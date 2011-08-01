@@ -1231,7 +1231,7 @@ StringAggregate::NewNode ()
 
 StringNode::StringNode() 
 {
-    value = 0;
+    value = "";
 }
 
 StringNode::~StringNode() 
