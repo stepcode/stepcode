@@ -95,7 +95,6 @@ USEREFout(Schema schema, Dictionary refdict,Linked_List reflist,char *type,FILE*
 	DictionaryEntry de;
 	struct Rename *r;
 	Linked_List list;
-	int level = 6;
 	char td_name[BUFSIZ];
 	char sch_name[BUFSIZ];
 
@@ -302,10 +301,8 @@ GetAggrElemType(const Type type)
 const char *
 TYPEget_idl_type (const Type t)
 {      
-    Class_Of_Type class, class2;
-    Type bt;
+    Class_Of_Type class;
     static char retval [BUFSIZ];
-    char *n;
 
     /*  aggregates are based on their base type  
     case TYPE_ARRAY:
@@ -931,7 +928,6 @@ ATTRprint_access_methods_get_head (const char * classnm, Variable a,
 				   FILE* file) 
 {
     Type t = VARget_type (a);
-    Class_Of_Type class = TYPEget_type(t);
     char ctype [BUFSIZ];   /*  return type of the get function  */
     char funcnm [BUFSIZ];  /*  name of member function  */
 
@@ -1706,7 +1702,6 @@ ATTRprint_access_methods  (CONST char * entnm, Variable a, FILE* file)
     Type t = VARget_type (a);
     Class_Of_Type class;
     char ctype [BUFSIZ];  /*  type of data member  */
-    char return_type [BUFSIZ];
     char attrnm [BUFSIZ];
     char membernm[BUFSIZ];
     char funcnm [BUFSIZ];  /*  name of member function  */
@@ -2162,14 +2157,10 @@ ATTRprint_access_methods  (CONST char * entnm, Variable a, FILE* file)
 void
 ENTITYhead_print (Entity entity, FILE* file,Schema schema)
 {
-    char buffer [BUFSIZ];
     char entnm [BUFSIZ];
     char attrnm [BUFSIZ];
-    char *buf = buffer;
-    char *tmp;
     Linked_List list;
     int attr_count_tmp = attr_count;
-    int super_cnt =0;
     Entity super =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);
@@ -2347,7 +2338,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     /* added for calling multiple_inheritance */
     Linked_List parent_attr_list;
     Linked_List parent_list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);  /*  assign entnm  */
@@ -2430,7 +2421,7 @@ MemberFunctionSign (Entity entity, FILE* file)
 /* //////////////// */
     if(corba_binding)
     {
-	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
+	fprintf(file, "\n//\t%d_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
 		ENTITYget_CORBAname(entity));
 /*
 	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tP26::Application_instance_ptr create_TIE();\n", 
@@ -2447,7 +2438,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     fprintf (file, "};\n");
     if(corba_binding)
     {
-	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%s(%s)\n", ENTITYget_CORBAname(entity), entnm);
+	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%d(%s)\n", ENTITYget_CORBAname(entity), entnm);
     }
 
     /*  Print ObjectStore Access Hook function  */
@@ -2488,10 +2479,8 @@ MemberFunctionSign (Entity entity, FILE* file)
 void
 LIBdescribe_entity (Entity entity, FILE* file, Schema schema)  
 {
-  Linked_List list;
   int attr_count_tmp = attr_count;
   char attrnm [BUFSIZ];
-  char * tmp;
 
   fprintf(file,"EntityDescriptor *%s%s%s =0;\n",
 	  SCHEMAget_name(schema),ENT_PREFIX,ENTITYget_name(entity));
@@ -2527,7 +2516,7 @@ LIBmemberFunctionPrint (Entity entity, FILE* file)
     /* added for calling multiple_inheritance */
     Linked_List parent_attr_list;
     Linked_List parent_list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);  /*  assign entnm */
@@ -2630,12 +2619,11 @@ LIBcopy_constructor (Entity ent, FILE* file)
     Type t;
     char buffer [BUFSIZ],
              attrnm[BUFSIZ],
-      *b = buffer, *n = '\0';
+      *b = buffer;
     int count = attr_count;
-    char * tmp;    
     
     String entnm = ENTITYget_classname (ent);
-    Boolean opt;    
+    __attribute__((unused)) Boolean opt;
     String StrToLower (String word);
 
     /*mjm7/10/91 copy constructor definition  */
@@ -2769,7 +2757,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    Entity super =0;
+    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
     Entity principalSuper =0;
 
@@ -3025,7 +3013,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
     {
 
       fprintf (file, 
-	       "\n//%s_ptr \nIDL_Application_instance_ptr \n%s::create_TIE()\n{\n", 
+	       "\n//%d_ptr \nIDL_Application_instance_ptr \n%s::create_TIE()\n{\n", 
 	       ENTITYget_CORBAname(entity), entnm);
 /*
       fprintf (file, 
@@ -3038,7 +3026,7 @@ LIBstructor_print (Entity entity, FILE* file, Schema schema)
 	       "    std::cout << \"Server creating entity: \" << markerName ");
       fprintf (file,
 	       "<< \" TIE object.\" << std::endl;\n");
-      fprintf (file, "    return new TIE_%s(%s) (this, markerName);\n",
+      fprintf (file, "    return new TIE_%d(%s) (this, markerName);\n",
 	       ENTITYget_CORBAname(entity), entnm);
       fprintf (file, "}\n");
 
@@ -3108,13 +3096,12 @@ LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
     char attrnm [BUFSIZ];
     
     Linked_List list;
-    Entity super =0;
+	__attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     /* added for calling parents constructor if there is one */
     char parentnm [BUFSIZ];
     char *parent = 0;
-    Link parentLink = 0;
     Entity parentEntity = 0;
 
     const char * entnm;
@@ -3127,18 +3114,14 @@ LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
 /* //////////// */
     list = ENTITYget_supertypes (entity);
     if (! LISTempty (list)) {
-/*
-      parentLink = list->mark->next; 
-      parentEntity = (Entity) parentLink->data;
-*/
       parentEntity = (Entity)LISTpeek_first(list);
       if(parentEntity)
       {
-	strcpy(parentnm, ENTITYget_classname (parentEntity));
-	parent = parentnm;
+        strcpy(parentnm, ENTITYget_classname (parentEntity));
+        parent = parentnm;
       }
       else
-	parent = 0; /* no parent */
+        parent = 0; /* no parent */
     }
     else
       parent = 0; /* no parent */
@@ -3398,7 +3381,7 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
       case set_:
       case list_:
       /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-	fprintf(f,"\t%s * %s%d = new %s;\n",
+	fprintf(f,"\t%d * %s%d = new %d;\n",
 		GetTypeDescriptorName(t), TD_PREFIX, count, 
 		GetTypeDescriptorName(t) );
 
@@ -3499,23 +3482,14 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
  ** Status:  ok 1/15/91
  ******************************************************************/
 void
-ENTITYincode_print (Entity entity, FILE* file,Schema schema)  /*  ,FILES *files) */
+ENTITYincode_print (Entity entity, FILE* file,Schema schema)
 {
 #define entity_name	ENTITYget_name(entity)
 #define schema_name	SCHEMAget_name(schema)
-	const char *cn = ENTITYget_classname(entity);
 	char attrnm [BUFSIZ];
 	char dict_attrnm [BUFSIZ];
 	const char * super_schema;
 	char * tmp, *tmp2;
-#if 0
-	String cn_unsafe = ENTITYget_classname (entity);
-	char cn[MAX_LEN];
-
-	/* cn_unsafe points to a static buffer, grr..., so save it */
-	strcpy(cn,cn_unsafe);
-#endif
-
 
 #ifdef NEWDICT
 /* DAS New SDAI Dictionary 5/95 */
@@ -4111,7 +4085,7 @@ DASBUG
 			} else {
 				if (i > 2) fprintf(files->create,", ");
 				uniqRule = EXPRto_string(v->name);
-				fprintf(files->create, uniqRule);
+				fprintf(files->create, "%s",uniqRule);
 			}
 		LISTod
 		fprintf(files->create,";\\n\");\n");
@@ -4223,7 +4197,6 @@ CheckEnumSymbol (char * s)
 void
 TYPEenum_inc_print (const Type type, FILE* inc)
 {
-    DictionaryEntry de;
     Expression expr;
 
     char tdnm[BUFSIZ],
@@ -4248,9 +4221,6 @@ TYPEenum_inc_print (const Type type, FILE* inc)
 	    ++cnt;
 	    fprintf (inc,"\t%s", EnumCElementName (type, expr));
 
-/*	      printf( "WARNING: truncating values %s%s in the .h file.\n\n",
-		      "that will be used to print the enumeration ", 
-		      TYPEget_name (type));*/
         LISTod
 	
 	fprintf (inc, ",\n\t%s_unset\n};\n", EnumName(TYPEget_name(type)));
@@ -4264,11 +4234,6 @@ TYPEenum_inc_print (const Type type, FILE* inc)
 	fprintf (inc, "\nclass %s  :  public SCLP23(Enum)  {\n", n);
 
 	printAccessHookFriend( inc, n );
-/*
-    fprintf(inc,"\n#ifdef __OSTORE__\n");
-    fprintf (inc, "  friend void %s_access_hook_in(void *, \n\tenum os_access_reason, void *, void *, void *);\n", n);
-    fprintf(inc,"#endif\n");
-*/
 	fprintf (inc, "  protected:\n\tEnumTypeDescriptor *type;\n\n");
 
 	/*	constructors	*/
@@ -4370,15 +4335,12 @@ TYPEenum_lib_print (const Type type, FILE* f)
   DictionaryEntry de;
   Expression expr;
   const char *n;	/*  pointer to class name  */
-  char buf [BUFSIZ];
   char c_enum_ele [BUFSIZ];
     
   fprintf (f, "//////////  ENUMERATION TYPE %s\n", TYPEget_ctype (type));
   n = TYPEget_ctype(type);
     
   /*  set up the dictionary info  */
-/*  fprintf (f, "void \t%s::Init ()  {\n", n);*/
-/*  fprintf (f, "  static const char * const l [] = {\n");*/
   
   fprintf (f, "const char * \n%s::element_at (int n) const  {\n", n);
   fprintf (f, "  switch (n)  {\n");
@@ -4391,19 +4353,12 @@ TYPEenum_lib_print (const Type type, FILE* f)
   }
   fprintf (f, "  case %s_unset\t:\n", EnumName(TYPEget_name(type)));
   fprintf (f, "  default\t\t:  return \"UNSET\";\n  }\n}\n");
-/*  fprintf (f, "\t 0\n  };\n");*/
-/*  fprintf (f, "  set_elements (l);\n  v = ENUM_NULL;\n}\n");*/
 
   /*	constructors	*/
   /*    construct with character string  */
   fprintf (f, "\n%s::%s (const char * n, EnumTypeDescriptor *et)\n"
 	      "  : type(et)\n{\n", n, n);
-/*  fprintf (f, "  Init ();\n  set_value (n);\n}\n");*/
   fprintf (f, "  set_value (n);\n}\n");
-  
-  /*    copy constructor  */
-/*  fprintf (f, "%s::%s (%s& n )  {\n", n, n, n);*/
-/*  fprintf (f, "   (l);\n");*/
   
 /*NEWENUM */
     /*  print ObjectStore Access Hook function  */
@@ -4429,9 +4384,6 @@ TYPEenum_lib_print (const Type type, FILE* f)
     fprintf(f,"\n#endif\n");
 /*NEWENUM */
 
-  /*      operator =      */
-/*  fprintf (f, "%s& \t%s::operator= (%s& x)", n, n, n);*/
-/*  fprintf (f, "\n\t{  put (x.asInt ()); return *this;   }\n");*/
 
 	/*      cast operator to an enumerated type  */
   fprintf (f, "\n%s::operator %s () const {\n", n, 
@@ -4444,20 +4396,12 @@ TYPEenum_lib_print (const Type type, FILE* f)
 	  fprintf (f, "\tcase %s\t:  ", c_enum_ele);
 	  fprintf (f, "return %s;\n", c_enum_ele);
 
-	  //fprintf (f, "%s", buf);
-	  //strncpy (c_enum_ele, EnumCElementName (type, expr), BUFSIZ);
-	  //fprintf (f, "\tcase %s\t:  ", c_enum_ele);
-	  //sprintf (buf, "return %s;\n", c_enum_ele);
 
 	}
   /*  print the last case with the default so sun c++ doesn\'t complain */
   fprintf (f, "\tcase %s_unset\t:\n", EnumName(TYPEget_name(type)));
   fprintf (f, "\tdefault\t\t:  return %s_unset;\n  }\n}\n", EnumName(TYPEget_name(type)));
 
-	//fprintf (f, "\n\tdefault\t\t:  %s  }\n}\n", buf);
-
-/*	fprintf (f, "\n\tdefault :  %s;\n  }\n}\n", buf);*/
-/*	fprintf (f, "\t\tdefault:  return 0;\n  }\n}\n");*/
 
   printEnumCreateBody( f, type );
 		 
@@ -4540,16 +4484,8 @@ strcat_bounds(TypeBody b,char *buf)
 
 TypeBody_Description(TypeBody body, char *buf)
 {
-	Expression expr;
-	DictionaryEntry de;
 	char *s;
-/* // I believe it should never go here? DAS
-	if(body->type != array_ && body->type != list_)
-	{
-	    if (body->flags.unique)	strcat(buf," UNIQUE");
-	    if (body->flags.optional)	strcat(buf," OPTIONAL");
-	}
-*/
+	
 	switch (body->type) {
 	case integer_:		strcat(buf," INTEGER");	break;
 	case real_:		strcat(buf," REAL");	break;
@@ -4651,7 +4587,6 @@ Type_Description(const Type t,char *buf)
 void
 TYPEprint_typedefs (Type t, FILE *classes)  
 {
-    Class_Of_Type class;
     char nm [BUFSIZ];
     Type i;
 
@@ -4709,7 +4644,7 @@ TYPEprint_typedefs (Type t, FILE *classes)
   externln:
     /* Print the extern statement: */
     strncpy (nm, TYPEtd_name(t), BUFSIZ);
-    fprintf( classes, "extern %s \t*%s;\n", GetTypeDescriptorName(t), nm );
+    fprintf( classes, "extern %d \t*%s;\n", GetTypeDescriptorName(t), nm );
 }
 
 /* return 1 if it is a multidimensional aggregate at the level passed in
@@ -4879,7 +4814,7 @@ TYPEprint_descriptions (const Type type, FILES* files, Schema schema)
 
 	/*  in source - declare the real definition of the pointer */
 	/*  i.e. in the .cc file                                   */
-    fprintf(files -> lib,"%s \t*%s;\n", GetTypeDescriptorName(type), tdnm);
+    fprintf(files -> lib,"%d \t*%s;\n", GetTypeDescriptorName(type), tdnm);
 
     if(isAggregateType(type)) {
       const char * ctype = TYPEget_ctype (type);
@@ -5081,7 +5016,6 @@ TYPEprint_init (const Type type, FILE *ifile, Schema schema)
 	case set_:
 	case list_:
 	{
-	  const char * ctype = TYPEget_ctype (type);
 
 	  if( isMultiDimAggregateType(type) ) 
 	  {
@@ -5191,8 +5125,6 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
     Type tmpType = TYPEget_head(type);
     Type bodyType = tmpType;
 
-    const char * ctype = TYPEget_ctype (type);
-
     /* define type definition */
     /*  in source - the real definition of the TypeDescriptor   */
 
@@ -5286,7 +5218,7 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
 	  case set_:
 	  case list_:
 
-	    fprintf(create,"\n\t%s = new %s (\n",
+	    fprintf(create,"\n\t%s = new %d (\n",
 		    TYPEtd_name (type), GetTypeDescriptorName(type));
 	    
 	    /* fill in it's values	*/

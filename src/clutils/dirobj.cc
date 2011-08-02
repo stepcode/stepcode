@@ -63,13 +63,6 @@ void * memmove(void *__s1, const void *__s2, size_t __n);
 }
 #endif
 
-//#ifdef __OBJECTCENTER__ 
-//extern "C"
-//{
-//void * memmove(void *__s1, const void *__s2, size_t __n);
-//}
-//#endif
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Create a new DirObj object.
@@ -125,7 +118,6 @@ const char* DirObj::RealPath (const char* path) {
 
 boolean DirObj::LoadDirectory (const char* name) {
     char buf[MAXPATHLEN+2];
-    const char* path = buf;
 
     strcpy(buf, ValidDirectories(RealPath(name)));
     return Reset(buf);
@@ -332,8 +324,6 @@ const char* DirObj::ElimDot (const char* path) {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-//static boolean CollapsedDotDotSlash (const char* path, const char*& start) {
-// Josh L, 5/2/95
 static boolean CollapsedDotDotSlash (const char* path, const char* start) {
        // fail  if 'start' is at beginning of path (there is no path) or
        //	if no directory is before start (no '/' before '../')

@@ -1,4 +1,4 @@
-static char rcsid[] = "$Id: error.c,v 1.13 1997/10/23 21:41:44 sauderd Exp $";
+
 
 /************************************************************************
 ** Module:	Error
@@ -501,7 +501,7 @@ ERROR_flush_message_buffer(void)
 		int parent, child;
 
 		/* pop off the top of the heap */
-		fprintf(stderr,heap[1].msg);
+		fprintf(stderr,"%s",heap[1].msg);
 
 		replace = &heap[ERROR_with_lines--];
 

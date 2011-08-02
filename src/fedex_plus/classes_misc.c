@@ -240,10 +240,9 @@ isAggregateType (const Type t)
 const char *
 TYPEget_ctype (const Type t)
 {      
-    Class_Of_Type class, class2;
+    Class_Of_Type class;
     Type bt;
     static char retval [BUFSIZ];
-    char *n;
     
 
     /*  aggregates are based on their base type  
@@ -516,7 +515,7 @@ PrettyTmpName (const char * oldname)
 const char *
 EnumName (const char * oldname)  
 {
-    int i= 0, j = 0;
+    int j = 0;
     static char newname [MAX_LEN];
     if (!oldname)  return ("");
     
@@ -532,7 +531,7 @@ EnumName (const char * oldname)
 const char *
 SelectName (const char * oldname)  
 {
-    int i= 0, j = 0;
+    int j = 0;
     static char newname [MAX_LEN];
     if (!oldname)  return ("");
     
@@ -550,7 +549,6 @@ const char *
 FirstToUpper (const char * word)
 {
     static char newword [MAX_LEN];
-    int i =0;
     
     strncpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );

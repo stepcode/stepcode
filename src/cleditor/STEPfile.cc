@@ -97,7 +97,7 @@ STEPfile::ReadHeader (istream& in)
 
     InstMgr *im = new InstMgr;
     SCLP23(Application_instance)* obj;
-    Severity objsev = SEVERITY_NULL;
+    __attribute__((unused)) Severity objsev = SEVERITY_NULL;
     
     int endsec = 0;
     int userDefined = 0;
@@ -271,8 +271,6 @@ STEPfile::HeaderConvertToNew(InstMgr& oldinst)
 {
     InstMgr* imtmp = new InstMgr; 
     SCLP23(Application_instance)* oldse;
-    
-    int count = 0;
     
 // FILE_NAME <== (N279)FILE_IDENTIFICATION
     p21DIS_File_name * fn = 0;
@@ -498,7 +496,6 @@ STEPfile::HeaderMergeInstances(InstMgr* im)
 {
     SCLP23(Application_instance)* se = 0; 
     SCLP23(Application_instance)* from = 0;
-    SCLP23(Application_instance)* to = 0;
     
     int idnum;
 
@@ -1545,7 +1542,6 @@ STEPfile::FindHeaderSection (istream& in)
 {
     char buf[BUFSIZ];
     char *b = buf;
-    int rval =0;
     
     *b = '\0';
     
@@ -1597,7 +1593,6 @@ STEPfile::CreateInstance(istream& in, ostream &out)
 
     int fileid = -1;
     SCLP23(Application_instance_ptr) * scopelist =0;
-    int n =0;
 
     SCLP23(Application_instance)* obj;
     ErrorDescriptor result;
@@ -2125,7 +2120,6 @@ STEPfile::ReadInstance(istream& in, ostream& out, SCLstring &cmtStr,
 
     char c;
     int fileid;
-    int n =0;
     SCLP23(Application_instance)* obj = ENTITY_NULL;
     int idIncrNum = FileIdIncr();
 
@@ -2333,7 +2327,6 @@ BUG: doesn't check to see if the backup command works.
 void
 STEPfile::MakeBackupFile() 
 {
-  static int i =1;
     char backup_call [2*BUFSIZ];
     char backup_file [BUFSIZ];
 
@@ -2810,7 +2803,7 @@ STEPfile::AppendFile (istream* in, int useTechCor)
     
     SetFileIdIncrement ();
     int total_insts =0,  valid_insts =0;
-    int exchange_file = -1;
+    __attribute__((unused)) int exchange_file = -1;
     
     ReadTokenSeparator(*in);
     SCLstring keywd = GetKeyword(*in, "; #", _error);
