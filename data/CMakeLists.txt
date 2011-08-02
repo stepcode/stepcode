@@ -31,3 +31,12 @@ SET(step_datafiles
   select.exp 
 )
 INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
+
+# To build one or more schemas, configure with 'cmake -DBUILD_SCHEMAS="ap203;ap214e3;ap227"
+# where each schema is built in a directory of the same name. To build a p21read program
+# for each schema, use '-DENABLE_P21READ'
+if(NOT BUILD_SCHEMAS STREQUAL "" )
+  foreach( ap ${BUILD_SCHEMAS} )
+    add_subdirectory( ${ap} )
+  endforeach()
+endif()
