@@ -436,12 +436,7 @@ GenericAggregate::~GenericAggregate()
 SingleLinkNode *
 GenericAggregate::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this),
-		GenericAggrNode::get_os_typespec()) GenericAggrNode();
-#else
     return new GenericAggrNode();
-#endif
 }
 
 STEPaggregate& 
@@ -454,13 +449,7 @@ GenericAggregate::ShallowCopy (const STEPaggregate& a)
 
     while (next) 
     {
-#ifdef __OSTORE__
-	copy = new (os_segment::of(this), 
-		    GenericAggrNode::get_os_typespec()) 
-				GenericAggrNode (*(GenericAggrNode*)next);
-#else
 	copy = new GenericAggrNode (*(GenericAggrNode*)next);
-#endif
 	AddNode(copy);
 	next = next->NextNode();
     }
@@ -497,12 +486,7 @@ GenericAggrNode::~GenericAggrNode()
 SingleLinkNode *
 GenericAggrNode::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		GenericAggrNode::get_os_typespec()) GenericAggrNode();
-#else
     return new GenericAggrNode();
-#endif
 }
 
 Severity 
@@ -630,20 +614,13 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
     // if not assigning values only need one node. So only one node is created.
     // It is used to read the values
     else if(!assignVal) 
-      // OSTORE note - since this is temporary and deleted anyway don't worry
-      // about persistent new
 	item = new EntityNode();
 
     while (in.good() && (c != ')') )
     {
 	value_cnt++;
 	if(assignVal) // create a new node each time through the loop
-#ifdef __OSTORE__
-	    item = new (os_segment::of(this), 
-			EntityNode::get_os_typespec()) EntityNode();
-#else
 	    item = new EntityNode();
-#endif
 
 	errdesc.ClearErrorMsg();
 
@@ -715,12 +692,7 @@ EntityAggregate::ShallowCopy (const STEPaggregate& a)
     const EntityNode * tmp = (const EntityNode*) a.GetHead ();
     while (tmp) 
     {
-#ifdef __OSTORE__
-	AddNode (new (os_segment::of(this), 
-		      EntityNode::get_os_typespec()) EntityNode (tmp -> node));
-#else
 	AddNode (new EntityNode (tmp -> node));
-#endif
 	tmp = (const EntityNode*) tmp -> NextNode ();
     }
     if(head)
@@ -735,12 +707,7 @@ EntityAggregate::ShallowCopy (const STEPaggregate& a)
 SingleLinkNode *	
 EntityAggregate::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		EntityNode::get_os_typespec()) EntityNode();
-#else
     return new EntityNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -762,12 +729,7 @@ EntityNode::EntityNode  (SCLP23(Application_instance) * e) : node (e)
 SingleLinkNode *	
 EntityNode::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		EntityNode::get_os_typespec()) EntityNode();
-#else
     return new EntityNode();
-#endif
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1013,12 +975,7 @@ SelectAggregate::ShallowCopy (const STEPaggregate& a)
     const SelectNode * tmp = (const SelectNode*) a.GetHead ();
     while (tmp) 
     {
-#ifdef __OSTORE__
-	AddNode (new (os_segment::of(this), 
-		      SelectNode::get_os_typespec()) SelectNode (tmp -> node));
-#else
 	AddNode (new SelectNode (tmp -> node));
-#endif
 
 	tmp = (const SelectNode*) tmp -> NextNode ();
     }
@@ -1034,12 +991,7 @@ SelectAggregate::ShallowCopy (const STEPaggregate& a)
 SingleLinkNode *	
 SelectAggregate::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		SelectNode::get_os_typespec()) SelectNode();
-#else
     return new SelectNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1061,12 +1013,7 @@ SelectNode::~SelectNode()
 SingleLinkNode *	
 SelectNode::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		SelectNode::get_os_typespec()) SelectNode();
-#else
     return new SelectNode();
-#endif
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1196,13 +1143,7 @@ StringAggregate::ShallowCopy (const STEPaggregate& a)
 
     while (next) 
     {
-#ifdef __OSTORE__
-	copy = new (os_segment::of(this), 
-		    StringNode::get_os_typespec()) 
-				StringNode (*(StringNode*)next);
-#else
 	copy = new StringNode (*(StringNode*)next);
-#endif
 	AddNode(copy);
 	next = next->NextNode();
     }
@@ -1217,12 +1158,7 @@ StringAggregate::ShallowCopy (const STEPaggregate& a)
 SingleLinkNode *
 StringAggregate::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		StringNode::get_os_typespec()) StringNode();
-#else
     return new StringNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1259,12 +1195,7 @@ StringNode::StringNode(const char * sStr)
 SingleLinkNode *
 StringNode::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		StringNode::get_os_typespec()) StringNode();
-#else
     return new StringNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1354,13 +1285,7 @@ BinaryAggregate::ShallowCopy (const STEPaggregate& a)
 
     while (next) 
     {
-#ifdef __OSTORE__
-	copy = new (os_segment::of(this), 
-		    BinaryNode::get_os_typespec()) 
-				BinaryNode (*(BinaryNode*)next);
-#else
 	copy = new BinaryNode (*(BinaryNode*)next);
-#endif
 	AddNode(copy);
 	next = next->NextNode();
     }
@@ -1375,12 +1300,7 @@ BinaryAggregate::ShallowCopy (const STEPaggregate& a)
 SingleLinkNode *
 BinaryAggregate::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		BinaryNode::get_os_typespec()) BinaryNode();
-#else
     return new BinaryNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1410,12 +1330,7 @@ BinaryNode::BinaryNode(const char *sStr)
 SingleLinkNode *
 BinaryNode::NewNode () 
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		BinaryNode::get_os_typespec()) BinaryNode();
-#else
     return new BinaryNode();
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1733,28 +1648,14 @@ LOGICALS::~LOGICALS()
 SingleLinkNode *
 LOGICALS::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), EnumNode::get_os_typespec()) 
-			EnumNode( new (os_segment::of(this), 
-				       SCLP23(LOGICAL)::get_os_typespec()) SCLP23(LOGICAL) );
-#else
     return new EnumNode (new SCLP23(LOGICAL));
-#endif
 }	
 
-#ifdef __OSTORE__
-LOGICALS * 
-create_LOGICALS(os_database *db)
-{
-    return new (db, LOGICALS::get_os_typespec()) LOGICALS;
-}
-#else
 LOGICALS * 
 create_LOGICALS()
 {
     return new LOGICALS;
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // BOOLEANS
@@ -1772,28 +1673,14 @@ BOOLEANS::~BOOLEANS()
 SingleLinkNode *
 BOOLEANS::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), EnumNode::get_os_typespec()) 
-			EnumNode( new (os_segment::of(this), 
-				       SCLP23(BOOLEAN)::get_os_typespec()) SCLP23(BOOLEAN) );
-#else
     return new EnumNode (new SCLP23(BOOLEAN));
-#endif
 }	
 
-#ifdef __OSTORE__
-BOOLEANS * 
-create_BOOLEANS(os_database *db)
-{
-    return new (db, BOOLEANS::get_os_typespec()) BOOLEANS;
-}
-#else
 BOOLEANS * 
 create_BOOLEANS()
 {
     return new BOOLEANS ; 
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // RealAggregate
@@ -1810,12 +1697,7 @@ RealAggregate::~RealAggregate()
 SingleLinkNode *
 RealAggregate::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		RealNode::get_os_typespec()) RealNode();
-#else
     return new RealNode();
-#endif
 }	
 
 // COPY
@@ -1854,12 +1736,7 @@ IntAggregate::~IntAggregate()
 SingleLinkNode *
 IntAggregate::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		IntNode::get_os_typespec()) IntNode();
-#else
     return new IntNode();
-#endif
 }	
 
 // COPY
@@ -1899,12 +1776,7 @@ RealNode::~RealNode()
 SingleLinkNode *
 RealNode::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		RealNode::get_os_typespec()) RealNode();
-#else
     return new RealNode();
-#endif
 }	
 
 Severity 
@@ -2002,12 +1874,7 @@ IntNode::~IntNode()
 SingleLinkNode *
 IntNode::NewNode ()  
 {
-#ifdef __OSTORE__
-    return new (os_segment::of(this), 
-		IntNode::get_os_typespec()) IntNode();
-#else
     return new IntNode();
-#endif
 }	
 
 Severity 

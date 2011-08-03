@@ -107,10 +107,6 @@ class STEPaggregate :  public SingleLinkList
 // COPY - defined in subtypes
     virtual STEPaggregate& ShallowCopy (const STEPaggregate&);
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
-
 };									      
 
 /******************************************************************
@@ -128,9 +124,6 @@ class GenericAggregate  :  public STEPaggregate
     GenericAggregate();
     virtual ~GenericAggregate();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  GenericAggregate * GenericAggregateH;
 typedef  GenericAggregate * GenericAggregate_ptr;
@@ -155,9 +148,6 @@ class EntityAggregate  :  public  STEPaggregate
     EntityAggregate ();
     virtual ~EntityAggregate ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef   EntityAggregate * EntityAggregateH;
 typedef   EntityAggregate * EntityAggregate_ptr;
@@ -183,9 +173,6 @@ class SelectAggregate  :  public STEPaggregate
     SelectAggregate ();
     virtual ~SelectAggregate ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  SelectAggregate *  SelectAggregateH;
 typedef  SelectAggregate *  SelectAggregate_ptr;
@@ -204,9 +191,6 @@ class StringAggregate  :  public STEPaggregate
     StringAggregate();
     virtual ~StringAggregate();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  StringAggregate * StringAggregateH;
 typedef  StringAggregate * StringAggregate_ptr;
@@ -226,9 +210,6 @@ class BinaryAggregate  :  public STEPaggregate
     BinaryAggregate();
     virtual ~BinaryAggregate();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  BinaryAggregate * BinaryAggregateH;
 typedef  BinaryAggregate * BinaryAggregate_ptr;
@@ -248,9 +229,6 @@ class EnumAggregate  :  public STEPaggregate
     EnumAggregate ();
   virtual ~EnumAggregate ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  EnumAggregate *  EnumAggregateH;
 typedef  EnumAggregate *  EnumAggregate_ptr;
@@ -264,18 +242,11 @@ class LOGICALS  : public EnumAggregate
     LOGICALS();
     virtual ~LOGICALS();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  LOGICALS *  LogicalsH;
 typedef  LOGICALS *  LOGICALS_ptr;
 typedef  LOGICALS_ptr LOGICALS_var;
-#ifdef __OSTORE__
-LOGICALS * create_LOGICALS(os_database *db);
-#else
 LOGICALS * create_LOGICALS();
-#endif
 
 
 class BOOLEANS  : public EnumAggregate  
@@ -286,20 +257,13 @@ class BOOLEANS  : public EnumAggregate
     BOOLEANS();
     virtual ~BOOLEANS();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 //typedef  BOOLEANS *  BooleansH;
 typedef  BOOLEANS *  BOOLEANS_ptr;
 typedef  BOOLEANS_ptr BOOLEANS_var;
 
-#ifdef __OSTORE__
-BOOLEANS * create_BOOLEANS(os_database *db);
-#else
 BOOLEANS * create_BOOLEANS();
-#endif
 
 class RealAggregate  : public STEPaggregate  {
 
@@ -310,9 +274,6 @@ class RealAggregate  : public STEPaggregate  {
     RealAggregate();
     virtual ~RealAggregate();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  RealAggregate *  RealAggregateH;
 typedef  RealAggregate *  RealAggregate_ptr;
@@ -327,9 +288,6 @@ class IntAggregate  : public STEPaggregate  {
     IntAggregate();
     virtual ~IntAggregate();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  IntAggregate *  IntAggregateH;
 typedef  IntAggregate *  IntAggregate_ptr;
@@ -360,9 +318,6 @@ class STEPnode :  public SingleLinkNode  {
     virtual const char *asStr(SCLstring & s);
     virtual const char *STEPwrite(SCLstring &s, const char * =0);
     virtual void STEPwrite (ostream& out =cout);
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 typedef  STEPnode *  STEPnodeH;
 
@@ -396,10 +351,6 @@ class GenericAggrNode  : public STEPnode {
     ~GenericAggrNode ();
 
     virtual SingleLinkNode *	NewNode ();
-
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 
 };
 
@@ -462,9 +413,6 @@ class EntityNode  : public STEPnode {
 	return STEPread(in, err, 0, 0, 0);
     }
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -536,9 +484,6 @@ class SelectNode  : public STEPnode {
 	return STEPread(in, err, 0, 0, 0);
     }
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -574,9 +519,6 @@ class StringNode  : public STEPnode {
 
     virtual SingleLinkNode *	NewNode ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -612,9 +554,6 @@ class BinaryNode  : public STEPnode {
 
     virtual SingleLinkNode *	NewNode ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 /******************************************************************
@@ -648,9 +587,6 @@ class EnumNode  : public STEPnode {
 
     virtual SingleLinkNode *	NewNode ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 class RealNode  : public STEPnode {
@@ -676,9 +612,6 @@ class RealNode  : public STEPnode {
 
     virtual SingleLinkNode *	NewNode ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 class IntNode  : public STEPnode {
@@ -704,9 +637,6 @@ class IntNode  : public STEPnode {
 
     virtual SingleLinkNode *	NewNode ();
 
-#ifdef __OSTORE__
-    static os_typespec* get_os_typespec();
-#endif
 };
 
 /******************************************************************
