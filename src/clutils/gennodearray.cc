@@ -74,7 +74,6 @@ GenNodeArray::Check (int index)
         _bufsize = (index+1) * 2;
         newbuf = new GenericNode*[_bufsize];
 
-
 	memset(newbuf, 0, _bufsize);
     memmove(newbuf, _buf, _count*sizeof(GenericNode*));
 	delete [] _buf;
