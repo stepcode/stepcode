@@ -240,12 +240,12 @@ MgrNode *InstMgr::Append(SCLP23(Application_instance) *se, stateEnum listState)
     if (se->StepFileId () == 0)  // no id assigned
 	se->StepFileId( NextFileId () ); // assign a file id
 
-    if (mn = FindFileId (se->StepFileId())) // if id already in list
-	// and it's because instance is already in list
-	if (GetApplication_instance (mn) == se)  
-	    return 0;  // return 0 or mn?
-	else se->StepFileId( NextFileId () ); // otherwise assign a new file id
-
+    if( (mn = FindFileId (se->StepFileId())) ) {// if id already in list
+	  // and it's because instance is already in list
+	  if (GetApplication_instance (mn) == se)  
+		  return 0;  // return 0 or mn?
+	  else se->StepFileId( NextFileId () ); // otherwise assign a new file id
+	}
     // update the maxFileId if needed
     if (se->StepFileId() > MaxFileId()) maxFileId = se->StepFileId();
 

@@ -1137,7 +1137,7 @@ generic_type		: TOK_GENERIC
 			    TypeBody g = TYPEBODYcreate(generic_);
 			    $$ = TYPEcreate_from_body_anonymously(g);
 			    SCOPEadd_super($$);
-			    if (g->tag = TYPEcreate_user_defined_tag($$,CURRENT_SCOPE,$3))
+			    if ( (g->tag = TYPEcreate_user_defined_tag($$,CURRENT_SCOPE,$3)) )
 				SCOPEadd_super(g->tag);
 		    	  }
 			;

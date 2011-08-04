@@ -260,8 +260,9 @@ STEPaggregate::asStr(SCLstring & s) const
 	while (n)
 	{
 	    s.Append( n->STEPwrite(tmp) );
-	    if (n = (STEPnode *) n -> NextNode ())
-		s.Append(',');
+	    if ( (n = (STEPnode *) n -> NextNode ()) ) {
+		  s.Append(',');
+		}
 	}
 	s.Append(')');
     }
@@ -279,8 +280,9 @@ STEPaggregate::STEPwrite(ostream& out, const char *currSch) const
 	while (n)  
 	{
 	    out << n->STEPwrite (s, currSch);
-	    if ( n = (STEPnode *)(n -> NextNode ()) )
-		out <<  ',';
+	    if ( ( n = (STEPnode *)(n -> NextNode ()) ) ) {
+		  out <<  ',';
+		}
 	}
 	out << ')';
     }

@@ -1236,14 +1236,13 @@ EntityDescriptor::QualifiedName(SCLstring &s) const
 
     int count = 1;
     const EntityDescriptor * ed = 0;
-    while(ed = edi.NextEntityDesc())
+    while( (ed = edi.NextEntityDesc()) )
     {
-	if(count > 1)
-	{
-	    s.Append("&");
-	}
-	s.Append(ed->Name());
-	count++;
+	  if(count > 1) {
+		  s.Append("&");
+	  }
+	  s.Append(ed->Name());
+	  count++;
     }
     if(count > 1) s.Append("&");
     s.Append(Name());
@@ -2074,7 +2073,7 @@ SelectTypeDescriptor::CanBe (const TypeDescriptor * other) const
   const TypeDescriptor * td =0;
 
   if (this == other) return other;
-  while (td = elements.NextTypeDesc ())  {
+  while( (td = elements.NextTypeDesc ()) ) {
 //    if (found = (td -> CanBe (other))) return found;
     if (td -> CanBe (other)) return td;
   }
@@ -2096,7 +2095,7 @@ SelectTypeDescriptor::CanBe (const char * other) const
     return this;
 
   // see if other is one of the elements
-  while (td = elements.NextTypeDesc ())  {
+  while( (td = elements.NextTypeDesc ()) ) {
     if (td -> CanBe (other)) return td;
 //    if (found = (td -> CanBe (other))) return found;
   }
@@ -2127,7 +2126,7 @@ SelectTypeDescriptor::CanBeSet (const char * other, const char *schNm) const
   TypeDescItr elements (GetElements()) ;
   const TypeDescriptor * td =0;
 
-  while (td = elements.NextTypeDesc ()) {
+  while( (td = elements.NextTypeDesc ()) ) {
       if ( td->Type() == REFERENCE_TYPE && td->NonRefType() == sdaiSELECT ) {
 	  // Just look at this level, don't look at my items (see intro).
 	  if ( td->CurrName( other, schNm ) ) {

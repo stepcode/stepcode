@@ -439,8 +439,9 @@ HASHexpand_table(Hash_Table table)
 	NewAddress = table->maxp + table->p;
 	NewSegmentDir = DIV(NewAddress, SEGMENT_SIZE_SHIFT);
 	NewSegmentIndex = MOD(NewAddress, SEGMENT_SIZE);
-	if (NewSegmentIndex == 0)
+	if (NewSegmentIndex == 0) {
 	    CALLOC(table->Directory[NewSegmentDir], SEGMENT_SIZE, Element);
+	}
 		 /*  "segment in HASHexpand_table");*/
 	NewSegment = table->Directory[NewSegmentDir];
 	/*
