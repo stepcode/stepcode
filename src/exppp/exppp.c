@@ -1401,7 +1401,7 @@ TYPE_body_out(Type t, int level)
 					TYPEunique_or_optional_out(tb);
 					break;
 		default:
-		  printf("Error in exppp.c, line 1407: type %d not handled by switch statement.",tb->type);
+		  printf("Error in %s, line %d: type %d not handled by switch statement.",__FILE__,__LINE__,tb->type);
 		  abort();
 		}
 

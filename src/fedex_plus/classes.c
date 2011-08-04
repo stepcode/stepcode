@@ -3755,7 +3755,7 @@ ENTITYincode_print (Entity entity, FILE* file,Schema schema)
 			    fprintf(file,"// inverse entity 3 %s\n",TYPEget_body(v->type)->base->symbol.name);
 			    break;
 			  default:
-				printf("Error in classes.c, line 3783: type %d not handled by switch statement.",TYPEget_body(v->type)->type);
+				printf("Error in %s, line %d: type %d not handled by switch statement.",__FILE__,__LINE__,TYPEget_body(v->type)->type);
 				abort();
 			}
 		    }
@@ -4530,7 +4530,7 @@ TypeBody_Description(TypeBody body, char *buf)
 		  if (body->flags.unique)	strcat(buf," UNIQUE");
 		  break;
 		default:
-		  printf("Error in classes.c, line 4596: type %d not handled by switch statement.",body->type);
+		  printf("Error in %s, line %d: type %d not handled by switch statement.",__FILE__,__LINE__,body->type);
 		  abort();
 		}
 
