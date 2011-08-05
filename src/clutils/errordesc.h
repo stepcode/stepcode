@@ -19,8 +19,11 @@
 #include <OpenOODB.h>
 #endif
 
-#include <scl_string.h>
+#include <string>
 #include <iostream>
+using namespace std;
+
+#define _POC_  " report problem to brlcad-devel"
 
 typedef enum Severity {
     SEVERITY_MAX	= -5,
@@ -60,7 +63,7 @@ enum  DebugLevel  {
  **	the error is a detailed error message + a severity level
  **	also keeps a user message separately
  **	detailed message gets sent to ostream
- **	uses SCLstring class to keep the user messages
+ **	uses std::string class to keep the user messages
  **	keeps severity of error
  **	created with or without error
  ** Status:  
@@ -75,8 +78,8 @@ class ErrorDescriptor {
     static DebugLevel	_debug_level;
     static ostream* _out; // note this will not be persistent
     
-    SCLstring *_userMsg;
-    SCLstring *_detailMsg;
+    std::string *_userMsg;
+    std::string *_detailMsg;
   public:
 
     ErrorDescriptor (Severity s    = SEVERITY_NULL, 
@@ -93,8 +96,8 @@ class ErrorDescriptor {
 
 	// return the enum value of _severity
     Severity severity() const        { return _severity; }
-	// return _severity as a const char * in the SCLstring provided
-    const char * severity(SCLstring &s) const; 
+	// return _severity as a const char * in the std::string provided
+    const char * severity(std::string &s) const; 
     Severity severity(Severity s) {  return (_severity = s); }
     Severity GetCorrSeverity(const char *s);
     Severity GreaterSeverity(Severity s)
@@ -124,8 +127,6 @@ class ErrorDescriptor {
     void debug_level(DebugLevel d)   { _debug_level = d; }
     void SetOutput(ostream *o)      { _out = o; }
 
-    // void operator =  (const char* y)  {  SCLstring::operator = (y);  }
-    
 /*
 //    Enforcement	_enforcement_level;	
     ErrorDescriptor (Severity s    = SEVERITY_NULL, 
