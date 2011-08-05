@@ -649,6 +649,9 @@ GetTypeDescriptorName( Type t )
       case number_:
       case generic_:
 	return "TypeDescriptor";
+    default:
+      printf("Error in %s, line %d: type %d not handled by switch statement.",__FILE__,__LINE__,TYPEget_body(t)->type);
+      abort();
     }
 }
 

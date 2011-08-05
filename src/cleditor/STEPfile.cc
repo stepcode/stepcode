@@ -2881,6 +2881,10 @@ STEPfile::AppendFile (istream* in, int useTechCor)
 //	  valid_insts = ReadWorkingData2 (*in2);
 	  valid_insts = ReadData2 (*in2, useTechCor);
 	  break;
+	default:
+      cerr << "STEPfile::AppendFile: type " << _fileType << " not handled by switch statement. " << __FILE__ << ":" <<  __LINE__ << endl;
+      abort();
+
       }
 
     //check for "ENDSEC;"
