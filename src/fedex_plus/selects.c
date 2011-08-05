@@ -427,6 +427,9 @@ non_unique_types_vector ( const Type type, int* tvec )
         case number_:
             tvec[tnumber]++;
             break;
+        default:
+          printf("Error in %s, line %d: type %d not handled by switch statement.",__FILE__,__LINE__,TYPEget_body(t)->type);
+          abort();
         }
     LISTod;
 }            
