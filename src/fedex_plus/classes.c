@@ -2422,7 +2422,7 @@ MemberFunctionSign (Entity entity, FILE* file)
 /* //////////////// */
     if(corba_binding)
     {
-	fprintf(file, "\n//\t%d_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
+	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
 		ENTITYget_CORBAname(entity));
 /*
 	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tP26::Application_instance_ptr create_TIE();\n", 
@@ -2432,7 +2432,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     fprintf (file, "};\n");
     if(corba_binding)
     {
-	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%d(%s)\n", ENTITYget_CORBAname(entity), entnm);
+	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%s(%s)\n", ENTITYget_CORBAname(entity), entnm);
     }
 
     /*  print creation function for class	*/
@@ -2711,7 +2711,10 @@ get_attribute_number (Entity entity)
 	    if (found)  return i;
 	    else printf ( "Internal error:  %s:%d\n"
 			"Attribute %s not found. \n"
-			,__FILE__,__LINE__, VARget_name (a));
+			/* In this case, a is a Variable - so macro VARget_name (a) expands  *
+			 * to an Expression. The first element of an Expression is a Symbol. *
+			 * The first element of a Symbol is char * name.					 */
+			,__FILE__,__LINE__, VARget_name(a)->symbol.name );
 	}
 
     LISTod;
@@ -3232,7 +3235,7 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
       case set_:
       case list_:
       /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-	fprintf(f,"\t%d * %s%d = new %d;\n",
+	fprintf(f,"\t%s * %s%d = new %s;\n",
 		GetTypeDescriptorName(t), TD_PREFIX, count, 
 		GetTypeDescriptorName(t) );
 
@@ -4432,7 +4435,7 @@ TYPEprint_typedefs (Type t, FILE *classes)
   externln:
     /* Print the extern statement: */
     strncpy (nm, TYPEtd_name(t), BUFSIZ);
-    fprintf( classes, "extern %d \t*%s;\n", GetTypeDescriptorName(t), nm );
+    fprintf( classes, "extern %s \t*%s;\n", GetTypeDescriptorName(t), nm );
 }
 
 /* return 1 if it is a multidimensional aggregate at the level passed in
@@ -4602,7 +4605,7 @@ TYPEprint_descriptions (const Type type, FILES* files, Schema schema)
 
 	/*  in source - declare the real definition of the pointer */
 	/*  i.e. in the .cc file                                   */
-    fprintf(files -> lib,"%d \t*%s;\n", GetTypeDescriptorName(type), tdnm);
+    fprintf(files -> lib,"%s \t*%s;\n", GetTypeDescriptorName(type), tdnm);
 
     if(isAggregateType(type)) {
       const char * ctype = TYPEget_ctype (type);
@@ -4941,7 +4944,7 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
 	  case set_:
 	  case list_:
 
-	    fprintf(create,"\n\t%s = new %d (\n",
+	    fprintf(create,"\n\t%s = new %s (\n",
 		    TYPEtd_name (type), GetTypeDescriptorName(type));
 	    
 	    /* fill in it's values	*/

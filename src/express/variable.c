@@ -214,7 +214,7 @@ VARget_simple_name(Variable v)
 			e = e->e.op2;
 			break;
 		default:
-			fprintf(stderr,"unexpected op_code (%d) encountered in variable name expression\n",opcode_print(e->e.op_code));
+			fprintf(stderr,"unexpected op_code (%s) encountered in variable name expression\n",opcode_print(e->e.op_code));
 			abort();
 		}
 	}
