@@ -1509,7 +1509,7 @@ TYPEselect_lib_part21 (const Type type, FILE* f, Schema schema)
       fprintf(f, "    out << \")\";\n  }\n  else ");
       break;
     default:
-      fprintf(f, "  _%s -> STEPwrite (out); \n  else "); //FIXME should this be given 'dm' as an arg?
+      fprintf(f, "  _%s -> STEPwrite (out); \n  else ", dm);
       break;
     }
   LISTod;
