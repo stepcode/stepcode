@@ -106,6 +106,7 @@
  */
 
 #define HASH_C
+#include <string.h>
 #include <stdlib.h>
 #include "express/hash.h"
 

@@ -24,6 +24,14 @@ extern int multiple_inheritance;
 #include <stdlib.h>
 #include "classes.h"
 
+int isAggregateType (const Type t);
+char * generate_attribute_name( Variable a, char *out );
+char * FundamentalType(const Type t,int report_reftypes);
+void ATTRsign_access_methods (Variable a, FILE* file);
+char * generate_attribute_func_name( Variable a, char *out );
+void ATTRprint_access_methods_get_head (const char * classnm, Variable a, FILE* file);
+void ATTRprint_access_methods_put_head (const char * entnm, Variable a, FILE* file);
+
 #define BASE_SELECT "SCLP23(Select)"
 
 #define TYPEis_primitive(t) ( !( TYPEis_entity(t)  || \
@@ -563,7 +571,7 @@ TYPEselect_inc_print_vars( const Type type, FILE *f, Linked_List dups)
    fprintf( f, "\t//  types in SELECT \n" );  
    LISTdo( SEL_TYPEget_items(type), t, Type )
      fprintf( f, "\t//   %s\t--  %d\n", 
-	      SEL_ITEMget_enumtype (t), FundamentalType (t));
+	      SEL_ITEMget_enumtype (t), FundamentalType (t,0));
    LISTod;
 
    LISTdo (data_members, t, Type)

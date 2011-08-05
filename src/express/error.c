@@ -54,6 +54,7 @@
 #include <stdlib.h>
 #include "conf.h"
 #include <setjmp.h>
+#include <unistd.h>
 
 #define	ERROR_C
 #include "signal.h"

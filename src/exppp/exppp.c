@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <memory.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #ifdef __STDC__
 #include <stdarg.h>
 #else
@@ -31,6 +34,7 @@ void EXPRop1_out(struct Op_Subexpression *eo,char *opcode,int paren);
 void EXPRop2__out(struct Op_Subexpression *eo,char *opcode,int paren,int pad,int previous_op);
 void EXPR__out(Expression expr,int paren,int previous_op);
 void EXPRbounds_out(TypeBody tb);
+int EXPRlength(Expression e);
 void FUNC_out(Function fn,int level);
 void PROC_out(Procedure p,int level);
 void REFout(Dictionary refdict,Linked_List reflist,char *type,int level);
@@ -41,6 +45,7 @@ void SCOPEentities_out(Scope s,int level);
 void SCOPElocals_out(Scope s,int level);
 void SCOPEtypes_out(Scope s, int level);
 void STMT_out(Statement s,int level);
+void STMTlist_out(Linked_List stmts,int level);
 void TYPE_out(Type t, int level);
 void TYPE_head_out(Type t,int level);
 void TYPE_body_out(Type t, int level);
@@ -1838,8 +1843,8 @@ EXPRlength(Expression e)
 /* Interfacing Definitions */
 
 #define BIGBUFSIZ	100000
-static old_curpos;
-static old_lineno;
+static int old_curpos;
+static int old_lineno;
 static int string_func_in_use = False;
 static int file_func_in_use = False;
 
