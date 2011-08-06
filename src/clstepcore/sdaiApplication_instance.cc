@@ -607,7 +607,7 @@ SCLP23(Application_instance)::STEPread_error(char c, int i, istream& in)
 	    }
 	}
     }
-    _error.AppendToDetailMsg( tmp.chars() );
+    _error.AppendToDetailMsg( tmp.c_str() );
 #endif
     sprintf (errStr, "\nfinished reading #%d\n", STEPfile_id);
     _error.AppendToDetailMsg(errStr);

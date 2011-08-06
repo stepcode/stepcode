@@ -75,8 +75,8 @@ main()
 	str = "";
 	str.Append(StrToLower(schema->Name(),tmp));
 	str.Append(".exp");
-	efile = new ofstream(str.chars());
-	cout << "Generating: " << str.chars() << endl;
+	efile = new ofstream(str.c_str());
+	cout << "Generating: " << str.c_str() << endl;
 	schema->GenerateExpress(*efile);
 	efile->close();
 	delete efile;

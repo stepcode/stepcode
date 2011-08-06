@@ -1345,8 +1345,8 @@ AGGRprint_access_methods(CONST char *entnm, Variable a, FILE* file, Type t,
 	    fprintf (file, "    while(n)\n");
 	    fprintf (file, "    {\n");
 
-	    fprintf (file, "\t(*seq)[i] = CORBA::string_dupl( ((StringNode*)n)->value.chars() );\n");
-	    fprintf (file, "\tstd::cout << \"returning entity %s, attr _%s: aggr string element: \" << ((StringNode*)n)->value.chars() << std::endl;\n", entnm, attrnm);
+	    fprintf (file, "\t(*seq)[i] = CORBA::string_dupl( ((StringNode*)n)->value.c_str() );\n");
+	    fprintf (file, "\tstd::cout << \"returning entity %s, attr _%s: aggr string element: \" << ((StringNode*)n)->value.c_str() << std::endl;\n", entnm, attrnm);
 /* /////////////////////////////////////////// */
 	    if(print_logging)
 	    {
@@ -1354,7 +1354,7 @@ AGGRprint_access_methods(CONST char *entnm, Variable a, FILE* file, Type t,
 		fprintf (file, "\tif(*logStream)\n\t{\n");
 		fprintf (file, 
 			 "\t    logStream->open(SCLLOGFILE,ios::app);\n");
-		fprintf (file, "\t    *logStream << time(NULL) << \" SDAI returning entity: %s, attr: _%s, aggr string element: \" << ((StringNode*)n)->value.chars() << std::endl;\n", entnm, attrnm);
+		fprintf (file, "\t    *logStream << time(NULL) << \" SDAI returning entity: %s, attr: _%s, aggr string element: \" << ((StringNode*)n)->value.c_str() << std::endl;\n", entnm, attrnm);
 		fprintf (file, "\t    logStream->close();\n");
 		fprintf (file, "\t}\n");
 		fprintf (file, "#endif\n");
@@ -1654,7 +1654,7 @@ AGGRprint_access_methods(CONST char *entnm, Variable a, FILE* file, Type t,
 	    fprintf (file, "\t    _%s.AppendNode( (StringNode*)n );\n", attrnm);
 	    fprintf (file, "\t}\n");
 	    fprintf (file, "\t((StringNode*)n)->value = x[i];\n", nm);
-	    fprintf (file, "\tstd::cout << \"Assigning aggr string element: \" << ((StringNode*)n)->value.chars();\n");
+	    fprintf (file, "\tstd::cout << \"Assigning aggr string element: \" << ((StringNode*)n)->value.c_str();\n");
 /* /////////////////////////////////////////// */
 	    if(print_logging)
 	    {
@@ -1662,7 +1662,7 @@ AGGRprint_access_methods(CONST char *entnm, Variable a, FILE* file, Type t,
 		fprintf (file, "\tif(*logStream)\n\t{\n");
 		fprintf (file, 
 			 "\t    logStream->open(SCLLOGFILE,ios::app);\n");
-		fprintf (file, "\t    *logStream << time(NULL) << \" SDAI assigning entity: %s, attr: _%s, aggr string element: \" << ((StringNode*)n)->value.chars() << std::endl;\n", entnm, attrnm);
+		fprintf (file, "\t    *logStream << time(NULL) << \" SDAI assigning entity: %s, attr: _%s, aggr string element: \" << ((StringNode*)n)->value.c_str() << std::endl;\n", entnm, attrnm);
 		fprintf (file, "\t    logStream->close();\n");
 		fprintf (file, "\t}\n");
 		fprintf (file, "#endif\n");
@@ -2012,7 +2012,7 @@ ATTRprint_access_methods  (CONST char * entnm, Variable a, FILE* file)
 	    fprintf (file, "\t    *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", 
 		     entnm, funcnm);
 	    fprintf (file,
-		     "\t    *logStream << _%s.chars() << std::endl;\n", attrnm);
+		     "\t    *logStream << _%s.c_str() << std::endl;\n", attrnm);
 	    fprintf (file, "\t}\n\telse\n\t{\n");
 	    fprintf (file, "\t    *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", 
 		     entnm, funcnm);

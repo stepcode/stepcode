@@ -712,7 +712,7 @@ SCLP23(Enum)::asStr (std::string &s) const  {
     {
 //	s = elements[v];
 	return const_cast<char *>((s = element_at (v)).c_str());
-//	return s.chars();
+//	return s.c_str();
     }
     else return "";
 }
