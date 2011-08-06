@@ -1,4 +1,60 @@
 ***********************************************************************
+Step Class Library - https://github.com/mpictor/StepClassLibrary
+
+* What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
+  C++ source code that can read and write Part 21 files conforming 
+  to that schema. SCL could also work with ObjectStore, CORBA IDL, 
+  and C - but to my knowledge, that code has not been exercised in 
+  a very long time. Some of the ObjectStore code has been removed,
+  and CORBA may follow it if there is no interest.
+ 
+* SCL is packaged along with some other tools. See 
+  "THE NIST STEP TOOLSET", below. In particular, Data Probe
+  requires InterViews, an obsolete UI toolkit. A version of it is
+  still present in the git repository, but I have not had luck
+  building the data probe with it. It may be more productive
+  to replace InterViews with a modern toolkit such as Qt. I
+  expect that this would be non-trivial.
+
+* Much of the work to update SCL has been done by the developers of
+  BRL-CAD, and SCL was originally created at NIST in the 90's.
+
+* Build system uses only CMake now: configure, Makefile, and all
+  autotools files have been removed, as has mkProbe.
+  
+* To build:
+  cd scl
+  mkdir build
+  cd build
+  cmake ..
+  make
+  
+* Build options (append to the 'cmake ..' line):
+  -DBUILD_SCHEMAS="schema_dir;another_schema_dir" 
+    - this generates c++ for the schema found in each dir, and
+      compiles it into a library
+    - each directory listed must be present under scl/data
+    - multiple directories are separated by semicolons
+    - for this to work, there must be a CMakeLists.txt file in the
+      schema dir. If there isn't, copy one from another schema -
+      it should be generic.
+  -DENABLE_P21READ=TRUE
+    - requires -DBUILD_SCHEMAS="..."
+    - for each of the schemas build by -DBUILD_SCHEMAS="...", this 
+      builds an executable which reads a part21 file and writes a
+      second file.
+    - if all goes well, the files will be identical except for 
+      whitespace and comments.
+  -DCMAKE_BUILD_TYPE=Release
+    - this causes binaries to be built without debugging information
+    - fedex_plus will be less verbose
+    - fedex_plus debugging options such as -d8 will not be available
+    - without this, cmake defaults to a Debug build
+
+***********************************************************************
+
+
+***********************************************************************
 Notes/TODO items specific to the STEP libraries as included in BRL-CAD:
 
 * Original build system has been replaced with Makefile.am and
@@ -22,6 +78,12 @@ Notes/TODO items specific to the STEP libraries as included in BRL-CAD:
   and other required files.
 
 ***********************************************************************
+
+
+=====================================================
+Much has changed since README.scl was written.
+It is reproduced in its entirety below.
+=====================================================
 
 README.scl (top level README) February 1998
 
