@@ -260,8 +260,9 @@ STEPaggregate::asStr(std::string & s) const
 	while (n)
 	{
 	    s.append( n->STEPwrite(tmp) );
-	    if (n = (STEPnode *) n -> NextNode ())
-		s.append(",");
+	    if ( (n = (STEPnode *) n -> NextNode ()) ) {
+		  s.append(",");
+		}
 	}
 	s.append(")");
     }
@@ -279,8 +280,9 @@ STEPaggregate::STEPwrite(ostream& out, const char *currSch) const
 	while (n)  
 	{
 	    out << n->STEPwrite (s, currSch);
-	    if ( n = (STEPnode *)(n -> NextNode ()) )
-		out <<  ',';
+	    if ( ( n = (STEPnode *)(n -> NextNode ()) ) ) {
+		  out <<  ',';
+		}
 	}
 	out << ')';
     }
