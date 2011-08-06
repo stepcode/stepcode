@@ -1258,9 +1258,9 @@ class TypeDescriptor {
 	  const;
         virtual const TypeDescriptor * IsA (const char *) const;
         virtual const TypeDescriptor * CanBe (const TypeDescriptor *n) const
-                {  return TypeDescriptor::IsA (n);  }
+                {  return IsA (n);  }
 	virtual const TypeDescriptor * CanBe (const char *n) const
-		{  return TypeDescriptor::IsA (n); }
+		{  return IsA (n); }
 	virtual const TypeDescriptor * CanBeSet (const char *n,
 						 const char *schNm =0) const
 		{  return ( CurrName( n, schNm ) ? this : 0 ); }
