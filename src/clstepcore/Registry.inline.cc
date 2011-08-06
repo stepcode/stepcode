@@ -237,8 +237,7 @@ uniqueNames( const char *entnm, const SchRename *altlist )
     const SchRename *alt = altlist;
 
     while ( alt ) {
-	if ( !(    alt->next
-	        && alt->next->choice( alt->objName() )
+	if ( !(  ( alt->next && alt->next->choice( alt->objName() ) )
 	        || !StrCmpIns( alt->objName(), entnm ) ) ) {
 	    // alt has a unique alternate name if it's not reused by a later
 	    // alt.  alt->next->choice() returns 1 if one of the later alts

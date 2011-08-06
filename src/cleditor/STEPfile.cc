@@ -503,7 +503,7 @@ STEPfile::HeaderMergeInstances(InstMgr* im)
     
     //checking for _headerInstances::FILE_NAME
     idnum = HeaderId("File_Name");
-    if(se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) 
+    if( (se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) )
       {
 	  from = im->GetApplication_instance(im->FindFileId(idnum));
 
@@ -523,7 +523,7 @@ STEPfile::HeaderMergeInstances(InstMgr* im)
 
     //checking for _headerInstances::FILE_DESCRIPTION
     idnum = HeaderId("File_Description");
-    if(se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) 
+    if( (se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) )
       {
 	  from = im->GetApplication_instance(im->FindFileId(idnum));
 	  
@@ -538,7 +538,7 @@ STEPfile::HeaderMergeInstances(InstMgr* im)
 
     //checking for _headerInstances::FILE_SCHEMA
     idnum = HeaderId("File_Schema");
-    if(se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) 
+    if( (se = _headerInstances->GetApplication_instance(_headerInstances->FindFileId(idnum))) )
       {
 	  from = im->GetApplication_instance(im->FindFileId(idnum));
 	  

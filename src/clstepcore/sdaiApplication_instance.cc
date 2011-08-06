@@ -49,8 +49,9 @@ SCLP23(Application_instance)::~SCLP23_NAME(Application_instance) ()
 {
   STEPattribute * next =0;
   ResetAttributes ();
-  while (next = NextAttribute ())  
+  while ( (next = NextAttribute ()) ) {
     delete next;
+  }
 
   if(MultipleInheritance())
   {

@@ -542,7 +542,7 @@ TYPEget_express_type (const Type t)
     /*    case TYPE_ENTITY:	*/
     /*	case TYPE_SELECT:       */
 
-    if (n = TYPEget_name (t)) {
+    if ( (n = TYPEget_name (t)) ) {
       PrettyTmpName (n);
     }
 
@@ -2302,8 +2302,8 @@ DataMemberPrint(Entity entity, FILE* file,Schema schema)
 	    if (VARget_optional (a)) fprintf (file, "    //  OPTIONAL");
 	    if (isAggregate (a)) 		{
 		/*  if it's a named type, comment the type  */
-		if (etype = TYPEget_name
-		            (TYPEget_nonaggregate_base_type (VARget_type (a))))
+		if ( (etype = TYPEget_name
+		            (TYPEget_nonaggregate_base_type (VARget_type (a)))) )
 		  fprintf (file, "\t  //  of  %s\n", etype);
 	    }
 
