@@ -12,7 +12,8 @@ endif()
 
 # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
 file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "SCHEMA .*")
-string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_NAME ${SCHEMA_STATEMENT} )
+string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
+string(TOUPPER ${SCHEMA_N} SCHEMA_NAME) #fedex_plus always uses upper case for file names
 project( sdai_${SCHEMA_NAME} )
 message( STATUS "Generating code for ${SCHEMA_NAME}.")
 
