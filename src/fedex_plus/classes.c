@@ -2339,7 +2339,6 @@ MemberFunctionSign (Entity entity, FILE* file)
     /* added for calling multiple_inheritance */
     Linked_List parent_attr_list;
     Linked_List parent_list;
-    __attribute__((unused)) Entity super =0;
     int super_cnt =0;
 
     strncpy (entnm, ENTITYget_classname (entity), BUFSIZ);  /*  assign entnm  */
@@ -2390,7 +2389,7 @@ MemberFunctionSign (Entity entity, FILE* file)
 	      or the super class doesn\'t have any attributes
 	  */
 
-	    super = e;
+	    __attribute__((unused)) Entity super = e;
 	    super_cnt++;
 	    if (super_cnt == 1)
 	    {
