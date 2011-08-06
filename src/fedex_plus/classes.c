@@ -28,6 +28,12 @@ static char rcsid[] ="$Id: classes.c,v 3.0.1.11 1997/09/18 21:14:46 sauderd Exp 
 #include <stdlib.h>
 #include "classes.h"
 
+int isAggregateType (const Type t);
+int isAggregate (Variable a);
+Variable VARis_type_shifter (Variable a);
+const char * ENTITYget_CORBAname (Entity ent);
+const char * GetTypeDescriptorName( Type t );
+
 char *FundamentalType(const Type t,int report_reftypes);
 
 int multiple_inheritance = 1;
@@ -47,10 +53,9 @@ int old_accessors = 0;
     ENTITYincode_print (Entity entity, FILE* file,Schema schema)  
     DAS
   */
-static attr_count;	/* number each attr to avoid inter-entity clashes */
-static type_count;	/* number each temporary type for same reason above */
+static int attr_count;	/* number each attr to avoid inter-entity clashes */
+static int type_count;	/* number each temporary type for same reason above */
 
-char *FundamentalType(const Type,int);
 extern int any_duplicates_in_select( const Linked_List list );
 extern int unique_types ( const Linked_List list );
 extern char* non_unique_types_string ( const Type type );
@@ -58,6 +63,10 @@ static void printEnumCreateHdr ( FILE *, const Type );
 static void printEnumCreateBody( FILE *, const Type );
 static void printEnumAggrCrHdr ( FILE *, const Type );
 static void printEnumAggrCrBody( FILE *, const Type );
+void printAccessHookFriend( FILE *, const char * );
+void printAccessHookHdr( FILE *, const char * );
+int TYPEget_RefTypeVarNm(const Type t,char *buf,Schema schema);
+void TypeBody_Description(TypeBody body, char *buf);
 
 /*
 Turn the string into a new string that will be printed the same as the 
@@ -2413,7 +2422,7 @@ MemberFunctionSign (Entity entity, FILE* file)
 /* //////////////// */
     if(corba_binding)
     {
-	fprintf(file, "\n//\t%d_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
+	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n", 
 		ENTITYget_CORBAname(entity));
 /*
 	fprintf(file, "\n//\t%s_ptr create_TIE();\n\tP26::Application_instance_ptr create_TIE();\n", 
@@ -2423,7 +2432,7 @@ MemberFunctionSign (Entity entity, FILE* file)
     fprintf (file, "};\n");
     if(corba_binding)
     {
-	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%d(%s)\n", ENTITYget_CORBAname(entity), entnm);
+	fprintf (file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%s(%s)\n", ENTITYget_CORBAname(entity), entnm);
     }
 
     /*  print creation function for class	*/
@@ -2702,7 +2711,10 @@ get_attribute_number (Entity entity)
 	    if (found)  return i;
 	    else printf ( "Internal error:  %s:%d\n"
 			"Attribute %s not found. \n"
-			,__FILE__,__LINE__, VARget_name (a));
+			/* In this case, a is a Variable - so macro VARget_name (a) expands  *
+			 * to an Expression. The first element of an Expression is a Symbol. *
+			 * The first element of a Symbol is char * name.					 */
+			,__FILE__,__LINE__, VARget_name(a)->symbol.name );
 	}
 
     LISTod;
@@ -3227,7 +3239,7 @@ print_typechain(FILE *f,const Type t,char *buf,Schema schema)
       case set_:
       case list_:
       /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-	fprintf(f,"\t%d * %s%d = new %d;\n",
+	fprintf(f,"\t%s * %s%d = new %s;\n",
 		GetTypeDescriptorName(t), TD_PREFIX, count, 
 		GetTypeDescriptorName(t) );
 
@@ -4433,7 +4445,7 @@ TYPEprint_typedefs (Type t, FILE *classes)
   externln:
     /* Print the extern statement: */
     strncpy (nm, TYPEtd_name(t), BUFSIZ);
-    fprintf( classes, "extern %d \t*%s;\n", GetTypeDescriptorName(t), nm );
+    fprintf( classes, "extern %s \t*%s;\n", GetTypeDescriptorName(t), nm );
 }
 
 /* return 1 if it is a multidimensional aggregate at the level passed in
@@ -4603,7 +4615,7 @@ TYPEprint_descriptions (const Type type, FILES* files, Schema schema)
 
 	/*  in source - declare the real definition of the pointer */
 	/*  i.e. in the .cc file                                   */
-    fprintf(files -> lib,"%d \t*%s;\n", GetTypeDescriptorName(type), tdnm);
+    fprintf(files -> lib,"%s \t*%s;\n", GetTypeDescriptorName(type), tdnm);
 
     if(isAggregateType(type)) {
       const char * ctype = TYPEget_ctype (type);
@@ -4942,7 +4954,7 @@ TYPEprint_new (const Type type, FILE *create, Schema schema)
 	  case set_:
 	  case list_:
 
-	    fprintf(create,"\n\t%s = new %d (\n",
+	    fprintf(create,"\n\t%s = new %s (\n",
 		    TYPEtd_name (type), GetTypeDescriptorName(type));
 	    
 	    /* fill in it's values	*/

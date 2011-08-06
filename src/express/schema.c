@@ -46,6 +46,7 @@
  */
 
 #define SCHEMA_C
+#include <unistd.h>
 #include "express/expbasic.h"
 #include "express/schema.h"
 #include "express/object.h"
