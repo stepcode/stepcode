@@ -466,7 +466,7 @@ STEPattribute::asStr (std::string& str, const char *currSch) const
     // see technical corrigendum for Part 21
     if (!writeRedefined && (aDesc->AttrType() == AttrType_Redefining) )  {
       str = "*";
-      return str.chars();
+      return str.c_str();
     }
 */
     // The attribute has been redefined by the attribute pointed 
@@ -498,14 +498,14 @@ STEPattribute::asStr (std::string& str, const char *currSch) const
 	else
 	{
 	    (*(ptr.c))->STEPwrite_reference (str);
-//	    strncpy(attrVal, str.chars(), str.Length()+1);
+//	    strncpy(attrVal, str.c_str(), str.Length()+1);
 	}
 	break;	  
 	
       case BINARY_TYPE:
 	if( !( (ptr.b)->empty() ) )
 	    (ptr.b) -> STEPwrite (str);
-//	    strncpy(attrVal, str.chars(), str.Length()+1);
+//	    strncpy(attrVal, str.c_str(), str.Length()+1);
 	break;
 
       case STRING_TYPE:
@@ -529,7 +529,7 @@ STEPattribute::asStr (std::string& str, const char *currSch) const
       case SELECT_TYPE:
 	  ptr.sh -> STEPwrite ( str, currSch );
 	  return const_cast<char *>(str.c_str());
-//	  strncpy (attrVal, tmp.chars(), BUFSIZ);
+//	  strncpy (attrVal, tmp.c_str(), BUFSIZ);
 
       case REFERENCE_TYPE:
       case GENERIC_TYPE:

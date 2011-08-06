@@ -256,7 +256,7 @@ WriteReal(SCLP23(Real) val, ostream &out)
     else
       s = rbuf;
 
-    out << (char *)(s.chars());
+    out << (char *)(s.c_str());
 #endif
 }
 
@@ -787,7 +787,7 @@ FindStartOfInstance(istream& in, std::string&  inst)
 	    inst.append (tmp);
 
 //	    PushPastString(in, tmp, &errs);
-//	    inst.Append( tmp->chars() );
+//	    inst.Append( tmp->c_str() );
 	    break;
 
 	  case '\0':  // problem in input ?
@@ -826,7 +826,7 @@ SkipInstance (istream& in, std::string&  inst)
 	    inst.append (tmp);
 
 //	    PushPastString(in, tmp, &errs);
-//	    inst.Append( tmp->chars() );
+//	    inst.Append( tmp->c_str() );
 	    break;
 
 	  case '\0':  // problem in input ?
