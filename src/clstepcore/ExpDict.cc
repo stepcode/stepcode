@@ -780,7 +780,6 @@ AttrDescriptor::ExpandedTypeName(std::string & s) const
 const char * 
 AttrDescriptor::GenerateExpress (std::string &buf) const
 {
-    char tmp[BUFSIZ];
     std::string sstr;
     buf = AttrExprDefStr(sstr);
     buf.append(";\n");
@@ -980,7 +979,6 @@ EntityDescriptor::~EntityDescriptor ()
 const char * 
 EntityDescriptor::GenerateExpress (std::string &buf) const
 {
-    char tmp[BUFSIZ];
     std::string sstr;
     int count;
     int i;
