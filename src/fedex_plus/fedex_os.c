@@ -39,7 +39,6 @@ SCOPEPrintHooks(Scope scope, FILE *os_hooks_file,Schema schema,Express model)
 {
     const char * entnm;
     Linked_List list;
-    char nm[BUFSIZ];
     char classNm [BUFSIZ];
 
     DictionaryEntry de;
@@ -175,7 +174,7 @@ SCOPEPrint(Scope scope, FILE *osschema_file,Schema schema,Express model)
 void
 osSCHEMAprint (Schema schema, FILES* files, Express model)
 {
-    char fnm [BUFSIZ], *np;
+    char fnm [BUFSIZ];
     char schnm[BUFSIZ];
 
     FILE *osschema_file;
