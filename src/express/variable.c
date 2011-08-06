@@ -87,7 +87,7 @@
 #include <stdlib.h>
 #include "express/variable.h"
 #include "express/object.h"
-
+char * opcode_print(Op_Code o);
 /*
 ** Procedure:	VAR_create/free/copy/equal
 ** Description:	These are the low-level defining functions for Class_Variable
@@ -214,7 +214,7 @@ VARget_simple_name(Variable v)
 			e = e->e.op2;
 			break;
 		default:
-			fprintf(stderr,"unexpected op_code (%d) encountered in variable name expression\n",opcode_print(e->e.op_code));
+			fprintf(stderr,"unexpected op_code (%s) encountered in variable name expression\n",opcode_print(e->e.op_code));
 			abort();
 		}
 	}

@@ -116,6 +116,8 @@ void (*interface_func)();	/* func to attach rename clauses */
 /* differentiated from other schemas parsed earlier */
 Linked_List PARSEnew_schemas;
 
+void SCANskip_to_end_schema(); //in expscan.l
+
 extern int	yylineno;
 
 static int	PARSEchunk_start;

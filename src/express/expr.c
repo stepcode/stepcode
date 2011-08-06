@@ -71,6 +71,7 @@
  */
 
 #define EXPRESSION_C
+#include <unistd.h>
 #include "express/expr.h"
 #include "express/resolve.h"
 
