@@ -57,6 +57,7 @@
 
 #define RESOLVE_C
 #include <stdlib.h>
+#include <unistd.h>
 #include "express/resolve.h"
 #include "stack.h"
 #include "express/schema.h"
@@ -1672,7 +1673,7 @@ TYPEget_tagname(Type type) {
 		
 struct tag *
 TAGcreate_tags() {
-	extern tag_count;
+	extern int tag_count;
 
 	return((struct tag *)calloc(tag_count,sizeof(struct tag)));
 }

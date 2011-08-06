@@ -87,7 +87,7 @@
 #include <stdlib.h>
 #include "express/variable.h"
 #include "express/object.h"
-
+char * opcode_print(Op_Code o);
 /*
 ** Procedure:	VAR_create/free/copy/equal
 ** Description:	These are the low-level defining functions for Class_Variable

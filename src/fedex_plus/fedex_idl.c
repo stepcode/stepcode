@@ -6,6 +6,11 @@
 
 #define SCHEMA_FILE_PREFIX	"Sdai"
 
+char ToLower (char c);
+char ToUpper (char c);
+int isAggregateType (const Type t);
+int isAggregate (Variable a);
+
 int multiple_inheritance = 0;
 
 char ** aggrNameList = 0;
