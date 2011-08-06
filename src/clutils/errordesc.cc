@@ -99,7 +99,7 @@ ErrorDescriptor::GetCorrSeverity(const char *s)
     {
       std::string s2;
 	StrToUpper(s,s2);
-//	cout << "s after if is (" << s << ") \n" << "s2 is (" << s2.chars() << ")\n";
+//	cout << "s after if is (" << s << ") \n" << "s2 is (" << s2.c_str() << ")\n";
 	if(!strcmp(s2.c_str(),"SEVERITY_NULL"))
 	{
 //	    cout << "SEVERITY_NULL" << endl;

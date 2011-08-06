@@ -522,7 +522,7 @@ Schema::GenerateUseRefExpress(ostream& out) const
 	    if(count > 0)
 	    {
 		
-//		out << "    REFERENCE FROM " << (*(is->explicit_items_()))[0]->foreign_schema_().chars() << endl;
+//		out << "    REFERENCE FROM " << (*(is->explicit_items_()))[0]->foreign_schema_().c_str() << endl;
 		out << endl << "    REFERENCE FROM " 
 		   << StrToLower(is->foreign_schema_id_().c_str(),tmp) << endl;
 		out << "       (";

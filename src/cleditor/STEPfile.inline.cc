@@ -351,7 +351,7 @@ char *STEPfile::schemaName( char *schName )
     if ( n == NULL ) return NULL;
     n->STEPwrite(tmp);
     if ( *tmp.c_str() == '\0' || *tmp.c_str() == '$' ) return NULL;
-    // tmp.chars() returns the string we want plus a beginning and ending
+    // tmp.c_str() returns the string we want plus a beginning and ending
     // quote mark (').  We remove these below.
     strncpy( schName, tmp.c_str()+1, BUFSIZ-1 );
     // "+1" to remove beginning '.

@@ -761,7 +761,7 @@ STEPfile::ReadData1(istream& in)
 	tmpbuf.set_null();
 	SkipInstance(in,tmpbuf);
 	cout << "ERROR: trying to recover from invalid data. skipping: "
-	     << tmpbuf.chars() << endl;
+	     << tmpbuf.c_str() << endl;
 	ReadTokenSeparator(in);
     }
 
@@ -842,7 +842,7 @@ STEPfile::ReadData1(istream& in)
 		tmpbuf.set_null();
 		SkipInstance(in,tmpbuf);
 	       cout << "ERROR: trying to recover from invalid data. skipping: "
-		     << tmpbuf.chars() << endl;
+		     << tmpbuf.c_str() << endl;
 		ReadTokenSeparator(in);
 	    }
 	    if( c == ENTITY_NAME_DELIM )
@@ -1284,7 +1284,7 @@ STEPfile::ReadData2 (istream& in)
 	    tmpbuf.set_null();
 	    SkipInstance(in,tmpbuf);
 	    cout << "ERROR: trying to recover from invalid data. skipping: "
-		 << tmpbuf.chars() << endl;
+		 << tmpbuf.c_str() << endl;
 	    ReadTokenSeparator(in);
 	}
 
@@ -2007,7 +2007,7 @@ ReadEntityError(char c, int i, istream& in)
     STEPwrite (tmp);  // STEPwrite writes to a static buffer inside function
     sprintf(errStr, 
 	    "  The invalid instance to this point looks like :\n%s\n", 
-	    tmp.chars() );
+	    tmp.c_str() );
     _error.AppendToDetailMsg(errStr);
     
     _error.AppendToDetailMsg("  data lost looking for end of entity:");
@@ -2043,7 +2043,7 @@ ReadEntityError(char c, int i, istream& in)
 	    }
 	}
     }
-    _error.AppendToDetailMsg( tmp.chars() );
+    _error.AppendToDetailMsg( tmp.c_str() );
     sprintf (errStr, "\nfinished reading #%d\n", STEPfile_id);
     _error.AppendToDetailMsg(errStr);
     return;

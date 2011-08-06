@@ -206,7 +206,7 @@ STEPaggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	    }
 	    // BUG could overwrite the error message buffer
 	    sprintf(errmsg, "ERROR aggr. elem. followed by \'%s\' garbage.\n",
-		    tmp.chars());
+		    tmp.c_str());
 	    err->AppendToDetailMsg(errmsg);
 	    err->AppendToUserMsg(errmsg);
 	    err->GreaterSeverity(SEVERITY_WARNING);
@@ -663,7 +663,7 @@ EntityAggregate::ReadValue(istream &in, ErrorDescriptor *err,
 	    }
 	    // BUG could overwrite the error message buffer
 	    sprintf(errmsg, "ERROR aggr. elem. followed by \'%s\' garbage.\n",
-		    tmp.chars());
+		    tmp.c_str());
 	    err->AppendToDetailMsg(errmsg);
 	    err->AppendToUserMsg(errmsg);
 	    err->GreaterSeverity(SEVERITY_WARNING);
