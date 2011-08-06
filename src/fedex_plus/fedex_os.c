@@ -42,7 +42,6 @@ SCOPEPrintHooks(Scope scope, FILE *os_hooks_file,Schema schema,Express model)
     char classNm [BUFSIZ];
 
     DictionaryEntry de;
-    int index = 0;
 
     /* do \'new\'s for types descriptors  */
 /*
@@ -93,7 +92,6 @@ SCOPEPrint(Scope scope, FILE *osschema_file,Schema schema,Express model)
     const char * enum_nm;  /*  pointer to class name  */
 
     DictionaryEntry de;
-    int index = 0;
 
     /* do \'new\'s for types descriptors  */
 /*
