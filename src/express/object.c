@@ -59,7 +59,8 @@ OBJinitialize()
 void
 OBJcreate(char type,struct Symbol_ *(*get_symbol)(Generic),char *printable_type,int bits)
 {
-	OBJ[type].get_symbol = get_symbol;
-	OBJ[type].type = printable_type;
-	OBJ[type].bits = bits;
+    unsigned index = (unsigned)type;
+    OBJ[index].get_symbol = get_symbol;
+	OBJ[index].type = printable_type;
+	OBJ[index].bits = bits;
 }
