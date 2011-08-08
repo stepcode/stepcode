@@ -2079,7 +2079,7 @@ void StepEntityEditor::Update()
 	CheckButtons();
     }
 #ifdef firstWaySEEUpdate
-    int buttonValue;
+//    int buttonValue;
     seeAttrRow *ptr;
     SubordinateInfo *si = 0;
 
@@ -2132,7 +2132,7 @@ void StepEntityEditor::Update()
     }
 #endif
 #ifdef secondWaySEEUpdate
-    int buttonValue;
+//    int buttonValue;
     seeAttrRow *ptr;
     Event e;
 
