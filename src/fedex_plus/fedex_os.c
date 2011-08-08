@@ -39,11 +39,9 @@ SCOPEPrintHooks(Scope scope, FILE *os_hooks_file,Schema schema,Express model)
 {
     const char * entnm;
     Linked_List list;
-    char nm[BUFSIZ];
     char classNm [BUFSIZ];
 
     DictionaryEntry de;
-    int index = 0;
 
     /* do \'new\'s for types descriptors  */
 /*
@@ -94,7 +92,6 @@ SCOPEPrint(Scope scope, FILE *osschema_file,Schema schema,Express model)
     const char * enum_nm;  /*  pointer to class name  */
 
     DictionaryEntry de;
-    int index = 0;
 
     /* do \'new\'s for types descriptors  */
 /*
@@ -175,7 +172,7 @@ SCOPEPrint(Scope scope, FILE *osschema_file,Schema schema,Express model)
 void
 osSCHEMAprint (Schema schema, FILES* files, Express model)
 {
-    char fnm [BUFSIZ], *np;
+    char fnm [BUFSIZ];
     char schnm[BUFSIZ];
 
     FILE *osschema_file;
@@ -239,11 +236,16 @@ osSCHEMAprint (Schema schema, FILES* files, Express model)
 Generate access hooks for reinitializing EntityDescriptor* in each SCLP23(Application_instance)
 *****************/
     sprintf(fnm,"osdb_%s.cc",schnm);
-    if (! (os_hooks_file_cc = myFILEcreate (fnm)))  return;
-
+    if (! (os_hooks_file_cc = myFILEcreate (fnm)))  {
+        FILEclose (os_hooks_file_cc);
+        return;
+    }
     sprintf(fnm,"osdb_%s.h",schnm);
-    if (! (os_hooks_file_h = myFILEcreate (fnm)))  return;
-
+    if (! (os_hooks_file_h = myFILEcreate (fnm)))  {
+        FILEclose (os_hooks_file_h);
+        return;
+    }
+    
     fprintf (os_hooks_file_cc, "/* %cId$  */ \n",'\044');
     fprintf (os_hooks_file_cc,"\n");
     fprintf (os_hooks_file_cc,"#include <%s>\n", fnm);

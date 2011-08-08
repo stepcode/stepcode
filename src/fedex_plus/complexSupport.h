@@ -266,7 +266,7 @@ class AndList : public JoinList {
 
 class OrList : public MultList {
   public:
-    OrList() : MultList( OR ), choice(-1), choiceCount(0) {}
+    OrList() : MultList( OR ), choice(-1), choice1(-2), choiceCount(0) {}
     ~OrList() {}
     int hit( const char * );
     MatchType matchORs( EntNode * );
@@ -275,7 +275,7 @@ class OrList : public MultList {
     int acceptChoice( EntNode * );
     int acceptNextChoice( EntNode *ents )
         { choice++; return ( acceptChoice( ents ) ); }
-    void reset() { choice = -1; choiceCount = 0; MultList::reset(); }
+    void reset() { choice = -1; choice1 = -2; choiceCount = 0; MultList::reset(); }
 
   private:
     int choice, choice1, choiceCount;

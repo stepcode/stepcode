@@ -1487,7 +1487,7 @@ void
 ENTITYresolve_types(Entity e)
 {
     int i;
-    Qualified_Attr *ref;
+    Qualified_Attr *reference;
     Variable attr;
     int failed = 0;
 
@@ -1517,9 +1517,9 @@ ENTITYresolve_types(Entity e)
 	    /* skip first which is always the label (or NULL if no label) */
 	    i++;
 	    if (i == 1) continue;
-	    ref = (Qualified_Attr *)reflink->data;
+	    reference = (Qualified_Attr *)reflink->data;
 
-	    attr = ENTITYresolve_attr_ref(e, ref->entity, ref->attribute);
+	    attr = ENTITYresolve_attr_ref(e, reference->entity, reference->attribute);
 	    if (!attr) {
 /*		ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
 /*					ref->attribute, ref->attribute->name,*/
@@ -1528,7 +1528,7 @@ ENTITYresolve_types(Entity e)
 		continue;
 	    }
 
-	    QUAL_ATTR_destroy(ref);
+	    QUAL_ATTR_destroy(reference);
 	    reflink->data = (Generic)attr;
 
 	    if (ENTITYdeclares_variable(e,attr)) {

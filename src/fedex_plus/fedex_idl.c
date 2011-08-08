@@ -241,7 +241,6 @@ SCOPEPrintHooks(Scope scope, FILE *os_hooks_file,Schema schema,Express model)
 {
     const char * entnm;
     Linked_List list;
-    char nm[BUFSIZ];
     char classNm [BUFSIZ];
 
     DictionaryEntry de;
@@ -293,7 +292,6 @@ TYPEget_idl_type (const Type t)
     Class_Of_Type class, class2;
     Type bt;
     static char retval [BUFSIZ];
-    char *n;
 
     /*  aggregates are based on their base type  
     case TYPE_ARRAY:
@@ -821,12 +819,10 @@ FundamentalType(const Type t,int report_reftypes) {
 void 
 idlSCHEMAprint (Schema schema, FILES* files, Express model)
 {
-    char fnm [BUFSIZ], *np;
+    char fnm [BUFSIZ];
     char schnm[BUFSIZ];
 
     FILE *idl_file;
-    FILE *os_hooks_file_h;
-    FILE *os_hooks_file_cc;
     FILE* os_makefile = files -> make;
 /*
     FILE* idl_file;
