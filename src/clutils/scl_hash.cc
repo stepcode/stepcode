@@ -98,7 +98,7 @@ HASHinsert( Hash_TableP t, char * s, void * data ) {
 
 Hash_TableP
 HASHcreate( unsigned count ) {
-    int     i;
+    unsigned int i;
     Hash_TableP table;
 
     /*
@@ -348,7 +348,7 @@ HASHhash( char * Key, Hash_TableP table ) {
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );
-    if( address < table->p ) {
+    if( (int)address < table->p ) {
         address = MOD( h, ( table->maxp << 1 ) );    /* h % (2*table->maxp) */
     }
     return( address );

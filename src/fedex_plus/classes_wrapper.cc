@@ -547,7 +547,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     Procedure p;
     DictionaryEntry de;
     char * tmpstr = 0;
-    int tmpstr_size = 0;
+    unsigned int tmpstr_size = 0;
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
