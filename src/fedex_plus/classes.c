@@ -20,7 +20,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 ***  classes, TYPEs, and TypeDescriptors.                       ***
  **                             **/
 
-static char rcsid[] = "$Id: classes.c,v 3.0.1.11 1997/09/18 21:14:46 sauderd Exp sauderd";
 
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
