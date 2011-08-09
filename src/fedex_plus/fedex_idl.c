@@ -739,7 +739,7 @@ SCOPEPrint( Scope scope, FILE * idl_file, Schema schema, Express model ) {
         }
 
         /*  }
-            else /* the old way * /
+            else // the old way
               super = ENTITYput_superclass (e);*/
 
         if( super ) {

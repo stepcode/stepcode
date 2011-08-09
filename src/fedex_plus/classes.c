@@ -431,7 +431,7 @@ generate_attribute_name( Variable a, char * out ) {
     /*  copy p to out  */
     /* DAR - fixed so that '\n's removed */
     for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
-        /* copy p to out, 1 char at time.  Skip \n's and spaces, convert
+        /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
             if( *p == '.' ) {
@@ -2715,10 +2715,10 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     /* Next lines added for independent field - DAR */
     /*  if ( ENTITYget_supertypes(entity) || ENTITYget_abstract(entity) ) {
-        /* If entity has supertypes or is abstract it's not independent.
+        // If entity has supertypes or is abstract it's not independent.
         fprintf (file, "\n    _independent = 0;\n");
         fprintf (file, "    // entity either has supertypes or is abstract\n");
-        /* Otherwise, keep the default value of 1.
+		// Otherwise, keep the default value of 1.
         }
     */
     /*  attributes  */
