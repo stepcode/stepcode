@@ -23,7 +23,6 @@ STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
                           int fileid, const char * schnm )
     : SCLP23( Application_instance )( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
     char * nms[BUFSIZ];
-    std::string * name;
     int j, k;
 
     // Create a char ** list of names and call Initialize to build all:

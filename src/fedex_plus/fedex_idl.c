@@ -29,7 +29,6 @@ void printAggrNameList( FILE * idl_file ) {
 
 int AddToAggrNameList( const char * aggr, FILE * idl_file ) {
     char ** tmpList = 0;
-    int found = 0;
     int i = 0;
 
     /*    fprintf(idl_file, " CALLED addtoagrr w/%s \n", aggr);*/
@@ -239,8 +238,7 @@ SCOPEPrintHooks( Scope scope, FILE * os_hooks_file, Schema schema, Express model
     char classNm [BUFSIZ];
 
     DictionaryEntry de;
-    int index = 0;
-
+ 
     /* do \'new\'s for types descriptors  */
     /*
         SCOPEdo_types(scope,t,de)
@@ -280,8 +278,7 @@ SCOPEPrintHooks( Scope scope, FILE * os_hooks_file, Schema schema, Express model
 
 const char *
 TYPEget_idl_type( const Type t ) {
-    Class_Of_Type class, class2;
-    Type bt;
+    Class_Of_Type class;
     static char retval [BUFSIZ];
 
     /*  aggregates are based on their base type
@@ -492,11 +489,8 @@ SCOPEPrint( Scope scope, FILE * idl_file, Schema schema, Express model ) {
     Entity super = 0;
 
     DictionaryEntry de;
-    int index = 0;
-
-    Type bt;
-    Class_Of_Type class;
-
+ 
+ 
     /* do \'new\'s for types descriptors  */
     /*
         SCOPEdo_types(scope,t,de)
