@@ -69,8 +69,7 @@ print_file_header( Express express, FILES * files ) {
     /*  create file for user to #include the CORBA-generated header file in. */
     if( corba_binding ) {
         if( ( corbafile = fopen( "corbaSchema.h", "w" ) ) == NULL ) {
-            printf( "**Error in print_file_header:  unable to create file ",
-                    "corbaSchema.h ** \n" );
+            printf( "**Error in print_file_header:  unable to create file corbaSchema.h ** \n" );
         }
         fprintf( corbafile,
                  "// #include the idl generated .hh C++ file that defines the code that \n" );
@@ -547,7 +546,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     Procedure p;
     DictionaryEntry de;
     char * tmpstr = 0;
-    int tmpstr_size = 0;
+    unsigned int tmpstr_size = 0;
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */

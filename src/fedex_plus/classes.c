@@ -20,7 +20,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 ***  classes, TYPEs, and TypeDescriptors.                       ***
  **                             **/
 
-static char rcsid[] = "$Id: classes.c,v 3.0.1.11 1997/09/18 21:14:46 sauderd Exp sauderd";
 
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
@@ -432,7 +431,7 @@ generate_attribute_name( Variable a, char * out ) {
     /*  copy p to out  */
     /* DAR - fixed so that '\n's removed */
     for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
-        /* copy p to out, 1 char at time.  Skip \n's and spaces, convert
+        /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
             if( *p == '.' ) {
@@ -2183,8 +2182,7 @@ DataMemberPrint( Entity entity, FILE * file, Schema schema ) {
         generate_attribute_name( a, attrnm );
         if( !strcmp( ctype, "SCLundefined" ) ) {
             printf( "WARNING:  in entity %s:\n", ENTITYget_name( entity ) );
-            printf( "\tthe type for attribute  %s is not fully ",
-                    "implemented\n", attrnm );
+            printf( "\tthe type for attribute  %s is not fully implemented\n", attrnm );
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
             fprintf( file, "\tSCLP23(Application_instance_ptr) _%s ;", attrnm );
@@ -2717,10 +2715,10 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     /* Next lines added for independent field - DAR */
     /*  if ( ENTITYget_supertypes(entity) || ENTITYget_abstract(entity) ) {
-        /* If entity has supertypes or is abstract it's not independent.
+        // If entity has supertypes or is abstract it's not independent.
         fprintf (file, "\n    _independent = 0;\n");
         fprintf (file, "    // entity either has supertypes or is abstract\n");
-        /* Otherwise, keep the default value of 1.
+		// Otherwise, keep the default value of 1.
         }
     */
     /*  attributes  */

@@ -245,7 +245,7 @@ ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
     }
 }
 
-/* resolve a (possibly group-qualified) attribute ref. *
+/* resolve a (possibly group-qualified) attribute ref. */
 /* report errors as appropriate */
 Variable
 ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref ) {

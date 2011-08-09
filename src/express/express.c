@@ -459,7 +459,7 @@ PARSERrun( char * filename, FILE * fp ) {
     extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
 
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "parse (pass 0)\n", EXPRESSpass );
+        fprintf( stdout, "parse (pass %d)\n", EXPRESSpass );
     }
 
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {

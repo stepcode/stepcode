@@ -258,7 +258,7 @@ va_dcl {
             fputc( '\n', error_file );
             ERRORoccurred = True;
         } else if( what->severity >= SEVERITY_WARNING ) {
-            fprintf( error_file, "WARNING: ", what->severity );
+            fprintf( error_file, "WARNING: %d", what->severity );
             vfprintf( error_file, what->message, args );
             fputc( '\n', error_file );
         }
