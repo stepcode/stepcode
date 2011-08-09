@@ -93,24 +93,24 @@
 
 extern int print_objects_while_running;
 
-int tag_count;	/* use this to count tagged GENERIC types in the formal */
-		/* argument lists.  Gross, but much easier to do it this */
-		/* way then with the 'help' of yacc. */
-		/* Set it to -1 to indicate that tags cannot be defined, */
-		/* only used (outside of formal parameter list, i.e. for */
-		/* return types and local variables).  Hey, as long as */
-		/* there's a gross hack sitting around, we might as well */
-		/* milk it for all it's worth!  -snc */
+int tag_count;  /* use this to count tagged GENERIC types in the formal */
+                /* argument lists.  Gross, but much easier to do it this */
+                /* way then with the 'help' of yacc. */
+                /* Set it to -1 to indicate that tags cannot be defined, */
+                /* only used (outside of formal parameter list, i.e. for */
+                /* return types and local variables).  Hey, as long as */
+                /* there's a gross hack sitting around, we might as well */
+                /* milk it for all it's worth!  -snc */
 
 /*SUPPRESS 61*/
-/* Type current_type;*/	/* pass type placeholder down */
-		/* this allows us to attach a dictionary to it only when */
-		/* we decide we absolutely need one */
+/* Type current_type;*/     /* pass type placeholder down */
+                            /* this allows us to attach a dictionary to it only when */
+                            /* we decide we absolutely need one */
 
-Express yyexpresult;	/* hook to everything built by parser */
+Express yyexpresult;    /* hook to everything built by parser */
 
-Symbol *interface_schema;	/* schema of interest in use/ref clauses */
-void (*interface_func)();	/* func to attach rename clauses */
+Symbol *interface_schema;    /* schema of interest in use/ref clauses */
+void (*interface_func)();    /* func to attach rename clauses */
 
 /* record schemas found in a single parse here, allowing them to be */
 /* differentiated from other schemas parsed earlier */
@@ -118,52 +118,53 @@ Linked_List PARSEnew_schemas;
 
 void SCANskip_to_end_schema(); //in expscan.l
 
-extern int	yylineno;
+extern int    yylineno;
 
-static int	PARSEchunk_start;
+static int    PARSEchunk_start;
 
-static void	yyerror PROTO((char*));
-static void	yyerror2 PROTO((char CONST *));
+static void   yyerror PROTO((char*));
+static void   yyerror2 PROTO((char CONST *));
 
-Boolean		yyeof = False;
+Boolean       yyeof = False;
 
 #ifdef FLEX
-extern char	*yytext;
+extern char   *yytext;
 #else /* LEX */
-extern char	yytext[];
+extern char   yytext[];
 #endif /*FLEX*/
 
-#define MAX_SCOPE_DEPTH	20	/* max number of scopes that can be nested */
+#define MAX_SCOPE_DEPTH    20    /* max number of scopes that can be nested */
 
 static struct scope {
-	struct Scope_ *this_;
-	char type;	/* one of OBJ_XXX */
-	struct scope *pscope;	/* pointer back to most recent scope */
-				/* that has a printable name - for better */
-				/* error messages */
+    struct Scope_ *this_;
+    char type;                  /* one of OBJ_XXX */
+    struct scope *pscope;       /* pointer back to most recent scope */
+                                /* that has a printable name - for better */
+                                /* error messages */
 } scopes[MAX_SCOPE_DEPTH], *scope;
+
 #define CURRENT_SCOPE (scope->this_)
 #define PREVIOUS_SCOPE ((scope-1)->this_)
 #define CURRENT_SCHEMA (scope->this_->u.schema)
-#define CURRENT_SCOPE_NAME		(OBJget_symbol(scope->pscope->this_,scope->pscope->type)->name)
-#define CURRENT_SCOPE_TYPE_PRINTABLE	(OBJget_type(scope->pscope->type))
+#define CURRENT_SCOPE_NAME      (OBJget_symbol(scope->pscope->this_,scope->pscope->type)->name)
+#define CURRENT_SCOPE_TYPE_PRINTABLE    (OBJget_type(scope->pscope->type))
 
 /* ths = new scope to enter */
 /* sym = name of scope to enter into parent.  Some scopes (i.e., increment) */
 /*       are not named, in which case sym should be 0 */
-/*	 This is useful for when a diagnostic is printed, an earlier named */
-/* 	 scoped can be used */
+/*     This is useful for when a diagnostic is printed, an earlier named */
+/*      scoped can be used */
 /* typ = type of scope */
 #define PUSH_SCOPE(ths,sym,typ) \
-	if (sym) DICTdefine(scope->this_->symbol_table,(sym)->name,(Generic)ths,sym,typ);\
-	ths->superscope = scope->this_; \
-	scope++;		\
-	scope->type = typ;	\
-	scope->pscope = (sym?scope:(scope-1)->pscope); \
-	scope->this_ = ths; \
-	if (sym) { \
-		ths->symbol = *(sym); \
-	}
+    if (sym) DICTdefine(scope->this_->symbol_table,(sym)->name,(Generic)ths,sym,typ);\
+    ths->superscope = scope->this_; \
+    scope++;        \
+    scope->type = typ;    \
+    scope->pscope = (sym?scope:(scope-1)->pscope); \
+    scope->this_ = ths; \
+    if (sym) { \
+        ths->symbol = *(sym); \
+    }
 #define POP_SCOPE() scope--
 
 /* PUSH_SCOPE_DUMMY just pushes the scope stack with nothing actually on it */
@@ -174,7 +175,7 @@ static struct scope {
 /* bother to get pushed so fix them this way */
 #define SCOPEadd_super(ths) ths->superscope = scope->this_;
 
-#define ERROR(code)	ERRORreport(code, yylineno)
+#define ERROR(code)    ERRORreport(code, yylineno)
 
 /* structured types for parse node decorations */
 
@@ -2019,55 +2020,55 @@ while_control		: /* NULL */
 			;
 
 %%
-static void
-yyerror(string)
+static void yyerror(string)
 char* string;
 {
-	char buf[200];
-	Symbol sym;
+    char buf[200];
+    Symbol sym;
 
-	strcpy (buf, string);
+    strcpy (buf, string);
 
-	if (yyeof) strcat(buf, " at end of input");
-	else if (yytext[0] == 0) strcat(buf, " at null character");
-	else if (yytext[0] < 040 || yytext[0] >= 0177)
-		sprintf(buf + strlen(buf), " before character 0%o", yytext[0]);
-	else	sprintf(buf + strlen(buf), " before `%s'", yytext);
+    if (yyeof) strcat(buf, " at end of input");
+    else if (yytext[0] == 0) strcat(buf, " at null character");
+    else if (yytext[0] < 040 || yytext[0] >= 0177)
+        sprintf(buf + strlen(buf), " before character 0%o", yytext[0]);
+    else    sprintf(buf + strlen(buf), " before `%s'", yytext);
 
-	sym.line = yylineno;
-	sym.filename = current_filename;
-	ERRORreport_with_symbol(ERROR_syntax, &sym, buf, CURRENT_SCOPE_TYPE_PRINTABLE,CURRENT_SCOPE_NAME);
-  }
+    sym.line = yylineno;
+    sym.filename = current_filename;
+    ERRORreport_with_symbol(ERROR_syntax, &sym, buf, CURRENT_SCOPE_TYPE_PRINTABLE,CURRENT_SCOPE_NAME);
+}
 
-static void
-yyerror2(t)
-char CONST * t;	/* token or 0 to indicate no more tokens */
+static void yyerror2(t)
+char CONST * t;    /* token or 0 to indicate no more tokens */
 {
-	char buf[200];
-	Symbol sym;
-	static int first = 1;	/* true if first suggested replacement */
-	static char tokens[4000] = "";/* error message, saying */
-					/* "expecting <token types>" */
+    char buf[200];
+    Symbol sym;
+    static int first = 1;    /* true if first suggested replacement */
+    static char tokens[4000] = "";/* error message, saying */
+                                  /* "expecting <token types>" */
 
-	if (t) {	/* subsequent token? */
-		if (first) first = 0;
-		else strcat (tokens," or ");
-		strcat(tokens,t);
-	} else {
-	  strcpy(buf,"syntax error");
-	  if (yyeof)
-	    strcat(buf, " at end of input");
-	  else if (yytext[0] == 0)
-	    strcat(buf, " at null character");
-	  else if (yytext[0] < 040 || yytext[0] >= 0177)
-	    sprintf(buf + strlen(buf), " near character 0%o", yytext[0]);
-	  else
-	    sprintf(buf + strlen(buf), " near `%s'", yytext);
-
-	  if (0 == strlen(tokens)) yyerror("syntax error");
-	  sym.line = yylineno - (yytext[0] == '\n');
-	  sym.filename = current_filename;
-	  ERRORreport_with_symbol(ERROR_syntax_expecting,&sym,buf,tokens
-			,CURRENT_SCOPE_TYPE_PRINTABLE,CURRENT_SCOPE_NAME);
-	}
+    if (t) {    /* subsequent token? */
+        if (first) first = 0;
+        else strcat (tokens," or ");
+        strcat(tokens,t);
+    } else {
+        strcpy(buf,"syntax error");
+        if (yyeof) {
+            strcat(buf, " at end of input");
+        } else if (yytext[0] == 0) {
+            strcat(buf, " at null character");
+        } else if (yytext[0] < 040 || yytext[0] >= 0177) {
+            sprintf(buf + strlen(buf), " near character 0%o", yytext[0]);
+        } else {
+            sprintf(buf + strlen(buf), " near `%s'", yytext);
+        }
+        if (0 == strlen(tokens)) {
+            yyerror("syntax error");
+        }
+        sym.line = yylineno - (yytext[0] == '\n');
+        sym.filename = current_filename;
+        ERRORreport_with_symbol( ERROR_syntax_expecting, &sym, buf, tokens,
+                                 CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
+    }
 }

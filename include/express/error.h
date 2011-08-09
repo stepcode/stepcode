@@ -4,8 +4,8 @@
 /* $Id: error.h,v 1.8 1997/01/21 19:16:55 dar Exp $ */
 
 /************************************************************************
-** Module:	Error
-** Description:	This module implements the ERROR abstraction.
+** Module:  Error
+** Description: This module implements the ERROR abstraction.
 ************************************************************************/
 
 /*
@@ -30,15 +30,15 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include "basic.h"	/* get basic definitions */
+#include "basic.h"  /* get basic definitions */
 #include "setjmp.h"
 
 /*************/
 /* constants */
 /*************/
 
-#define ERROR_none		(Error)NULL
-#define ERROR_MAX		100
+#define ERROR_none      (Error)NULL
+#define ERROR_MAX       100
 
 /*****************/
 /* packages used */
@@ -52,11 +52,11 @@
 /************/
 
 typedef enum {
-    SEVERITY_WARNING	= 0,
-    SEVERITY_ERROR	= 1,
-    SEVERITY_EXIT	= 2,
-    SEVERITY_DUMP	= 3,
-    SEVERITY_MAX	= 4
+    SEVERITY_WARNING    = 0,
+    SEVERITY_ERROR  = 1,
+    SEVERITY_EXIT   = 2,
+    SEVERITY_DUMP   = 3,
+    SEVERITY_MAX    = 4
 } Severity;
 
 /***************************/
@@ -64,15 +64,15 @@ typedef enum {
 /***************************/
 
 typedef struct Error_ {
-    Boolean	enabled;
-    Severity	severity;
-    char*	message;
-} *Error;
+    Boolean enabled;
+    Severity    severity;
+    char  * message;
+} * Error;
 
 typedef struct Error_Warning_ {
-	char *	name;
-	struct Linked_List_ *errors;
-} *Error_Warning;
+    char  * name;
+    struct Linked_List_ * errors;
+} * Error_Warning;
 
 /****************/
 /* modules used */
@@ -88,29 +88,29 @@ typedef struct Error_Warning_ {
 #include "decstart.h"
 #endif /* ERROR_C */
 
-GLOBAL Boolean	__ERROR_buffer_errors		INITIALLY(False);
-GLOBAL char *current_filename			INITIALLY("stdin");
+GLOBAL Boolean  __ERROR_buffer_errors       INITIALLY( False );
+GLOBAL char * current_filename           INITIALLY( "stdin" );
 
 /* flag to remember whether non-warning errors have occurred */
-GLOBAL Boolean	ERRORoccurred			INITIALLY(False);
+GLOBAL Boolean  ERRORoccurred           INITIALLY( False );
 
 
-GLOBAL Error	experrc				INITIALLY(ERROR_none);
-GLOBAL Error	ERROR_subordinate_failed	INITIALLY(ERROR_none);
-GLOBAL Error	ERROR_syntax_expecting		INITIALLY(ERROR_none);
+GLOBAL Error    experrc             INITIALLY( ERROR_none );
+GLOBAL Error    ERROR_subordinate_failed    INITIALLY( ERROR_none );
+GLOBAL Error    ERROR_syntax_expecting      INITIALLY( ERROR_none );
 
 /* all of these are 1 if true, 0 if false switches */
 /* for debugging fedex */
-GLOBAL int	ERRORdebugging			INITIALLY(0);
+GLOBAL int  ERRORdebugging          INITIALLY( 0 );
 /* for debugging malloc during resolution */
-GLOBAL int	malloc_debug_resolve		INITIALLY(0);
+GLOBAL int  malloc_debug_resolve        INITIALLY( 0 );
 /* for debugging yacc/lex */
-GLOBAL int	debug				INITIALLY(0);
+GLOBAL int  debug               INITIALLY( 0 );
 
-GLOBAL struct Linked_List_ *ERRORwarnings;
+GLOBAL struct Linked_List_ * ERRORwarnings;
 GLOBAL struct freelist_head ERROR_OPT_fl;
 
-GLOBAL void (*ERRORusage_function) PROTO((void));
+GLOBAL void ( *ERRORusage_function ) PROTO( ( void ) );
 
 #include "de_end.h"
 
@@ -118,8 +118,8 @@ GLOBAL void (*ERRORusage_function) PROTO((void));
 /* macro function definitions */
 /******************************/
 
-#define ERROR_OPT_new()	(struct Error_Warning_ *)MEM_new(&ERROR_OPT_fl)
-#define ERROR_OPT_destroy(x)	MEM_destroy(&ERROR_OPT_fl,(Freelist *)(Generic)x)
+#define ERROR_OPT_new() (struct Error_Warning_ *)MEM_new(&ERROR_OPT_fl)
+#define ERROR_OPT_destroy(x)    MEM_destroy(&ERROR_OPT_fl,(Freelist *)(Generic)x)
 
 
 /********************/
@@ -130,51 +130,49 @@ GLOBAL void (*ERRORusage_function) PROTO((void));
 
 static_inline
 void
-ERRORdisable(Error error)
-{
-    if (error != ERROR_none)
-	error->enabled = False;
+ERRORdisable( Error error ) {
+    if( error != ERROR_none ) {
+        error->enabled = False;
+    }
 }
 
 static_inline
 void
-ERRORenable(Error error)
-{
-    if (error != ERROR_none)
-	error->enabled = True;
+ERRORenable( Error error ) {
+    if( error != ERROR_none ) {
+        error->enabled = True;
+    }
 }
 
 static_inline
 Boolean
-ERRORis_enabled(Error error)
-{
+ERRORis_enabled( Error error ) {
     return error->enabled;
 }
 
 static_inline
 void
-ERRORbuffer_messages(Boolean flag)
-{
-    extern void	ERROR_start_message_buffer(void),
-		ERROR_flush_message_buffer(void);
+ERRORbuffer_messages( Boolean flag ) {
+    extern void ERROR_start_message_buffer( void ),
+           ERROR_flush_message_buffer( void );
 
     __ERROR_buffer_errors = flag;
-    if (__ERROR_buffer_errors)
-	ERROR_start_message_buffer();
-    else
-	ERROR_flush_message_buffer();
+    if( __ERROR_buffer_errors ) {
+        ERROR_start_message_buffer();
+    } else {
+        ERROR_flush_message_buffer();
+    }
 }
 
 static_inline
 void
-ERRORflush_messages(void)
-{
-    extern void	ERROR_start_message_buffer(void),
-		ERROR_flush_message_buffer(void);
+ERRORflush_messages( void ) {
+    extern void ERROR_start_message_buffer( void ),
+           ERROR_flush_message_buffer( void );
 
-    if (__ERROR_buffer_errors) {
-	ERROR_flush_message_buffer();
-	ERROR_start_message_buffer();
+    if( __ERROR_buffer_errors ) {
+        ERROR_flush_message_buffer();
+        ERROR_start_message_buffer();
     }
 }
 
@@ -184,33 +182,33 @@ ERRORflush_messages(void)
 /* function prototypes */
 /***********************/
 
-extern void	ERRORinitialize PROTO((void));
-extern void	ERRORinitialize_after_LIST PROTO((void));
-extern void	ERRORnospace PROTO((void));
-extern void	ERRORabort PROTO((int));
-extern Error	ERRORcreate PROTO((char*, Severity));
-extern void	ERRORreport PROTO((Error, ...));
+extern void ERRORinitialize PROTO( ( void ) );
+extern void ERRORinitialize_after_LIST PROTO( ( void ) );
+extern void ERRORnospace PROTO( ( void ) );
+extern void ERRORabort PROTO( ( int ) );
+extern Error    ERRORcreate PROTO( ( char *, Severity ) );
+extern void ERRORreport PROTO( ( Error, ... ) );
 /*SUPPRESS 652*/  /* 1.? */
 /*SUPPRESS 842*/  /* 4.0.2 */
-struct Symbol_;	/* mention Symbol to avoid warning on following line */
-extern void	ERRORreport_with_symbol PROTO((Error, struct Symbol_ *, ...));
-extern void	ERRORreport_with_line PROTO((Error, int, ...));
-extern void	ERRORbuffer_messages PROTO((Boolean));
-extern void	ERRORflush_messages PROTO((void));
+struct Symbol_; /* mention Symbol to avoid warning on following line */
+extern void ERRORreport_with_symbol PROTO( ( Error, struct Symbol_ *, ... ) );
+extern void ERRORreport_with_line PROTO( ( Error, int, ... ) );
+extern void ERRORbuffer_messages PROTO( ( Boolean ) );
+extern void ERRORflush_messages PROTO( ( void ) );
 
-extern void	ERROR_start_message_buffer PROTO((void));
-extern void	ERROR_flush_message_buffer PROTO((void));
+extern void ERROR_start_message_buffer PROTO( ( void ) );
+extern void ERROR_flush_message_buffer PROTO( ( void ) );
 
-extern void	ERRORcreate_warning PROTO((char *,Error));
-extern void	ERRORset_warning PROTO((char *,int));
-extern void	ERRORset_all_warnings PROTO((int));
-extern void	ERRORsafe PROTO((jmp_buf env));
-extern void	ERRORunsafe PROTO((void));
+extern void ERRORcreate_warning PROTO( ( char *, Error ) );
+extern void ERRORset_warning PROTO( ( char *, int ) );
+extern void ERRORset_all_warnings PROTO( ( int ) );
+extern void ERRORsafe PROTO( ( jmp_buf env ) );
+extern void ERRORunsafe PROTO( ( void ) );
 
 #if deprecated
-extern void	ERRORdisable PROTO((Error));
-extern void	ERRORenable PROTO((Error));
-extern Boolean	ERRORis_enabled PROTO((Error));
+extern void ERRORdisable PROTO( ( Error ) );
+extern void ERRORenable PROTO( ( Error ) );
+extern Boolean  ERRORis_enabled PROTO( ( Error ) );
 #endif
 
 #endif /* ERROR_H */

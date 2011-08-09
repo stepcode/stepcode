@@ -21,150 +21,137 @@
 #include <listmgrcore.h>  // ivfasd/listmgrcore.h
 
 
-void ListMgrCore::WriteChar(char c, int col, int index)
-{ strbuf[index][col] = c;
-  display->ReplaceText(index, strbuf[index], strlen(strbuf[index]));
-  display->Style(index, 0, index, columns, Plain);
+void ListMgrCore::WriteChar( char c, int col, int index ) {
+    strbuf[index][col] = c;
+    display->ReplaceText( index, strbuf[index], strlen( strbuf[index] ) );
+    display->Style( index, 0, index, columns, Plain );
 };
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-void ListMgrCore::Insert (const char* s, int index)
-{
-    int len = strlen(s) + 1 + opColumns;
-    char *sCopy = new char[len];
-    
-    memset(sCopy, ' ', opColumns);
+void ListMgrCore::Insert( const char * s, int index ) {
+    int len = strlen( s ) + 1 + opColumns;
+    char * sCopy = new char[len];
+
+    memset( sCopy, ' ', opColumns );
 //    memset(sCopy, ' ', opColumns);
-//    bcopy(s, sCopy + opColumns, strlen(s) + 1); // non ANSI 
-	// the 1st two operands are reversed from bcopy. memcpy() is ANSI 
- 	// memcpy is o.k. since memory areas do not overlap - DAS
-    memcpy(sCopy + opColumns, s, strlen(s) + 1); 
-    MyStringBrowser::Insert (sCopy, index);
+//    bcopy(s, sCopy + opColumns, strlen(s) + 1); // non ANSI
+    // the 1st two operands are reversed from bcopy. memcpy() is ANSI
+    // memcpy is o.k. since memory areas do not overlap - DAS
+    memcpy( sCopy + opColumns, s, strlen( s ) + 1 );
+    MyStringBrowser::Insert( sCopy, index );
 
     delete [] sCopy;
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-void ListMgrCore::Append (const char* s)
-{
-    Insert(s, strcount);
+void ListMgrCore::Append( const char * s ) {
+    Insert( s, strcount );
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-void ListMgrCore::ReplaceText (const char* s, int index)
-{
-    int len = strlen(s) + 1 + opColumns;
-    char *sCopy = new char[len];
-    
+void ListMgrCore::ReplaceText( const char * s, int index ) {
+    int len = strlen( s ) + 1 + opColumns;
+    char * sCopy = new char[len];
+
 //    memset(sCopy, ' ', opColumns);
-    strncpy(sCopy, MyStringBrowser::String(index), opColumns);
+    strncpy( sCopy, MyStringBrowser::String( index ), opColumns );
 //    sCopy[opColumns] = '\0';
-//    bcopy(s, sCopy + opColumns, strlen(s) + 1); // non ANSI 
-	// the 1st two operands are reversed from bcopy. memcpy() is ANSI 
- 	// memcpy is o.k. since memory areas do not overlap - DAS
-    memcpy(sCopy + opColumns, s, strlen(s) + 1); 
-    MyStringBrowser::ReplaceText (sCopy, index);
+//    bcopy(s, sCopy + opColumns, strlen(s) + 1); // non ANSI
+    // the 1st two operands are reversed from bcopy. memcpy() is ANSI
+    // memcpy is o.k. since memory areas do not overlap - DAS
+    memcpy( sCopy + opColumns, s, strlen( s ) + 1 );
+    MyStringBrowser::ReplaceText( sCopy, index );
 
     delete [] sCopy;
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-char* ListMgrCore::String(int index)
-{
-    return MyStringBrowser::String(index) + opColumns;
+char * ListMgrCore::String( int index ) {
+    return MyStringBrowser::String( index ) + opColumns;
 }
 
-char* ListMgrCore::CmdString(int index, char *str, int strSize)
-{
-    if(strSize > opColumns)
-    {
-	strncpy(str, MyStringBrowser::String(index), opColumns);
-	str[opColumns] = '\0';
-    }
-    else
-    {
-	strncpy(str, MyStringBrowser::String(index), strSize);
-	str[strSize - 1] = '\0';
+char * ListMgrCore::CmdString( int index, char * str, int strSize ) {
+    if( strSize > opColumns ) {
+        strncpy( str, MyStringBrowser::String( index ), opColumns );
+        str[opColumns] = '\0';
+    } else {
+        strncpy( str, MyStringBrowser::String( index ), strSize );
+        str[strSize - 1] = '\0';
     }
     return str;
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-// if found, returns the position of 'ch' in the cmd string at 'index' 
-//	otherwise returns -1 
+// if found, returns the position of 'ch' in the cmd string at 'index'
+//  otherwise returns -1
 
-int ListMgrCore::InCmdString(char ch, int index)
-{
+int ListMgrCore::InCmdString( char ch, int index ) {
     int len = opColumns + 1;
-    char *str = new char[len];
+    char * str = new char[len];
 
-    CmdString(index, str, opColumns + 1);
-    char *strptr = strchr(str, ch);
+    CmdString( index, str, opColumns + 1 );
+    char * strptr = strchr( str, ch );
 
-    if(strptr)
-    {
-	int rindex = strptr - str;
-	delete [] str;
-	return rindex;
+    if( strptr ) {
+        int rindex = strptr - str;
+        delete [] str;
+        return rindex;
     }
     delete [] str;
     return -1;
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-void ListMgrCore::Init(lmCommand *CmdArray, int arraySize)
-{
-    SetClassName("ListMgrCore");
+void ListMgrCore::Init( lmCommand * CmdArray, int arraySize ) {
+    SetClassName( "ListMgrCore" );
     opColumns = 0;
 
     lmCmdArray = CmdArray;
     lmCmdStr = new char[arraySize + 1];
     int i;
-    for(i = 0; i < arraySize; i++) {
-	lmCmdStr[i] = lmCmdArray[i].cmdChar;
-	opColumns = max(opColumns, lmCmdArray[i].cmdCol);
+    for( i = 0; i < arraySize; i++ ) {
+        lmCmdStr[i] = lmCmdArray[i].cmdChar;
+        opColumns = max( opColumns, lmCmdArray[i].cmdCol );
     }
     lmCmdStr[i] = '\0';
-    opColumns++;	// cols start at zero, so add 1 to total columns
+    opColumns++;    // cols start at zero, so add 1 to total columns
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-boolean ListMgrCore::HandleCharExtra(char c)
-{
+boolean ListMgrCore::HandleCharExtra( char c ) {
     int index = Selection();
-    if(index >= 0){
-		// since g++ is missing strpos() use strchr() work around.
-	char *cmdIndexPtr = strchr((const char *)lmCmdStr, c);
-	int cmdIndex = -1;
-	if(cmdIndexPtr){
-	    cmdIndex = cmdIndexPtr - lmCmdStr;
-	}
+    if( index >= 0 ) {
+        // since g++ is missing strpos() use strchr() work around.
+        char * cmdIndexPtr = strchr( ( const char * )lmCmdStr, c );
+        int cmdIndex = -1;
+        if( cmdIndexPtr ) {
+            cmdIndex = cmdIndexPtr - lmCmdStr;
+        }
 
-	if(cmdIndex >= 0){
-	    DoCommand(lmCmdArray[cmdIndex], index);
-	    return true;
-	} 
-	else
-	{
-	    if(strchr(done, c) == nil)
-		printf("index %d invalid char '%c'\n", index, c);
-	}
-	
+        if( cmdIndex >= 0 ) {
+            DoCommand( lmCmdArray[cmdIndex], index );
+            return true;
+        } else {
+            if( strchr( done, c ) == nil ) {
+                printf( "index %d invalid char '%c'\n", index, c );
+            }
+        }
+
 //    char* copy = new char[strlen(s)+1];
 //    strcpy(copy, s);
 
 //    display->ReplaceText(index, s, strlen(s));
 
+    } else {
+        printf( "no Selections\n" );
     }
-    else printf("no Selections\n");
     return false;
 }
-              //////////////////////////////////////////
+//////////////////////////////////////////
 
-void ListMgrCore::DoCommand(lmCommand lm, int index) 
-{
-    printf("ListMgrCore doCommand() - char '%c', col: %d, index: %d\n",
-		 lm.cmdChar, lm.cmdCol, index);
+void ListMgrCore::DoCommand( lmCommand lm, int index ) {
+    printf( "ListMgrCore doCommand() - char '%c', col: %d, index: %d\n",
+            lm.cmdChar, lm.cmdCol, index );
 };
 
 /*

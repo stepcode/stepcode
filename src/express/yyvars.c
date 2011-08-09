@@ -13,7 +13,7 @@
  *
  * Revision 1.1  90/06/11  16:30:22  clark
  * Initial revision
- * 
+ *
  */
 
 #include <stdio.h>
@@ -23,7 +23,6 @@
 int expyylineno = 1;
 
 void
-yynewparse()
-{
+yynewparse() {
     expyylineno = 1;
 }
