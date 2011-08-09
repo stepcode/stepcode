@@ -3,16 +3,16 @@
 
 /*
  * IntStringEditorSub - Interactive editor for character strings based
- *			on IntStringEditor.  This one is sociable with
- *			a supervisor.  In addition to supplying the 
- *			supervisor with the terminating char it also 
- *			returns a pointer to itself.
- *			It does this by redefining SetSubject() to 
- *			communicate with the supervisor supplying the 
- *			fields contained in class SubordinateInfo.
+ *          on IntStringEditor.  This one is sociable with
+ *          a supervisor.  In addition to supplying the
+ *          supervisor with the terminating char it also
+ *          returns a pointer to itself.
+ *          It does this by redefining SetSubject() to
+ *          communicate with the supervisor supplying the
+ *          fields contained in class SubordinateInfo.
  *
- * RealStringEditorSub - Same as above except for real numbers and based 
- *			on RealStringEditor.
+ * RealStringEditorSub - Same as above except for real numbers and based
+ *          on RealStringEditor.
  */
 
 #include <ctype.h>
@@ -25,32 +25,28 @@
 #include <IV-2_6/InterViews/button.h>
 #include <IV-2_6/InterViews/textbuffer.h>
 
-const char RingBell = '\007';   // <CNTRL> G 
+const char RingBell = '\007';   // <CNTRL> G
 
-IntStringEditorSub::~IntStringEditorSub()
-{
-    delete subInfo; 
+IntStringEditorSub::~IntStringEditorSub() {
+    delete subInfo;
 }
 
-void IntStringEditorSub::SetSubject(int c)
-{
-    if (subject != nil) {
-	subInfo->SetValue(c);
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
+void IntStringEditorSub::SetSubject( int c ) {
+    if( subject != nil ) {
+        subInfo->SetValue( c );
+        subject->SetValue( subInfo ); // don't cast this to (void*)
+        //   it makes it not work.
     }
 }
 
-RealStringEditorSub::~RealStringEditorSub() 
-{
+RealStringEditorSub::~RealStringEditorSub() {
 }
 
-void RealStringEditorSub::SetSubject(int c)
-{
-    if (subject != nil) {
-	subInfo->SetValue(c);
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
+void RealStringEditorSub::SetSubject( int c ) {
+    if( subject != nil ) {
+        subInfo->SetValue( c );
+        subject->SetValue( subInfo ); // don't cast this to (void*)
+        //   it makes it not work.
     }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,12 +56,12 @@ void RealStringEditorSub::SetSubject(int c)
 ///////////////////////////////////////////////////////////////////////////////
 
 /*
- define this if you want the supervisor to be notified before this 
- IntStringEditorSub handles it's own event.  If you do define this you will 
- probably want to call StringEditor2::Handle() for this object when the 
- supervisor has done what it wanted to do before this object handled it's 
- event.  You will need to read the event if you don't call handle for this 
- object otherwise this function will cause an infinite loop (i.e. read the 
+ define this if you want the supervisor to be notified before this
+ IntStringEditorSub handles it's own event.  If you do define this you will
+ probably want to call StringEditor2::Handle() for this object when the
+ supervisor has done what it wanted to do before this object handled it's
+ event.  You will need to read the event if you don't call handle for this
+ object otherwise this function will cause an infinite loop (i.e. read the
  event, unread the event, read the event, unread the event, etc)
 */
 /*
@@ -74,22 +70,22 @@ void IntStringEditorSub::Handle(Event& e)
 //    if(e.eventType == 2 || e.eventType == 4)
     if(e.eventType == DownEvent || e.eventType == KeyEvent)
     {
-	UnRead(e);
-	subInfo->SetValue(' ');
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-//	call notify for subject (which calls see update)
+    UnRead(e);
+    subInfo->SetValue(' ');
+    subject->SetValue(subInfo);  // don't cast this to (void*)
+//  call notify for subject (which calls see update)
     }
     else
-	StringEditor2::Handle(e);
+    StringEditor2::Handle(e);
 }
 */
 /*
- define this if you want the supervisor to be notified before this 
- RealStringEditorSub handles it's own event.  If you do define this you will 
- probably want to call StringEditor2::Handle() for this object when the 
- supervisor has done what it wanted to do before this object handled it's 
- event.  You will need to read the event if you don't call handle for this 
- object otherwise this function will cause an infinite loop (i.e. read the 
+ define this if you want the supervisor to be notified before this
+ RealStringEditorSub handles it's own event.  If you do define this you will
+ probably want to call StringEditor2::Handle() for this object when the
+ supervisor has done what it wanted to do before this object handled it's
+ event.  You will need to read the event if you don't call handle for this
+ object otherwise this function will cause an infinite loop (i.e. read the
  event, unread the event, read the event, unread the event, etc)
 */
 /*
@@ -98,14 +94,14 @@ void RealStringEditorSub::Handle(Event& e)
 //    if(e.eventType == 2 || e.eventType == 4)
     if(e.eventType == DownEvent || e.eventType == KeyEvent)
     {
-	UnRead(e);
-	subInfo->SetValue(' ');
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-//	call notify for subject (which calls see update)
-	StringEditor2::Handle(e);
+    UnRead(e);
+    subInfo->SetValue(' ');
+    subject->SetValue(subInfo);  // don't cast this to (void*)
+//  call notify for subject (which calls see update)
+    StringEditor2::Handle(e);
     }
     else
-	StringEditor2::Handle(e);
+    StringEditor2::Handle(e);
 }
 */
 /*
@@ -134,9 +130,9 @@ void IntStringEditorSub::Init()
 void IntStringEditorSub::SetSubject(char c)
 {
     if (subject != nil) {
-	subInfo->SetValue(c);
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
+    subInfo->SetValue(c);
+    subject->SetValue(subInfo);  // don't cast this to (void*)
+                    //   it makes it not work.
     }
 }
 */
@@ -144,26 +140,26 @@ void IntStringEditorSub::SetSubject(char c)
 boolean IntStringEditorSub::HandleChar (char c) {
     if (strchr(done, c) != nil) {
         if (subject != nil) {
-	    subInfo->SetValue(c);
+        subInfo->SetValue(c);
             subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
-	    long int tmpI = 0;
-	    char tmpstr[3];
-	    int numFound = sscanf((char *)text->Text(),"%ld%1s", &tmpI, 
-					tmpstr);
-	    if(numFound == 0 || numFound == 2){
-		    // 0 => bogus beginning; 2 => bogus ending
-		fprintf(stderr, "%c bogus int attr value\n" , RingBell);
-		fflush(stderr);
-	    }
+                    //   it makes it not work.
+        long int tmpI = 0;
+        char tmpstr[3];
+        int numFound = sscanf((char *)text->Text(),"%ld%1s", &tmpI,
+                    tmpstr);
+        if(numFound == 0 || numFound == 2){
+            // 0 => bogus beginning; 2 => bogus ending
+        fprintf(stderr, "%c bogus int attr value\n" , RingBell);
+        fflush(stderr);
+        }
             else if(numFound == 1 || numFound == EOF){
-		    // 1 => success; EOF => blank field
-		printf("edit results returned %d\n", numFound);
-		printf("attr value: %ld\n", tmpI);
-		printf("term char (hex): %x, 'this' address(hex): %x\n",
-			(int)subInfo->GetValue(), subInfo->GetSubordinate());
-		return true;
-	    }
+            // 1 => success; EOF => blank field
+        printf("edit results returned %d\n", numFound);
+        printf("attr value: %ld\n", tmpI);
+        printf("term char (hex): %x, 'this' address(hex): %x\n",
+            (int)subInfo->GetValue(), subInfo->GetSubordinate());
+        return true;
+        }
         }
     } else {
         switch (c) {
@@ -182,14 +178,14 @@ boolean IntStringEditorSub::HandleChar (char c) {
 //            );
 //            break;
           case SESelectWord:
-	    if(text->IsEndOfWord(right))
+        if(text->IsEndOfWord(right))
                Select(
                 left, text->EndOfWord(text->BeginningOfNextWord(right))
-	       );
-	    else
+           );
+        else
                Select(
                 left, text->EndOfWord(right)
-	       );
+           );
             break;
           case SEDeleteToEndOfLine:
             Select(left, text->EndOfLine(right));
@@ -224,44 +220,44 @@ boolean IntStringEditorSub::HandleChar (char c) {
           case '7':
           case '8':
           case '9':
-		InsertText(&c, 1);
-		break;
-	  case '+':
-	  case '-':
-		if (acceptSigns)
-		    InsertText(&c, 1);
-		else {
-		    fprintf(stdout, "%c" , RingBell);
-		    fflush(stdout);
-		}
-		break;
+        InsertText(&c, 1);
+        break;
+      case '+':
+      case '-':
+        if (acceptSigns)
+            InsertText(&c, 1);
+        else {
+            fprintf(stdout, "%c" , RingBell);
+            fflush(stdout);
+        }
+        break;
           case ESCAPE_KEY:
-	    meta = true;
+        meta = true;
             break;
           default:
-	    if(meta){
-		switch(c){
-		    case 'f':
-			Select(text->BeginningOfNextWord(right));
-			break;
-		    case 'b':
-			if(text->IsBeginningOfWord(left))
-			    Select(text->BeginningOfWord(
-					text->PreviousCharacter(left)));
-			else
-			    Select(text->BeginningOfWord(left));
-			break;
-		}
-            }
-            else {
-		fprintf(stdout, "%c" , RingBell);
-		fflush(stdout);
-	    }
+        if(meta){
+        switch(c){
+            case 'f':
+            Select(text->BeginningOfNextWord(right));
+            break;
+            case 'b':
+            if(text->IsBeginningOfWord(left))
+                Select(text->BeginningOfWord(
+                    text->PreviousCharacter(left)));
+            else
+                Select(text->BeginningOfWord(left));
             break;
         }
-	if(meta)
-	    if(c != ESCAPE_KEY)
-		meta = false;
+            }
+            else {
+        fprintf(stdout, "%c" , RingBell);
+        fflush(stdout);
+        }
+            break;
+        }
+    if(meta)
+        if(c != ESCAPE_KEY)
+        meta = false;
         return false;
     }
 }
@@ -299,9 +295,9 @@ printf("se this: %d\n", this);
 void RealStringEditorSub::SetSubject(char c)
 {
     if (subject != nil) {
-	subInfo->SetValue(c);
-	subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
+    subInfo->SetValue(c);
+    subject->SetValue(subInfo);  // don't cast this to (void*)
+                    //   it makes it not work.
     }
 }
 */
@@ -309,26 +305,26 @@ void RealStringEditorSub::SetSubject(char c)
 boolean RealStringEditorSub::HandleChar (char c) {
     if (strchr(done, c) != nil) {
         if (subject != nil) {
-	    subInfo->SetValue(c);
+        subInfo->SetValue(c);
             subject->SetValue(subInfo);  // don't cast this to (void*)
-					//   it makes it not work.
-	    double tmpD = 0;
-	    char tmpstr[3];
-	    int numFound = sscanf((char *)text->Text(),"%lf%1s", &tmpD,
-					tmpstr);
-	    if(numFound == 0 || numFound == 2){
-		    // 0 => bogus beginning; 2 => bogus ending
-		fprintf(stderr, "%c bogus real attr value\n" , RingBell);
-		fflush(stderr);
-	    }
+                    //   it makes it not work.
+        double tmpD = 0;
+        char tmpstr[3];
+        int numFound = sscanf((char *)text->Text(),"%lf%1s", &tmpD,
+                    tmpstr);
+        if(numFound == 0 || numFound == 2){
+            // 0 => bogus beginning; 2 => bogus ending
+        fprintf(stderr, "%c bogus real attr value\n" , RingBell);
+        fflush(stderr);
+        }
             else if(numFound == 1 || numFound == EOF){
-		    // 1 => success; EOF => blank field
-		printf("edit results returned %d\n", numFound);
-		printf("attr value: %e\n", tmpD);
-		printf("term char (hex): %x, this address(hex): %x\n",
-			(int)subInfo->GetValue(), subInfo->GetSubordinate());
-		return true;
-	    }
+            // 1 => success; EOF => blank field
+        printf("edit results returned %d\n", numFound);
+        printf("attr value: %e\n", tmpD);
+        printf("term char (hex): %x, this address(hex): %x\n",
+            (int)subInfo->GetValue(), subInfo->GetSubordinate());
+        return true;
+        }
         }
     } else {
         switch (c) {
@@ -347,14 +343,14 @@ boolean RealStringEditorSub::HandleChar (char c) {
 //            );
 //            break;
           case SESelectWord:
-	    if(text->IsEndOfWord(right))
+        if(text->IsEndOfWord(right))
                Select(
                 left, text->EndOfWord(text->BeginningOfNextWord(right))
-	       );
-	    else
+           );
+        else
                Select(
                 left, text->EndOfWord(right)
-	       );
+           );
             break;
           case SEDeleteToEndOfLine:
             Select(left, text->EndOfLine(right));
@@ -389,42 +385,42 @@ boolean RealStringEditorSub::HandleChar (char c) {
           case '7':
           case '8':
           case '9':
-	  case 'e':
-	  case 'E':
-	  case '.':
-	  case '+':
-	  case '-':
+      case 'e':
+      case 'E':
+      case '.':
+      case '+':
+      case '-':
             if (!iscntrl(c)) {
                 InsertText(&c, 1);
             }
             break;
           case ESCAPE_KEY:
-	    meta = true;
+        meta = true;
             break;
           default:
-	    if(meta){
-		switch(c){
-		    case 'f':
-			Select(text->BeginningOfNextWord(right));
-			break;
-		    case 'b':
-			if(text->IsBeginningOfWord(left))
-			    Select(text->BeginningOfWord(
-					text->PreviousCharacter(left)));
-			else
-			    Select(text->BeginningOfWord(left));
-			break;
-		}
-            }
-            else {
-		fprintf(stdout, "%c" , RingBell);
-		fflush(stdout);
-	    }
+        if(meta){
+        switch(c){
+            case 'f':
+            Select(text->BeginningOfNextWord(right));
+            break;
+            case 'b':
+            if(text->IsBeginningOfWord(left))
+                Select(text->BeginningOfWord(
+                    text->PreviousCharacter(left)));
+            else
+                Select(text->BeginningOfWord(left));
             break;
         }
-	if(meta)
-	    if(c != ESCAPE_KEY)
-		meta = false;
+            }
+            else {
+        fprintf(stdout, "%c" , RingBell);
+        fflush(stdout);
+        }
+            break;
+        }
+    if(meta)
+        if(c != ESCAPE_KEY)
+        meta = false;
         return false;
     }
 }

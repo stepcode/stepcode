@@ -37,29 +37,27 @@ extern "C" {
 #include <string.h>
 }
 
-MyMessage::MyMessage(const char* msg, Alignment al, int Pad, 
-			int hstretch, int vstretch) 
-{
-    Init(msg, al, Pad, hstretch, vstretch);
+MyMessage::MyMessage( const char * msg, Alignment al, int Pad,
+                      int hstretch, int vstretch ) {
+    Init( msg, al, Pad, hstretch, vstretch );
 }
 
 MyMessage::MyMessage(
-    const char* name,
-    const char* msg, Alignment al, int Pad, int hstretch, int vstretch) 
- : Interactor(name) 
-{
-    Init(msg, al, Pad, hstretch, vstretch);
+    const char * name,
+    const char * msg, Alignment al, int Pad, int hstretch, int vstretch )
+    : Interactor( name ) {
+    Init( msg, al, Pad, hstretch, vstretch );
 }
 
-void MyMessage::Init (const char* t, Alignment a, int p, int hstr, int vstr) {
-    SetClassName("MyMessage");
-    textLen = strlen(t) + 1;
+void MyMessage::Init( const char * t, Alignment a, int p, int hstr, int vstr ) {
+    SetClassName( "MyMessage" );
+    textLen = strlen( t ) + 1;
 
     text = new char[textLen];
-    strcpy(text, t);
+    strcpy( text, t );
 
     textReturned = new char[textLen];
-    strcpy(textReturned, t);
+    strcpy( textReturned, t );
 
     alignment = a;
     pad = p;
@@ -68,81 +66,83 @@ void MyMessage::Init (const char* t, Alignment a, int p, int hstr, int vstr) {
     highlighted = false;
 }
 
-MyMessage::~MyMessage() { delete text; }
+MyMessage::~MyMessage() {
+    delete text;
+}
 
-void MyMessage::Reconfig () {
-    const char* a = GetAttribute("text");
-    if (a != nil) {
-	delete text;
-	text = new char[strlen(a)+1];
-	strcpy(text, a);
+void MyMessage::Reconfig() {
+    const char * a = GetAttribute( "text" );
+    if( a != nil ) {
+        delete text;
+        text = new char[strlen( a ) + 1];
+        strcpy( text, a );
     }
-    a = GetAttribute("padding");
-    if (a != nil) {
-	pad = atoi(a);
+    a = GetAttribute( "padding" );
+    if( a != nil ) {
+        pad = atoi( a );
     }
-    const Font* f = output->GetFont();
-    shape->width = pad + f->Width(text) + pad;
+    const Font * f = output->GetFont();
+    shape->width = pad + f->Width( text ) + pad;
     shape->height = pad + f->Height() + pad;
     shape->hshrink = pad + pad;
     shape->vshrink = pad + pad;
 }
 
-void MyMessage::Realign (Alignment a) {
+void MyMessage::Realign( Alignment a ) {
     alignment = a;
     Draw();
 }
 
-void MyMessage::Redraw (IntCoord l, IntCoord b, IntCoord r, IntCoord t) {
+void MyMessage::Redraw( IntCoord l, IntCoord b, IntCoord r, IntCoord t ) {
     IntCoord x = 0, y = 0;
-    Align(alignment, shape->width, shape->height, x, y);
-    output->Clip(canvas, l, b, r, t);
-    if (highlighted) {
-	output->SetColors(output->GetBgColor(), output->GetFgColor());
+    Align( alignment, shape->width, shape->height, x, y );
+    output->Clip( canvas, l, b, r, t );
+    if( highlighted ) {
+        output->SetColors( output->GetBgColor(), output->GetFgColor() );
     }
-    output->ClearRect(canvas, l, b, r, t);
-    output->Text(canvas, text, x + pad, y + pad);
-    if (highlighted) {
-	output->SetColors(output->GetBgColor(), output->GetFgColor());
+    output->ClearRect( canvas, l, b, r, t );
+    output->Text( canvas, text, x + pad, y + pad );
+    if( highlighted ) {
+        output->SetColors( output->GetBgColor(), output->GetFgColor() );
     }
     output->NoClip();
 }
 
-void MyMessage::Highlight (boolean b) {
-    if (highlighted != b) {
-	highlighted = b;
-	Draw();
+void MyMessage::Highlight( boolean b ) {
+    if( highlighted != b ) {
+        highlighted = b;
+        Draw();
     }
 }
 
-void MyMessage::NewMessage (char* t) {
+void MyMessage::NewMessage( char * t ) {
     IntCoord x = 0, y = 0;
 
 
-/*
-    int len_t = strlen(t);
-    int len_text = strlen(text);
+    /*
+        int len_t = strlen(t);
+        int len_text = strlen(text);
 
-    if(len_t > len_text){
-	delete text;
-	text = new char[len_t + 1];
-	strcpy(text, t);
-    } else {
-	strcpy(text, t);
-	for(i = len_t - 1; i < len_text; i++)
-	    text[i] = ' ';
-    }
-*/
-    strncpy(text, t, textLen);
+        if(len_t > len_text){
+        delete text;
+        text = new char[len_t + 1];
+        strcpy(text, t);
+        } else {
+        strcpy(text, t);
+        for(i = len_t - 1; i < len_text; i++)
+            text[i] = ' ';
+        }
+    */
+    strncpy( text, t, textLen );
     text[textLen - 1] = '\0';
 
-    strncpy(textReturned, t, textLen);
+    strncpy( textReturned, t, textLen );
     textReturned[textLen - 1] = '\0';
 
-    output->Text(canvas, text, x + pad, y + pad);
+    output->Text( canvas, text, x + pad, y + pad );
     Draw();
 }
 
-char * MyMessage::Text () {
+char * MyMessage::Text() {
     return textReturned;
 }

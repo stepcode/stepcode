@@ -87,8 +87,8 @@
  *
  * Revision 4.3  1991/04/26  20:12:50  libes
  * Made scanner work with lex
- * 	Simulated exclusive states with inclusive states
- * 	Fixed line counting
+ *     Simulated exclusive states with inclusive states
+ *     Fixed line counting
  * Speeded up whitespace matching
  * Convert unknown chars to whitespace
  * Disabled default rule matching (enabled "jamming")
@@ -110,10 +110,10 @@
 #include "express/express.h"
 #include "expparse.h"
 
-extern void	yyerror();
-extern int	yylineno;
-extern Boolean	yyeof;
-static int	nesting_level;
+extern void     yyerror();
+extern int      yylineno;
+extern Boolean  yyeof;
+static int      nesting_level;
 
 /* can't imagine this will ever be more than 2 or 3 - DEL */
 #define MAX_NESTED_COMMENTS 20
@@ -123,14 +123,14 @@ static struct Symbol_ open_comment[MAX_NESTED_COMMENTS];
 static int
 yywrap()
 {
-	int i;
+    int i;
 
-	for (i=0;i<nesting_level && i<MAX_NESTED_COMMENTS;i++) {
-		ERRORreport_with_symbol(ERROR_unmatched_open_comment,
-			&open_comment[i]);
-		/* maybe not all, but at least some will be reported - DEL */
-	}
-	return 1;
+    for (i=0;i<nesting_level && i<MAX_NESTED_COMMENTS;i++) {
+        ERRORreport_with_symbol(ERROR_unmatched_open_comment,
+            &open_comment[i]);
+        /* maybe not all, but at least some will be reported - DEL */
+    }
+    return 1;
 }
 
 #ifdef FLEX_SCANNER
@@ -140,29 +140,29 @@ yywrap()
 You used flex (in make_rules) but compiled with -DLEX (in Makefile)!
 #endif
 
-#define YY_USER_INIT	BEGIN code;	/* DEL */
+#define YY_USER_INIT    BEGIN code;    /* DEL */
 
 #undef YY_DECL
 #define YY_DECL int yylex(void)
 
 /* here's the hook for the preprocessor */
 #undef YY_INPUT
-#define YY_INPUT(buf, result, max_size)					\
-	(result) = SCANnextchar(buf)
+#define YY_INPUT(buf, result, max_size)                 \
+    (result) = SCANnextchar(buf)
 
 /* I don't believe this is used anymore, but not sure */
 /* in any case, experimental code above that attempts to skip over */
 /* initial non-Express code explicitly refers to YY_INPUT */
 #ifdef slow_yylineno
 #undef YY_INPUT
-#define YY_INPUT(buf,result,max_size)					\
- 	result = (((buf[0] = getc(yyin)) == '\n')			\
-		  ? (NEWLINE, 1)					\
-		  : ((buf[0] == EOF) ? ((yyeof = True), YY_NULL) : 1))
+#define YY_INPUT(buf,result,max_size)                   \
+     result = (((buf[0] = getc(yyin)) == '\n')          \
+          ? (NEWLINE, 1)                    \
+          : ((buf[0] == EOF) ? ((yyeof = True), YY_NULL) : 1))
 #endif /*slow_yylineno*/
 
-/*#define NEWLINE	((SCANbol = SCANtell()), yylineno++)*/
-#define NEWLINE	yylineno++
+/*#define NEWLINE    ((SCANbol = SCANtell()), yylineno++)*/
+#define NEWLINE    yylineno++
 #define LINENO_FUDGE yylineno
 
 #else /* !FLEX_SCANNER (i.e, LEX) */
@@ -176,28 +176,28 @@ You used lex (in make_rules) but compiled with -DFLEX (in Makefile)!
 #undef unput
 
 /* max page size 100 is guaranteed, but lex code uses BUFSIZ! - DEL */
-static char unchar[BUFSIZ];		/* one char for lex unput storage */
-static char *unchar_p = unchar;		/* whether unchar is in use */
+static char unchar[BUFSIZ];     /* one char for lex unput storage */
+static char *unchar_p = unchar;     /* whether unchar is in use */
 
 static int first_time = True;
 
 static int
 input() {
-	char c;
+    char c;
 
-	if (unchar_p == unchar) {
-		/* no chars pushed back */
-		if (!SCANnextchar(&c)) return(0);
-		if (c == '\n') {
-		    yylineno++;
-/*		    SCANbol = SCANtell();*/
-		}
-		return(c);
-	} else {
-		unchar_p--;
-		if (*unchar_p == '\n') yylineno++;
-		return(*unchar_p);
-	}
+    if (unchar_p == unchar) {
+        /* no chars pushed back */
+        if (!SCANnextchar(&c)) return(0);
+        if (c == '\n') {
+            yylineno++;
+/*          SCANbol = SCANtell();*/
+        }
+        return(c);
+    } else {
+        unchar_p--;
+        if (*unchar_p == '\n') yylineno++;
+        return(*unchar_p);
+    }
 }
 
 /* if paranoid, should check that bounds are never exceeded, but maybe */
@@ -221,29 +221,29 @@ void exp_flex_init();
 /* added for re-initializing parser -snc 22-Apr-1992 */
 void
 SCAN_lex_init(char *filename,FILE *fp) {
-	int i;
+    int i;
 
-        /* return to initial scan buffer */
-        SCAN_current_buffer = 0;
-        *(SCANcurrent = SCANbuffer.text) = '\0';
-        SCANbuffer.readEof = False;
-        SCANbuffer.file = fp;
-	SCANbuffer.filename = (filename?filename:"");
-	current_filename = SCANbuffer.filename;
+    /* return to initial scan buffer */
+    SCAN_current_buffer = 0;
+    *(SCANcurrent = SCANbuffer.text) = '\0';
+    SCANbuffer.readEof = False;
+    SCANbuffer.file = fp;
+    SCANbuffer.filename = (filename?filename:"");
+    current_filename = SCANbuffer.filename;
 
-        /* empty all scan buffers */
-/*      for (i = 0; i < SCAN_NESTING_DEPTH; ++i)*/
-/*          SCAN_buffers[i].text[0] = '\0';*/
+    /* empty all scan buffers */
+    /*      for (i = 0; i < SCAN_NESTING_DEPTH; ++i)*/
+    /*          SCAN_buffers[i].text[0] = '\0';*/
 
 #ifdef FLEX_SCANNER
-	exp_flex_init();
+    exp_flex_init();
 #endif
 
 #ifndef FLEX_SCANNER
         /* initialize un-got character pointer to start of buffer */
         unchar_p = unchar;
 
-	first_time = True;
+    first_time = True;
 #endif
 }
 
@@ -252,18 +252,18 @@ SCAN_lex_init(char *filename,FILE *fp) {
 
 %s comment code return_end_schema
 
-digit	[0-9]
-integer	{digit}+
-letter	[A-Za-z]
-id_char	[A-Za-z0-9_]
+digit    [0-9]
+integer  {digit}+
+letter   [A-Za-z]
+id_char  [A-Za-z0-9_]
 
 %%
 
 %{
 #ifndef FLEX_SCANNER
 if (first_time) {
-	BEGIN code;
-	first_time = False;
+    BEGIN code;
+    first_time = False;
 }
 #endif
 %}
@@ -277,13 +277,13 @@ if (first_time) {
 <code>"--"[^\n]*\n	{ NEWLINE; SCANsave_comment(); }
 
 "(*"	{
-	/* nested comment errors will occur with most deeply nested - DEL */
-	if (nesting_level < MAX_NESTED_COMMENTS) {
-		open_comment[nesting_level].line = yylineno;
-		open_comment[nesting_level].filename = current_filename;
-	}
-	nesting_level++;
-	BEGIN comment;
+    /* nested comment errors will occur with most deeply nested - DEL */
+    if (nesting_level < MAX_NESTED_COMMENTS) {
+        open_comment[nesting_level].line = yylineno;
+        open_comment[nesting_level].filename = current_filename;
+    }
+    nesting_level++;
+    BEGIN comment;
 }
 
 %{
@@ -291,7 +291,7 @@ if (first_time) {
 %}
 
 <code>{integer}"."{integer}?([eE][+-]?{integer})?	{
-	return SCANprocess_real_literal();
+    return SCANprocess_real_literal();
 }
 
 %{
@@ -299,7 +299,7 @@ if (first_time) {
 %}
 
 <code>{integer}	{
-	return SCANprocess_integer_literal();
+    return SCANprocess_integer_literal();
 }
 
 %{
@@ -307,7 +307,7 @@ if (first_time) {
 %}
 
 <code>"\%"[01]+	{
-	return SCANprocess_binary_literal();
+    return SCANprocess_binary_literal();
 }
 
 %{
@@ -315,7 +315,7 @@ if (first_time) {
 %}
 
 <code>{letter}{id_char}*	{
-	return SCANprocess_identifier_or_keyword();
+    return SCANprocess_identifier_or_keyword();
 }
 
 %{
@@ -323,38 +323,38 @@ if (first_time) {
 %}
 
 <code>[_A-Za-z]{id_char}*	{
-	ERRORreport_with_line(ERROR_bad_identifier,yylineno,yytext);
-	return SCANprocess_identifier_or_keyword();
+    ERRORreport_with_line(ERROR_bad_identifier,yylineno,yytext);
+    return SCANprocess_identifier_or_keyword();
 }
 
 %{
 /* string literal */
 %}
 
-<code>'([^'\n]|'')*'	{	/* ' keep font-lock happy */
-	return SCANprocess_string();
+<code>'([^'\n]|'')*'	{    /* ' keep font-lock happy */
+    return SCANprocess_string();
 }
 
 <code>'([^'\n]|'')*\n	{
-	ERRORreport_with_line(ERROR_unterminated_string,LINENO_FUDGE);
-	NEWLINE;
-	return SCANprocess_string();
+    ERRORreport_with_line(ERROR_unterminated_string,LINENO_FUDGE);
+    NEWLINE;
+    return SCANprocess_string();
 }
 
 <code>\"[^\"\n]*\"	{
-	return SCANprocess_encoded_string();
+    return SCANprocess_encoded_string();
 }
 
 <code>\"[^\"\n]*\n	{
-	ERRORreport_with_line(ERROR_unterminated_string,LINENO_FUDGE);
-	NEWLINE;
-	return SCANprocess_encoded_string();
+    ERRORreport_with_line(ERROR_unterminated_string,LINENO_FUDGE);
+    NEWLINE;
+    return SCANprocess_encoded_string();
 }
 
 
 <code>";"[ \t]*"--"[^\n]*\n {
-		  NEWLINE;
-		  return SCANprocess_semicolon(1);
+          NEWLINE;
+          return SCANprocess_semicolon(1);
 }
 <code>";"	{ return SCANprocess_semicolon(0); }
 
@@ -388,16 +388,16 @@ if (first_time) {
 <code>"\\"	{ return TOK_BACKSLASH; }
 
 <return_end_schema>X	{
-	BEGIN code;
-	return TOK_END_SCHEMA;
+    BEGIN code;
+    return TOK_END_SCHEMA;
 }
 
 <comment>"*)"	{
-	if (0 == --nesting_level) BEGIN code;
+    if (0 == --nesting_level) BEGIN code;
 }
 
 <code>"*)"	{
-	ERRORreport_with_line(ERROR_unmatched_close_comment,yylineno);
+    ERRORreport_with_line(ERROR_unmatched_close_comment,yylineno);
 }	
 
 <comment>\n		{ NEWLINE; }
@@ -408,7 +408,7 @@ if (first_time) {
 /* As per N15, 7.1.5.3, all other recognized chars are incorrect - DEL */
 %}
 <code>[$%&@\^{}~] {
-	ERRORreport_with_line(ERROR_unexpected_character,yylineno,yytext[0]);
+    ERRORreport_with_line(ERROR_unexpected_character,yylineno,yytext[0]);
 }
 
 %{
@@ -420,11 +420,9 @@ if (first_time) {
 void
 SCANskip_to_end_schema()
 {
-	while (yylex() != TOK_END_SCHEMA);
-
-	unput('X');	/* any old character */
-
-	BEGIN return_end_schema;
+    while (yylex() != TOK_END_SCHEMA);
+    unput('X');    /* any old character */
+    BEGIN return_end_schema;
 }
 
 #ifdef FLEX_SCANNER

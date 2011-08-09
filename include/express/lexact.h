@@ -48,21 +48,21 @@
 /* typedefs */
 /************/
 
-#define SCAN_BUFFER_SIZE	1024
-#define SCAN_NESTING_DEPTH	6
-#define SCAN_ESCAPE		'\001'
+#define SCAN_BUFFER_SIZE    1024
+#define SCAN_NESTING_DEPTH  6
+#define SCAN_ESCAPE     '\001'
 
 typedef struct Scan_Buffer {
-	char	text[SCAN_BUFFER_SIZE + 1];
+    char    text[SCAN_BUFFER_SIZE + 1];
 #ifdef keep_nul
-	int	numRead;
+    int numRead;
 #endif
-	char*	savedPos;
-	FILE*	file;
-	char	*filename;
-	Boolean	readEof;
-	int	lineno;
-	int	bol;
+    char  * savedPos;
+    FILE  * file;
+    char  *  filename;
+    Boolean readEof;
+    int lineno;
+    int bol;
 } Scan_Buffer;
 
 /********************/
@@ -77,19 +77,19 @@ typedef struct Scan_Buffer {
 # define INITIALLY(value)
 #endif /* LEX_ACTIONS_C */
 
-GLOBAL Scan_Buffer	SCAN_buffers[SCAN_NESTING_DEPTH];
-GLOBAL int		SCAN_current_buffer	INITIALLY(0);
-GLOBAL char*		SCANcurrent;
+GLOBAL Scan_Buffer  SCAN_buffers[SCAN_NESTING_DEPTH];
+GLOBAL int      SCAN_current_buffer INITIALLY( 0 );
+GLOBAL char    *    SCANcurrent;
 
-GLOBAL Error		ERROR_include_file		INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_unmatched_close_comment	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_unmatched_open_comment	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_unterminated_string	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_encoded_string_bad_digit	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_encoded_string_bad_count	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_bad_identifier		INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_unexpected_character	INITIALLY(ERROR_none);
-GLOBAL Error		ERROR_nonascii_char;
+GLOBAL Error        ERROR_include_file      INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_unmatched_close_comment   INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_unmatched_open_comment    INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_unterminated_string   INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_encoded_string_bad_digit  INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_encoded_string_bad_count  INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_bad_identifier        INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_unexpected_character  INITIALLY( ERROR_none );
+GLOBAL Error        ERROR_nonascii_char;
 
 
 #undef GLOBAL
@@ -99,40 +99,40 @@ GLOBAL Error		ERROR_nonascii_char;
 /* macro function definitions */
 /******************************/
 
-#define SCANbuffer	SCAN_buffers[SCAN_current_buffer]
-#define SCANbol		SCANbuffer.bol
+#define SCANbuffer  SCAN_buffers[SCAN_current_buffer]
+#define SCANbol     SCANbuffer.bol
 
 #ifdef keep_nul
-# define SCANtext_ready	(SCANbuffer.numRead != 0)
+# define SCANtext_ready (SCANbuffer.numRead != 0)
 #else
-# define SCANtext_ready	(*SCANcurrent != '\0')
+# define SCANtext_ready (*SCANcurrent != '\0')
 #endif
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern int	yylex PROTO((void));	/* the scanner */
+extern int  yylex PROTO( ( void ) ); /* the scanner */
 
-extern void	SCANinitialize PROTO((void));
-extern int	SCANprocess_real_literal PROTO((void));
-extern int	SCANprocess_integer_literal PROTO((void));
-extern int	SCANprocess_binary_literal PROTO((void));
-extern int	SCANprocess_logical_literal PROTO((char *));
-extern int	SCANprocess_identifier_or_keyword PROTO((void));
-extern int	SCANprocess_string PROTO((void));
-extern int	SCANprocess_encoded_string PROTO((void));
-extern int	SCANprocess_semicolon PROTO((int));
-extern void	SCANsave_comment PROTO((void));
-extern Boolean	SCANread PROTO((void));
+extern void SCANinitialize PROTO( ( void ) );
+extern int  SCANprocess_real_literal PROTO( ( void ) );
+extern int  SCANprocess_integer_literal PROTO( ( void ) );
+extern int  SCANprocess_binary_literal PROTO( ( void ) );
+extern int  SCANprocess_logical_literal PROTO( ( char * ) );
+extern int  SCANprocess_identifier_or_keyword PROTO( ( void ) );
+extern int  SCANprocess_string PROTO( ( void ) );
+extern int  SCANprocess_encoded_string PROTO( ( void ) );
+extern int  SCANprocess_semicolon PROTO( ( int ) );
+extern void SCANsave_comment PROTO( ( void ) );
+extern Boolean  SCANread PROTO( ( void ) );
 #if macros_bit_the_dust
-extern void	SCANdefine_macro PROTO((char *, char *));
+extern void SCANdefine_macro PROTO( ( char *, char * ) );
 #endif
-extern void	SCANinclude_file PROTO((char *));
-void		SCANlowerize PROTO((char *));
-void		SCANupperize PROTO((char *));
-extern char *	SCANstrdup PROTO((char *));
-extern long	SCANtell PROTO((void));
+extern void SCANinclude_file PROTO( ( char * ) );
+void        SCANlowerize PROTO( ( char * ) );
+void        SCANupperize PROTO( ( char * ) );
+extern char  *  SCANstrdup PROTO( ( char * ) );
+extern long SCANtell PROTO( ( void ) );
 
 /*******************************/
 /* inline function definitions */
@@ -142,35 +142,35 @@ extern long	SCANtell PROTO((void));
 
 static_inline
 int
-SCANnextchar(char* buffer)
-{
-    extern Boolean SCANread(void);
+SCANnextchar( char * buffer ) {
+    extern Boolean SCANread( void );
 #ifdef keep_nul
     static int escaped = 0;
 #endif
 
-    if (SCANtext_ready || SCANread()) {
+    if( SCANtext_ready || SCANread() ) {
 #ifdef keep_nul
-	if (!*SCANcurrent) {
-	    buffer[0] = SCAN_ESCAPE;
-	    *SCANcurrent = '0';
-	    return 1;
-	} else if ((*SCANcurrent == SCAN_ESCAPE) && !escaped) {
-	    escaped = 1;
-	    buffer[0] = SCAN_ESCAPE;
-	    return 1;
-	}
-	SCANbuffer.numRead--;
+        if( !*SCANcurrent ) {
+            buffer[0] = SCAN_ESCAPE;
+            *SCANcurrent = '0';
+            return 1;
+        } else if( ( *SCANcurrent == SCAN_ESCAPE ) && !escaped ) {
+            escaped = 1;
+            buffer[0] = SCAN_ESCAPE;
+            return 1;
+        }
+        SCANbuffer.numRead--;
 #endif
-	buffer[0] = *(SCANcurrent++);
-	if (!isascii(buffer[0])) {
-	    ERRORreport_with_line(ERROR_nonascii_char,yylineno,
-				  0xff & buffer[0]);
-	    buffer[0] = ' ';	/* substitute space */
-	}
-	return 1;
-    } else
-	return 0;
+        buffer[0] = *( SCANcurrent++ );
+        if( !isascii( buffer[0] ) ) {
+            ERRORreport_with_line( ERROR_nonascii_char, yylineno,
+                                   0xff & buffer[0] );
+            buffer[0] = ' ';    /* substitute space */
+        }
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 #endif /* supports_inline_functions || defined(LEX_ACTIONS_C) */
