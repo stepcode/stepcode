@@ -4,10 +4,10 @@
 /* $Id: symbol.h,v 1.8 1997/01/21 19:17:11 dar Exp $ */
 
 /************************************************************************
-** Module:	Symbol
-** Description:	This module implements the Symbol abstraction.  
+** Module:  Symbol
+** Description: This module implements the Symbol abstraction.
 ** Constants:
-**	SYMBOL_NULL	- the null Symbol
+**  SYMBOL_NULL - the null Symbol
 **
 ************************************************************************/
 
@@ -39,7 +39,7 @@
 /* constants */
 /*************/
 
-#define SYMBOL_NULL		(Symbol)NULL
+#define SYMBOL_NULL     (Symbol)NULL
 
 /*****************/
 /* packages used */
@@ -48,7 +48,7 @@
 #ifdef SYMBOL_C
 #endif    /*  SYMBOL_C  */
 
-#include "basic.h"	/* get basic definitions */
+#include "basic.h"  /* get basic definitions */
 #include "memory.h"
 
 /************/
@@ -62,10 +62,10 @@ typedef struct Symbol_ Symbol;
 /***************************/
 
 struct Symbol_ {
-	char *name;
-	char *filename;
-	unsigned int line;
-	char resolved;
+    char * name;
+    char * filename;
+    unsigned int line;
+    char resolved;
 };
 
 /****************/
@@ -90,20 +90,20 @@ GLOBAL struct freelist_head SYMBOL_fl;
 /* macro function definitions */
 /******************************/
 
-#define SYMBOL_new()		(struct Symbol_ *)MEM_new(&SYMBOL_fl)
-#define SYMBOL_destroy(x)	MEM_destroy(&SYMBOL_fl,(Freelist *)(Generic)x)
+#define SYMBOL_new()        (struct Symbol_ *)MEM_new(&SYMBOL_fl)
+#define SYMBOL_destroy(x)   MEM_destroy(&SYMBOL_fl,(Freelist *)(Generic)x)
 
-#define SYMBOLset(obj)		obj->symbol.line = yylineno; \
-				obj->symbol.filename = current_filename
+#define SYMBOLset(obj)      obj->symbol.line = yylineno; \
+                obj->symbol.filename = current_filename
 /* for backwards compatibility only, no one should ever need this */
-#define SYMBOLget_name(sym)	((sym)->name)
+#define SYMBOLget_name(sym) ((sym)->name)
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern void	SYMBOLinitialize PROTO((void));
-Symbol *SYMBOLcreate PROTO((char *, int, char *));
+extern void SYMBOLinitialize PROTO( ( void ) );
+Symbol * SYMBOLcreate PROTO( ( char *, int, char * ) );
 
 /********************/
 /* inline functions */

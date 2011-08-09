@@ -1,7 +1,7 @@
 //
 //  File: StrUtil.cc
 //
-//  Description: Implementation of string utility functions 
+//  Description: Implementation of string utility functions
 //
 //  Rev:         $Revision: 1.1 $
 //  Created:     $Date: 1998/01/09 21:39:30 $
@@ -28,40 +28,32 @@
 // The space for the new string is obtained using ::new(). If the new string
 // cannot be created, a null pointer is returned.
 //
-char * strDup(char *destStr, const char *srcStr)
-{
-  if (destStr != NULL)
-    {
-      delete [] destStr;
+char * strDup( char * destStr, const char * srcStr ) {
+    if( destStr != NULL ) {
+        delete [] destStr;
 
-      destStr = NULL;
+        destStr = NULL;
     }
 
-  if (srcStr != NULL)
-   {
-     destStr = new char[strlen(srcStr)+1];
+    if( srcStr != NULL ) {
+        destStr = new char[strlen( srcStr ) + 1];
 
-     if (destStr != NULL)
-       {
-         strcpy(destStr, srcStr);
-       }
-     else
-       {
-         reportServerError(serverNoMemoryError);
-       }
-   }
+        if( destStr != NULL ) {
+            strcpy( destStr, srcStr );
+        } else {
+            reportServerError( serverNoMemoryError );
+        }
+    }
 
-  return destStr;
+    return destStr;
 }
 
 //
 //  Free the memory allocated to a string
 //
-void strFree(char * str)
-{
-  if (str != NULL)
-    {
-      delete [] str;
+void strFree( char * str ) {
+    if( str != NULL ) {
+        delete [] str;
     }
 }
 
@@ -70,33 +62,29 @@ void strFree(char * str)
 //
 //    It is the caller's responsibility to deallocate the memory for the string.
 //
-char * getCurrentDate(void)
-{
-  // need to get format of time stamp from ISO 8601
+char * getCurrentDate( void ) {
+    // need to get format of time stamp from ISO 8601
 
 #define TIME_STR_LEN  256
 
-  char * timeStr = NULL;
-  char time_buf[TIME_STR_LEN];
-  char * time_format = NULL; // use default locale format for now
-  struct timeval time_of_day;
-  struct tm * time_struct;
+    char * timeStr = NULL;
+    char time_buf[TIME_STR_LEN];
+    char * time_format = NULL; // use default locale format for now
+    struct timeval time_of_day;
+    struct tm * time_struct;
 
-  (void) gettimeofday(&time_of_day, (void *) NULL);
+    ( void ) gettimeofday( &time_of_day, ( void * ) NULL );
 
-  time_struct = localtime(&(time_of_day.tv_sec));
+    time_struct = localtime( &( time_of_day.tv_sec ) );
 
-  int length = strftime(time_buf, TIME_STR_LEN, time_format , time_struct);
+    int length = strftime( time_buf, TIME_STR_LEN, time_format , time_struct );
 
-  if (length > 0)
-    {
-      timeStr = strDup(timeStr, time_buf);
-    }
-  else
-    {
-      reportServerError(serverTimeFormatError);
+    if( length > 0 ) {
+        timeStr = strDup( timeStr, time_buf );
+    } else {
+        reportServerError( serverTimeFormatError );
     }
 
-  return timeStr;
+    return timeStr;
 }
 
