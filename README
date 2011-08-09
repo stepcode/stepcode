@@ -30,26 +30,49 @@ Step Class Library - https://github.com/mpictor/StepClassLibrary
   make
   
 * Build options (append to the 'cmake ..' line):
-  -DBUILD_SCHEMAS="schema_dir;another_schema_dir" 
-    - this generates c++ for the schema found in each dir, and
-      compiles it into a library
-    - each directory listed must be present under scl/data
-    - multiple directories are separated by semicolons
-    - for this to work, there must be a CMakeLists.txt file in the
-      schema dir. If there isn't, copy one from another schema -
-      it should be generic.
-  -DENABLE_P21READ=TRUE
-    - requires -DBUILD_SCHEMAS="..."
-    - for each of the schemas build by -DBUILD_SCHEMAS="...", this 
-      builds an executable which reads a part21 file and writes a
-      second file.
-    - if all goes well, the files will be identical except for 
-      whitespace and comments.
+  -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp" 
+    - this generates c++ for the schema, and
+      compiles it into a library. Also works with directories,
+      as long as each dir only has one express file.
+    - multiple files/directories are separated by semicolons
+    - this also builds a 'p21read' program, which reads one step
+      file and writes another. It may change whitespace or remove
+      comments; otherwise, the input and output files will be
+      identical.
+      If they are not identical, either the file does not match 
+      the schema, or SCL generated incorrect source code.
+  -DDISABLE_P21READ=TRUE
+    - disable p21read. probably not a useful option.
   -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
     - fedex_plus will be less verbose
     - fedex_plus debugging options such as -d8 will not be available
     - without this, cmake defaults to a Debug build
+
+***********************************************************************
+
+***********************************************************************
+CODING STANDARDS
+
+SCL's source has been reformatted with astyle. When making changes, try
+to match the current formatting. The main points are:
+
+  - compact (java-style) brackets:
+        if( a == 3 ) {
+            c = 5;
+            function( a, b );
+        } else {
+            somefunc( );
+        }
+  - indents are 4 spaces
+  - no tab characters
+  - line endings are LF (linux), not CRLF (windows)
+  - brackets around single-line conditionals
+  - spaces inside parentheses and around operators
+
+If in doubt about a large patch, run astyle with the config file
+misc/astyle.cfg. 
+Download astyle from http://sourceforge.net/projects/astyle/files/astyle/
 
 ***********************************************************************
 
