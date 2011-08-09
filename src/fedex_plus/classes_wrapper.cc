@@ -69,8 +69,7 @@ print_file_header( Express express, FILES * files ) {
     /*  create file for user to #include the CORBA-generated header file in. */
     if( corba_binding ) {
         if( ( corbafile = fopen( "corbaSchema.h", "w" ) ) == NULL ) {
-            printf( "**Error in print_file_header:  unable to create file ",
-                    "corbaSchema.h ** \n" );
+            printf( "**Error in print_file_header:  unable to create file corbaSchema.h ** \n" );
         }
         fprintf( corbafile,
                  "// #include the idl generated .hh C++ file that defines the code that \n" );

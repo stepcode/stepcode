@@ -758,8 +758,7 @@ SCOPEPrint( Scope scope, FILE * idl_file, Schema schema, Express model ) {
                 generate_attribute_name( a, attrnm );
                 if( !strcmp( idl_type, "SCLundefined" ) ) {
                     printf( "WARNING:  in entity %s:\n", ENTITYget_name( e ) );
-                    printf( "\tthe type for attribute  %s is not fully ",
-                            "implemented\n", attrnm );
+                    printf( "\tthe type for attribute  %s is not fully implemented\n", attrnm );
                 }
                 /*
                         if (TYPEis_entity (VARget_type (a)))

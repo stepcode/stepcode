@@ -2182,8 +2182,7 @@ DataMemberPrint( Entity entity, FILE * file, Schema schema ) {
         generate_attribute_name( a, attrnm );
         if( !strcmp( ctype, "SCLundefined" ) ) {
             printf( "WARNING:  in entity %s:\n", ENTITYget_name( entity ) );
-            printf( "\tthe type for attribute  %s is not fully ",
-                    "implemented\n", attrnm );
+            printf( "\tthe type for attribute  %s is not fully implemented\n", attrnm );
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
             fprintf( file, "\tSCLP23(Application_instance_ptr) _%s ;", attrnm );
