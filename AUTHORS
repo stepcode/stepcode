@@ -1,7 +1,21 @@
-Various authors have contributed to SCL since 2009. They
-are listed in the commit messages at
-https://github.com/mpictor/StepClassLibrary and
+Various authors have contributed to SCL since 2009. Their work is available at 
+https://github.com/mpictor/StepClassLibrary and/or
 http://brlcad.svn.sourceforge.net/viewvc/brlcad/brlcad/trunk/src/other/step/?view=log
+
+In alphabetical order:
+Bowman, W. Keith (indianlarry)
+Easterbrook, Zach (lainiwakurax)
+Greenwald, Erik (erikg, erikgreenwald)
+Loman, David (davidloman)
+Morrison, Christopher Sean (sean, morrison, brlcad)
+Paviot, Thomas (tpaviot)
+Pictor, Mark (mpictor)
+Thomas, Dawn (homovulgaris, madant)
+Yapp, Clifford (starseeker)
+
+Special thanks:
+Lubbell, Joshua (NIST)
+Stirk, Charlie (CostVision)
 
 Between 2005 and 2006, Stefan Richter worked to make SCL compatible with
 modern ANSI/ISO C++, and modified the build system. His patches are at
