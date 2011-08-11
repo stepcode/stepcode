@@ -1092,7 +1092,6 @@ void
 ReadTokenSeparator( istream & in, std::string * comments ) {
     char c;
     std::string s; // used if need to read a comment
-    const char * cstr = 0;
 
     if( in.eof() ) {
         //BUG: no error message is reported
