@@ -51,7 +51,7 @@ struct freelist_head * flh;
 
     current = flh->freelist;
     while( current ) {
-        printf( "-> %x", current );
+        printf( "-> %x", current->memory );
         current = current->next;
     }
     putchar( '\n' );
