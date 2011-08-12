@@ -145,15 +145,6 @@ USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, 
         bool first_time = true;
         LISTdo( list, r, struct Rename * )
 
-        /*
-           Interface_spec_ptr is;
-           Used_item_ptr ui;
-           is = new Interface_spec(const char * cur_sch_id);
-           schemadescriptor->use_interface_list_()->Append(is);
-           ui = new Used_item(TypeDescriptor *ld, const char *oi, const char *ni) ;
-           is->_explicit_items->Append(ui);
-        */
-
         /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
         if( first_time ) {
             fprintf( file, "\t// %s FROM %s (selected objects)\n", type, r->schema->symbol.name );
@@ -232,9 +223,6 @@ GetAggrElemType( const Type type ) {
 
     if( isAggregateType( type ) ) {
         bt = TYPEget_nonaggregate_base_type( type );
-        /*
-            bt = TYPEget_body(t)->base;
-        */
         if( isAggregateType( bt ) ) {
             strcpy( retval, "ERROR_aggr_of_aggr" );
         }
@@ -242,14 +230,13 @@ GetAggrElemType( const Type type ) {
         class = TYPEget_type( bt );
 
         /*      case TYPE_INTEGER:  */
-        if( class == Class_Integer_Type ) { /* return ( "IntAggregate" );*/
+        if( class == Class_Integer_Type ) {
             strcpy( retval, "long" );
         }
 
         /*      case TYPE_REAL:
             case TYPE_NUMBER:   */
         if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) )
-            /*      return ( "RealAggregate" );*/
         {
             strcpy( retval, "double" );
         }
@@ -264,9 +251,6 @@ GetAggrElemType( const Type type ) {
         /*  case TYPE_SELECT:   */
         if( ( class == Class_Enumeration_Type )
                 || ( class == Class_Select_Type ) )  {
-            /*
-                    strcpy (retval, ClassName (TYPEget_name (bt)));
-            */
             strcpy( retval, TYPEget_ctype( bt ) );
         }
 
@@ -281,12 +265,12 @@ GetAggrElemType( const Type type ) {
         }
 
         /*  case TYPE_STRING:   */
-        if( class == Class_String_Type ) { /* return("StringAggregate");*/
+        if( class == Class_String_Type ) {
             strcpy( retval, "string" );
         }
 
         /*  case TYPE_BINARY:   */
-        if( class == Class_Binary_Type ) { /* return("BinaryAggregate");*/
+        if( class == Class_Binary_Type ) {
             strcpy( retval, "binary" );
         }
     }
@@ -632,19 +616,6 @@ ATTRsign_access_methods( Variable a, FILE * file ) {
 
     generate_attribute_func_name( a, attrnm );
 
-    /*
-        generate_attribute_name( a, attrnm  );
-        strncpy (attrnm, CheckWord (StrToLower (attrnm)), BUFSIZ);
-        if(old_accessors)
-        {
-        attrnm[0] = toupper(attrnm[0]);
-        }
-        else
-        {
-        attrnm[strlen(attrnm)] = '_';
-        }
-    */
-
     class = TYPEget_type( t );
 
     if( corba_binding ) {
@@ -682,190 +653,6 @@ ATTRsign_access_methods( Variable a, FILE * file ) {
         fprintf( file, "\tvoid %s (const %s x);\n\n", attrnm, ctype );
     }
     return;
-
-#if 0
-    /*  LOGICAL and ENUM use an enumerated value in
-    the put and the get function  */
-    /*    case TYPE_LOGICAL:    */
-    if( class == Class_Logical_Type )  {
-        if( corba_binding ) {
-            fprintf( file, "\tconst Logical %s(", attrnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env=CORBA::default_environment) " );
-            fprintf( file,
-                     " const throw (CORBA::SystemException);\n" );
-            fprintf( file, "\tvoid %s (Logical x", attrnm );
-            fprintf( file,
-                     ", CORBA::Environment &IT_env=CORBA::default_environment)" );
-            fprintf( file,
-                     " throw (CORBA::SystemException);\n\n" );
-        } else {
-            fprintf( file, "\tconst Logical %s() const;\n", attrnm );
-            fprintf( file, "\tvoid %s (Logical x);\n\n", attrnm );
-        }
-        return;
-    }
-    /*    case TYPE_BOOLEAN:    */
-    if( class == Class_Boolean_Type )  {
-        if( corba_binding ) {
-            fprintf( file, "\tconst Boolean %s(", attrnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env=CORBA::default_environment) " );
-            fprintf( file,
-                     "const throw (CORBA::SystemException);\n" );
-            fprintf( file, "\tvoid %s (Boolean x", attrnm );
-            fprintf( file,
-                     ", CORBA::Environment &IT_env=CORBA::default_environment)" );
-            fprintf( file,
-                     " throw (CORBA::SystemException);\n\n" );
-        } else {
-            fprintf( file, "\tconst Boolean %s() const;\n", attrnm );
-            fprintf( file, "\tvoid %s (Boolean x);\n\n", attrnm );
-        }
-        return;
-    }
-    /*    case TYPE_ENUM:   */
-    if( class == Class_Enumeration_Type )  {
-        fprintf( file, "\tconst %s %s(",
-                 EnumName( TYPEget_name( t ) ), attrnm );
-        if( corba_binding ) {
-            fprintf( file,
-                     "CORBA::Environment &IT_env=CORBA::default_environment) " );
-            fprintf( file,
-                     " const throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, ") const;\n" );
-        }
-        fprintf( file, "\tvoid %s (%s x",
-                 attrnm, EnumName( TYPEget_name( t ) ) );
-        if( corba_binding ) {
-            fprintf( file,
-                     ", CORBA::Environment &IT_env=CORBA::default_environment)" );
-            fprintf( file,
-                     " throw (CORBA::SystemException" );
-        }
-        fprintf( file, ");\n\n" );
-        return;
-    }
-
-    /*  case STRING  */
-    if( class == Class_String_Type ) {
-        if( corba_binding ) {
-            fprintf( file, "\tchar * %s(", attrnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env=CORBA::default_environment) " );
-            fprintf( file,
-                     " const throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, "\tconst %s %s() const;\n", ctype, attrnm );
-        }
-        fprintf( file, "\tvoid %s (const char * x", attrnm );
-        if( corba_binding ) {
-            fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-        }
-        fprintf( file, ");\n\n" );
-
-        return;
-    }
-    /*      case TYPE_BINARY:   */
-    if( class == Class_Binary_Type ) {
-        fprintf( file, "\tconst %s %s(", ctype, attrnm );
-        if( corba_binding ) {
-            fprintf( file,
-                     "CORBA::Environment &IT_env=CORBA::default_environment)" );
-            fprintf( file,
-                     " const throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, ") const;\n" );
-        }
-        /*DASSTR      fprintf (file, "\tconst %s& %s() const;\n", ctype, attrnm); */
-        fprintf( file, "\tvoid %s (const %s& x", attrnm, ctype );
-        if( corba_binding ) {
-            fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-        }
-        fprintf( file, ");\n\n" );
-        return;
-    }
-
-    /*      case TYPE_ENTITY:   */
-    if( class == Class_Entity_Type )  {
-        /*  get method doesn\'t return const  */
-        if( corba_binding ) {
-            fprintf( file, "\t%s_ptr %s(", IdlEntityTypeName( t ), attrnm );
-            fprintf( file, "CORBA::Environment &IT_env=CORBA::default_environment) const throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, "\t%s %s(", ctype, attrnm );
-            fprintf( file, ") const;\n" );
-        }
-        if( corba_binding ) {
-            fprintf( file, "\tvoid %s (%s_ptr x", attrnm, IdlEntityTypeName( t ) );
-            fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-        } else {
-            fprintf( file, "\tvoid %s (%s x", attrnm, ctype );
-        }
-        fprintf( file, ");\n\n" );
-        return;
-    }
-
-    /*      case TYPE_AGGREGATE:    */
-    if( isAggregateType( t ) ) {
-        /*    if (class == Class_Array_Type) */
-        /*  get method doesn\'t return const  */
-        if( corba_binding ) {
-            fprintf( file, "\t%s* %s(", TYPEget_idl_type( t ), attrnm );
-            fprintf( file, "CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, "\tconst %s %s(", ctype, attrnm );
-            fprintf( file, ") const;\n" );
-        }
-        if( corba_binding ) {
-            fprintf( file, "\tvoid %s(const %s& x", attrnm,
-                     TYPEget_idl_type( t ) );
-            fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-        } else {
-            fprintf( file, "\tvoid %s (%s x", attrnm, ctype );
-        }
-        fprintf( file, ");\n\n" );
-        return;
-    }
-
-    if( class == Class_Integer_Type )  {
-        /*  get method doesn\'t return const  */
-        if( corba_binding ) {
-            fprintf( file, "\tconst %s %s(", "CORBA::Long", attrnm );
-            fprintf( file, "CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException);\n" );
-        } else {
-            fprintf( file, "\tconst %s %s(", ctype, attrnm );
-            fprintf( file, ") const;\n" );
-        }
-        if( corba_binding ) {
-            fprintf( file, "\tvoid %s (const %s x", attrnm, "CORBA::Long" );
-            fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-        } else {
-            fprintf( file, "\tvoid %s (%s x", attrnm, ctype );
-        }
-        fprintf( file, ");\n\n" );
-        return;
-    }
-    /*  default:  INTEGER, and NUMBER   */
-    /*    case TYPE_SELECT: */
-    /*    case TYPE_AGGRETATES: */
-    /*      case TYPE_ENTITY:   */
-    /*  is the same type as the data member  */
-    fprintf( file, "\tconst %s %s(", ctype, attrnm );
-    if( corba_binding ) {
-        fprintf( file, "CORBA::Environment &IT_env=CORBA::default_environment) const throw (CORBA::SystemException);\n" );
-    } else {
-        fprintf( file, ") const;\n" );
-    }
-    fprintf( file, "\tvoid %s (%s x", attrnm, ctype );
-    if( corba_binding ) {
-        fprintf( file, ", CORBA::Environment &IT_env=CORBA::default_environment) throw (CORBA::SystemException" );
-    }
-    fprintf( file, ");\n\n" );
-
-#endif
-
 }
 
 /******************************************************************
@@ -892,10 +679,6 @@ ATTRprint_access_methods_get_head( const char * classnm, Variable a,
     char funcnm [BUFSIZ];  /*  name of member function  */
 
     generate_attribute_func_name( a, funcnm );
-    /*
-        generate_attribute_name( a, funcnm  );
-        funcnm[0] = toupper(funcnm[0]);
-    */
 
     /* ///////////////////////////////////////////////// */
 
@@ -919,82 +702,6 @@ ATTRprint_access_methods_get_head( const char * classnm, Variable a,
         fprintf( file, "\nconst %s \n%s::%s() const\n", ctype, classnm, funcnm );
     }
     return;
-    /* ///////////////////////////////////////////////// */
-#if 0
-    /*  case STRING:    */
-    /*      case TYPE_BINARY:   */
-    /*  string can\'t be const because it causes problems with SELECTs  */
-    if( ( class == Class_String_Type ) || ( class == Class_Binary_Type ) ) {
-        if( corba_binding ) {
-            fprintf( file, "\nchar * \n%s::%s(", classnm, funcnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env) const " );
-            fprintf( file,
-                     "throw (CORBA::SystemException)\n" );
-        } else {
-            fprintf( file,
-                     "\nconst %s\n%s::%s() const\n", ctype, classnm, funcnm );
-        }
-        return;
-    }
-    /*  case ENTITY:  */
-    /*  return value isn\'t const  */
-    if( class == Class_Entity_Type ) {
-        if( corba_binding ) {
-            fprintf( file, "\n%s\n%s::%s(", ctype, classnm, funcnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env) /* const */ " );
-            fprintf( file,
-                     "throw (CORBA::SystemException)\n" );
-        } else {
-            fprintf( file, "\n%s\n%s::%s() const \n", ctype, classnm, funcnm );
-        }
-        return;
-    }
-
-    /*    case TYPE_LOGICAL:    */
-    if( class == Class_Logical_Type )  {
-        if( corba_binding ) {
-            fprintf( file, "\nconst Logical\n%s::%s(", classnm, funcnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env) const throw (CORBA::SystemException)\n" );
-        } else
-            fprintf( file,
-                     "\nconst Logical \n%s::%s() const\n", classnm, funcnm );
-        return;
-    }
-
-    /*    case TYPE_BOOLEAN:    */
-    if( class == Class_Boolean_Type )  {
-        if( corba_binding ) {
-            fprintf( file, "\nconst Boolean\n%s::%s(", classnm, funcnm );
-            fprintf( file,
-                     "CORBA::Environment &IT_env) const throw (CORBA::SystemException)\n" );
-        } else
-            fprintf( file,
-                     "\nconst Boolean\n%s::%s() const\n", classnm, funcnm );
-        return;
-    }
-
-    /*    case TYPE_ENUM:   */
-    if( class == Class_Enumeration_Type ) {
-        sprintf( ctype, "%s ", EnumName( TYPEget_name( t ) ) );
-    }
-
-
-    /*  default:  INTEGER and NUMBER    */
-    /*    case TYPE_AGGRETATES: */
-    /*    case TYPE_SELECT: */
-    /*      case TYPE_ENTITY:   */
-    /*  is the same type as the data member  */
-    fprintf( file, "\nconst %s\n%s::%s(", ctype, classnm, funcnm );
-    if( corba_binding )
-        fprintf( file,
-                 "CORBA::Environment &IT_env) const throw (CORBA::SystemException)\n" );
-    else {
-        fprintf( file, ") const\n" );
-    }
-#endif
 }
 
 /******************************************************************
@@ -1022,10 +729,6 @@ ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * file )
     Class_Of_Type class = TYPEget_type( t );
 
     generate_attribute_func_name( a, funcnm );
-    /*
-        generate_attribute_name( a, funcnm  );
-        funcnm[0] = toupper(funcnm[0]);
-    */
 
     /* ///////////////////////////////////////////////// */
 
@@ -1054,48 +757,6 @@ ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * file )
         fprintf( file, "\nvoid \n%s::%s (const %s x)\n\n", entnm, funcnm, ctype );
     }
     return;
-    /* ///////////////////////////////////////////////// */
-#if 0
-
-    /*    case TYPE_LOGICAL:  */
-    if( class == Class_Logical_Type ) {
-        strcpy( ctype, "Logical" );
-    }
-
-    /*    case TYPE_BOOLEAN:  */
-    if( class == Class_Boolean_Type ) {
-        strcpy( ctype, "Boolean" );
-    }
-
-    /*    case TYPE_ENUM:   */
-    if( class == Class_Enumeration_Type ) {
-        strncpy( ctype, EnumName( TYPEget_name( t ) ), BUFSIZ );
-    }
-
-
-    /*  case STRING:*/
-    if( class == Class_String_Type ) {
-        strcpy( ctype, "const char *" );
-    }
-
-    /*        case TYPE_BINARY:   */
-    if( class == Class_Binary_Type ) {
-        sprintf( ctype, "const %s&", AccessType( t ) );
-    }
-
-    /*  default:  INTEGER and NUMBER  */
-    /*    case TYPE_AGGRETATES:   */
-    /*      case TYPE_ENTITY: */
-    /*    case TYPE_SELECT:   */
-    /*  is the same type as the data member  */
-    fprintf( file, "\nvoid \n%s::%s (%s x", entnm, funcnm, ctype );
-    if( corba_binding ) {
-        fprintf( file, ", CORBA::Environment &IT_env) \nthrow (CORBA::SystemException" );
-    }
-    fprintf( file, ")\n" );
-
-#endif
-
 }
 
 void
@@ -1132,7 +793,6 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
         class = TYPEget_type( bt );
 
         if( class == Class_Integer_Type ) {
-            /*    strcpy(aggrnode_name,"IntNode"); */
             fprintf( file, "    while(n)\n" );
             fprintf( file, "    {\n" );
 
@@ -1159,7 +819,6 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
         }
 
         if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) ) {
-            /*    strcpy(aggrnode_name,"RealNode"); */
             fprintf( file, "    while(n)\n" );
             fprintf( file, "    {\n" );
 
@@ -1187,7 +846,6 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
         }
 
         if( class == Class_Entity_Type ) {
-            /*      strcpy(aggrnode_name,"EntityNode");*/
             fprintf( file, "    int file_id = 0;\n" );
             fprintf( file, "    char markerServer[BUFSIZ];\n" );
             fprintf( file, "    while(n)\n" );
@@ -1234,7 +892,6 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
         if( ( class == Class_Enumeration_Type ) ||
                 ( class == Class_Logical_Type ) ||
                 ( class == Class_Boolean_Type ) ) {
-            /*      strcpy(aggrnode_name,"EnumNode"); */
             fprintf( file, "    while(n)\n" );
             fprintf( file, "    {\n" );
 
@@ -1267,8 +924,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             fprintf( file, "}\n" );
         }
 
-        if( class == Class_String_Type ) { /* return("StringAggregate");*/
-            /*      strcpy(aggrnode_name,"StringNode");*/
+        if( class == Class_String_Type ) {
             fprintf( file, "    while(n)\n" );
             fprintf( file, "    {\n" );
 
@@ -1415,10 +1071,6 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
         }
 
         if( class == Class_Entity_Type ) {
-            /*      strcpy(nm, TYPEget_name(bt));
-                    strcpy(nm, TYPEget_name
-                        (TYPEget_nonaggregate_base_type (VARget_type (a))));
-            */
             /* ************************************** */
             if( TYPEget_name( bt ) ) {
                 strcpy( nm, "Sdai" );
@@ -1538,7 +1190,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             strcpy( aggrnode_name, "SelectNode" );
         }
 
-        if( class == Class_String_Type ) { /* return("StringAggregate");*/
+        if( class == Class_String_Type ) {
             /* ************************************** */
             if( TYPEget_name( bt ) ) {
                 strcpy( nm, "Sdai" );
@@ -1628,16 +1280,11 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     }
 
     generate_attribute_func_name( a, funcnm );
-    /*
-        generate_attribute_name( a, funcnm  );
-        funcnm[0] = toupper(funcnm[0]);
-    */
 
     generate_attribute_name( a, attrnm );
     strcpy( membernm, attrnm );
     membernm[0] = toupper( membernm[0] );
     class = TYPEget_type( t );
-    /*    strncpy (ctype, TYPEget_ctype (t), BUFSIZ);*/
     if( corba_binding ) {
         strncpy( ctype, TYPEget_idl_type( t ), BUFSIZ );
     } else {
@@ -1673,14 +1320,12 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "\tlogStream->close();\n" );
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
-            /*      fprintf (file, "    return (%s) _%s;\n}\n", ctype, attrnm); */
         }
         if( corba_binding ) {
             if( TYPEget_name( t ) ) {
                 strncpy( nm, FirstToUpper( TYPEget_name( t ) ), BUFSIZ - 1 );
             }
 
-            /*      fprintf (file, "{\n    if(_%s != 0)\n    {\n", attrnm); */
             fprintf( file, "    if(_%s != 0)\n    {\n", attrnm );
             fprintf( file, "\ttry\n\t{\n" );
             fprintf( file,
@@ -1727,19 +1372,12 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file,
                      "\t    throw;\n\t}\n" );
 
-            /*
-                    fprintf (file, "\t%s_ptr x = new TIE_%s(Sdai%s) ((Sdai%s*)_%s);\n",
-                         nm, nm, nm, nm, attrnm);
-                    fprintf (file, "\t%s::_duplicate(x);\n", nm);
-                    fprintf (file, "\tstd::cout << \"STEPfile id is: \" << _%s->STEPfile_id << std::endl;\n", attrnm);
-            */
             fprintf( file, "    }\n" );
             fprintf( file, "    else\n" );
             fprintf( file, "\tstd::cout << \"nil object ref in attr _%s's put "
                      "funct\" << std::endl;\n", attrnm );
             fprintf( file, "    return %s::_nil();\n}\n", nm );
         } else
-            /*      fprintf (file, "\t{ return (%s) _%s; }\n", ctype, attrnm);*/
         {
             fprintf( file, "    return (%s) _%s; \n}\n", ctype, attrnm );
         }
@@ -1748,7 +1386,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         fprintf( file, "{\n" );
         if( print_logging ) {
             fprintf( file, "\n" );
-            /*      fprintf (file, "{\n"); */
             fprintf( file, "#ifdef SCL_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "\tlogStream->open(SCLLOGFILE,ios::app);\n" );
@@ -1779,7 +1416,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "\tlogStream->close();\n" );
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
-            /*      fprintf (file, "    _%s = x; \n}\n", attrnm  ); */
         }
         if( corba_binding ) {
             fprintf( file, "\n" );
@@ -1793,7 +1429,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         } else {
             fprintf( file, "    _%s = x; \n}\n", attrnm );
         }
-        /*    fprintf (file, "\t{ _%s = x; }\n", attrnm  ); */
 
         return;
     }
@@ -1819,7 +1454,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "\t    logStream->close();\n" );
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
-            /*  fprintf (file, "\t{ return (const PSDAI::LOGICAL&) _%s; }\n", attrnm);*/
         }
         if( corba_binding ) {
             if( class == Class_Boolean_Type ) {
@@ -1843,8 +1477,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
 
-            /*  fprintf (file, "\t{ return (const PSDAI::LOGICAL&) _%s; }\n", attrnm);*/
-            /*      fprintf (file, "    _%s.put (x); \n}\n", attrnm  ); */
         }
         fprintf( file, "    _%s.put (x); \n}\n", attrnm );
         return;
@@ -1867,9 +1499,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file,
                      "\t    *logStream << \"unset\" << std::endl;\n\t}\n    }\n" );
             fprintf( file, "#endif\n" );
-            /*  fprintf (file, "\t{ return (const %s&) _%s; }\n", ctype, attrnm);*/
-            /*      fprintf (file, "    return (%s) _%s; \n}\n",  */
-            /*           EnumName (TYPEget_name (t)), attrnm); */
         }
         fprintf( file, "    return (%s) _%s; \n}\n",
                  EnumName( TYPEget_name( t ) ), attrnm );
@@ -1885,9 +1514,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
                      "\t*logStream << _%s.element_at(x) << std::endl;\n", attrnm );
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
-
-            /*  fprintf (file, "\t{ return (const PSDAI::LOGICAL&) _%s; }\n", attrnm);*/
-            /*      fprintf (file, "    _%s.put (x); \n}\n", attrnm  ); */
         }
         fprintf( file, "    _%s.put (x); \n}\n", attrnm );
         return;
@@ -1899,10 +1525,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         fprintf( file, "\t{ _%s = x; }\n", attrnm );
         return;
     }
-    /*    case TYPE_AGGRETATES: */
-    /* handled in AGGRprint_access_methods(entnm, a, file, t, ctype, attrnm) */
-
-
     /*  case STRING:*/
     /*      case TYPE_BINARY:   */
     if( ( class == Class_String_Type ) || ( class == Class_Binary_Type ) )  {
@@ -1922,9 +1544,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
                      "\t    *logStream << \"unset\" << std::endl;\n\t}\n    }\n" );
             fprintf( file, "#endif\n" );
 
-            /*      fprintf (file, "\t{ return (%s) _%s; }\n", ctype, attrnm);*/
-            /*      fprintf (file, "    return (const %s) _%s; \n}\n", ctype, attrnm); */
-            /*DASSTR    fprintf (file, "\t{ return (const %s&) _%s; }\n", ctype, attrnm);*/
         }
         if( corba_binding ) {
             fprintf( file, "    return CORBA::string_dupl(_%s); \n}\n", attrnm );
@@ -1947,8 +1566,6 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file,
                      "\t    *logStream << \"unset\" << std::endl;\n\t}\n    }\n" );
             fprintf( file, "#endif\n" );
-
-            /*      fprintf (file, "    _%s = x; \n}\n", attrnm  ); */
         }
         fprintf( file, "    _%s = x; \n}\n", attrnm );
         return;
@@ -2072,26 +1689,6 @@ ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
              ATTR_PREFIX, attr_count_tmp++,
              ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
              attrnm );
-
-    /* **** testing the functions **** */
-    /*
-        if( !(VARis_derived(v) &&
-          VARget_initializer(v) &&
-          VARis_type_shifter(v) &&
-          VARis_overrider(entity, v)) )
-          fprintf(file,"// %s Attr is not derived, a type shifter, overrider, no initializer.\n",attrnm);
-
-        if(VARis_derived (v))
-          fprintf(file,"// %s Attr is derived\n",attrnm);
-        if (VARget_initializer (v))
-          fprintf(file,"// %s Attr has an initializer\n",attrnm);
-        if(VARis_type_shifter (v))
-          fprintf(file,"// %s Attr is a type shifter\n",attrnm);
-        if(VARis_overrider (entity, v))
-          fprintf(file,"// %s Attr is an overrider\n",attrnm);
-    */
-    /* ****** */
-
     LISTod
 
     fprintf( file, "\nclass %s  :  ", entnm );
@@ -2113,41 +1710,6 @@ ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
     } else {
         fprintf( file, "  public SCLP23(Application_instance) {\n" );
     }
-
-#if 0
-    /* this code is old non-working multiple inheritance code */
-
-    list = ENTITYget_supertypes( entity );
-    if( ! LISTempty( list ) ) {
-        LISTdo( list, e, Entity )
-        /*  if there\'s no super class yet,
-            or the super class doesn\'t have any attributes
-            */
-        if( ( ! super ) || ( ! ENTITYhas_explicit_attributes( super ) ) ) {
-            super = e;
-            ++ super_cnt;
-        }  else {
-            printf( "WARNING:  multiple inheritance not implemented.\n" );
-            printf( "\tin ENTITY %s\n\tSUPERTYPE %s IGNORED.\n\n",
-                    ENTITYget_name( entity ), ENTITYget_name( e ) );
-        }
-        LISTod;
-        fprintf( file, "  public %s  {\n ", ENTITYget_classname( super ) );
-
-        /*  for multiple inheritance
-            LISTdo (list, e, Entity)
-                sprintf (buf, "  public %s, ", ENTITYget_classname (e));
-                move (buf);
-            LISTod;
-            sprintf (buf - 2, " {\n");
-            move (buf);
-            fprintf(file,buffer);
-        */
-    }  else {   /*  if entity has no supertypes, it's at top of hierarchy  */
-        fprintf( file, "  public SCLP23(Application_instance) {\n" );
-    }
-#endif
-
 }
 
 /******************************************************************
@@ -2252,8 +1814,6 @@ MemberFunctionSign( Entity entity, FILE * file ) {
     fprintf( file, "\tvoid oodb_reInit();\n" );
     fprintf( file, "#endif\n\n" );
 
-    /*    fprintf (file, "  char *Name () { return \"%s\"; }\n", */
-    /*       PrettyTmpName (ENTITYget_name (entity)));*/
     fprintf( file, "	int opcode ()  { return %d ; } \n",
              entcode++ );
 
@@ -2391,11 +1951,6 @@ LIBmemberFunctionPrint( Entity entity, FILE * file ) {
 
     /*  1. put in member functions which belong to all entities */
     /*  the common function are still in the class definition 17-Feb-1992 */
-    /* fprintf (file, " char *Name () { return \"%s\"; }\n",
-         PrettyTmpName (ENTITYget_name (entity)));
-    fprintf (file, "    int opcode () { return %d ; }\n",
-         entcode++);
-    */
 
     /*  2. print access functions for attributes    */
     attr_list = ENTITYget_attributes( entity );
@@ -2557,8 +2112,6 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
 
         fprintf( file, "\n\t(new STEPattribute(*%s%d%s, %s &_%s));\n",
                  ATTR_PREFIX, count,
-                 /*           (VARis_derived (t) ? "D" : (VARis_type_shifter (t) ? "R" : (VARget_inverse (t) ? "I" : ""))),*/
-                 /*           (VARis_derived (t) ? "D" : (VARget_inverse (t) ? "I" : "")),*/
                  attrnm,
                  ( TYPEis_entity( t ) ? "(SCLP23(Application_instance_ptr) *)" : "" ),
                  attrnm );
@@ -2643,8 +2196,6 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     fprintf( file, "%s::%s( ) \n", entnm, entnm );
     fprintf( file, "{\n" );
 
-    /*    super = ENTITYput_superclass (entity); */
-
     /* ////MULTIPLE INHERITANCE//////// */
 
     if( multiple_inheritance ) {
@@ -2693,7 +2244,6 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
                 fprintf( file, "    AppendMultInstance(new %s(this)); \n",
                          ENTITYget_classname( e ) );
-                /*        fprintf (file, "new %s(this);  \n", ENTITYget_classname (e));*/
 
                 if( super_cnt == 2 ) {
                     printf( "\nMULTIPLE INHERITANCE for entity: %s\n",
@@ -2702,8 +2252,6 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                             ENTITYget_name( principalSuper ) );
                 }
                 printf( "\tSUPERTYPE %d: %s\n", super_cnt, ENTITYget_name( e ) );
-                /*      printf("\tin ENTITY %s\n\tadding SUPERTYPE %s. cp\n\n",
-                               ENTITYget_name (entity), ENTITYget_name (e));*/
             }
             LISTod;
 
@@ -2712,17 +2260,6 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         }
     }
     /* ////MULTIPLE INHERITANCE//////// */
-
-    /* Next lines added for independent field - DAR */
-    /*  if ( ENTITYget_supertypes(entity) || ENTITYget_abstract(entity) ) {
-        // If entity has supertypes or is abstract it's not independent.
-        fprintf (file, "\n    _independent = 0;\n");
-        fprintf (file, "    // entity either has supertypes or is abstract\n");
-		// Otherwise, keep the default value of 1.
-        }
-    */
-    /*  attributes  */
-    /*    fprintf (file, "\n\tSTEPattribute * a;\n");*/
 
     /* what if entity comes from other schema? */
     fprintf( file, "\n    eDesc = %s%s%s;\n",
@@ -2738,11 +2275,8 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
         /*  1.  declare the AttrDescriptor  */
         /*  this is now in the header  */
-        /*      fprintf(file,"extern AttrDescriptor *%s%d%s;\n",*/
-        /*          ATTR_PREFIX,count,VARget_name(a));*/
 
         /*  if the attribute is Explicit, make a STEPattribute  */
-        /*      if (VARis_simple_explicit (a))  {*/
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             /*  1. create a new STEPattribute */
 
@@ -2886,7 +2420,6 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         fprintf( file, "{\n" );
 
         /* ////MULTIPLE INHERITANCE//////// */
-        /*    super = ENTITYput_superclass (entity); */
 
         fprintf( file, "\t/* Set this to point to the head entity. */\n" );
         fprintf( file, "    HeadEntity(se); \n" );
@@ -2933,8 +2466,6 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                 fprintf( file, "#endif \n" );
                 fprintf( file, "    se->AppendMultInstance(new %s(se, 0)); \n",
                          ENTITYget_classname( e ) );
-                /*      printf("\tin ENTITY %s\n\thandling SUPERTYPE %s cp wArgs\n\n",
-                            ENTITYget_name (entity), ENTITYget_name (e));*/
             }
             LISTod;
 
@@ -2943,9 +2474,6 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         }
 
         /* ////MULTIPLE INHERITANCE//////// */
-
-        /*  attributes  */
-        /*    fprintf (file, "\n    STEPattribute * a;\n");*/
 
         /* what if entity comes from other schema? */
         fprintf( file, "\n    eDesc = %s%s%s;\n",
@@ -2961,11 +2489,8 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
             /*  1.  declare the AttrDescriptor  */
             /*  this is now in the header  */
-            /*      fprintf(file,"extern AttrDescriptor *%s%d%s;\n",*/
-            /*          ATTR_PREFIX,count,VARget_name(a));*/
 
             /*  if the attribute is Explicit, make a STEPattribute  */
-            /*      if (VARis_simple_explicit (a))  {*/
             if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
                 /*  1. create a new STEPattribute */
 
@@ -3017,7 +2542,6 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         attr_list = ENTITYget_all_attributes( entity );
 
         LISTdo( attr_list, a, Variable )
-        /*      if (VARis_overrider (entity, a)) { */
         if( VARis_derived( a ) ) {
             fprintf( file, "    MakeDerived (\"%s\");\n",
                      VARget_simple_name( a ) );
@@ -3169,44 +2693,6 @@ print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
         fprintf( f, "\t%s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
     }
     sprintf( buf, "%s%d", TD_PREFIX, count );
-
-#if 0
-    /* the old way */
-    if( TYPEget_body( t ) ) {
-        base = TYPEget_body( t )->base;
-    }
-    if( TYPEget_head( t ) ) {
-        fprintf( f, "\t%s%d->ReferentType(%s%s%s);\n",
-                 TD_PREFIX, count,
-                 SCHEMAget_name( TYPEget_head( t )->superscope ),
-                 schema ) ),
-        TYPEprefix( t ), TYPEget_name( TYPEget_head( t ) ) );
-
-    } else if( TYPEis_builtin( base ) ) { /* dunno if correct*/
-        fprintf( f, "\t%s%d->ReferentType(%s%s);\n",
-                 TD_PREFIX, count,
-                 TD_PREFIX, FundamentalType( base, 0 ) );
-
-    } else if( TYPEget_body( base )->type == entity_ ) {
-        fprintf( f, "\t%s%d->ReferentType(%s%s%s);\n",
-                 TYPEprefix( t ) , count,
-                 /* following assumes we are not in a nested entity */
-                 /* otherwise we should search upward for schema */
-                 TYPEget_name( TYPEget_body( base )->entity->superscope ),
-                 ENT_PREFIX, TYPEget_name( base ) );
-    } else if( TYPEget_name( base ) ) { /* aggr elements that are enums go here */
-        /* type ref with name */
-        fprintf( f, "\t%s%d->ReferentType(%s%s%s);\n", TD_PREFIX, count,
-                 SCHEMAget_name( base->superscope ), TD_PREFIX,
-                 TYPEget_name( base ) );
-    } else {
-        /* no name, recurse */
-        char callee_buffer[MAX_LEN];
-        print_typechain( f, base, callee_buffer, schema );
-        fprintf( f, "\t%s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
-    }
-    sprintf( buf, "%s%d", TD_PREFIX, count );
-#endif
 }
 
 /******************************************************************
@@ -3261,23 +2747,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
             free( tmp2 );
         }
     }
-    /*
-        if (entity->u.entity->subtype_expression) {
-            tmp = SUBTYPEto_string(entity->u.entity->subtype_expression);
-            tmp2 = (char*)malloc( sizeof(char) * (strlen(tmp)+BUFSIZ) );
-            fprintf(file,"\t%s%s%s->AddSupertype_Stmt(\"(%s)\");\n",
-                schema_name,ENT_PREFIX,entity_name,format_for_stringout(tmp,tmp2));
-            free(tmp);
-            free(tmp2);
-        }
-    */
-    /*
-        LISTdo(ENTITYget_subtypes(entity),sub,Entity)
-            fprintf(file,"  %s%s%s->AddSubtype(%s%s%s);\n",
-                schema_name,ENT_PREFIX,entity_name,
-                schema_name,ENT_PREFIX,ENTITYget_name(sub));
-        LISTod
-    */
     LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
     /*  set the owning schema of the supertype  */
     super_schema = SCHEMAget_name( ENTITYget_schema( sup ) );
@@ -3302,7 +2771,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            /*          fprintf(file, "\t%s%d%s%s = new %sAttrDescriptor(\"%s\",%s%s%s,%s,%s,%s,*%s%s%s);\n", */
             fprintf( file, "\t%s%d%s%s =\n\t  new %s"
                      "(\"%s\",%s%s%s,\n\t  %s,%s%s,\n\t  *%s%s%s);\n",
                      ATTR_PREFIX, attr_count,
@@ -3336,8 +2804,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                      schema_name, ENT_PREFIX, TYPEget_name( entity )
                    );
         } else {
-            /* type reference */
-            /*          fprintf(file,"  %s%d%s%s = new %sAttrDescriptor(\"%s\",%s%s%s,%s,%s,%s,*%s%s%s);\n",*/
             fprintf( file, "  %s%d%s%s =\n\t  new %s"
                      "(\"%s\",%s%s%s,\n\t  %s,%s%s,\n\t  *%s%s%s);\n",
                      ATTR_PREFIX, attr_count,
@@ -3368,7 +2834,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     } else if( TYPEis_builtin( v->type ) ) {
         /*  the type wasn\'t named -- it must be built in or aggregate  */
 
-        /*          fprintf(file,"  %s%d%s%s = new %sAttrDescriptor(\"%s\",%s%s,%s,%s,%s,*%s%s%s);\n",*/
         fprintf( file, "  %s%d%s%s =\n\t  new %s"
                  "(\"%s\",%s%s,\n\t  %s,%s%s,\n\t  *%s%s%s);\n",
                  ATTR_PREFIX, attr_count,
@@ -3395,7 +2860,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
         /* manufacture new one(s) on the spot */
         char typename_buf[MAX_LEN];
         print_typechain( file, v->type, typename_buf, schema );
-        /*          fprintf(file,"  %s%d%s%s = new %sAttrDescriptor(\"%s\",%s,%s,%s,%s,*%s%s%s);\n",*/
         fprintf( file, "  %s%d%s%s =\n\t  new %s"
                  "(\"%s\",%s,%s,%s%s,\n\t  *%s%s%s);\n",
                  ATTR_PREFIX, attr_count,
@@ -3458,7 +2922,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                      v->type->symbol.name );
             fprintf( file, "// inverse entity 1 %s\n", v->type->symbol.name );
         } else {
-            /*          fprintf(file,"// inverse entity %s",TYPE_body_out(v->type));*/
             switch( TYPEget_body( v->type )->type ) {
                 case entity_:
                     fprintf( file,
@@ -3490,36 +2953,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
             }
         }
     }
-#if 0
-}
-else   if( VARget_inverse( v ) ) {
-    /*  do INVERSE attributes too  */
-    /*
-    TODO   -- write algorithm for determining descriptor of this attribute\'s inverse
-    */
-    /*      if ((!TYPEget_head(v->type)) && (TYPEget_body(v->type)->type == entity_)) {  */
-    /* this should always be true for INVERSE attributes  */
-    fprintf( file, "\t%s%dI%s =\n\t  new Inverse_attribute"
-             "(\"%s\",%s%s%s,\n\t  %s,%s,\n\t  *%s%s%s);\n",
-             ATTR_PREFIX, attr_count, attrnm, /*  descriptor name */
-             /*            ATTR_PREFIX,attr_count,TYPEget_name(v->name), */
-             StrToLower( attrnm ), /*  attribute name  */
-             /*            StrToLower (TYPEget_name(v->name)), */
-             /* following assumes we are not in a nested entity */
-             /* otherwise we should search upward for schema */
-             /* attribute's type  */
-             TYPEget_name( TYPEget_body( v->type )->entity->superscope ), ENT_PREFIX, attrnm,
-             /*TYPEget_name(v->type), */
-             ( VARget_optional( v ) ? "LTrue" : "LFalse" ),
-             ( VARget_unique( v ) ? "LTrue" : "LFalse" ),
-             schema_name, ENT_PREFIX, TYPEget_name( entity ) );
-
-    fprintf( file, "\t%s%s%s->AddInverseAttr (%s%dI%s);\n",
-             schema_name, ENT_PREFIX, TYPEget_name( entity ),
-             ATTR_PREFIX, attr_count, TYPEget_name( v->name ) );
-    /*      }*/
-}
-#endif
 attr_count++;
 
 LISTod
@@ -3529,22 +2962,6 @@ fprintf( file, "\treg.AddEntity (*%s%s%s);\n",
 
 #undef schema_name
 }
-
-#if 0
-void
-/* create calls to connect sub/supertype relationships */
-ENTITYstype_connect( Entity entity, FILE * file, Schema schema ) {
-    LISTdo( ENTITYget_subtypes( entity ), sub, Entity )
-    fprintf( file, "	%s->Subtypes().AddNode(%s);\n",
-             ENTITYget_name( sub ) );
-    LISTod
-
-    LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
-    fprintf( file, "	%s->Supertypes().AddNode(%s);\n",
-             ENTITYget_name( sup ) );
-    LISTod
-}
-#endif
 
 /******************************************************************
  ** Procedure:  ENTITYPrint
@@ -3593,24 +3010,6 @@ MODELPrintConstructorBody( Entity entity, FILES * files, Schema schema
     fprintf( files->lib, "    eep->definition_(%s%s%s);\n",
              SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
     fprintf( files->lib, "    _folders.Append(eep);\n\n" );
-
-    /*
-      fprintf (files->lib, "    %s__set_var SdaiModel_contents_%s::%s_get_extents()\n",
-           n, SCHEMAget_name(schema), n);
-
-           fprintf(files->create,"  %s%s%s = new EntityDescriptor(\"%s\",%s%s,%s, (Creator) create_%s);\n",
-
-            PrettyTmpName (ENTITYget_name(entity)),
-            SCHEMA_PREFIX,SCHEMAget_name(schema),
-            (ENTITYget_abstract(entity)?"LTrue":"LFalse"),
-            ENTITYget_classname (entity)
-            );
-
-
-      fprintf (files->lib,
-           "{\n    return (%s__set_var)((_folders.retrieve(%d))->instances_());\n}\n",
-           n, index);
-    */
 }
 
 void
@@ -3625,35 +3024,8 @@ MODELPrint( Entity entity, FILES * files, Schema schema, int index ) {
     fprintf( files->lib,
              "{\n    return (%s__set_var)((_folders.retrieve(%d))->instances_());\n}\n",
              n, index );
-    /*
-      fprintf (files->lib,
-           "{\n    return (%s__set_var)((_folders[%d])->instances_());\n}\n",
-           n, index);
-    */
-
-    /* //////////////// */
-    /*
-      fprintf (files->inc, "\n/////////\t ENTITY %s\n\n", n);
-      ENTITYinc_print (entity, files -> inc,schema);
-      fprintf (files->inc, "\n/////////\t END_ENTITY %s\n\n", n);
-
-      fprintf (files->lib, "\n/////////\t ENTITY %s\n\n", n);
-      ENTITYlib_print (entity, files -> lib,schema);
-      fprintf (files->lib, "\n/////////\t END_ENTITY %s\n\n", n);
-
-      fprintf (files->init, "\n/////////\t ENTITY %s\n\n", n);
-      ENTITYincode_print (entity, files -> init, schema);
-      fprintf (files->init, "/////////\t END_ENTITY %s\n", n);
-    */
     DEBUG( "DONE MODELPrint\n" )    ;
 }
-
-/*
-getEntityDescVarName(Entity entity)
-{
-    SCHEMAget_name(schema),ENT_PREFIX,ENTITYget_name(entity),
-}
-*/
 
 /* print in include file: class forward prototype, class typedefs, and
    extern EntityDescriptor.  `externMap' = 1 if entity must be instantiated
@@ -3662,7 +3034,6 @@ void
 ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
     const char * n;
     Linked_List wheres;
-    /*  char buf[BUFSIZ],buf2[BUFSIZ]; */
     char * whereRule, *whereRule_formatted = "";
     int whereRule_formatted_size = 0;
     char * ptr, *ptr2;
@@ -3705,10 +3076,6 @@ ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
             whereRule_formatted = ( char * )malloc( sizeof( char ) * whereRule_formatted_size );
         }
         whereRule_formatted[0] = '\0';
-        /*
-                printf("whereRule length: %d\n",strlen(whereRule));
-                printf("whereRule_formatted size: %d\n",whereRule_formatted_size);
-        */
         if( w->label ) {
             strcpy( whereRule_formatted, w->label->name );
             strcat( whereRule_formatted, ": (" );
@@ -3801,7 +3168,7 @@ ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
 
         /*******/
         /*
-        DASBUG
+        FIXME DASBUG
          * take care of qualified attribute names like SELF\entity.attrname
          * add parent entity to the uniqueness rule
          * change EntityDescriptor::generate_express() to generate the UNIQUE clause
@@ -3859,20 +3226,6 @@ MODELprint_new( Entity entity, FILES * files, Schema schema ) {
 
     n = ENTITYget_classname( entity );
     fprintf( files->inc, "\n    %s__set_var %s_get_extents();\n", n, n );
-    /*
-        fprintf(files->create," %s%s%s = new EntityDescriptor(\"%s\",%s%s,%s, (Creator) create_%s);\n",
-            SCHEMAget_name(schema),ENT_PREFIX,ENTITYget_name(entity),
-            PrettyTmpName (ENTITYget_name(entity)),
-            SCHEMA_PREFIX,SCHEMAget_name(schema),
-            (ENTITYget_abstract(entity)?"LTrue":"LFalse"),
-            ENTITYget_classname (entity)
-            );
-    */
-    /*
-        fprintf(files ->inc,"extern EntityDescriptor \t*%s%s%s;\n",
-            SCHEMAget_name(schema),ENT_PREFIX,ENTITYget_name(entity));
-    */
-
 }
 
 /******************************************************************
@@ -3973,7 +3326,6 @@ TYPEenum_inc_print( const Type type, FILE * inc ) {
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     fprintf( inc, "  public:\n\t%s (const char * n =0, Enum"
              "TypeDescriptor *et =%s);\n", n, tdnm );
-    /*  fprintf (inc, "\t%s (%s e) { Init ();  set_value (e);  }\n", */
     fprintf( inc, "\t%s (%s e, EnumTypeDescriptor *et =%s)\n"
              "\t\t: type(et) {  set_value (e);  }\n",
              n, EnumName( TYPEget_name( type ) ), tdnm );
@@ -3984,7 +3336,6 @@ TYPEenum_inc_print( const Type type, FILE * inc ) {
     /*      operator =      */
     fprintf( inc, "\t%s& operator= (const %s& e)\n",
              n, TYPEget_ctype( type ) );
-    /*  fprintf (inc, "\t%s& operator= (const %s& e)\n", n, n);*/
     fprintf( inc, "\t\t{  set_value (e);  return *this;  }\n" );
 
     /*      operator to cast to an enumerated type  */
@@ -3996,14 +3347,12 @@ TYPEenum_inc_print( const Type type, FILE * inc ) {
     fprintf( inc, "\t\t{  return type->Name();  }\n" );
     fprintf( inc, "\tinline virtual int no_elements () const"
              "  {  return %d;  }\n", cnt );
-    /*  fprintf (inc, "  private:\n\tvoid Init ();\n");*/
     fprintf( inc, "\tvirtual const char * element_at (int n) const;\n" );
 
     /*  end class definition  */
     fprintf( inc, "};\n" );
 
     fprintf( inc, "\ntypedef %s * %s_ptr;\n", n, n );
-    /*  fprintf (inc, "typedef %s_ptr %s_var;\n", n, n);*/
 
 
     /*  Print ObjectStore Access Hook function  */
@@ -4016,7 +3365,6 @@ TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     fprintf( inc, "\nclass %ss  :  public EnumAggregate  {\n", n );
 
-    /*      fprintf (inc, "  public:\n\tvirtual EnumNode * NewNode ()  {\n");*/
     fprintf( inc, "  protected:\n    EnumTypeDescriptor *enum_type;\n\n" );
     fprintf( inc, "  public:\n" );
     fprintf( inc, "    %ss( EnumTypeDescriptor * =%s);\n", n, tdnm );
@@ -4028,10 +3376,6 @@ TYPEenum_inc_print( const Type type, FILE * inc ) {
     fprintf( inc, "};\n" );
 
     fprintf( inc, "\ntypedef %ss * %ss_ptr;\n", n, n );
-    /*
-        fprintf (inc, "typedef %ss_ptr %ss_var;\n", n, n);
-        fprintf (inc, "typedef %ss * %ssH;\n", n, n);
-    */
 
     /* DAS brandnew below */
 
@@ -4077,7 +3421,6 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     fprintf( f, "\n%s::operator %s () const {\n", n,
              EnumName( TYPEget_name( type ) ) );
     fprintf( f, "  switch (v) {\n" );
-    //buf [0] = '\0';
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
@@ -4282,7 +3625,6 @@ Type_Description( const Type t, char * buf ) {
     if( TYPEget_name( t ) ) {
         strcat( buf, " " );
         strcat( buf, TYPEget_name( t ) );
-        /* strcat(buf,PrettyTmpName (TYPEget_name(t)));*/
     } else {
         TypeBody_Description( TYPEget_body( t ), buf );
     }
@@ -4482,7 +3824,6 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
                 return 0;
         }
     }
-    /*  return 0; // this stmt will never be reached */
 }
 
 
@@ -4558,12 +3899,6 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
                 break;
 
             case select_:
-                /*  the select definitions are done seperately, since they depend
-                    on the others  */
-                /*******
-                  TYPEselect_inc_print (type, files -> inc);
-                  TYPEselect_lib_print (type, files -> lib);
-                  *******/
                 break;
             default:
                 break;
@@ -4641,13 +3976,9 @@ TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
             if( TYPEget_body( type )->flags.unique ) {
                 fprintf( ifile, "\t%s->UniqueElements(\"LTrue\");\n", tdnm );
             }
-            /*    fprintf(ifile, "\t%s->UniqueElements(%d);\n", tdnm,
-                      TYPEget_body(type)->flags.unique); */
             if( TYPEget_body( type )->flags.optional ) {
                 fprintf( ifile, "\t%s->OptionalElements(\"LTrue\");\n", tdnm );
             }
-            /*    fprintf(ifile, "\t%s->OptionalElements(%d);\n", tdnm,
-                      TYPEget_body(type)->flags.optional);*/
         }
     }
 
@@ -4709,40 +4040,6 @@ TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endChars 
              TypeDescription( type ), endChars );
 }
 
-#if 0
-if( TYPEget_head( type ) ) {
-    if( !streq( "", TYPEget_name( type ) ) ) {
-        /* type ref with name */
-        fprintf( files->init,
-                 "\t%s->ReferentType (%s%s%s);\n",
-                 tdnm,
-                 SCHEMAget_name( TYPEget_head( type )->superscope ),
-                 TYPEprefix( type ),
-                 TYPEget_name( TYPEget_head( type ) ) );
-        switch( TYPEget_body( type )->type ) {
-            case aggregate_: /* aggregate_ should not happen? DAS */
-            case array_:
-            case bag_:
-            case set_:
-            case list_:
-                fprintf( files->inc, "STEPaggregate * create_%s ();\n\n",
-                         ClassName( TYPEget_name( type ) ) );
-                fprintf( files->lib,
-                         "STEPaggregate *\ncreate_%s () {  return create_%s();  }\n",
-                         ClassName( TYPEget_name( type ) ),
-                         TYPEget_ctype( TYPEget_head( type ) ) );
-                break;
-        }
-    } else if( streq( "", TYPEget_name( type ) ) ) {
-        /* no name, recurse */
-        char callee_buffer[MAX_LEN];
-        print_typechain( files -> init, TYPEget_head( type ),
-                         callee_buffer, schema );
-        fprintf( files->init, "	%s->ReferentType(%s);\n",
-                 tdnm, callee_buffer );
-    }
-}
-#endif
 /* new space for a variable of type TypeDescriptor (or subtype).  This
    function is called for Types that have an Express name. */
 
@@ -4763,8 +4060,6 @@ TYPEprint_new( const Type type, FILE * create, Schema schema ) {
         fprintf( create,
                  "\t%s = new SelectTypeDescriptor (\n\t\t  ~%s,\t//unique elements,\n",
                  TYPEtd_name( type ),
-                 /*      ! any_duplicates_in_select (SEL_TYPEget_items(type)) );*/
-                 /*      unique_types (SEL_TYPEget_items (type) ) );*/
                  non_unique_types_string( type ) );
         /* DAS ORIG SCHEMA FIX */
         TYPEprint_nm_ft_desc( schema, type, create, "," );
@@ -4773,18 +4068,10 @@ TYPEprint_new( const Type type, FILE * create, Schema schema ) {
                  "\t\t  (SelectCreator) create_%s);\t// Creator function\n",
                  SelectName( TYPEget_name( type ) ) );
     } else
-        /*DASSSS    if (TYPEget_name(t)) {
-                strcat(buf," ");
-                strcat(buf,PrettyTmpName (TYPEget_name(t)));
-        */
         switch( TYPEget_body( type )->type ) {
-
-
             case boolean_:
-
                 fprintf( create, "\t%s = new EnumTypeDescriptor (\n",
                          TYPEtd_name( type ) );
-
                 /* fill in it's values  */
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
                 fprintf( create,
@@ -4809,11 +4096,6 @@ TYPEprint_new( const Type type, FILE * create, Schema schema ) {
 
                 /* fill in it's values  */
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-                /*
-                        fprintf(create,
-                            "\t\t  (EnumCreator) create_%s);\t// Creator function\n",
-                            TYPEget_ctype(type) );
-                   */
                 /* DASCUR */
 
                 /* get the type name of the underlying type - it is the type that
@@ -4901,10 +4183,6 @@ TYPEprint_new( const Type type, FILE * create, Schema schema ) {
                     ptr++;
 
                 } else if( *ptr2 == '(' ) {
-                    /*  *ptr = '\\'; ptr++;
-                      *ptr = 'n';  ptr++;
-                      *ptr = '\\'; ptr++;
-                      *ptr = 't';  ptr++; */
                     *ptr = *ptr2;
                     ptr++;
                 } else {
@@ -4931,10 +4209,6 @@ TYPEprint_new( const Type type, FILE * create, Schema schema ) {
                     ptr++;
 
                 } else if( *ptr2 == '(' ) {
-                    /*  *ptr = '\\'; ptr++;
-                      *ptr = 'n';  ptr++;
-                      *ptr = '\\'; ptr++;
-                      *ptr = 't';  ptr++; */
                     *ptr = *ptr2;
                     ptr++;
                 } else {

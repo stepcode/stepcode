@@ -79,11 +79,6 @@ SEL_ITEMget_enumtype( Type t ) {
 
 const char *
 TYPEget_utype( Type t )  {
-    /*
-      static char b [BUFSIZ];
-      strncpy (b, TYPEget_ctype (t), BUFSIZ-2);
-      if (TYPEis_select (t)) strcat (b, "H");
-      */
     return ( TYPEis_entity( t ) ?  "SCLP23(Application_instance_ptr)" : TYPEget_ctype( t ) );
 }
 
