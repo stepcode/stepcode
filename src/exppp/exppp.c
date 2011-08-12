@@ -57,7 +57,7 @@ int exppp_nesting_indent = 2;       /* default nesting indent */
 int exppp_continuation_indent = 4;  /* default nesting indent for */
 /* continuation lines */
 int exppp_linelength = 75;      /* leave some slop for closing
-                    /* parens.  \n is not included in */
+                     parens.  \n is not included in */
 /* this count either */
 
 int indent2;        /* where continuation lines start */

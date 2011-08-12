@@ -1691,26 +1691,7 @@ SCHEMAresolve_pass2( Schema * schema ) {
         }
     }
 
-    static Type
-    TAGget_type( struct tag * tags, char * name ) {
-        while( 1 ) {
-            if( streq( tags->name, name ) ) {
-                return( tags->type );
-            }
-        }
-    }
 
-    /* should only be called on types known to be tagged! */
-    static char *
-    TYPEget_tagname( Type type ) {
-        for( ; type; type = type->u.type->body->base ) {
-            if( type->u.type->body->tag ) {
-                return type->u.type->body->tag->symbol.name;
-            }
-        }
-        /* can't happen */
-        return 0;
-    }
 
     struct tag *
     TAGcreate_tags() {
