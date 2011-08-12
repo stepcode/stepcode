@@ -1334,7 +1334,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             fprintf( file, "\t    n = _%s.NewNode();\n", attrnm );
             fprintf( file, "\t    _%s.AppendNode( (IntNode*)n );\n", attrnm );
             fprintf( file, "\t}\n" );
-            fprintf( file, "\t((IntNode*)n)->value = x[i];\n", nm );
+            fprintf( file, "\t((IntNode*)n)->value = x[i];\n");
             fprintf( file, "\tstd::cout << \"Assigning aggr int element: \" << ((IntNode*)n)->value;\n" );
             /* /////////////////////////////////////////// */
             if( print_logging ) {
@@ -1387,7 +1387,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             fprintf( file, "\t    n = _%s.NewNode();\n", attrnm );
             fprintf( file, "\t    _%s.AppendNode( (RealNode*)n );\n", attrnm );
             fprintf( file, "\t}\n" );
-            fprintf( file, "\t((RealNode*)n)->value = x[i];\n", nm );
+            fprintf( file, "\t((RealNode*)n)->value = x[i];\n");
             fprintf( file, "\tstd::cout << \"Assigning aggr real element: \" << ((RealNode*)n)->value;\n" );
             /* /////////////////////////////////////////// */
             if( print_logging ) {
@@ -1507,7 +1507,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             fprintf( file, "\t    n = _%s.NewNode();\n", attrnm );
             fprintf( file, "\t    _%s.AppendNode( (EnumNode*)n );\n", attrnm );
             fprintf( file, "\t}\n" );
-            fprintf( file, "\t((EnumNode*)n)->node->put( (int)x[i] );\n", nm );
+            fprintf( file, "\t((EnumNode*)n)->node->put( (int)x[i] );\n");
             fprintf( file, "\tstd::cout << \"Assigning aggr enum element: \" << ((EnumNode*)n)->node->element_at( ((EnumNode*)n)->node->asInt() );\n" );
             /* /////////////////////////////////////////// */
             if( print_logging ) {
@@ -1563,7 +1563,7 @@ AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
             fprintf( file, "\t    n = _%s.NewNode();\n", attrnm );
             fprintf( file, "\t    _%s.AppendNode( (StringNode*)n );\n", attrnm );
             fprintf( file, "\t}\n" );
-            fprintf( file, "\t((StringNode*)n)->value = x[i];\n", nm );
+            fprintf( file, "\t((StringNode*)n)->value = x[i];\n");
             fprintf( file, "\tstd::cout << \"Assigning aggr string element: \" << ((StringNode*)n)->value.c_str();\n" );
             /* /////////////////////////////////////////// */
             if( print_logging ) {
