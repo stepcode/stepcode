@@ -1,20 +1,7 @@
-set(FEDEX_COMMON_SRCS
-    classes_misc.c
-    ${SCL_SOURCE_DIR}/src/express/fedex.c
-)
-
-set(fedex_os_SOURCES
-    ${FEDEX_COMMON_SRCS}
-    fedex_os.c
-)
-
-set(fedex_idl_SOURCES
-    ${FEDEX_COMMON_SRCS}
-    fedex_idl.c
-)
 
 set(fedex_plus_SOURCES
-    ${FEDEX_COMMON_SRCS} 
+    classes_misc.c
+    ${SCL_SOURCE_DIR}/src/express/fedex.c
     fedex_main.c 
     classes_wrapper.cc 
     classes.c 
@@ -45,10 +32,6 @@ add_definitions( -DHAVE_CONFIG_H )
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging )
 ENDIF()
-
-SCL_ADDEXEC(fedex_os "${fedex_os_SOURCES}" "libexppp express")
-
-SCL_ADDEXEC(fedex_idl "${fedex_idl_SOURCES}" "libexppp express")
 
 SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES}" "libexppp express")
 
