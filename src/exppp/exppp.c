@@ -574,7 +574,7 @@ SCOPEalgs_out( Scope s, int level ) {
     SCOPEprocs_out( s, level );
 }
 
-static
+static int
 min( int a, int b, int c ) {
     if( a < b ) {
         return ( ( a < c ) ? a : c );
@@ -849,7 +849,7 @@ SCOPElocals_out( Scope s, int level ) {
     raw( "%*sEND_LOCAL;\n", level, "" );
 }
 
-void LOOPout( struct Loop_ *loop, int level ) {
+LOOPout( struct Loop_ *loop, int level ) {
     Variable v;
 
     raw( "%*sREPEAT", level, "" );
