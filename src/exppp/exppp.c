@@ -583,7 +583,7 @@ min( int a, int b, int c ) {
     }
 }
 
-static
+static void
 copy_file_chunk( char * filename, int start, int end, int level ) {
     FILE * infile;
     char buff[256];
@@ -849,7 +849,7 @@ SCOPElocals_out( Scope s, int level ) {
     raw( "%*sEND_LOCAL;\n", level, "" );
 }
 
-LOOPout( struct Loop_ *loop, int level ) {
+void LOOPout( struct Loop_ *loop, int level ) {
     Variable v;
 
     raw( "%*sREPEAT", level, "" );
@@ -1384,7 +1384,7 @@ TYPE_head_out( Type t, int level ) {
     }
 }
 
-TYPEunique_or_optional_out( TypeBody tb ) {
+void TYPEunique_or_optional_out( TypeBody tb ) {
     if( tb->flags.unique ) {
         wrap( " UNIQUE" );
     }
