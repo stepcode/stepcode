@@ -117,7 +117,7 @@ SCLundefined::asStr( std::string & s ) const {
 
 const char *
 SCLundefined::STEPwrite( std::string & s ) {
-    if( val.c_str() != "" ) {
+    if (strcmp(val.c_str(),"")) {
         s = val.c_str();
     } else {
         s = "$";
@@ -127,7 +127,7 @@ SCLundefined::STEPwrite( std::string & s ) {
 
 void
 SCLundefined::  STEPwrite( ostream & out ) {
-    if( val.c_str() != "" ) {
+    if( strcmp(val.c_str(),"") ) {
         out << val.c_str();
     } else {
         out << "$";
