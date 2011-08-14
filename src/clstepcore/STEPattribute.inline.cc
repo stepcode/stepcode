@@ -20,29 +20,29 @@
 //  references to inline functions
 
 STEPattribute::STEPattribute( const STEPattribute & a )
-    : aDesc( a.aDesc ), _derive( 0 ), _redefAttr( 0 ) {}
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( a.aDesc ) {}
 
 //  INTEGER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Integer ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )  {
     ptr.i = p;
 }
 
 //  BINARY
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Binary ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.b = p;
 }
 
 //  STRING
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( String ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.S = p;
 }
 
 //  REAL & NUMBER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Real ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.r = p;
 }
 
@@ -54,32 +54,32 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Real ) *p 
 //  ENTITY
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               SCLP23( Application_instance )* *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.c = p;
 }
 
 //  AGGREGATE
 STEPattribute::STEPattribute( const class AttrDescriptor & d, STEPaggregate * p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.a =  p;
 }
 
 //  ENUMERATION  and Logical
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Enum ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.e = p;
 }
 
 //  SELECT
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               class SCLP23( Select ) *p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d )  {
     ptr.sh = p;
 }
 
 //  UNDEFINED
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p )
-    : aDesc( &d ), _derive( 0 ), _redefAttr( 0 ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )   {
     ptr.u = p;
 }
 
