@@ -44,7 +44,6 @@ set(EXPRESS_SOURCES
     memory.c 
     object.c 
     inithook.c 
-    yyvars.c 
     express.c
 )
 
