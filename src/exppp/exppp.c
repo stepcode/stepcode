@@ -849,6 +849,7 @@ SCOPElocals_out( Scope s, int level ) {
     raw( "%*sEND_LOCAL;\n", level, "" );
 }
 
+void
 LOOPout( struct Loop_ *loop, int level ) {
     Variable v;
 
@@ -1020,6 +1021,7 @@ STMT_out( Statement s, int level ) {
     }
 }
 
+void
 STMTlist_out( Linked_List stmts, int level ) {
     LISTdo( stmts, stmt, Statement )
     STMT_out( stmt, level );
