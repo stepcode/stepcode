@@ -4162,6 +4162,7 @@ strcat_bounds( TypeBody b, char * buf ) {
     strcat( buf, "]" );
 }
 
+void
 TypeBody_Description( TypeBody body, char * buf ) {
     char * s;
 
