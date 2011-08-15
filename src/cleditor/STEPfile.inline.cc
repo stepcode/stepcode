@@ -41,13 +41,12 @@ STEPfile::STEPfile( Registry & r, InstMgr & i, const char * filename )
     : _reg( &r ), _instances( &i ),
 #else
     :
-    _reg( r ), _instances( i ),
+    _instances( i ), _reg( r ),
 #endif
-      _headerId( 0 ), _maxErrorCount( 5000 ),
+      _fileIdIncr( 0 ), _headerId( 0 ),
       _fileName( 0 ), _entsNotCreated( 0 ), _entsInvalid( 0 ),
       _entsIncomplete( 0 ), _entsWarning( 0 ),
-      _errorCount( 0 ), _warningCount( 0 ),
-      _fileIdIncr( 0 )
+      _errorCount( 0 ), _warningCount( 0 ), _maxErrorCount( 5000 )
 
 {
     SetFileType( VERSION_CURRENT );

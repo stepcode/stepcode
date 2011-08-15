@@ -44,6 +44,7 @@ Now you can say things like:
 #define ALLOC
 #endif /*ALLOC*/
 
+void
 print_freelist( flh )
 struct freelist_head * flh;
 {
@@ -51,7 +52,7 @@ struct freelist_head * flh;
 
     current = flh->freelist;
     while( current ) {
-        printf( "-> %x", current );
+        printf( "-> %x", current->memory );
         current = current->next;
     }
     putchar( '\n' );

@@ -574,7 +574,7 @@ SCOPEalgs_out( Scope s, int level ) {
     SCOPEprocs_out( s, level );
 }
 
-static
+static int
 min( int a, int b, int c ) {
     if( a < b ) {
         return ( ( a < c ) ? a : c );
@@ -583,7 +583,7 @@ min( int a, int b, int c ) {
     }
 }
 
-static
+static void
 copy_file_chunk( char * filename, int start, int end, int level ) {
     FILE * infile;
     char buff[256];
@@ -849,6 +849,7 @@ SCOPElocals_out( Scope s, int level ) {
     raw( "%*sEND_LOCAL;\n", level, "" );
 }
 
+void
 LOOPout( struct Loop_ *loop, int level ) {
     Variable v;
 
@@ -1020,6 +1021,7 @@ STMT_out( Statement s, int level ) {
     }
 }
 
+void
 STMTlist_out( Linked_List stmts, int level ) {
     LISTdo( stmts, stmt, Statement )
     STMT_out( stmt, level );
@@ -1384,7 +1386,7 @@ TYPE_head_out( Type t, int level ) {
     }
 }
 
-TYPEunique_or_optional_out( TypeBody tb ) {
+void TYPEunique_or_optional_out( TypeBody tb ) {
     if( tb->flags.unique ) {
         wrap( " UNIQUE" );
     }
