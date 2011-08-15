@@ -117,20 +117,20 @@ SCLundefined::asStr( std::string & s ) const {
 
 const char *
 SCLundefined::STEPwrite( std::string & s ) {
-    if( val.c_str() != "" ) {
-        s = val.c_str();
-    } else {
+    if ( val.empty() ) {
         s = "$";
+    } else {
+        s = val.c_str();
     }
     return const_cast<char *>( s.c_str() );
 }
 
 void
 SCLundefined::  STEPwrite( ostream & out ) {
-    if( val.c_str() != "" ) {
-        out << val.c_str();
-    } else {
+    if( val.empty()) {
         out << "$";
+    } else {
+        out << val.c_str();
     }
 }
 
@@ -165,7 +165,7 @@ SCLundefined::set_null() {
 
 int
 SCLundefined::is_null() {
-    return ( !strcmp( val.c_str(), "" ) );
+    return ( val.empty() );
 
 }
 

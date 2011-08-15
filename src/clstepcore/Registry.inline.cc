@@ -25,7 +25,7 @@ const TypeDescriptor  * t_sdaiLOGICAL;
 static int uniqueNames( const char *, const SchRename * );
 
 Registry::Registry( CF_init initFunct )
-    : entity_cnt( 0 ), all_ents_cnt( 0 ), col( 0 ) {
+    : col( 0 ), entity_cnt( 0 ), all_ents_cnt( 0 ) {
 //    if(NilSTEPentity == 0)
 //      NilSTEPentity = new SCLP23(Application_instance);
 
