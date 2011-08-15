@@ -123,7 +123,7 @@ extern int    yylineno;
 
 static void   yyerror PROTO((char*));
 
-Boolean       yyeof = False;
+bool       yyeof = false;
 
 #ifdef FLEX
 extern char   *yytext;
@@ -378,12 +378,12 @@ static struct scope {
     struct {
 	Expression	subtypes;
 	Linked_List	supertypes;
-	Boolean		abstract;
+	bool		abstract;
     } subsuper_decl;
 
     struct {
 	Expression	subtypes;
-	Boolean		abstract;
+	bool		abstract;
     } subtypes;
 
     struct {
@@ -725,7 +725,7 @@ derive_decl		: /* NULL body */
 derived_attribute	: attribute_decl TOK_COLON attribute_type initializer semicolon
 			  { $$ = VARcreate($1,$3);
 			    $$->initializer = $4;
-			    $$->flags.attribute = True;
+			    $$->flags.attribute = true;
 			  }
 			;
 
@@ -849,7 +849,7 @@ explicit_attribute	: attribute_decl_list TOK_COLON optional
 			    LISTdo_links ($1, attr)
 				v = VARcreate((Expression)attr->data,$4);
 				v->flags.optional = $3.optional;
-			        v->flags.attribute = True;
+			        v->flags.attribute = true;
 				attr->data = (Generic)v;
 			    LISTod;
 			  }
@@ -997,7 +997,7 @@ formal_parameter	: var id_list TOK_COLON parameter_type
 				e = EXPcreate_from_symbol(Type_Attribute,tmp);
 			        v = VARcreate(e,$4);
 			        v->flags.optional = $1.var;
-				v->flags.parameter = True;
+				v->flags.parameter = true;
 				param->data = (Generic)v;
 
 				/* link it in to the current scope's dict */
@@ -1311,7 +1311,7 @@ inverse_attr		: TOK_IDENTIFIER TOK_COLON set_or_bag_of_entity
 				  SCOPEadd_super(t);
 				  $$ = VARcreate(e,t);
 			  }
-			  $$->flags.attribute = True;
+			  $$->flags.attribute = true;
 			  $$->inverse_symbol = $5;}
 			;
 
@@ -1640,8 +1640,8 @@ rule_formal_parameter	: TOK_IDENTIFIER
 			    SCOPEadd_super(t);
 			    e = EXPcreate_from_symbol(t,$1);
 			    $$ = VARcreate(e,t);
-			    $$->flags.attribute = True;
-			    $$->flags.parameter = True;
+			    $$->flags.attribute = true;
+			    $$->flags.parameter = true;
 			    /* link it in to the current scope's dict */
 			    DICTdefine(CURRENT_SCOPE->symbol_table,
 				$1->name,(Generic)$$,$1,OBJ_VARIABLE);
@@ -1764,7 +1764,7 @@ statement_rep		: /* no statements */
 
 subsuper_decl		: /* NULL body */
 			  { $$.subtypes = EXPRESSION_NULL;
-			    $$.abstract = False;
+			    $$.abstract = false;
 			    $$.supertypes = LIST_NULL; }
 			| supertype_decl
 			  { $$.subtypes = $1.subtypes;
@@ -1772,7 +1772,7 @@ subsuper_decl		: /* NULL body */
 			    $$.supertypes = LIST_NULL; }
 			| subtype_decl
 			  { $$.supertypes = $1;
-			    $$.abstract = False;
+			    $$.abstract = false;
 			    $$.subtypes = EXPRESSION_NULL; }
 /*			| subtype_decl supertype_decl
 			  { $$.supertypes = $1;
@@ -1791,15 +1791,15 @@ subtype_decl		: TOK_SUBTYPE TOK_OF TOK_LEFT_PAREN defined_type_list
 
 supertype_decl		: TOK_ABSTRACT TOK_SUPERTYPE
 			  { $$.subtypes = (Expression)0;
-			    $$.abstract = True; }
+			    $$.abstract = true; }
 			| TOK_SUPERTYPE TOK_OF TOK_LEFT_PAREN
 			  supertype_expression TOK_RIGHT_PAREN
 			  { $$.subtypes = $4;
-			    $$.abstract = False; }
+			    $$.abstract = false; }
 			| TOK_ABSTRACT TOK_SUPERTYPE TOK_OF TOK_LEFT_PAREN
 			  supertype_expression TOK_RIGHT_PAREN
 			  { $$.subtypes = $5;
-			    $$.abstract = True; }
+			    $$.abstract = true; }
 			;
 
 supertype_expression	: supertype_factor

@@ -161,15 +161,15 @@ extern int  LISTget_length PROTO( ( Linked_List ) );
 #if supports_inline_functions || defined(LINKED_LIST_C)
 
 static_inline
-Boolean
+bool
 LISTempty( Linked_List list ) {
     if( !list ) {
-        return True;
+        return true;
     }
     if( list->mark->next == list->mark ) {
-        return True;
+        return true;
     }
-    return False;
+    return false;
 }
 
 #endif /* supports_inline_functions || defined(LINKED_LIST_C) */

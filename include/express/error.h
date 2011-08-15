@@ -64,7 +64,7 @@ typedef enum {
 /***************************/
 
 typedef struct Error_ {
-    Boolean enabled;
+    bool enabled;
     Severity    severity;
     char  * message;
 } * Error;
@@ -88,11 +88,11 @@ typedef struct Error_Warning_ {
 #include "decstart.h"
 #endif /* ERROR_C */
 
-GLOBAL Boolean  __ERROR_buffer_errors       INITIALLY( False );
+GLOBAL bool  __ERROR_buffer_errors       INITIALLY( false );
 GLOBAL char * current_filename           INITIALLY( "stdin" );
 
 /* flag to remember whether non-warning errors have occurred */
-GLOBAL Boolean  ERRORoccurred           INITIALLY( False );
+GLOBAL bool  ERRORoccurred           INITIALLY( false );
 
 
 GLOBAL Error    experrc             INITIALLY( ERROR_none );
@@ -132,7 +132,7 @@ static_inline
 void
 ERRORdisable( Error error ) {
     if( error != ERROR_none ) {
-        error->enabled = False;
+        error->enabled = false;
     }
 }
 
@@ -140,19 +140,19 @@ static_inline
 void
 ERRORenable( Error error ) {
     if( error != ERROR_none ) {
-        error->enabled = True;
+        error->enabled = true;
     }
 }
 
 static_inline
-Boolean
+bool
 ERRORis_enabled( Error error ) {
     return error->enabled;
 }
 
 static_inline
 void
-ERRORbuffer_messages( Boolean flag ) {
+ERRORbuffer_messages( bool flag ) {
     extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
 
@@ -193,7 +193,7 @@ extern void ERRORreport PROTO( ( Error, ... ) );
 struct Symbol_; /* mention Symbol to avoid warning on following line */
 extern void ERRORreport_with_symbol PROTO( ( Error, struct Symbol_ *, ... ) );
 extern void ERRORreport_with_line PROTO( ( Error, int, ... ) );
-extern void ERRORbuffer_messages PROTO( ( Boolean ) );
+extern void ERRORbuffer_messages PROTO( ( bool ) );
 extern void ERRORflush_messages PROTO( ( void ) );
 
 extern void ERROR_start_message_buffer PROTO( ( void ) );

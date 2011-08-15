@@ -219,7 +219,7 @@ TYPEBODYcreate( enum type_enum type ) {
 /* may need to be implemented for more types */
 #define TYPE_inherits_from(t,e) ((t) && TYPEinherits_from((t),(e)))
 
-Boolean
+bool
 TYPEinherits_from( Type t, enum type_enum e ) {
     TypeBody tb = t->u.type->body;
 
@@ -230,19 +230,19 @@ TYPEinherits_from( Type t, enum type_enum e ) {
                     tb->type == bag_ ||
                     tb->type == set_ ||
                     tb->type == list_ ) {
-                return True;
+                return true;
             } else {
                 return( TYPE_inherits_from( tb->base, e ) );
             }
         case array_:
-            return( ( tb->type == array_ ) ? True : TYPE_inherits_from( tb->base, e ) );
+            return( ( tb->type == array_ ) ? true : TYPE_inherits_from( tb->base, e ) );
         case bag_:
             return( ( tb->type == bag_ ||
-                      tb->type == set_ ) ? True : TYPE_inherits_from( tb->base, e ) );
+                      tb->type == set_ ) ? true : TYPE_inherits_from( tb->base, e ) );
         case set_:
-            return( ( tb->type == set_ ) ? True : TYPE_inherits_from( tb->base, e ) );
+            return( ( tb->type == set_ ) ? true : TYPE_inherits_from( tb->base, e ) );
         case list_:
-            return( ( tb->type == list_ ) ? True : TYPE_inherits_from( tb->base, e ) );
+            return( ( tb->type == list_ ) ? true : TYPE_inherits_from( tb->base, e ) );
         default:
             break;
     }
@@ -506,12 +506,12 @@ TYPEcompatible( Type lhs_type, Type rhs_type ) {
             list = COMP_TYPEget_items( rhs_type );
             LISTdo( list, e, Entity )
             if( !ENTITYhas_supertype( e, entity ) ) {
-                return False;
+                return false;
             }
             LISTod;
-            return True;
+            return true;
         } else {
-            return False;
+            return false;
         }
     } else if( CLASSinherits_from( lhs_class, Class_Composed_Type ) ) {
         return OBJequal( rhs_type, lhs_type, &experrc );
