@@ -11,12 +11,13 @@
 # remove end-of-line comments; won't work properly on single-line comments inside (*...*) comments but those probably don't occur in official schemas
 # remove blank lines
 # remove spaces before semicolons
-# remove newlines and tabs (\r,\n,\t) with tr, replace with a space
+# replace newlines and tabs (\r,\n,\t) with a space, using tr
 # remove multiline comments
 # replace multiple spaces with one
+# newline after SCHEMA and END_SCHEMA
+# remove whitespace inside parenthesis
 function compact {
-    sed -e 's/^-- *.*$//g'                      \
-        -e 's/\s-- .*$//g'                       \
+    sed -e 's/--.*$//g'                         \
         -e 's/^ *$//g'                          \
         -e 's/^ *//g'                           \
         -e 's/ *;/;/g' $1                      |\
@@ -29,7 +30,6 @@ function compact {
         -e 's/\(SCHEMA [A-Za-z0-9_-]*;\)/\1\n/' \
         -e 's/( \+)/()/g'
 }
-#    sed -e 's/(\*[A-Za-z0-9 ;_-=+]*\*)//g' \
 
 #newline after every comma or semicolon, before and after ||, |, *, /, +, -, :, inside () and []
 function expand_all {
@@ -41,12 +41,7 @@ function expand_all {
         -e 's/\[\([^]]\)/[\n\1/g;'                  \
         -e 's/\([^[]\)]/\1\n]/g;' 
 }
-#        -e 's/[^|]|[^|]/\n|\n/;'                    \
-#        -e "s/\([^<\']\)\([*/]\)/\1\n\2\n/g;"               \
-#        -e 's/\([^E^e][+-]\)/\n\1\n/g;'             \
-#        -e 's/\([^=^>]\):/\1\n:/g;'   \
-#        -e 's/:\([^=^<]\)/:\n\1/g;'   \
-#
+
 function expand_inner {
     sed -e 's/END_CASE;/END_CASE;\n/g;'     \
         -e 's/END_IF;/END_IF;\n/g;'         \

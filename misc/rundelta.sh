@@ -12,7 +12,7 @@ function usage {
     echo "is an executable script that tests pass/fail and returns 0 on success,"
     echo "newline-level affects delta's granularity. Start with 1, increase to 2,"
     echo "then 3, repeat, repeat, repeat."
-    echo "file.exp is the schema to start with"
+    echo "file.exp is the schema to start with. Result is named minimal.exp"
     echo "Uses delta, available at http://delta.tigris.org/"
     echo
     echo "example: ../../misc/rundelta.sh ../bin/fedex_plus ../../misc/test-fedex-error.sh 1 ../../data/ap203e2/ap203e2_mim_lf.exp"
