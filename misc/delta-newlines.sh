@@ -17,44 +17,47 @@
 # newline after SCHEMA and END_SCHEMA
 # remove whitespace inside parenthesis
 function compact {
-    sed -e 's/--.*$//g'                         \
-        -e 's/^ *$//g'                          \
-        -e 's/^ *//g'                           \
-        -e 's/ *;/;/g' $1                      |\
-    tr  '\t' ' '                               |\
-    tr  '\r' ' '                               |\
-    tr  '\n' ' '                               |\
-    sed -e 's/(\*[^)]*\*)//g'                   \
-        -e 's/ \+/ /g'                          \
-        -e 's/END_SCHEMA;/END_SCHEMA;\n/'       \
-        -e 's/\(SCHEMA [A-Za-z0-9_-]*;\)/\1\n/' \
+    sed -e 's/--.*$//g'                            \
+        -e 's/^ *$//g'                             \
+        -e 's/^ *//g'                              \
+        -e 's/ *;/;/g' $1                         |\
+    tr  '\t' ' '                                  |\
+    tr  '\r' ' '                                  |\
+    tr  '\n' ' '                                  |\
+    sed -e 's/(\*[^)]*\*)//g'                      \
+        -e 's/ \+/ /g'                             \
+        -e 's/END_SCHEMA\s*;/END_SCHEMA;\n/'       \
+        -e 's/\(SCHEMA [A-Za-z0-9_]*\)\s*;/\1;\n/' \
         -e 's/( \+)/()/g'
 }
 
-#newline after every comma or semicolon, before and after ||, |, *, /, +, -, :, inside () and []
+#newline before and after comma, ;, :=, :=:, :<>:, ||, |, *, /, +, -, :, inside () and []
 function expand_all {
-    sed -e 's/\([,;]\)/\1\n/g;'                     \
+    sed -e 's/\([,;]\)/\n\1\n/g;'                   \
+        -e 's/:=\([^:]\)/\n:=\n\1/g;'               \
+        -e 's/:=:/\n:=:\n/g;'                       \
+        -e 's/:<>:/\n:<>:\n/g;'                     \
         -e 's/||/\n||\n/g;'                         \
         -e 's/ \([*\/+-=|:]\) /\n\1\n/g;'           \
         -e 's/(\([^)]\)/\n(\n\1/g;'                 \
         -e 's/\([^(]\))/\1\n)\n/g;'                 \
-        -e 's/\[\([^]]\)/[\n\1/g;'                  \
-        -e 's/\([^[]\)]/\1\n]/g;' 
+        -e 's/\[\([^]]\)/\n[\n\1/g;'                \
+        -e 's/\([^[]\)]/\1\n]\n/g;'
 }
 
 function expand_inner {
-    sed -e 's/END_CASE;/END_CASE;\n/g;'     \
-        -e 's/END_IF;/END_IF;\n/g;'         \
-        -e 's/END_LOCAL;/END_LOCAL;\n/g;'   \
-        -e 's/END_REPEAT;/END_REPEAT;\n/g;'
+    sed -e 's/END_CASE\s*;/END_CASE;\n/g;'     \
+        -e 's/END_IF\s*;/END_IF;\n/g;'         \
+        -e 's/END_LOCAL\s*;/END_LOCAL;\n/g;'   \
+        -e 's/END_REPEAT\s*;/END_REPEAT;\n/g;'
 }
 
 function expand_outer {
-    sed -e 's/END_RULE;/END_RULE;\n/g;'         \
-        -e 's/END_TYPE;/END_TYPE;\n/g;'         \
-        -e 's/END_CONSTANT;/END_CONSTANT;\n/g;' \
-        -e 's/END_ENTITY;/END_ENTITY;\n/g;'     \
-        -e 's/END_FUNCTION;/END_FUNCTION;\n/g;'
+    sed -e 's/END_RULE\s*;/END_RULE;\n/g;'         \
+        -e 's/END_TYPE\s*;/END_TYPE;\n/g;'         \
+        -e 's/END_CONSTANT\s*;/END_CONSTANT;\n/g;' \
+        -e 's/END_ENTITY\s*;/END_ENTITY;\n/g;'     \
+        -e 's/END_FUNCTION\s*;/END_FUNCTION;\n/g;'
 }
 
 if  [ "$2" == "1" ]; then
