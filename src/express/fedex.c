@@ -212,7 +212,7 @@ main( int argc, char ** argv ) {
                 break;
             case 'z':
                 printf( "pid = %d\n", getpid() );
-                pause();/* to allow user to attach debugger and continue */
+                system("pause");
                 break;
             default:
                 rc = 1;

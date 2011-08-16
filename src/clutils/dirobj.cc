@@ -188,9 +188,9 @@ boolean DirObj::IsADirectory( const char * path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 const char * DirObj::Home( const char * name ) {
-    struct passwd * pw =
-        ( name == nil ) ? getpwuid( getuid() ) : getpwnam( ( char * )name );
-    return ( pw == nil ) ? nil : pw->pw_dir;
+//    struct passwd * pw =
+//        ( name == nil ) ? getpwuid( getuid() ) : getpwnam( ( char * )name );
+//    return ( pw == nil ) ? nil : pw->pw_dir;
 }
 
 //////////////////////////////// Normalize() //////////////////////////////////
@@ -435,7 +435,9 @@ const char * DirObj::ExpandTilde( const char * tildeName, int length ) {
     const char * name = nil;
 
     if( length > 1 ) {
-        static char buf[MAXNAMLEN + 1];
+    	// TODO: MAXNAMLEN has not been ported on Windows
+    	static char buf[255];
+//        static char buf[MAXNAMLEN + 1];
         strncpy( buf, tildeName + 1, length - 1 );
         buf[length - 1] = '\0';
         name = buf;

@@ -361,7 +361,7 @@ EXPresolve_op_dot( Expression expr, Scope scope ) {
             }
             if( DICT_type != OBJ_VARIABLE ) {
                 printf( "EXPresolved_op_dot: attribute not an attribute? - press ^C now to trap to debugger\n" );
-                pause();
+                system("pause");
             }
 
             op2->u.variable = v;

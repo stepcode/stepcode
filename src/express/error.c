@@ -543,7 +543,7 @@ ERRORabort( int sig ) {
     }
 
     fprintf( stderr, "pausing...press ^C now to enter debugger: " );
-    pause();
+    system("pause");
 }
 
 void
