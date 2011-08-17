@@ -212,7 +212,13 @@ main( int argc, char ** argv ) {
                 break;
             case 'z':
                 printf( "pid = %d\n", getpid() );
-                system("pause");
+                #ifndef __WIN32__
+                    pause();
+                #else     //windows
+                    //should have the same effect as pause()
+                    getchar();
+                    abort();
+                #endif
                 break;
             default:
                 rc = 1;
