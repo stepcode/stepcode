@@ -543,7 +543,13 @@ ERRORabort( int sig ) {
     }
 
     fprintf( stderr, "pausing...press ^C now to enter debugger: " );
-    pause();
+    #ifndef __WIN32__
+        pause();
+    #else     //windows
+        //should have the same effect as pause()
+        getchar();
+        abort();
+    #endif
 }
 
 void

@@ -361,7 +361,13 @@ EXPresolve_op_dot( Expression expr, Scope scope ) {
             }
             if( DICT_type != OBJ_VARIABLE ) {
                 printf( "EXPresolved_op_dot: attribute not an attribute? - press ^C now to trap to debugger\n" );
-                pause();
+                #ifndef __WIN32__
+                    pause();
+                #else     //windows
+                    //should have the same effect as pause()
+                    getchar();
+                    abort();
+                #endif
             }
 
             op2->u.variable = v;

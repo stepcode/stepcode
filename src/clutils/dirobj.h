@@ -77,7 +77,7 @@
 //#include <sys/stat.h>
 //#endif
 
-#include <pwd.h>
+//#include <pwd.h>
 //#include <InterViews/Std/os/auth.h>
 //#include <InterViews/Std/os/fs.h>
 	// the below is good for g++

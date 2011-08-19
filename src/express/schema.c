@@ -306,7 +306,13 @@ VARfind( Scope scope, char * name, int strict ) {
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
                     printf( "press ^C now to trap to debugger\n" );
-                    pause();
+                    #ifndef __WIN32__
+                        pause();
+                    #else     //windows
+                        //should have the same effect as pause()
+                        getchar();
+                        abort();
+                    #endif
                 }
                 return result;
             }
@@ -318,7 +324,13 @@ VARfind( Scope scope, char * name, int strict ) {
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
                     printf( "press ^C now to trap to debugger\n" );
-                    pause();
+                    #ifndef __WIN32__
+                        pause();
+                    #else     //windows
+                        //should have the same effect as pause()
+                        getchar();
+                        abort();
+                    #endif
                 }
                 return result;
             }

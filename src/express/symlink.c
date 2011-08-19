@@ -45,11 +45,12 @@ create_links( Express model ) {
 
         sprintf( linkname, "%s.exp", lower );
 
-        if( -1 == symlink( linksrc, linkname ) ) {
-            fprintf( stderr, "symlink(%s,%s) failed: %s\n",
-                     linksrc, linkname, strerror( errno ) );
-            exit( 1 );
-        }
+        // symlink not on Windows
+//        if( -1 == symlink( linksrc, linkname ) ) {
+//            fprintf( stderr, "symlink(%s,%s) failed: %s\n",
+//                     linksrc, linkname, strerror( errno ) );
+//            exit( 1 );
+//        }
     }
     exit( 0 );
 }

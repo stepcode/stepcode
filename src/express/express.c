@@ -71,7 +71,8 @@
 #include "conf.h"
 #include "express/basic.h"
 #include <ctype.h>
-#include <pwd.h>
+// not found on Windows
+//#include <pwd.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
@@ -161,8 +162,8 @@ tilde_translate( char * name ) {
         new = getenv( "HOME" );
     } else {
         /* "~name" */
-        pwd = getpwnam( name );
-        new = ( pwd ? pwd->pw_dir : 0 );
+//        pwd = getpwnam( name );
+//        new = ( pwd ? pwd->pw_dir : 0 );
     }
     if( !new ) {
         ERRORreport( ERROR_tilde_expansion_failed, name - 1 );
