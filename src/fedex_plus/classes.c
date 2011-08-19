@@ -142,7 +142,7 @@ USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, 
     /* step 2: for each list, print out the renames */
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
-        int first_time = True;
+        bool first_time = true;
         LISTdo( list, r, struct Rename * )
 
         /*
@@ -166,7 +166,7 @@ USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, 
         }
 
         if( first_time ) {
-            first_time = False;
+            first_time = false;
         }
         if( r->type == OBJ_TYPE ) {
             sprintf( td_name, "%s", TYPEtd_name( ( Type )r->object ) );
@@ -2485,7 +2485,7 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
     int count = attr_count;
 
     String entnm = ENTITYget_classname( ent );
-    __attribute__( ( unused ) ) Boolean opt;
+    __attribute__( ( unused ) ) bool opt;
     String StrToLower( String word );
 
     /*mjm7/10/91 copy constructor definition  */

@@ -353,7 +353,7 @@ extern void TYPEinitialize PROTO( ( void ) );
 #if 0
 extern Dictionary TYPEget_enum_tags PROTO( ( Type ) );
 #endif
-extern Boolean TYPEinherits_from PROTO( ( Type, enum type_enum ) );
+extern bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
 extern Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
 
 extern Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
@@ -361,9 +361,9 @@ extern Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * )
 
 #if 0
 extern int      TYPEget_size PROTO( ( Type ) );
-extern Boolean      TYPEcompatible PROTO( ( Type, Type ) );
+extern bool      TYPEcompatible PROTO( ( Type, Type ) );
 extern Expression   SZD_TYPEget_precision PROTO( ( Sized_Type ) );
-extern Boolean      SZD_TYPEget_varying PROTO( ( Sized_Type ) );
+extern bool      SZD_TYPEget_varying PROTO( ( Sized_Type ) );
 extern Expression   TYPE_REFget_full_name PROTO( ( Type_Reference * ) );
 #endif /*0*/
 

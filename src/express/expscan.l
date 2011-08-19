@@ -112,7 +112,7 @@
 
 extern void     yyerror();
 extern int      yylineno;
-extern Boolean  yyeof;
+extern bool  yyeof;
 static int      nesting_level;
 
 /* can't imagine this will ever be more than 2 or 3 - DEL */
@@ -158,7 +158,7 @@ You used flex (in make_rules) but compiled with -DLEX (in Makefile)!
 #define YY_INPUT(buf,result,max_size)                   \
      result = (((buf[0] = getc(yyin)) == '\n')          \
           ? (NEWLINE, 1)                    \
-          : ((buf[0] == EOF) ? ((yyeof = True), YY_NULL) : 1))
+          : ((buf[0] == EOF) ? ((yyeof = true), YY_NULL) : 1))
 #endif /*slow_yylineno*/
 
 /*#define NEWLINE    ((SCANbol = SCANtell()), yylineno++)*/
@@ -179,7 +179,7 @@ You used lex (in make_rules) but compiled with -DFLEX (in Makefile)!
 static char unchar[BUFSIZ];     /* one char for lex unput storage */
 static char *unchar_p = unchar;     /* whether unchar is in use */
 
-static int first_time = True;
+static bool first_time = true;
 
 static int
 input() {
@@ -225,7 +225,7 @@ SCAN_lex_init(char *filename,FILE *fp) {
     /* return to initial scan buffer */
     SCAN_current_buffer = 0;
     *(SCANcurrent = SCANbuffer.text) = '\0';
-    SCANbuffer.readEof = False;
+    SCANbuffer.readEof = false;
     SCANbuffer.file = fp;
     SCANbuffer.filename = (filename?filename:"");
     current_filename = SCANbuffer.filename;
@@ -242,7 +242,7 @@ SCAN_lex_init(char *filename,FILE *fp) {
         /* initialize un-got character pointer to start of buffer */
         unchar_p = unchar;
 
-    first_time = True;
+    first_time = true;
 #endif
 }
 
@@ -262,7 +262,7 @@ id_char  [A-Za-z0-9_]
 #ifndef FLEX_SCANNER
 if (first_time) {
     BEGIN code;
-    first_time = False;
+    first_time = false;
 }
 #endif
 %}

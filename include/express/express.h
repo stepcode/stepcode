@@ -109,7 +109,7 @@ GLOBAL void ( *EXPRESSbackend ) PROTO( ( Express ) )      INITIALLY( 0 );
 GLOBAL char * EXPRESSprogram_name;
 extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
 GLOBAL int ( *EXPRESSgetopt ) PROTO( ( int, char * ) )    INITIALLY( 0 );
-GLOBAL int    EXPRESSignore_duplicate_schemas       INITIALLY( False );
+GLOBAL bool    EXPRESSignore_duplicate_schemas       INITIALLY( false );
 
 GLOBAL Dictionary EXPRESSbuiltins;  /* procedures/functions */
 

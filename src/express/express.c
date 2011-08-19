@@ -323,13 +323,13 @@ EXPRESSinitialize( void ) {
             x->symbol.name = y;\
             x->u.func->pcount = c; \
             x->u.func->return_type = r; \
-            x->u.func->builtin = True; \
+            x->u.func->builtin = true; \
             resolved_all(x); \
             DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_FUNCTION);
 #define procdef(x,y,c)  x = ALGcreate(OBJ_PROCEDURE);\
             x->symbol.name = y;\
             x->u.proc->pcount = c; \
-            x->u.proc->builtin = True; \
+            x->u.proc->builtin = true; \
             resolved_all(x); \
             DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_PROCEDURE);
     /* third arg is # of parameters */
