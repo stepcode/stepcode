@@ -94,7 +94,7 @@ static Error ERROR_missing_self;
 static Type self = 0;   /* always points to current value of SELF */
 /* or 0 if none */
 
-static int found_self;  /* remember whether we've seen a SELF in a */
+static bool found_self;  /* remember whether we've seen a SELF in a */
 /* WHERE clause */
 
 /***********************/
@@ -253,7 +253,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
     Generic x;
     Entity e;
     Type t;
-    int func_args_checked = False;
+    bool func_args_checked = false;
 
     /*  if (expr == EXPRESSION_NULL)
             return;
@@ -317,7 +317,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 if( f == FUNC_NVL ) {
                     EXPresolve( ( Expression )LISTget_first( expr->u.funcall.list ), scope, typecheck );
                     EXPresolve( ( Expression )LISTget_second( expr->u.funcall.list ), scope, typecheck );
-                    func_args_checked = True;
+                    func_args_checked = true;
                 }
 
                 /* why is this here?  (snc) */
@@ -397,7 +397,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     /* Geez, don't wipe out original type! */
                     expr->return_type = expr->u.variable->type;
                     if( expr->u.variable->flags.attribute ) {
-                        found_self = True;
+                        found_self = true;
                     }
                     resolved_all( expr );
                     break;
@@ -455,7 +455,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 /* will be by the time we return, and besides, */
                 /* there's no way this will be accessed if the true */
                 /* entity fails resolution */
-                found_self = True;
+                found_self = true;
                 resolved_all( expr );
             } else {
                 ERRORreport_with_symbol( ERROR_self_is_unknown, &scope->symbol );
@@ -534,7 +534,7 @@ ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, Link
                                      expr->symbol.name, sym->line );
             i = RESOLVE_FAILED;
         } else {
-            int found = False;
+            bool found = false;
 
             /* link in to flat list */
             if( !*flat ) {
@@ -543,7 +543,7 @@ ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, Link
 
             LISTdo( *flat, sub, Entity )
             if( sub == ent_ref ) {
-                found = True;
+                found = true;
                 break;
             }
             LISTod
@@ -562,7 +562,7 @@ ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, Link
             /* complain (IS p. 44) */
             LISTdo( ent_ref->u.entity->supertypes, sup, Entity )
             if( sup == ent ) {
-                found = True;
+                found = true;
                 break;
             }
             LISTod
@@ -1178,14 +1178,14 @@ ENTITYresolve_pass2( Entity e ) {
 
 void
 ENTITYcheck_missing_supertypes( Entity ent ) {
-    int found;
+    bool found;
 
     /* Make sure each of my subtypes lists me as a supertype */
     LISTdo( ent->u.entity->subtypes, sub, Entity )
-    found = False;
+    found = false;
     LISTdo( sub->u.entity->supertypes, sup, Entity )
     if( sup == ent ) {
-        found = True;
+        found = true;
         break;
     }
     LISTod;
@@ -1464,7 +1464,7 @@ SCHEMAresolve_pass2( Schema * schema ) {
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else {
-            int found = False;
+            bool found = false;
 
             LISTadd( e->u.entity->supertypes, ( Generic )ref_entity );
             if( is_resolve_failed( ref_entity ) ) {
@@ -1478,7 +1478,7 @@ SCHEMAresolve_pass2( Schema * schema ) {
 
             LISTdo( ref_entity->u.entity->subtypes, sub, Entity )
             if( sub == e ) {
-                found = True;
+                found = true;
                 break;
             }
             LISTod
@@ -1512,7 +1512,7 @@ SCHEMAresolve_pass2( Schema * schema ) {
         int i;
         Qualified_Attr * reference;
         Variable attr;
-        int failed = 0;
+        bool failed = false;
 
         if( print_objects_while_running & OBJ_ENTITY_BITS ) {
             fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
@@ -1672,7 +1672,7 @@ SCHEMAresolve_pass2( Schema * schema ) {
             break;
         }
 
-        found_self = False;
+        found_self = false;
         EXPresolve( w->expr, scope, Type_Dont_Care );
         if( need_self && ! found_self ) {
             ERRORreport_with_symbol( ERROR_missing_self,

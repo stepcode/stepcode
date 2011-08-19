@@ -117,15 +117,15 @@
 #include "express/object.h"
 
 /* returns true if variable is declared (or redeclared) directly by entity */
-int
+bool
 ENTITYdeclares_variable( Entity e, Variable v ) {
     LISTdo( e->u.entity->attributes, attr, Variable )
     if( attr == v ) {
-        return True;
+        return true;
     }
     LISTod;
 
-    return False;
+    return false;
 }
 
 static
@@ -414,7 +414,7 @@ ENTITY_copy( Generic dummy1, Generic dummy2 ) {
     dest->mark = source->mark;
 }
 
-Boolean
+bool
 ENTITY_equal( Generic dummy1, Generic dummy2 ) {
     struct Entity * entity1 = ( struct Entity * )dummy1;
     struct Entity * entity2 = ( struct Entity * )dummy2;
@@ -686,21 +686,21 @@ ENTITYdelete_instance( Entity entity, Generic instance ) {
 ** Description: Look for a certain entity in the supertype graph of an entity.
 */
 
-Boolean
+bool
 ENTITYhas_supertype( Entity child, Entity parent ) {
     LISTdo( child->u.entity->supertypes, entity, Entity )
     if( entity == parent ) {
-        return True;
+        return true;
     }
 #if 0
     if( OBJis_kind_of( entity, Class_Entity ) &&
             ENTITYhas_supertype( entity, parent ) )
 #endif
         if( ENTITYhas_supertype( entity, parent ) ) {
-            return True;
+            return true;
         }
     LISTod;
-    return False;
+    return false;
 }
 
 #if 0
@@ -764,7 +764,7 @@ ENTITYget_subtype( Entity child, String subname ) {
 ** Description: Look for a certain entity in the subtype graph of an entity.
 */
 
-Boolean
+bool
 ENTITYhas_subtype( Entity parent, Entity child ) {
     struct Entity * data;
     Error       experrc;
@@ -772,13 +772,13 @@ ENTITYhas_subtype( Entity parent, Entity child ) {
     data = ( struct Entity * )OBJget_data( parent, Class_Entity, &experrc );
     LISTdo( data->subtypes, entity, Entity )
     if( OBJequal( entity, child, &experrc ) ) {
-        return True;
+        return true;
     }
     if( ENTITYhas_subtype( entity, child ) ) {
-        return True;
+        return true;
     }
     LISTod;
-    return False;
+    return false;
 }
 
 /*
@@ -791,14 +791,14 @@ ENTITYhas_subtype( Entity parent, Entity child ) {
 
 #endif
 
-Boolean
+bool
 ENTITYhas_immediate_supertype( Entity child, Entity parent ) {
     LISTdo( child->u.entity->supertypes, entity, Entity )
     if( entity == parent ) {
-        return True;
+        return true;
     }
     LISTod;
-    return False;
+    return false;
 }
 
 #if 0
@@ -811,17 +811,17 @@ ENTITYhas_immediate_supertype( Entity child, Entity parent ) {
 ** Description: Check whether an entity has a specific immediate subclass.
 */
 
-Boolean
+bool
 ENTITYhas_immediate_subtype( Entity parent, Entity child ) {
     LISTdo( parent->u.entity->subtypes, entity, Entity )
     if( entity == child ) {
-        return True;
+        return true;
     }
     LISTod;
-    return False;
+    return false;
 }
 
-Boolean
+bool
 ENTITYhas_immediate_subtype( Entity parent, Entity child ) {
     struct Entity * data;
     Error       experrc;
@@ -829,10 +829,10 @@ ENTITYhas_immediate_subtype( Entity parent, Entity child ) {
     data = ( struct Entity * )OBJget_data( parent, Class_Entity, &experrc );
     LISTdo( data->subtypes, entity, Entity )
     if( OBJequal( entity, child, &experrc ) ) {
-        return True;
+        return true;
     }
     LISTod;
-    return False;
+    return false;
 }
 
 /*
@@ -877,7 +877,7 @@ ENTITYget_subtypes( Entity entity ) {
 ** Description: Retrieve/Set whether an entity is abstract.
 */
 
-Boolean
+bool
 ENTITYget_abstract( Entity entity ) {
     struct Entity * data;
     Error       experrc;
@@ -887,7 +887,7 @@ ENTITYget_abstract( Entity entity ) {
 }
 
 void
-ENTITYput_abstract( Entity entity, Boolean abstract ) {
+ENTITYput_abstract( Entity entity, bool abstract ) {
     struct Entity * data;
     Error       experrc;
 

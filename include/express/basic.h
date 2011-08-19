@@ -78,7 +78,8 @@
 /* type Boolean and constants */
 /******************************/
 
-typedef enum Boolean_ { False, True} Boolean;
+#include <stdbool.h>
+
 
 /************************/
 /* Generic pointer type */
