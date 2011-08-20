@@ -430,7 +430,7 @@ generate_attribute_name( Variable a, char * out ) {
     }
     /*  copy p to out  */
     /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
+    for( j = 0, q = out; j < BUFSIZ; p++ ) {
         /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
@@ -492,7 +492,7 @@ generate_dict_attr_name( Variable a, char * out ) {
     /*  copy p to out  */
     strncpy( out, StrToLower( p ), BUFSIZ );
     /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
+    for( j = 0, q = out; j < BUFSIZ; p++ ) {
         /* copy p to out, 1 char at time.  Skip \n's, and convert to lc. */
         if( *p != '\n' ) {
             *q = tolower( *p );
