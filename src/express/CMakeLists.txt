@@ -1,7 +1,7 @@
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging
   message("Bison will create a graph of the scanner flow at ${SCL_BINARY_DIR}/expparse.dot")
-  set( YACC_FLAGS "-t --graph=${SCL_BINARY_DIR}/expparse.dot" )
+  set( YACC_FLAGS "-t --graph=${SCL_BINARY_DIR}/expparse.dot" -Wall )
   set( LEX_FLAGS "-d" )
 ELSE()
   set( LEX_FLAGS " " )

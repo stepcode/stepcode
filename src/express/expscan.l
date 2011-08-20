@@ -398,8 +398,12 @@ if (first_time) {
 <code>"*)"	{
     ERRORreport_with_line(ERROR_unmatched_close_comment,yylineno);
 }	
-
-<comment>\n		{ NEWLINE; }
+%{
+/*
+** expscan.l:402: warning, rule cannot be matched
+** <comment>\n		{ NEWLINE; }
+*/
+%}
 <comment>[^*()\n]*	;
 <comment>[*()]		;
 
