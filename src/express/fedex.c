@@ -210,9 +210,14 @@ main( int argc, char ** argv ) {
                 printf( "%s %s\n%s\n", EXPRESSprogram_name, FEDEXversion(), EXPRESSversion() );
                 no_need_to_work = 1;
                 break;
-            case 'z':
+            case 'z': /* to allow user to attach debugger and continue */
                 printf( "pid = %d\n", getpid() );
-                pause();/* to allow user to attach debugger and continue */
+                #ifndef __WIN32__
+                    pause();
+                #else     //windows
+                    getchar();
+                    abort();
+                #endif
                 break;
             default:
                 rc = 1;
