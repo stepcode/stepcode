@@ -121,9 +121,8 @@ static struct Symbol_ open_comment[MAX_NESTED_COMMENTS];
 #define YY_NO_INPUT  //warning: ‘input’ defined but not used [-Wunused-function]
 
 #undef yywrap
-static int
-yywrap()
-{
+#define YY_SKIP_YYWRAP //warning: prototype for ‘yywrap’ follows non-prototype definition
+static int yywrap() {
     int i;
 
     for (i=0;i<nesting_level && i<MAX_NESTED_COMMENTS;i++) {
