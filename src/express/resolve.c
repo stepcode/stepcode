@@ -248,7 +248,7 @@ RESOLVEinitialize( void ) {
 
 void
 EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
-    Function f;
+    Function f = 0;
     Symbol * sym;
     Generic x;
     Entity e;
