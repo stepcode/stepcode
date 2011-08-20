@@ -118,6 +118,7 @@ static int      nesting_level;
 /* can't imagine this will ever be more than 2 or 3 - DEL */
 #define MAX_NESTED_COMMENTS 20
 static struct Symbol_ open_comment[MAX_NESTED_COMMENTS];
+#define YY_NO_INPUT  //warning: ‘input’ defined but not used [-Wunused-function]
 
 #undef yywrap
 static int
