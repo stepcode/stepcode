@@ -1642,7 +1642,8 @@ STEPfile::CreateScopeInstances( istream & in, SCLP23( Application_instance_ptr )
     in.putback( c );
     *scopelist = new SCLP23( Application_instance_ptr ) [i];
     while( i > 0 ) {
-        *scopelist [--i] = inscope [i];
+        *scopelist [i-1] = inscope [i];
+        i--;
     }
 
     //check for "ENDSCOPE"
