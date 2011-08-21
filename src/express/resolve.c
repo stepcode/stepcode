@@ -523,6 +523,10 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             } else if( TYPEis_runtime( expr->return_type ) ) {
                 t = Type_Runtime;
             } else {
+                fprintf(stderr,"\nquery requires aggregate. expr->return_type->symbol.name: %s at line %d. expr->return_type->u.type->body->type %d,  scope->symbol.name %s at line %d, expr->u.query->aggregate->symbol.name %s at line %d\n",
+                        expr->return_type->symbol.name, expr->return_type->symbol.line,
+                        expr->return_type->u.type->body->type, scope->symbol.name, scope->symbol.line,
+                       expr->u.query->aggregate->symbol.name,expr->u.query->aggregate->symbol.line);
                 ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
                 break;
