@@ -280,7 +280,7 @@ void ComplexList::addImplicitSubs( Linked_List subs, ComplexCollect * col )
     EntNode node((char *)"");
     // Temp var - used to check if this already contains certain values.
     int none_yet = TRUE;
-    AndOrList * ao;
+    AndOrList * ao = 0;
 
     LISTdo( subs, subEnt, Entity )
     strcpy( node.name, ENTITYget_name( subEnt ) );

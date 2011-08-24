@@ -118,11 +118,11 @@ static int      nesting_level;
 /* can't imagine this will ever be more than 2 or 3 - DEL */
 #define MAX_NESTED_COMMENTS 20
 static struct Symbol_ open_comment[MAX_NESTED_COMMENTS];
+#define YY_NO_INPUT  //warning: ‘input’ defined but not used [-Wunused-function]
 
 #undef yywrap
-static int
-yywrap()
-{
+#define YY_SKIP_YYWRAP //warning: prototype for ‘yywrap’ follows non-prototype definition
+static int yywrap() {
     int i;
 
     for (i=0;i<nesting_level && i<MAX_NESTED_COMMENTS;i++) {
@@ -398,8 +398,12 @@ if (first_time) {
 <code>"*)"	{
     ERRORreport_with_line(ERROR_unmatched_close_comment,yylineno);
 }	
-
-<comment>\n		{ NEWLINE; }
+%{
+/*
+** expscan.l:402: warning, rule cannot be matched
+** <comment>\n		{ NEWLINE; }
+*/
+%}
 <comment>[^*()\n]*	;
 <comment>[*()]		;
 

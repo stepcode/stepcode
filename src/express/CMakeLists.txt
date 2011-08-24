@@ -1,7 +1,14 @@
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging
-  message("Bison will create a graph of the scanner flow at ${SCL_BINARY_DIR}/expparse.dot")
-  set( YACC_FLAGS "-t --graph=${SCL_BINARY_DIR}/expparse.dot" )
+  #set( EXTRA_YACC_FLAGS "-Wall" ) #-Wall introduced somewhere between bison v2.3 and v2.4.1
+
+  #This graph is HUGE! dot takes a very long time, so does loading it in a viewer
+  #enable with -DBISON_GRAPH=TRUE
+  if( BISON_GRAPH )
+    message("Bison will create a graph of the scanner flow at ${SCL_BINARY_DIR}/expparse.dot")
+    set( EXTRA_YACC_FLAGS "${EXTRA_YACC_FLAGS} --graph=${SCL_BINARY_DIR}/expparse.dot" )
+  endif( BISON_GRAPH )
+  set( YACC_FLAGS "-t ${EXTRA_YACC_FLAGS}" )
   set( LEX_FLAGS "-d" )
 ELSE()
   set( LEX_FLAGS " " )

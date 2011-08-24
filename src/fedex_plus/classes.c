@@ -430,7 +430,7 @@ generate_attribute_name( Variable a, char * out ) {
     }
     /*  copy p to out  */
     /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
+    for( j = 0, q = out; j < BUFSIZ; p++ ) {
         /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
@@ -492,7 +492,7 @@ generate_dict_attr_name( Variable a, char * out ) {
     /*  copy p to out  */
     strncpy( out, StrToLower( p ), BUFSIZ );
     /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; p, j < BUFSIZ; p++ ) {
+    for( j = 0, q = out; j < BUFSIZ; p++ ) {
         /* copy p to out, 1 char at time.  Skip \n's, and convert to lc. */
         if( *p != '\n' ) {
             *q = tolower( *p );
@@ -3105,7 +3105,7 @@ print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
     /* the type_count variable is there for debugging purposes  */
 
     const char * ctype = TYPEget_ctype( t );
-    Type base;
+    Type base = 0;
     int count = type_count++;
     char typename_buf[MAX_LEN];
 
@@ -3663,7 +3663,7 @@ ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
     const char * n;
     Linked_List wheres;
     /*  char buf[BUFSIZ],buf2[BUFSIZ]; */
-    char * whereRule, *whereRule_formatted;
+    char * whereRule, *whereRule_formatted = "";
     int whereRule_formatted_size = 0;
     char * ptr, *ptr2;
     char * uniqRule, *uniqRule_formatted;
@@ -4749,7 +4749,7 @@ if( TYPEget_head( type ) ) {
 void
 TYPEprint_new( const Type type, FILE * create, Schema schema ) {
     Linked_List wheres;
-    char * whereRule, *whereRule_formatted;
+    char * whereRule, *whereRule_formatted = "";
     int whereRule_formatted_size = 0;
     char * ptr, *ptr2;
 
