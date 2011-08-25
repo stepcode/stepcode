@@ -30,6 +30,18 @@ set(LIBSTEPCORE_SRCS
     print.cc
 )
 
+if(MINGW)
+	set(LIBDEPEND_SRCS
+    	${SCL_SOURCE_DIR}/src/cldai/sdaiObject.cc 
+    	${SCL_SOURCE_DIR}/src/cldai/sdaiDaObject.cc
+    	${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
+    	${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
+    	${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
+    	${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
+    	${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
+	)
+endif(MINGW)
+
 SET(LIBSTEPCORE_PRIVATE_HDRS
     baseType.h 
     complexSupport.h 
@@ -64,7 +76,7 @@ add_definitions(
     -DHAVE_CONFIG_H
 )
 
-SCL_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "express steputils")
+SCL_ADDLIB(stepcore "${LIBSTEPCORE_SRCS} ${LIBDEPEND_SRCS}" "express steputils")
 if(APPLE)
-   set_target_properties(stepcore PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    set_target_properties(stepcore PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif(APPLE)

@@ -92,10 +92,7 @@ DirObj::~DirObj() {
 //
 // Returns a real path.
 // if 'path' is a null string ("\0") or nil (0) return ./
-// otherwise return the path remaining after the following is done:
-// send the remaining path after the first '/' in the last occurence
-//  of '//' to InterpTilde() where the last tilde will be expanded
-//  to a full path.
+// otherwise return the path.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -105,7 +102,7 @@ const char * DirObj::RealPath( const char * path ) {
     if( path == 0 || *path == '\0' ) {
         realpath = "./";
     } else {
-        realpath = InterpTilde( InterpSlashSlash( path ) );
+        realpath = path;
     }
     return realpath;
 }
@@ -179,20 +176,6 @@ boolean DirObj::IsADirectory( const char * path ) {
     return stat( path, &st ) == 0 && ( st.st_mode & S_IFMT ) == S_IFDIR;
 }
 
-//////////////////////////////// Home() ///////////////////////////////////////
-//
-// Return the home directory (complete path) for user with login name 'name'.
-// If 'name' is nil, it returns the home directory of the logged-in user who
-// ran the program.  Returns nil on error - (name not in password file).
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::Home( const char * name ) {
-    struct passwd * pw =
-        ( name == nil ) ? getpwuid( getuid() ) : getpwnam( ( char * )name );
-    return ( pw == nil ) ? nil : pw->pw_dir;
-}
-
 //////////////////////////////// Normalize() //////////////////////////////////
 //
 // Normalize path in order in the following way:
@@ -222,7 +205,6 @@ const char * DirObj::Normalize( const char * path ) {
     buf = InterpSlashSlash( path );
     buf = ElimDot( buf );
     buf = ElimDotDot( buf );
-    buf = InterpTilde( buf );
 
     if( *buf == '\0' ) {
         strcpy( newpath, "./" );
@@ -381,67 +363,6 @@ const char * DirObj::ElimDotDot( const char * path ) {
     return newpath;
 }
 
-//////////////////////////////// InterpTilde() ////////////////////////////////
-//
-// if 'path' has no tilde or an error happens when expanding the tilde,
-//  return 'path'.
-// if 'path' has a tilde, it must be at the beginning of 'path' or
-//    follow a '/'
-//  if a 'name' follows tilde, return a new path consisting of the
-//      last ~ in 'path' expanded to the 'name's home directory
-//      followed by the remaining path after name (if such exists)
-//  if no 'name' follows tilde, return a new path consisting of the
-//      last ~ in 'path' expanded to the home directory of the
-//      logged-in user who ran the process followed by the remaining
-//      path after ~ (if such exists)
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::InterpTilde( const char * path ) {
-    static char realpath[MAXPATHLEN + 1];
-    const char * beg = strrchr( path, '~' );
-    boolean validTilde = beg != NULL && ( beg == path || *( beg - 1 ) == '/' );
-
-    if( validTilde ) {
-        const char * end = strchr( beg, '/' );
-        int length = ( end == nil ) ? strlen( beg ) : end - beg;
-        const char * expandedTilde = ExpandTilde( beg, length );
-
-        if( expandedTilde == nil ) {
-            validTilde = 0;
-        } else {
-            strcpy( realpath, expandedTilde );
-            if( end != nil ) {
-                strcat( realpath, end );
-            }
-        }
-    }
-    return validTilde ? realpath : path;
-}
-
-//////////////////////////////// ExpandTilde() ////////////////////////////////
-//
-// 'tildeName' must start with a tilde.
-// if a name immediately follows ~ return a path expanded to the
-//  name's home directory.
-// if tildeName is only a ~ or if a '/' immediately follows ~
-//  return a path expanded to the home directory of the logged-in
-//  user who ran the program.
-// return nil on error (if the name is not in the password file)
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::ExpandTilde( const char * tildeName, int length ) {
-    const char * name = nil;
-
-    if( length > 1 ) {
-        static char buf[MAXNAMLEN + 1];
-        strncpy( buf, tildeName + 1, length - 1 );
-        buf[length - 1] = '\0';
-        name = buf;
-    }
-    return Home( name );
-}
 
 //////////////////////////////// CheckIndex() /////////////////////////////////
 //

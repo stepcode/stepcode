@@ -440,7 +440,12 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     break;
                 default:
                     printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-                    pause();
+                    #ifndef __WIN32__
+                        pause();
+                    #else     //windows
+                        getchar();
+                        abort();
+                    #endif
                     break;
             }
             break;
@@ -501,7 +506,12 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             break;
         default:
             printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-            pause();
+            #ifndef __WIN32__
+                pause();
+            #else     //windows
+                getchar();
+                abort();
+            #endif
     }
 }
 
