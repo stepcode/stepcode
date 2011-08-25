@@ -13,13 +13,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: dirobj.h,v 3.0.1.3 1997/11/05 22:33:45 sauderd DP3.1 $  */ 
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
-
 /*
  * DirObj - This object contains a list of files in a directory.
  *		Can be used for interpreting a tilde, checking paths etc.
@@ -30,8 +23,6 @@
  *	few things, and made it so we can actually use it.
  *		David Sauder
  */
-
-//#include <InterViews/filebrowser.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -50,11 +41,6 @@
 #include <unistd.h>
 #endif
 
-////extern _G_uid_t getuid _G_ARGS((void));
-//#ifdef HAVE_STAT_H
-//#include <stat.h> 
-//#endif
-
 #ifdef HAVE_SYSENT_H
 #include <sysent.h>
 #endif
@@ -64,30 +50,8 @@
 #include <sys/stat.h>
 #endif
 
-//#ifdef __GNUC__
-//#include <unistd.h>  // needed to declare getuid() with new GNU 2.3.3
-////extern _G_uid_t getuid _G_ARGS((void));
-//#include <stat.h> 
-
-//#else
-////#ifdef __OBJECTCENTER__
-////#ifdef __SUNCPLUSPLUS__
-////#ifdef __xlC__
-//#include <sysent.h>
-//#include <sys/stat.h>
-//#endif
-
-#include <pwd.h>
-//#include <InterViews/Std/os/auth.h>
-//#include <InterViews/Std/os/fs.h>
-	// the below is good for g++
-	// if getting it from /usr/include change to __string_h
-#ifndef _std_h
 #include <string.h>
-#endif
 #include <sys/param.h>
-//#include <InterViews/Std/sys/dir.h>
-//#include <InterViews/Std/sys/stat.h>
 
 #include <scldir.h>
 
@@ -116,12 +80,9 @@ public:
 
     boolean IsADirectory(const char*);
 private:
-    const char* Home(const char* x = nil);
     const char* ElimDot(const char*);
     const char* ElimDotDot(const char*);
     const char* InterpSlashSlash(const char*);
-    const char* InterpTilde(const char*);
-    const char* ExpandTilde(const char*, int);
     const char* RealPath(const char*);
 
     boolean Reset(const char*);

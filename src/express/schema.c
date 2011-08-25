@@ -305,8 +305,13 @@ VARfind( Scope scope, char * name, int strict ) {
             result = ENTITYfind_inherited_attribute( scope, name, 0 );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    printf( "press ^C now to trap to debugger\n" );
-                    pause();
+                    printf( "schema.c: press ^C now to trap to debugger\n" );
+                    #ifndef __WIN32__
+                        pause();
+                    #else     //windows
+                        getchar();
+                        abort();
+                    #endif
                 }
                 return result;
             }
@@ -317,8 +322,13 @@ VARfind( Scope scope, char * name, int strict ) {
             result = ( Variable )DICTlookup( scope->symbol_table, name );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    printf( "press ^C now to trap to debugger\n" );
-                    pause();
+                    printf( "schema.c: press ^C now to trap to debugger\n" );
+                    #ifndef __WIN32__
+                        pause();
+                    #else     //windows
+                        getchar();
+                        abort();
+                    #endif
                 }
                 return result;
             }
