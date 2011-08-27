@@ -79,11 +79,11 @@
 
 static void
 fedex_plus_usage() {
-    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-l|-L] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-L] [-v] [-d # | -d 9 -l nnn -u nnn] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
     fprintf( stderr, "\t-c or -C generates C++ classes for use with CORBA (Orbix)\n" );
-    fprintf( stderr, "\t-l or -L prints logging code in the generated C++ classes\n" );
+    fprintf( stderr, "\t-L prints logging code in the generated C++ classes\n" );
     fprintf( stderr, "\t-v produces a version description\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
@@ -126,7 +126,7 @@ EXPRESSinit_init() {
     EXPRESSsucceed = success;
     EXPRESSgetopt = Handle_FedPlus_Args;
     /* so the function getopt (see man 3 getopt) will not report an error */
-    strcat( EXPRESSgetopt_options, "sSlLcCaA" );
+    strcat( EXPRESSgetopt_options, "sSLcCaA" );
     ERRORusage_function = fedex_plus_usage;
 }
 

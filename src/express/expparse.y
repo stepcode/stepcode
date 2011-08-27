@@ -91,6 +91,11 @@
 #include "express/entity.h"
 #include "express/resolve.h"
 
+#ifdef YYDEBUG
+int yydbg_upper_limit = -1;
+int yydbg_lower_limit = -1;
+#endif /*YYDEBUG*/
+
 extern int print_objects_while_running;
 
 int tag_count;  /* use this to count tagged GENERIC types in the formal */

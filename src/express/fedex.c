@@ -84,13 +84,15 @@ char * FEDEXversion( void ) {
 
 #ifdef YYDEBUG
 extern int yydebug;
+extern int yydbg_upper_limit;
+extern int yydbg_lower_limit;
 #endif /*YYDEBUG*/
 
-char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz";
+char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:rvz";
 
 static void
 usage() {
-    fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-v] [-d # | -d 9 -l nnn -u nnn] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-v produces a version description\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
@@ -155,6 +157,9 @@ main( int argc, char ** argv ) {
 #endif /* debugging*/
 #ifdef YYDEBUG
                         fprintf( stderr, "  8 - set YYDEBUG\n" );
+                        fprintf( stderr, "  9 - set YYDEBUG, use -u and -l\n" );
+                        fprintf( stderr, "-u nnn: upper line limit\n" );
+                        fprintf( stderr, "-l nnn: lower line limit\n" );
 #endif /*YYDEBUG*/
                         break;
                     case 1:
@@ -175,9 +180,20 @@ main( int argc, char ** argv ) {
                     case 8:
                         yydebug = 1;
                         break;
+                    case 9:
+                        yydebug = 0;
+                        break;
 #endif /* YYDEBUG */
                 }
                 break;
+#ifdef YYDEBUG
+            case 'u':
+                yydbg_upper_limit = atoi(optarg);
+                break;
+            case 'l':
+                yydbg_lower_limit = atoi(optarg);
+                break;
+#endif /* YYDEBUG */
             case 'B':
                 buffer_messages = true;
                 break;

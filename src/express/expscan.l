@@ -145,10 +145,49 @@ You used flex (in make_rules) but compiled with -DLEX (in Makefile)!
 #undef YY_DECL
 #define YY_DECL int yylex(void)
 
+#ifdef YYDEBUG
+extern int yydebug;
+extern int yydbg_upper_limit;
+extern int yydbg_lower_limit;
+/*
+** Update yydebug based on yydbg_upper_limit and yydbg_lower_limit,
+** which are set in fedex.c. They default to -1 (no effect).
+** Prints line number when it changes and yydebug == 1.
+** Use: 'fedex_plus -d 9 [-l nnn] [-u nnn]'
+*/
+void upd_yydebug() {
+    static int oldyyline = 0; //keep track of previous line number
+    if( ( yylineno >= yydbg_lower_limit ) &&
+        ( ( yydbg_upper_limit == -1 ) || ( yylineno <= yydbg_upper_limit ) ) ) {
+        yydebug = 1;
+        if( oldyyline < yylineno ) {
+            oldyyline = yylineno;
+            fprintf(stderr, "Schema line number: %d\n",yylineno);
+        }
+    } else {
+        if( yydebug ) {
+            if ( oldyyline < yylineno ) {
+                oldyyline = yylineno;
+                fprintf(stderr, "\nSchema line number %d > upper limit. yydebug = 0.\n",yylineno);
+            }
+            yydebug = 0;
+        }
+    }
+}
+#define UPDATE_YYDEBUG() upd_yydebug()
+#else
+#define UPDATE_YYDEBUG() 
+#endif /*YYDEBUG*/
+
+
 /* here's the hook for the preprocessor */
 #undef YY_INPUT
 #define YY_INPUT(buf, result, max_size)                 \
-    (result) = SCANnextchar(buf)
+    do {                                                \
+        UPDATE_YYDEBUG();                               \
+        (result) = SCANnextchar(buf);                   \
+    } while (0)
+
 
 /* I don't believe this is used anymore, but not sure */
 /* in any case, experimental code above that attempts to skip over */
