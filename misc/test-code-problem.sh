@@ -7,7 +7,7 @@ else
 fi
 
 #must be the full path to fedex_plus, as the script will be run from a different dir
-$FEDEX_PLUS $f >/dev/null 2>&1
+$FEDEX_PLUS -n $f >/dev/null 2>&1
 
 # The line below contains a string or pattern to be matched. 
 # In this case, it occurs in several files - for speed, only check the smallest of them

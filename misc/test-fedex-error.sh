@@ -12,5 +12,5 @@ fi
 
 #must be the full path to fedex_plus, as the script will be run from a different dir
 #grep ERROR | head -n1 ensures that the error remains the first error
-$FEDEX_PLUS $f 2>&1 >/dev/null | grep ERROR | head -n1 |\
+$FEDEX_PLUS -n $f 2>&1 >/dev/null | grep ERROR | head -n1 |\
     grep -q "ERROR: Query expression source must be an aggregate" &> /dev/null 

@@ -52,6 +52,8 @@
 #include "express/object.h"
 #include "express/resolve.h"
 
+extern void exp_pause(); //in fedex.c
+
 Symbol *
 RENAME_get_symbol( Generic r ) {
     return( ( ( Rename * )r )->old );
@@ -306,12 +308,7 @@ VARfind( Scope scope, char * name, int strict ) {
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
                     printf( "schema.c: press ^C now to trap to debugger\n" );
-                    #ifndef __WIN32__
-                        pause();
-                    #else     //windows
-                        getchar();
-                        abort();
-                    #endif
+                    exp_pause();
                 }
                 return result;
             }
@@ -323,12 +320,7 @@ VARfind( Scope scope, char * name, int strict ) {
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
                     printf( "schema.c: press ^C now to trap to debugger\n" );
-                    #ifndef __WIN32__
-                        pause();
-                    #else     //windows
-                        getchar();
-                        abort();
-                    #endif
+                    exp_pause();
                 }
                 return result;
             }
