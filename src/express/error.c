@@ -76,6 +76,8 @@
 /* remaining in the error string buffer, call it a day and */
 /* dump the buffer */
 
+extern void exp_pause(); //in fedex.c
+
 static struct heap_element {
     int line;
     char * msg;
@@ -543,12 +545,7 @@ ERRORabort( int sig ) {
     }
 
     fprintf( stderr, "pausing...press ^C now to enter debugger: " );
-    #ifndef __WIN32__
-        pause();
-    #else     //windows
-        getchar();
-        abort();
-    #endif
+    exp_pause();
 }
 
 void
