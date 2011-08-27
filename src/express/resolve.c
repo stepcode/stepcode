@@ -63,6 +63,8 @@
 #include "express/schema.h"
 #include "express/express.h"
 
+extern void exp_pause(); //in fedex.c
+
 static void ENTITYresolve_subtypes PROTO( ( Schema ) );
 static void ENTITYresolve_supertypes PROTO( ( Entity ) );
 static void TYPEresolve_expressions PROTO( ( Type, Scope ) );
@@ -440,12 +442,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     break;
                 default:
                     printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-                    #ifndef __WIN32__
-                        pause();
-                    #else     //windows
-                        getchar();
-                        abort();
-                    #endif
+                    exp_pause();
                     break;
             }
             break;
@@ -506,12 +503,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             break;
         default:
             printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-            #ifndef __WIN32__
-                pause();
-            #else     //windows
-                getchar();
-                abort();
-            #endif
+            exp_pause();
     }
 }
 

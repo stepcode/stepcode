@@ -79,7 +79,7 @@
 
 static void
 fedex_plus_usage() {
-    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-l|-L] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-l|-L] [-v] [-d #] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
     fprintf( stderr, "\t-c or -C generates C++ classes for use with CORBA (Orbix)\n" );
@@ -87,6 +87,7 @@ fedex_plus_usage() {
     fprintf( stderr, "\t-v produces a version description\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
+    fprintf( stderr, "\t-n do not pause for internal errors (useful with delta script)\n" );
     fprintf( stderr, "\t-w warning enable\n" );
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );

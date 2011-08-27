@@ -86,14 +86,17 @@ char * FEDEXversion( void ) {
 extern int yydebug;
 #endif /*YYDEBUG*/
 
-char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz";
+int skip_exp_pause = false;
+
+char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:nrvz";
 
 static void
 usage() {
-    fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-v] [-d #] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-v produces a version description\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
+    fprintf( stderr, "\t-n do not pause for internal errors (useful with delta script)\n" );
     fprintf( stderr, "\t-w warning enable\n" );
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
@@ -111,6 +114,17 @@ usage() {
     fprintf( stderr, "	#	pass #\n" );
     fprintf( stderr, "	E	everything (all of the above)\n" );
     exit( 2 );
+}
+
+void exp_pause() {
+    if( !skip_exp_pause ) {
+        #ifdef __WIN32__
+            getchar();
+            abort();
+        #else
+            pause();
+        #endif
+    }
 }
 
 int
@@ -186,6 +200,9 @@ main( int argc, char ** argv ) {
                 break;
             case 'e':
                 filename = optarg;
+                break;
+            case 'n':
+                skip_exp_pause = true;
                 break;
             case 'r':
                 resolve = 0;

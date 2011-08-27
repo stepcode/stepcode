@@ -75,6 +75,8 @@
 #include "express/expr.h"
 #include "express/resolve.h"
 
+extern void exp_pause(); //in fedex.c
+
 void EXPop_init();
 static Error ERROR_internal_unrecognized_op_in_EXPresolve;
 /* following two could probably be combined */
@@ -361,12 +363,7 @@ EXPresolve_op_dot( Expression expr, Scope scope ) {
             }
             if( DICT_type != OBJ_VARIABLE ) {
                 printf( "EXPresolved_op_dot: attribute not an attribute? - press ^C now to trap to debugger\n" );
-                #ifndef __WIN32__
-                    pause();
-                #else     //windows
-                    getchar();
-                    abort();
-                #endif
+                exp_pause();
             }
 
             op2->u.variable = v;
