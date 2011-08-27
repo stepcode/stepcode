@@ -56,7 +56,7 @@ endif()
 OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 
 # build static libs by default
-OPTION(BUILD_STATIC_LIBS "Build static libraries" ON)
+OPTION(BUILD_STATIC_LIBS "Build static libraries" OFF)
 
 # Set version
 SET(SCL_VERSION_MAJOR "3")
