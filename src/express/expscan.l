@@ -157,20 +157,22 @@ extern int yydbg_lower_limit;
 */
 void upd_yydebug() {
     static int oldyyline = 0; //keep track of previous line number
-    if( ( yylineno >= yydbg_lower_limit ) &&
-        ( ( yydbg_upper_limit == -1 ) || ( yylineno <= yydbg_upper_limit ) ) ) {
-        yydebug = 1;
-        if( oldyyline < yylineno ) {
-            oldyyline = yylineno;
-            fprintf(stderr, "Schema line number: %d\n",yylineno);
-        }
-    } else {
-        if( yydebug ) {
-            if ( oldyyline < yylineno ) {
+    if( (yydbg_lower_limit > -1) || (yydbg_upper_limit > -1) ) {
+        if( ( yylineno >= yydbg_lower_limit ) &&
+            ( ( yydbg_upper_limit == -1 ) || ( yylineno <= yydbg_upper_limit ) ) ) {
+            yydebug = 1;
+            if( oldyyline < yylineno ) {
                 oldyyline = yylineno;
-                fprintf(stderr, "\nSchema line number %d > upper limit. yydebug = 0.\n",yylineno);
+                fprintf(stderr, "Schema line number: %d\n",yylineno);
             }
-            yydebug = 0;
+        } else {
+            if( yydebug ) {
+                if ( oldyyline < yylineno ) {
+                    oldyyline = yylineno;
+                    fprintf(stderr, "\nSchema line number %d > upper limit. yydebug = 0.\n",yylineno);
+                }
+                yydebug = 0;
+            }
         }
     }
 }
