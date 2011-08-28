@@ -49,7 +49,7 @@ Severity  SCLP23( Select )::severity( Severity s ) {
     return _error.severity( s );
 }       /**  end function  **/
 
-const char * SCLP23( Select )::Error() {
+const std::string SCLP23( Select )::Error() {
     /**  fn Error  **/
     return _error.DetailMsg();
 }       /**  end function  **/

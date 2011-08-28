@@ -1540,7 +1540,7 @@ STEPfile::CreateInstance( istream & in, ostream & out ) {
                 // Common causes of error is that obj is an abstract supertype
                 // or that it can only be instantiated using external mapping.
                 // If neither are the case, create a generic message.
-                if( *obj->Error().UserMsg() != '\0' ) {
+                if( !obj->Error().UserMsg().empty() ) {
                     result.UserMsg( obj->Error().UserMsg() );
                 } else {
                     result.UserMsg( "Could not create ENTITY" );
@@ -1549,11 +1549,6 @@ STEPfile::CreateInstance( istream & in, ostream & out ) {
                 delete obj;
                 obj = ENTITY_NULL;
             }
-#ifdef __O3DB__
-            if( obj ) {
-                obj -> persist();
-            }
-#endif
         }
     }
 
@@ -1565,7 +1560,6 @@ STEPfile::CreateInstance( istream & in, ostream & out ) {
         return ENTITY_NULL;
     }
     obj -> STEPfile_id = fileid;
-//    AppendEntityErrorMsg( &(obj->Error()) );
 
     //  scan values
     SkipInstance( in, tmpbuf );

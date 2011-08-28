@@ -41,7 +41,7 @@ class SCLP23_NAME(Select) {
   public:
 	Severity severity() const;
 	Severity severity( Severity );
-	const char *Error();
+	const std::string Error();
 	void Error( const char * );
 		// clears select's error  
 	void ClearError();
