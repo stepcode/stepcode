@@ -401,7 +401,7 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     if( ( ( char )i == 'a' ) || ( ( char )i == 'A' ) ) {
         old_accessors = 1;
     }
-    if( ( ( char )i == 'l' ) || ( ( char )i == 'L' ) ) {
+    if( ( char )i == 'L' ) {
         print_logging = 1;
     }
     if( ( ( char )i == 'c' ) || ( ( char )i == 'C' ) ) {
