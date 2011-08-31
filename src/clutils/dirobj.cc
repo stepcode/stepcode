@@ -115,8 +115,8 @@ const char * DirObj::RealPath( const char * path ) {
 
 boolean DirObj::LoadDirectory( const char * name ) {
     char buf[MAXPATHLEN + 2];
-
-    strcpy( buf, ValidDirectories( RealPath( name ) ) );
+    strcpy( buf, RealPath( name ) );
+//    strcpy( buf, ValidDirectories( RealPath( name ) ) );
     return Reset( buf );
 }
 
@@ -145,7 +145,8 @@ int DirObj::Index( const char * name ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 boolean DirObj::Reset( const char * path ) {
-    boolean successful = IsADirectory( path );
+//    boolean successful = IsADirectory( path );
+    boolean successful = true;
     if( successful ) {
         DIR * dir = opendir( path );
         ClearFileList();

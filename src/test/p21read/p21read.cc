@@ -46,6 +46,7 @@ int main( int argc, char * argv[] ) {
         flnm = ( char * )"testfile.step";
     }
     sfile.ReadExchangeFile( flnm );
+    sfile.Error().PrintContents(cout);
 
     cout << "EXAMPLE :  write file ..." << endl;
     if( argc == 3 ) {
@@ -54,5 +55,6 @@ int main( int argc, char * argv[] ) {
         flnm = ( char * )"file.out";
     }
     sfile.WriteExchangeFile( flnm );
+    sfile.Error().PrintContents(cout);
     cout << flnm << " written"  << endl;
 }

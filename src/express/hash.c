@@ -310,6 +310,34 @@ HASHdestroy( Hash_Table table ) {
     }
 }
 
+// rok
+void *
+HASHfind( Hash_Table t, char * s ) {
+//    Element * ep;
+    struct Element_ *ep = malloc(sizeof *ep);
+    struct Element_ *e = malloc(sizeof *e);
+    e -> key = s;
+    e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
+    ep = HASHsearch( t, e, HASH_FIND );
+    return( ep ? ep->data : 0 );
+}
+
+
+// rok
+void
+HASHinsert( Hash_Table t, char * s, void * data ) {
+    Element *e2;
+//    memset(e, 0, sizeof(s) + sizeof(data));
+    struct Element_ *e = malloc(sizeof *e);
+    e -> key = s;
+    e -> data = data;
+    e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
+    e2 = HASHsearch( t, e, HASH_INSERT );
+    if( e2 ) {
+        printf( "Redeclaration of %s\n", s );
+    }
+}
+
 Element
 HASHsearch( Hash_Table table, Element item, Action action ) {
     Address h;

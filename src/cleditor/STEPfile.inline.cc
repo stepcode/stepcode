@@ -278,12 +278,12 @@ STEPfile::OpenOutputFile( const char * filename ) {
         }
     }
 
-    if( _currentDir->FileExists( TruncFileName( FileName() ) ) ) {
+    if( _currentDir->FileExists( TruncFileName( filename ) ) ) {
         MakeBackupFile();
     }
 //    ostream* out  = new ostream(FileName(), io_writeonly, a_create);
     // - port 29-Mar-1994 kcm
-    ofstream * out  = new ofstream( FileName() );
+    ofstream * out  = new ofstream( filename );
     // default for ostream is writeonly and protections are set to 644
     if( !out ) {
         _error.AppendToUserMsg( "unable to open file for output\n" );
