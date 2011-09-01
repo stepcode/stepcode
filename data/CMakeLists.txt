@@ -65,16 +65,17 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     message( STATUS "Generating code for ${SCHEMA_NAME}.")
     set( SCHEMA_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_NAME} )
 
-    include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${SCL_SOURCE_DIR}/src/cldai
-                         ${SCL_SOURCE_DIR}/src/cleditor ${SCL_SOURCE_DIR}/src/clutils
-                         ${SCHEMA_DIR} ${SCL_SOURCE_DIR}/src/clstepcore )
-    add_definitions( -DHAVE_CONFIG_H )
-
     #the names of the files that will be generated
     set( FEDEX_OUT ${SCHEMA_DIR}/compstructs.cc ${SCHEMA_DIR}/Sdaiclasses.h 
                    ${SCHEMA_DIR}/schema.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.cc
                    ${SCHEMA_DIR}/schema.h ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.h
                    ${SCHEMA_DIR}/SdaiAll.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.init.cc )
+
+    # *cannot* use include_directories() because the includes keep piling up - if building
+    # multiple schemas, each one will use the include dirs from all previous schemas. Since
+    # one header (schema.h) is always named the same, this will not work. only workaround
+    # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
+    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
 
     add_custom_command( OUTPUT ${SCHEMA_DIR}
                         COMMAND cmake ARGS -E make_directory ${SCHEMA_DIR} 
@@ -87,11 +88,16 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         VERBATIM )
     add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
     target_link_libraries(${PROJECT_NAME} stepdai stepcore express stepeditor )
+    set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
+                           ${${PROJECT_NAME}_COMPILE_FLAGS} )
     
     if( NOT DEFINED ${DISABLE_P21READ} )
         add_executable( "p21read_${PROJECT_NAME}" ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
         target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
+        set_target_properties( "p21read_${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS
+                               ${${PROJECT_NAME}_COMPILE_FLAGS} )
     endif()
+
 ENDFUNCTION(BUILD_A_SCHEMA)
 
 if(NOT BUILD_SCHEMAS STREQUAL "" )
