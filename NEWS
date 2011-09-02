@@ -1,3 +1,42 @@
+STEP Class Library  ------  https://github.com/mpictor/StepClassLibrary
+************************************************************************
+
+Release 0.1 (Sept 2011)
+
+What's new since the SCL 3.2 release in 1998?
+===========
+* CMake build system replaces the configure script, Makefiles, and bash
+  scripts that were used by NIST. CMake is far easier to maintain and is
+  cross-platform.
+* Support for formats that are no longer in the STEP standard
+  (ObjectStore, CORBA) has been disabled.
+* Fix some bugs that were found when testing SCL with modern schemas,
+  including spaces inserted into function names and use of outdated
+  functions
+* Bring SCL closer to alignment with modern coding standards - replace
+  String class with std::string, fix all GCC warnings
+* Builds on Linux, OSX, and Windows; requires mingw on Windows.
+* Add debugging option -d 9 -l nnn -u nnn to fedex_plus. This limits
+  parser debug output to a specified range of lines in the schema.
+
+For a detailed list of changes, see
+https://github.com/mpictor/StepClassLibrary/wiki/changelog-v0.1
+
+For a list of closed issues, see
+https://github.com/mpictor/StepClassLibrary/issues?state=closed&milestone=1
+
+Pre-BRL-CAD changes:
+* Patches from http://www.statik.tu-cottbus.de/fileadmin/project_dth/scl/
+            Jan 2005 - Mar 2006
+* STEP Class Library Release 3.2 February 1998
+* STEP Class Library Release 3.1 October 1997
+* STEP Class Library and Data Probe release 2.1 June 1995
+
+
+************************************************************************
+************************************************************************
+                --Original NEWS file follows--
+************************************************************************
 ************************************************************************
  Updates from http://www.statik.tu-cottbus.de/fileadmin/project_dth/scl/
 			Jan 2005 - Mar 2006

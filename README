@@ -1,5 +1,5 @@
 ***********************************************************************
-Step Class Library - https://github.com/mpictor/StepClassLibrary
+Step Class Library v0.1 -- https://github.com/mpictor/StepClassLibrary
 
 * What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
   C++ source code that can read and write Part 21 files conforming 
@@ -31,22 +31,19 @@ Step Class Library - https://github.com/mpictor/StepClassLibrary
   
 * Build options (append to the 'cmake ..' line):
   -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp" 
-    - this generates c++ for the schema, and
-      compiles it into a library. Also works with directories,
-      as long as each dir only has one express file.
+    - this generates c++ for the schema, and compiles it into a
+      library. Also works with directories, as long as each dir only
+      has one express file.
     - multiple files/directories are separated by semicolons
-    - this also builds a 'p21read' program, which reads one step
-      file and writes another. It may change whitespace or remove
-      comments; otherwise, the input and output files will be
-      identical.
-      If they are not identical, either the file does not match 
-      the schema, or SCL generated incorrect source code.
+    - this also builds a 'p21read' program, which reads one step file
+      and writes another. It may change whitespace or remove comments;
+      otherwise, the input and output files should be identical. If
+      they are not identical, either the file does not match the
+      schema, or SCL generated incorrect source code.
   -DDISABLE_P21READ=TRUE
     - disable p21read. probably not a useful option.
   -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
-    - fedex_plus will be less verbose
-    - fedex_plus debugging options such as -d8 will not be available
     - without this, cmake defaults to a Debug build
 
 ***********************************************************************
