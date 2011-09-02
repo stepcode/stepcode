@@ -1506,13 +1506,13 @@ procedure_id     : TOK_IDENTIFIER
                   { $$ = $1; }
                  ;
 /* rules from ISO 10303-11:2004 bnf (courtesy craigl64)
- *
+ * 
 179 attribute_qualifier = ’.’ attribute_ref .
 232 group_qualifier = ’\’ entity_ref .
 239 index_qualifier = ’[’ index_1 [ ’:’ index_2 ] ’]’ .
- *
+ * 
 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
- *
+ * 
 276 qualifier = attribute_qualifier | group_qualifier | index_qualifier .
  *
 174 alias_stmt = ALIAS variable_id FOR general_ref { qualifier } ’;’ stmt { stmt } END_ALIAS ’;’ .

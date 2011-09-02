@@ -40,7 +40,7 @@
 #define	TOK_COLON	297
 #define	TOK_COMMA	298
 #define	TOK_CONSTANT	299
-#define	TOK_CONTEXT	300
+// #define	TOK_CONTEXT	300
 #define	TOK_E	301
 #define	TOK_DERIVE	302
 #define	TOK_ELSE	303
@@ -48,12 +48,12 @@
 #define	TOK_END_ALIAS	305
 #define	TOK_END_CASE	306
 #define	TOK_END_CONSTANT	307
-#define	TOK_END_CONTEXT	308
+// #define	TOK_END_CONTEXT	308
 #define	TOK_END_ENTITY	309
 #define	TOK_END_FUNCTION	310
 #define	TOK_END_IF	311
 #define	TOK_END_LOCAL	312
-#define	TOK_END_MODEL	313
+// #define	TOK_END_MODEL	313
 #define	TOK_END_PROCEDURE	314
 #define	TOK_END_REPEAT	315
 #define	TOK_END_RULE	316
@@ -76,7 +76,7 @@
 #define	TOK_LIST	333
 #define	TOK_LOCAL	334
 #define	TOK_LOGICAL	335
-#define	TOK_MODEL	336
+// #define	TOK_MODEL	336
 #define	TOK_NUMBER	337
 #define	TOK_OF	338
 #define	TOK_ONEOF	339
