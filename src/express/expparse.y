@@ -195,7 +195,7 @@ static struct scope {
 			constant
 			expression
 			function_call
-			general_ref		group_ref
+			general_ref		/*group_ref*/
 			identifier		initializer
 			interval		literal
 			local_initializer	precision_spec
@@ -1523,11 +1523,12 @@ procedure_id		: TOK_IDENTIFIER
 			  { $$ = $1; }
 			;
 
-group_ref		: TOK_BACKSLASH TOK_IDENTIFIER
+//group_ref is used in general_ref at 1884 ( = assignable [group_ref]); other instances are commented out
+/*group_ref		: TOK_BACKSLASH TOK_IDENTIFIER
 			  { $$ = BIN_EXPcreate(OP_GROUP,(Expression )0,(Expression )0);
 			    $$->e.op2 = EXPcreate(Type_Identifier);
 			    $$->e.op2->symbol = *$2; SYMBOL_destroy($2); }
-			;
+			;*/
 
 qualifier		: TOK_DOT TOK_IDENTIFIER
 			  { $$.expr = $$.first =
@@ -1870,10 +1871,10 @@ type_decl		: TOK_TYPE type_item where_rule_OPT {
 			;
 
 
-general_ref		: assignable group_ref
+general_ref		:/* assignable group_ref
 			  { $2->e.op1 = $1;
 			    $$ = $2;}
-			| assignable
+			|*/ assignable
 			  { $$ = $1; }
 			;
 
