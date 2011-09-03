@@ -554,26 +554,6 @@ NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
     return err->severity();
 }
 
-
-// return 1 if 'in' points at a quoted quote otherwise return 0
-
-int
-QuoteInString( istream & in ) {
-    char c1, c2;
-    if( in.good() ) {
-        in >> c1;
-        in >> c2;
-        in.putback( c2 );
-        in.putback( c1 );
-        if( c1 == STRING_DELIM ) {
-            if( c2 == STRING_DELIM ) {
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
-
 // assign 's' so that it contains an exchange file format string read from
 // 'in'.
 
@@ -585,34 +565,31 @@ PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
     char c;
     in >> ws; // skip whitespace
     in >> c;
-    if( c == STRING_DELIM ) {
+    int i_quote = 0;
+    if ( c == STRING_DELIM ) {
         s += c;
-        while( QuoteInString( in ) ) { // to handle a string like '''hi'
-            in.get( c );
+        while ( i_quote != -1 && in.get(c) ) {
             s += c;
-            in.get( c );
-            s += c;
-        }
-//  int sk = in.skip(0);
-        while( in.get( c ) && ( c != STRING_DELIM ) ) {
-            s += c;
-            while( QuoteInString( in ) ) {
-                // to handle a string like 'hi'''
-                in.get( c );
-                s += c;
-                in.get( c );
-                s += c;
+            // to handle a string like 'hi'''
+            if ( c == STRING_DELIM) {
+                i_quote++;
+            } else {
+                // # of quotes is odd
+                if ( i_quote % 2 != 0 ) {
+                    i_quote = -1;
+                    // put back last char, take it off from s and update c
+                    in.putback(c);
+                    s = s.substr(0, s.size() - 1);
+                    c = *s.rbegin();
+                }
             }
         }
-//  in.skip(sk);
 
         if( c != STRING_DELIM ) {
             err->GreaterSeverity( SEVERITY_INPUT_ERROR );
             sprintf( messageBuf, "Invalid string value.\n" );
             err->AppendToDetailMsg( messageBuf );
             s.append( "\'" );
-        } else {
-            s += c;
         }
     }
 }
