@@ -326,7 +326,7 @@ HASHfind( Hash_Table t, char * s ) {
 // rok
 void
 HASHinsert( Hash_Table t, char * s, void * data ) {
-    Element *e2;
+    Element e2;
 //    memset(e, 0, sizeof(s) + sizeof(data));
     struct Element_ *e = malloc(sizeof *e);
     e -> key = s;
