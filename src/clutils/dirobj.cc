@@ -54,6 +54,10 @@
 #include <string>
 #include <iostream>
 
+#if defined(__WIN32__)
+#include <shlwapi.h>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Create a new DirObj object.
@@ -159,7 +163,7 @@ bool DirObj::Reset( const std::string & path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool DirObj::IsADirectory( const char * path ) {
-#if defined(__WIN32__) && !defined(__mingw32__)
+#if defined(__WIN32__)
     return PathIsDirectory( path );
 #else
     struct stat st;
@@ -189,11 +193,11 @@ bool DirObj::IsADirectory( const char * path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 const std::string DirObj::Normalize( const std::string & path ) {
-    char * b = 0;
+    char b[MAX_PATH];
     std::string buf;
     const char * slash;
-#if defined(__WIN32__) && !defined(__mingw32__)
-    _fullpath(b,path.c_str(),MAXPATHLEN);
+#if defined(__WIN32__)
+    PathCanonicalize(b, path.c_str());
     slash = "\\";
 #else
     b = realpath(path.c_str(),0);
