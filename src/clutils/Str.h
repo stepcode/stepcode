@@ -13,22 +13,21 @@
 * and is not subject to copyright.
 */
 
-/* $Id: Str.h,v 3.0.1.3 1997/11/05 22:33:52 sauderd DP3.1 $  */ 
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 #include <ctype.h>
 
-//#include <std.h> // not found in CenterLine C++
-// the two includes stdio.h and stdlib.h below are replacing std.h since 
-// CenterLine doesn't have std.h
-
-#include <stdio.h> // added to have the definition for BUFSIZE
+#include <stdio.h>
 #include <stdlib.h> 
 #include <string.h>
 #include <errordesc.h>
+
+
+//StrCmpIns - case-insensitive string compare. Original fct (replaced Sep 2011)
+//called PrettyTmpName(). Not doing so may affect sort order but that shouldn't hurt
+#ifdef _MSC_VER
+    #define StrCmpIns(a,b) _stricmp(a,b)
+#else
+    #define StrCmpIns(a,b) strcasecmp(a,b)
+#endif
 
 char         ToLower (const char c);
 char         ToUpper  (const char c);
@@ -38,7 +37,6 @@ const char * StrToUpper (const char * word, std::string &s);
 const char * StrToConstant (const char * word, std::string &s);
 const char * PrettyTmpName (const char * oldname);
 char *       PrettyNewName (const char * oldname);
-int          StrCmpIns (const char *, const char *);
 char *       EntityClassName ( char * oldname);
 
 extern Severity CheckRemainingInput

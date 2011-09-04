@@ -10,8 +10,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: Str.cc,v 3.0.1.3 1997/11/05 22:33:52 sauderd DP3.1 $  */
-
 #include <Str.h>
 
 /******************************************************************
@@ -24,8 +22,7 @@
  ** Status:  complete
  ******************************************************************/
 
-char
-ToLower( const char c ) {
+char ToLower( const char c ) {
     if( isupper( c ) ) {
         return ( tolower( c ) );
     } else {
@@ -34,8 +31,7 @@ ToLower( const char c ) {
 
 }
 
-char
-ToUpper( const char c ) {
+char ToUpper( const char c ) {
     if( islower( c ) ) {
         return ( toupper( c ) );
     } else {
@@ -43,11 +39,8 @@ ToUpper( const char c ) {
     }
 }
 
-char *
-StrToLower( const char * strOld, char * strNew )
-/*
- * Place in strNew a lowercase version of strOld.
- */
+// Place in strNew a lowercase version of strOld.
+char * StrToLower( const char * strOld, char * strNew )
 {
     int i = 0;
 
@@ -59,11 +52,9 @@ StrToLower( const char * strOld, char * strNew )
     return strNew;
 }
 
-const char *
-StrToLower( const char * word, std::string & s ) {
+const char * StrToLower( const char * word, std::string & s ) {
     char newword [BUFSIZ];
     int i = 0;
-//    char ToLower (char c);
 
     while( word [i] != '\0' ) {
         newword [i] = ToLower( word [i] );
@@ -74,27 +65,22 @@ StrToLower( const char * word, std::string & s ) {
     return const_cast<char *>( s.c_str() );
 }
 
-const char *
-StrToUpper( const char * word, std::string & s ) {
+const char * StrToUpper( const char * word, std::string & s ) {
     char newword [BUFSIZ];
     int i = 0;
-//    char ToUpper (char c);
 
     while( word [i] != '\0' ) {
         newword [i] = ToUpper( word [i] );
         ++i;
-
     }
     newword [i] = '\0';
     s = newword;
     return const_cast<char *>( s.c_str() );
 }
 
-const char *
-StrToConstant( const char * word, std::string & s ) {
+const char * StrToConstant( const char * word, std::string & s ) {
     char newword [BUFSIZ];
     int i = 0;
-//    char ToUpper (char c);
 
     while( word [i] != '\0' ) {
         if( word [i] == '/' || word [i] == '.' ) {
@@ -103,7 +89,6 @@ StrToConstant( const char * word, std::string & s ) {
             newword [i] = ToUpper( word [i] );
         }
         ++i;
-
     }
     newword [i] = '\0';
     s = newword;
@@ -119,8 +104,7 @@ StrToConstant( const char * word, std::string & s ) {
                    PrettyTmpName returns new name in a static buffer
  ** Status:   OK  7-Oct-1992 kcm
  ******************************************************************/
-const char *
-PrettyTmpName( const char * oldname ) {
+const char * PrettyTmpName( const char * oldname ) {
     int i = 0;
     static char newname [BUFSIZ];
     newname [0] = '\0';
@@ -134,36 +118,16 @@ PrettyTmpName( const char * oldname ) {
             ++i;
         }
     }
-
     newname [0] = ToUpper( oldname [0] );
     newname [i] = '\0';
     return newname;
 }
 
-char *
-PrettyNewName( const char * oldname ) {
+char * PrettyNewName( const char * oldname ) {
 
     char * name = new char [strlen( oldname ) + 1];
     strcpy( name, PrettyTmpName( oldname ) );
     return name;
-}
-
-int
-StrCmpIns( const char * strA, const char * strB )
-/*
- * An insensitive string compare function.  Used most often to compare
- * names of objects where case is not known and not significant.
- *
- * NOTE - cygnus does not define strcmpi/stricmp.  I'm sure there's a nifty
- * way to add preprocessor commands to check if it exists, and if so to
- * use it, but I didn't bother.
- */
-{
-    char str1[BUFSIZ], str2[BUFSIZ];
-
-    strncpy( str1, PrettyTmpName( strA ), BUFSIZ - 1 );
-    strncpy( str2, PrettyTmpName( strB ), BUFSIZ - 1 );
-    return ( strcmp( str1, str2 ) );
 }
 
 // This function is used to check an input stream following a read.  It writes
