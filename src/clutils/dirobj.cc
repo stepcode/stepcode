@@ -193,13 +193,14 @@ bool DirObj::IsADirectory( const char * path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 const std::string DirObj::Normalize( const std::string & path ) {
-    char b[MAX_PATH];
     std::string buf;
     const char * slash;
 #if defined(__WIN32__)
+    char b[MAX_PATH];
     PathCanonicalize(b, path.c_str());
     slash = "\\";
 #else
+    char * b;
     b = realpath(path.c_str(),0);
     slash = "/";
 #endif
@@ -214,7 +215,7 @@ const std::string DirObj::Normalize( const std::string & path ) {
         buf.append(slash);
 
         // if buf is a path to a directory and doesn't end with '/'
-    } else if( IsADirectory( buf.c_str() ) && buf[buf.size()] != '/' ) {
+    } else if( IsADirectory( buf.c_str() ) && buf[buf.size()] != slash[0] ) {
         buf.append(slash);
     }
     return buf;

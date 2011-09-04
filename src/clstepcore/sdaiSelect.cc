@@ -10,12 +10,9 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiSelect.cc,v 1.6 1997/11/05 21:59:16 sauderd DP3.1 $ */
-
 #include <stdio.h> // to get the BUFSIZ #define
 #include <ExpDict.h>
 #include <sstream>
-//#include <STEPentity.h>
 #include <string>
 #include <sdai.h>
 #include <STEPattribute.h>
@@ -358,12 +355,6 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 return SEVERITY_WARNING;
             }
         }
-        /*  if (!in.good())
-            {
-                err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-                return SEVERITY_INPUT_ERROR;
-            }
-        */
     }
 // NOTE **** anything that gets read below here is invalid according to the
 // Technical Corrigendum for Part 21 (except for reading an entity instance
@@ -372,11 +363,6 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
 // is what it does (for every type but entity instance refs). DAS 2/4/97
 
     else { // case A
-        //  the type can be determined from the value
-//      if (_type && ! _type -> UniqueElements ())  {
-//  err->AppendToDetailMsg("Type for value of SELECT is ambiguous.\n" );
-//  err->GreaterSeverity( SEVERITY_WARNING );
-//      }
         switch( c ) {
             case '$':
                 nullify();
@@ -466,7 +452,6 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
 
             default:
                 // ambiguous - ERROR:  underlying type should have been set
-                //       STEPread_error ();
                 err->AppendToDetailMsg(
                     "type for SELECT could not be determined from value.\n" );
                 nullify();
@@ -482,10 +467,9 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
 
         // now the type descriptor should be derivable from the base_type
 
-        // if it\'s not issue a warning
+        // if it's not issue a warning
         if( _type && !( IsUnique( base_type ) ) )  {
             err->AppendToDetailMsg( "Value for SELECT will be assigned to first possible choice.\n" );
-//    err->GreaterSeverity( SEVERITY_INCOMPLETE );
             err->GreaterSeverity( SEVERITY_USERMSG );
         }
 
@@ -538,7 +522,6 @@ SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
         out << "$";
         return;
     }
-//    switch(ValueType()) // This doesn't work DAS 2/4/97
     switch( underlying_type->NonRefType() ) {
         case sdaiINSTANCE: {
             STEPwrite_content( out );
@@ -546,7 +529,6 @@ SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
         }
         case sdaiSELECT: { // The name of a select is never written DAS 1/31/97
             if( underlying_type->Type() == REFERENCE_TYPE ) {
-//      if(underlying_type->NonRefType() == sdaiSELECT)
                 std::string s;
                 out << StrToUpper( underlying_type->Name( currSch ), s ) << "(";
                 STEPwrite_content( out, currSch );
@@ -579,52 +561,26 @@ SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
     }
 }
 
-void
-SCLP23( Select )::STEPwrite_verbose( ostream & out, const char * currSch ) const {
+void SCLP23( Select )::STEPwrite_verbose( ostream & out, const char * currSch ) const {
     std::string tmp;
     out << StrToUpper( CurrentUnderlyingType()->Name( currSch ), tmp ) << "(";
     STEPwrite_content( out );
     out << ")";
 }
 
-const char *
-SCLP23( Select )::STEPwrite( std::string & s, const char * currSch )  const {
+const char * SCLP23( Select )::STEPwrite( std::string & s, const char * currSch )  const {
     ostringstream buf;
     STEPwrite( buf, currSch );
-    buf << ends;  // have to add the terminating \0 char
-    char * tmp;
-    /*** tmp = buf.str (); ***/
-    tmp = &( buf.str()[0] );
-    s = tmp;
-    delete tmp;
+    buf << ends;  // add the terminating \0 char
+    s = buf.str();
     return const_cast<char *>( s.c_str() );
 }
 
-
-//SCLP23(Select)&
-//SCLP23(Select)::operator= (SCLP23(Select)& x)
-//{
-//    return *this;
-//}
-
-#ifdef OBSOLETE
-char *
-SCLP23( Select )::asStr()  const {
-    strstream buf;
-    STEPwrite( buf );
-    /*  STEPwrite_content (buf);*/
-    buf << ends;  // have to add the terminating \0 char
-    return buf.str();   // need to delete this space
-}
-#endif
-
-int
-SCLP23( Select )::set_null() {
+int SCLP23( Select )::set_null() {
     nullify();
     return 1;
 }
 
-int
-SCLP23( Select )::is_null() {
+int SCLP23( Select )::is_null() {
     return ( !exists() );
 }
