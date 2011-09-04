@@ -885,9 +885,7 @@ STEPattribute::is_null()  const {
             return ( *( ptr.c ) == S_ENTITY_NULL );
 
         case STRING_TYPE:
-            // rok
-            //ptr.S->clear();
-            return ptr.S->empty();
+            return ( *( ptr.S ) == S_STRING_NULL);
 
         case BINARY_TYPE:
             ptr.b->clear();
@@ -927,15 +925,12 @@ STEPattribute::is_null()  const {
  ** Returns:  int -- if 0 => not equal
  ** Description:  evaluates the equality of two attributes
  ** Side Effects:  none
- ** Status:  stub -- needs alot of work
  ******************************************************************/
 
 //  equality for STEPattribute
 int operator == ( STEPattribute & a1, STEPattribute & a2 ) {
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-         << "\n" << _POC_ "\n";
-    if( a1.aDesc->NonRefType() == a2.aDesc->NonRefType() ) {
-        ;
+    if ( a1.aDesc == a2.aDesc ) {
+        return 1;
     }
     return 0;
 }
