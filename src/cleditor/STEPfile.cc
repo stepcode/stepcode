@@ -10,8 +10,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPfile.cc,v 3.0.1.10 1998/02/17 18:04:30 sauderd Exp $ */
-
 /********************************************************************
  TODO LIST:
  - ReadHeader doesn't merge the information from more than one instance
@@ -1709,15 +1707,7 @@ STEPfile::CreateSubSuperInstance( istream & in, int fileid, ErrorDescriptor & e 
     entNmArr[enaIndex] = 0;
     schemaName( schnm );
 
-#ifdef __O3DB__
-    obj = new STEPcomplex( _reg, ( const std::string ** )entNmArr, fileid,
-                           schnm );
-#else
-    obj = new STEPcomplex( &_reg, ( const std::string ** )entNmArr, fileid,
-                           schnm );
-#endif
-
-//    SkipInstance(in, tmpstr);
+    obj = new STEPcomplex( &_reg, ( const std::string ** )entNmArr, fileid, schnm );
 
     if( obj->Error().severity() <= SEVERITY_WARNING ) {
         // If obj is not legal, record its error info and delete it:
@@ -1813,24 +1803,12 @@ STEPfile::ReadScopeInstances( istream & in ) {
 }
 
 
-/*
-Severity
-STEPfile::ReadSubSuperInstance (istream& in)
-{
-  std::string tmp;
-  SkipInstance(in, tmp);
-  return SEVERITY_NULL;
-}
-*/
 
 #ifdef junk
-void
-ReadEntityError( char c, int i, istream & in ) {
+//FIXME: do we keep this?
+void ReadEntityError( char c, int i, istream & in ) {
     char errStr[BUFSIZ];
     errStr[0] = '\0';
-
-    /*    sprintf(errStr, " for instance #%d : %s\n", STEPfile_id, EntityName());*/
-    /*    _error.AppendToDetailMsg(errStr);*/
 
     if( ( i >= 0 ) && ( i < attributes.list_length() ) ) { // i is an attribute
         sprintf( errStr, "  invalid data for type \'%s\'\n",
@@ -1851,8 +1829,6 @@ ReadEntityError( char c, int i, istream & in ) {
     _error.AppendToDetailMsg( "  data lost looking for end of entity:" );
 
     //  scan over the rest of the instance and echo it
-//    cerr << "  ERROR Trying to find the end of the ENTITY to recover...\n";
-//    cerr << "  skipping the following input:\n";
 
     in.clear();
     int foundEnd = 0;
@@ -1864,14 +1840,11 @@ ReadEntityError( char c, int i, istream & in ) {
         while( in.good() && ( c != ')' ) ) {
             in.get( c );
             tmp.Append( c );
-//      cerr << c;
         }
         if( in.good() && ( c == ')' ) ) {
             in >> ws; // skip whitespace
             in.get( c );
             tmp.Append( c );
-//      cerr << c;
-//      cerr << "\n";
             if( c == ';' ) {
                 foundEnd = 1;
             }
@@ -1978,7 +1951,6 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
     //check for subtype/supertype record
     if( c == '(' ) {
         // TODO
-//    ReadSubSuperInstance(in);
         sev = obj->STEPread( fileid, idIncrNum, &instances(), in, currSch,
                              useTechCor );
 
@@ -1992,7 +1964,6 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         if( c != 'E' ) {
             in >> c;    // read the semicolon
         }
-//    return ENTITY_NULL;
     } else {
         ReadTokenSeparator( in, &cmtStr );
         c = in.peek();
@@ -2212,10 +2183,7 @@ STEPfile::WriteValuePairsFile( ostream & out, int validate, int clearError,
         }
     }
 
-//    out << FILE_DELIM << "\n";
-//    WriteHeader(out);
     WriteValuePairsData( out, writeComments, mixedCase );
-//    out << END_FILE_DELIM << "\n";
     return rval;
 }
 
@@ -2250,21 +2218,10 @@ STEPfile::HeaderId( const char * name ) {
 
 /***************************
 ***************************/
-int
-STEPfile::HeaderIdOld( const char * name ) {
-    /*
-        char* nms[5] =
-          {
-          "FILE_IDENTIFICATION\0",
-          "FILE_DESCRIPTION\0",
-          "IMP_LEVEL\0",
-          "CLASSIFICATION\0",
-          "MAXSIG\0"
-          };
-    */
+int STEPfile::HeaderIdOld( const char * name ) {
     const char * nms[5];
     nms[0] = "FILE_IDENTIFICATION",
-             nms[1] = "FILE_DESCRIPTION";
+    nms[1] = "FILE_DESCRIPTION";
     nms[2] = "IMP_LEVEL";
     nms[3] = "CLASSIFICATION";
     nms[4] = "MAXSIG";
@@ -2293,7 +2250,6 @@ STEPfile::WriteHeader( ostream & out ) {
     SCLP23( Application_instance )* se;
     int n = _headerInstances->InstanceCount();
     for( int i = 0; i < n; ++i ) {
-        /*    se = (*_headerInstances)[i]->GetApplication_instance();*/
         se = _headerInstances->GetMgrNode( i ) ->GetApplication_instance();
         if( !(
                     ( se->StepFileId() == HeaderId( "File_Name" ) ) ||
@@ -2302,8 +2258,6 @@ STEPfile::WriteHeader( ostream & out ) {
                 ) )
             WriteHeaderInstance(
                 _headerInstances->GetMgrNode( i )->GetApplication_instance(), out );
-        /*        WriteHeaderInstance((*_headerInstances)[i] -> GetApplication_instance(),
-                           out );*/
     }
     out << "ENDSEC;\n";
 }
@@ -2335,9 +2289,6 @@ STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
     SCLP23( Application_instance ) *se = 0;
     se = _headerInstances->GetApplication_instance( "File_Name" );
     if( se == ENTITY_NULL ) {
-        // ERROR: no File_Name instance in _headerInstances
-        // create a File_Name instance
-//    (p21DIS_File_name*)se = HeaderDefaultFileName();
         se = ( SCLP23( Application_instance ) * )HeaderDefaultFileName();
     }
 
@@ -2354,173 +2305,39 @@ STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
     struct tm * timeptr = localtime( &t );
     char time_buf[26];
     strftime( time_buf, 26, "%Y-%m-%dT%H:%M:%S", timeptr );
-    //s_String  s = fn->time_stamp();
-    //strncpy((char*)s,time_buf,27);
     fn->time_stamp( time_buf );
 
 //output the values to the file
     WriteHeaderInstance( se, out );
 }
 
-
-/**************************************************
-  DAVE, should this section be deleted now?
-
-    p21DIS_File_name * fn;
-    int fileid = HeaderId("File_Name");
-    MgrNode * mn = _headerInstances->FindFileId(fileid);
-    if (!mn)
-    {
-    // ERROR: no File_Name instance in _headerInstances
-    // create a File_Name instance
-    (SCLP23(Application_instance)*)fn = HeaderDefaultFileName();
-    }
-    else
-      {
-      (SCLP23(Application_instance)*)fn = _headerInstances->GetApplication_instance(mn);
-      }
-
-// Write the values for the FileName instance to the ostream
-    std::string tmp;
-    out << StrToUpper (fn->EntityName()) << "(";
-
-    // write name
-    //out << "\'" << (char*)fn->name() << "\',";
-    SCLP23(String) * s = new SCLP23(String)((char*)fn->name());
-    s->STEPwrite(out);
-    delete s;
-    out << ",";
-
-    // write time_stamp (as specified in ISO Standard 8601)
-    // output the current system time to the file, using the following format:
-    // example: '1994-04-12 15:27:46'
-    // for Calendar Date, 12 April 1994, 27 minute 46 seconds past 15 hours
-    time_t t = time(NULL);
-    struct tm *timeptr = localtime(&t);
-    char time_buf[26];
-    strftime(time_buf,26,"%Y-%m-%d %H:%M:%S",timeptr);
-    out << '\'' << time_buf << "\',";
-
-    // write author
-    fn->author().STEPwrite(out);
-    out << ",";
-
-    // write organization
-    fn->organization().STEPwrite(out);
-    out << ",";
-
-    // write preprocessor_version
-    s = new SCLP23(String)((char*)fn->preprocessor_version());
-    s->STEPwrite(out);
-    delete s;
-    out << ",";
-
-    // write originating_system
-    s = new SCLP23(String)((char*)fn->originating_system());
-    s->STEPwrite(out);
-    delete s;
-    out << ",";
-
-    // write authorization
-    s = new SCLP23(String)((char*)fn->authorization());
-    s->STEPwrite(out);
-    delete s;
-    out << ");\n";
-
-}
-**************************************************/
-
-
-void
-STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
+void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
 // Get the FileDescription instance from _headerInstances
     SCLP23( Application_instance ) *se = 0;
     se = _headerInstances->GetApplication_instance( "File_Description" );
     if( se == ENTITY_NULL ) {
-        // ERROR: no File_Name instance in _headerInstances
-        // create a File_Name instance
-//    (s_File_Description*)se = HeaderDefaultFileDescription();
         se = ( SCLP23( Application_instance ) * )HeaderDefaultFileDescription();
     }
 
     WriteHeaderInstance( se, out );
-
-    /**************************************************
-
-       p21DIS_File_description * fd;
-        int fileid = HeaderId("File_Description");
-        MgrNode * mn = _headerInstances->FindFileId(fileid);
-        if (!mn)
-          {
-          // ERROR: no File_Description instance in _headerInstances
-          // create a File_Description instance
-          (SCLP23(Application_instance)*)fd = HeaderDefaultFileDescription();
-          }
-        else
-          {
-          (SCLP23(Application_instance)*)fd = _headerInstances->GetApplication_instance(mn);
-          }
-    // Write the values for the FileDescription instance to the ostream
-        out << StrToUpper (fd->EntityName()) << "(";
-
-        //write description
-        fd->description().STEPwrite(out,&_error,a_16DESCRIPTION);
-        out << ",";
-
-        //write implementation_level
-        SCLP23(String) *s = new SCLP23(String)((char*)fd->implementation_level());
-        s->STEPwrite(out);
-        delete s;
-        out << ");\n";
-
-    **************************************************/
 }
 
-void
-STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
-// Get the FileName instance from _headerInstances
+void STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
     SCLP23( Application_instance ) *se = 0;
+
+    // Get the FileName instance from _headerInstances
     se = _headerInstances->GetApplication_instance( "File_Schema" );
     if( se == ENTITY_NULL ) {
-        // ERROR: no File_Name instance in _headerInstances
-        // create a File_Name instance
-//    (p21DIS_File_schema*)se = HeaderDefaultFileSchema();
         se = ( SCLP23( Application_instance ) * ) HeaderDefaultFileSchema();
     }
-
     WriteHeaderInstance( se, out );
-
-    /**************************************************
-
-        p21DIS_File_schema * fs;
-        int fileid = HeaderId("File_Schema");
-        MgrNode * mn = _headerInstances->FindFileId(fileid);
-        if (!mn)
-          {
-          // ERROR: no File_Schema instance in _headerInstances
-          // create a File_Schema instance
-          (SCLP23(Application_instance)*)fs = HeaderDefaultFileSchema();
-          }
-        else
-          {
-          (SCLP23(Application_instance)*)fs = _headerInstances->GetApplication_instance(mn);
-          }
-    // Write the values for the FileName instance to the ostream
-        out << StrToUpper (fs->EntityName()) << "(";
-
-        // write schema_identifiers
-        fs->schema_identifiers().STEPwrite(out);
-        out << ");\n";
-    **************************************************/
-
 }
 
 
 /***************************
 ***************************/
 
-void
-STEPfile::WriteData( ostream & out, int writeComments ) {
+void STEPfile::WriteData( ostream & out, int writeComments ) {
     char currSch[BUFSIZ];
     currSch[0] = '\0';
 
@@ -2529,7 +2346,6 @@ STEPfile::WriteData( ostream & out, int writeComments ) {
     schemaName( currSch );
     int n = instances().InstanceCount();
     for( int i = 0; i < n; ++i )
-        /*  instances ()[i] -> GetApplication_instance()->STEPwrite(out);*/
     {
         instances().GetMgrNode( i )->GetApplication_instance()->STEPwrite( out, currSch, writeComments );
     }
@@ -2544,18 +2360,12 @@ void
 STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedCase ) {
     char currSch[BUFSIZ];
     currSch[0] = '\0';
-
-//    out << "DATA;\n";
-
     schemaName( currSch );
     int n = instances().InstanceCount();
     for( int i = 0; i < n; ++i )
-        /*  instances ()[i] -> GetApplication_instance()->STEPwrite(out);*/
     {
         instances().GetMgrNode( i )->GetApplication_instance()->WriteValuePairs( out, currSch, writeComments, mixedCase );
     }
-
-//    out << "ENDSEC;\n";
 }
 
 Severity
@@ -2650,14 +2460,12 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
     //  parsing.  SO we are using istreams and this works, but could
     //  be better.
 
-    // reset the error count so you\'re not counting things twice:
+    // reset the error count so you're not counting things twice:
     _errorCount = 0;
-//    delete in; // yikes -- deleted by caller
     istream * in2;
     if( !( ( in2 = OpenInputFile() ) && ( in2 -> good() ) ) ) {
         //  if the stream is not readable, there's an error
         _error.AppendToUserMsg( "Cannot open file for 2nd pass -- No data read.\n" );
-//    return total_insts;
         CloseInputFile( in2 );
         return SEVERITY_INPUT_ERROR;
     }
@@ -2675,7 +2483,6 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
             break;
 
         case WORKING_SESSION:
-//    valid_insts = ReadWorkingData2 (*in2);
             valid_insts = ReadData2( *in2, useTechCor );
             break;
         default:
@@ -2686,14 +2493,6 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
 
     //check for "ENDSEC;"
     ReadTokenSeparator( *in2 );
-//    keywd = GetKeyword(*in2,";", _error);
-//    if ( strncmp (keywd, "ENDSEC;",strlen(keywd)) || !in2 -> good () )
-//      {
-//  _error.AppendToUserMsg("Unknown value in DATA section. Terminated parsing.\n\tvalue was: %s\n");
-//  _error.AppendToUserMsg(keywd);
-//  _error.GreaterSeverity(SEVERITY_WARNING);
-//      }
-
     if( total_insts != valid_insts ) {
         sprintf( errbuf, "%d invalid instances in file: %s\n",
                  total_insts - valid_insts, ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
@@ -2722,6 +2521,8 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
         in2->get( c );
         if( c == ';' ) {
             ;
+        } else {
+            //FIXME shouldn't *something* be done based upon the value of c? MAP, 9/2011
         }
     }
 
@@ -2741,8 +2542,7 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
 
 
 
-/***************************
-***************************/
+/******************************************************/
 Severity
 STEPfile::WriteWorkingFile( ostream & out, int clearError, int writeComments ) {
     SetFileType( WORKING_SESSION );
@@ -2765,8 +2565,7 @@ STEPfile::WriteWorkingFile( ostream & out, int clearError, int writeComments ) {
     return _error.severity();
 }
 
-/***************************
-***************************/
+/******************************************************/
 Severity
 STEPfile::WriteWorkingFile( const std::string filename, int clearError,
                             int writeComments ) {
@@ -2855,7 +2654,6 @@ STEPfile::AppendEntityErrorMsg( ErrorDescriptor * e ) {
             return SEVERITY_NULL;
 
         default: {
-//    cerr << e->UserMsg();
             cerr << e->DetailMsg();
             e->ClearErrorMsg();
 

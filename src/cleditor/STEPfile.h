@@ -13,13 +13,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPfile.h,v 3.0.1.6 1998/02/17 18:04:30 sauderd Exp $ */ 
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
-/*#include <math.h>*/
 #include <instmgr.h>
 #include <Registry.h>
 #include <fstream>
@@ -57,8 +50,6 @@ class STEPfile
 //header information
     InstMgr*  _headerInstances;
     Registry *_headerRegistry;
-//Registry *_headerUserDefined;
-//    Registry *_headerRegistryOld;
     
     int _headerId;     //STEPfile_id given to SCLP23(Application_instance) from header section
 
@@ -73,10 +64,10 @@ class STEPfile
     int _entsNotCreated; // num entities not created in first pass
     int _entsInvalid;    // num entities that had invalid attr values
     int _entsIncomplete; // num entities that had missing attr values
-			 // (includes entities that had invalid values
-			 // for required attrs)
-    int _entsWarning; // num entities that may have had problems 
-		      // with attrs - reported as an attr user msg
+                         // (includes entities that had invalid values
+                         // for required attrs)
+    int _entsWarning;    // num entities that may have had problems
+                         // with attrs - reported as an attr user msg
 
     // old errors
     int _errorCount;

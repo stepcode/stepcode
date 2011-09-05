@@ -9,18 +9,11 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPattribute.cc,v 3.0.1.9 1998/02/17 18:12:41 sauderd Exp $ */
-
-//static char rcsid[] ="$Id: STEPattribute.cc,v 3.0.1.9 1998/02/17 18:12:41 sauderd Exp $";
-
-
 #include <read_func.h>
 #include <STEPattribute.h>
-//#include <sdai.h>
 #include <instmgr.h>
 #include <STEPundefined.h>
 #include <STEPaggregate.h>
-//#include <STEPentity.h>
 #include <ExpDict.h>
 #include <sdai.h>
 

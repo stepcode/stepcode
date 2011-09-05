@@ -12,13 +12,7 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPattribute.h,v 3.0.1.8 1997/11/05 21:59:24 sauderd DP3.1 $ */
-
 #include <sclprefixes.h>
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
 
 #include <stdio.h>
 #include <errordesc.h>
@@ -30,26 +24,18 @@
 // in STEPaggregate.cc and STEPattribute.cc
 #define REAL_NUM_PRECISION 15
 
-//typedef unsigned short BOOLEAN;
 typedef double real;  
 
 class InstMgr;
 class SCLP23(Application_instance);
 class STEPaggregate;
 class SCLundefined;
-//class SCLP23(Enum);
-//class SCLP23(Select);
-//class SCLP23(Binary);
-//class SCLP23(String);
 
 class TypeDescriptor;
 class AttrDescriptor;
 class EntityDescriptor;
 
 #include <sstream>
-//#include <ExpDict.h>
-
-//#define s_String	char *
 
 extern int SetErrOnNull(const char *attrValue, ErrorDescriptor *error);
 ////////////////////
@@ -103,10 +89,6 @@ PushPastImbedAggr (istream& in, std::string& s, ErrorDescriptor *err);
 extern void 
 PushPastAggr1Dim(istream& in, std::string& s, ErrorDescriptor *err);
 
-//extern  Severity ValidateEntityType(SCLP23(Application_instance) *se, 
-//					const AttrDescriptor *ad, 
-//					ErrorDescriptor *error);
-
 class STEPattribute {
 
     friend ostream &operator<< ( ostream&, STEPattribute& );
@@ -114,7 +96,7 @@ class STEPattribute {
 // The CenterLine compiler couldn't handle this friend declaration.
 // Here is the error
 // "../../../src/clstepcore/STEPattribute.h", line 118: internal << AT&T C++ Translator 3.0.2 - ObjectCenter Version 2.1>> error: cannot find friend P23::Application_instance
-// We may want to change the next two lines back at some point? DAS
+// We may want to change the next two lines back at some point? DAS  FIXME
 //    friend class SCLP23(Application_instance);
 //  protected:
   public:

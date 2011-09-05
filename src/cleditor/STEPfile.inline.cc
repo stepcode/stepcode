@@ -11,19 +11,12 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPfile.inline.cc,v 3.0.1.4 1997/11/05 22:11:46 sauderd DP3.1 $ */
-
 #include <STEPfile.h>
 #include <s_HEADER_SCHEMA.h>
 #include <STEPaggregate.h>
 
-/* for strrchr */
 #include <cstring>
 
-//#ifdef __GNUG__
-//#ifdef __SUNCPLUSPLUS__
-//#ifdef __OBJECTCENTER__
-//#ifdef __xlC__
 extern "C" {
     double  ceil( double );
 }
@@ -44,7 +37,6 @@ STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename ) :
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
-//    _headerRegistry = new Registry(&s_HeaderSchemaInit);
     _headerRegistry = new Registry( HeaderSchemaInit );
     _headerInstances = new InstMgr;
     if( !filename.empty() ) {
@@ -63,8 +55,7 @@ STEPfile::~STEPfile() {
     delete _headerInstances;
 }
 
-int
-STEPfile::SetFileType( FileTypeCode ft ) {
+int STEPfile::SetFileType( FileTypeCode ft ) {
     FileType( ft );
 
     switch( _fileType ) {
@@ -72,12 +63,6 @@ STEPfile::SetFileType( FileTypeCode ft ) {
             ENTITY_NAME_DELIM = '@';
             FILE_DELIM = ( char * )"STEP;";
             END_FILE_DELIM = ( char * )"ENDSTEP;";
-            /*DAS
-                  if (!_headerRegistryOld)
-                      _headerRegistryOld =
-                        new Registry(& s_Header_Section_Schema_N279Init);
-            */
-
             break;
         case( VERSION_UNKNOWN ):
         case( VERSION_CURRENT ):
@@ -117,19 +102,11 @@ const std::string STEPfile::TruncFileName( const std::string filename ) const {
     } else {
         return filename.substr(l);
     }
-//     const char * tmp = strrchr( filename, '/' );
-//     if( tmp ) {
-//         return tmp++;
-//     } else {
-//         return filename;
-//     }
-
 }
 
 
 /******************************************************/
-Severity
-STEPfile::ReadExchangeFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::ReadExchangeFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -148,8 +125,7 @@ STEPfile::ReadExchangeFile( const std::string filename, int useTechCor ) {
     return rval;
 }
 
-Severity
-STEPfile::AppendExchangeFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::AppendExchangeFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -163,8 +139,7 @@ STEPfile::AppendExchangeFile( const std::string filename, int useTechCor ) {
 }
 
 /******************************************************/
-Severity
-STEPfile::ReadWorkingFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::ReadWorkingFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -184,8 +159,7 @@ STEPfile::ReadWorkingFile( const std::string filename, int useTechCor ) {
 }
 
 
-Severity
-STEPfile::AppendWorkingFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::AppendWorkingFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -224,8 +198,6 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
     if( filename.compare( "-" ) == 0 ) {
         in = &std::cin;
     } else {
-        //  istream* in = new istream(FileName(), io_readonly, a_useonly);
-        // port 29-Mar-1994 kcm
         in = new ifstream( FileName().c_str() );
     }
 
@@ -241,8 +213,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
 }
 
 /******************************************************/
-void
-STEPfile::CloseInputFile( istream * in ) {
+void STEPfile::CloseInputFile( istream * in ) {
     if( in && *in != std::cin ) {
         delete in;
     }
@@ -276,22 +247,19 @@ ofstream * STEPfile::OpenOutputFile( const std::string filename ) {
     return out;
 }
 
-void
-STEPfile::CloseOutputFile( ostream * out ) {
+void STEPfile::CloseOutputFile( ostream * out ) {
     delete out;
 }
 
 
 
 /******************************************************/
-int
-STEPfile::IncrementFileId( int fileid ) {
+int STEPfile::IncrementFileId( int fileid ) {
     return ( fileid + FileIdIncr() );
 }
 
 
-void
-STEPfile::SetFileIdIncrement() {
+void STEPfile::SetFileIdIncrement() {
     if( instances().MaxFileId() < 0 ) {
         _fileIdIncr = 0;
     } else _fileIdIncr =
