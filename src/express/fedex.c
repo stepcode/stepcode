@@ -89,6 +89,7 @@ extern int yydbg_lower_limit;
 #endif /*YYDEBUG*/
 
 int skip_exp_pause = false;
+int yydbg_verbose = false;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
 
 static void
@@ -144,7 +145,9 @@ main( int argc, char ** argv ) {
 
     EXPRESSprogram_name = argv[0];
     ERRORusage_function = usage;
-
+#ifdef YYDEBUG
+    yydebug = 0;
+#endif
     EXPRESSinit_init();
 
     EXPRESSinitialize();
@@ -169,8 +172,8 @@ main( int argc, char ** argv ) {
                         fprintf( stderr, "  6 - heavy malloc debugging while resolving\n" );
 #endif /* debugging*/
 #ifdef YYDEBUG
-                        fprintf( stderr, "  8 - set YYDEBUG\n" );
-                        fprintf( stderr, "  9 - set YYDEBUG, use -u and -l\n" );
+                        fprintf( stderr, "  8 - set yydebug\n" );
+                        fprintf( stderr, "  9 - set yydebug selectively, must use -u and/or -l. Also increases verbosity for some errors\n" );
                         fprintf( stderr, "-u nnn: upper line limit\n" );
                         fprintf( stderr, "-l nnn: lower line limit\n" );
 #endif /*YYDEBUG*/
@@ -194,7 +197,8 @@ main( int argc, char ** argv ) {
                         yydebug = 1;
                         break;
                     case 9:
-                        yydebug = 0;
+                        yydbg_verbose = true;
+                        //yydebug gets set in expscan.l when in the line range set by -l and -u
                         break;
 #endif /* YYDEBUG */
                 }
