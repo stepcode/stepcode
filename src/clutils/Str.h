@@ -39,6 +39,8 @@ const char * PrettyTmpName (const char * oldname);
 char *       PrettyNewName (const char * oldname);
 char *       EntityClassName ( char * oldname);
 
+std::string  ToExpressStr (istream &in, ErrorDescriptor *err);
+
 extern Severity CheckRemainingInput
    (istream &in, ErrorDescriptor *err, 
     const char *typeName, // used in error message

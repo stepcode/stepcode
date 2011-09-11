@@ -11,7 +11,9 @@
 */
 
 #include <Str.h>
-
+#ifndef STRING_DELIM
+#define STRING_DELIM '\''
+#endif
 /******************************************************************
  ** Procedure:  string functions
  ** Description:  These functions take a character or a string and return
@@ -128,6 +130,52 @@ char * PrettyNewName( const char * oldname ) {
     char * name = new char [strlen( oldname ) + 1];
     strcpy( name, PrettyTmpName( oldname ) );
     return name;
+}
+
+/*
+ *  Extract the string conform to P21 from the istream
+ */
+std::string ToExpressStr( istream &in, ErrorDescriptor *err ) {
+    char c;
+    in >> ws; // skip white space
+    in >> c;
+    int i_quote = 0;
+    size_t found;
+    string s = "";
+    if ( c == STRING_DELIM ) {
+        s += c;
+        while ( i_quote != -1 && in.get(c) ) {
+            s += c;
+            // to handle a string like 'hi'''
+            if ( c == STRING_DELIM) {
+                // to handle \S\'
+                found = s.find_last_of("\\S\\");
+                if ( !(found != string::npos && (s.size() == found + 2)) ) {
+                    i_quote++;
+                }
+            } else {
+                // # of quotes is odd
+                if ( i_quote % 2 != 0 ) {
+                    i_quote = -1;
+                    // put back last char, take it off from s and update c
+                    in.putback(c);
+                    s = s.substr(0, s.size() - 1);
+                    c = *s.rbegin();
+                }
+            }
+        }
+
+        if ( c != STRING_DELIM ) {
+            // non-recoverable error
+            err->AppendToDetailMsg("Missing closing quote on string value.\n");
+            err->AppendToUserMsg("Missing closing quote on string value.\n");
+            err->GreaterSeverity(SEVERITY_INPUT_ERROR);
+        }
+    } else {
+        in.putback(c);
+    }
+
+    return s;
 }
 
 // This function is used to check an input stream following a read.  It writes

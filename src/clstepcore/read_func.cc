@@ -559,39 +559,7 @@ NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
 
 void
 PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
-    char messageBuf[BUFSIZ];
-    messageBuf[0] = '\0';
-
-    char c;
-    in >> ws; // skip whitespace
-    in >> c;
-    int i_quote = 0;
-    if ( c == STRING_DELIM ) {
-        s += c;
-        while ( i_quote != -1 && in.get(c) ) {
-            s += c;
-            // to handle a string like 'hi'''
-            if ( c == STRING_DELIM) {
-                i_quote++;
-            } else {
-                // # of quotes is odd
-                if ( i_quote % 2 != 0 ) {
-                    i_quote = -1;
-                    // put back last char, take it off from s and update c
-                    in.putback(c);
-                    s = s.substr(0, s.size() - 1);
-                    c = *s.rbegin();
-                }
-            }
-        }
-
-        if( c != STRING_DELIM ) {
-            err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-            sprintf( messageBuf, "Invalid string value.\n" );
-            err->AppendToDetailMsg( messageBuf );
-            s.append( "\'" );
-        }
-    }
+    s = ToExpressStr(in, err);
 }
 
 // assign 's' so that it contains an exchange file format aggregate read from
