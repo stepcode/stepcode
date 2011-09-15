@@ -10,12 +10,8 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiApplication_instance.cc,v 1.5 1998/02/17 18:56:53 sauderd DP3.1 $ */
-
-//static char rcsid[] ="$Id: sdaiApplication_instance.cc,v 1.5 1998/02/17 18:56:53 sauderd DP3.1 $";
 
 #include <sdai.h>
-//#include <STEPentity.h>
 #include <instmgr.h>
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
@@ -44,41 +40,17 @@ SCLP23( Application_instance )::SCLP23_NAME( Application_instance )( int fileid,
 }
 
 SCLP23( Application_instance )::~SCLP23_NAME( Application_instance )() {
-    STEPattribute * next = 0;
+//     STEPattribute * next = 0;
     ResetAttributes();
-    while( ( next = NextAttribute() ) ) {
-        delete next;
-    }
+//     while( ( next = NextAttribute() ) ) {
+//         delete next; //FIXME: causes SIGABRT double free or corruption
+//     }
 
     if( MultipleInheritance() ) {
         delete nextMiEntity;
     }
-
     delete p21Comment;
-
-    /*
-    // this is not necessary since each will call delete on its
-    // own nextMiEntity - DAS
-      SCLP23(Application_instance) * nextMI = nextMiEntity;
-      SCLP23(Application_instance) * nextMItrail = 0;
-      while(nextMI)
-      {
-          nextMItrail = nextMI;
-          nextMI = nextMI->nextMiEntity;
-        // this is ok since STEPattribute doesn't explicitly delete its attr
-          delete nextMItrail;
-      }
-    */
 }
-
-#ifdef PART26
-//SCLP26(Application_instance_ptr)
-IDL_Application_instance_ptr
-SCLP23( Application_instance )::create_TIE() {
-    cout << "ERROR SCLP23(Application_instance)::create_TIE() called." << endl;
-    return 0;
-}
-#endif
 
 SCLP23( Application_instance ) *
 SCLP23( Application_instance )::Replicate() {
@@ -691,9 +663,8 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
                 _error.GreaterSeverity( severe );
                 sprintf( errStr, "  %s :  ", attributes[i].Name() );
                 _error.AppendToDetailMsg( errStr ); // add attr name
-                _error.AppendToDetailMsg( ( char * ) // add attr error
-                                          attributes[i].Error().DetailMsg() );
-                _error.AppendToUserMsg( ( char * )attributes[i].Error().UserMsg() );
+                _error.AppendToDetailMsg( attributes[i].Error().DetailMsg() );  // add attr error
+                _error.AppendToUserMsg( attributes[i].Error().UserMsg() );
             }
         }
 

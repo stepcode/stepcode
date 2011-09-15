@@ -10,8 +10,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: instmgr.cc,v 3.0.1.5 1997/11/05 22:11:42 sauderd DP3.1 $ */
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // InstMgr member functions
@@ -19,14 +17,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include <sdai.h>
-//#include <STEPentity.h>
 #include <instmgr.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //  debug_level >= 2 => tells when a command is chosen
 //  debug_level >= 3 => prints values within functions:
 ///////////////////////////////////////////////////////////////////////////////
-static int debug_level = 2;
+static int debug_level = 3;
 // if debug_level is greater than this number then
 // function names get printed out when executed
 //static int PrintFunctionTrace = 2;
@@ -65,16 +62,12 @@ InstMgr::~InstMgr() {
 ///////////////////////////////////////////////////////////////////////////////
 
 void InstMgr::ClearInstances() {
-//    delete master;
-//    master = new MgrNodeArray();
     master->ClearEntries();
     sortedMaster->ClearEntries();
     maxFileId = -1;
 }
 
 void InstMgr::DeleteInstances() {
-//    delete master;
-//    master = new MgrNodeArray();
     master->DeleteEntries();
     sortedMaster->ClearEntries();
     maxFileId = -1;

@@ -23,46 +23,12 @@ SCLP23( String )::operator= ( const char * s ) {
 
 void
 SCLP23( String )::STEPwrite( ostream & out ) const {
-    const char * str = 0;
-// strings that exist but do not contain any chars should be written as '',
-// not $ --Josh L, 4/28/95
-//    if (is_null ())
-    if( empty() ) {
-        out << "$";
-    } else {
-        out << "\'";
-        str = c_str();
-        while( *str ) {
-            if( *str == STRING_DELIM ) {
-                out << STRING_DELIM;
-            }
-            out << *str;
-            str++;
-        }
-        out << "\'";
-    }
+    out << c_str();
 }
 
 void
 SCLP23( String )::STEPwrite( std::string & s ) const {
-    const char * str = 0;
-// null strings should be represented by '', not $ --Josh L, 4/28/95
-//    if (is_null ())
-    if( empty() ) {
-//  s.set_null(); // this would free up space? nope
-        s = "$";
-    } else {
-        s = "\'";
-        str = c_str();
-        while( *str ) {
-            if( *str == STRING_DELIM ) {
-                s += STRING_DELIM;
-            }
-            s += *str;
-            str++;
-        }
-        s += STRING_DELIM;
-    }
+    s += c_str();
 }
 
 Severity
@@ -79,12 +45,7 @@ SCLP23( String )::StrToVal( const char * s ) {
 //  starting with a single quote
 Severity
 SCLP23( String )::STEPread( istream & in, ErrorDescriptor * err ) {
-    int foundEndQuote = 0; // need so this string is not ok: 'hi''
     clear();  // clear the old string
-    char c;
-    in >> ws; // skip white space
-    in >> c;
-
     // remember the current format state to restore the previous settings
 #if defined(__GNUC__) && (__GNUC__ > 2)
     ios_base::fmtflags flags = in.flags();
@@ -93,44 +54,26 @@ SCLP23( String )::STEPread( istream & in, ErrorDescriptor * err ) {
 #endif
     in.unsetf( ios::skipws );
 
-    if( c == STRING_DELIM ) {
-        while( ( c != '\0' ) && in.good() && in.get( c ) ) {
-            if( c == STRING_DELIM )   {
-                in.get( c );
-                if( ! in.good() ) {
-                    // it is the final quote and no extra char was read
-                    foundEndQuote = 1;
-                    c = '\0';
-                    continue;
-                } else if( !( c == STRING_DELIM ) ) {
-                    // it is the final quote and extra char was read
-                    in.putback( c ); // put back non-quote extra char
-                    foundEndQuote = 1;
-                    c = '\0';
-                    continue;
-                }
-                // else { ; } // do nothing it is an embedded quote
-            }
-            operator+= ( c );
-        }
+    // extract the string from the inputstream
+    string s = ToExpressStr(in, err);
+    operator+= (s);
 
-        if( foundEndQuote ) {
-            return SEVERITY_NULL;
-        } else {
-            // non-recoverable error
-            err->AppendToDetailMsg( "Missing closing quote on string value.\n" );
-            err->AppendToUserMsg( "Missing closing quote on string value.\n" );
-            err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-            return SEVERITY_INPUT_ERROR;
-        }
+    // retrieve current severity
+    Severity sev = err -> severity();
+
+    // Not missing closing quote on string value
+    if (sev != SEVERITY_INPUT_ERROR && s.compare("") != 0) {
+        sev = SEVERITY_NULL;
     }
-    //  otherwise there was not a quote
-    in.putback( c );
-    in.flags( flags ); // set the format state back to previous settings
 
-    clear();
-
-    return err -> GreaterSeverity( SEVERITY_INCOMPLETE );
+    // There was no quote
+    if ( !(sev == SEVERITY_INPUT_ERROR || sev == SEVERITY_NULL) ) {
+            in.flags( flags ); // set the format state back to previous settings
+            clear();
+            err -> GreaterSeverity( SEVERITY_INCOMPLETE );
+            sev = SEVERITY_INCOMPLETE;
+    }
+    return sev;
 }
 
 Severity

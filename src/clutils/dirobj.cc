@@ -46,21 +46,16 @@
 # include <scl_cf.h>
 #endif
 
-/* for getuid() */
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
 /* for stat() file status */
 #ifdef HAVE_SYS_STAT_H
 # include <sys/stat.h>
 #endif
 
-// to help ObjectCenter
-#ifndef HAVE_MEMMOVE
-extern "C"
-{
-    void * memmove( void * __s1, const void * __s2, size_t __n );
-}
+#include <string>
+#include <iostream>
+
+#if defined(__WIN32__)
+#include <shlwapi.h>
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,11 +108,12 @@ const char * DirObj::RealPath( const char * path ) {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-boolean DirObj::LoadDirectory( const char * name ) {
-    char buf[MAXPATHLEN + 2];
-
-    strcpy( buf, ValidDirectories( RealPath( name ) ) );
-    return Reset( buf );
+bool DirObj::LoadDirectory( const std::string & name ) {
+    if( name.empty() ) {
+        return Reset( "./" );
+    } else {
+        return Reset( name );
+    }
 }
 
 //////////////////////////////// Index() //////////////////////////////////////
@@ -144,22 +140,17 @@ int DirObj::Index( const char * name ) {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-boolean DirObj::Reset( const char * path ) {
-    boolean successful = IsADirectory( path );
+bool DirObj::Reset( const std::string & path ) {
+    bool successful = IsADirectory( path.c_str() );
     if( successful ) {
-        DIR * dir = opendir( path );
+        DIR * dir = opendir( path.c_str() );
         ClearFileList();
 
         for( struct dirent * d = readdir( dir ); d != NULL; d = readdir( dir ) ) {
-//#if defined(SYSV)
-//        for (struct dirent* d = readdir(dir); d != NULL; d = readdir(dir)) {
-//#else
-//        for (struct direct* d = readdir(dir); d != NULL; d = readdir(dir)) {
-//#endif
             InsertFile( d->d_name, Position( d->d_name ) );
         }
         closedir( dir );
-    }
+    } else std::cout << "not a directory: " << path << "!" << std::endl;
     return successful;
 }
 
@@ -171,9 +162,13 @@ boolean DirObj::Reset( const char * path ) {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-boolean DirObj::IsADirectory( const char * path ) {
+bool DirObj::IsADirectory( const char * path ) {
+#if defined(__WIN32__)
+    return PathIsDirectory( path );
+#else
     struct stat st;
     return stat( path, &st ) == 0 && ( st.st_mode & S_IFMT ) == S_IFDIR;
+#endif
 }
 
 //////////////////////////////// Normalize() //////////////////////////////////
@@ -182,9 +177,7 @@ boolean DirObj::IsADirectory( const char * path ) {
 //  set path to:
 //  1) remaining path starting at the last '/' in multiple '/'s in a row
 //  2) path with all './'s removed from path except a possible leading './'
-//  2) path with all '../'s collapsed from path except a possible leading '../'
-//  3) path with the last ~ or ~name expanded fully followed by the path
-//  remaining after the last ~ or ~name (if any).
+//  3) path with all '../'s collapsed from path except a possible leading '../'
 //  4)  if path[0] is now '\0' set path to "./" or
 //  if path doesn't start with './' or '../' or '/'
 //      make it start with './' or
@@ -193,36 +186,39 @@ boolean DirObj::IsADirectory( const char * path ) {
 //  Soooooo, should end up with a path:
 //    1) starting with './', '..', or '/'
 //    2) with all internal './'and '../' removed and collapsed respectively
-//    3) the last ~ or ~name expanded fully
-//    4) ending with '/'
+//    3) ending with '/'
+//
+//    disabled - 3) the last ~ or ~name expanded fully
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-const char * DirObj::Normalize( const char * path ) {
-    static char newpath[MAXPATHLEN + 1];
-    const char * buf;
+const std::string DirObj::Normalize( const std::string & path ) {
+    std::string buf;
+    const char * slash;
+#if defined(__WIN32__)
+    char b[MAX_PATH];
+    PathCanonicalize(b, path.c_str());
+    slash = "\\";
+#else
+    char * b;
+    b = realpath(path.c_str(),0);
+    slash = "/";
+#endif
+    if( b == 0 ) {
+        buf.clear();
+    } else {
+        buf.assign(b);
+    }
 
-    buf = InterpSlashSlash( path );
-    buf = ElimDot( buf );
-    buf = ElimDotDot( buf );
-
-    if( *buf == '\0' ) {
-        strcpy( newpath, "./" );
-
-        // if buf doesn't start with '.' or '..' and buf[0] != '/'
-    } else if( !DotSlash( buf ) && !DotDotSlash( buf ) && *buf != '/' ) {
-        strcpy( newpath, "./" );
-        strcat( newpath, buf );
+    if( buf.empty() ) {
+        buf = ".";
+        buf.append(slash);
 
         // if buf is a path to a directory and doesn't end with '/'
-    } else if( IsADirectory( buf ) && buf[strlen( buf ) - 1] != '/' ) {
-        strcpy( newpath, buf );
-        strcat( newpath, "/" );
-
-    } else {
-        strcpy( newpath, buf );
+    } else if( IsADirectory( buf.c_str() ) && buf[buf.size()] != slash[0] ) {
+        buf.append(slash);
     }
-    return newpath;
+    return buf;
 }
 
 //////////////////////////////// ValidDirectories() ///////////////////////////
@@ -245,125 +241,6 @@ const char * DirObj::ValidDirectories( const char * path ) {
     return buf;
 }
 
-//////////////////////////////// InterpSlashSlash() ///////////////////////////
-//
-// Searches from the end of 'path' backwards for the first occurence of
-// a double slash and returns the remaining path starting at the
-// second / of a double /
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::InterpSlashSlash( const char * path ) {
-    for( int i = strlen( path ) - 1; i > 0; --i ) {
-        if( path[i] == '/' && path[i - 1] == '/' ) {
-            return &path[i];
-        }
-    }
-    return path;
-}
-
-//////////////////////////////// ElimDot() ////////////////////////////////////
-//
-// Removes all './' from path unless it's the first two char's in the path
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::ElimDot( const char * path ) {
-    static char newpath[MAXPATHLEN + 1];
-    const char * src;
-    char * dest = newpath;
-
-    for( src = path; src < &path[strlen( path )]; ++src ) {
-        // if not (src[0] == '.' and src[1] == ('/' or '\0'))
-        if( !DotSlash( src ) ) {
-            *dest++ = *src;
-
-            // if path preceeds DotSlash skip '.' now and '/' at loop
-        } else if( *( dest - 1 ) == '/' ) {
-            ++src;
-
-            // if no path preceeds DotSlash copy '.' now and '/' next loop
-        } else {
-            *dest++ = *src;
-        }
-    }
-    *dest = '\0';
-    return newpath;
-}
-
-//////////////////////////////// CollapsedDotDotSlash() ///////////////////////
-//
-// path = char * to path being collapsed
-// start = char * to 1 char past the last char in 'path'
-//      (where the ../ would be)
-// This should be called CollapsedDotDotSlashIfPossible()
-// Return 1
-//  if collapsed ../ and should have
-//  if didn't collapse ../ and should not have (for path = /)
-//      (should maybe return an error but this object seems to try to
-//       correct the path in this case or find the longest correct path
-//       in other cases)
-// Return 0
-//  if didn't collapse ../ and should have
-//
-///////////////////////////////////////////////////////////////////////////////
-
-static boolean CollapsedDotDotSlash( const char * path, const char * start ) {
-    // fail  if 'start' is at beginning of path (there is no path) or
-    //   if no directory is before start (no '/' before '../')
-    if( path == start || *( start - 1 ) != '/' ) {
-        return 0;
-
-        // succeed if 1st char in path is '/' and start points to the
-        //  next char (didn't collapse path and shouldn't have
-    } else if( path == start - 1 && *path == '/' ) {
-        return 1;
-
-    } else if( path == start - 2 ) {            // NB: won't handle '//' right
-        start = path;
-        return *start != '.';
-
-    } else if( path < start - 2 && !DotDotSlash( start - 3 ) ) {
-        for( start -= 2; path <= start; --start ) {
-            if( *start == '/' ) {
-                ++start;
-                return 1;
-            }
-        }
-        start = path;
-        return 1;
-    }
-    return 0;
-}
-
-//////////////////////////////// ElimDotDot() /////////////////////////////////
-//
-// Removes all '../' from path unless it's the first three char's in the path
-//
-///////////////////////////////////////////////////////////////////////////////
-
-const char * DirObj::ElimDotDot( const char * path ) {
-    static char newpath[MAXPATHLEN + 1];
-    const char * src;
-    char * dest = newpath;
-
-    for( src = path; src < &path[strlen( path )]; ++src ) {
-        // if found ../ and could collapse it, skip the '..' now and
-        //    the '/' at loop
-//        if (DotDotSlash(src) && CollapsedDotDotSlash(newpath, dest)) {
-// Josh L, 5/2/95
-        if( DotDotSlash( src ) &&
-                CollapsedDotDotSlash( newpath, ( const char * )dest ) ) {
-            src += 2;
-        } else { // copy char in path
-            *dest++ = *src;
-        }
-    }
-    *dest = '\0';
-    return newpath;
-}
-
-
 //////////////////////////////// CheckIndex() /////////////////////////////////
 //
 // Check to see if index is within fileListSize.  If not, make the number of
@@ -377,10 +254,6 @@ void DirObj::CheckIndex( int index ) {
     if( index >= fileListSize ) {
         fileListSize = ( index + 1 ) * 2;
         newstrbuf = new char*[fileListSize];
-//        bcopy(fileList, newstrbuf, fileCount*sizeof(char*));
-// Josh L, 5/2/95
-//        memcpy(newstrbuf, fileList, fileCount*sizeof(char*));
-// Dave memcpy is not working since memory areas overlap
         memmove( newstrbuf, fileList, fileCount * sizeof( char * ) );
         delete fileList;
         fileList = newstrbuf;
@@ -400,19 +273,12 @@ void DirObj::InsertFile( const char * f, int index ) {
     if( index < fileCount ) {
         CheckIndex( fileCount + 1 );
         spot = &fileList[index];
-//        memcpy(spot+1, spot, (fileCount - index)*sizeof(char*));
-// Dave memcpy is not working since memory areas overlap
         memmove( spot + 1, spot, ( fileCount - index )*sizeof( char * ) );
     } else {
         CheckIndex( index );
         spot = &fileList[index];
     }
-#ifdef __O3DB__
-    char * string = new char [strlen( f )];
-    strcpy( string, f );
-#else
     char * string = strdup( f );
-#endif
     *spot = string;
     ++fileCount;
 }
@@ -425,14 +291,8 @@ void DirObj::InsertFile( const char * f, int index ) {
 
 void DirObj::RemoveFile( int index ) {
     if( index < --fileCount ) {
-//        const char** spot = &fileList[index];
-// Josh L, 5/2/95
         const char ** spot = ( const char ** )&fileList[index];
         delete spot;
-//        bcopy(spot+1, spot, (fileCount - index)*sizeof(char*));
-// Josh L, 5/2/95
-//        memcpy(spot, spot+1, (fileCount - index)*sizeof(char*));
-// Dave memcpy is not working since memory areas overlap
         memmove( spot, spot + 1, ( fileCount - index )*sizeof( char * ) );
     }
 }

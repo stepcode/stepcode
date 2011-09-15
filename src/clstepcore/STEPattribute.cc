@@ -9,18 +9,11 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPattribute.cc,v 3.0.1.9 1998/02/17 18:12:41 sauderd Exp $ */
-
-//static char rcsid[] ="$Id: STEPattribute.cc,v 3.0.1.9 1998/02/17 18:12:41 sauderd Exp $";
-
-
 #include <read_func.h>
 #include <STEPattribute.h>
-//#include <sdai.h>
 #include <instmgr.h>
 #include <STEPundefined.h>
 #include <STEPaggregate.h>
-//#include <STEPentity.h>
 #include <ExpDict.h>
 #include <sdai.h>
 
@@ -885,8 +878,7 @@ STEPattribute::is_null()  const {
             return ( *( ptr.c ) == S_ENTITY_NULL );
 
         case STRING_TYPE:
-            ptr.S->clear();
-            return ptr.S->empty();
+            return ( *( ptr.S ) == S_STRING_NULL);
 
         case BINARY_TYPE:
             ptr.b->clear();
@@ -926,15 +918,12 @@ STEPattribute::is_null()  const {
  ** Returns:  int -- if 0 => not equal
  ** Description:  evaluates the equality of two attributes
  ** Side Effects:  none
- ** Status:  stub -- needs alot of work
  ******************************************************************/
 
 //  equality for STEPattribute
 int operator == ( STEPattribute & a1, STEPattribute & a2 ) {
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-         << "\n" << _POC_ "\n";
-    if( a1.aDesc->NonRefType() == a2.aDesc->NonRefType() ) {
-        ;
+    if ( a1.aDesc == a2.aDesc ) {
+        return 1;
     }
     return 0;
 }

@@ -21,19 +21,19 @@ ostream  * ErrorDescriptor::_out = 0;
 void
 ErrorDescriptor::PrintContents( ostream & out ) const {
     std::string s;
-    out << "Severity: " << severity( s ) << endl;
-    if( _userMsg ) {
+    severity( s );
+    out << "Severity: " << s << endl;
+    if( !_userMsg.empty() ) {
         out << "User message in parens:" << endl << "(";
         out << UserMsg() << ")" << endl;
     }
-    if( _detailMsg ) {
+    if( !_detailMsg.empty() ) {
         out << "Detailed message in parens:" << endl << "(";
         out << DetailMsg() << ")" << endl;
     }
 }
 
-const char *
-ErrorDescriptor::severity( std::string & s ) const {
+void ErrorDescriptor::severity( std::string & s ) const {
     s.clear();
     switch( severity() ) {
         case SEVERITY_NULL : {
@@ -73,7 +73,6 @@ ErrorDescriptor::severity( std::string & s ) const {
             break;
         }
     }
-    return s.c_str();
 }
 
 
@@ -127,106 +126,42 @@ ErrorDescriptor::GetCorrSeverity( const char * s ) {
     return SEVERITY_BUG;
 }
 
-ErrorDescriptor::ErrorDescriptor( Severity s,  DebugLevel d )
-    :     _severity( s ),
-          _userMsg( 0 ),
-          _detailMsg( 0 ) {
+ErrorDescriptor::ErrorDescriptor( Severity s,  DebugLevel d ) : _severity( s ) {
     if( d  != DEBUG_OFF ) {
         _debug_level = d;
     }
+    _userMsg.clear();
+    _detailMsg.clear();
 }
 
-/*
-ErrorDescriptor::ErrorDescriptor ( Severity s,  Enforcement e,  DebugLevel d)
-:     _severity (s),
-      _enforcement_level (e),
-      _userMsg (0),
-      _detailMsg (0)
-{
-  if (d  != DEBUG_OFF)
-    _debug_level = d;
-}
-*/
-
-const char *
-ErrorDescriptor::UserMsg() const {
-    if( _userMsg ) {
-        return _userMsg->c_str();
-    } else {
-        return "";
-    }
+void ErrorDescriptor::UserMsg( const char * msg ) {
+    _userMsg.assign( msg );
 }
 
-void
-ErrorDescriptor::UserMsg( const char * msg ) {
-    if( !_userMsg ) {
-        _userMsg = new std::string;
-    }
-    _userMsg->assign( msg );
+void ErrorDescriptor::PrependToUserMsg( const char * msg ) {
+    _userMsg.insert( 0, msg );
 }
 
-void
-ErrorDescriptor::PrependToUserMsg( const char * msg ) {
-    if( !_userMsg ) {
-        _userMsg = new std::string;
-    }
-    _userMsg->insert( 0, msg );
+void ErrorDescriptor::AppendToUserMsg( const char c ) {
+    _userMsg.append( &c );
 }
 
-void
-ErrorDescriptor::AppendToUserMsg( const char c ) {
-    if( !_userMsg ) {
-        _userMsg = new std::string;
-    }
-    _userMsg->append( &c );
+void ErrorDescriptor::AppendToUserMsg( const char * msg ) {
+    _userMsg.append( msg );
 }
 
-void
-ErrorDescriptor::AppendToUserMsg( const char * msg ) {
-    if( !_userMsg ) {
-        _userMsg = new std::string;
-    }
-    _userMsg->append( msg );
+void ErrorDescriptor::DetailMsg( const char * msg ) {
+    _detailMsg.assign( msg );
 }
 
-
-const char *
-ErrorDescriptor::DetailMsg()  const {
-    if( _detailMsg ) {
-        return _detailMsg->c_str();
-    } else {
-        return "";
-    }
+void ErrorDescriptor::PrependToDetailMsg( const char * msg ) {
+    _detailMsg.insert( 0, msg );
 }
 
-void
-ErrorDescriptor::DetailMsg( const char * msg ) {
-    if( !_detailMsg ) {
-        _detailMsg = new std::string;
-    }
-    _detailMsg->assign( msg );
+void ErrorDescriptor::AppendToDetailMsg( const char c ) {
+    _detailMsg.append( &c );
 }
 
-void
-ErrorDescriptor::PrependToDetailMsg( const char * msg ) {
-    if( !_detailMsg ) {
-        _detailMsg = new std::string;
-    }
-    _detailMsg->insert( 0, msg );
-}
-
-void
-ErrorDescriptor::AppendToDetailMsg( const char c ) {
-    if( !_detailMsg ) {
-        _detailMsg = new std::string;
-    }
-    _detailMsg->append( &c );
-}
-
-void
-ErrorDescriptor::AppendToDetailMsg( const char * msg ) {
-    if( !_detailMsg ) {
-        _detailMsg = new std::string;
-    }
-    _detailMsg->append( msg );
+void ErrorDescriptor::AppendToDetailMsg( const char * msg ) {
+    _detailMsg.append( msg );
 }

@@ -71,6 +71,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /* First set all marks we'll be using to UNPROCESSED/NOTKNOWN: */
     initializeMarks( express );
 
+    //FIXME SdaiAll.cc:12:24: warning: unused variable ‘is’ [-Wunused-variable] (also for ui & ri)
     fprintf( files->create, "    Interface_spec_ptr is;\n    Used_item_ptr ui;\n    Referenced_item_ptr ri;\n    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" );
     while( !complete ) {
         complete = TRUE;

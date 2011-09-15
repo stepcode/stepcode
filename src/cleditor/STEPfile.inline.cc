@@ -11,19 +11,12 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPfile.inline.cc,v 3.0.1.4 1997/11/05 22:11:46 sauderd DP3.1 $ */
-
 #include <STEPfile.h>
 #include <s_HEADER_SCHEMA.h>
 #include <STEPaggregate.h>
 
-/* for strrchr */
 #include <cstring>
 
-//#ifdef __GNUG__
-//#ifdef __SUNCPLUSPLUS__
-//#ifdef __OBJECTCENTER__
-//#ifdef __xlC__
 extern "C" {
     double  ceil( double );
 }
@@ -35,27 +28,18 @@ extern void HeaderSchemaInit( Registry & reg );
 
 //constructor & destructor
 
-STEPfile::STEPfile( Registry & r, InstMgr & i, const char * filename )
-
-#ifdef __O3DB__
-    : _reg( &r ), _instances( &i ),
-#else
-    :
-    _instances( i ), _reg( r ),
-#endif
-      _fileIdIncr( 0 ), _headerId( 0 ),
-      _fileName( 0 ), _entsNotCreated( 0 ), _entsInvalid( 0 ),
-      _entsIncomplete( 0 ), _entsWarning( 0 ),
-      _errorCount( 0 ), _warningCount( 0 ), _maxErrorCount( 5000 )
-
+STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename ) :
+    _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
+    _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
+    _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
+    _maxErrorCount( 5000 )
 {
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
-//    _headerRegistry = new Registry(&s_HeaderSchemaInit);
     _headerRegistry = new Registry( HeaderSchemaInit );
     _headerInstances = new InstMgr;
-    if( filename ) {
+    if( !filename.empty() ) {
         ReadExchangeFile( filename );
     }
 }
@@ -71,8 +55,7 @@ STEPfile::~STEPfile() {
     delete _headerInstances;
 }
 
-int
-STEPfile::SetFileType( FileTypeCode ft ) {
+int STEPfile::SetFileType( FileTypeCode ft ) {
     FileType( ft );
 
     switch( _fileType ) {
@@ -80,12 +63,6 @@ STEPfile::SetFileType( FileTypeCode ft ) {
             ENTITY_NAME_DELIM = '@';
             FILE_DELIM = ( char * )"STEP;";
             END_FILE_DELIM = ( char * )"ENDSTEP;";
-            /*DAS
-                  if (!_headerRegistryOld)
-                      _headerRegistryOld =
-                        new Registry(& s_Header_Section_Schema_N279Init);
-            */
-
             break;
         case( VERSION_UNKNOWN ):
         case( VERSION_CURRENT ):
@@ -109,22 +86,27 @@ STEPfile::SetFileType( FileTypeCode ft ) {
 }
 
 
-/******************************************************/
-const char *
-STEPfile::TruncFileName( const char * filename ) const {
-    const char * tmp = strrchr( filename, '/' );
-    if( tmp ) {
-        return tmp++;
-    } else {
+/******************************************************
+** remove any slashes, and anything before the slash,
+** from filename
+*/
+const std::string STEPfile::TruncFileName( const std::string filename ) const {
+#if defined(__WIN32__) && !defined(__mingw32__)
+    char slash = '\\';
+#else
+    char slash = '/';
+#endif
+    size_t l = filename.find_last_of(slash);
+    if( l == std::string::npos ) {
         return filename;
+    } else {
+        return filename.substr(l);
     }
-
 }
 
 
 /******************************************************/
-Severity
-STEPfile::ReadExchangeFile( const char * filename, int useTechCor ) {
+Severity STEPfile::ReadExchangeFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -143,8 +125,7 @@ STEPfile::ReadExchangeFile( const char * filename, int useTechCor ) {
     return rval;
 }
 
-Severity
-STEPfile::AppendExchangeFile( const char * filename, int useTechCor ) {
+Severity STEPfile::AppendExchangeFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -158,8 +139,7 @@ STEPfile::AppendExchangeFile( const char * filename, int useTechCor ) {
 }
 
 /******************************************************/
-Severity
-STEPfile::ReadWorkingFile( const char * filename, int useTechCor ) {
+Severity STEPfile::ReadWorkingFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -179,8 +159,7 @@ STEPfile::ReadWorkingFile( const char * filename, int useTechCor ) {
 }
 
 
-Severity
-STEPfile::AppendWorkingFile( const char * filename, int useTechCor ) {
+Severity STEPfile::AppendWorkingFile( const std::string filename, int useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -198,36 +177,33 @@ STEPfile::AppendWorkingFile( const char * filename, int useTechCor ) {
 
 
 /******************************************************/
-istream *
-STEPfile::OpenInputFile( const char * filename ) {
+istream * STEPfile::OpenInputFile( const std::string filename ) {
     //  if there's no filename to use, fail
-    if( !( strcmp( filename, "" ) || strcmp( FileName(), "" ) ) ) {
+    if( filename.empty() && FileName().empty() ) {
         _error.AppendToUserMsg( "Unable to open file for input. No current file name.\n" );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-        return ( 0 );
+        return( 0 );
     } else {
-        if( !SetFileName( filename ) && ( strcmp( filename, "-" ) != 0 ) ) {
+        if( SetFileName( filename ).empty() && ( filename.compare( "-" ) != 0 ) ) {
             char msg[BUFSIZ];
-            sprintf( msg, "Unable to find file for input: \'%s\'. File not read.\n", filename );
+            sprintf( msg, "Unable to find file for input: \'%s\'. File not read.\n", filename.c_str() );
             _error.AppendToUserMsg( msg );
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-            return ( 0 );
+            return( 0 );
         }
     }
 
     std::istream * in;
 
-    if( strcmp( filename, "-" ) == 0 ) {
+    if( filename.compare( "-" ) == 0 ) {
         in = &std::cin;
     } else {
-        //  istream* in = new istream(FileName(), io_readonly, a_useonly);
-        // port 29-Mar-1994 kcm
-        in = new ifstream( FileName() );
+        in = new ifstream( FileName().c_str() );
     }
 
     if( !in || !( in -> good() ) ) {
         char msg[BUFSIZ];
-        sprintf( msg, "Unable to open file for input: \'%s\'. File not read.\n", filename );
+        sprintf( msg, "Unable to open file for input: \'%s\'. File not read.\n", filename.c_str() );
         _error.AppendToUserMsg( msg );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
         return ( 0 );
@@ -237,8 +213,7 @@ STEPfile::OpenInputFile( const char * filename ) {
 }
 
 /******************************************************/
-void
-STEPfile::CloseInputFile( istream * in ) {
+void STEPfile::CloseInputFile( istream * in ) {
     if( in && *in != std::cin ) {
         delete in;
     }
@@ -246,45 +221,25 @@ STEPfile::CloseInputFile( istream * in ) {
 
 
 /******************************************************/
-
-/*
-void
-STEPfile::ReadWhiteSpace (istream& in)
-{
-
-  char c = ' ';
-  while ((c == ' ') || (c == '\n') || (c == '\t'))  {
-    in >> c;
-  }
-  in.putback (c);
-}
-*/
-
-/***************************
-***************************/
-ofstream *
-STEPfile::OpenOutputFile( const char * filename ) {
-    if( !filename ) {
-        if( !FileName() ) {
+ofstream * STEPfile::OpenOutputFile( const std::string filename ) {
+    if( filename.empty() ) {
+        if( FileName().empty() ) {
             _error.AppendToUserMsg( "No current file name.\n" );
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
         }
     } else {
-        if( !SetFileName( filename ) ) {
+        if( SetFileName( filename ).empty() ) {
             char msg[BUFSIZ];
-            sprintf( msg, "can't find file: %s\nFile not written.\n", filename );
+            sprintf( msg, "can't find file: %s\nFile not written.\n", filename.c_str() );
             _error.AppendToUserMsg( msg );
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
         }
     }
 
-    if( _currentDir->FileExists( TruncFileName( FileName() ) ) ) {
+    if( _currentDir->FileExists( TruncFileName( filename ) ) ) {
         MakeBackupFile();
     }
-//    ostream* out  = new ostream(FileName(), io_writeonly, a_create);
-    // - port 29-Mar-1994 kcm
-    ofstream * out  = new ofstream( FileName() );
-    // default for ostream is writeonly and protections are set to 644
+    ofstream * out  = new ofstream( filename.c_str() );
     if( !out ) {
         _error.AppendToUserMsg( "unable to open file for output\n" );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -292,25 +247,22 @@ STEPfile::OpenOutputFile( const char * filename ) {
     return out;
 }
 
-void
-STEPfile::CloseOutputFile( ostream * out ) {
+void STEPfile::CloseOutputFile( ostream * out ) {
     delete out;
 }
 
 
 
 /******************************************************/
-int
-STEPfile::IncrementFileId( int fileid ) {
+int STEPfile::IncrementFileId( int fileid ) {
     return ( fileid + FileIdIncr() );
 }
 
 
-void
-STEPfile::SetFileIdIncrement() {
+void STEPfile::SetFileIdIncrement() {
     if( instances().MaxFileId() < 0 ) {
         _fileIdIncr = 0;
-    } else _fileIdIncr = // (int)((ceil((instances ().MaxFileId() + 99)/1000) + 1) * 1000);
+    } else _fileIdIncr =
             ( int )( ( ceil( ( double )( ( instances().MaxFileId() + 99 ) / 1000 ) ) + 1 ) * 1000 );
     // FIXME: Is this correct? Why put an integer expression into ceil()?
 }
