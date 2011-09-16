@@ -154,7 +154,7 @@ function gen_wiki {
 #         if [ -s $result_dir/fedex_"$i"_stderr.txt ]; then
 #             fedex_details $i
 #         fi
-        make_schema_page $i $j >$out_dir/schema_$i.md
+        make_schema_page $i $j | sed -e "s/\`/'/g;" >$out_dir/schema_$i.md  # the backtick confuses github's wiki
     done
     echo "</table>" >>$matrix_file
 }
