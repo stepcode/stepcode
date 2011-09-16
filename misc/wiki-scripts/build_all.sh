@@ -34,7 +34,7 @@ function count_we {
             echo "<td>   ----   </td>"
         fi
         if [ -s $o ]; then
-            echo -n "<td><a href=schema_$3wiki-#$1_o>stdout text</a></td>"
+            echo -n "<td><a href=schema_$3#wiki-$1_o>stdout text</a></td>"
         else #empty
             echo "<td>   ----   </td>"
         fi
