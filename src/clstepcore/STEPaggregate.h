@@ -30,9 +30,6 @@ extern STEPaggregate NilSTEPaggregate;
 
 class SingleLinkNode;
 
-/******************************************************************************
- **
- *****************************************************************************/
 
 typedef STEPaggregate * STEPaggregateH;
 typedef STEPaggregate * STEPaggregate_ptr;
@@ -85,15 +82,12 @@ class STEPaggregate :  public SingleLinkList
 
 // COPY - defined in subtypes
     virtual STEPaggregate& ShallowCopy (const STEPaggregate&);
-
 };
 
-/******************************************************************
- ** Class:  GenericAggregate
- ** Description:  This class supports LIST OF:
+/****************************************************************//**
+ ** This class supports LIST OF:
  **    SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
  ******************************************************************/
-
 class GenericAggregate  :  public STEPaggregate
 {
   public:
@@ -102,7 +96,6 @@ class GenericAggregate  :  public STEPaggregate
 
     GenericAggregate();
     virtual ~GenericAggregate();
-
 };
 typedef  GenericAggregate * GenericAggregateH;
 typedef  GenericAggregate * GenericAggregate_ptr;
@@ -126,16 +119,13 @@ class EntityAggregate  :  public  STEPaggregate
 
     EntityAggregate ();
     virtual ~EntityAggregate ();
-
 };
 typedef   EntityAggregate * EntityAggregateH;
 typedef   EntityAggregate * EntityAggregate_ptr;
 typedef   EntityAggregate_ptr EntityAggregate_var;
 
-/******************************************************************
- ** Class:  SelectAggregate
- ** Description:  this is a minimal representions for a collection of
- **    SCLP23(Select)
+/****************************************************************//**
+ ** This is a minimal represention for a collection of SCLP23(Select)
  ******************************************************************/
 class SelectAggregate  :  public STEPaggregate
 {
@@ -151,16 +141,14 @@ class SelectAggregate  :  public STEPaggregate
 
     SelectAggregate ();
     virtual ~SelectAggregate ();
-
 };
 typedef  SelectAggregate *  SelectAggregateH;
 typedef  SelectAggregate *  SelectAggregate_ptr;
 typedef  SelectAggregate_ptr SelectAggregate_var;
 
-/******************************************************************
- ** Class:  StringAggregate
- ** Description:  This class supports LIST OF STRING type
- ******************************************************************/
+/****************************************************************//**
+** This class supports LIST OF STRING type
+******************************************************************/
 class StringAggregate  :  public STEPaggregate
 {
   public:
@@ -169,17 +157,15 @@ class StringAggregate  :  public STEPaggregate
 
     StringAggregate();
     virtual ~StringAggregate();
-
 };
 typedef  StringAggregate * StringAggregateH;
 typedef  StringAggregate * StringAggregate_ptr;
 typedef  StringAggregate_ptr StringAggregate_var;
 
 
-/******************************************************************
- ** Class:  BinaryAggregate
- ** Description:  This class supports LIST OF BINARY type
- ******************************************************************/
+/****************************************************************//**
+** This class supports LIST OF BINARY type
+******************************************************************/
 class BinaryAggregate  :  public STEPaggregate
 {
   public:
@@ -194,11 +180,9 @@ typedef  BinaryAggregate * BinaryAggregateH;
 typedef  BinaryAggregate * BinaryAggregate_ptr;
 typedef  BinaryAggregate_ptr BinaryAggregate_var;
 
-/******************************************************************
- ** Class:  EnumAggregate
- ** Description:  this is a minimal representions for a collection of
- **    SCLP23(Enum)
- ******************************************************************/
+/**************************************************************//**
+** This is a minimal representions for a collection ofSCLP23(Enum)
+******************************************************************/
 class EnumAggregate  :  public STEPaggregate
 {
   public:
@@ -206,8 +190,7 @@ class EnumAggregate  :  public STEPaggregate
     virtual STEPaggregate& ShallowCopy  (const STEPaggregate&);
 
     EnumAggregate ();
-  virtual ~EnumAggregate ();
-
+    virtual ~EnumAggregate ();
 };
 typedef  EnumAggregate *  EnumAggregateH;
 typedef  EnumAggregate *  EnumAggregate_ptr;
@@ -220,7 +203,6 @@ class LOGICALS  : public EnumAggregate
 
     LOGICALS();
     virtual ~LOGICALS();
-
 };
 typedef  LOGICALS *  LogicalsH;
 typedef  LOGICALS *  LOGICALS_ptr;
@@ -235,7 +217,6 @@ class BOOLEANS  : public EnumAggregate
 
     BOOLEANS();
     virtual ~BOOLEANS();
-
 };
 
 typedef  BOOLEANS *  BOOLEANS_ptr;
@@ -251,7 +232,6 @@ class RealAggregate  : public STEPaggregate  {
 
     RealAggregate();
     virtual ~RealAggregate();
-
 };
 typedef  RealAggregate *  RealAggregateH;
 typedef  RealAggregate *  RealAggregate_ptr;
@@ -265,15 +245,10 @@ class IntAggregate  : public STEPaggregate  {
 
     IntAggregate();
     virtual ~IntAggregate();
-
 };
 typedef  IntAggregate *  IntAggregateH;
 typedef  IntAggregate *  IntAggregate_ptr;
 typedef  IntAggregate_ptr IntAggregate_var;
-
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -299,17 +274,13 @@ class STEPnode :  public SingleLinkNode  {
 };
 typedef  STEPnode *  STEPnodeH;
 
-/******************************************************************
- ** Class:  GenericNode
- ** Description:  This class is for the Nodes of GenericAggregates
- ******************************************************************/
-
+/**************************************************************//**
+** This class is for the Nodes of GenericAggregates
+******************************************************************/
 class GenericAggrNode  : public STEPnode {
   public:
-
     SCLundefined value;
-
-  public:
+    
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -329,7 +300,6 @@ class GenericAggrNode  : public STEPnode {
     ~GenericAggrNode ();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -365,48 +335,37 @@ class EntityNode  : public STEPnode {
     virtual SingleLinkNode *    NewNode ();
 
     // Calling these funtions is an error.
-    Severity StrToVal(const char *s, ErrorDescriptor *err)
-    {
+    Severity StrToVal(const char *s, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
         << "\n" << _POC_ "\n";
     return StrToVal(s, err, 0, 0, 0);
     }
-    Severity StrToVal(istream &in, ErrorDescriptor *err)
-    {
+    Severity StrToVal(istream &in, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
         << "\n" << _POC_ "\n";
     return StrToVal(in, err, 0, 0, 0);
     }
 
-    Severity STEPread(const char *s, ErrorDescriptor *err)
-    {
+    Severity STEPread(const char *s, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
         << "\n" << _POC_ "\n";
     return STEPread(s, err, 0, 0, 0);
     }
-    Severity STEPread(istream &in, ErrorDescriptor *err)
-    {
+    Severity STEPread(istream &in, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
         << "\n" << _POC_ "\n";
     return STEPread(in, err, 0, 0, 0);
     }
-
 };
 
 ///////////////////////////////////////////////////////////////////////////
 
-/******************************************************************
- ** Class:  SelectNode
- ** Description:  this is a minimal representions for node in lists of
- **    SCLP23(Select)
- ******************************************************************/
-
+/**************************************************************//**
+** This is a minimal representions for node in lists of SCLP23(Select)
+******************************************************************/
 class SelectNode  : public STEPnode {
   public:
-
     SCLP23(Select) * node;
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err,
                   const TypeDescriptor *elem_type,
@@ -436,47 +395,35 @@ class SelectNode  : public STEPnode {
     virtual SingleLinkNode *    NewNode ();
 
     // Calling these funtions is an error.
-    Severity StrToVal(const char *s, ErrorDescriptor *err)
-    {
+    Severity StrToVal(const char *s, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
          << "\n" << _POC_ "\n";
     return StrToVal(s, err, 0, 0, 0);
     }
-    Severity StrToVal(istream &in, ErrorDescriptor *err)
-    {
+    Severity StrToVal(istream &in, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
          << "\n" << _POC_ "\n";
     return StrToVal(in, err, 0, 0, 0);
     }
 
-    Severity STEPread(const char *s, ErrorDescriptor *err)
-    {
+    Severity STEPread(const char *s, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
          << "\n" << _POC_ "\n";
     return STEPread(s, err, 0, 0, 0);
     }
-    Severity STEPread(istream &in, ErrorDescriptor *err)
-    {
+    Severity STEPread(istream &in, ErrorDescriptor *err) {
     cerr << "Internal error:  " << __FILE__ <<  __LINE__
          << "\n" << _POC_ "\n";
     return STEPread(in, err, 0, 0, 0);
     }
-
 };
 
-///////////////////////////////////////////////////////////////////////////
-
-/******************************************************************
- ** Class:  StringNode
- ** Description:  This class is for the Nodes of StringAggregates
- ******************************************************************/
-
+/**************************************************************//**
+** This class is for the Nodes of StringAggregates
+******************************************************************/
 class StringNode  : public STEPnode {
   public:
-
     SCLP23(String) value;
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -496,22 +443,16 @@ class StringNode  : public STEPnode {
     ~StringNode();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
 ///////////////////////////////////////////////////////////////////////////
 
-/******************************************************************
- ** Class:  BinaryNode
- ** Description:  This class is for the Nodes of BinaryAggregates
- ******************************************************************/
-
+/**************************************************************//**
+** This class is for the Nodes of BinaryAggregates
+******************************************************************/
 class BinaryNode  : public STEPnode {
   public:
-
     SCLP23(Binary) value;
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -531,21 +472,14 @@ class BinaryNode  : public STEPnode {
     ~BinaryNode();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
-/******************************************************************
- ** Class:  EnumNode
- ** Description:  this is a minimal representions for node in lists of
- **    SCLP23(Enum)
- ******************************************************************/
-
+/**************************************************************//**
+** This is a minimal representions for node in lists of SCLP23(Enum)
+******************************************************************/
 class EnumNode  : public STEPnode {
   public:
-
     SCLP23(Enum) * node;
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -564,14 +498,11 @@ class EnumNode  : public STEPnode {
     ~EnumNode();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
 class RealNode  : public STEPnode {
   public:
     SCLP23(Real) value; // double
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -589,14 +520,11 @@ class RealNode  : public STEPnode {
     ~RealNode();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
 class IntNode  : public STEPnode {
   public:
     SCLP23(Integer) value; // long int
-
-  public:
 //    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
@@ -614,11 +542,10 @@ class IntNode  : public STEPnode {
     ~IntNode();
 
     virtual SingleLinkNode *    NewNode ();
-
 };
 
 /******************************************************************
- **    The following classes are currently stubs
+ **   FIXME The following classes are currently stubs
  **
 **/
 /*

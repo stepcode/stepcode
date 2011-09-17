@@ -78,53 +78,46 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p )
 
 
 // name is the same even if redefined
-const char *
-STEPattribute::Name() const {
+const char * STEPattribute::Name() const {
     return aDesc->Name();
 }
 
-const char *
-STEPattribute::TypeName() const {
+const char * STEPattribute::TypeName() const {
     if( _redefAttr )  {
         return _redefAttr->TypeName();
     }
     return aDesc->TypeName();
 }
 
-const BASE_TYPE
-STEPattribute::Type() const {
+const BASE_TYPE STEPattribute::Type() const {
     if( _redefAttr )  {
         return _redefAttr->Type();
     }
     return aDesc->Type();
 }
 
-const BASE_TYPE
-STEPattribute::NonRefType() const {
+const BASE_TYPE STEPattribute::NonRefType() const {
     if( _redefAttr )  {
         return _redefAttr->NonRefType();
     }
     return aDesc->NonRefType();
 }
 
-const BASE_TYPE
-STEPattribute::BaseType() const {
+const BASE_TYPE STEPattribute::BaseType() const {
     if( _redefAttr )  {
         return _redefAttr->BaseType();
     }
     return aDesc->BaseType();
 }
 
-const TypeDescriptor *
-STEPattribute::ReferentType() const {
+const TypeDescriptor * STEPattribute::ReferentType() const {
     if( _redefAttr )  {
         return _redefAttr->ReferentType();
     }
     return aDesc->ReferentType();
 }
 
-int
-STEPattribute::Nullable() const {
+int STEPattribute::Nullable() const {
     if( _redefAttr )  {
         return _redefAttr->Nullable();
     }

@@ -12,73 +12,23 @@
 * and is not subject to copyright.
 */
 
-/* $Id: ExpDict.h,v 3.0.1.12 1998/02/17 19:19:15 sauderd DP3.1 $  */ 
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 #include <sdai.h>
-//class SCLP23(Application_instance);
 
 typedef  SCLP23(Application_instance) * (* Creator) () ;
-//class StringAggregate;
 
 enum AttrType_Enum {
-	AttrType_Explicit = 0,
-	AttrType_Inverse,
-	AttrType_Deriving,
-	AttrType_Redefining
+        AttrType_Explicit = 0,
+        AttrType_Inverse,
+        AttrType_Deriving,
+        AttrType_Redefining
     };
 
 #include <SingleLinkList.h>
 
 #include <baseType.h>
-//#include <typeDefs.h>
 #include <dictdefs.h>
-//#include <sdaiDefs.h> 
 #include <Str.h>
 #include <scl_char_str_list.h>
-
-/*
-**  I tried these variations on the TypeDescriptor to get them to be
-*   initialized globally.  I couldn\'t do it.  They are now initialized
-*   in the Registry constructor (in Registry.inline.cc
-
-extern const TypeDescriptor t_INTEGER_TYPE;
-extern const TypeDescriptor t_REAL_TYPE;
-extern const TypeDescriptor t_NUMBER_TYPE;
-extern const TypeDescriptor t_STRING_TYPE;
-extern const TypeDescriptor t_BINARY_TYPE;
-extern const TypeDescriptor t_BOOLEAN_TYPE;
-extern const TypeDescriptor t_LOGICAL_TYPE;
-
-#define t_INTEGER_TYPE &_t_INTEGER_TYPE
-#define t_REAL_TYPE  &_t_REAL_TYPE
-#define t_NUMBER_TYPE &_t_NUMBER_TYPE
-#define t_STRING_TYPE &_t_STRING_TYPE
-#define t_BINARY_TYPE &_t_BINARY_TYPE
-#define t_BOOLEAN_TYPE &_t_BOOLEAN_TYPE
-#define t_LOGICAL_TYPE &_t_LOGICAL_TYPE
-
-extern const TypeDescriptor * const t_INTEGER_TYPE;
-extern const TypeDescriptor * const t_REAL_TYPE;
-extern const TypeDescriptor * const t_NUMBER_TYPE;
-extern const TypeDescriptor * const t_STRING_TYPE;
-extern const TypeDescriptor * const t_BINARY_TYPE;
-extern const TypeDescriptor * const t_BOOLEAN_TYPE;
-extern const TypeDescriptor * const t_LOGICAL_TYPE;
-*/
-
-/*
-extern const TypeDescriptor *  t_INTEGER_TYPE;
-extern const TypeDescriptor *  t_REAL_TYPE;
-extern const TypeDescriptor *  t_NUMBER_TYPE;
-extern const TypeDescriptor *  t_STRING_TYPE;
-extern const TypeDescriptor *  t_BINARY_TYPE;
-extern const TypeDescriptor *  t_BOOLEAN_TYPE;
-extern const TypeDescriptor *  t_LOGICAL_TYPE;
-*/
 
 // defined and created in Registry.inline.cc
 extern const TypeDescriptor *  t_sdaiINTEGER;
@@ -126,10 +76,10 @@ class TypeDescriptorList : public SingleLinkList {
     virtual SingleLinkNode * NewNode () { return new TypeDescLinkNode; }
 
     TypeDescLinkNode * AddNode (TypeDescriptor * td) {
-	TypeDescLinkNode *node = (TypeDescLinkNode *) NewNode();
-	node->TypeDesc(td);
-	SingleLinkList::AppendNode(node);
-	return node;
+        TypeDescLinkNode *node = (TypeDescLinkNode *) NewNode();
+        node->TypeDesc(td);
+        SingleLinkList::AppendNode(node);
+        return node;
     }    
 };
 
@@ -175,10 +125,10 @@ class EntityDescriptorList : public SingleLinkList {
     virtual SingleLinkNode * NewNode () { return new EntityDescLinkNode; }
 
     EntityDescLinkNode * AddNode (EntityDescriptor * ed) { 
-	EntityDescLinkNode *node = (EntityDescLinkNode *) NewNode();
-	node->EntityDesc(ed);
-	SingleLinkList::AppendNode(node);
-	return node;
+        EntityDescLinkNode *node = (EntityDescLinkNode *) NewNode();
+        node->EntityDesc(ed);
+        SingleLinkList::AppendNode(node);
+        return node;
     }
 };
 
@@ -231,7 +181,7 @@ class Explicit_item_id : public Interfaced_item{
     Explicit_item_id();
     Explicit_item_id(const Explicit_item_id&);
     Explicit_item_id(const char *foreign_schema, TypeDescriptor *ld, 
-		     const char *oi, const char *ni) 
+                     const char *oi, const char *ni)
       : Interfaced_item(foreign_schema), _local_definition(ld), _original_id(oi), _new_id(ni) {}
     virtual ~Explicit_item_id();
   public:
@@ -250,27 +200,27 @@ class Explicit_item_id : public Interfaced_item{
     Express_id _new_id; // original or renamed name via USE or REFERENCE (non-SDAI)
 
     const TypeDescriptor *local_definition_() const 
-	{ return _local_definition; }
+        { return _local_definition; }
 
     const Express_id original_id_() const
-	{ return _original_id; }
+        { return _original_id; }
 
     // non-sdai, renamed name
     const Express_id new_id_() const
-	{ return _new_id; }
+        { return _new_id; }
 
     // return string "USE" or "REFERENCE"
     virtual const char * EXPRESS_type()=0;
 
 //  private:
     void local_definition_(const TypeDescriptor *td)
-	{ _local_definition = td; }
+        { _local_definition = td; }
     void original_id_(const Express_id& ei)
-	{ _original_id = ei; }
+        { _original_id = ei; }
 
     // non-sdai
     void new_id_(const Express_id& ni)
-	{ _new_id = ni; }
+        { _new_id = ni; }
 };
 
 typedef Explicit_item_id * Explicit_item_id_ptr;
@@ -279,7 +229,7 @@ class Used_item : public Explicit_item_id {
   public:
     Used_item() {}
     Used_item(const char *foreign_schema, TypeDescriptor *ld, 
-	      const char *oi, const char *ni) 
+              const char *oi, const char *ni)
       : Explicit_item_id(foreign_schema, ld, oi, ni) {}
     virtual ~Used_item();
 
@@ -292,7 +242,7 @@ class Referenced_item : public Explicit_item_id {
   public:
     Referenced_item() {}
     Referenced_item(const char *foreign_schema, TypeDescriptor *ld, 
-		    const char *oi, const char *ni) 
+                    const char *oi, const char *ni)
       : Explicit_item_id(foreign_schema, ld, oi, ni) {}
     virtual ~Referenced_item();
 
@@ -338,11 +288,11 @@ class Implicit_item_id : public Interfaced_item {
     const TypeDescriptor * _local_definition;
 
     const TypeDescriptor *local_definition_() const 
-	{ return _local_definition; }
+        { return _local_definition; }
 
 //  private:
     void local_definition_(const TypeDescriptor *td)
-	{ _local_definition = td; }
+        { _local_definition = td; }
 };
 
 typedef Implicit_item_id * Implicit_item_id_ptr;
@@ -382,7 +332,7 @@ typedef Implicit_item_id__set_ptr Implicit_item_id__set_var;
 class Interface_spec : public Dictionary_instance {
   public:
     Express_id _current_schema_id; // schema containing the USE/REF stmt
-	// set of objects from USE/REFERENCE stmt(s)
+        // set of objects from USE/REFERENCE stmt(s)
     Explicit_item_id__set_var _explicit_items; 
     Implicit_item_id__set_var _implicit_items; //not yet initialized for schema
 
@@ -399,7 +349,7 @@ class Interface_spec : public Dictionary_instance {
     Interface_spec();
     Interface_spec(Interface_spec &); // not tested
     Interface_spec(const char * cur_sch_id, const char * foreign_sch_id,
-		   int all_objects=0);
+                   int all_objects=0);
     virtual ~Interface_spec();
 
     Express_id current_schema_id_() { return _current_schema_id; }
@@ -464,8 +414,8 @@ class Where_rule : public Dictionary_instance {
 
     // non-SDAI
     std::string _comment; // Comment contained in the EXPRESS.
-			// Should be properly formatted to include (* *)
-			// Will be written to EXPRESS as-is (w/out formatting)
+                        // Should be properly formatted to include (* *)
+                        // Will be written to EXPRESS as-is (w/out formatting)
 
     Where_rule();
     Where_rule(const Where_rule&);
@@ -568,8 +518,8 @@ class Uniqueness_rule : public Dictionary_instance {
 
     // non-SDAI
     std::string _comment; // Comment contained in the EXPRESS.
-			// Should be properly formatted to include (* *)
-			// Will be written to EXPRESS as-is (w/out formatting)
+                        // Should be properly formatted to include (* *)
+                        // Will be written to EXPRESS as-is (w/out formatting)
 
     Uniqueness_rule();
     Uniqueness_rule(const Uniqueness_rule&);
@@ -645,10 +595,10 @@ class Schema : public Dictionary_instance {
 
     void AssignModelContentsCreator(ModelContentsCreator f = 0)
     {
-	CreateNewModelContents = f;
+        CreateNewModelContents = f;
     }
 
-    const char * Name() const	{ return _name; }
+    const char * Name() const        { return _name; }
     void Name (const char *  n)  { _name = n; }
 
     Interface_spec& interface_() { return _interface; }
@@ -774,7 +724,7 @@ class InverseAItr
     virtual ~InverseAItr();
 
     void ResetItr() 
-	{ cur = (Inverse_attributeLinkNode *)( ial.GetHead() ); }
+        { cur = (Inverse_attributeLinkNode *)( ial.GetHead() ); }
 
     const Inverse_attribute * NextInverse_attribute();
 };
@@ -788,127 +738,118 @@ class InverseAItr
 class AttrDescriptor { 
 
   protected:
-	const char *  _name ;	// the attributes name
-		// this defines the domain of the attribute
-	const TypeDescriptor * _domainType ;
-	SCLP23(LOGICAL) _optional;
-	SCLP23(LOGICAL) _unique;
-	AttrType_Enum _attrType; // former attribute _derived
-	
-#ifdef __O3DB__
-	const EntityDescriptor * _owner ;  // the owning entityDescriptor
-#else
-	const EntityDescriptor & _owner ;  // the owning entityDescriptor
-#endif
+        const char *  _name ;        // the attributes name
+                // this defines the domain of the attribute
+        const TypeDescriptor * _domainType ;
+        SCLP23(LOGICAL) _optional;
+        SCLP23(LOGICAL) _unique;
+        AttrType_Enum _attrType; // former attribute _derived
+        const EntityDescriptor & _owner ;  // the owning entityDescriptor
   public:  
 
-	AttrDescriptor(
-		       const char * name,		// i.e. char *
-		       const TypeDescriptor *domainType, 
-		       Logical optional,	// i.e. F U or T
-		       Logical unique,	// i.e. F U or T
-		       AttrType_Enum at,// AttrType_Explicit, AttrType_Inverse,
-				       // AttrType_Deriving,AttrType_Redefining
-		       const EntityDescriptor & owner 
-		   );
-	virtual ~AttrDescriptor ();
+        AttrDescriptor(
+                       const char * name,                // i.e. char *
+                       const TypeDescriptor *domainType,
+                       Logical optional,        // i.e. F U or T
+                       Logical unique,        // i.e. F U or T
+                       AttrType_Enum at,// AttrType_Explicit, AttrType_Inverse,
+                                       // AttrType_Deriving,AttrType_Redefining
+                       const EntityDescriptor & owner
+                   );
+        virtual ~AttrDescriptor ();
 
-	const char * GenerateExpress (std::string &buf) const;
+        const char * GenerateExpress (std::string &buf) const;
 
-		// the attribute Express def
-	virtual const char *AttrExprDefStr(std::string & s) const;
+                // the attribute Express def
+        virtual const char *AttrExprDefStr(std::string & s) const;
 
-		// left side of attr def
-	const char * Name()	const	   { return _name; }
-	void     Name (const char *  n) { _name = n; }
+                // left side of attr def
+        const char * Name()        const           { return _name; }
+        void     Name (const char *  n) { _name = n; }
 
-	   // BaseType() is the underlying type of this attribute. 
-	   // NonRefType() is the first non REFERENCE_TYPE type
-	   // e.g. Given attributes of each of the following types 
-	   // TYPE count = INTEGER;
-	   // TYPE ref_count = count;
-	   // TYPE count_set = SET OF ref_count;
-	   //  BaseType() will return INTEGER_TYPE for an attr of each type.
-	   //  BaseTypeDescriptor() returns the TypeDescriptor for Integer
-	   //  NonRefType() will return INTEGER_TYPE for the first two. For an
-	   //    attribute of type count_set NonRefType() would return 
-	   //    AGGREGATE_TYPE
-	   //  NonRefTypeDescriptor() returns the TypeDescriptor for Integer
-	   //     for the first two and a TypeDescriptor for an
-	   //     aggregate for the last.
+           // BaseType() is the underlying type of this attribute.
+           // NonRefType() is the first non REFERENCE_TYPE type
+           // e.g. Given attributes of each of the following types
+           // TYPE count = INTEGER;
+           // TYPE ref_count = count;
+           // TYPE count_set = SET OF ref_count;
+           //  BaseType() will return INTEGER_TYPE for an attr of each type.
+           //  BaseTypeDescriptor() returns the TypeDescriptor for Integer
+           //  NonRefType() will return INTEGER_TYPE for the first two. For an
+           //    attribute of type count_set NonRefType() would return
+           //    AGGREGATE_TYPE
+           //  NonRefTypeDescriptor() returns the TypeDescriptor for Integer
+           //     for the first two and a TypeDescriptor for an
+           //     aggregate for the last.
 
-	const PrimitiveType BaseType() const;
-	const TypeDescriptor *BaseTypeDescriptor() const;
+        const PrimitiveType BaseType() const;
+        const TypeDescriptor *BaseTypeDescriptor() const;
 
-	   // the first PrimitiveType that is not REFERENCE_TYPE (the first 
-	   // TypeDescriptor *_referentType that does not have REFERENCE_TYPE 
-	   // for it's fundamentalType variable).  This would return the same 
-	   // as BaseType() for fundamental types.  An aggregate type
-	   // would return AGGREGATE_TYPE then you could find out the type of
-	   // an element by calling AggrElemType().  Select types
-	   // would work the same?
+           // the first PrimitiveType that is not REFERENCE_TYPE (the first
+           // TypeDescriptor *_referentType that does not have REFERENCE_TYPE
+           // for it's fundamentalType variable).  This would return the same
+           // as BaseType() for fundamental types.  An aggregate type
+           // would return AGGREGATE_TYPE then you could find out the type of
+           // an element by calling AggrElemType().  Select types
+           // would work the same?
 
-	const PrimitiveType NonRefType() const;
-	const TypeDescriptor *NonRefTypeDescriptor() const;
+        const PrimitiveType NonRefType() const;
+        const TypeDescriptor *NonRefTypeDescriptor() const;
 
-	int   IsAggrType() const;
-	const PrimitiveType	AggrElemType() const;
-	const TypeDescriptor *AggrElemTypeDescriptor() const;
+        int   IsAggrType() const;
+        const PrimitiveType        AggrElemType() const;
+        const TypeDescriptor *AggrElemTypeDescriptor() const;
 
-		// The type of the attributes TypeDescriptor
-	const PrimitiveType Type() const;
-	const char * TypeName() const;	// right side of attr def
+                // The type of the attributes TypeDescriptor
+        const PrimitiveType Type() const;
+        const char * TypeName() const;        // right side of attr def
 
-			// an expanded right side of attr def
-	const char *ExpandedTypeName(std::string & s) const;
+                        // an expanded right side of attr def
+        const char *ExpandedTypeName(std::string & s) const;
 
-	int RefersToType() const	{ return !(_domainType == 0); }
+        int RefersToType() const        { return !(_domainType == 0); }
 
-	const TypeDescriptor * ReferentType() const { return _domainType; }
-	const TypeDescriptor * DomainType() const { return _domainType; }
-	void DomainType (const TypeDescriptor *td)  { _domainType = td; }
-	void ReferentType(const TypeDescriptor *td) { _domainType = td; }
+        const TypeDescriptor * ReferentType() const { return _domainType; }
+        const TypeDescriptor * DomainType() const { return _domainType; }
+        void DomainType (const TypeDescriptor *td)  { _domainType = td; }
+        void ReferentType(const TypeDescriptor *td) { _domainType = td; }
 
-	const SCLP23(LOGICAL) & Optional() const { return _optional; }
-	void Optional (SCLP23(LOGICAL) &opt)	{ _optional.put(opt.asInt()); }
+        const SCLP23(LOGICAL) & Optional() const { return _optional; }
+        void Optional (SCLP23(LOGICAL) &opt)        { _optional.put(opt.asInt()); }
 
-	void Optional (Logical opt)	{ _optional.put(opt); }
-	void Optional (const char *opt) { _optional.put(opt); }
+        void Optional (Logical opt)        { _optional.put(opt); }
+        void Optional (const char *opt) { _optional.put(opt); }
 
-	const SCLP23(LOGICAL) & Unique() const { return _unique; }
-	void Unique (SCLP23(LOGICAL) uniq)	{ _unique.put(uniq.asInt()); }
-	void Unique (Logical uniq)	{ _unique.put(uniq); }
-	void Unique (const char *uniq)	{ _unique.put(uniq); }
+        const SCLP23(LOGICAL) & Unique() const { return _unique; }
+        void Unique (SCLP23(LOGICAL) uniq)        { _unique.put(uniq.asInt()); }
+        void Unique (Logical uniq)        { _unique.put(uniq); }
+        void Unique (const char *uniq)        { _unique.put(uniq); }
 
-	void AttrType(enum AttrType_Enum ate) { _attrType = ate; }
-	enum AttrType_Enum AttrType() const { return _attrType; }
+        void AttrType(enum AttrType_Enum ate) { _attrType = ate; }
+        enum AttrType_Enum AttrType() const { return _attrType; }
 
-	Logical Explicit() const;
-	Logical Inverse() const;
-	Logical Redefining() const;
-	Logical Deriving() const;
+        Logical Explicit() const;
+        Logical Inverse() const;
+        Logical Redefining() const;
+        Logical Deriving() const;
 
-	//outdated functions, use AttrType func above, new support of redefined
-	Logical Derived() const { return Deriving(); }
-	void Derived (Logical x);     // outdated DAS
-	void Derived (SCLP23(LOGICAL) x); // outdated DAS
-	void Derived (const char *x); // outdated DAS
+        //outdated functions, use AttrType func above, new support of redefined
+        Logical Derived() const { return Deriving(); }
+        void Derived (Logical x);     // outdated DAS
+        void Derived (SCLP23(LOGICAL) x); // outdated DAS
+        void Derived (const char *x); // outdated DAS
 
-	const SCLP23(LOGICAL) & Optionality() const { return _optional; }
-	void Optionality (SCLP23(LOGICAL) &opt) { _optional.put(opt.asInt()); }
-	void Optionality (Logical opt)	   { _optional.put(opt); }
-	void Optionality (const char *opt) { _optional.put(opt); }
+        const SCLP23(LOGICAL) & Optionality() const { return _optional; }
+        void Optionality (SCLP23(LOGICAL) &opt) { _optional.put(opt.asInt()); }
+        void Optionality (Logical opt)           { _optional.put(opt); }
+        void Optionality (const char *opt) { _optional.put(opt); }
 
-	const SCLP23(LOGICAL) & Uniqueness() const	{ return _unique; }
-	void Uniqueness (SCLP23(LOGICAL) uniq)	{ _unique.put(uniq.asInt()); }
-	void Uniqueness (Logical uniq)		{ _unique.put(uniq); }
-	void Uniqueness (const char *uniq)	{ _unique.put(uniq); }
+        const SCLP23(LOGICAL) & Uniqueness() const        { return _unique; }
+        void Uniqueness (SCLP23(LOGICAL) uniq)        { _unique.put(uniq.asInt()); }
+        void Uniqueness (Logical uniq)                { _unique.put(uniq); }
+        void Uniqueness (const char *uniq)        { _unique.put(uniq); }
 
-#ifdef __O3DB__
-	const EntityDescriptor  & Owner() const	{ return *_owner; }
-#else
-	const EntityDescriptor  & Owner() const	{ return _owner; }
-#endif
+        const EntityDescriptor  & Owner() const        { return _owner; }
 };
 
 
@@ -921,14 +862,14 @@ class Derived_attribute  :    public AttrDescriptor  {
     const char *_initializer;
 
     Derived_attribute(
-		       const char * name,		// i.e. char *
-		       const TypeDescriptor *domainType, 
-		       Logical optional,	// i.e. F U or T
-		       Logical unique,	// i.e. F U or T
-		       AttrType_Enum at,// AttrType_Explicit, AttrType_Inverse,
-				       // AttrType_Deriving,AttrType_Redefining
-		       const EntityDescriptor & owner 
-		   );
+                       const char * name,                // i.e. char *
+                       const TypeDescriptor *domainType,
+                       Logical optional,        // i.e. F U or T
+                       Logical unique,        // i.e. F U or T
+                       AttrType_Enum at,// AttrType_Explicit, AttrType_Inverse,
+                                       // AttrType_Deriving,AttrType_Redefining
+                       const EntityDescriptor & owner
+                   );
     virtual ~Derived_attribute();
     const char * AttrExprDefStr(std::string & s) const;
 
@@ -946,47 +887,47 @@ class Inverse_attribute  :    public AttrDescriptor  {
     const char *_inverted_attr_id;
     const char *_inverted_entity_id;
   protected: 
-	AttrDescriptor * _inverted_attr ; // not implemented
+        AttrDescriptor * _inverted_attr ; // not implemented
   public:  
 
-	Inverse_attribute(
-		       const char * name,		// i.e. char *
-		       TypeDescriptor *domainType, 
-		       Logical optional,	// i.e. F U or T*/
-		       Logical unique,	// i.e. F U or T
-//		       AttrType_Enum at, // will always be AttrType_Inverse
-		       const EntityDescriptor & owner, 
-		       const char *inverted_attr_id =0
-		   ) : AttrDescriptor( name, domainType, optional, unique, 
-				       AttrType_Inverse, owner ), 
-		       _inverted_attr_id(inverted_attr_id), 
-		       _inverted_entity_id(0), _inverted_attr(0)
-		{ }
-	virtual ~Inverse_attribute () { }
-	
-	const char * AttrExprDefStr(std::string & s) const;
+        Inverse_attribute(
+                       const char * name,                // i.e. char *
+                       TypeDescriptor *domainType,
+                       Logical optional,        // i.e. F U or T*/
+                       Logical unique,        // i.e. F U or T
+//                       AttrType_Enum at, // will always be AttrType_Inverse
+                       const EntityDescriptor & owner,
+                       const char *inverted_attr_id =0
+                   ) : AttrDescriptor( name, domainType, optional, unique,
+                                       AttrType_Inverse, owner ),
+                       _inverted_attr_id(inverted_attr_id),
+                       _inverted_entity_id(0), _inverted_attr(0)
+                { }
+        virtual ~Inverse_attribute () { }
 
-	const char * inverted_attr_id_() const
+        const char * AttrExprDefStr(std::string & s) const;
+
+        const char * inverted_attr_id_() const
                 { return _inverted_attr_id; } 
-	
-	void inverted_attr_id_(const char *iai ) 
+
+        void inverted_attr_id_(const char *iai )
                 { _inverted_attr_id = iai; } 
 
-	const char * inverted_entity_id_() const
+        const char * inverted_entity_id_() const
                 { return _inverted_entity_id; } 
-	
-	void inverted_entity_id_(const char *iei ) 
+
+        void inverted_entity_id_(const char *iei )
                 { _inverted_entity_id = iei; } 
 
-	// not implemented 
-	class AttrDescriptor * inverted_attr_() 
+        // not implemented
+        class AttrDescriptor * inverted_attr_()
                 { return _inverted_attr; } 
-	
-	void inverted_attr_(AttrDescriptor *ia ) 
+
+        void inverted_attr_(AttrDescriptor *ia )
                 { _inverted_attr = ia; } 
 
-	  // below are obsolete (and not implemented anyway)
-	class AttrDescriptor * InverseAttribute() 
+          // below are obsolete (and not implemented anyway)
+        class AttrDescriptor * InverseAttribute()
                 { return _inverted_attr; } 
         void InverseOf (AttrDescriptor * invAttr) 
                 { _inverted_attr = invAttr; } 
@@ -1030,85 +971,85 @@ class SchRename {
 // class generated for each type found in the schema.  
 // A TypeDescriptor will be generated in three contexts:
 // 1) to describe a base type - e.g. INTEGER, REAL, STRING.  There is only one 
-//	TypeDescriptor created for each Express base type. Each of these will 
-//	be pointed to by several other AttrDescriptors and TypeDescriptors)
+//        TypeDescriptor created for each Express base type. Each of these will
+//        be pointed to by several other AttrDescriptors and TypeDescriptors)
 // 2) to describe a type created by an Express TYPE statement.
-//	e.g. TYPE label = STRING END_TYPE;
-//	These TypeDescriptors will be pointed to by other AttrDescriptors (and 
-//	TypeDescriptors) representing attributes (and Express TYPEs) that are 
-//	of the type created by this Express TYPE.
+//        e.g. TYPE label = STRING END_TYPE;
+//        These TypeDescriptors will be pointed to by other AttrDescriptors (and
+//        TypeDescriptors) representing attributes (and Express TYPEs) that are
+//        of the type created by this Express TYPE.
 // 3) to describe a type created in an attribute definition
-//	e.g. part_label_grouping : ARRAY [1.10] label;
-//	or part_codes : ARRAY [1.10] INTEGER;
-//	In this #3 context there will not be a name associated with the type.
-//	The TypeDescriptor created in this case will only be pointed to by the
-//	single AttrDescriptor associated with the attribute it was created for.
+//        e.g. part_label_grouping : ARRAY [1.10] label;
+//        or part_codes : ARRAY [1.10] INTEGER;
+//        In this #3 context there will not be a name associated with the type.
+//        The TypeDescriptor created in this case will only be pointed to by the
+//        single AttrDescriptor associated with the attribute it was created for.
 ///////////////////////////////////////////////////////////////////////////////
 
 ///// _name is the name of the type. 
-	// In the case of the TypeDescriptors representing the Express base
-	// types this will be the name of the base type.
-	// In the case where this TypeDescriptor is representing an Express
-	// TYPE it is the LEFT side of an Express TYPE statement (i.e. label 
-	// as in TYPE label = STRING END_TYPE;) This name would in turn be 
-	// found on the RIGHT side of an Express attribute definition (e.g. 
-	// attr defined as part_label : label; )
-	// In the case where this TypeDescriptor was generated to describe a
-	// type created in an attr definition, it will be a null pointer (e.g
-	// attr defined as part_label_grouping : ARRAY [1..10] label)
+        // In the case of the TypeDescriptors representing the Express base
+        // types this will be the name of the base type.
+        // In the case where this TypeDescriptor is representing an Express
+        // TYPE it is the LEFT side of an Express TYPE statement (i.e. label
+        // as in TYPE label = STRING END_TYPE;) This name would in turn be
+        // found on the RIGHT side of an Express attribute definition (e.g.
+        // attr defined as part_label : label; )
+        // In the case where this TypeDescriptor was generated to describe a
+        // type created in an attr definition, it will be a null pointer (e.g
+        // attr defined as part_label_grouping : ARRAY [1..10] label)
 ///// _fundamentalType is the 'type' of the type being represented by 
-	//  the TypeDescriptor . i.e. the following 2 stmts
-	//  would cause 2 TypeDescriptors to be generated - the 1st having
-	//  _fundamentalType set to STRING_TYPE and for the 2nd to 
-	//  REFERENCE_TYPE.
-	// TYPE label = STRING END_TYPE; 
-	// TYPE part_label = label END_TYPE;
-	// part_label and label would be the value of the respective
-	// _name member variables for the 2 TypeDescriptors.  
+        //  the TypeDescriptor . i.e. the following 2 stmts
+        //  would cause 2 TypeDescriptors to be generated - the 1st having
+        //  _fundamentalType set to STRING_TYPE and for the 2nd to
+        //  REFERENCE_TYPE.
+        // TYPE label = STRING END_TYPE;
+        // TYPE part_label = label END_TYPE;
+        // part_label and label would be the value of the respective
+        // _name member variables for the 2 TypeDescriptors.
 ///// _referentType will point at another TypeDescriptor furthur specifying 
-	//  the type in all cases except when the type is directly 
-	//  an enum or select.  i.e. in the following... _referentType for 
-	//  the 1st type does not point at anything and for the 2nd it does:
-	// TYPE color = ENUMERATION OF (red, blue); END_TYPE;
-	// TYPE color_ref = color; END_TYPE;
+        //  the type in all cases except when the type is directly
+        //  an enum or select.  i.e. in the following... _referentType for
+        //  the 1st type does not point at anything and for the 2nd it does:
+        // TYPE color = ENUMERATION OF (red, blue); END_TYPE;
+        // TYPE color_ref = color; END_TYPE;
 ////// _fundamentalType being REFERENCE_TYPE (as would be the case for 
-	// part_label and color_ref above) means that the _referentType 
-	// member variable points at a TypeDescriptor representing a type
-	// that has been defined in an Express TYPE stmt.
-	//  Otherwise _fundamental type reflects 
-	//  the type directly as in the type label above.  type label above
-	//  has a _referentType that points at a TypeDescriptor for STRING 
-	//  described in the next sentence (also see #1 above).
-	// A TypeDescriptor would be generated for each of the EXPRESS base 
-	// types (int, string, real, etc) having _fundamentalType member 
-	// variables set to match the EXPRESS base type being represented.
+        // part_label and color_ref above) means that the _referentType
+        // member variable points at a TypeDescriptor representing a type
+        // that has been defined in an Express TYPE stmt.
+        //  Otherwise _fundamental type reflects
+        //  the type directly as in the type label above.  type label above
+        //  has a _referentType that points at a TypeDescriptor for STRING
+        //  described in the next sentence (also see #1 above).
+        // A TypeDescriptor would be generated for each of the EXPRESS base
+        // types (int, string, real, etc) having _fundamentalType member
+        // variables set to match the EXPRESS base type being represented.
 //////_referentType
-	// For the TypeDescriptors describing the EXPRESS base types this will
-	// be a null pointer.  For all other TypeDescriptors this will point 
-	// to another TypeDescriptor which furthur describes the type. e.g.
-	// TYPE part_label = label END_TYPE; TYPE label = STRING END_TYPE; 
-	// part_label's _referentType will point to the TypeDescriptor for
-	// label.  label's _referentType will point to the TypeDescriptor
-	// for STRING. The _fundamentalType for part_label will be
-	// REFERENCE_TYPE and for label will be STRING_TYPE.  
-	// The _fundamentalType for the EXPRESS base type STRING's
-	// TypeDescriptor will be STRING_TYPE.
-	// The _referentType member variable will in most cases point to
-	// a subtype of TypeDescriptor.
+        // For the TypeDescriptors describing the EXPRESS base types this will
+        // be a null pointer.  For all other TypeDescriptors this will point
+        // to another TypeDescriptor which furthur describes the type. e.g.
+        // TYPE part_label = label END_TYPE; TYPE label = STRING END_TYPE;
+        // part_label's _referentType will point to the TypeDescriptor for
+        // label.  label's _referentType will point to the TypeDescriptor
+        // for STRING. The _fundamentalType for part_label will be
+        // REFERENCE_TYPE and for label will be STRING_TYPE.
+        // The _fundamentalType for the EXPRESS base type STRING's
+        // TypeDescriptor will be STRING_TYPE.
+        // The _referentType member variable will in most cases point to
+        // a subtype of TypeDescriptor.
 //////_description
-	// This is the string description of the type as found in the
-	// EXPRESS file. e.g. aggr of [aggr of ...] [list of ...] someType 
-	// It is the RIGHT side of an Express TYPE statement 
-	// (i.e. LIST OF STRING as in 
-	// TYPE label_group = LIST OF STRING END_TYPE;) 
-	// It is the same as _name for EXPRESS base types TypeDescriptors (with
-	// the possible exception of upper or lower case differences).
+        // This is the string description of the type as found in the
+        // EXPRESS file. e.g. aggr of [aggr of ...] [list of ...] someType
+        // It is the RIGHT side of an Express TYPE statement
+        // (i.e. LIST OF STRING as in
+        // TYPE label_group = LIST OF STRING END_TYPE;)
+        // It is the same as _name for EXPRESS base types TypeDescriptors (with
+        // the possible exception of upper or lower case differences).
 
 class TypeDescriptor { 
 
   protected:
 
-		// the name of the type (see above)
+                // the name of the type (see above)
                 //
                 // NOTE - memory is not allocated for this, or for _description
                 // below.  It is assumed that at creation, _name will be made
@@ -1116,158 +1057,155 @@ class TypeDescriptor {
                 // generated code, for example, places a literal string in its
                 // TypeDesc constructor calls.  This creates a location in me-
                 // mory static throughout the lifetime of the calling program.
-	const char *  _name ;
+        const char *  _name ;
 
-	        // an alternate name of type - such as one given by a different
-	        // schema which USEs/ REFERENCEs this.  (A complete list of
-	        // alternate names is stored in altNames below.  _altname pro-
-	        // vides storage space for the currently used one.)
-	char _altname[BUFSIZ];
+                // an alternate name of type - such as one given by a different
+                // schema which USEs/ REFERENCEs this.  (A complete list of
+                // alternate names is stored in altNames below.  _altname pro-
+                // vides storage space for the currently used one.)
+        char _altname[BUFSIZ];
 
-	        // contains list of renamings of type - used by other schemas
-	        // which USE/ REFERENCE this
-	const SchRename * altNames;
+                // contains list of renamings of type - used by other schemas
+                // which USE/ REFERENCE this
+        const SchRename * altNames;
 
-		// the type of the type (see above). 
-		// it is an enum see file clstepcore/baseType.h
-//	BASE_TYPE _fundamentalType ;
-	PrimitiveType _fundamentalType ;
+                // the type of the type (see above).
+                // it is an enum see file clstepcore/baseType.h
+        PrimitiveType _fundamentalType ;
 
-	const Schema * _originatingSchema;
+        const Schema * _originatingSchema;
 
-		// further describes the type (see above)
-		// most often (or always) points at a subtype.
-	const TypeDescriptor * _referentType ;
+                // further describes the type (see above)
+                // most often (or always) points at a subtype.
+        const TypeDescriptor * _referentType ;
 
-		// Express file description (see above)
-		// e.g. the right side of an Express TYPE stmt
-	        // (See note above by _name regarding memory allocation.)
-	const char *  _description ;
+                // Express file description (see above)
+                // e.g. the right side of an Express TYPE stmt
+                // (See note above by _name regarding memory allocation.)
+        const char *  _description ;
 
       public:
-	// a Where_rule may contain only a comment
-	Where_rule__list_var _where_rules; // initially a null pointer
+        // a Where_rule may contain only a comment
+        Where_rule__list_var _where_rules; // initially a null pointer
 
-	Where_rule__list_var& where_rules_()
-	{ return _where_rules; }
+        Where_rule__list_var& where_rules_() { return _where_rules; }
 
-	void where_rules_(Where_rule__list * wrl)
-	{ _where_rules = wrl; }
+        void where_rules_(Where_rule__list * wrl) { _where_rules = wrl; }
 
       protected:
-	        // Functions used to check the current name of the type (may
-	        // != _name if altNames has diff name for current schema).
-	int PossName (const char *) const;
-	int OurName  (const char *) const;
-	int AltName  (const char *) const;
-	
+                // Functions used to check the current name of the type (may
+                // != _name if altNames has diff name for current schema).
+        int PossName (const char *) const;
+        int OurName  (const char *) const;
+        int AltName  (const char *) const;
+
   public:  
 
-	TypeDescriptor (const char * nm, PrimitiveType ft, const char * d); 
-	TypeDescriptor (const char * nm, PrimitiveType ft, 
-			Schema *origSchema, const char * d);
-	TypeDescriptor ( ); 
-	virtual ~TypeDescriptor () { /* if ( altNames ) delete altNames; */ }
+        TypeDescriptor (const char * nm, PrimitiveType ft, const char * d);
+        TypeDescriptor (const char * nm, PrimitiveType ft,
+                        Schema *origSchema, const char * d);
+        TypeDescriptor ( );
+        virtual ~TypeDescriptor () { /* if ( altNames ) delete altNames; */ }
 
-	virtual const char * GenerateExpress (std::string &buf) const;
+        virtual const char * GenerateExpress (std::string &buf) const;
 
-		// The name of this type.  If schnm != NULL, the name we're
-	        // referred to by schema schnm (may be diff name in our alt-
-	        // names list (based on schnm's USE/REF list)).
-	const char * Name(const char *schnm = NULL) const;
+                // The name of this type.  If schnm != NULL, the name we're
+                // referred to by schema schnm (may be diff name in our alt-
+                // names list (based on schnm's USE/REF list)).
+        const char * Name(const char *schnm = NULL) const;
 
-		// The name that would be found on the right side of an 
-		// attribute definition. In the case of a type defined like
-		// TYPE name = STRING END_TYPE; 
-		// with attribute definition   employee_name : name;
-		// it would be the _name member variable. If it was a type
-		// defined in an attribute it will be the _description
-		// member variable since _name will be null. e.g. attr. def.
-		// project_names : ARRAY [1..10] name;
-	const char * AttrTypeName( std::string &buf, const char *schnm =NULL ) const;
+                // The name that would be found on the right side of an
+                // attribute definition. In the case of a type defined like
+                // TYPE name = STRING END_TYPE;
+                // with attribute definition   employee_name : name;
+                // it would be the _name member variable. If it was a type
+                // defined in an attribute it will be the _description
+                // member variable since _name will be null. e.g. attr. def.
+                // project_names : ARRAY [1..10] name;
+        const char * AttrTypeName( std::string &buf, const char *schnm =NULL ) const;
 
-	        // Linked link of alternate names for the type:
-	const SchRename *AltNameList() const { return altNames; }
+                // Linked link of alternate names for the type:
+        const SchRename *AltNameList() const { return altNames; }
 
-		// This is a fully expanded description of the type.
-		// This returns a string like the _description member variable
-		// except it is more thorough of a description where possible
-		// e.g. if the description contains a TYPE name it will also
-		// be explained.
-	const char *TypeString(std::string & s) const;
+                // This is a fully expanded description of the type.
+                // This returns a string like the _description member variable
+                // except it is more thorough of a description where possible
+                // e.g. if the description contains a TYPE name it will also
+                // be explained.
+        const char *TypeString(std::string & s) const;
 
-		// This TypeDescriptor's type
-	const PrimitiveType Type() const	{ return _fundamentalType; }
-	void  Type(const PrimitiveType type) 	{ _fundamentalType = type; }
+                // This TypeDescriptor's type
+        const PrimitiveType Type() const        { return _fundamentalType; }
+        void  Type(const PrimitiveType type)         { _fundamentalType = type; }
 
-	   // This is the underlying Express base type of this type. It will 
-	   // be the type of the last TypeDescriptor following the 
-	   // _referentType member variable pointers. e.g.
-	   // TYPE count = INTEGER;
-	   // TYPE ref_count = count;
-	   // TYPE count_set = SET OF ref_count;
-	   //  each of the above will generate a TypeDescriptor and for 
-	   //  each one, PrimitiveType BaseType() will return INTEGER_TYPE.
-	   //  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor 
-	   //  for Integer.
-	const PrimitiveType       BaseType() const;
-	const TypeDescriptor *BaseTypeDescriptor() const;
-	const char * BaseTypeName () const;
+           // This is the underlying Express base type of this type. It will
+           // be the type of the last TypeDescriptor following the
+           // _referentType member variable pointers. e.g.
+           // TYPE count = INTEGER;
+           // TYPE ref_count = count;
+           // TYPE count_set = SET OF ref_count;
+           //  each of the above will generate a TypeDescriptor and for
+           //  each one, PrimitiveType BaseType() will return INTEGER_TYPE.
+           //  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor
+           //  for Integer.
+        const PrimitiveType       BaseType() const;
+        const TypeDescriptor *BaseTypeDescriptor() const;
+        const char * BaseTypeName () const;
 
-	   // the first PrimitiveType that is not REFERENCE_TYPE (the first 
-	   // TypeDescriptor *_referentType that does not have REFERENCE_TYPE 
-	   // for it's fundamentalType variable).  This would return the same 
-	   // as BaseType() for fundamental types.  An aggregate type
-	   // would return AGGREGATE_TYPE then you could find out the type of
-	   // an element by calling AggrElemType().  Select types
-	   // would work the same?
+           // the first PrimitiveType that is not REFERENCE_TYPE (the first
+           // TypeDescriptor *_referentType that does not have REFERENCE_TYPE
+           // for it's fundamentalType variable).  This would return the same
+           // as BaseType() for fundamental types.  An aggregate type
+           // would return AGGREGATE_TYPE then you could find out the type of
+           // an element by calling AggrElemType().  Select types
+           // would work the same?
 
-	const PrimitiveType	NonRefType() const;
-	const TypeDescriptor *NonRefTypeDescriptor() const;
+        const PrimitiveType        NonRefType() const;
+        const TypeDescriptor *NonRefTypeDescriptor() const;
 
-	int   IsAggrType() const;
-	const PrimitiveType	AggrElemType() const;
-	const TypeDescriptor *AggrElemTypeDescriptor() const;
+        int   IsAggrType() const;
+        const PrimitiveType        AggrElemType() const;
+        const TypeDescriptor *AggrElemTypeDescriptor() const;
 
-	const PrimitiveType FundamentalType() const { return _fundamentalType; }
-	void FundamentalType (PrimitiveType ftype) { _fundamentalType = ftype; }
+        const PrimitiveType FundamentalType() const { return _fundamentalType; }
+        void FundamentalType (PrimitiveType ftype) { _fundamentalType = ftype; }
 
-		// The TypeDescriptor for the type this type is based on 
-	const TypeDescriptor * ReferentType() const { return _referentType; }
-	void ReferentType (const TypeDescriptor * rtype) 
-			{ _referentType = rtype; }
+                // The TypeDescriptor for the type this type is based on
+        const TypeDescriptor * ReferentType() const { return _referentType; }
+        void ReferentType (const TypeDescriptor * rtype)
+                        { _referentType = rtype; }
 
 
-	const Schema * OriginatingSchema()  const
-			{ return _originatingSchema; }
-	void OriginatingSchema (const Schema * os)
-			{ _originatingSchema = os; }
-	const char *schemaName() const {
-	    if ( _originatingSchema ) return _originatingSchema->Name();
-	    else return "";
-	}
+        const Schema * OriginatingSchema()  const
+                        { return _originatingSchema; }
+        void OriginatingSchema (const Schema * os)
+                        { _originatingSchema = os; }
+        const char *schemaName() const {
+            if ( _originatingSchema ) return _originatingSchema->Name();
+            else return "";
+        }
 
-		// A description of this type's type. Basically you
-		// get the right side of a TYPE statement minus END_TYPE.
-		// For base type TypeDescriptors it is the same as _name.
-	const char * Description() const	{ return _description; }
-	void Description (const char * desc) { _description = desc; } 
+                // A description of this type's type. Basically you
+                // get the right side of a TYPE statement minus END_TYPE.
+                // For base type TypeDescriptors it is the same as _name.
+        const char * Description() const        { return _description; }
+        void Description (const char * desc) { _description = desc; }
 
         virtual const TypeDescriptor * IsA (const TypeDescriptor *) const;
         virtual const TypeDescriptor * BaseTypeIsA (const TypeDescriptor *)
-	  const;
+          const;
         virtual const TypeDescriptor * IsA (const char *) const;
         virtual const TypeDescriptor * CanBe (const TypeDescriptor *n) const
                 {  return IsA (n);  }
-	virtual const TypeDescriptor * CanBe (const char *n) const
-		{  return IsA (n); }
-	virtual const TypeDescriptor * CanBeSet (const char *n,
-						 const char *schNm =0) const
-		{  return ( CurrName( n, schNm ) ? this : 0 ); }
-	int CurrName( const char *, const char * =0 ) const;
-	void addAltName( const char *schnm, const char *newnm );
-	        // Adds an additional name, newnm, to be use when schema schnm
-	        // is USE/REFERENCE'ing us (added to altNames).
+        virtual const TypeDescriptor * CanBe (const char *n) const
+                {  return IsA (n); }
+        virtual const TypeDescriptor * CanBeSet (const char *n,
+                                                 const char *schNm =0) const
+                {  return ( CurrName( n, schNm ) ? this : 0 ); }
+        int CurrName( const char *, const char * =0 ) const;
+        void addAltName( const char *schnm, const char *newnm );
+                // Adds an additional name, newnm, to be use when schema schnm
+                // is USE/REFERENCE'ing us (added to altNames).
 };
 
 typedef  SCLP23(Enum) * (* EnumCreator) () ;
@@ -1280,15 +1218,15 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
 
     void AssignEnumCreator(EnumCreator f = 0)
     {
-	CreateNewEnum = f;
+        CreateNewEnum = f;
     }
 
     SCLP23(Enum) *CreateEnum();
 
     EnumTypeDescriptor ( ) { }
     EnumTypeDescriptor (const char * nm, PrimitiveType ft, 
-			Schema *origSchema, const char * d, 
-			EnumCreator f =0 ); 
+                        Schema *origSchema, const char * d,
+                        EnumCreator f =0 );
 
     virtual ~EnumTypeDescriptor () { }
 };
@@ -1307,67 +1245,61 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
 class EntityDescriptor  :    public TypeDescriptor  { 
 
   protected:
-//	const Schema * _originatingSchema;
-	SCLP23(LOGICAL) _abstractEntity;
-	SCLP23(LOGICAL) _extMapping;
-	  // does external mapping have to be used to create an instance of
-	  // us (see STEP Part 21, sect 11.2.5.1)
+        SCLP23(LOGICAL) _abstractEntity;
+        SCLP23(LOGICAL) _extMapping;
+          // does external mapping have to be used to create an instance of
+          // us (see STEP Part 21, sect 11.2.5.1)
 
-	EntityDescriptorList _subtypes;   // OPTIONAL
-	EntityDescriptorList _supertypes; // OPTIONAL
-
-	AttrDescriptorList	  _explicitAttr; // OPTIONAL
-//	StringAggregate		 * _derivedAttr;  // OPTIONAL
-	Inverse_attributeList _inverseAttr;  // OPTIONAL
-
-	std::string _supertype_stmt;
+        EntityDescriptorList _subtypes;   // OPTIONAL
+        EntityDescriptorList _supertypes; // OPTIONAL
+        AttrDescriptorList          _explicitAttr; // OPTIONAL
+        Inverse_attributeList _inverseAttr;  // OPTIONAL
+        std::string _supertype_stmt;
   public:
-	Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
+        Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
        // pointer to a function that will create a new instance of a SCLP23(Application_instance)
         Creator NewSTEPentity;
 
-	EntityDescriptor ( );
-	EntityDescriptor (const char * name, // i.e. char *
-			  Schema *origSchema,
-			  Logical abstractEntity, // i.e. F U or T
-			  Logical extMapping,
-			  Creator f =0
-			  );
+        EntityDescriptor ( );
+        EntityDescriptor (const char * name, // i.e. char *
+                          Schema *origSchema,
+                          Logical abstractEntity, // i.e. F U or T
+                          Logical extMapping,
+                          Creator f =0
+                          );
 
-	virtual ~EntityDescriptor ();
+        virtual ~EntityDescriptor ();
 
-	const char * GenerateExpress (std::string &buf) const;
+        const char * GenerateExpress (std::string &buf) const;
 
-	const char * QualifiedName(std::string &s) const;
+        const char * QualifiedName(std::string &s) const;
 
-	const SCLP23(LOGICAL) & AbstractEntity() const 
-					{ return _abstractEntity;}
-	const SCLP23(LOGICAL) & ExtMapping() const   { return _extMapping; }
-	void AbstractEntity (SCLP23(LOGICAL) &ae)
-					{ _abstractEntity.put(ae.asInt()); }
-	void ExtMapping (SCLP23(LOGICAL) &em)
-				        { _extMapping.put(em.asInt());     }
-	void AbstractEntity (Logical ae) { _abstractEntity.put(ae); }
-	void ExtMapping     (Logical em) { _extMapping.put(em);     }
-	void ExtMapping     (const char *em)    { _extMapping.put(em);     }
+        const SCLP23(LOGICAL) & AbstractEntity() const
+                                        { return _abstractEntity;}
+        const SCLP23(LOGICAL) & ExtMapping() const   { return _extMapping; }
+        void AbstractEntity (SCLP23(LOGICAL) &ae)
+                                        { _abstractEntity.put(ae.asInt()); }
+        void ExtMapping (SCLP23(LOGICAL) &em)
+                                        { _extMapping.put(em.asInt());     }
+        void AbstractEntity (Logical ae) { _abstractEntity.put(ae); }
+        void ExtMapping     (Logical em) { _extMapping.put(em);     }
+        void ExtMapping     (const char *em)    { _extMapping.put(em);     }
 
-	const EntityDescriptorList& Subtypes() const
-	  { return _subtypes; } 
+        const EntityDescriptorList& Subtypes() const
+          { return _subtypes; }
 
-	const EntityDescriptorList& Supertypes() const
-	  { return _supertypes; }
+        const EntityDescriptorList& Supertypes() const
+          { return _supertypes; }
 
-	const EntityDescriptorList& GetSupertypes()  const 
-	  { return _supertypes; }
+        const EntityDescriptorList& GetSupertypes()  const
+          { return _supertypes; }
 
-	const AttrDescriptorList& ExplicitAttr() const
-	  { return _explicitAttr; }
+        const AttrDescriptorList& ExplicitAttr() const
+          { return _explicitAttr; }
 
-//	StringAggregate  & DerivedAttr()	{ return *_derivedAttr; }
-
-	const Inverse_attributeList& InverseAttr() const
-	        { return _inverseAttr; }
+        const Inverse_attributeList& InverseAttr() const
+                { return _inverseAttr; }
 
         virtual const EntityDescriptor * IsA (const EntityDescriptor *) const;
         virtual const TypeDescriptor * IsA (const TypeDescriptor * td) const;
@@ -1376,29 +1308,29 @@ class EntityDescriptor  :    public TypeDescriptor  {
         virtual const TypeDescriptor * CanBe (const TypeDescriptor *o) const
                 {  return o -> IsA (this);  }
 
-	virtual const TypeDescriptor * CanBe (const char *n) const
-		{  return TypeDescriptor::CanBe (n); }
+        virtual const TypeDescriptor * CanBe (const char *n) const
+                {  return TypeDescriptor::CanBe (n); }
 
     // The following will be used by schema initialization functions
 
-	void AddSubtype(EntityDescriptor *ed) 
-		{ _subtypes.AddNode(ed); }
-	void AddSupertype_Stmt(const char *s) { _supertype_stmt = s; }
-	const char * Supertype_Stmt() { return const_cast<char *>(_supertype_stmt.c_str()); }
-	std::string& supertype_stmt_() { return _supertype_stmt; }
+        void AddSubtype(EntityDescriptor *ed)
+                { _subtypes.AddNode(ed); }
+        void AddSupertype_Stmt(const char *s) { _supertype_stmt = s; }
+        const char * Supertype_Stmt() { return const_cast<char *>(_supertype_stmt.c_str()); }
+        std::string& supertype_stmt_() { return _supertype_stmt; }
 
-	void AddSupertype(EntityDescriptor *ed) 
-		{ _supertypes.AddNode(ed); }
+        void AddSupertype(EntityDescriptor *ed)
+                { _supertypes.AddNode(ed); }
 
-	void AddExplicitAttr(AttrDescriptor *ad)
-		{ _explicitAttr.AddNode(ad); }
+        void AddExplicitAttr(AttrDescriptor *ad)
+                { _explicitAttr.AddNode(ad); }
 
-	void AddInverseAttr(Inverse_attribute *ia)
-		{ _inverseAttr.AddNode(ia); }
-	void uniqueness_rules_(Uniqueness_rule__set *urs)
-	  { _uniqueness_rules = urs; }
-	Uniqueness_rule__set_var& uniqueness_rules_()
-	  { return _uniqueness_rules; }
+        void AddInverseAttr(Inverse_attribute *ia)
+                { _inverseAttr.AddNode(ia); }
+        void uniqueness_rules_(Uniqueness_rule__set *urs)
+          { _uniqueness_rules = urs; }
+        Uniqueness_rule__set_var& uniqueness_rules_()
+          { return _uniqueness_rules; }
 
 };
 
@@ -1410,15 +1342,15 @@ class EntityDescriptor  :    public TypeDescriptor  {
 class EnumerationTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-	StringAggregate  *_elements ;	  //  of  (null)
+        StringAggregate  *_elements ;          //  of  (null)
 
   public:  
-	EnumerationTypeDescriptor ( );
-	virtual ~EnumerationTypeDescriptor () { } 
+        EnumerationTypeDescriptor ( );
+        virtual ~EnumerationTypeDescriptor () { }
 
 
-	StringAggregate & Elements() { return *_elements; }
-//	void Elements (StringAggregate  e);
+        StringAggregate & Elements() { return *_elements; }
+//        void Elements (StringAggregate  e);
 };
 #endif
 
@@ -1484,31 +1416,31 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 
     void AssignAggrCreator(AggregateCreator f = 0)
     {
-	CreateNewAggr = f;
+        CreateNewAggr = f;
     }
 
     STEPaggregate *CreateAggregate();
 
     AggrTypeDescriptor ( ); 
     AggrTypeDescriptor(SCLP23(Integer) b1, SCLP23(Integer) b2, 
-		       Logical uniqElem, 
-		       TypeDescriptor *aggrDomType);
+                       Logical uniqElem,
+                       TypeDescriptor *aggrDomType);
     AggrTypeDescriptor (const char * nm, PrimitiveType ft, 
-			Schema *origSchema, const char * d, 
-			AggregateCreator f =0 )
-	: TypeDescriptor (nm, ft, origSchema, d), CreateNewAggr(f) { }
+                        Schema *origSchema, const char * d,
+                        AggregateCreator f =0 )
+        : TypeDescriptor (nm, ft, origSchema, d), CreateNewAggr(f) { }
     virtual ~AggrTypeDescriptor ();
 
 
-    SCLP23(Integer) & Bound1()	        { return _bound1; }
+    SCLP23(Integer) & Bound1()                { return _bound1; }
     void Bound1 (SCLP23(Integer)  b1)   { _bound1 = b1; } 
 
-    SCLP23(Integer) & Bound2() 		{ return _bound2; }
+    SCLP23(Integer) & Bound2()                 { return _bound2; }
     void Bound2 (SCLP23(Integer)  b2)   { _bound2 = b2; } 
 
-    SCLP23(LOGICAL)& UniqueElements()	{ return _uniqueElements; } 
+    SCLP23(LOGICAL)& UniqueElements()        { return _uniqueElements; }
     void UniqueElements (SCLP23(LOGICAL) &ue) 
-					{ _uniqueElements.put(ue.asInt()); } 
+                                        { _uniqueElements.put(ue.asInt()); }
     void UniqueElements (Logical ue)     { _uniqueElements.put(ue); }
     void UniqueElements (const char *ue) { _uniqueElements.put(ue); }
 
@@ -1523,17 +1455,17 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 class ArrayTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
-	SCLP23(LOGICAL) _optionalElements ;
+        SCLP23(LOGICAL) _optionalElements ;
   public:  
 
     ArrayTypeDescriptor ( ) : _optionalElements((char *)"UNKNOWN_TYPE") { } 
     ArrayTypeDescriptor (Logical optElem) : _optionalElements(optElem)
       { }
     ArrayTypeDescriptor (const char * nm, PrimitiveType ft, 
-			 Schema *origSchema, const char * d, 
-			 AggregateCreator f =0 )
-	: AggrTypeDescriptor (nm, ft, origSchema, d, f),
-	  _optionalElements((char *)"UNKNOWN_TYPE") 
+                         Schema *origSchema, const char * d,
+                         AggregateCreator f =0 )
+        : AggrTypeDescriptor (nm, ft, origSchema, d, f),
+          _optionalElements((char *)"UNKNOWN_TYPE")
     { }
 
     virtual ~ArrayTypeDescriptor () {}
@@ -1541,7 +1473,7 @@ class ArrayTypeDescriptor  :    public AggrTypeDescriptor  {
 
     SCLP23(LOGICAL)& OptionalElements()       { return _optionalElements; } 
     void OptionalElements (SCLP23(LOGICAL) &oe) 
-				     { _optionalElements.put(oe.asInt()); } 
+                                     { _optionalElements.put(oe.asInt()); }
     void OptionalElements (Logical oe)     { _optionalElements.put(oe); }
     void OptionalElements (const char *oe) { _optionalElements.put(oe); }
 };
@@ -1553,22 +1485,22 @@ class ListTypeDescriptor  :    public AggrTypeDescriptor  {
 
 /*    void AssignAggrCreator(ListAggregateCreator f = 0)
     {
-	CreateNewAggr = f;
+        CreateNewAggr = f;
     }
 
     STEPaggregate *CreateListAggregate()
     {
-	if(CreateNewAggr)
-	    return CreateNewAggr();
-	else
-	    return 0;
+        if(CreateNewAggr)
+            return CreateNewAggr();
+        else
+            return 0;
     }
     */
     ListTypeDescriptor ( ) { }
     ListTypeDescriptor (const char * nm, PrimitiveType ft, 
-			Schema *origSchema, const char * d, 
-			AggregateCreator f =0 )
-		: AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
+                        Schema *origSchema, const char * d,
+                        AggregateCreator f =0 )
+                : AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
     virtual ~ListTypeDescriptor () { }
 
 };
@@ -1580,9 +1512,9 @@ class SetTypeDescriptor  :    public AggrTypeDescriptor  {
 
     SetTypeDescriptor ( ) { } 
     SetTypeDescriptor (const char * nm, PrimitiveType ft, 
-		       Schema *origSchema, const char * d, 
-		       AggregateCreator f =0 )
-		: AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
+                       Schema *origSchema, const char * d,
+                       AggregateCreator f =0 )
+                : AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
     virtual ~SetTypeDescriptor () { }
 
 };
@@ -1594,9 +1526,9 @@ class BagTypeDescriptor  :    public AggrTypeDescriptor  {
 
     BagTypeDescriptor ( ) { }
     BagTypeDescriptor (const char * nm, PrimitiveType ft, 
-		       Schema *origSchema, const char * d, 
-		       AggregateCreator f =0 )
-		: AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
+                       Schema *origSchema, const char * d,
+                       AggregateCreator f =0 )
+                : AggrTypeDescriptor (nm, ft, origSchema, d, f) { }
     virtual ~BagTypeDescriptor () { }
 
 };
@@ -1606,71 +1538,71 @@ typedef  SCLP23(Select) * (* SelectCreator) () ;
 class SelectTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-	TypeDescriptorList _elements ;	  //  of  TYPE_DESCRIPTOR
-	int _unique_elements;
+        TypeDescriptorList _elements ;          //  of  TYPE_DESCRIPTOR
+        int _unique_elements;
 
   public:  
 
-	SelectCreator CreateNewSelect;
+        SelectCreator CreateNewSelect;
 
-	void AssignSelectCreator(SelectCreator f = 0)
-	{
-	    CreateNewSelect = f;
-	}
+        void AssignSelectCreator(SelectCreator f = 0)
+        {
+            CreateNewSelect = f;
+        }
 
-	SCLP23(Select) *CreateSelect();
+        SCLP23(Select) *CreateSelect();
 
         SelectTypeDescriptor (int b, const char * nm, PrimitiveType ft, 
-			      Schema *origSchema, 
-			      const char * d, SelectCreator f =0 ) 
+                              Schema *origSchema,
+                              const char * d, SelectCreator f =0 )
           : TypeDescriptor (nm, ft, origSchema, d), 
-	  _unique_elements (b), CreateNewSelect(f)
-		{ }
-	virtual ~SelectTypeDescriptor () { }
+          _unique_elements (b), CreateNewSelect(f)
+                { }
+        virtual ~SelectTypeDescriptor () { }
 
-	TypeDescriptorList& Elements() { return _elements; }
-	const TypeDescriptorList& GetElements() const { return _elements; }
-//	void Elements (TypeDescriptorList x);
+        TypeDescriptorList& Elements() { return _elements; }
+        const TypeDescriptorList& GetElements() const { return _elements; }
+//        void Elements (TypeDescriptorList x);
         int UniqueElements () const {  return _unique_elements; }
         virtual const TypeDescriptor * IsA (const TypeDescriptor *) const;
         virtual const TypeDescriptor * IsA (const char * n) const  
                 {  return TypeDescriptor::IsA (n);  }
         virtual const TypeDescriptor * CanBe (const TypeDescriptor *) const;
-	virtual const TypeDescriptor * CanBe (const char *n) const;
-	virtual const TypeDescriptor * CanBeSet (const char *, const char *)
-	  const;
+        virtual const TypeDescriptor * CanBe (const char *n) const;
+        virtual const TypeDescriptor * CanBeSet (const char *, const char *)
+          const;
 };
 
 class StringTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-	SCLP23(Integer)  _width ;    //  OPTIONAL
-	SCLP23(LOGICAL) _fixedSize ;
+        SCLP23(Integer)  _width ;    //  OPTIONAL
+        SCLP23(LOGICAL) _fixedSize ;
   public:  
 
-	StringTypeDescriptor ( ) : _fixedSize((char *)"UNKNOWN_TYPE") { _width = 0; }
-	virtual ~StringTypeDescriptor () { }
+        StringTypeDescriptor ( ) : _fixedSize((char *)"UNKNOWN_TYPE") { _width = 0; }
+        virtual ~StringTypeDescriptor () { }
 
 
-	SCLP23(Integer) Width()		{ return _width; }
-	void Width (SCLP23(Integer)  w)	{ _width = w; }
+        SCLP23(Integer) Width()                { return _width; }
+        void Width (SCLP23(Integer)  w)        { _width = w; }
 
-	SCLP23(LOGICAL)& FixedSize()		{ return _fixedSize; }
-	void FixedSize (SCLP23(LOGICAL) fs)	{ _fixedSize.put(fs.asInt()); }
-	void FixedSize (Logical fs)	{ _fixedSize.put(fs); }
+        SCLP23(LOGICAL)& FixedSize()                { return _fixedSize; }
+        void FixedSize (SCLP23(LOGICAL) fs)        { _fixedSize.put(fs.asInt()); }
+        void FixedSize (Logical fs)        { _fixedSize.put(fs); }
 };
 
 class RealTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-	SCLP23(Integer)  _precisionSpec ;    //  OPTIONAL
+        SCLP23(Integer)  _precisionSpec ;    //  OPTIONAL
   public:  
 
-	RealTypeDescriptor ( ) { _precisionSpec = 0; }
-	virtual ~RealTypeDescriptor () { }
+        RealTypeDescriptor ( ) { _precisionSpec = 0; }
+        virtual ~RealTypeDescriptor () { }
 
-	SCLP23(Integer) PrecisionSpec()		 { return _precisionSpec; }
-	void PrecisionSpec (SCLP23(Integer)  ps) { _precisionSpec = ps; }
+        SCLP23(Integer) PrecisionSpec()                 { return _precisionSpec; }
+        void PrecisionSpec (SCLP23(Integer)  ps) { _precisionSpec = ps; }
 };
 
 

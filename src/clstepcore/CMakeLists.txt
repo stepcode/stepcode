@@ -31,15 +31,15 @@ set(LIBSTEPCORE_SRCS
 )
 
 if(MINGW)
-	set(LIBDEPEND_SRCS
-    	${SCL_SOURCE_DIR}/src/cldai/sdaiObject.cc 
-    	${SCL_SOURCE_DIR}/src/cldai/sdaiDaObject.cc
-    	${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
-    	${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
-    	${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
-    	${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
-    	${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
-	)
+        set(LIBDEPEND_SRCS
+            ${SCL_SOURCE_DIR}/src/cldai/sdaiObject.cc
+            ${SCL_SOURCE_DIR}/src/cldai/sdaiDaObject.cc
+            ${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
+            ${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
+            ${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
+            ${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
+            ${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
+        )
 endif(MINGW)
 
 SET(LIBSTEPCORE_PRIVATE_HDRS

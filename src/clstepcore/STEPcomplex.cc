@@ -6,18 +6,11 @@
 #include <STEPattribute.h>
 #include <sstream>
 
-extern const char *
-ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
+extern const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
     : SCLP23( Application_instance )( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
-    /*
-        _complex = 1;
-        _registry = registry;
-        sc = 0;
-        visited = 0;
-    */
 }
 
 STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
@@ -44,9 +37,7 @@ STEPcomplex::STEPcomplex( Registry * registry, const char ** names, int fileid,
     Initialize( names, schnm );
 }
 
-void
-STEPcomplex::Initialize( const char ** names, const char * schnm )
-/*
+/**
  * Called by the STEPcomplex constructors to validate the names in our
  * list, see if they represent a legal entity combination, and build the
  * complex list.  schnm is the name of the current schema if applicable.
@@ -57,7 +48,7 @@ STEPcomplex::Initialize( const char ** names, const char * schnm )
  * A and renames it to Y.)  Registry::FindEntity() below knows how to
  * search using the current name of each entity based on schnm.
  */
-{
+void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
     // Create an EntNode list consisting of all the names in the complex ent:
     EntNode * ents = new EntNode( names ),
     *eptr = ents, *prev = NULL, *enext;
@@ -155,8 +146,7 @@ STEPcomplex::~STEPcomplex() {
     }
 }
 
-void
-STEPcomplex::AssignDerives() {
+void STEPcomplex::AssignDerives() {
     STEPattribute * a = 0;
     STEPcomplex * scomp1 = head;
     STEPcomplex * scomp2;
@@ -164,9 +154,6 @@ STEPcomplex::AssignDerives() {
     const AttrDescriptorList * attrList;
     AttrDescLinkNode * attrPtr;
     const AttrDescriptor * ad;
-
-    // find out how many attrs there are
-//  int attrCount = attrList->EntryCount();
 
     while( scomp1 && scomp1->eDesc ) {
         a = 0;
@@ -189,14 +176,11 @@ STEPcomplex::AssignDerives() {
                 scomp2 = head;
                 while( scomp2 && !a ) {
                     if( scomp1 != scomp2 ) {
-//          scomp2->MakeDerived ( ad->Name() );
                         scomp2->MakeDerived( attrNm );
-//          a = scomp2->GetSTEPattribute( ad->Name() );
                         a = scomp2->GetSTEPattribute( attrNm );
                     }
                     scomp2 = scomp2->sc;
                 }
-//      if (a)  a ->Derive ();
             }
             // increment attr
             attrPtr = ( AttrDescLinkNode * )attrPtr->NextNode();
@@ -205,11 +189,11 @@ STEPcomplex::AssignDerives() {
     }
 }
 
-// this function should only be called for the head entity
-// in the list of entity parts.
-
-void
-STEPcomplex::AddEntityPart( const char * name ) {
+/** \fn STEPcomplex::AddEntityPart
+** this function should only be called for the head entity
+** in the list of entity parts.
+*/
+void STEPcomplex::AddEntityPart( const char * name ) {
     STEPcomplex * scomplex;
 
     if( name ) {
@@ -217,7 +201,6 @@ STEPcomplex::AddEntityPart( const char * name ) {
         scomplex->BuildAttrs( name );
         if( scomplex->eDesc ) {
             scomplex->head = this;
-//      scomplex->STEPfile_id = STEPfile_id;
             AppendEntity( scomplex );
         } else {
             cout << scomplex->_error.DetailMsg() << endl;
@@ -226,8 +209,7 @@ STEPcomplex::AddEntityPart( const char * name ) {
     }
 }
 
-STEPcomplex *
-STEPcomplex::EntityPart( const char * name, const char * currSch ) {
+STEPcomplex * STEPcomplex::EntityPart( const char * name, const char * currSch ) {
     STEPcomplex * scomp = head;
     std::string s1, s2;
     while( scomp ) {
@@ -243,18 +225,17 @@ STEPcomplex::EntityPart( const char * name, const char * currSch ) {
     return 0;
 }
 
-int
-STEPcomplex::EntityExists( const char * name, const char * currSch ) {
+int STEPcomplex::EntityExists( const char * name, const char * currSch ) {
     return ( EntityPart( name, currSch ) ? 1 : 0 );
 }
 
-// Check if a given entity (by descriptor) is the same as this one.
-// For a complex entity, we'll check the EntityDescriptor of each entity
-// in the complex 'chain'
-const EntityDescriptor *
-STEPcomplex::IsA( const EntityDescriptor * ed ) const {
+/**
+** Check if a given entity (by descriptor) is the same as this one.
+** For a complex entity, we'll check the EntityDescriptor of each entity
+** in the complex 'chain'
+*/
+const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
     const EntityDescriptor * return_ed = eDesc->IsA( ed );
-
     if( !return_ed && sc ) {
         return sc->IsA( ed );
     } else {
@@ -262,15 +243,13 @@ STEPcomplex::IsA( const EntityDescriptor * ed ) const {
     }
 }
 
-Severity
-STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgr * im,
+Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgr * im,
                          int clearError ) {
     cout << "STEPcomplex::ValidLevel() not implemented.\n";
     return SEVERITY_NULL;
 }
 
-void
-STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
+void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
     if( sc ) {
         sc->AppendEntity( stepc );
     } else {
@@ -279,8 +258,7 @@ STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
 }
 
 // READ
-Severity
-STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
+Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
                        istream & in, const char * currSch, int useTechCor ) {
     char c;
     std::string typeNm;
@@ -342,10 +320,10 @@ STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
     return _error.severity();
 }
 
+//FIXME delete this?
 #ifdef buildwhileread
 // READ
-Severity
-STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
+Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
                        istream & in, const char * currSch ) {
     ClearError( 1 );
     STEPfile_id = id;
@@ -371,7 +349,6 @@ STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
             in >> ws;
             in.get( c );
         }
-//    STEPcomplex *EntityPart(const char *name);
 
         if( c != '(' ) {
             _error.AppendToDetailMsg(
@@ -429,8 +406,7 @@ STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
 
 #endif
 
-void
-STEPcomplex::BuildAttrs( const char * s ) {
+void STEPcomplex::BuildAttrs( const char * s ) {
     // assign inherited member variable
     eDesc = ( class EntityDescriptor * )_registry->FindEntity( s );
 
@@ -511,14 +487,6 @@ STEPcomplex::BuildAttrs( const char * s ) {
                 a -> set_null();
                 attributes.push( a );
             }
-
-            /*      // for when inverse information is included
-                    else if( (LOGICAL)( ad->Inverse() ) == sdaiTRUE)
-                    {
-                    str.Append('(');
-                    endchar = ')';
-                    }
-            */
             attrPtr = ( AttrDescLinkNode * )attrPtr->NextNode();
         }
     } else {
@@ -527,22 +495,19 @@ STEPcomplex::BuildAttrs( const char * s ) {
     }
 }
 
-void
-STEPcomplex::STEPread_error( char c, int index, istream & in ) {
+void STEPcomplex::STEPread_error( char c, int index, istream & in ) {
     cout << "STEPcomplex::STEPread_error() \n";
 }
 
-// WRITE
-
-// These functions take into account the current schema, so that if an entity
-// or attribute type is renamed in this schema (using the USE/REF clause) the
-// new name is written out.  They do not, however, comply with the requirement
-// in the standard that the entity parts of a complex entity must be printed in
-// alphabetical order.  The nodes are sorted alphabetically according to their
-// original names but not according to their renamed names (DAR 6/5/97).
-
-void
-STEPcomplex::STEPwrite( ostream & out, const char * currSch, int writeComment ) {
+/** 
+** These functions take into account the current schema, so that if an entity
+** or attribute type is renamed in this schema (using the USE/REF clause) the
+** new name is written out.  They do not, however, comply with the requirement
+** in the standard that the entity parts of a complex entity must be printed in
+** alphabetical order.  The nodes are sorted alphabetically according to their
+** original names but not according to their renamed names (DAR 6/5/97).
+*/
+void STEPcomplex::STEPwrite( ostream & out, const char * currSch, int writeComment ) {
     if( writeComment && p21Comment && !p21Comment->empty() ) {
         out << p21Comment->c_str();
     }
@@ -551,8 +516,7 @@ STEPcomplex::STEPwrite( ostream & out, const char * currSch, int writeComment ) 
     out << ");\n";
 }
 
-const char *
-STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
+const char * STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
     buf.clear();
 
     stringstream ss;
@@ -566,8 +530,8 @@ STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
     return const_cast<char *>( buf.c_str() );
 }
 
-void
-STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
+/** \copydoc STEPcomplex::STEPwrite */
+void STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
     std::string tmp;
     out << StrToUpper( EntityName( currSch ), tmp );
     out << "(";
@@ -585,12 +549,10 @@ STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
     }
 }
 
-const char *
-STEPcomplex::WriteExtMapEntities( std::string & buf, const char * currSch ) {
+/** \copydoc STEPcomplex::STEPwrite */
+const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * currSch ) {
 
     std::string tmp;
-//    sprintf(instanceInfo, "%s(", (char *)StrToUpper( EntityName(), tmp ) );
-//    buf.Append(instanceInfo);
 
     buf.append( ( char * )StrToUpper( EntityName( currSch ), tmp ) );
     buf.append( "i" );
@@ -613,8 +575,7 @@ STEPcomplex::WriteExtMapEntities( std::string & buf, const char * currSch ) {
     return const_cast<char *>( buf.c_str() );
 }
 
-void
-STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
+void STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
     if( !se->IsComplex() ) {
         char errStr[BUFSIZ];
         cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "
@@ -628,8 +589,6 @@ STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
         _error.GreaterSeverity( SEVERITY_BUG );
         return;
     } else {
-//  STEPcomplex * sc = 0;
-
         STEPcomplex * scpartCpyTo = head;
         STEPcomplex * scpartCpyFrom = ( ( STEPcomplex * )se )->head;
         while( scpartCpyTo && scpartCpyFrom ) {
@@ -638,11 +597,9 @@ STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
             scpartCpyFrom = scpartCpyFrom->sc;
         }
     }
-//    cout << "ERROR: STEPcomplex::CopyAs() not implemented.\n";
 }
 
-SCLP23( Application_instance ) *
-STEPcomplex::Replicate() {
+SCLP23( Application_instance ) * STEPcomplex::Replicate() {
     if( !IsComplex() ) {
         return SCLP23( Application_instance )::Replicate();
     } else if( !_registry ) {
@@ -679,11 +636,11 @@ STEPcomplex::Replicate() {
         seNew -> CopyAs( this );
         return seNew;
 
-// need to:
-// get registry
-// create list of entity names
-// send them to constructor for STEPcomplex
-// implement STEPcomplex::CopyAs()
-// call seNew->CopyAs()
+        // TODO need to:
+        // get registry
+        // create list of entity names
+        // send them to constructor for STEPcomplex
+        // implement STEPcomplex::CopyAs()
+        // call seNew->CopyAs()
     }
 }

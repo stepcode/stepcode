@@ -1,6 +1,3 @@
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
 
 #include <errordesc.h>
 #include <stdio.h>
@@ -197,44 +194,6 @@ WriteReal( SCLP23( Real ) val, ostream & out ) {
     std::string s;
 
     out << WriteReal( val, s );
-#if 0
-    char rbuf[64];
-
-//        out << form("%.*G", (int) Real_Num_Precision,tmp);
-    // replace the above line with this code so that writing the '.' is
-    // guaranteed for reals. If you use e or E then you get many
-    // unnecessary trailing zeros. g and G truncates all trailing zeros
-    // to save space but when no non-zero precision exists it also
-    // truncates the decimal. The decimal is required by Part 21.
-    // Also use G instead of g since G writes uppercase E (E instead of e
-    // is also required by Part 21) when scientific notation is used - DAS
-
-    sprintf( rbuf, "%.*G", ( int ) RealNumPrecision, val );
-    if( !strchr( rbuf, '.' ) ) {
-        if( strchr( rbuf, 'E' ) || strchr( rbuf, 'e' ) ) {
-            char * expon = strchr( rbuf, 'E' );
-
-            if( !expon ) {
-                expon = strchr( rbuf, 'e' );
-            }
-            *expon = '\0';
-            s = rbuf;
-            s.Append( '.' );
-            s.Append( 'E' );
-            expon++;
-            s.Append( expon );
-        } else {
-            int rindex = strlen( rbuf );
-            rbuf[rindex] = '.';
-            rbuf[rindex + 1] = '\0';
-            s = rbuf;
-        }
-    } else {
-        s = rbuf;
-    }
-
-    out << ( char * )( s.c_str() );
-#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -345,21 +304,14 @@ ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
     }
     buf[i] = '\0';
 
-    /*
-        int success = 0;
-        success = sscanf(buf," %G", &d);
-    */
     istringstream in2( ( char * )buf );
 
     // now that we have the real the stream will be able to salvage reading
     // whatever kind of format was used to represent the real.
     in2 >> d;
-//    cout << "buffer: " << buf << endl << "value:  " << d << endl << endl;
 
     int valAssigned = 0;
-//    PrintErrorState(err);
 
-//    if(success > 0)
     if( !in2.fail() ) {
         valAssigned = 1;
         val = d;
@@ -371,24 +323,6 @@ ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
 
     CheckRemainingInput( in, err, "Real", tokenList );
     return valAssigned;
-
-    /* old way - much easier but not thorough enough */
-    /*
-        in >> d;
-
-    //    IStreamState(in);
-
-        int valAssigned = 0;
-    //    PrintErrorState(err);
-
-        if(!in.fail())
-        {
-        valAssigned = 1;
-        val = d;
-        }
-        Severity s = CheckRemainingInput(in, err, "Real", tokenList);
-        return valAssigned;
-    */
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -479,8 +413,6 @@ ReadNumber( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
     SCLP23( Real ) d = 0;
     in >> ws;
     in >> d;
-
-//    IStreamState(in);
 
     int valAssigned = 0;
     if( !in.fail() ) {
@@ -657,7 +589,6 @@ FindStartOfInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SCLP23( String ) tmp;
-//    std::string tmp;
 
     while( in.good() ) {
         in >> c;
@@ -670,9 +601,6 @@ FindStartOfInstance( istream & in, std::string & inst ) {
                 in.putback( c );
                 tmp.STEPread( in, &errs );
                 inst.append( tmp );
-
-//      PushPastString(in, tmp, &errs);
-//      inst.Append( tmp->c_str() );
                 break;
 
             case '\0':  // problem in input ?
@@ -695,7 +623,6 @@ SkipInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SCLP23( String ) tmp;
-//    std::string tmp;
 
     while( in.good() ) {
         in >> c;
@@ -708,8 +635,6 @@ SkipInstance( istream & in, std::string & inst ) {
                 tmp.STEPread( in, &errs );
                 inst.append( tmp );
 
-//      PushPastString(in, tmp, &errs);
-//      inst.Append( tmp->c_str() );
                 break;
 
             case '\0':  // problem in input ?

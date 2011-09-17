@@ -10,18 +10,16 @@
 * and is not subject to copyright.
 */
 
-/* $Id: ExpDict.inline.cc,v 3.0.1.5 1997/11/05 21:59:20 sauderd DP3.1 $  */
-
 #include <ExpDict.h>
 
-Dictionary_instance::~Dictionary_instance()
-{}
+Dictionary_instance::~Dictionary_instance() {
+}
 
 
 Schema::Schema( const char * schemaName )
-    : _use_interface_list( new Interface_spec__set ),
-      _ref_interface_list( new Interface_spec__set ),
-      _function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
+            : _use_interface_list( new Interface_spec__set ),
+              _ref_interface_list( new Interface_spec__set ),
+              _function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
     _name = schemaName;
 }
 
@@ -57,13 +55,11 @@ Interfaced_item::Interfaced_item( const char * foreign_schema )
 Interfaced_item::~Interfaced_item() {
 }
 
-const Express_id
-Interfaced_item::foreign_schema_() {
+const Express_id Interfaced_item::foreign_schema_() {
     return _foreign_schema;
 }
 
-void
-Interfaced_item::foreign_schema_( const Express_id & fs ) {
+void Interfaced_item::foreign_schema_( const Express_id & fs ) {
     _foreign_schema = fs;
 }
 
@@ -147,8 +143,7 @@ Inverse_attributeList::Inverse_attributeList() {
 Inverse_attributeList::~Inverse_attributeList() {
 }
 
-Inverse_attributeLinkNode *
-Inverse_attributeList::AddNode( Inverse_attribute * ad ) {
+Inverse_attributeLinkNode * Inverse_attributeList::AddNode( Inverse_attribute * ad ) {
     Inverse_attributeLinkNode * node = ( Inverse_attributeLinkNode * ) NewNode();
     node->Inverse_attr( ad );
     SingleLinkList::AppendNode( node );
@@ -372,61 +367,45 @@ SchRename::rename( const char * schnm, char * newnm ) const
 // AttrDescriptor functions
 ///////////////////////////////////////////////////////////////////////////////
 
-AttrDescriptor::AttrDescriptor(
-    const char * name,      // i.e. char *
-    const TypeDescriptor * domainType,
-    Logical optional,   // i.e. F U or T
-    Logical unique,     // i.e. F U or T
-    AttrType_Enum at, // AttrType_Explicit,AttrType_Inverse,
-    // AttrType_Deriving,AttrType_Redefining
-    const EntityDescriptor & owner )
-    : _name( name ), _domainType( domainType ), _optional( optional ),
-      _unique( unique ), _attrType( at ),
-
-#ifdef __O3DB__
-      _owner( &owner )
-#else
-      _owner( ( EntityDescriptor & )owner )
-#endif
-
-{
+AttrDescriptor::AttrDescriptor( const char * name, const TypeDescriptor * domainType,
+                                Logical optional, Logical unique, AttrType_Enum at,
+                                const EntityDescriptor & owner )
+                : _name( name ), _domainType( domainType ), _optional( optional ),
+                  _unique( unique ), _attrType( at ), _owner( ( EntityDescriptor & )owner ) {
 }
 
-AttrDescriptor::~AttrDescriptor()
-{ }
+AttrDescriptor::~AttrDescriptor() {
+}
 
-Logical
-AttrDescriptor::Explicit() const {
+Logical AttrDescriptor::Explicit() const {
     if( _attrType == AttrType_Explicit ) {
         return LTrue;
     }
     return LFalse;
 }
 
-Logical
-AttrDescriptor::Inverse() const {
+Logical AttrDescriptor::Inverse() const {
     if( _attrType == AttrType_Inverse ) {
         return LTrue;
     }
     return LFalse;
 }
 
-Logical
-AttrDescriptor::Redefining() const {
+Logical AttrDescriptor::Redefining() const {
     if( _attrType == AttrType_Redefining ) {
         return LTrue;
     }
     return LFalse;
 }
 
-Logical
-AttrDescriptor::Deriving() const {
+Logical AttrDescriptor::Deriving() const {
     if( _attrType == AttrType_Deriving ) {
         return LTrue;
     }
     return LFalse;
 }
 
+/*
 // outdated function
 void
 AttrDescriptor::Derived( SCLP23( LOGICAL ) x ) {
@@ -456,16 +435,10 @@ AttrDescriptor::Derived( const char * x ) {
         _attrType = AttrType_Explicit;
     }
 }
+*/
 
-
-Derived_attribute::Derived_attribute(
-    const char * name,      // i.e. char *
-    const TypeDescriptor * domainType,
-    Logical optional,   // i.e. F U or T
-    Logical unique,     // i.e. F U or T
-    AttrType_Enum at, // AttrType_Explicit,AttrType_Inverse,
-    // AttrType_Deriving,AttrType_Redefining
-    const EntityDescriptor & owner )
+Derived_attribute::Derived_attribute( const char * name, const TypeDescriptor * domainType,
+    Logical optional, Logical unique, AttrType_Enum at, const EntityDescriptor & owner )
     : AttrDescriptor( name, domainType, optional, unique, at, owner ) {
     _initializer = ( const char * )0;
 }
