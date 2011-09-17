@@ -49,7 +49,6 @@ SET(LIBSTEPCORE_PRIVATE_HDRS
     ExpDict.h 
     read_func.h 
     Registry.h 
-    scl_osschema.h 
     sdaiApplication_instance.h 
     sdaiBinary.h 
     sdaiEnum.h 
