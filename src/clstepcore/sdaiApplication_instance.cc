@@ -375,8 +375,7 @@ void SCLP23( Application_instance )::PrependEntityErrMsg() {
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                 EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 }
@@ -395,8 +394,7 @@ void SCLP23( Application_instance )::STEPread_error( char c, int i, istream & in
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                 EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 
@@ -417,7 +415,7 @@ void SCLP23( Application_instance )::STEPread_error( char c, int i, istream & in
              tmp.c_str() );
     _error.AppendToDetailMsg( errStr );
 
-    sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
+    sprintf( errStr, "\nfinished reading #%d\n", StepFileId() );
     _error.AppendToDetailMsg( errStr );
     return;
 }

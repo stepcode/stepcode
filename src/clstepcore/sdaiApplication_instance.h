@@ -125,13 +125,6 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
 
     virtual void CopyAs (SCLP23_NAME(Application_instance) *);
     void PrependEntityErrMsg();
-  public:
-    // TODO these functions are going to go away in the future.
-    int SetFileId(int fid) { return STEPfile_id = fid; }
-    int GetFileId() const  { return STEPfile_id; }
-    int FileId (int fid) { return STEPfile_id = fid; }
-    int FileId() const  { return STEPfile_id; }
-
 };
 
 // current style of CORBA handles for Part 23 - NOTE - used for more than CORBA
