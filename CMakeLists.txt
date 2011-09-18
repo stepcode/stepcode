@@ -200,7 +200,19 @@ CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
 
-
+#set GIT_COMMIT_ID to the output of `git describe`
+find_package(Git)
+if(GIT_FOUND)
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags RESULT_VARIABLE res_var OUTPUT_VARIABLE GIT_COM_ID )
+    if( NOT ${res_var} EQUAL 0 )
+        set( GIT_COMMIT_ID "unknown (git failed!)")
+        message( WARNING "Git failed (not a repo?). Build will not contain git revision info." )
+    endif()
+    string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COM_ID} )
+else()
+    set( GIT_COMMIT_ID "unknown (git not found!)")
+    message( WARNING "Git not found. Build will not contain git revision info." )
+endif()
 
 # Now that all the tests are done, configure the scl_cf.h file:
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
