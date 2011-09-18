@@ -477,10 +477,10 @@ Schema::GenerateUseRefExpress( ostream & out ) const {
                     }
                     if( !( ( *( is->explicit_items_() ) )[k]->original_id_().size() ) ) {
                         // not renamed
-                        out << ( *( is->explicit_items_() ) )[k]->new_id_().c_str();
+                        out << ( *( is->explicit_items_() ) )[k]->new_id_();
                     } else { // renamed
-                        out << ( *( is->explicit_items_() ) )[k]->original_id_().c_str();
-                        out << " AS " << ( *( is->explicit_items_() ) )[k]->new_id_().c_str();
+                        out << ( *( is->explicit_items_() ) )[k]->original_id_();
+                        out << " AS " << ( *( is->explicit_items_() ) )[k]->new_id_();
                     }
                 }
                 out << ");" << endl;
@@ -505,7 +505,7 @@ Schema::GenerateUseRefExpress( ostream & out ) const {
 
             if( count > 0 ) {
 
-//      out << "    REFERENCE FROM " << (*(is->explicit_items_()))[0]->foreign_schema_().c_str() << endl;
+//      out << "    REFERENCE FROM " << (*(is->explicit_items_()))[0]->foreign_schema_() << endl;
                 out << endl << "    REFERENCE FROM "
                     << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
                 out << "       (";
@@ -519,11 +519,11 @@ Schema::GenerateUseRefExpress( ostream & out ) const {
                     }
                     if( ( !( *( is->explicit_items_() ) )[k]->original_id_().size() ) ) {
                         // not renamed
-                        out << ( *( is->explicit_items_() ) )[k]->new_id_().c_str();
+                        out << ( *( is->explicit_items_() ) )[k]->new_id_();
                     } else { // renamed
-                        out << ( *( is->explicit_items_() ) )[k]->original_id_().c_str();
+                        out << ( *( is->explicit_items_() ) )[k]->original_id_();
                         out << " AS "
-                            << ( *( is->explicit_items_() ) )[k]->new_id_().c_str();
+                            << ( *( is->explicit_items_() ) )[k]->new_id_();
                     }
                 }
                 out << ");" << endl;

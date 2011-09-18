@@ -299,7 +299,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                         instance_set, in,
                         currSch );
             else {
-                cout << "ERROR: complex entity part \"" << typeNm.c_str()
+                cout << "ERROR: complex entity part \"" << typeNm
                      << "\" does not exist.\n";
                 _error.AppendToDetailMsg(
                     "Complex entity part of instance does not exist.\n" );
@@ -361,7 +361,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
             in.putback( c );
         }
 
-        cout << s.c_str() << endl;
+        cout << s << endl;
         BuildAttrs( s.c_str() );
         SCLP23( Application_instance )::STEPread( id, addFileId, instance_set,
                 in, currSch );
@@ -389,7 +389,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                 in.putback( c );
             }
 
-            cout << s.c_str() << endl; // diagnostics DAS
+            cout << s << endl; // diagnostics DAS
 
             STEPcomplex * stepc = new STEPcomplex( _registry );
             AppendEntity( stepc );

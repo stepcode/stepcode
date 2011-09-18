@@ -56,14 +56,14 @@ Severity SCLundefined::STEPread( istream & in, ErrorDescriptor * err ) {
                 in.putback( c );
 
                 PushPastImbedAggr( in, str, err );
-                ss << str.c_str();
+                ss << str;
                 break;
 
             case '\'':
                 in.putback( c );
 
                 PushPastString( in, str, err );
-                ss << str.c_str();
+                ss << str;
                 break;
 
             case ',':
@@ -118,7 +118,7 @@ void SCLundefined::  STEPwrite( ostream & out ) {
     if( val.empty()) {
         out << "$";
     } else {
-        out << val.c_str();
+        out << val;
     }
 }
 
