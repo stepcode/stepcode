@@ -30,13 +30,12 @@ SCLP23( Application_instance ) NilSTEPentity;
 */
 
 SCLP23( Application_instance )::SCLP23_NAME( Application_instance )()
-    :  _cur( 0 ), STEPfile_id( 0 ), p21Comment( 0 ), headMiEntity( 0 ), nextMiEntity( 0 ),
+    :  _cur( 0 ), STEPfile_id( 0 ), headMiEntity( 0 ), nextMiEntity( 0 ),
        _complex( 0 ) {
 }
 
 SCLP23( Application_instance )::SCLP23_NAME( Application_instance )( int fileid, int complex )
-    :  _cur( 0 ), STEPfile_id( fileid ), p21Comment( 0 ),
-       headMiEntity( 0 ), nextMiEntity( 0 ), _complex( complex ) {
+    :  _cur( 0 ), STEPfile_id( fileid ), headMiEntity( 0 ), nextMiEntity( 0 ), _complex( complex ) {
 }
 
 SCLP23( Application_instance )::~SCLP23_NAME( Application_instance )() {
@@ -45,7 +44,6 @@ SCLP23( Application_instance )::~SCLP23_NAME( Application_instance )() {
     if( MultipleInheritance() ) {
         delete nextMiEntity;
     }
-    delete p21Comment;
 }
 
 SCLP23( Application_instance ) * SCLP23( Application_instance )::Replicate() {
@@ -68,34 +66,26 @@ SCLP23( Application_instance ) * SCLP23( Application_instance )::Replicate() {
     }
 }
 
-void SCLP23( Application_instance )::AddP21Comment( const char * s, int replace ) {
+void SCLP23( Application_instance )::AddP21Comment( const char * s, bool replace ) {
     if( replace ) {
-        delete p21Comment;
-        p21Comment = 0;
+        p21Comment.clear();
     }
     if( s ) {
-        if( !p21Comment ) {
-            p21Comment = new std::string( "" );
-        } else {
-            p21Comment->clear();
-        }
-        p21Comment->append( s );
+        //NOTE MAP Sept 2011 - originally, this cleared and then appended -
+        // I don't think that's right, since it makes 'replace' useless
+        //Also, function name contains 'Add', not 'Set'
+        p21Comment.append( s );
     }
 }
 
-void SCLP23( Application_instance )::AddP21Comment( std::string & s, int replace ) {
+void SCLP23( Application_instance )::AddP21Comment( const std::string & s, bool replace ) {
     if( replace ) {
-        delete p21Comment;
-        p21Comment = 0;
+        p21Comment.clear();
     }
-    if( !s.empty() ) {
-        if( !p21Comment ) {
-            p21Comment = new std::string( "" );
-        } else {
-            p21Comment->clear();
-        }
-        p21Comment->append( const_cast<char *>( s.c_str() ) );
-    }
+    //NOTE MAP Sept 2011 - originally, this cleared and then appended -
+    // I don't think that's right, since it makes 'replace' useless
+    //Also, function name contains 'Add', not 'Set'
+    p21Comment.append( s );
 }
 
 void SCLP23( Application_instance )::STEPwrite_reference( ostream & out ) {
@@ -282,8 +272,8 @@ void SCLP23( Application_instance )::beginSTEPwrite( ostream & out ) {
 void SCLP23( Application_instance )::STEPwrite( ostream & out, const char * currSch,
         int writeComments ) {
     std::string tmp;
-    if( writeComments && p21Comment && !p21Comment->empty() ) {
-        out << p21Comment->c_str();
+    if( writeComments && !p21Comment.empty() ) {
+        out << p21Comment;
     }
     out << "#" << STEPfile_id << "=" << StrToUpper( EntityName( currSch ), tmp )
         << "(";
@@ -310,8 +300,8 @@ void SCLP23( Application_instance )::WriteValuePairs( ostream & out,
         int writeComments, int mixedCase ) {
     std::string s, tmp, tmp2;
     
-    if( writeComments && p21Comment && !p21Comment->empty() ) {
-        out << p21Comment->c_str();
+    if( writeComments && !p21Comment.empty() ) {
+        out << p21Comment;
     }
     if( mixedCase ) {
         out << "#" << STEPfile_id << " "

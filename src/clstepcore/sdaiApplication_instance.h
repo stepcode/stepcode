@@ -25,7 +25,7 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
     STEPattributeList attributes;
     int               STEPfile_id;
     ErrorDescriptor   _error;
-    std::string              *p21Comment;
+    std::string       p21Comment;
                                         // registry additions
     EntityDescriptor *eDesc;
 
@@ -53,19 +53,11 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
     void StepFileId (int fid) { STEPfile_id = fid; }
     int StepFileId() const  { return STEPfile_id; }
 
-    void AddP21Comment(std::string &s, int replace = 1);
-    void AddP21Comment(const char *s, int replace = 1);
-    void DeleteP21Comment() { delete p21Comment; p21Comment = 0; }
+    void AddP21Comment(const std::string &s, bool replace = true);
+    void AddP21Comment(const char *s, bool replace = true);
+    void DeleteP21Comment() { p21Comment = ""; }
 
-    /// guaranteed a string (may be null string)
-    const char *P21Comment() 
-        { return ( p21Comment ? const_cast<char *>(p21Comment->c_str()) : "" ); }
-    /** returns null if no comment exists
-    // NOTE: Jul-24-2011, confirm that we want to change p21Comment->rep() to
-    // const_cast<char *>(p21Comment->c_str())
-    */
-    const char *P21CommentRep() 
-        { return ( p21Comment ? const_cast<char *>(p21Comment->c_str()) : 0 ); }
+    const std::string P21Comment() const { return p21Comment; }
 
     const char *EntityName( const char *schnm =NULL) const;
 

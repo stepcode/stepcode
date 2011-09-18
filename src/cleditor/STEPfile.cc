@@ -2267,7 +2267,7 @@ STEPfile::WriteHeader( ostream & out ) {
 void
 STEPfile::WriteHeaderInstance( SCLP23( Application_instance )* obj, ostream & out ) {
     std::string tmp;
-    if( obj->P21CommentRep() ) {
+    if( !obj->P21Comment().empty() ) {
         out << obj->P21Comment();
     }
     out << StrToUpper( obj->EntityName(), tmp ) << "(";
