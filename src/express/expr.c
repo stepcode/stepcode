@@ -75,6 +75,14 @@
 #include "express/expr.h"
 #include "express/resolve.h"
 
+#ifdef YYDEBUG
+  extern int yydebug;
+#else
+  const int yydebug = 0;
+#endif
+
+extern void exp_pause(); //in fedex.c
+
 void EXPop_init();
 static Error ERROR_internal_unrecognized_op_in_EXPresolve;
 /* following two could probably be combined */
@@ -361,12 +369,7 @@ EXPresolve_op_dot( Expression expr, Scope scope ) {
             }
             if( DICT_type != OBJ_VARIABLE ) {
                 printf( "EXPresolved_op_dot: attribute not an attribute? - press ^C now to trap to debugger\n" );
-                #ifndef __WIN32__
-                    pause();
-                #else     //windows
-                    getchar();
-                    abort();
-                #endif
+                exp_pause();
             }
 
             op2->u.variable = v;
@@ -499,6 +502,9 @@ EXPresolve_op_group( Expression expr, Scope scope ) {
             ent_ref =
                 ( Entity )ENTITYfind_inherited_entity( tmp, op2->symbol.name, 1 );
             if( !ent_ref ) {
+                if( yydebug ) {
+                    fprintf(stderr,"\ngroup ref no such entity (entity_). op1->symbol.name: %s, line %d, op1->return_type->symbol.name %s, op1->return_type->u.type->body->type %d. op2->symbol.name: %s, line %d, op2->return_type->symbol.name %s, op2->return_type->u.type->body->type %d.\n",op1->symbol.name,op1->symbol.line,op1->return_type->symbol.name,op1->return_type->u.type->body->type,op2->symbol.name,op2->symbol.line,op2->return_type->symbol.name,op2->return_type->u.type->body->type);
+                }
                 ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
                                          &op2->symbol, op2->symbol.name );
                 resolve_failed( expr );
@@ -527,6 +533,9 @@ EXPresolve_op_group( Expression expr, Scope scope ) {
             switch( options ) {
                 case 0:
                     /* no possible resolutions */
+                    if( yydebug ) {
+                        fprintf(stderr,"\ngroup ref no such entity (select_). op1->symbol.name: %s, line %d, op1->return_type->symbol.name %s, op1->return_type->u.type->body->type %d. op2->symbol.name: %s, line %d, op2->return_type->symbol.name %s, op2->return_type->u.type->body->type %d.\n",op1->symbol.name,op1->symbol.line,op1->return_type->symbol.name,op1->return_type->u.type->body->type,op2->symbol.name,op2->symbol.line,op2->return_type->symbol.name,op2->return_type->u.type->body->type);
+                    }
                     ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
                                              &op2->symbol, op2->symbol.name );
                     resolve_failed( expr );

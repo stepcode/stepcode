@@ -63,6 +63,14 @@
 #include "express/schema.h"
 #include "express/express.h"
 
+extern void exp_pause(); //in fedex.c
+
+#ifdef YYDEBUG
+  extern int yydebug;
+#else
+  const int yydebug = 0;
+#endif
+
 static void ENTITYresolve_subtypes PROTO( ( Schema ) );
 static void ENTITYresolve_supertypes PROTO( ( Entity ) );
 static void TYPEresolve_expressions PROTO( ( Type, Scope ) );
@@ -474,12 +482,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     break;
                 default:
                     printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-                    #ifndef __WIN32__
-                        pause();
-                    #else     //windows
-                        getchar();
-                        abort();
-                    #endif
+                    exp_pause();
                     break;
             }
             break;
@@ -523,6 +526,12 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             } else if( TYPEis_runtime( expr->return_type ) ) {
                 t = Type_Runtime;
             } else {
+                if( yydebug ) {
+                    fprintf(stderr,"\nquery requires aggregate. expr->return_type->symbol.name: %s at line %d. expr->return_type->u.type->body->type %d,  scope->symbol.name %s at line %d, expr->u.query->aggregate->symbol.name %s at line %d\n",
+                            expr->return_type->symbol.name, expr->return_type->symbol.line,
+                            expr->return_type->u.type->body->type, scope->symbol.name, scope->symbol.line,
+                            expr->u.query->aggregate->symbol.name,expr->u.query->aggregate->symbol.line);
+                }
                 ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
                 break;
@@ -548,12 +557,7 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             break;
         default:
             printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-            #ifndef __WIN32__
-                pause();
-            #else     //windows
-                getchar();
-                abort();
-            #endif
+            exp_pause();
     }
 }
 
