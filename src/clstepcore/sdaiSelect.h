@@ -12,8 +12,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiSelect.h,v 1.5 1997/11/05 21:59:15 sauderd DP3.1 $ */
-
 /**********
 	class definition for the select superclass SCLP23_NAME(Select).
 **********/
@@ -41,7 +39,7 @@ class SCLP23_NAME(Select) {
   public:
 	Severity severity() const;
 	Severity severity( Severity );
-	const char *Error();
+	const std::string Error();
 	void Error( const char * );
 		// clears select's error  
 	void ClearError();

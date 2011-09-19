@@ -13,13 +13,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPfile.h,v 3.0.1.6 1998/02/17 18:04:30 sauderd Exp $ */ 
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
-/*#include <math.h>*/
 #include <instmgr.h>
 #include <Registry.h>
 #include <fstream>
@@ -47,32 +40,22 @@ class STEPfile
   protected:
     //data members
 
-#ifdef __O3DB__
-    InstMgr *  _instances;
-    Registry * _reg;
-
-    InstMgr & instances ()  { return *_instances; }
-    Registry & reg () { return *_reg; }
-#else
     InstMgr&  _instances;
     Registry& _reg;
 
     InstMgr & instances ()  { return _instances; }
     Registry & reg () { return _reg; }
-#endif
     int _fileIdIncr;   //Increment value to be added to FileId Numbers on input
 
 //header information
     InstMgr*  _headerInstances;
     Registry *_headerRegistry;
-//Registry *_headerUserDefined;
-//    Registry *_headerRegistryOld;
     
     int _headerId;     //STEPfile_id given to SCLP23(Application_instance) from header section
 
 //file information
     DirObj* _currentDir;
-    char* _fileName;
+    std::string _fileName;
 
 //error information
     ErrorDescriptor _error;
@@ -81,10 +64,10 @@ class STEPfile
     int _entsNotCreated; // num entities not created in first pass
     int _entsInvalid;    // num entities that had invalid attr values
     int _entsIncomplete; // num entities that had missing attr values
-			 // (includes entities that had invalid values
-			 // for required attrs)
-    int _entsWarning; // num entities that may have had problems 
-		      // with attrs - reported as an attr user msg
+                         // (includes entities that had invalid values
+                         // for required attrs)
+    int _entsWarning;    // num entities that may have had problems
+                         // with attrs - reported as an attr user msg
 
     // old errors
     int _errorCount;
@@ -113,9 +96,9 @@ class STEPfile
     SCLP23(Application_instance)* HeaderDefaultFileSchema();	
 
 //file information
-    const char* FileName() const { return _fileName; }
-    const char* SetFileName (const char* name = "");
-    const char* TruncFileName (const char* name) const;
+    const std::string FileName() const { return _fileName; }
+    const std::string SetFileName (const std::string name = "");
+    const std::string TruncFileName (const std::string name) const;
 
 //error information
     ErrorDescriptor& Error() /* const */  { return _error;        }
@@ -129,17 +112,17 @@ class STEPfile
     int SetFileType (FileTypeCode ft = VERSION_CURRENT);
     
 //Reading and Writing 
-    Severity ReadExchangeFile (const char* filename =0, int useTechCor =1);
-    Severity AppendExchangeFile (const char* filename =0, int useTechCor =1); 
+    Severity ReadExchangeFile (const std::string filename = "", int useTechCor =1);
+    Severity AppendExchangeFile (const std::string filename = "", int useTechCor =1);
 
-    Severity ReadWorkingFile (const char* filename =0, int useTechCor =1);
-    Severity AppendWorkingFile (const char* filename =0, int useTechCor =1);
+    Severity ReadWorkingFile (const std::string filename = "", int useTechCor =1);
+    Severity AppendWorkingFile (const std::string filename = "", int useTechCor =1);
 
     Severity AppendFile (istream* in, int useTechCor =1) ;
 
     Severity WriteExchangeFile (ostream& out, int validate =1,
 				int clearError = 1, int writeComments = 1);
-    Severity WriteExchangeFile (const char* filename =0, int validate =1, 
+    Severity WriteExchangeFile (const std::string filename = "", int validate =1,
 				int clearError = 1, int writeComments = 1);
     Severity WriteValuePairsFile(ostream& out, int validate =1, 
 				 int clearError =1, 
@@ -147,7 +130,7 @@ class STEPfile
 
     Severity WriteWorkingFile (ostream& out, int clearError = 1, 
 			       int writeComments = 1);
-    Severity WriteWorkingFile (const char* filename =0, int clearError = 1, 
+    Severity WriteWorkingFile (const std::string filename = "", int clearError = 1,
 			       int writeComments = 1);
 
     stateEnum EntityWfState(char c);
@@ -155,7 +138,7 @@ class STEPfile
     void Renumber ();
 
 //constructors
-    STEPfile (Registry& r, InstMgr& i, const char *filename = (const char*)0);
+    STEPfile (Registry& r, InstMgr& i, const std::string filename = "");
     virtual ~STEPfile();
 
   protected:    
@@ -163,7 +146,7 @@ class STEPfile
     char *schemaName( char * ); // returns and copies out schema name from
                                 // header instances
 //called by ReadExchangeFile
-    istream* OpenInputFile (const char* filename = "");
+    istream* OpenInputFile (const std::string filename = "");
     void CloseInputFile(istream* in);
     
     Severity ReadHeader(istream& in);
@@ -209,7 +192,7 @@ class STEPfile
     void WriteWorkingData(ostream& out, int writeComments = 1);
 
 //called by WriteExchangeFile
-    ofstream* OpenOutputFile(const char* filename =0);
+    ofstream* OpenOutputFile(const std::string filename = "");
     void CloseOutputFile(ostream* out);
 
     void WriteHeader (ostream& out);

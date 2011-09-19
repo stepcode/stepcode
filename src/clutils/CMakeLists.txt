@@ -34,3 +34,8 @@ add_definitions(
 )
 
 SCL_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "")
+
+IF(MINGW)
+	TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
+ENDIF(MINGW)
+

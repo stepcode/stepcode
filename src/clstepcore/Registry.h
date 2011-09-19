@@ -25,19 +25,19 @@ typedef struct Hash_Table * HashTable;
 
 class Registry;
 extern char * EntityClassName ( char *);
-typedef void (* CF_init) (Registry &);	//  pointer to creation initialization 
+typedef void (* CF_init) (Registry &);    //  pointer to creation initialization
 
 class Registry {
   protected:
-    HashTable primordialSwamp;	//  dictionary of EntityDescriptors
-    HashTable active_schemas;	//  dictionary of Schemas
-    HashTable active_types;	//  dictionary of TypeDescriptors
-    ComplexCollect *col;        //  struct containing all complex entity info
+    HashTable primordialSwamp;    //  dictionary of EntityDescriptors
+    HashTable active_schemas;     //  dictionary of Schemas
+    HashTable active_types;       //  dictionary of TypeDescriptors
+    ComplexCollect *col;          //  struct containing all complex entity info
     
     int entity_cnt,
         all_ents_cnt;
-    HashEntry 	cur_entity;
-    HashEntry 	cur_schema;
+    HashEntry    cur_entity;
+    HashEntry    cur_schema;
     HashEntry   cur_type;
 
          // used by AddEntity() and RemoveEntity() to deal with renamings of an
@@ -56,22 +56,22 @@ class Registry {
     const Schema* FindSchema (const char *, int check_case =0) const;
     const TypeDescriptor*   FindType   (const char *, int check_case =0) const;
     
-    void 	AddEntity (const EntityDescriptor&);
-    void	AddSchema (const Schema&);
-    void 	AddType   (const TypeDescriptor&);
+    void    AddEntity (const EntityDescriptor&);
+    void    AddSchema (const Schema&);
+    void    AddType   (const TypeDescriptor&);
     
-    void 	RemoveEntity (const char *);
-    void	RemoveSchema (const char *);
-    void 	RemoveType   (const char *);
+    void    RemoveEntity (const char *);
+    void    RemoveSchema (const char *);
+    void    RemoveType   (const char *);
 
-    int 	GetEntityCnt ();
-    int 	GetFullEntCnt () { return all_ents_cnt; }
+    int    GetEntityCnt ();
+    int    GetFullEntCnt () { return all_ents_cnt; }
 
-    void	ResetEntities ();
-    const EntityDescriptor *	NextEntity ();
+    void    ResetEntities ();
+    const EntityDescriptor *    NextEntity ();
 
-    void	ResetSchemas ();
-    const Schema *	NextSchema ();
+    void    ResetSchemas ();
+    const Schema *    NextSchema ();
 
     void        ResetTypes ();
     const TypeDescriptor *      NextType ();

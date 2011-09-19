@@ -12,18 +12,10 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPaggregate.h,v 3.0.1.6 1997/11/05 21:59:27 sauderd DP3.1 $ */
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 class InstMgr;
 class STEPaggregate;
-#ifndef _ODI_OSSG_
 class LOGICAL;
 class BOOLEAN;
-#endif
 class TypeDescriptor;
 
 #include <errordesc.h>
@@ -33,15 +25,9 @@ class TypeDescriptor;
 #include <STEPundefined.h>
 #include <string>
 
-//class SCLP23(Application_instance);
-//#define 	S_ENTITY_NULL	&NilSTEPentity
-//extern SCLP23(Application_instance) NilSTEPentity;
-
-
-#define 	AGGR_NULL	&NilSTEPaggregate
+#define     AGGR_NULL    &NilSTEPaggregate
 extern STEPaggregate NilSTEPaggregate;
 
-//typedef unsigned short BOOLEAN;
 class SingleLinkNode;
 
 /******************************************************************************
@@ -52,7 +38,7 @@ typedef STEPaggregate * STEPaggregateH;
 typedef STEPaggregate * STEPaggregate_ptr;
 typedef STEPaggregate_ptr STEPaggregate_var;
 
-class STEPaggregate :  public SingleLinkList 
+class STEPaggregate :  public SingleLinkList
 {
   protected:
     int _null;
@@ -60,58 +46,55 @@ class STEPaggregate :  public SingleLinkList
   protected:
 
     virtual Severity ReadValue(istream &in, ErrorDescriptor *err,
-			       const TypeDescriptor *elem_type,
-			       InstMgr *insts, int addFileId =0,
-			       int assignVal =1, int ExchangeFileFormat =1,
-			       const char *currSch =0);
+                   const TypeDescriptor *elem_type,
+                   InstMgr *insts, int addFileId =0,
+                   int assignVal =1, int ExchangeFileFormat =1,
+                   const char *currSch =0);
   public:
 
     int is_null() { return _null; }
 
     virtual Severity AggrValidLevel(const char *value, ErrorDescriptor *err,
-			    const TypeDescriptor *elem_type, InstMgr *insts,
-			    int optional, char *tokenList, int addFileId =0,
-			    int clearError =0);
+                const TypeDescriptor *elem_type, InstMgr *insts,
+                int optional, char *tokenList, int addFileId =0,
+                int clearError =0);
 
     virtual Severity AggrValidLevel(istream &in, ErrorDescriptor *err,
-			    const TypeDescriptor *elem_type, InstMgr *insts,
-			    int optional, char *tokenList, int addFileId =0,
-			    int clearError =0);
+                const TypeDescriptor *elem_type, InstMgr *insts,
+                int optional, char *tokenList, int addFileId =0,
+                int clearError =0);
 
 // INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err =0,
-			      const TypeDescriptor *elem_type =0,
-			      InstMgr *insts =0, int addFileId = 0);
+                  const TypeDescriptor *elem_type =0,
+                  InstMgr *insts =0, int addFileId = 0);
     virtual Severity STEPread (istream& in, ErrorDescriptor *err,
-			       const TypeDescriptor *elem_type =0,
-			       InstMgr *insts =0, int addFileId =0,
-			       const char *currSch =0);
+                   const TypeDescriptor *elem_type =0,
+                   InstMgr *insts =0, int addFileId =0,
+                   const char *currSch =0);
 // OUTPUT
     virtual const char *asStr(std::string& s) const;
     virtual void STEPwrite (ostream& out =cout, const char * =0) const;
 
-//    SingleLinkNode * GetHead () const
-//	{ return (STEPnode *) SingleLinkList::GetHead(); }
-
-    virtual SingleLinkNode * NewNode ();  
+    virtual SingleLinkNode * NewNode ();
     void AddNode (SingleLinkNode *);
     void Empty ();
-    
+
     STEPaggregate ();
     virtual ~STEPaggregate ();
 
 // COPY - defined in subtypes
     virtual STEPaggregate& ShallowCopy (const STEPaggregate&);
 
-};									      
+};
 
 /******************************************************************
  ** Class:  GenericAggregate
- ** Description:  This class supports LIST OF: 
- **	SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
+ ** Description:  This class supports LIST OF:
+ **    SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
  ******************************************************************/
 
-class GenericAggregate  :  public STEPaggregate 
+class GenericAggregate  :  public STEPaggregate
 {
   public:
     virtual SingleLinkNode *NewNode();
@@ -129,14 +112,14 @@ typedef  GenericAggregate_ptr GenericAggregate_var;
  **
  *****************************************************************************/
 
-class EntityAggregate  :  public  STEPaggregate 
+class EntityAggregate  :  public  STEPaggregate
 {
   public:
-    virtual Severity ReadValue(istream &in, ErrorDescriptor *err, 
-			       const TypeDescriptor *elem_type, 
-			       InstMgr *insts, int addFileId =0, 
-			       int assignVal =1, int ExchangeFileFormat =1,
-			       const char *currSch =0);
+    virtual Severity ReadValue(istream &in, ErrorDescriptor *err,
+                   const TypeDescriptor *elem_type,
+                   InstMgr *insts, int addFileId =0,
+                   int assignVal =1, int ExchangeFileFormat =1,
+                   const char *currSch =0);
 
     virtual  SingleLinkNode *NewNode();
     virtual  STEPaggregate&  ShallowCopy (const STEPaggregate&);
@@ -151,17 +134,17 @@ typedef   EntityAggregate_ptr EntityAggregate_var;
 
 /******************************************************************
  ** Class:  SelectAggregate
- ** Description:  this is a minimal representions for a collection of 
- **	SCLP23(Select)
+ ** Description:  this is a minimal representions for a collection of
+ **    SCLP23(Select)
  ******************************************************************/
-class SelectAggregate  :  public STEPaggregate 
+class SelectAggregate  :  public STEPaggregate
 {
   public:
-    virtual Severity ReadValue(istream &in, ErrorDescriptor *err, 
-			       const TypeDescriptor *elem_type, 
-			       InstMgr *insts, int addFileId =0, 
-			       int assignVal =1, int ExchangeFileFormat =1,
-			       const char *currSch =0);
+    virtual Severity ReadValue(istream &in, ErrorDescriptor *err,
+                   const TypeDescriptor *elem_type,
+                   InstMgr *insts, int addFileId =0,
+                   int assignVal =1, int ExchangeFileFormat =1,
+                   const char *currSch =0);
 
     virtual SingleLinkNode *NewNode ();
     virtual STEPaggregate& ShallowCopy  (const STEPaggregate&);
@@ -178,7 +161,7 @@ typedef  SelectAggregate_ptr SelectAggregate_var;
  ** Class:  StringAggregate
  ** Description:  This class supports LIST OF STRING type
  ******************************************************************/
-class StringAggregate  :  public STEPaggregate 
+class StringAggregate  :  public STEPaggregate
 {
   public:
     virtual SingleLinkNode *NewNode();
@@ -197,7 +180,7 @@ typedef  StringAggregate_ptr StringAggregate_var;
  ** Class:  BinaryAggregate
  ** Description:  This class supports LIST OF BINARY type
  ******************************************************************/
-class BinaryAggregate  :  public STEPaggregate 
+class BinaryAggregate  :  public STEPaggregate
 {
   public:
     virtual SingleLinkNode *NewNode();
@@ -213,10 +196,10 @@ typedef  BinaryAggregate_ptr BinaryAggregate_var;
 
 /******************************************************************
  ** Class:  EnumAggregate
- ** Description:  this is a minimal representions for a collection of 
- **	SCLP23(Enum)
+ ** Description:  this is a minimal representions for a collection of
+ **    SCLP23(Enum)
  ******************************************************************/
-class EnumAggregate  :  public STEPaggregate 
+class EnumAggregate  :  public STEPaggregate
 {
   public:
     virtual SingleLinkNode *NewNode ();
@@ -230,10 +213,10 @@ typedef  EnumAggregate *  EnumAggregateH;
 typedef  EnumAggregate *  EnumAggregate_ptr;
 typedef  EnumAggregate_ptr EnumAggregate_var;
 
-class LOGICALS  : public EnumAggregate  
+class LOGICALS  : public EnumAggregate
 {
   public:
-    virtual SingleLinkNode * NewNode ();  
+    virtual SingleLinkNode * NewNode ();
 
     LOGICALS();
     virtual ~LOGICALS();
@@ -245,17 +228,16 @@ typedef  LOGICALS_ptr LOGICALS_var;
 LOGICALS * create_LOGICALS();
 
 
-class BOOLEANS  : public EnumAggregate  
+class BOOLEANS  : public EnumAggregate
 {
   public:
-    virtual SingleLinkNode * NewNode ();  
+    virtual SingleLinkNode * NewNode ();
 
     BOOLEANS();
     virtual ~BOOLEANS();
 
 };
 
-//typedef  BOOLEANS *  BooleansH;
 typedef  BOOLEANS *  BOOLEANS_ptr;
 typedef  BOOLEANS_ptr BOOLEANS_var;
 
@@ -300,17 +282,17 @@ class STEPnode :  public SingleLinkNode  {
     int _null;
 
   public:
-    int is_null() { return _null; } 
-    void set_null() { _null = 1; } 
+    int is_null() { return _null; }
+    void set_null() { _null = 1; }
 
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite(std::string& s, const char * =0);
     virtual void STEPwrite (ostream& out =cout);
@@ -328,25 +310,25 @@ class GenericAggrNode  : public STEPnode {
     SCLundefined value;
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite(std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     GenericAggrNode (const char *str);
     GenericAggrNode (GenericAggrNode& gan);
     GenericAggrNode ();
     ~GenericAggrNode ();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
@@ -357,56 +339,56 @@ class EntityNode  : public STEPnode {
     SCLP23(Application_instance) * node;
 
 // INPUT
-    virtual Severity StrToVal(const char *s, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
-    virtual Severity StrToVal(istream &in, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
+    virtual Severity StrToVal(const char *s, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
+    virtual Severity StrToVal(istream &in, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
 
-    virtual Severity STEPread(const char *s, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
-    virtual Severity STEPread(istream &in, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
-//	OUTPUT
+    virtual Severity STEPread(const char *s, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
+    virtual Severity STEPread(istream &in, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     EntityNode (SCLP23(Application_instance) * e);
     EntityNode();
     ~EntityNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
     // Calling these funtions is an error.
     Severity StrToVal(const char *s, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	    << "\n" << _POC_ "\n";
-	return StrToVal(s, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        << "\n" << _POC_ "\n";
+    return StrToVal(s, err, 0, 0, 0);
     }
     Severity StrToVal(istream &in, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	    << "\n" << _POC_ "\n";
-	return StrToVal(in, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        << "\n" << _POC_ "\n";
+    return StrToVal(in, err, 0, 0, 0);
     }
 
     Severity STEPread(const char *s, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	    << "\n" << _POC_ "\n";
-	return STEPread(s, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        << "\n" << _POC_ "\n";
+    return STEPread(s, err, 0, 0, 0);
     }
     Severity STEPread(istream &in, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	    << "\n" << _POC_ "\n";
-	return STEPread(in, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        << "\n" << _POC_ "\n";
+    return STEPread(in, err, 0, 0, 0);
     }
 
 };
@@ -416,7 +398,7 @@ class EntityNode  : public STEPnode {
 /******************************************************************
  ** Class:  SelectNode
  ** Description:  this is a minimal representions for node in lists of
- **	SCLP23(Select)
+ **    SCLP23(Select)
  ******************************************************************/
 
 class SelectNode  : public STEPnode {
@@ -425,59 +407,59 @@ class SelectNode  : public STEPnode {
     SCLP23(Select) * node;
 
   public:
-//	INPUT
-    virtual Severity StrToVal(const char *s, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
-    virtual Severity StrToVal(istream &in, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0,
-			      const char *currSch =0);
+//    INPUT
+    virtual Severity StrToVal(const char *s, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
+    virtual Severity StrToVal(istream &in, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0,
+                  const char *currSch =0);
 
-    virtual Severity STEPread(const char *s, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0);
-    virtual Severity STEPread(istream &in, ErrorDescriptor *err, 
-			      const TypeDescriptor *elem_type,
-			      InstMgr *insts, int addFileId = 0,
-			      const char *currSch =0);
-//	OUTPUT
+    virtual Severity STEPread(const char *s, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0);
+    virtual Severity STEPread(istream &in, ErrorDescriptor *err,
+                  const TypeDescriptor *elem_type,
+                  InstMgr *insts, int addFileId = 0,
+                  const char *currSch =0);
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     SelectNode(SCLP23(Select) * s);
     SelectNode();
     ~SelectNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
     // Calling these funtions is an error.
     Severity StrToVal(const char *s, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	     << "\n" << _POC_ "\n";
-	return StrToVal(s, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+         << "\n" << _POC_ "\n";
+    return StrToVal(s, err, 0, 0, 0);
     }
     Severity StrToVal(istream &in, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	     << "\n" << _POC_ "\n";
-	return StrToVal(in, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+         << "\n" << _POC_ "\n";
+    return StrToVal(in, err, 0, 0, 0);
     }
 
     Severity STEPread(const char *s, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	     << "\n" << _POC_ "\n";
-	return STEPread(s, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+         << "\n" << _POC_ "\n";
+    return STEPread(s, err, 0, 0, 0);
     }
     Severity STEPread(istream &in, ErrorDescriptor *err)
     {
-	cerr << "Internal error:  " << __FILE__ <<  __LINE__
-	     << "\n" << _POC_ "\n";
-	return STEPread(in, err, 0, 0, 0);
+    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+         << "\n" << _POC_ "\n";
+    return STEPread(in, err, 0, 0, 0);
     }
 
 };
@@ -495,25 +477,25 @@ class StringNode  : public STEPnode {
     SCLP23(String) value;
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     StringNode(StringNode& sn);
     StringNode (const char * sStr);
     StringNode();
     ~StringNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
@@ -530,32 +512,32 @@ class BinaryNode  : public STEPnode {
     SCLP23(Binary) value;
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     BinaryNode(BinaryNode& bn);
     BinaryNode (const char * sStr);
     BinaryNode();
     ~BinaryNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
 /******************************************************************
  ** Class:  EnumNode
  ** Description:  this is a minimal representions for node in lists of
- **	SCLP23(Enum)
+ **    SCLP23(Enum)
  ******************************************************************/
 
 class EnumNode  : public STEPnode {
@@ -564,24 +546,24 @@ class EnumNode  : public STEPnode {
     SCLP23(Enum) * node;
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     EnumNode(SCLP23(Enum) * e);
     EnumNode();
     ~EnumNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
@@ -590,23 +572,23 @@ class RealNode  : public STEPnode {
     SCLP23(Real) value; // double
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     RealNode();
     ~RealNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
@@ -615,52 +597,52 @@ class IntNode  : public STEPnode {
     SCLP23(Integer) value; // long int
 
   public:
-//	INPUT
+//    INPUT
     virtual Severity StrToVal(const char *s, ErrorDescriptor *err);
     virtual Severity StrToVal(istream &in, ErrorDescriptor *err);
 
     virtual Severity STEPread(const char *s, ErrorDescriptor *err);
     virtual Severity STEPread(istream &in, ErrorDescriptor *err);
 
-//	OUTPUT
+//    OUTPUT
     virtual const char *asStr(std::string& s);
     virtual const char *STEPwrite (std::string& s, const char * =0);
-    virtual void 	STEPwrite (ostream& out =cout);
+    virtual void     STEPwrite (ostream& out =cout);
 
-//	CONSTRUCTORS
+//    CONSTRUCTORS
     IntNode();
     ~IntNode();
 
-    virtual SingleLinkNode *	NewNode ();
+    virtual SingleLinkNode *    NewNode ();
 
 };
 
 /******************************************************************
- **	The following classes are currently stubs
- **							
+ **    The following classes are currently stubs
+ **
 **/
 /*
-class Array  :  public STEPaggregate  {	
-  public:								      
-    int lowerBound;							      
-    int upperBound;							      
+class Array  :  public STEPaggregate  {
+  public:
+    int lowerBound;
+    int upperBound;
 };
-									      
-class Bag  :  public STEPaggregate  {								      
-  public:								      
-    int min_ele;							      
-    int max_ele;							      
+
+class Bag  :  public STEPaggregate  {
+  public:
+    int min_ele;
+    int max_ele;
 };
-									      
-class List :  public STEPaggregate  {								      
-    int min_ele;							      
-    int max_ele;							      
-    List *prev;								      
+
+class List :  public STEPaggregate  {
+    int min_ele;
+    int max_ele;
+    List *prev;
 };
-									      
-class Set :								      
-public STEPaggregate  {								      
-    int cnt;								      
+
+class Set :
+public STEPaggregate  {
+    int cnt;
 };
 */
-#endif 
+#endif

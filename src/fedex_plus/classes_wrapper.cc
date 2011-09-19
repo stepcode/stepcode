@@ -682,6 +682,7 @@ getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
 
     fprintf( schema_h,
              "\nSCLP23(Model_contents_ptr) GetModelContents(char *schemaName);\n" );
+    fprintf( schema_cc, "/*    Generated at %s:%d.    */\n\n", __FILE__, __LINE__);
     fprintf( schema_cc, "%s%s%s%s",
              "// Generate a function to be called by Model to help it\n",
              "// create the necessary Model_contents without the\n",
@@ -705,7 +706,7 @@ getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
                  "        return (SCLP23(Model_contents_ptr)) new SdaiModel_contents_%s; \n",
                  SCHEMAget_name( schema ) );
     }
-    fprintf( schema_cc, "}\n" );
+    fprintf( schema_cc, "    else return (SCLP23(Model_contents_ptr)) 0;\n}\n" );
 }
 
 /******************************************************************

@@ -67,6 +67,12 @@ void ComplexCollect::write( const char * fname )
     // First write to os the variables it will need:
     complex << "    ComplexCollect *cc;\n";
     complex << "    ComplexList *cl;\n";
+    /*
+     * FIXME compstructs.cc:26:50: warning: unused variable ‘next30’ [-Wunused-variable]
+     * see MultList::write() below, line 169 - level, defined in complexSupport.h,
+     * records which variable is being used. Perhaps we can track max(level) and only
+     * write that many variables here.
+     */
     complex << "    EntList *node, *child, *next1, *next2, *next3, *next4,\n"
             << "            *next5, *next6, *next7, *next8, *next9, *next10,\n"
             << "            *next11, *next12, *next13, *next14, *next15,\n"
