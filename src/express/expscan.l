@@ -147,9 +147,9 @@ You used flex (in make_rules) but compiled with -DLEX (in Makefile)!
 
 #ifdef YYDEBUG
 extern int yydebug;
-extern int yydbg_verbose;
 extern int yydbg_upper_limit;
 extern int yydbg_lower_limit;
+int yydbg_verbose = false;
 /*
 ** Update yydebug based on yydbg_upper_limit and yydbg_lower_limit,
 ** which are set in fedex.c. They default to -1 (no effect).
