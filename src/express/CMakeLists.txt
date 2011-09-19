@@ -69,3 +69,7 @@ add_definitions(
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
 
 SCL_ADDEXEC(fedex "${FEDEX_SOURCES}" express)
+
+if(APPLE)
+    set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+endif(APPLE)
