@@ -86,10 +86,10 @@ char * FEDEXversion( void ) {
 extern int yydebug;
 extern int yydbg_upper_limit;
 extern int yydbg_lower_limit;
+extern int yydbg_verbose;
 #endif /*YYDEBUG*/
 
-int skip_exp_pause = false;
-int yydbg_verbose = false;
+extern int skip_exp_pause;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
 
 static void
@@ -118,19 +118,7 @@ usage() {
     exit( 2 );
 }
 
-void exp_pause() {
-    if( !skip_exp_pause ) {
-        #ifdef __WIN32__
-            getchar();
-            abort();
-        #else
-            pause();
-        #endif
-    }
-}
-
-int
-main( int argc, char ** argv ) {
+int main( int argc, char ** argv ) {
     int c;
     int rc;
     char * cp;
