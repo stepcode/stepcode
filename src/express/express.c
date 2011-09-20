@@ -74,6 +74,7 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "express/express.h"
 #include "express/resolve.h"
@@ -94,6 +95,18 @@ static Express PARSERrun PROTO( ( char *, FILE * ) );
 
 char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );
+}
+
+int skip_exp_pause = false;
+void exp_pause() {
+    if( !skip_exp_pause ) {
+        #ifdef __WIN32__
+        getchar();
+        abort();
+        #else
+        pause();
+        #endif
+    }
 }
 
 int
