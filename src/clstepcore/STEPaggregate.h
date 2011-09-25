@@ -85,6 +85,7 @@ class STEPaggregate :  public SingleLinkList
 };
 
 /****************************************************************//**
+ ** \class GenericAggregate
  ** This class supports LIST OF:
  **    SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
  ******************************************************************/
@@ -125,6 +126,7 @@ typedef   EntityAggregate * EntityAggregate_ptr;
 typedef   EntityAggregate_ptr EntityAggregate_var;
 
 /****************************************************************//**
+ ** \class SelectAggregate
  ** This is a minimal represention for a collection of SCLP23(Select)
  ******************************************************************/
 class SelectAggregate  :  public STEPaggregate
@@ -147,6 +149,7 @@ typedef  SelectAggregate *  SelectAggregate_ptr;
 typedef  SelectAggregate_ptr SelectAggregate_var;
 
 /****************************************************************//**
+** \class StringAggregate
 ** This class supports LIST OF STRING type
 ******************************************************************/
 class StringAggregate  :  public STEPaggregate
@@ -164,6 +167,7 @@ typedef  StringAggregate_ptr StringAggregate_var;
 
 
 /****************************************************************//**
+** \class BinaryAggregate
 ** This class supports LIST OF BINARY type
 ******************************************************************/
 class BinaryAggregate  :  public STEPaggregate
@@ -181,6 +185,7 @@ typedef  BinaryAggregate * BinaryAggregate_ptr;
 typedef  BinaryAggregate_ptr BinaryAggregate_var;
 
 /**************************************************************//**
+** \class EnumAggregate
 ** This is a minimal representions for a collection ofSCLP23(Enum)
 ******************************************************************/
 class EnumAggregate  :  public STEPaggregate
@@ -275,6 +280,7 @@ class STEPnode :  public SingleLinkNode  {
 typedef  STEPnode *  STEPnodeH;
 
 /**************************************************************//**
+** \class GenericAggregate
 ** This class is for the Nodes of GenericAggregates
 ******************************************************************/
 class GenericAggrNode  : public STEPnode {
@@ -361,6 +367,7 @@ class EntityNode  : public STEPnode {
 ///////////////////////////////////////////////////////////////////////////
 
 /**************************************************************//**
+** \class SelectNode
 ** This is a minimal representions for node in lists of SCLP23(Select)
 ******************************************************************/
 class SelectNode  : public STEPnode {
@@ -419,6 +426,7 @@ class SelectNode  : public STEPnode {
 };
 
 /**************************************************************//**
+** \class StringNode
 ** This class is for the Nodes of StringAggregates
 ******************************************************************/
 class StringNode  : public STEPnode {
@@ -448,6 +456,7 @@ class StringNode  : public STEPnode {
 ///////////////////////////////////////////////////////////////////////////
 
 /**************************************************************//**
+** \class BinaryNode
 ** This class is for the Nodes of BinaryAggregates
 ******************************************************************/
 class BinaryNode  : public STEPnode {
@@ -475,6 +484,7 @@ class BinaryNode  : public STEPnode {
 };
 
 /**************************************************************//**
+** \class EnumNode
 ** This is a minimal representions for node in lists of SCLP23(Enum)
 ******************************************************************/
 class EnumNode  : public STEPnode {

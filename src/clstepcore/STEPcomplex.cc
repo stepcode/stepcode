@@ -244,7 +244,7 @@ const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
 }
 
 Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgr * im,
-                         int clearError ) {
+                                  int clearError ) {
     cout << "STEPcomplex::ValidLevel() not implemented.\n";
     return SEVERITY_NULL;
 }

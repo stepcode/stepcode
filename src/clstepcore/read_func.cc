@@ -67,17 +67,13 @@ void IStreamState( istream & in ) {
 //   by any characters other than white space (i.e. EOF must happen)
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadInteger( SCLP23( Integer ) &val, istream & in, ErrorDescriptor * err,
+int ReadInteger( SCLP23( Integer ) &val, istream & in, ErrorDescriptor * err,
              const char * tokenList ) {
     SCLP23( Integer ) i = 0;
     in >> ws;
     in >> i;
 
     int valAssigned = 0;
-
-//    IStreamState(in);
 
     if( !in.fail() ) {
         valAssigned = 1;
@@ -87,12 +83,8 @@ ReadInteger( SCLP23( Integer ) &val, istream & in, ErrorDescriptor * err,
     return valAssigned;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// same as above but reads from a const char *
-///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadInteger( SCLP23( Integer ) &val, const char * s, ErrorDescriptor * err,
+/// same as above but reads from a const char *
+int ReadInteger( SCLP23( Integer ) &val, const char * s, ErrorDescriptor * err,
              const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadInteger( val, in, err, tokenList );
@@ -117,9 +109,7 @@ ReadInteger( SCLP23( Integer ) &val, const char * s, ErrorDescriptor * err,
 //   null then attrValue must only contain a valid value and nothing else
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
-
-Severity
-IntValidLevel( const char * attrValue, ErrorDescriptor * err,
+Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
                int clearError, int optional, char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
@@ -188,8 +178,7 @@ std::string WriteReal( SCLP23( Real ) val ) {
     return s;
 }
 
-void
-WriteReal( SCLP23( Real ) val, ostream & out ) {
+void WriteReal( SCLP23( Real ) val, ostream & out ) {
     out << WriteReal( val );
 }
 
@@ -211,16 +200,14 @@ WriteReal( SCLP23( Real ) val, ostream & out ) {
 //   space between the value and the terminating character is not considered
 //   to be invalid.  If tokenList is null then the value must not be followed
 //   by any characters other than white space (i.e. EOF must happen)
-
+//
 //   skip any leading whitespace characters
 //   read: optional sign, at least one decimal digit, required decimal point,
 //   zero or more decimal digits, optional letter e or E (but lower case e is
 //   an error), optional sign, at least one decimal digit if there is an E.
-
+//
 ///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
+int ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
           const char * tokenList ) {
     SCLP23( Real ) d = 0;
 
@@ -274,7 +261,6 @@ ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
         if( c == 'e' ) {
             // this is incorrectly specified and thus is an error
             e.GreaterSeverity( SEVERITY_WARNING );
-//      e.GreaterSeverity(SEVERITY_USERMSG); // not flagged as an error
             e.AppendToDetailMsg(
                 "Reals using scientific notation must use upper case E.\n" );
         }
@@ -322,12 +308,8 @@ ReadReal( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
     return valAssigned;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// same as above but reads from a const char *
-///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadReal( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
+/// same as above but reads from a const char *
+int ReadReal( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
           const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadReal( val, in, err, tokenList );
@@ -352,9 +334,7 @@ ReadReal( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
 //   null then attrValue must only contain a valid value and nothing else
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
-
-Severity
-RealValidLevel( const char * attrValue, ErrorDescriptor * err,
+Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
                 int clearError, int optional, char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
@@ -403,9 +383,7 @@ RealValidLevel( const char * attrValue, ErrorDescriptor * err,
 //   to be invalid.  If tokenList is null then the value must not be followed
 //   by any characters other than white space (i.e. EOF must happen)
 ///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadNumber( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
+int ReadNumber( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
             const char * tokenList ) {
     SCLP23( Real ) d = 0;
     in >> ws;
@@ -420,12 +398,8 @@ ReadNumber( SCLP23( Real ) &val, istream & in, ErrorDescriptor * err,
     return valAssigned;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// same as above but reads from a const char *
-///////////////////////////////////////////////////////////////////////////////
-
-int
-ReadNumber( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
+/// same as above but reads from a const char *
+int ReadNumber( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
             const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadNumber( val, in, err, tokenList );
@@ -451,9 +425,7 @@ ReadNumber( SCLP23( Real ) &val, const char * s, ErrorDescriptor * err,
 //   null then attrValue must only contain a valid value and nothing else
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
-
-Severity
-NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
+Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
                   int clearError, int optional, char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
@@ -483,21 +455,16 @@ NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
     return err->severity();
 }
 
-// assign 's' so that it contains an exchange file format string read from
-// 'in'.
-
-void
-PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
+/// assign 's' so that it contains an exchange file format string read from 'in'.
+void PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
     s = ToExpressStr(in, err);
 }
 
-// assign 's' so that it contains an exchange file format aggregate read from
-// 'in'.
-// This is used to read aggregates that are part of multidimensional
-// aggregates.
-
-void
-PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
+/**
+ * assign 's' so that it contains an exchange file format aggregate read from 'in'.
+ * This is used to read aggregates that are part of multidimensional aggregates.
+ */
+void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
     char messageBuf[BUFSIZ];
     messageBuf[0] = '\0';
 
@@ -531,14 +498,12 @@ PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
     }
 }
 
-
-// assign 's' so that it contains an exchange file format aggregate read from
-// 'in'.
-// This is used to read a single dimensional aggregate (i.e. it is not allowed
-// to contain an aggregate as an element.
-
-void
-PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
+/**
+ * assign 's' so that it contains an exchange file format aggregate read from 'in'.
+ * This is used to read a single dimensional aggregate (i.e. it is not allowed
+ * to contain an aggregate as an element.
+ */
+void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
     char messageBuf[BUFSIZ];
     messageBuf[0] = '\0';
 
@@ -575,14 +540,12 @@ PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
     }
 }
 
-/***************************
+/**
 * FindStartOfInstance reads to the beginning of an instance marked by #
 * it copies what is read to the std::string inst.  It leaves the # on the
 * istream.
-***************************/
-
-Severity
-FindStartOfInstance( istream & in, std::string & inst ) {
+*/
+Severity FindStartOfInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SCLP23( String ) tmp;
@@ -610,13 +573,11 @@ FindStartOfInstance( istream & in, std::string & inst ) {
     return SEVERITY_INPUT_ERROR;
 }
 
-/***************************
+/**
 * SkipInstance reads in an instance terminated with ;.  it copies
 * what is read to the std::string inst.
-***************************/
-
-Severity
-SkipInstance( istream & in, std::string & inst ) {
+*/
+Severity SkipInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SCLP23( String ) tmp;
@@ -645,16 +606,14 @@ SkipInstance( istream & in, std::string & inst ) {
 }
 
 
-/***************************
+/**
 // This reads a simple record.  It is used when parsing externally mapped
 // entities to skip to the next entity type name part of the externally mapped
 // record.  It does not expect a semicolon at the end since the pieces in an
 // external mapping don't have them.  If you are reading a simple record in the
 // form of an internal mapping you will have to read the semicolon.
-***************************/
-
-const char *
-SkipSimpleRecord( istream & in, std::string & buf, ErrorDescriptor * err ) {
+*/
+const char * SkipSimpleRecord( istream & in, std::string & buf, ErrorDescriptor * err ) {
     char c;
     std::string s;
 
@@ -688,14 +647,12 @@ SkipSimpleRecord( istream & in, std::string & buf, ErrorDescriptor * err ) {
     return const_cast<char *>( buf.c_str() );
 }
 
-/***************************
+/**
 // This reads a part 21 definition of keyword.  This includes the name of
 // entity types.  To read a user-defined keyword: read the '!' then call
 // this function with skipInitWS turned off.
-***************************/
-
-const char *
-ReadStdKeyword( istream & in, std::string & buf, int skipInitWS ) {
+**/
+const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS ) {
     char c;
     if( skipInitWS ) {
         in >> ws;
@@ -726,8 +683,7 @@ of an entity of a specific type. They shall consist of uppercase letters,
 digits, underscore characters, and possibly an exclamation mark.
 The "!" shall appear only once, and only as the first character.
 ***************************/
-const char *
-GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) {
+const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) {
     char c;
     int sz = 1;
     static std::string str;
@@ -758,22 +714,23 @@ GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) {
     return const_cast<char *>( str.c_str() );
 }
 
-// return 1 if found the keyword 'ENDSEC' with optional space and a ';'
-// otherwise return 0. This gobbles up the input stream until it knows
-// that it does or does not have the ENDSEC keyword (and semicolon). i.e.
-// the first character that stops matching the keyword ENDSEC; (including the
-// semicolon) will be put back onto the istream, everything else will remain
-// read.  It is this way so that checking for the keywd the next time will
-// start with the correct char or if it doesn't find it the non-matching char
-// may be what you are looking for next (e.g. someone typed in END; and the
-// next chars are DATA; for the beginning of the data section).
-
-int
-FoundEndSecKywd( istream & in, ErrorDescriptor & err ) {
+/**
+ * return 1 if found the keyword 'ENDSEC' with optional space and a ';'
+ * otherwise return 0. This gobbles up the input stream until it knows
+ * that it does or does not have the ENDSEC keyword (and semicolon). i.e.
+ * the first character that stops matching the keyword ENDSEC; (including the
+ * semicolon) will be put back onto the istream, everything else will remain
+ * read.  It is this way so that checking for the keywd the next time will
+ * start with the correct char or if it doesn't find it the non-matching char
+ * may be what you are looking for next (e.g. someone typed in END; and the
+ * next chars are DATA; for the beginning of the data section).
+ * FIXME putback() doesn't work well on all platforms
+ */
+int FoundEndSecKywd( istream & in, ErrorDescriptor & err ) {
     char c;
     in >> ws;
     in.get( c );
-
+    
     if( c == 'E' ) {
         in.get( c );
         if( c == 'N' ) {
@@ -869,10 +826,9 @@ const char * ReadComment( std::string & ss, const char * s ) {
  * If first char from 'in' is a slash it will remain read
  * whether or not there was a comment.  If there is no comment
  * only the slash will be read from 'in'.
-***************************/
-
-const char *
-ReadComment( istream & in, std::string & s ) {
+ * FIXME putback() doesn't work well on all platforms
+ ***************************/
+const char * ReadComment( istream & in, std::string & s ) {
     char c = '\0';
     int commentLength = 0;
     in >> ws;
@@ -927,8 +883,7 @@ ReadComment( istream & in, std::string & s ) {
  ** "\F\" == formfeed
  ** "\N\" == newline
  ***************************/
-Severity
-ReadPcd( istream & in ) {
+Severity ReadPcd( istream & in ) {
     char c;
     in.get( c );
     if( c == '\\' ) {
@@ -955,8 +910,7 @@ and comments.
 Part 21 considers the blank to be the space character,
 but this function considers blanks to be the return value of isspace(c)
 ******************************/
-void
-ReadTokenSeparator( istream & in, std::string * comments ) {
+void ReadTokenSeparator( istream & in, std::string * comments ) {
     char c;
     std::string s; // used if need to read a comment
 

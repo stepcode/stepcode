@@ -20,8 +20,10 @@
 
 #include <sdai.h>
 
-// this is used to set a const int Real_Num_Precision 
-// in STEPaggregate.cc and STEPattribute.cc
+/** \def REAL_NUM_PRECISION
+ * this is used to set a const int Real_Num_Precision
+ * in STEPaggregate.cc and STEPattribute.cc
+ */
 #define REAL_NUM_PRECISION 15
 
 typedef double real;  
@@ -50,23 +52,13 @@ extern SCLP23(Application_instance) * ReadEntityRef(const char * s, ErrorDescrip
               InstMgr * instances, int addFileId);
 
 extern Severity EntityValidLevel(SCLP23(Application_instance) *se,
-                 const TypeDescriptor *ed, // entity type that entity se needs
-                                           // to match. (this must be an
-                                           // EntityDescriptor)
+                 const TypeDescriptor *ed, ///< entity type that entity se needs to match. (this must be an EntityDescriptor)
                  ErrorDescriptor *err);
 
-/**
- * \arg attrValue string containing entity ref
- * \arg ed entity type that entity in attrValue (if it exists) needs to match. (this must be an EntityDescriptor)
- * \arg err
- * \arg im
- * \arg clearError
-*/
-extern Severity EntityValidLevel(const char *attrValue, // string contain entity ref
-                 const TypeDescriptor *ed, // entity type that entity in
-                                           // attrValue (if it exists) needs
-                                           // to match. (this must be an
-                                           // EntityDescriptor)
+extern Severity EntityValidLevel(const char *attrValue, ///< string containing entity ref
+                 const TypeDescriptor *ed, /**< entity type that entity in attrValue (if it exists) needs
+                                             *  to match. (this must be an EntityDescriptor)
+                                             */
                  ErrorDescriptor *err, InstMgr *im, int clearError);
 
 ////////////////////
@@ -99,7 +91,7 @@ class STEPattribute {
   public:
     const AttrDescriptor * aDesc;
 
-    /**
+    /** \union ptr
     ** You know which of these to use based on the return value of
     ** NonRefType() - see below. BASE_TYPE is defined in baseType.h
     ** This variable points to an appropriate member variable in the entity

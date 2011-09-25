@@ -48,7 +48,7 @@ STEPaggregate & STEPaggregate::ShallowCopy( const STEPaggregate & a ) {
     return *this;
 }
 
-// do not require exchange file format
+/// do not require exchange file format
 Severity STEPaggregate::AggrValidLevel( const char * value, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type, InstMgr * insts,
                                int optional, char * tokenList, int addFileId,
@@ -68,7 +68,7 @@ Severity STEPaggregate::AggrValidLevel( const char * value, ErrorDescriptor * er
     return err->severity();
 }
 
-// require exchange file format
+/// require exchange file format
 Severity STEPaggregate::AggrValidLevel( istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type, InstMgr * insts,
                                int optional, char * tokenList, int addFileId,
@@ -86,7 +86,7 @@ Severity STEPaggregate::AggrValidLevel( istream & in, ErrorDescriptor * err,
     return err->severity();
 }
 
-// if exchangeFileFormat == 1 then paren delims are required.
+/// if exchangeFileFormat == 1 then paren delims are required.
 
 Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
                           const TypeDescriptor * elem_type, InstMgr * insts,
@@ -454,7 +454,7 @@ EntityAggregate::~EntityAggregate() {
 }
 
 
-// if exchangeFileFormat == 1 then delims are required.
+/// if exchangeFileFormat == 1 then delims are required.
 Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
                             const TypeDescriptor * elem_type, InstMgr * insts,
                             int addFileId, int assignVal,
@@ -692,7 +692,7 @@ SelectAggregate::~SelectAggregate() {
 }
 
 
-// if exchangeFileFormat == 1 then delims are required.
+/// if exchangeFileFormat == 1 then delims are required.
 Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
                             const TypeDescriptor * elem_type, InstMgr * insts,
                             int addFileId, int assignVal,
@@ -813,8 +813,7 @@ STEPaggregate & SelectAggregate::ShallowCopy( const STEPaggregate & a ) {
 }
 
 
-SingleLinkNode *
-SelectAggregate::NewNode() {
+SingleLinkNode * SelectAggregate::NewNode() {
     return new SelectNode();
 }
 
@@ -1118,7 +1117,7 @@ void BinaryNode::STEPwrite( ostream & out ) {
 // EnumAggregate
 ///////////////////////////////////////////////////////////////////////////////
 
-// COPY
+/// COPY
 STEPaggregate & EnumAggregate::ShallowCopy( const STEPaggregate & a ) {
     const EnumNode * tmp = ( const EnumNode * ) a.GetHead();
     EnumNode * to;
@@ -1174,19 +1173,18 @@ EnumNode::EnumNode() {
 EnumNode::~EnumNode() {
 }
 
+///  defined in subclass
 SingleLinkNode * EnumNode::NewNode() {
-    //  defined in subclass
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  EnumNode::NewNode () called instead of virtual function. \n"
          << _POC_ << "\n";
     return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// non-whitespace chars following s are considered garbage and is an error.
-// a valid value will still be assigned if it exists before the garbage.
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * non-whitespace chars following s are considered garbage and is an error.
+ * a valid value will still be assigned if it exists before the garbage.
+ */
 Severity EnumNode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return STEPread( s, err );
 }
@@ -1316,7 +1314,7 @@ SingleLinkNode * IntAggregate::NewNode() {
     return new IntNode();
 }
 
-// COPY
+/// COPY
 STEPaggregate & IntAggregate::ShallowCopy( const STEPaggregate & a ) {
     const IntNode * tmp = ( const IntNode * ) a.GetHead();
     IntNode * to;

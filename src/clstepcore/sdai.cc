@@ -3,11 +3,6 @@
 
 #include <sdai.h>
 
-//  The values used here to represent NULL values for numeric types come from
-//  the ANSI C standard
-//  LONG_MAX: ex MAXLONG
-//  FLT_MIN: ex MINFLOAT
-
 const char * SCLversion = "STEP Class Library, github.com/mpictor/StepClassLibrary";
 
 const SCLP23( Integer ) SCLP23( INT_NULL ) = LONG_MAX;

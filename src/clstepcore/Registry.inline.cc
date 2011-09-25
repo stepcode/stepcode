@@ -62,7 +62,7 @@ Registry::Registry( CF_init initFunct )
 
     initFunct( *this );
     HASHlistinit( active_types, &cur_type );
-    HASHlistinit( primordialSwamp, &cur_entity ); // initialize cur\'s
+    HASHlistinit( primordialSwamp, &cur_entity ); // initialize cur's
     HASHlistinit( active_schemas, &cur_schema );
 }
 

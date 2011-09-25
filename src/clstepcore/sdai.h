@@ -1,5 +1,5 @@
 #ifndef P23SDAI_H
-#define	P23SDAI_H
+#define        P23SDAI_H
 
 /*
 * NIST STEP Core Class Library
@@ -52,12 +52,9 @@ class STEPattribute;
 #define STRING_DELIM '\''
 #endif
 
-	//  STRING
-#define S_STRING_NULL	""
+        //  STRING
+#define S_STRING_NULL        ""
 
-#ifndef CC_NO_NESTED_CLASSES
-struct P23_NAMESPACE {
-#endif // CC_NO_NESTED_CLASSES
 
 typedef long           SCLP23_NAME(Integer);
 typedef short          SCLP23_NAME(Short);
@@ -66,24 +63,11 @@ typedef unsigned long  SCLP23_NAME(ULong);
 typedef double         SCLP23_NAME(Real);
 
 // C++ from values.h DAS PORT
-#ifdef CC_NO_NESTED_CLASSES
-   extern const SCLP23_NAME(Integer) SCLP23_NAME(INT_NULL);
-   extern const SCLP23_NAME(Real) SCLP23_NAME(REAL_NULL);
-	// arbitrary choice by me for number DAS
-   extern const SCLP23_NAME(Real) SCLP23_NAME(NUMBER_NULL);
-#else
- #ifdef PART26
-   extern const SCLP23_NAME(Integer) SCLP23_NAME(INT_NULL);
-   extern const SCLP23_NAME(Real) SCLP23_NAME(REAL_NULL);
-	// arbitrary choice by me for number DAS
-   extern const SCLP23_NAME(Real) SCLP23_NAME(NUMBER_NULL);
- #else
-   static const SCLP23_NAME(Integer) SCLP23_NAME(INT_NULL);
-   static const SCLP23_NAME(Real) SCLP23_NAME(REAL_NULL);
-	// arbitrary choice by me for number DAS
-   static const SCLP23_NAME(Real) SCLP23_NAME(NUMBER_NULL);
- #endif
-#endif
+extern const SCLP23_NAME(Integer) SCLP23_NAME(INT_NULL);
+extern const SCLP23_NAME(Real) SCLP23_NAME(REAL_NULL);
+// arbitrary choice by me for number DAS
+extern const SCLP23_NAME(Real) SCLP23_NAME(NUMBER_NULL);
+   
 
 enum SCLP23_NAME(Access_type) {
   SCLP23_NAME(sdaiRO), 
@@ -218,8 +202,6 @@ SELECT
 ******************************************************************************/
 #include <sdaiSelect.h>
 
-//typedef char * SCLP23_NAME(Entity_name);
-
 class SCLP23_NAME(Model_contents);
 typedef SCLP23_NAME(Model_contents) * SCLP23_NAME(Model_contents_ptr);
 typedef SCLP23_NAME(Model_contents_ptr) SCLP23_NAME(Model_contents_var);
@@ -231,30 +213,13 @@ typedef SCLP23_NAME(Model_contents_ptr) SCLP23_NAME(Model_contents_var);
 #include <sdaiEntity_extent_set.h>
 #include <sdaiModel_contents.h>
 
-#ifndef CC_NO_NESTED_CLASSES
-#ifndef PART26
-}; // end struct P23_NAMESPACE
-#endif // PART26
-#endif // CC_NO_NESTED_CLASSES
-
-#ifdef PART26
-
-//#define SDAI_DEF_TIE_P26_Application_instance(x) DEF_TIE_P26_Application_instance(x)
-
-#define Application_instance_i SCLP23(Application_instance)
-DEF_TIE_IDL_Application_instance(Application_instance_i)
-//DEF_TIE_P26_Application_instance(Application_instance_i)
-//DEF_TIE_IDL_Application_instance(SCLP23(Application_instance))
-#endif
-
-	//  ENTITY
+        //  ENTITY
 extern SCLP23(Application_instance) NilSTEPentity;
-#define ENTITY_NULL	&NilSTEPentity
-#define NULL_ENTITY	&NilSTEPentity
-#define S_ENTITY_NULL	&NilSTEPentity
+#define ENTITY_NULL        &NilSTEPentity
+#define NULL_ENTITY        &NilSTEPentity
+#define S_ENTITY_NULL        &NilSTEPentity
 
 
-//#define STEPentity SCLP23_NAME(Application_instance);
 typedef SCLP23(Application_instance) STEPentity;
 typedef SCLP23(Application_instance)* STEPentity_ptr;
 typedef STEPentity_ptr STEPentity_var;
@@ -264,7 +229,7 @@ typedef SCLP23(Application_instance)* STEPentityH;
 
 extern SCLP23(Application_instance) *
 ReadEntityRef(istream &in, ErrorDescriptor *err, const char *tokenList, 
-	      InstMgr * instances, int addFileId);
+              InstMgr * instances, int addFileId);
 
 #define SdaiInteger SCLP23(Integer)
 #define SdaiReal SCLP23(Real)
@@ -274,7 +239,7 @@ ReadEntityRef(istream &in, ErrorDescriptor *err, const char *tokenList,
 #define SdaiString SCLP23(String)
 #define SdaiBinary SCLP23(Binary)
 
-#define	S_INT_NULL    SCLP23(INT_NULL)
+#define        S_INT_NULL    SCLP23(INT_NULL)
 #define S_REAL_NULL   SCLP23(REAL_NULL)
 #define S_NUMBER_NULL SCLP23(NUMBER_NULL)
 
@@ -293,21 +258,5 @@ inline SCLP23(LOGICAL) *create_LOGICAL() { return new SCLP23(LOGICAL) ; }
 
 // below is outdated
 typedef SCLP23(Select) * SdaiSelectH;
-
-//#define INT_NULL MAXLONG
-// C from limits.h
-//#define	S_INT_NULL	LONG_MAX 
-
-//#define S_REAL_NULL	10 ** DBL_MAX_10_EXP
-//#define FLT_MIN  1E-37  - port 29-Mar-1994 kcm
-// C++ from values.h DAS PORT
-
-//#define REAL_NULL MINFLOAT
-// C from float.h
-//#define S_REAL_NULL FLT_MIN
-
-//#define NUMBER_NULL MINFLOAT
-// C from float.h
-//#define S_NUMBER_NULL FLT_MIN
 
 #endif

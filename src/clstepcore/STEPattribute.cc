@@ -41,10 +41,7 @@ const int Real_Num_Precision = REAL_NUM_PRECISION;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-/******************************************************************
-// the value of the attribute is assigned from the supplied string
- ******************************************************************/
-
+/// the value of the attribute is assigned from the supplied string
 Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFileId ) {
     if( RedefiningAttr() )  {
         return RedefiningAttr()->StrToVal( s, instances, addFileId );
@@ -179,6 +176,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFi
 
 
 /**************************************************************//**
+** \fn STEPread
 ** \brief Reads attribute value from in, formatted as P21 file.
 ** The value of the attribute is read from istream. The format
 ** expected is STEP exchange file.
@@ -353,6 +351,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
 }
 
 /*****************************************************************//**
+ ** \fn asStr
  ** \param currSch - used for select type writes.  See commenting in SCLP23(Select)::STEPwrite().
  ** \returns the value of the attribute
  ** Status:  complete 3/91
@@ -778,9 +777,9 @@ int STEPattribute::is_null()  const {
 }
 
 /**************************************************************//**
-** \return int -- if 0 => not equal
 ** evaluates the equality of two attributes
 ** Side Effects:  none
+** \return int -- if 0 => not equal
 ******************************************************************/
 int operator == ( STEPattribute & a1, STEPattribute & a2 ) {
     if ( a1.aDesc == a2.aDesc ) {

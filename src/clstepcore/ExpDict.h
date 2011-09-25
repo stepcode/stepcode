@@ -563,14 +563,11 @@ private:
 typedef Uniqueness_rule__set* Uniqueness_rule__set_ptr;
 typedef Uniqueness_rule__set_ptr Uniqueness_rule__set_var;
 
-///////////////////////////////////////////////////////////////////////////////
-// Schema (was SchemaDescriptor) - a class of this type is generated and 
-// contains schema info.
-///////////////////////////////////////////////////////////////////////////////
-
-
 typedef  SCLP23(Model_contents_ptr) (* ModelContentsCreator) () ;
 
+/**
+ * \class Schema (was SchemaDescriptor) - a class of this type is generated and contains schema info.
+ */
 class Schema : public Dictionary_instance { 
 
   protected:
@@ -729,12 +726,11 @@ class InverseAItr
     const Inverse_attribute * NextInverse_attribute();
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// AttrDescriptor
-// An instance of this class will be generated for each attribute for
-// an Entity.  They will be pointed to by the EntityTypeDescriptors.
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * \class AttrDescriptor
+ * An instance of this class will be generated for each attribute for
+ * an Entity.  They will be pointed to by the EntityTypeDescriptors.
+ */
 class AttrDescriptor { 
 
   protected:
@@ -854,7 +850,7 @@ class AttrDescriptor {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Inverse_attribute
+// Derived_attribute
 ///////////////////////////////////////////////////////////////////////////////
 
 class Derived_attribute  :    public AttrDescriptor  { 
@@ -895,7 +891,6 @@ class Inverse_attribute  :    public AttrDescriptor  {
                        TypeDescriptor *domainType,
                        Logical optional,        // i.e. F U or T*/
                        Logical unique,        // i.e. F U or T
-//                       AttrType_Enum at, // will always be AttrType_Inverse
                        const EntityDescriptor & owner,
                        const char *inverted_attr_id =0
                    ) : AttrDescriptor( name, domainType, optional, unique,
@@ -919,7 +914,7 @@ class Inverse_attribute  :    public AttrDescriptor  {
         void inverted_entity_id_(const char *iei )
                 { _inverted_entity_id = iei; } 
 
-        // not implemented
+        /// FIXME not implemented
         class AttrDescriptor * inverted_attr_()
                 { return _inverted_attr; } 
 
@@ -933,18 +928,17 @@ class Inverse_attribute  :    public AttrDescriptor  {
                 { _inverted_attr = invAttr; } 
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// SchRename is a structure which partially support the concept of USE and RE-
-// FERENCE in EXPRESS.  Say schema A USEs object X from schema B and renames it
-// to Y (i.e., "USE (X as Y);").  SchRename stores the name of the schema (B)
-// plus the new object name for that schema (Y).  Each TypeDescriptor has a
-// SchRename object (actually a linked list of SchRenames) corresponding to all
-// the possible different names of itself depending on the current schema (the
-// schema which is currently reading or writing this object).  (The current
-// schema is determined by the file schema section of the header section of a
-// part21 file (the _headerInstances of STEPfile).
-///////////////////////////////////////////////////////////////////////////////
-
+/** \class SchRename
+ * SchRename is a structure which partially support the concept of USE and RE-
+ * FERENCE in EXPRESS.  Say schema A USEs object X from schema B and renames it
+ * to Y (i.e., "USE (X as Y);").  SchRename stores the name of the schema (B)
+ * plus the new object name for that schema (Y).  Each TypeDescriptor has a
+ * SchRename object (actually a linked list of SchRenames) corresponding to all
+ * the possible different names of itself depending on the current schema (the
+ * schema which is currently reading or writing this object).  (The current
+ * schema is determined by the file schema section of the header section of a
+ * part21 file (the _headerInstances of STEPfile).
+ */
 class SchRename {
   public:
     SchRename( const char *sch="\0", const char *newnm="\0" ) : next(0)
@@ -964,87 +958,92 @@ class SchRename {
     char newName[BUFSIZ];
 };
 
-///////////////////////////////////////////////////////////////////////////////
-// TypeDescriptor
-// This class and the classes inherited from this class are used to describe   
-// all types (base types and created types).  There will be an instance of this
-// class generated for each type found in the schema.  
-// A TypeDescriptor will be generated in three contexts:
-// 1) to describe a base type - e.g. INTEGER, REAL, STRING.  There is only one 
-//        TypeDescriptor created for each Express base type. Each of these will
-//        be pointed to by several other AttrDescriptors and TypeDescriptors)
-// 2) to describe a type created by an Express TYPE statement.
-//        e.g. TYPE label = STRING END_TYPE;
-//        These TypeDescriptors will be pointed to by other AttrDescriptors (and
-//        TypeDescriptors) representing attributes (and Express TYPEs) that are
-//        of the type created by this Express TYPE.
-// 3) to describe a type created in an attribute definition
-//        e.g. part_label_grouping : ARRAY [1.10] label;
-//        or part_codes : ARRAY [1.10] INTEGER;
-//        In this #3 context there will not be a name associated with the type.
-//        The TypeDescriptor created in this case will only be pointed to by the
-//        single AttrDescriptor associated with the attribute it was created for.
-///////////////////////////////////////////////////////////////////////////////
-
-///// _name is the name of the type. 
-        // In the case of the TypeDescriptors representing the Express base
-        // types this will be the name of the base type.
-        // In the case where this TypeDescriptor is representing an Express
-        // TYPE it is the LEFT side of an Express TYPE statement (i.e. label
-        // as in TYPE label = STRING END_TYPE;) This name would in turn be
-        // found on the RIGHT side of an Express attribute definition (e.g.
-        // attr defined as part_label : label; )
-        // In the case where this TypeDescriptor was generated to describe a
-        // type created in an attr definition, it will be a null pointer (e.g
-        // attr defined as part_label_grouping : ARRAY [1..10] label)
-///// _fundamentalType is the 'type' of the type being represented by 
-        //  the TypeDescriptor . i.e. the following 2 stmts
-        //  would cause 2 TypeDescriptors to be generated - the 1st having
-        //  _fundamentalType set to STRING_TYPE and for the 2nd to
-        //  REFERENCE_TYPE.
-        // TYPE label = STRING END_TYPE;
-        // TYPE part_label = label END_TYPE;
-        // part_label and label would be the value of the respective
-        // _name member variables for the 2 TypeDescriptors.
-///// _referentType will point at another TypeDescriptor furthur specifying 
-        //  the type in all cases except when the type is directly
-        //  an enum or select.  i.e. in the following... _referentType for
-        //  the 1st type does not point at anything and for the 2nd it does:
-        // TYPE color = ENUMERATION OF (red, blue); END_TYPE;
-        // TYPE color_ref = color; END_TYPE;
-////// _fundamentalType being REFERENCE_TYPE (as would be the case for 
-        // part_label and color_ref above) means that the _referentType
-        // member variable points at a TypeDescriptor representing a type
-        // that has been defined in an Express TYPE stmt.
-        //  Otherwise _fundamental type reflects
-        //  the type directly as in the type label above.  type label above
-        //  has a _referentType that points at a TypeDescriptor for STRING
-        //  described in the next sentence (also see #1 above).
-        // A TypeDescriptor would be generated for each of the EXPRESS base
-        // types (int, string, real, etc) having _fundamentalType member
-        // variables set to match the EXPRESS base type being represented.
-//////_referentType
-        // For the TypeDescriptors describing the EXPRESS base types this will
-        // be a null pointer.  For all other TypeDescriptors this will point
-        // to another TypeDescriptor which furthur describes the type. e.g.
-        // TYPE part_label = label END_TYPE; TYPE label = STRING END_TYPE;
-        // part_label's _referentType will point to the TypeDescriptor for
-        // label.  label's _referentType will point to the TypeDescriptor
-        // for STRING. The _fundamentalType for part_label will be
-        // REFERENCE_TYPE and for label will be STRING_TYPE.
-        // The _fundamentalType for the EXPRESS base type STRING's
-        // TypeDescriptor will be STRING_TYPE.
-        // The _referentType member variable will in most cases point to
-        // a subtype of TypeDescriptor.
-//////_description
-        // This is the string description of the type as found in the
-        // EXPRESS file. e.g. aggr of [aggr of ...] [list of ...] someType
-        // It is the RIGHT side of an Express TYPE statement
-        // (i.e. LIST OF STRING as in
-        // TYPE label_group = LIST OF STRING END_TYPE;)
-        // It is the same as _name for EXPRESS base types TypeDescriptors (with
-        // the possible exception of upper or lower case differences).
-
+/**
+ * TypeDescriptor
+ * This class and the classes inherited from this class are used to describe
+ * all types (base types and created types).  There will be an instance of this
+ * class generated for each type found in the schema.
+ * A TypeDescriptor will be generated in three contexts:
+ * 1) to describe a base type - e.g. INTEGER, REAL, STRING.  There is only one
+ *        TypeDescriptor created for each Express base type. Each of these will
+ *        be pointed to by several other AttrDescriptors and TypeDescriptors)
+ * 2) to describe a type created by an Express TYPE statement.
+ *        e.g. TYPE label = STRING END_TYPE;
+ *        These TypeDescriptors will be pointed to by other AttrDescriptors (and
+ *        TypeDescriptors) representing attributes (and Express TYPEs) that are
+ *        of the type created by this Express TYPE.
+ * 3) to describe a type created in an attribute definition
+ *        e.g. part_label_grouping : ARRAY [1.10] label;
+ *        or part_codes : ARRAY [1.10] INTEGER;
+ *        In this #3 context there will not be a name associated with the type.
+ *        The TypeDescriptor created in this case will only be pointed to by the
+ *        single AttrDescriptor associated with the attribute it was created for.
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * \var _name
+    * \brief the name of the type.
+    * In the case of the TypeDescriptors representing the Express base
+    * types this will be the name of the base type.
+    * In the case where this TypeDescriptor is representing an Express
+    * TYPE it is the LEFT side of an Express TYPE statement (i.e. label
+    * as in TYPE label = STRING END_TYPE;) This name would in turn be
+    * found on the RIGHT side of an Express attribute definition (e.g.
+    * attr defined as part_label : label; )
+    * In the case where this TypeDescriptor was generated to describe a
+    * type created in an attr definition, it will be a null pointer (e.g
+    * attr defined as part_label_grouping : ARRAY [1..10] label)
+ * \var _fundamentalType
+    *  the 'type' of the type being represented by
+    *  the TypeDescriptor . i.e. the following 2 stmts
+    *  would cause 2 TypeDescriptors to be generated - the 1st having
+    *  _fundamentalType set to STRING_TYPE and for the 2nd to
+    *  REFERENCE_TYPE.
+    * TYPE label = STRING END_TYPE;
+    * TYPE part_label = label END_TYPE;
+    * part_label and label would be the value of the respective
+    * _name member variables for the 2 TypeDescriptors.
+ * \var _referentType
+    * will point at another TypeDescriptor furthur specifying
+    *  the type in all cases except when the type is directly
+    *  an enum or select.  i.e. in the following... _referentType for
+    *  the 1st type does not point at anything and for the 2nd it does:
+    * TYPE color = ENUMERATION OF (red, blue); END_TYPE;
+    * TYPE color_ref = color; END_TYPE;
+ ** var _fundamentalType
+    * being REFERENCE_TYPE (as would be the case for
+    * part_label and color_ref above) means that the _referentType
+    * member variable points at a TypeDescriptor representing a type
+    * that has been defined in an Express TYPE stmt.
+    *  Otherwise _fundamental type reflects
+    *  the type directly as in the type label above.  type label above
+    *  has a _referentType that points at a TypeDescriptor for STRING
+    *  described in the next sentence (also see #1 above).
+    * A TypeDescriptor would be generated for each of the EXPRESS base
+    * types (int, string, real, etc) having _fundamentalType member
+    * variables set to match the EXPRESS base type being represented.
+ ** var _referentType
+    * For the TypeDescriptors describing the EXPRESS base types this will
+    * be a null pointer.  For all other TypeDescriptors this will point
+    * to another TypeDescriptor which furthur describes the type. e.g.
+    * TYPE part_label = label END_TYPE; TYPE label = STRING END_TYPE;
+    * part_label's _referentType will point to the TypeDescriptor for
+    * label.  label's _referentType will point to the TypeDescriptor
+    * for STRING. The _fundamentalType for part_label will be
+    * REFERENCE_TYPE and for label will be STRING_TYPE.
+    * The _fundamentalType for the EXPRESS base type STRING's
+    * TypeDescriptor will be STRING_TYPE.
+    * The _referentType member variable will in most cases point to
+    * a subtype of TypeDescriptor.
+ * \var _description
+    * This is the string description of the type as found in the
+    * EXPRESS file. e.g. aggr of [aggr of ...] [list of ...] someType
+    * It is the RIGHT side of an Express TYPE statement
+    * (i.e. LIST OF STRING as in
+    * TYPE label_group = LIST OF STRING END_TYPE;)
+    * It is the same as _name for EXPRESS base types TypeDescriptors (with
+    * the possible exception of upper or lower case differences).
+*/
 class TypeDescriptor { 
 
   protected:
@@ -1232,16 +1231,16 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
 };
 
 
-///////////////////////////////////////////////////////////////////////////////
-// EntityDescriptor
-// An instance of this class will be generated for each entity type
-// found in the schema.  This should probably be derived from the
-// CreatorEntry class (see sdaiApplicaton_instance.h).  Then the binary tree 
-// that the current software  builds up containing the entities in the schema
-// will be building the same thing but using the new schema info.
-// nodes (i.e. EntityDesc nodes) for each entity.
-///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * EntityDescriptor
+ * An instance of this class will be generated for each entity type
+ * found in the schema.  This should probably be derived from the
+ * CreatorEntry class (see sdaiApplicaton_instance.h).  Then the binary tree
+ * that the current software  builds up containing the entities in the schema
+ * will be building the same thing but using the new schema info.
+ * nodes (i.e. EntityDesc nodes) for each entity.
+ */
 class EntityDescriptor  :    public TypeDescriptor  { 
 
   protected:
@@ -1334,17 +1333,16 @@ class EntityDescriptor  :    public TypeDescriptor  {
 
 };
 
-
-///////////////////////////////////////////////////////////////////////////////
-// EnumerationTypeDescriptor
-///////////////////////////////////////////////////////////////////////////////
+/** \class EnumerationTypeDescriptor
+ * FIXME not implemented
+*/
 #ifdef NOT_YET
-class EnumerationTypeDescriptor  :    public TypeDescriptor  { 
+class EnumerationTypeDescriptor  :    public TypeDescriptor  {
 
-  protected:
+protected:
         StringAggregate  *_elements ;          //  of  (null)
 
-  public:  
+public:
         EnumerationTypeDescriptor ( );
         virtual ~EnumerationTypeDescriptor () { }
 
@@ -1390,18 +1388,17 @@ RealAggregate * create_RealAggregate();
 
 IntAggregate * create_IntAggregate();
 
-///////////////////////////////////////////////////////////////////////////////
-// AggrTypeDescriptor
-// I think we decided on a simplistic representation of aggr. types for now?
-// i.e. just have one AggrTypeDesc for Array of [list of] [set of] someType
-// the inherited variable _referentType will point to the TypeDesc for someType
-// So I don't believe this class was necessary.  If we were to retain
-// info for each of the [aggr of]'s in the example above then there would be
-// one of these for each [aggr of] above and they would be strung
-// together by the _aggrDomainType variables.  If you can make this
-// work then go for it.
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * \class AggrTypeDescriptor
+ * I think we decided on a simplistic representation of aggr. types for now?
+ * i.e. just have one AggrTypeDesc for Array of [list of] [set of] someType
+ * the inherited variable _referentType will point to the TypeDesc for someType
+ * So I don't believe this class was necessary.  If we were to retain
+ * info for each of the [aggr of]'s in the example above then there would be
+ * one of these for each [aggr of] above and they would be strung
+ * together by the _aggrDomainType variables.  If you can make this
+ * work then go for it.
+ */
 class AggrTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
@@ -1451,7 +1448,6 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 ///////////////////////////////////////////////////////////////////////////////
 // ArrayTypeDescriptor
 ///////////////////////////////////////////////////////////////////////////////
-
 class ArrayTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
@@ -1482,20 +1478,6 @@ class ListTypeDescriptor  :    public AggrTypeDescriptor  {
 
   protected:
   public:  
-
-/*    void AssignAggrCreator(ListAggregateCreator f = 0)
-    {
-        CreateNewAggr = f;
-    }
-
-    STEPaggregate *CreateListAggregate()
-    {
-        if(CreateNewAggr)
-            return CreateNewAggr();
-        else
-            return 0;
-    }
-    */
     ListTypeDescriptor ( ) { }
     ListTypeDescriptor (const char * nm, PrimitiveType ft, 
                         Schema *origSchema, const char * d,
@@ -1562,7 +1544,6 @@ class SelectTypeDescriptor  :    public TypeDescriptor  {
 
         TypeDescriptorList& Elements() { return _elements; }
         const TypeDescriptorList& GetElements() const { return _elements; }
-//        void Elements (TypeDescriptorList x);
         int UniqueElements () const {  return _unique_elements; }
         virtual const TypeDescriptor * IsA (const TypeDescriptor *) const;
         virtual const TypeDescriptor * IsA (const char * n) const  
