@@ -23,8 +23,7 @@ extern Severity
 IntValidLevel (const char *attrValue, ErrorDescriptor *err,
 	       int clearError, int optional, char *tokenList);
 
-extern char * 
-WriteReal(SCLP23(Real) val, std::string &s);
+extern std::string WriteReal(SCLP23(Real) val );
 
 extern void
 WriteReal(SCLP23(Real) val, ostream &out);

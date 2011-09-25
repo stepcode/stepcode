@@ -149,10 +149,9 @@ IntValidLevel( const char * attrValue, ErrorDescriptor * err,
     return err->severity();
 }
 
-char *
-WriteReal( SCLP23( Real ) val, std::string & s ) {
-
+std::string WriteReal( SCLP23( Real ) val ) {
     char rbuf[64];
+    std::string s;
 
 //        out << form("%.*G", (int) Real_Num_Precision,tmp);
     // replace the above line with this code so that writing the '.' is
@@ -186,14 +185,12 @@ WriteReal( SCLP23( Real ) val, std::string & s ) {
     } else {
         s = rbuf;
     }
-    return const_cast<char *>( s.c_str() );
+    return s;
 }
 
 void
 WriteReal( SCLP23( Real ) val, ostream & out ) {
-    std::string s;
-
-    out << WriteReal( val, s );
+    out << WriteReal( val );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
