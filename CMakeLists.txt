@@ -41,7 +41,7 @@
 # Minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 IF(COMMAND CMAKE_POLICY)
-	CMAKE_POLICY(SET CMP0003 NEW)
+    CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 
 # set CMake project name
@@ -77,22 +77,22 @@ SET(_orig_lc_all      $ENV{LC_ALL})
 SET(_orig_lc_messages $ENV{LC_MESSAGES})
 SET(_orig_lang        $ENV{LANG})
 IF(_orig_lc_all)
-	SET(ENV{LC_ALL}      C)
+    SET(ENV{LC_ALL}      C)
 ENDIF(_orig_lc_all)
 IF(_orig_lc_messages)
-	SET(ENV{LC_MESSAGES} C)
+    SET(ENV{LC_MESSAGES} C)
 ENDIF(_orig_lc_messages)
 IF(_orig_lang)
-	SET(ENV{LANG}        C)
+    SET(ENV{LANG}        C)
 ENDIF(_orig_lang)
 
 # For NFS volumes, to ensure proper file creation.
 IF(NOT WIN32)
-	IF(NOT UMASK)
-		EXEC_PROGRAM(umask ARGS 022 OUTPUT_VARIABLE exec_out)
-	ELSE(NOT UMASK)
-		EXEC_PROGRAM(umask ARGS ${UMASK} OUTPUT_VARIABLE exec_out)
-	ENDIF(NOT UMASK)
+    IF(NOT UMASK)
+        EXEC_PROGRAM(umask ARGS 022 OUTPUT_VARIABLE exec_out)
+    ELSE(NOT UMASK)
+        EXEC_PROGRAM(umask ARGS ${UMASK} OUTPUT_VARIABLE exec_out)
+    ENDIF(NOT UMASK)
 ENDIF(NOT WIN32)
 
 #---------------------------------------------------------------------
@@ -109,7 +109,7 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # the RPATH/INSTALL_NAME_DIR to be used when installing
 if (NOT APPLE)
-	SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif(NOT APPLE)
 SET(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 
@@ -121,34 +121,34 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #-----------------------------------------------------------------------------
 # Output directories.
 IF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-	IF(WIN32)
-		SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-	ELSE(WIN32)
-		SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-	ENDIF(WIN32)
+    IF(WIN32)
+        SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+    ELSE(WIN32)
+        SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
+    ENDIF(WIN32)
 ENDIF(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 IF(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-	SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
+    SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
 ENDIF(NOT CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 IF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-	SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+    SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
 ENDIF(NOT CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 
 FOREACH(CFG_TYPE ${CMAKE_CONFIGURATION_TYPES})
-	STRING(TOUPPER "${CFG_TYPE}" CFG_TYPE)
-	IF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
-		IF(WIN32)
-			SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-		ELSE(WIN32)
-			SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-		ENDIF(WIN32)
-	ENDIF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
-	IF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
-		SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
-	ENDIF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
-	IF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
-		SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-	ENDIF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
+    STRING(TOUPPER "${CFG_TYPE}" CFG_TYPE)
+    IF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
+        IF(WIN32)
+            SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+        ELSE(WIN32)
+            SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
+        ENDIF(WIN32)
+    ENDIF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
+    IF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
+        SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
+    ENDIF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
+    IF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
+        SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SCL_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+    ENDIF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
 ENDFOREACH()
 
 
@@ -159,18 +159,18 @@ ENDFOREACH()
 # for Windows.  Only do this if CMAKE_INSTALL_PREFIX hasn't been set
 # already, to try and allow parent builds (if any) some control.
 IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-	IF(NOT WIN32)
-		IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-			SET(CMAKE_INSTALL_PREFIX "/usr")
-		ELSEIF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-			MESSAGE("setting debug output dir")
-			SET(CMAKE_INSTALL_PREFIX "${SCL_SOURCE_DIR}/../scl-install")
-		ELSE("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-			SET(CMAKE_INSTALL_PREFIX "/usr/local")
-		ENDIF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-	ENDIF(NOT WIN32)
-	SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "SCL install prefix" FORCE)
-	SET(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 0)
+    IF(NOT WIN32)
+        IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+            SET(CMAKE_INSTALL_PREFIX "/usr")
+        ELSEIF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+            MESSAGE("setting debug output dir")
+            SET(CMAKE_INSTALL_PREFIX "${SCL_SOURCE_DIR}/../scl-install")
+        ELSE("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+            SET(CMAKE_INSTALL_PREFIX "/usr/local")
+        ENDIF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
+    ENDIF(NOT WIN32)
+    SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "SCL install prefix" FORCE)
+    SET(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 0)
 ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 OPTION(SCL-BUILD_EXPRESS_ONLY "Only build express parser." OFF)
@@ -200,17 +200,31 @@ CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
 
+#set GIT_COMMIT_ID to the output of `git describe`
+find_package(Git)
+if(GIT_FOUND)
+    execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags RESULT_VARIABLE res_var OUTPUT_VARIABLE GIT_COM_ID )
+    if( NOT ${res_var} EQUAL 0 )
+        set( GIT_COMMIT_ID "unknown (git failed!)")
+        message( WARNING "Git failed (not a repo?). Build will not contain git revision info." )
+    endif()
+    string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COM_ID} )
+else()
+    set( GIT_COMMIT_ID "unknown (git not found!)")
+    message( WARNING "Git not found. Build will not contain git revision info." )
+endif()
+
 # Now that all the tests are done, configure the scl_cf.h file:
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
 
 add_definitions(
-	-DHAVE_CONFIG_H -Wall
-	)
+    -DHAVE_CONFIG_H -Wall
+    )
 
 include_directories(
-	${SCL_SOURCE_DIR}/include
-	${SCL_BINARY_DIR}/include
-	)
+    ${SCL_SOURCE_DIR}/include
+    ${SCL_BINARY_DIR}/include
+    )
 
 ADD_SUBDIRECTORY(src/express)
 ADD_SUBDIRECTORY(src/exppp)

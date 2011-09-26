@@ -9,30 +9,23 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiString.cc,v 1.4 1997/11/05 21:59:17 sauderd DP3.1 $ */
-
 #include <sdai.h>
 #include <sstream>
 
-
-SCLP23( String ) &
-SCLP23( String )::operator= ( const char * s ) {
+SCLP23( String ) & SCLP23( String )::operator= ( const char * s ) {
     std::string::operator= ( s );
     return *this;
 }
 
-void
-SCLP23( String )::STEPwrite( ostream & out ) const {
+void SCLP23( String )::STEPwrite( ostream & out ) const {
     out << c_str();
 }
 
-void
-SCLP23( String )::STEPwrite( std::string & s ) const {
+void SCLP23( String )::STEPwrite( std::string & s ) const {
     s += c_str();
 }
 
-Severity
-SCLP23( String )::StrToVal( const char * s ) {
+Severity SCLP23( String )::StrToVal( const char * s ) {
     operator= ( s );
     if( ! strcmp( c_str(),  s ) ) {
         return SEVERITY_NULL ;
@@ -41,17 +34,14 @@ SCLP23( String )::StrToVal( const char * s ) {
     }
 }
 
-//  STEPread reads a string in exchange file format
-//  starting with a single quote
-Severity
-SCLP23( String )::STEPread( istream & in, ErrorDescriptor * err ) {
+/**
+ * STEPread reads a string in exchange file format
+ * starting with a single quote
+ */
+Severity SCLP23( String )::STEPread( istream & in, ErrorDescriptor * err ) {
     clear();  // clear the old string
     // remember the current format state to restore the previous settings
-#if defined(__GNUC__) && (__GNUC__ > 2)
     ios_base::fmtflags flags = in.flags();
-#else
-    ios::fmtflags flags = in.flags();
-#endif
     in.unsetf( ios::skipws );
 
     // extract the string from the inputstream
@@ -76,8 +66,10 @@ SCLP23( String )::STEPread( istream & in, ErrorDescriptor * err ) {
     return sev;
 }
 
-Severity
-SCLP23( String )::STEPread( const char * s, ErrorDescriptor * err ) {
+/**
+ * \copydoc STEPread( istream & in, ErrorDescriptor * err )
+ */
+Severity SCLP23( String )::STEPread( const char * s, ErrorDescriptor * err ) {
     istringstream in( ( char * )s );
     return STEPread( in, err );
 }

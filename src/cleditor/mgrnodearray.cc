@@ -123,7 +123,7 @@ int MgrNodeArray::MgrNodeIndex( int fileId ) {
     }
     int i;
     for( i = 0; i < _count; ++i ) {
-        if( ( ( MgrNode * )_buf[i] )->GetApplication_instance()->GetFileId() == fileId ) {
+        if( ( ( MgrNode * )_buf[i] )->GetApplication_instance()->StepFileId() == fileId ) {
             return i;
         }
     }
@@ -143,7 +143,7 @@ int MgrNodeArraySorted::Insert( GenericNode * gn ) {
 //  cout << "MgrNodeArraySorted::Insert()\n";
 
     // since gn is really a MgrNode
-    int fileId = ( ( MgrNode * )gn )->GetApplication_instance()->GetFileId();
+    int fileId = ( ( MgrNode * )gn )->GetApplication_instance()->StepFileId();
 
     int index = FindInsertPosition( fileId );
 
@@ -201,7 +201,7 @@ int MgrNodeArraySorted::FindInsertPosition( const int fileId ) {
     int curFileId;
 
     for( i = _count - 1; i >= 0; --i ) {
-        curFileId = ( ( MgrNode * )_buf[i] )->GetApplication_instance()->GetFileId();
+        curFileId = ( ( MgrNode * )_buf[i] )->GetApplication_instance()->StepFileId();
         if( curFileId < fileId /*|| curFileId == fileId*/ ) {
             return i + 1;
         }
@@ -226,7 +226,7 @@ int MgrNodeArraySorted::MgrNodeIndex( int fileId ) {
 
     while( !found && ( low <= high ) ) {
         mid = ( low + high ) / 2;
-        curFileId = ( ( MgrNode * )_buf[mid] )->GetApplication_instance()->GetFileId();
+        curFileId = ( ( MgrNode * )_buf[mid] )->GetApplication_instance()->StepFileId();
         if( curFileId == fileId ) {
             found = 1;
         } else if( curFileId < fileId ) {

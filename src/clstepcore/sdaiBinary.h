@@ -1,5 +1,5 @@
 #ifndef SDAIBINARY_H
-#define	SDAIBINARY_H 1
+#define SDAIBINARY_H 1
 
 #include <string>
 
@@ -13,8 +13,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiBinary.h,v */
-
 class SCLP23_NAME(Binary) : public std::string
 {
   public:
@@ -23,7 +21,6 @@ class SCLP23_NAME(Binary) : public std::string
     SCLP23_NAME(Binary) (const char * str = 0, int max =0) 
       : std::string (str,max) { }
 
-//Josh L, 3/28/95
     SCLP23_NAME(Binary) (const std::string& s)   : std::string (s) { }
 
 
@@ -42,15 +39,15 @@ class SCLP23_NAME(Binary) : public std::string
     Severity STEPread (const char *s, ErrorDescriptor *err);
 
     Severity BinaryValidLevel (const char *value, ErrorDescriptor *err,
-			       int optional, char *tokenList,
-			       int needDelims = 0, int clearError = 1);
+                               int optional, char *tokenList,
+                               int needDelims = 0, int clearError = 1);
     Severity BinaryValidLevel (istream &in, ErrorDescriptor *err, 
-			       int optional, char *tokenList,
-			       int needDelims = 0, int clearError = 1);
+                               int optional, char *tokenList,
+                               int needDelims = 0, int clearError = 1);
 
  protected:
   Severity ReadBinary(istream& in, ErrorDescriptor *err, int AssignVal = 1,
-		      int needDelims = 1);
+                      int needDelims = 1);
 };
 
 #endif

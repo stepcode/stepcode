@@ -1,12 +1,9 @@
 
-//#include <Enum.h>
-//#include <Enumeration.h>
-
 #include <sdai.h>
 
 /*
 * NIST STEP Core Class Library
-* clstepcore/Enumeration.cc
+* clstepcore/sdaiEnum.cc
 * April 1997
 * K. C. Morris
 * David Sauder
@@ -15,27 +12,7 @@
 * and is not subject to copyright.
 */
 
-/* $Id: sdaiEnum.cc,v 1.5 1997/11/05 21:59:14 sauderd DP3.1 $  */
-
-//static char rcsid[] ="$Id: sdaiEnum.cc,v 1.5 1997/11/05 21:59:14 sauderd DP3.1 $";
-
 #include <sstream>
-
-//#ifndef SCLP23(TRUE)
-//#ifndef SCLP23(FALSE)
-// Josh L, 3/31/95
-// These constants have to be initialized outside the SDAI struct.  They
-// are initialized here instead of in the header file in order to avoid
-// multiple inclusions when building SCL applications.
-/*
-const SCLP23(BOOLEAN) SCLP23(TRUE)( BTrue );
-const SCLP23(BOOLEAN) SCLP23(FALSE)( BFalse );
-const SCLP23(BOOLEAN) SCLP23(UNSET)( BUnset );
-const SCLP23(LOGICAL) SCLP23(UNKNOWN)( LUnknown );
-*/
-//#endif
-//#endif
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // class Logical
@@ -61,28 +38,18 @@ SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( int i ) {
     }
 }
 
-/*
-SCLP23(LOGICAL)::SCLP23_NAME(LOGICAL) (const BOOLEAN& boo)
-{
-    v = boo.asInt();
-}
-*/
-
 SCLP23( LOGICAL )::~SCLP23_NAME( LOGICAL )() {
 }
 
-const char *
-SCLP23( LOGICAL )::Name() const {
+const char * SCLP23( LOGICAL )::Name() const {
     return "Logical";
 }
 
-int
-SCLP23( LOGICAL )::no_elements() const {
+int SCLP23( LOGICAL )::no_elements() const {
     return 3;
 }
 
-const char *
-SCLP23( LOGICAL )::element_at( int n ) const {
+const char * SCLP23( LOGICAL )::element_at( int n ) const {
     switch( n )  {
         case  LUnknown :
             return "U";
@@ -95,41 +62,13 @@ SCLP23( LOGICAL )::element_at( int n ) const {
     }
 }
 
-int
-SCLP23( LOGICAL )::exists() const { // return 0 if unset otherwise return 1
+int SCLP23( LOGICAL )::exists() const { // return 0 if unset otherwise return 1
     return !( v == 2 );
 }
 
-void
-SCLP23( LOGICAL )::nullify() { // change the receiver to an unset status
+void SCLP23( LOGICAL )::nullify() { // change the receiver to an unset status
     v = 2;
 }
-
-#if 0
-
-SCLP23( LOGICAL )::operator int () const  {
-// anything other than BFalse should return 1 according to Part 23
-    if( v ==  LFalse ) {
-        return 0;
-    }
-    //#endif
-    else {
-        return 1;
-    }
-    /*
-      switch (v) {
-      case LFalse: return 0;
-      case LTrue: return 1;
-
-      case LUnknown:
-      case LUnset:  // BUnset or anything other than t or f should set error
-            // sdaiVA_NSET i.e. value unset
-      default: return 1;
-    }
-    */
-}
-
-#endif
 
 SCLP23( LOGICAL )::operator  Logical() const  {
     switch( v ) {
@@ -147,8 +86,7 @@ SCLP23( LOGICAL )::operator  Logical() const  {
 
 
 
-SCLP23( LOGICAL ) &
-SCLP23( LOGICAL )::operator= ( const SCLP23( LOGICAL )& t ) {
+SCLP23( LOGICAL ) & SCLP23( LOGICAL )::operator= ( const SCLP23( LOGICAL )& t ) {
     set_value( t.asInt() );
     return *this;
 }
@@ -160,8 +98,7 @@ SCLP23( LOGICAL ) SCLP23( LOGICAL )::operator ==( const SCLP23( LOGICAL )& t ) c
     return  LFalse ;
 }
 
-int
-SCLP23( LOGICAL )::set_value( const int i )  {
+int SCLP23( LOGICAL )::set_value( const int i )  {
     if( i > no_elements() + 1 )  {
         v = 2;
         return v;
@@ -175,14 +112,10 @@ SCLP23( LOGICAL )::set_value( const int i )  {
          << " for " <<  Name() << "\n";
     DebugDisplay();
     return  no_elements() + 1 ;
-//    return  ENUM_NULL ;
-
 }
 
-int
-SCLP23( LOGICAL )::set_value( const char * n )  {
+int SCLP23( LOGICAL )::set_value( const char * n )  {
     //  assigns the appropriate value based on n
-//    if  ( !n || (!strcmp (n, "")) )  return set_value (ENUM_NULL);
     if( !n || ( !strcmp( n, "" ) ) ) {
         nullify();
         return asInt();
@@ -197,16 +130,13 @@ SCLP23( LOGICAL )::set_value( const char * n )  {
     if( ( no_elements() + 1 ) == i ) { //  exhausted all the possible values
         nullify();
         return v;
-//  return set_value (ENUM_NULL);
     }
     v = i;
     return v;
-
 }
 
 
-Severity
-SCLP23( LOGICAL )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SCLP23( LOGICAL )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
                              int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -329,8 +259,7 @@ SCLP23( LOGICAL )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
 // class BOOLEAN  Jan 97
 ///////////////////////////////////////////////////////////////////////////////
 
-const char *
-SCLP23( BOOLEAN )::Name() const {
+const char * SCLP23( BOOLEAN )::Name() const {
     return "Bool";
 }
 
@@ -349,8 +278,7 @@ SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( const SCLP23_NAME( BOOLEAN )& source 
 SCLP23( BOOLEAN )::~SCLP23_NAME( BOOLEAN )() {
 }
 
-int
-SCLP23( BOOLEAN )::no_elements() const {
+int SCLP23( BOOLEAN )::no_elements() const {
     return 2;
 }
 
@@ -383,51 +311,17 @@ SCLP23( BOOLEAN )::operator  Boolean() const  {
     }
 }
 
-SCLP23( BOOLEAN ) &
-SCLP23( BOOLEAN )::operator= ( const SCLP23( LOGICAL )& t ) {
+SCLP23( BOOLEAN ) & SCLP23( BOOLEAN )::operator= ( const SCLP23( LOGICAL )& t ) {
     set_value( t.asInt() );
     return *this;
 }
 
-SCLP23( BOOLEAN ) &
-SCLP23( BOOLEAN )::operator= ( const  Boolean t ) {
+SCLP23( BOOLEAN ) & SCLP23( BOOLEAN )::operator= ( const  Boolean t ) {
     v = t;
     return *this;
 }
 
-#if 0
-
-SCLP23( BOOLEAN )::operator int () const  {
-// anything other than BFalse should return 1 according to Part 23
-    switch( v ) {
-        case  BFalse :
-            return 0;
-        case  BTrue :
-            return 1;
-        case  BUnset :  // BUnset or anything other than t or f should set
-            // error sdaiVA_NSET i.e. value unset
-        default:
-            return 1;
-    }
-}
-
-SCLP23( BOOLEAN )::operator  Logical() const  {
-    switch( v ) {
-        case  BFalse :
-            return  LFalse ;
-        case  BTrue :
-            return  LTrue ;
-        case  BUnset :
-            return  LUnset ;
-        default:
-            return  LUnknown ;
-    }
-}
-
-#endif
-
-const char *
-SCLP23( BOOLEAN )::element_at( int n )  const {
+const char * SCLP23( BOOLEAN )::element_at( int n )  const {
     switch( n )  {
         case  BFalse :
             return "F";
@@ -454,39 +348,38 @@ SCLP23( Enum )::SCLP23_NAME( Enum )() {
 SCLP23( Enum )::~SCLP23_NAME( Enum )() {
 }
 
-int
-SCLP23( Enum )::put( int val ) {
+/**
+ * \copydoc set_value( const char * n )
+ */
+int SCLP23( Enum )::put( int val ) {
     return set_value( val );
 }
 
-int
-SCLP23( Enum )::put( const char * n ) {
+/**
+ * \copydoc set_value( const char * n )
+ */
+int SCLP23( Enum )::put( const char * n ) {
     return set_value( n );
 }
 
-int
-SCLP23( Enum )::exists() const { // return 0 if unset otherwise return 1
+/// return 0 if unset otherwise return 1
+int SCLP23( Enum )::exists() const {
     return !( v > no_elements() );
 }
-
-void
-SCLP23( Enum )::nullify() // change the receiver to an unset status
-// unset is generated to be 1 greater than last element
-{
+/**
+ * change the receiver to an unset status
+ * unset is generated to be 1 greater than last element
+ */
+void SCLP23( Enum )::nullify() {
     set_value( no_elements() + 1 );
 }
 
-/******************************************************************
- ** Procedure:  DebugDisplay
- ** Parameters:  ostream& out
- ** Returns:
- ** Description:  prints out some information on the enumerated
- **               item for debugging purposes
- ** Side Effects:
+/**************************************************************//**
+ ** prints out some information on the enumerated item for
+ ** debugging purposes
  ** Status:  ok 2/1/91
  ******************************************************************/
-void
-SCLP23( Enum )::DebugDisplay( ostream & out ) const {
+void SCLP23( Enum )::DebugDisplay( ostream & out ) const {
     std::string tmp;
     out << "Current " << Name() << " value: " << endl
         << "  cardinal: " <<  v  << endl
@@ -504,22 +397,22 @@ SCLP23( Enum )::DebugDisplay( ostream & out ) const {
     out << "\n";
 }
 
-// Read an Enumeration value
-// ENUMERATION = "." UPPER { UPPER | DIGIT } "."
-// *note* UPPER is defined as alpha or underscore.
-// returns: Severity of the error.
-// error message and error Severity is written to ErrorDescriptor *err.
-// int AssignVal is:
-// true => value is assigned to the SCLP23(Enum);
-// true or false => value is read and appropriate error info is set and
-//  returned.
-// int needDelims is:
-// false => absence of the period delimiters is not an error;
-// true => delimiters must be valid;
-// true or false => non-matching delimiters are flagged as an error
-
-Severity
-SCLP23( Enum )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+/**
+** Read an Enumeration value
+** ENUMERATION = "." UPPER { UPPER | DIGIT } "."
+** *note* UPPER is defined as alpha or underscore.
+**
+** \returns Severity of the error.
+** \param err error message and error Severity is written to ErrorDescriptor *err.
+** \param AssignVal is:
+**  true => value is assigned to the SCLP23(Enum);
+**  true or false => value is read and appropriate error info is set and returned.
+** \param int needDelims is:
+**  false => absence of the period delimiters is not an error;
+**  true => delimiters must be valid;
+**  true or false => non-matching delimiters are flagged as an error
+*/
+Severity SCLP23( Enum )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
                           int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -638,17 +531,7 @@ SCLP23( Enum )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
     return err->severity();
 }
 
-/*
-Severity
-SCLP23(Enum)::StrToVal (const char * s)
-{
-    put (s);
-    return SEVERITY_NULL;
-}
-*/
-
-Severity
-SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
+Severity SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
     istringstream in( ( char * )s ); // sz defaults to length of s
 
     ReadEnum( in, err, 1, 0 );
@@ -659,16 +542,14 @@ SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int optional ) 
     return err->severity();
 }
 
-// reads an enumerated value in STEP file format
-Severity
-SCLP23( Enum )::STEPread( const char * s, ErrorDescriptor * err, int optional ) {
+/// reads an enumerated value in STEP file format
+Severity SCLP23( Enum )::STEPread( const char * s, ErrorDescriptor * err, int optional ) {
     istringstream in( ( char * )s );
     return STEPread( in, err, optional );
 }
 
-// reads an enumerated value in STEP file format
-Severity
-SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
+/// reads an enumerated value in STEP file format
+Severity SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
     ReadEnum( in, err, 1, 1 );
     if( ( err->severity() == SEVERITY_INCOMPLETE ) && optional ) {
         err->severity( SEVERITY_NULL );
@@ -677,21 +558,15 @@ SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
     return err->severity();
 }
 
-
-const char *
-SCLP23( Enum )::asStr( std::string & s ) const  {
-//    if (v != ENUM_NULL)
+const char * SCLP23( Enum )::asStr( std::string & s ) const  {
     if( exists() ) {
-//  s = elements[v];
         return const_cast<char *>( ( s = element_at( v ) ).c_str() );
-//  return s.c_str();
     } else {
         return "";
     }
 }
 
-void
-SCLP23( Enum )::STEPwrite( ostream & out )  const  {
+void SCLP23( Enum )::STEPwrite( ostream & out )  const  {
     if( is_null() ) {
         out << '$';
     } else {
@@ -700,8 +575,7 @@ SCLP23( Enum )::STEPwrite( ostream & out )  const  {
     }
 }
 
-const char *
-SCLP23( Enum )::STEPwrite( std::string & s ) const {
+const char * SCLP23( Enum )::STEPwrite( std::string & s ) const {
     if( is_null() ) {
         s.clear();
     } else {
@@ -713,27 +587,7 @@ SCLP23( Enum )::STEPwrite( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-//SCLP23(Enum)::SCLP23_NAME(Enum) (const char * const e)
-//:  elements (e)
-//{
-//}
-
-/******************************************************************
- ** Procedure:  set_elements
- ** Parameters:
- ** Returns:
- ** Description:
- ** Side Effects:
- ** Status:
- ******************************************************************/
-#ifdef OBSOLETE
-void
-SCLP23( Enum )::set_elements( const char * const e [] )  {
-    elements = e;
-}
-#endif
-Severity
-SCLP23( Enum )::EnumValidLevel( istream & in, ErrorDescriptor * err,
+Severity SCLP23( Enum )::EnumValidLevel( istream & in, ErrorDescriptor * err,
                                 int optional, char * tokenList,
                                 int needDelims, int clearError ) {
     if( clearError ) {
@@ -770,91 +624,26 @@ SCLP23( Enum )::EnumValidLevel( istream & in, ErrorDescriptor * err,
     return err->severity();
 }
 
-Severity
-SCLP23( Enum )::EnumValidLevel( const char * value, ErrorDescriptor * err,
+Severity SCLP23( Enum )::EnumValidLevel( const char * value, ErrorDescriptor * err,
                                 int optional, char * tokenList,
                                 int needDelims, int clearError ) {
     istringstream in( ( char * )value );
     return EnumValidLevel( in, err, optional, tokenList, needDelims,
                            clearError );
-    /*
-
-        char messageBuf[BUFSIZ];
-        messageBuf[0] = '\0';
-
-        if(attrValue)
-        {
-        int len = strlen (attrValue);
-        char *valstart = new char [len + 1];
-        char *val = valstart;
-
-        int numFound = sscanf(attrValue," %s", val);
-        if(numFound != EOF)
-        {
-            int i = 0;
-            if(val [0] == '.')  // strip the delims
-            {
-
-            val++;
-            char * pos = strchr(val, '.');
-            if (pos)
-                *pos = '\0';
-            else
-            {
-                err->AppendToDetailMsg(
-                "Missing ending period delimiter for enumerated value.\n");
-                err->AppendToUserMsg(
-                "Missing ending period delimiter for enumerated value.\n");
-                err->GreaterSeverity(SEVERITY_WARNING);
-            }
-            }
-
-            std::string tmp;
-            while((i < no_elements() ) &&
-            (strcmp( (char *)StrToUpper(val, tmp), element_at (i) ) != 0))
-            ++i;
-            if(no_elements() == i)  // exhausted all the possible values
-            {
-            err->GreaterSeverity(SEVERITY_WARNING);
-            sprintf(messageBuf,
-                "attribute %s: Invalid enumeration value: '%s'",
-                Name(), val);
-            err->AppendToUserMsg(messageBuf);
-            err->AppendToDetailMsg(messageBuf);
-    //      DebugDisplay ();
-            return SEVERITY_WARNING;
-            }
-            err->GreaterSeverity(SEVERITY_NULL);
-            return SEVERITY_NULL;
-        }
-        delete [] valstart;
-        }
-        if(optional)
-        {
-        err->GreaterSeverity(SEVERITY_NULL);
-        return SEVERITY_NULL;
-        }
-        else
-        {
-        err->GreaterSeverity(SEVERITY_INCOMPLETE);
-        return SEVERITY_INCOMPLETE;
-        }
-    */
 }
 
-/******************************************************************
- ** Procedure:  set_value
- ** Parameters:  char * n  OR  in i  -- value to be set
- ** Returns:  value set
- ** Description:  sets the value of an enumerated attribute
- **     case is not important in the character based version
- **     if value is not acceptable, a warning is printed and
- **     processing continues
- ** Side Effects:
- ** Status:  ok 2.91
- ******************************************************************/
-int
-SCLP23( Enum )::set_value( const char * n )  {
+/**************************************************************//**
+** sets the value of an enumerated attribute case is not important
+** in the character based version if value is not acceptable, a
+** warning is printed and processing continues
+**
+**  set_value is the same function as put
+** 
+** Parameter: value to be set
+** Status:  ok 2.91
+** \returns:  value set
+******************************************************************/
+int SCLP23( Enum )::set_value( const char * n )  {
     //  assigns the appropriate value based on n
 //    if  ( !n || (!strcmp (n, "")) )  return set_value (ENUM_NULL);
     if( !n || ( !strcmp( n, "" ) ) ) {
@@ -870,22 +659,16 @@ SCLP23( Enum )::set_value( const char * n )  {
     }
     if( no_elements() == i )  {   //  exhausted all the possible values
         return v = no_elements() + 1; // defined as UNSET
-//  return set_value (ENUM_NULL);
     }
     v = i;
     return v;
 
 }
 
-//  set_value is the same function as put
-int
-SCLP23( Enum )::set_value( const int i )  {
-    /*
-        if (i == ENUM_NULL)  {
-        v = ENUM_NULL;
-        return ENUM_NULL;
-        }
-    */
+/**
+ * \copydoc set_value( const char * n )
+ */
+int SCLP23( Enum )::set_value( const int i )  {
     if( i > no_elements() )  {
         v = no_elements() + 1;
         return v;
@@ -899,18 +682,15 @@ SCLP23( Enum )::set_value( const int i )  {
          << " for " <<  Name() << "\n";
     DebugDisplay();
     return  no_elements() + 1 ;
-//    return  ENUM_NULL ;
 
 }
 
-SCLP23( Enum ) &
-SCLP23( Enum )::operator= ( const int i ) {
+SCLP23( Enum ) & SCLP23( Enum )::operator= ( const int i ) {
     put( i );
     return *this;
 }
 
-SCLP23( Enum ) &
-SCLP23( Enum )::operator= ( const SCLP23( Enum )& Senum ) {
+SCLP23( Enum ) & SCLP23( Enum )::operator= ( const SCLP23( Enum )& Senum ) {
     put( Senum.asInt() );
     return *this;
 }
@@ -921,124 +701,3 @@ ostream & operator<< ( ostream & out, const SCLP23( Enum )& a ) {
     return out;
 
 }
-
-
-#ifdef pojoldStrToValNstepRead
-
-Severity
-SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
-    const char * sPtr = s;
-    while( isspace( *sPtr ) ) {
-        sPtr++;
-    }
-    if( *sPtr == '\0' ) {
-        if( optional ) {
-            err->GreaterSeverity( SEVERITY_NULL );
-            return SEVERITY_NULL;
-        } else {
-            err->GreaterSeverity( SEVERITY_INCOMPLETE );
-            return SEVERITY_INCOMPLETE;
-        }
-    } else if( *sPtr == '.' ) { // look for initial period delimiter
-        return STEPread( sPtr, err );
-    } else {
-        // look for ending period delimiter (an error)
-        char * periodLoc = strchr( sPtr, '.' );
-        if( periodLoc ) {
-            // found an ending period w/out initial period
-            char * tmp = new char[strlen( sPtr ) + 1];
-            strcpy( tmp, sPtr );
-            tmp[periodLoc - sPtr] = '\0'; // write over ending period
-            err->GreaterSeverity( SEVERITY_WARNING );
-            err->AppendToDetailMsg(
-                "Ending period delimiter without initial period delimiter.\n" );
-            err->AppendToUserMsg(
-                "Ending period delimiter without initial period delimiter.\n" );
-            delete [] tmp;
-            if( ValidLevel( sPtr, err, optional ) ) {
-                // remaining value is valid so assign it
-                put( tmp );
-                return SEVERITY_WARNING;
-            } else {
-                err->AppendToDetailMsg( "Invalid Enumerated value.\n" );
-                err->AppendToUserMsg( "Invalid Enumerated value.\n" );
-                return SEVERITY_WARNING;
-            }
-        }
-        // no surrounding delimiters
-        else if( ValidLevel( sPtr, err, optional ) ) {
-            // value is valid so assign it
-            put( sPtr );
-            return SEVERITY_NULL;
-        } else {
-            err->AppendToDetailMsg( "Invalid Enumerated value.\n" );
-            err->AppendToUserMsg( "Invalid Enumerated value.\n" );
-            return SEVERITY_WARNING;
-        }
-    }
-}
-
-
-Severity
-SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
-    char enumValue [BUFSIZ];
-    char c;
-    char errStr[BUFSIZ];
-    errStr[0] = '\0';
-
-    err->severity( SEVERITY_NULL ); // assume ok until error happens
-    in >> c;
-    switch( c ) {
-        case '.':
-            in.getline( enumValue, BUFSIZ, '.' ); // reads but does not store the .
-            /*
-              // gcc 2.3.3 - It does and should read the . It doesn't store it DAS 4/27/93
-                  char * pos = index(enumValue, '.');
-                  if (pos) *pos = '\0';
-                  //  NON-STANDARD (GNUism)  getline should not retrieve .
-                  //  function gcount is unavailable
-            */
-            if( in.fail() ) {
-                err->GreaterSeverity( SEVERITY_WARNING );
-                err->AppendToUserMsg(
-                    "Missing ending period delimiter for enumerated value.\n" );
-                err->AppendToDetailMsg(
-                    "Missing ending period delimiter for enumerated value.\n" );
-            }
-            if( ValidLevel( enumValue, err, optional ) == SEVERITY_NULL ) {
-                set_value( enumValue );
-            } else {
-                err->AppendToDetailMsg( "Invalid enumerated value.\n" );
-                err->GreaterSeverity( SEVERITY_WARNING );
-                set_value( ENUM_NULL );
-            }
-            break;
-
-        case ',':   // for next attribute or next aggregate value?
-        case ')':   // for end of aggregate value?
-        default:
-            in.putback( c );
-            set_value( ENUM_NULL );
-            if( optional ) {
-                err->GreaterSeverity( SEVERITY_NULL );
-            } else {
-                err->GreaterSeverity( SEVERITY_INCOMPLETE );
-            }
-            break;
-
-            /*
-                default:
-                  set_value (ENUM_NULL);
-                    // read didn't know what to do
-                  err->GreaterSeverity(SEVERITY_INPUT_ERROR);
-                  sprintf(errStr,
-                       "SCLP23(Enum)::STEPread(): warning : poorly delimited %s %s",
-                        Name(), "enumerated value was ignored.");
-                  err->AppendToDetailMsg(errStr);
-            */
-    }
-    return err->severity();
-}
-
-#endif
-

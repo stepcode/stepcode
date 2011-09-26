@@ -10,12 +10,8 @@
 * and is not subject to copyright.
 */
 
-/* $Id: STEPattributeList.cc,v 3.0.1.3 1997/11/05 21:59:26 sauderd DP3.1 $ */
-
 #include <STEPattributeList.h>
 #include <STEPattribute.h>
-
-//#include <stdlib.h>
 
 AttrListNode::AttrListNode( STEPattribute * a ) {
     attr = a;
@@ -44,7 +40,6 @@ STEPattribute & STEPattributeList::operator []( int n ) {
         return *( a->attr );
     }
 
-    // else
     cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
          << __LINE__ << "\n" << _POC_ << "\n\n";
     abort();

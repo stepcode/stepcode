@@ -37,29 +37,24 @@ SCLP23( Select )::~SCLP23_NAME( Select )() {
 }
 
 Severity SCLP23( Select )::severity() const {
-    /**  fn Severity  **/
     return _error.severity();
-}       /**  end function  **/
+}
 
 Severity  SCLP23( Select )::severity( Severity s ) {
-    /**  fn Severity  **/
     return _error.severity( s );
-}       /**  end function  **/
+}
 
 const std::string SCLP23( Select )::Error() {
-    /**  fn Error  **/
     return _error.DetailMsg();
-}       /**  end function  **/
+}
 
 void SCLP23( Select )::Error( const char * e ) {
-    /**  fn Error  **/
     _error.DetailMsg( e );
-}       /**  end function  **/
+}
 
 void  SCLP23( Select )::ClearError() {
-    /**  end function  **/
     _error.ClearErrorMsg();
-}       /**  end function  **/
+}
 
 const TypeDescriptor *
 SCLP23( Select )::CanBe( const char * n ) const {
@@ -132,8 +127,6 @@ SCLP23( Select )::SetUnderlyingType( const TypeDescriptor * td ) {
 }
 
 bool SCLP23( Select )::exists() const {
-    // instead of returning the address as 'true' or NULL as false, lets reduce
-    // this down to a bool.
     return underlying_type != NULL;
 }
 
@@ -141,17 +134,10 @@ void SCLP23( Select )::nullify() {
     underlying_type = 0;
 }
 
-Severity
-SCLP23( Select )::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
+Severity SCLP23( Select )::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
                                     InstMgr * im, int clearError ) {
     SCLP23( Select ) * tmp = NewSelect();
     Severity s = SEVERITY_NULL;
-
-//  COMMENTED OUT TO ALLOW FOR TYPE RESOLUTION WHEN TYPE CHANGES
-//  if (CurrentUnderlyingType ())
-//    s = tmp -> StrToVal
-//      (attrValue, CurrentUnderlyingType () -> Name (), err, im);
-//  else
 
     istringstream strtmp( attrValue );
     s = tmp -> STEPread( strtmp, err, im );
@@ -159,8 +145,7 @@ SCLP23( Select )::SelectValidLevel( const char * attrValue, ErrorDescriptor * er
     return s;
 }
 
-Severity
-SCLP23( Select )::StrToVal( const char * Val, const char * selectType,
+Severity SCLP23( Select )::StrToVal( const char * Val, const char * selectType,
                             ErrorDescriptor * err, InstMgr * instances ) {
     severity( SEVERITY_NULL );
     if( SetUnderlyingType( CanBe( selectType ) ) )
@@ -219,9 +204,10 @@ SCLP23( Select )::StrToVal( const char * Val, const char * selectType,
     return SEVERITY_INPUT_ERROR;
 }
 
-// updated to Technical Corrigendum. DAS 2/4/97
-Severity
-SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
+/** updated to Technical Corrigendum. DAS 2/4/97
+ * This function does the following:
+ */
+Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                             InstMgr * instances, const char * utype,
                             int addFileId, const char * currSch ) {
     char c = '\0';
@@ -233,11 +219,13 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
     // find out what case we have
     //  NOTE case C falls out of recursive calls in cases A and B
 
-    // This section of code is used to read a value belonging to a select
-    // contained in another select. If you have read the text part of the
-    // TYPED_PARAMETER and it needs to fall down thru some levels of contained
-    // select types, then the text is passed down to each select in the utype
-    // parameter as STEPread is called on each contained select type.DAS 2/4/97
+    /**
+    ** This section of code is used to read a value belonging to a select
+    ** contained in another select. If you have read the text part of the
+    ** TYPED_PARAMETER and it needs to fall down thru some levels of contained
+    ** select types, then the text is passed down to each select in the utype
+    ** parameter as STEPread is called on each contained select type.DAS 2/4/97
+    */
     if( utype ) {
         if( SetUnderlyingType( CanBeSet( utype, currSch ) ) ) {
             //  assign the value to the underlying type
@@ -256,23 +244,24 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
     }
     in >> ws;
     in >> c;
-//  c = in.peek();
 
-    // the if part of this code reads a value according to the Technical
-    // Corrigendum for Part 21 (except for Entity instance refs which are read
-    // in the else part - everything else in the else stmt is invalid). The
-    // idea here is to read text and find out if it is specifying the final
-    // type or is a simple defined type which is typed to be a select some
-    // number of levels down. The first case will cause the value to be read
-    // directly by STEPread_content() or will cause STEPread_content() to pass
-    // the text naming the type to the underlying Select containing it. When
-    // the latter is the case, STEPread_content calls STEPread for the
-    // contained select and passes in the text. The convoluted case is when
-    // the text describes a simple defined type that translates directly into
-    // a select some number of levels down. In this case there will be more
-    // text inside the containing parens to indicate the type. Since the text
-    // specifying the type still needs to be read utype is passed as null which
-    // will cause the contained Select STEPread function to read it. DAS 2/4/97
+    /**
+    ** the if part of this code reads a value according to the Technical
+    ** Corrigendum for Part 21 (except for Entity instance refs which are read
+    ** in the else part - everything else in the else stmt is invalid). The
+    ** idea here is to read text and find out if it is specifying the final
+    ** type or is a simple defined type which is typed to be a select some
+    ** number of levels down. The first case will cause the value to be read
+    ** directly by STEPread_content() or will cause STEPread_content() to pass
+    ** the text naming the type to the underlying Select containing it. When
+    ** the latter is the case, STEPread_content calls STEPread for the
+    ** contained select and passes in the text. The convoluted case is when
+    ** the text describes a simple defined type that translates directly into
+    ** a select some number of levels down. In this case there will be more
+    ** text inside the containing parens to indicate the type. Since the text
+    ** specifying the type still needs to be read utype is passed as null which
+    ** will cause the contained Select STEPread function to read it. DAS 2/4/97
+    */
 
     if( isalpha( c ) ) { //  case B
         int eot = 0; // end of token flag
@@ -288,34 +277,40 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
 
         //  check for valid type and set the underlying type
         if( SetUnderlyingType( CanBeSet( tmp.c_str(), currSch ) ) ) {
-            // Assign the value to the underlying type.  CanBeSet() is a
-            // slightly modified CanBe().  It ensures that a renamed select
-            // type (see big comment below) "CantBe" one of its member items.
-            // This is because such a select type requires its own name to
-            // appear first ("selX("), so even if we read a valid element of
-            // selX, selX can't be the underlying type.  That can only be the
-            // case if "selX" appears first and is what we just read.
+            /**
+            ** Assign the value to the underlying type.  CanBeSet() is a
+            ** slightly modified CanBe().  It ensures that a renamed select
+            ** type (see big comment below) "CantBe" one of its member items.
+            ** This is because such a select type requires its own name to
+            ** appear first ("selX("), so even if we read a valid element of
+            ** selX, selX can't be the underlying type.  That can only be the
+            ** case if "selX" appears first and is what we just read.
+            */
             in >> ws; // skip white space
             if( ( underlying_type->Type() == REFERENCE_TYPE ) &&
                     ( underlying_type->NonRefType() == sdaiSELECT ) ) {
-                // This means (1) that the underlying type is itself a select
-                // (cond 2), and (2) it's not defined in the EXPRESS as a
-                // select, but as a renamed select.  (E.g., TYPE sel2 = sel1.)
-                // In such a case, according to the TC, "sel2(" must appear in
-                // the text.  (We must have found one for SetUnderlyingType()
-                // above to set underlying_type to sel2.)  If all of the above
-                // is true, we read "sel2" but not the value of sel2.  We
-                // therefore do not pass down what we read to STEPread_content
-                // below, so that we can still read the value of sel2.  If,
-                // however, under_type was a non-renamed select, no "sel1"
-                // would appear (according to TC) and we already read the value
-                // of sel1.  If so, we pass the already-read value down.
+                /**
+                 * This means (1) that the underlying type is itself a select
+                ** (cond 2), and (2) it's not defined in the EXPRESS as a
+                ** select, but as a renamed select.  (E.g., TYPE sel2 = sel1.)
+                ** In such a case, according to the TC, "sel2(" must appear in
+                ** the text.  (We must have found one for SetUnderlyingType()
+                ** above to set underlying_type to sel2.)  If all of the above
+                ** is true, we read "sel2" but not the value of sel2.  We
+                ** therefore do not pass down what we read to STEPread_content
+                ** below, so that we can still read the value of sel2.  If,
+                ** however, under_type was a non-renamed select, no "sel1"
+                ** would appear (according to TC) and we already read the value
+                ** of sel1.  If so, we pass the already-read value down.
+                 */
                 STEPread_content( in, instances, 0, addFileId, currSch );
             } else {
-                // In most cases (see above note), we've already read the value
-                // we're interested in.
-                // This also handles all other cases? other than the if part
-                // above and elements of type entity ref?
+                /**
+                ** In most cases (see above note), we've already read the value
+                ** we're interested in.
+                ** This also handles all other cases? other than the if part
+                ** above and elements of type entity ref?
+                */
                 STEPread_content( in, instances, tmp.c_str(), addFileId,
                                   currSch );
                 // STEPread_content uses the ErrorDesc data member from the
@@ -356,13 +351,15 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
             }
         }
     }
-// NOTE **** anything that gets read below here is invalid according to the
-// Technical Corrigendum for Part 21 (except for reading an entity instance
-// where below is the only place they get read). I am leaving all of this
-// here since it is valuable to 'read what you can' and flag an error which
-// is what it does (for every type but entity instance refs). DAS 2/4/97
+    /**
+    ** NOTE **** anything that gets read below here is invalid according to the
+    ** Technical Corrigendum for Part 21 (except for reading an entity instance
+    ** where below is the only place they get read). I am leaving all of this
+    ** here since it is valuable to 'read what you can' and flag an error which
+    ** is what it does (for every type but entity instance refs). DAS 2/4/97
+    */
 
-    else { // case A
+    else { /// case A
         switch( c ) {
             case '$':
                 nullify();
@@ -515,9 +512,8 @@ SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
 }
 
 
-// updated to Technical Corrigendum DAS Feb 4, 1997
-void
-SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
+/// updated to Technical Corrigendum DAS Feb 4, 1997
+void SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
     if( !exists() ) {
         out << "$";
         return;

@@ -12,10 +12,7 @@
 * and is not subject to copyright.
 */
 
-/* $Id: Registry.h,v 3.0.1.7 1997/11/05 21:59:19 sauderd DP3.1 $  */ 
-
 #include <sdai.h>
-//#include <STEPentity.h>
 #include <errordesc.h>
 #include <scl_hash.h>
 #include <Str.h>
@@ -52,7 +49,7 @@ class Registry {
     void DeleteContents ();  // CAUTION: calls delete on all the descriptors 
 
     const EntityDescriptor* FindEntity (const char *, const char * =0,
-					int check_case =0) const;
+                                        int check_case =0) const;
     const Schema* FindSchema (const char *, int check_case =0) const;
     const TypeDescriptor*   FindType   (const char *, int check_case =0) const;
     
@@ -80,7 +77,7 @@ class Registry {
     void        SetCompCollect( ComplexCollect *c ) { col = c; }
 
     SCLP23(Application_instance)* ObjCreate (const char * nm, const char * =0,
-			   int check_case =0) const;
+                           int check_case =0) const;
 };
 
 #endif  /*  _REGISTRY_H  */

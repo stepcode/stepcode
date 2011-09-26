@@ -17,32 +17,29 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-/*
-extern "C"
-{
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-}
-*/
 #include "Str.h"
 
 #define FALSE     0
 #define TRUE      1
 #define LISTEND 999
-// LISTEND signifies that an OrList has gone beyond its last viable choice
-// among its children.
+/** \def LISTEND
+ * signifies that an OrList has gone beyond its last viable choice
+ * among its children. FIXME is 999 high enough? Maybe use -1?
+ */
 
 enum MarkType {
     NOMARK, ORMARK, MARK
 };
+/** \enum MarkType
 // MARK is the usual value we'd mark with.  If we mark with ORMARK, it means
 // an OrList marked this node, so we'll know it may become unmarked later if
 // we try another choice.
+*/
 
 enum MatchType {
     UNKNOWN, UNSATISFIED, SATISFIED, MATCHSOME, MATCHALL, NEWCHOICE, NOMORE
 };
+/** \enum MatchType
 // These are the conditions the EntList::match() functions may return.  They
 // are also the assigned values to EntList::viable.
 //
@@ -61,6 +58,7 @@ enum MatchType {
 //                  value signifies that we have found another choice.
 //    NOMORE      - Special case - when trying alternate OR paths, this return
 //                  value signifies that no more alternates within this path.
+*/
 
 enum JoinType {
     SIMPLE, AND, OR, ANDOR
@@ -85,8 +83,8 @@ class EntNode {
   public:
     EntNode( const char *nm="" ) : next(0), mark(NOMARK), multSupers(0)
         { StrToLower( nm, name ); }
-    EntNode( const char ** );                // given a list, create a 
-    ~EntNode() { if ( next ) delete next; }  // linked list of EntNodes
+    EntNode( const char ** );                ///< given a list, create a linked list of EntNodes
+    ~EntNode() { if ( next ) delete next; }
     operator const char *() { return name; }
     int operator== ( EntNode &ent )
         { return ( strcmp( name, ent.name ) == 0 ); }
@@ -101,7 +99,7 @@ class EntNode {
     void markAll( MarkType=MARK );
     void unmarkAll() { markAll( NOMARK ); }
     int  marked( MarkType base=ORMARK ) { return ( mark >= base ); }
-    int  allMarked();  // returns TRUE if all nodes in list are marked
+    int  allMarked();  ///< returns TRUE if all nodes in list are marked
     int  unmarkedCount();
     int  multSuprs() { return multSupers; }
     void multSuprs( int j ) { multSupers = j; }
@@ -112,8 +110,8 @@ class EntNode {
   private:
     MarkType mark;
     char name[BUFSIZ];
-    int multSupers;  // do I correspond to an entity with >1 supertype?
-    EntNode *lastSmaller( EntNode * );  // used by ::sort()
+    int multSupers;  ///< do I correspond to an entity with >1 supertype?
+    EntNode *lastSmaller( EntNode * );  ///< used by ::sort()
 };
 
 class EntList {
@@ -157,12 +155,14 @@ class EntList {
 
   protected:
     MatchType viable;
-      // How does this EntList match the complex type.  Used especially if Ent-
-      // List's parent is an OrList or AndOrList to record if this child is an
-      // acceptable choice or not.  For an AndOr, viable children are accepted
-      // right away.  For Or, only one is accepted, but we keep track of the
-      // other possible solutions in case we'll want to try them.
-    int level;  // How many levels deep are we (main use for printing).
+    /** \var viable
+     * How does this EntList match the complex type.  Used especially if Ent-
+     * List's parent is an OrList or AndOrList to record if this child is an
+     * acceptable choice or not.  For an AndOr, viable children are accepted
+     * right away.  For Or, only one is accepted, but we keep track of the
+     * other possible solutions in case we'll want to try them.
+     */
+    int level;  ///< How many levels deep are we (main use for printing).
 };
 
 class SimpleList : public EntList {
@@ -184,13 +184,15 @@ class SimpleList : public EntList {
     void reset() { viable = UNKNOWN; I_marked = NOMARK; }
 
   private:
-    char name[BUFSIZ];    // Name of entity we correspond to.
-    MarkType I_marked; // Did I mark, and with what type of mark.
+    char name[BUFSIZ];    ///< Name of entity we correspond to.
+    MarkType I_marked; ///< Did I mark, and with what type of mark.
 };
 
+/** \class MultList
+ * Supports concepts and functionality common to all the compound list
+ * types, especially AND and ANDOR.
+ */
 class MultList : public EntList {
-    // Supports concepts and functionality common to all the compound list
-    // types, especially AND and ANDOR.
 
     friend class ComplexList;
     friend class ComplexCollect;
@@ -209,7 +211,6 @@ class MultList : public EntList {
     virtual MatchType tryNext( EntNode * );
 
     int childCount() { return numchildren; }
-//  EntList *operator[]( int );
     EntList *getChild( int );
     EntList *getLast() { return ( getChild( numchildren-1 ) ); }
     void unmarkAll( EntNode * );
@@ -217,18 +218,22 @@ class MultList : public EntList {
     void reset();
 
   protected:
-    int supertype;  // do I represent a supertype?
+    int supertype;  ///< do I represent a supertype?
     int numchildren;
     EntList *childList;
-      // Points to a list of "children" of this EntList.  E.g., if join = 
-      // AND, it would point to a list of the entity types we are AND'ing.
-      // The children may be SIMPLE EntLists (contain entity names) or may
-      // themselves be And-, Or-, or AndOrLists.
+      /** \var childList
+       * Points to a list of "children" of this EntList.  E.g., if join =
+       * AND, it would point to a list of the entity types we are AND'ing.
+       * The children may be SIMPLE EntLists (contain entity names) or may
+       * themselves be And-, Or-, or AndOrLists.
+       */
 };
 
+/** \class JoinList
+ * A specialized MultList, super for subtypes AndOrList and AndList, or
+ * ones which join their multiple children.
+ */
 class JoinList : public MultList {
-    // A specialized MultList, super for subtypes AndOrList and AndList, or
-    // ones which join their multiple children.
   public:
     JoinList( JoinType j ) : MultList(j) {}
     ~JoinList() {}
@@ -271,15 +276,16 @@ class OrList : public MultList {
     void reset() { choice = -1; choice1 = -2; choiceCount = 0; MultList::reset(); }
 
   private:
-    int choice, choice1, choiceCount;
-      // Which choice of our childList did we select from this OrList; what's
-      // the first viable choice; and how many choices are there entirely.
+    int choice;      ///< Which choice of our childList did we select from this OrList
+    int choice1;     ///< what's the first viable choice
+    int choiceCount; ///< how many choices are there entirely.
 };
 
+/** \class ComplexList
+ * Contains the entire list of EntLists which describe the set of
+ * instantiable complex entities defined by an EXPRESS expression.
+ */
 class ComplexList {
-    // Contains the entire list of EntLists which describe the set of
-    // instantiable complex entities defined by an EXPRESS expression.
-
     friend class ultList;
     friend class ComplexCollect;
     friend ostream & operator<< ( ostream &, ComplexList & );
@@ -298,15 +304,18 @@ class ComplexList {
     int operator== ( char *name )
         { return ( strcmp( supertype(), name ) == 0 ); }
     const char *supertype() { return ((SimpleList *)head->childList)->name; }
-      // Based on knowledge that ComplexList always created by ANDing supertype
-      // with subtypes.
+      /** \fn supertype
+       * Based on knowledge that ComplexList always created by ANDing supertype
+       * with subtypes.
+       */
     int toplevel( const char * );
     int contains( EntNode * );
     int matches( EntNode * );
 
-    EntNode *list; // List of all entities contained in this complex type,
-                   // regardless of how.  (Used as a quick way of determining
-                   // if this List *may* contain a certain complex type.)
+    EntNode *list; /**< List of all entities contained in this complex type,
+                    *   regardless of how.  (Used as a quick way of determining
+                    *   if this List *may* contain a certain complex type.)
+                    */
     AndList *head;
     ComplexList *next;
     int Dependent() { return dependent; }
@@ -314,28 +323,26 @@ class ComplexList {
   private:
     void addChildren( EntList * );
     int hitMultNodes( EntNode * );
-    int abstract;   // is our supertype abstract?
-    int dependent;  // is our supertype also a subtype of other supertype(s)?
-    int multSupers; // am I a combo-CList created to test a subtype which has
-};                  // >1 supertypes?
+    int abstract;   ///< is our supertype abstract?
+    int dependent;  ///< is our supertype also a subtype of other supertype(s)?
+    int multSupers; ///< am I a combo-CList created to test a subtype which has >1 supertypes?
+};
 
+/// The collection of all the ComplexLists defined by the current schema.
 class ComplexCollect {
-    // The collection of all the ComplexLists defined by the current schema.
   public:
     ComplexCollect( ComplexList *c = NULL ) : clists(c)
         { count = ( c ? 1 : 0 ); }
     ~ComplexCollect() { delete clists; }
     void insert( ComplexList * );
-    void remove( ComplexList * );
-      // Remove this list but don't delete its hierarchy structure, because
-      // it's used elsewhere.
+    void remove( ComplexList * ); ///< Remove this list but don't delete its hierarchy structure, because it's used elsewhere.
     ComplexList *find( char * );
     int supports( EntNode * ) const;
 
     ComplexList *clists;
 
   private:
-    int count;  // # of clist children
+    int count;  ///< # of clist children
 };
 
 #endif

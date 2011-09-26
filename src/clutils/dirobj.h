@@ -38,8 +38,6 @@
 #include <string.h>
 #include <sys/param.h>
 
-#include <scldir.h>
-
 #include <string>
 
 

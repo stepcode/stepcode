@@ -1,5 +1,5 @@
-/*****************************************************************************
- * entlist.cc                                                                *
+/*************************************************************************//**
+ * entlist.cc     \class EntList                                             *
  *                                                                           *
  * Description: EntList is a class type which supports the concept of com-   *
  *              plex inheritance.  EntLists capture information on the       *
@@ -15,12 +15,11 @@
 
 #include "complexSupport.h"
 
-int EntList::siblings()
-/*
+/**
  * Returns the number of EntLists in this's list (EntList->next, next->next
  * etc.) including this.
  */
-{
+int EntList::siblings() {
     int count;
     EntList * el;
 
@@ -30,11 +29,10 @@ int EntList::siblings()
     return count;
 }
 
-EntList * EntList::firstNot( JoinType j )
-/*
+/**
  * Returns the first EntList not of type join, starting from this.
  */
-{
+EntList * EntList::firstNot( JoinType j ) {
     EntList * sibling = this;
 
     while( sibling != NULL && sibling->join == j ) {
@@ -43,11 +41,10 @@ EntList * EntList::firstNot( JoinType j )
     return sibling;  // (may = NULL)
 }
 
-EntList * EntList::firstWanted( MatchType match )
-/*
+/**
  * Returns the first EntList where viable = match, starting from this.
  */
-{
+EntList * EntList::firstWanted( MatchType match ) {
     EntList * sibling = this;
 
     while( sibling != NULL && sibling->viable != match ) {
@@ -56,12 +53,11 @@ EntList * EntList::firstWanted( MatchType match )
     return sibling;  // (may = NULL)
 }
 
-EntList * EntList::lastNot( JoinType j )
-/*
+/**
  * Returns the last EntList not of type join, searching backwards from
  * this.
  */
-{
+EntList * EntList::lastNot( JoinType j ) {
     EntList * sibling = this;
 
     while( sibling != NULL && sibling->join == j ) {
@@ -70,12 +66,11 @@ EntList * EntList::lastNot( JoinType j )
     return sibling;  // (may = NULL)
 }
 
-EntList * EntList::lastWanted( MatchType match )
-/*
+/**
  * Returns the last EntList where viable = match, searching backwards from
  * this.
  */
-{
+EntList * EntList::lastWanted( MatchType match ) {
     EntList * sibling = this;
 
     while( sibling != NULL && sibling->viable != match ) {
@@ -85,12 +80,11 @@ EntList * EntList::lastWanted( MatchType match )
 }
 
 
-void SimpleList::unmarkAll( EntNode * ents )
-/*
+/**
  * Unmarks the node that was marked by this List.  Normally called when
  * undoing an OR choice to try out another.
  */
-{
+void SimpleList::unmarkAll( EntNode * ents ) {
     EntNode * eptr = ents;
     int comp = -1;
 
@@ -111,14 +105,13 @@ void SimpleList::unmarkAll( EntNode * ents )
     I_marked = NOMARK;
 }
 
-int SimpleList::acceptChoice( EntNode * ents )
-/*
+/**
  * Marks whichever node we can mark.  We assume there is a match because
  * this function is only called by a parent MultList if its child had a
  * viable val of MATCHSOME.  Return TRUE if we mark a previously unmarked
  * node; otherwise FALSE.
  */
-{
+int SimpleList::acceptChoice( EntNode * ents ) {
     EntNode * eptr = ents;
     int comp;
 
