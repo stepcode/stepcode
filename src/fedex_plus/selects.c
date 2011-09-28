@@ -770,21 +770,21 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
     fprintf( f, "typedef %s_ptr %s_var;\n\n", n, n );
 
     /*  print things for aggregate class  */
-    fprintf( f, "\nclass %ss : public SelectAggregate {\n", n );
+    fprintf( f, "\nclass %s_agg : public SelectAggregate {\n", n );
     fprintf( f, "  protected:\n" );
     fprintf( f, "    SelectTypeDescriptor *sel_type;\n\n" );
     fprintf( f, "  public:\n" );
-    fprintf( f, "    %ss( SelectTypeDescriptor * =%s );\n", n, tdnm );
-    fprintf( f, "    ~%ss();\n", n );
+    fprintf( f, "    %s_agg( SelectTypeDescriptor * =%s );\n", n, tdnm );
+    fprintf( f, "    ~%s_agg();\n", n );
     fprintf( f, "    virtual SingleLinkNode * NewNode()\n" );
     fprintf( f, "\t { return new SelectNode (new %s( sel_type )); }\n", n );
     fprintf( f, "};\n" );
 
     /* DAS creation function for select aggregate class */
-    fprintf( f, "inline STEPaggregate * create_%ss () { return new %ss; }\n",
+    fprintf( f, "inline STEPaggregate * create_%s_agg () { return new %s_agg; }\n",
              n, n );
 
-    fprintf( f, "typedef %ss_ptr %ss_var;\n", n, n );
+    fprintf( f, "typedef %s_agg_ptr %s_agg_var;\n", n, n );
 
     fprintf( f, "\n/////  END SELECT TYPE %s\n\n", TYPEget_name( type ) );
 
@@ -918,9 +918,9 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     fprintf( f, "%s::~%s()\n{\n", n, n );
     fprintf( f, "}\n\n" );
 
-    fprintf( f, "%ss::%ss( SelectTypeDescriptor *s)\n"
+    fprintf( f, "%s_agg::%s_agg( SelectTypeDescriptor *s)\n"
              "  : SelectAggregate(), sel_type(s)\n{\n}\n\n", n, n );
-    fprintf( f, "%ss::~%ss() { }\n\n", n, n );
+    fprintf( f, "%s_agg::~%s_agg() { }\n\n", n, n );
 #undef schema_name
 }
 
@@ -1054,20 +1054,18 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
         {
             /*  for the select items which have the current attribute  */
-
-            /* if ( !multiple_inheritance ) { */
-            if( !memberOfEntPrimary( ent, uattr ) ) {
-                /* If multiple inheritance is not supported, we must addi-
-                   tionally check that uattr is a member of the entity's
-                   primary inheritance path (i.e., the entity, its first
-                   supertype, the super's first super, etc).  The above
-                   `if' is commented out, because currently mult inher is
-                   not supported to the extent of handling accessor func-
-                   tions for non-primary supertypes. */
-                continue;
+            if ( !multiple_inheritance ) {
+                if( !memberOfEntPrimary( ent, uattr ) ) {
+                    /* If multiple inheritance is not supported, we must addi-
+                    tionally check that uattr is a member of the entity's
+                    primary inheritance path (i.e., the entity, its first
+                    supertype, the super's first super, etc).  The above
+                    `if' is commented out, because currently mult inher is
+                    not supported to the extent of handling accessor func-
+                    tions for non-primary supertypes. */
+                    continue;
+                }
             }
-            /* } */
-
             if( ! VARis_derived( uattr ) )  {
 
                 if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) )  {
@@ -1079,6 +1077,13 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
                     /*  if the underlying type is that item\'s type
                     call the underlying_item\'s member function  */
+                    // if it is the same attribute
+                    if ( VARis_overrider( ENT_TYPEget_entity( t ), uattr )) {
+                        // update attribute_func_name because is has been overrid
+                        generate_attribute_func_name( uattr, funcnm );
+                    } else {
+                        generate_attribute_func_name( a, funcnm );
+                    }
                     fprintf( f,
                              "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
                              TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
@@ -1143,6 +1148,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
         ATTRprint_access_methods_put_head( classnm, a, f );
         fprintf( f, "{\n" );
         LISTdo( items, t, Type )
+
         if( TYPEis_entity( t ) &&
                 ( uattr = ENTITYget_named_attribute(
                               ( ent = ENT_TYPEget_entity( t ) ),
@@ -1151,12 +1157,12 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
         {
             /*  for the select items which have the current attribute  */
 
-            /* if ( !multiple_inheritance ) { */
+             if ( !multiple_inheritance ) {
             if( !memberOfEntPrimary( ent, uattr ) ) {
                 /* See note for similar code segment in 1st part of fn. */
                 continue;
             }
-            /* } */
+             }
 
             if( ! VARis_derived( uattr ) )  {
 
@@ -1167,19 +1173,29 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
                     /*  if the underlying type is that item\'s type
                         call the underlying_item\'s member function  */
+                    // if it is the same attribute
+                    if ( VARis_overrider( ENT_TYPEget_entity( t ), uattr )) {
+                        // update attribute_func_name because is has been overrid
+                        generate_attribute_func_name( uattr, funcnm );
+                    } else {
+                        generate_attribute_func_name( a, funcnm );
+                    }
+
                     strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
                     fprintf( f,
-                             "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
-                             TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
+                            "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
+                            TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
                     fprintf( f, "\t{  ((%s) _%s) ->%s( x );\n\t  return;\n\t}\n",
-                             uent, SEL_ITEMget_dmname( t ),  funcnm );
+                            uent, SEL_ITEMget_dmname( t ),  funcnm );
                 } else   /*  warning printed above  */
                     fprintf( f, "  //  for %s  attribute access function"
                              " has a different argument type\n",
                              SEL_ITEMget_enumtype( t ) );
-            } else /*  derived attributes  */
+            } else {
+                /*  derived attributes  */
                 fprintf( f, "  //  for %s  attribute is derived\n",
                          SEL_ITEMget_enumtype( t ) );
+            }
         }
         LISTod;
         PRINT_SELECTBUG_WARNING( f );
@@ -1993,8 +2009,8 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
         // give the user an easy way to create the renamed type properly. */
         fprintf( inc, "inline SCLP23(Select) *\ncreate_%s ()", nm );
         fprintf( inc, " { return new %s( %s ); }\n\n", nm, tdnm );
-        fprintf( inc, "inline STEPaggregate *\ncreate_%ss ()", nm );
-        fprintf( inc, " { return new %ss( %s ); }\n\n", nm, tdnm );
+        fprintf( inc, "inline STEPaggregate *\ncreate_%s_agg ()", nm );
+        fprintf( inc, " { return new %s_agg( %s ); }\n\n", nm, tdnm );
         return;
     }
 

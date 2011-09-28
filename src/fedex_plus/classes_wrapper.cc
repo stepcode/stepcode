@@ -377,9 +377,9 @@ PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
         fprintf( files->inc,
                  "typedef %s * %s_ptr;\ntypedef %s_ptr %s_var;\n\n",
                  nm, nm, nm, nm );
-        fprintf( files->inc, "class %ss;\ntypedef %ss * %ssH;\n", nm, nm, nm );
+        fprintf( files->inc, "class %s_agg;\ntypedef %s_agg * %s_aggH;\n", nm, nm, nm );
         fprintf( files->inc,
-                 "typedef %ss * %ss_ptr;\ntypedef %ss_ptr %ss_var;\n\n",
+                 "typedef %s_agg * %s_agg_ptr;\ntypedef %s_agg_ptr %s_agg_var;\n\n",
                  nm, nm, nm, nm );
     }
     SCOPEod;
