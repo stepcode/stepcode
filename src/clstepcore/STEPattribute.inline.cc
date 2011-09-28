@@ -14,117 +14,108 @@
 #include <sdai.h>
 #include <ExpDict.h>
 
-//  This is needed so that STEPattribute's can be passed as
-//  references to inline functions
-
+///  This is needed so that STEPattribute's can be passed as references to inline functions
 STEPattribute::STEPattribute( const STEPattribute & a )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( a.aDesc ) {}
 
-//  INTEGER
+///  INTEGER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Integer ) *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )  {
     ptr.i = p;
 }
 
-//  BINARY
+///  BINARY
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Binary ) *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.b = p;
 }
 
-//  STRING
+///  STRING
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( String ) *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.S = p;
 }
 
-//  REAL & NUMBER
+///  REAL & NUMBER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Real ) *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.r = p;
 }
 
-//  ENTITY
+///  ENTITY
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               SCLP23( Application_instance )* *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.c = p;
 }
 
-//  AGGREGATE
+///  AGGREGATE
 STEPattribute::STEPattribute( const class AttrDescriptor & d, STEPaggregate * p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.a =  p;
 }
 
-//  ENUMERATION  and Logical
+///  ENUMERATION  and Logical
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Enum ) *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.e = p;
 }
 
-//  SELECT
+///  SELECT
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               class SCLP23( Select ) *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d )  {
     ptr.sh = p;
 }
 
-//  UNDEFINED
+///  UNDEFINED
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )   {
     ptr.u = p;
 }
 
 
-// name is the same even if redefined
-const char *
-STEPattribute::Name() const {
+/// name is the same even if redefined
+const char * STEPattribute::Name() const {
     return aDesc->Name();
 }
 
-const char *
-STEPattribute::TypeName() const {
+const char * STEPattribute::TypeName() const {
     if( _redefAttr )  {
         return _redefAttr->TypeName();
     }
     return aDesc->TypeName();
 }
 
-const BASE_TYPE
-STEPattribute::Type() const {
+const BASE_TYPE STEPattribute::Type() const {
     if( _redefAttr )  {
         return _redefAttr->Type();
     }
     return aDesc->Type();
 }
 
-const BASE_TYPE
-STEPattribute::NonRefType() const {
+const BASE_TYPE STEPattribute::NonRefType() const {
     if( _redefAttr )  {
         return _redefAttr->NonRefType();
     }
     return aDesc->NonRefType();
 }
 
-const BASE_TYPE
-STEPattribute::BaseType() const {
+const BASE_TYPE STEPattribute::BaseType() const {
     if( _redefAttr )  {
         return _redefAttr->BaseType();
     }
     return aDesc->BaseType();
 }
 
-const TypeDescriptor *
-STEPattribute::ReferentType() const {
+const TypeDescriptor * STEPattribute::ReferentType() const {
     if( _redefAttr )  {
         return _redefAttr->ReferentType();
     }
     return aDesc->ReferentType();
 }
 
-int
-STEPattribute::Nullable() const {
+int STEPattribute::Nullable() const {
     if( _redefAttr )  {
         return _redefAttr->Nullable();
     }

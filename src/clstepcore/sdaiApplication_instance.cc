@@ -18,42 +18,35 @@
 
 SCLP23( Application_instance ) NilSTEPentity;
 
-/******************************************************************
-**    Functions for manipulating entities
-
+/**************************************************************//**
+** \file sdaiApplication_instance.cc  Functions for manipulating entities
+**
 **  KNOWN BUGs:  the SCLP23(Application_instance) is not aware of the STEPfile;
 **    therefore it can not read comments which may be embedded in the instance.
 **    The following are known problems:
 **    -- does not handle comments embedded in an instance ==> bombs
 **    -- ignores embedded entities ==> does not bomb
 **    -- error reporting does not include line number information
-**/
+*/
 
 SCLP23( Application_instance )::SCLP23_NAME( Application_instance )()
-    :  _cur( 0 ), STEPfile_id( 0 ), p21Comment( 0 ), headMiEntity( 0 ), nextMiEntity( 0 ),
+    :  _cur( 0 ), STEPfile_id( 0 ), headMiEntity( 0 ), nextMiEntity( 0 ),
        _complex( 0 ) {
 }
 
 SCLP23( Application_instance )::SCLP23_NAME( Application_instance )( int fileid, int complex )
-    :  _cur( 0 ), STEPfile_id( fileid ), p21Comment( 0 ),
-       headMiEntity( 0 ), nextMiEntity( 0 ), _complex( complex ) {
+    :  _cur( 0 ), STEPfile_id( fileid ), headMiEntity( 0 ), nextMiEntity( 0 ), _complex( complex ) {
 }
 
 SCLP23( Application_instance )::~SCLP23_NAME( Application_instance )() {
-//     STEPattribute * next = 0;
     ResetAttributes();
-//     while( ( next = NextAttribute() ) ) {
-//         delete next; //FIXME: causes SIGABRT double free or corruption
-//     }
 
     if( MultipleInheritance() ) {
         delete nextMiEntity;
     }
-    delete p21Comment;
 }
 
-SCLP23( Application_instance ) *
-SCLP23( Application_instance )::Replicate() {
+SCLP23( Application_instance ) * SCLP23( Application_instance )::Replicate() {
     char errStr[BUFSIZ];
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
@@ -73,52 +66,40 @@ SCLP23( Application_instance )::Replicate() {
     }
 }
 
-void SCLP23( Application_instance )::AddP21Comment( const char * s, int replace ) {
+void SCLP23( Application_instance )::AddP21Comment( const char * s, bool replace ) {
     if( replace ) {
-        delete p21Comment;
-        p21Comment = 0;
+        p21Comment.clear();
     }
     if( s ) {
-        if( !p21Comment ) {
-            p21Comment = new std::string( "" );
-        } else {
-            p21Comment->clear();
-        }
-        p21Comment->append( s );
+        //NOTE MAP Sept 2011 - originally, this cleared and then appended -
+        // I don't think that's right, since it makes 'replace' useless
+        //Also, function name contains 'Add', not 'Set'
+        p21Comment.append( s );
     }
 }
 
-void
-SCLP23( Application_instance )::AddP21Comment( std::string & s, int replace ) {
+void SCLP23( Application_instance )::AddP21Comment( const std::string & s, bool replace ) {
     if( replace ) {
-        delete p21Comment;
-        p21Comment = 0;
+        p21Comment.clear();
     }
-    if( !s.empty() ) {
-        if( !p21Comment ) {
-            p21Comment = new std::string( "" );
-        } else {
-            p21Comment->clear();
-        }
-        p21Comment->append( const_cast<char *>( s.c_str() ) );
-    }
+    //NOTE MAP Sept 2011 - originally, this cleared and then appended -
+    // I don't think that's right, since it makes 'replace' useless
+    //Also, function name contains 'Add', not 'Set'
+    p21Comment.append( s );
 }
 
-void
-SCLP23( Application_instance )::STEPwrite_reference( ostream & out ) {
+void SCLP23( Application_instance )::STEPwrite_reference( ostream & out ) {
     out << "#" << STEPfile_id;
 }
 
-const char *
-SCLP23( Application_instance )::STEPwrite_reference( std::string & buf ) {
+const char * SCLP23( Application_instance )::STEPwrite_reference( std::string & buf ) {
     char tmp[64];
     sprintf( tmp, "#%d", STEPfile_id );
     buf = tmp;
     return const_cast<char *>( buf.c_str() );
 }
 
-void
-SCLP23( Application_instance )::AppendMultInstance( SCLP23( Application_instance ) *se ) {
+void SCLP23( Application_instance )::AppendMultInstance( SCLP23( Application_instance ) *se ) {
     if( nextMiEntity == 0 ) {
         nextMiEntity = se;
     } else {
@@ -132,10 +113,9 @@ SCLP23( Application_instance )::AppendMultInstance( SCLP23( Application_instance
     }
 }
 
-// BUG implement this
+// BUG implement this -- FIXME function is never used
 
-SCLP23( Application_instance ) *
-SCLP23( Application_instance )::GetMiEntity( char * EntityName ) {
+SCLP23( Application_instance ) * SCLP23( Application_instance )::GetMiEntity( char * EntityName ) {
     std::string s1, s2;
 
     const EntityDescLinkNode * edln = 0;
@@ -162,8 +142,7 @@ SCLP23( Application_instance )::GetMiEntity( char * EntityName ) {
 
 
 
-STEPattribute *
-SCLP23( Application_instance )::GetSTEPattribute( const char * nm ) {
+STEPattribute * SCLP23( Application_instance )::GetSTEPattribute( const char * nm ) {
     if( !nm ) {
         return 0;
     }
@@ -178,8 +157,7 @@ SCLP23( Application_instance )::GetSTEPattribute( const char * nm ) {
     return a;
 }
 
-STEPattribute *
-SCLP23( Application_instance )::MakeRedefined( STEPattribute * redefiningAttr, const char * nm ) {
+STEPattribute * SCLP23( Application_instance )::MakeRedefined( STEPattribute * redefiningAttr, const char * nm ) {
     // find the attribute being redefined
     STEPattribute * a = GetSTEPattribute( nm );
 
@@ -190,8 +168,7 @@ SCLP23( Application_instance )::MakeRedefined( STEPattribute * redefiningAttr, c
     return a;
 }
 
-STEPattribute *
-SCLP23( Application_instance )::MakeDerived( const char * nm ) {
+STEPattribute * SCLP23( Application_instance )::MakeDerived( const char * nm ) {
     STEPattribute * a = GetSTEPattribute( nm );
     if( a ) {
         a ->Derive();
@@ -199,8 +176,7 @@ SCLP23( Application_instance )::MakeDerived( const char * nm ) {
     return a;
 }
 
-void
-SCLP23( Application_instance )::CopyAs( SCLP23( Application_instance ) * other ) {
+void SCLP23( Application_instance )::CopyAs( SCLP23( Application_instance ) * other ) {
     int numAttrs = AttributeCount();
     ResetAttributes();
     other -> ResetAttributes();
@@ -215,23 +191,21 @@ SCLP23( Application_instance )::CopyAs( SCLP23( Application_instance ) * other )
 }
 
 
-const char *
-SCLP23( Application_instance )::EntityName( const char * schnm ) const {
+const char * SCLP23( Application_instance )::EntityName( const char * schnm ) const {
     return eDesc->Name( schnm );
 }
 
-/*****************************************************************
-  Checks if a given SCLP23(Application_instance) is the same type as this one
-  ****************************************************************/
-
+/**
+ * Checks if a given SCLP23(Application_instance) is the same
+ * type as this one
+ */
 const EntityDescriptor * SCLP23( Application_instance )::IsA( const EntityDescriptor * ed ) const {
     return ( eDesc->IsA( ed ) );
 }
 
-/******************************************************************
-// Checks the validity of the current attribute values for the entity
- ******************************************************************/
-
+/**
+ * Checks the validity of the current attribute values for the entity
+ */
 Severity SCLP23( Application_instance )::ValidLevel( ErrorDescriptor * error, InstMgr * im,
         int clearError ) {
     ErrorDescriptor err;
@@ -248,9 +222,9 @@ Severity SCLP23( Application_instance )::ValidLevel( ErrorDescriptor * error, In
     return error->severity();
 }
 
-/******************************************************************
-    // clears all attr's errors
- ******************************************************************/
+/**
+ * clears all attr's errors
+ */
 void SCLP23( Application_instance )::ClearAttrError() {
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
@@ -258,10 +232,9 @@ void SCLP23( Application_instance )::ClearAttrError() {
     }
 }
 
-/******************************************************************
-    // clears entity's error and optionally all attr's errors
- ******************************************************************/
-
+/**
+ * clears entity's error and optionally all attr's errors
+ */
 void SCLP23( Application_instance )::ClearError( int clearAttrs ) {
     _error.ClearErrorMsg();
     if( clearAttrs ) {
@@ -269,31 +242,12 @@ void SCLP23( Application_instance )::ClearError( int clearAttrs ) {
     }
 }
 
-/******************************************************************
- ******************************************************************/
-
-/*
-void SCLP23(Application_instance)::EnforceOptionality(int on)
-{
-    Enforcement e;
-    if(on) e = ENFORCE_OPTIONALITY;
-    else   e = ENFORCE_OFF;
-
-    Error().enforcement(e);
-    int n = attributes.list_length();
-    for (int i = 0 ; i < n; i++) {
-    attributes[i].Error().enforcement(e);
-    }
-}
-*/
-/******************************************************************
- ** Procedure:  beginSTEPwrite
- ** Parameters:  ostream& out -- stream to write to
- ** Returns:
- ** Side Effects:  writes out the SCOPE section for an entity
- ** Status:  stub
- ******************************************************************/
-
+/**************************************************************//**
+** \param out -- stream to write to
+** \details
+** Side Effects:  writes out the SCOPE section for an entity
+** Status:  stub FIXME
+*******************************************************************/
 void SCLP23( Application_instance )::beginSTEPwrite( ostream & out ) {
     out << "begin STEPwrite ... \n" ;
     out.flush();
@@ -307,22 +261,19 @@ void SCLP23( Application_instance )::beginSTEPwrite( ostream & out ) {
     }
 }
 
-/******************************************************************
- ** Procedure:  STEPwrite
- ** Parameters:  ostream& out -- stream to write to
- ** Returns:
- ** Side Effects:  writes out the data associated with an instance
-                   in STEP format
- ** Problems:  does not print out the SCOPE section of an entity
- **
- ******************************************************************/
-
-void
-SCLP23( Application_instance )::STEPwrite( ostream & out, const char * currSch,
+/**************************************************************//**
+** \param out -- stream to write to
+** \details
+** Side Effects:  writes out the data associated with an instance
+**                  in STEP format
+** Problems:  does not print out the SCOPE section of an entity
+**
+*******************************************************************/
+void SCLP23( Application_instance )::STEPwrite( ostream & out, const char * currSch,
         int writeComments ) {
     std::string tmp;
-    if( writeComments && p21Comment && !p21Comment->empty() ) {
-        out << p21Comment->c_str();
+    if( writeComments && !p21Comment.empty() ) {
+        out << p21Comment;
     }
     out << "#" << STEPfile_id << "=" << StrToUpper( EntityName( currSch ), tmp )
         << "(";
@@ -344,54 +295,13 @@ void SCLP23( Application_instance )::endSTEPwrite( ostream & out ) {
     out.flush();
 }
 
-void
-SCLP23( Application_instance )::WriteValuePairs( ostream & out,
+void SCLP23( Application_instance )::WriteValuePairs( ostream & out,
         const char * currSch,
         int writeComments, int mixedCase ) {
-    /*
-        const EntityDescriptorList &edl = eDesc->Supertypes();
-        EntityDescItr &edi((EntityDescriptorList &)(eDesc->Supertypes()));
-
-        int count = 1;
-        const EntityDescriptor * ed = 0;
-        while(ed = edi.NextEntityDesc())
-        {
-        if(count > 1)
-        {
-            out << "&";
-        }
-        out << ed->Name();
-        count++;
-        }
-    */
-
-//    const AttrDescriptorList& adl = ed->ExplicitAttr();
-
-    /*
-        out << "Attributes are: " << endl;
-        edi.ResetItr();
-        AttrDescItr *adi = 0;
-        const AttrDescriptor * ad;
-        while(ed = edi.NextEntityDesc())
-        {
-        adi = new AttrDescItr((AttrDescriptorList&)ed->ExplicitAttr());
-        ad = 0;
-        while(ad = adi->NextAttrDesc())
-        {
-            out << ed->Name() << "." << ad->Name() << endl;
-        }
-        delete adi;
-        }
-        out << endl;
-        out << "finished writing attribute names." << endl;
-        edi.ResetItr();
-    */
-    std::string s;
-//    out << eDesc->QualifiedName(s) << endl;
-
-    std::string tmp, tmp2;
-    if( writeComments && p21Comment && !p21Comment->empty() ) {
-        out << p21Comment->c_str();
+    std::string s, tmp, tmp2;
+    
+    if( writeComments && !p21Comment.empty() ) {
+        out << p21Comment;
     }
     if( mixedCase ) {
         out << "#" << STEPfile_id << " "
@@ -404,7 +314,6 @@ SCLP23( Application_instance )::WriteValuePairs( ostream & out,
 
     for( int i = 0 ; i < n; i++ ) {
         if( !( attributes[i].aDesc->AttrType() == AttrType_Redefining ) ) {
-//      if (i > 0) out << ",";
             if( mixedCase ) {
                 out << "\t"
                     << attributes[i].aDesc->Owner().Name( s.c_str() )
@@ -422,14 +331,10 @@ SCLP23( Application_instance )::WriteValuePairs( ostream & out,
 }
 
 
-/******************************************************************
- ** Procedure:  STEPwrite
+/**************************************************************//**
  ** Problems:  does not print out the SCOPE section of an entity
- **
  ******************************************************************/
-
-const char *
-SCLP23( Application_instance )::STEPwrite( std::string & buf, const char * currSch ) {
+const char * SCLP23( Application_instance )::STEPwrite( std::string & buf, const char * currSch ) {
     buf.clear();
 
     char instanceInfo[BUFSIZ];
@@ -454,43 +359,34 @@ SCLP23( Application_instance )::STEPwrite( std::string & buf, const char * currS
     return const_cast<char *>( buf.c_str() );
 }
 
-void
-SCLP23( Application_instance )::PrependEntityErrMsg() {
+void SCLP23( Application_instance )::PrependEntityErrMsg() {
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                 EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 }
 
-/******************************************************************
- ** Procedure:  SCLP23(Application_instance)::STEPread_error
- ** Parameters:  char c --  character which caused error
- **     int i --  index of attribute which caused error
- **     istream& in  --  input stream for recovery
- ** Returns:
- ** Description:  reports the error found, reads until it finds the end of an
+/**************************************************************//**
+ ** \param c --  character which caused error
+ ** \param i --  index of attribute which caused error
+ ** \param in  --  input stream for recovery
+ ** \details  reports the error found, reads until it finds the end of an
  **     instance. i.e. a close quote followed by a semicolon optionally having
  **     whitespace between them.
  ******************************************************************/
-void
-SCLP23( Application_instance )::STEPread_error( char c, int i, istream & in ) {
+void SCLP23( Application_instance )::STEPread_error( char c, int i, istream & in ) {
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                 EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
-
-    /*    sprintf(errStr, " for instance #%d : %s\n", STEPfile_id, EntityName());*/
-    /*    _error.AppendToDetailMsg(errStr);*/
 
     if( ( i >= 0 ) && ( i < attributes.list_length() ) ) { // i is an attribute
         Error().GreaterSeverity( SEVERITY_WARNING );
@@ -509,65 +405,26 @@ SCLP23( Application_instance )::STEPread_error( char c, int i, istream & in ) {
              tmp.c_str() );
     _error.AppendToDetailMsg( errStr );
 
-//    _error.AppendToDetailMsg("  data lost looking for end of entity:");
-
-    //  scan over the rest of the instance and echo it
-//    cerr << "  ERROR Trying to find the end of the ENTITY to recover...\n";
-//    cerr << "  skipping the following input:\n";
-
-#ifdef OBSOLETE
-    in.clear();
-    int foundEnd = 0;
-    tmp = "";
-
-    // Search until a close paren is found followed by (skipping optional
-    // whitespace) a semicolon
-    while( in.good() && !foundEnd ) {
-        while( in.good() && ( c != ')' ) ) {
-            in.get( c );
-            tmp.Append( c );
-//      cerr << c;
-        }
-        if( in.good() && ( c == ')' ) ) {
-            in >> ws; // skip whitespace
-            in.get( c );
-            tmp.Append( c );
-//      cerr << c;
-//      cerr << "\n";
-            if( c == ';' ) {
-                foundEnd = 1;
-            }
-        }
-    }
-    _error.AppendToDetailMsg( tmp.c_str() );
-#endif
-    sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
+    sprintf( errStr, "\nfinished reading #%d\n", StepFileId() );
     _error.AppendToDetailMsg( errStr );
     return;
 }
 
-/******************************************************************
- ** Procedure:  STEPread
- ** Returns:    Severity, error information
- **             SEVERITY_NULL - no errors
- **             SEVERITY_USERMSG - checked as much as possible, could still
- **         be error - e.g. entity didn't match base entity type.
- **             SEVERITY_INCOMPLETE - data is missing and required.
- **             SEVERITY_WARNING - errors, but can recover
- **             <= SEVERITY_INPUT_ERROR - fatal error, can't recover
- ** Description:  reads the values for an entity from an input stream
- **               in STEP file format starting at the open paren and
- **               ending with the semi-colon
- ** Parameters:  int id
- **              int idIncrement
- **              InstMgr instances
- **              istream& in
+/**************************************************************//**
+ ** \returns Severity, error information
+ **          SEVERITY_NULL - no errors
+ **          SEVERITY_USERMSG - checked as much as possible, could still
+ **            be error - e.g. entity didn't match base entity type.
+ **          SEVERITY_INCOMPLETE - data is missing and required.
+ **          SEVERITY_WARNING - errors, but can recover
+ **            <= SEVERITY_INPUT_ERROR - fatal error, can't recover
+ ** \details  reads the values for an entity from an input stream
+ **            in STEP file format starting at the open paren and
+ **            ending with the semi-colon
  ** Side Effects:  gobbles up input stream
  ** Status:
  ******************************************************************/
-
-Severity
-SCLP23( Application_instance )::STEPread( int id,  int idIncr,
+Severity SCLP23( Application_instance )::STEPread( int id,  int idIncr,
         InstMgr * instance_set, istream & in,
         const char * currSch, int useTechCor ) {
     STEPfile_id = id;
@@ -619,23 +476,6 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
                     _error.AppendToUserMsg(
                         "Since using pre-technical corrigendum... missing asterisk for redefined attr. " );
                 }
-                /*
-                        if( ! ( (c == ',') || (c == ')') ) )
-                        { // input is not a delimiter - an error
-                            PrependEntityErrMsg();
-
-                            _error.AppendToDetailMsg(
-                            "Delimiter expected after redefined asterisk attribute encoding (since using pre-technical corregendum.\n");
-                            CheckRemainingInput(in, &_error, "ENTITY", ",)");
-                            if(!in.good())
-                              return _error.severity();
-                            if(_error.severity() <= SEVERITY_INPUT_ERROR)
-                            {
-                //          STEPread_error(c,i,in);
-                            return _error.severity();
-                            }
-                        }
-                */
             } else { // using technical corrigendum
                 // should be nothing to do except loop again unless...
                 // if at end need to have read the closing paren.
@@ -648,7 +488,6 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
             }
             // increment counter to read following attr since these attrs
             // aren't written or read => there won't be a delimiter either
-//      i++;
         } else {
             attributes[i].STEPread( in, instance_set, idIncr, currSch );
             in >> c; // read the , or ) following the attr read
@@ -668,16 +507,6 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
             }
         }
 
-        /*
-            if(severe <= SEVERITY_INPUT_ERROR)
-            {   // attribute\'s error is non-recoverable
-            // I believe if this error occurs then you cannot recover
-
-            //  TODO: can you just read to the next comma and try to continue ?
-            STEPread_error(c,i,in);
-            return _error.severity();
-            }
-        */
         // if technical corrigendum redefined, input is at next attribute value
         // if pre-technical corrigendum redefined, don't process
         if( ( !( attributes[i].aDesc->AttrType() == AttrType_Redefining ) ||
@@ -698,7 +527,6 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
                 return _error.severity();
             }
             if( _error.severity() <= SEVERITY_INPUT_ERROR ) {
-//      STEPread_error(c,i,in);
                 return _error.severity();
             }
         } else if( c == ')' ) {
@@ -718,7 +546,7 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
     }
     STEPread_error( c, i, in );
 //  code fragment imported from STEPread_error
-//  for some currently unknown reason it was commented out of STEPread_error
+//  for some unknown reason it was commented out of STEPread_error
     errStr[0] = '\0';
     in.clear();
     int foundEnd = 0;
@@ -731,14 +559,11 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
         while( in.good() && ( c != ')' ) ) {
             in.get( c );
             tmp += c;
-//      cerr << c;
         }
         if( in.good() && ( c == ')' ) ) {
             in >> ws; // skip whitespace
             in.get( c );
             tmp += c;
-//      cerr << c;
-//      cerr << "\n";
             if( c == ';' ) {
                 foundEnd = 1;
             }
@@ -751,12 +576,8 @@ SCLP23( Application_instance )::STEPread( int id,  int idIncr,
     return _error.severity();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// read an entity reference and return a pointer to the SCLP23(Application_instance)
-///////////////////////////////////////////////////////////////////////////////
-
-SCLP23( Application_instance ) *
-ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
+/// read an entity reference and return a pointer to the SCLP23(Application_instance)
+SCLP23( Application_instance ) * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
                InstMgr * instances, int addFileId ) {
     char c;
     char errStr[BUFSIZ];
@@ -774,7 +595,6 @@ ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
             int id = -1;
             in >>  id;
             if( in.fail() ) { //  there's been an error in input
-//      in.clear();
                 sprintf( errStr, "Invalid entity reference value.\n" );
                 err->AppendToDetailMsg( errStr );
                 err->AppendToUserMsg( errStr );
@@ -840,23 +660,15 @@ ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// same as above but reads from a const char *
-///////////////////////////////////////////////////////////////////////////////
-
-SCLP23( Application_instance ) *
-ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
+/// read an entity reference and return a pointer to the SCLP23(Application_instance)
+SCLP23( Application_instance ) * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
                InstMgr * instances, int addFileId ) {
     istringstream in( ( char * )s );
     return ReadEntityRef( in, err, tokenList, instances, addFileId );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// return SEVERITY_NULL if se's entity type matches the supplied entity type
-///////////////////////////////////////////////////////////////////////////////
-
-Severity
-EntityValidLevel( SCLP23( Application_instance ) *se,
+/// return SEVERITY_NULL if se's entity type matches the supplied entity type
+Severity EntityValidLevel( SCLP23( Application_instance ) *se,
                   const TypeDescriptor * ed, // entity type that entity se needs
                   // to match. (this must be an
                   // EntityDescriptor)
@@ -903,21 +715,6 @@ EntityValidLevel( SCLP23( Application_instance ) *se,
                 if( sc->EntityExists( ed->Name() ) ) {
                     return SEVERITY_NULL;
                 }
-                /*
-                */
-
-                // This way checks to see if it is an ed based on the dictionary
-                // It is much less efficient but does not depend on the instance
-                // having all the parts it needs to be valid.
-                /*
-                            STEPcomplex *sc = ((STEPcomplex *)se)->sc;
-                        while (sc)
-                        {
-                            if( sc->eDesc->IsA(ed) )
-                            return SEVERITY_NULL;
-                            sc = sc->sc;
-                        }
-                */
             }
             err->GreaterSeverity( SEVERITY_WARNING );
             sprintf( messageBuf,
@@ -940,41 +737,29 @@ EntityValidLevel( SCLP23( Application_instance ) *se,
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// return 1 if attrValue has the equivalent of a null value.
-///////////////////////////////////////////////////////////////////////////////
-
-int
-SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
-// DAVE: Is this needed will sscanf return 1 if assignment suppression is used?
+/**
+ * return 1 if attrValue has the equivalent of a null value.
+ * DAVE: Is this needed will sscanf return 1 if assignment suppression is used?
+ */
+int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
     char scanBuf[BUFSIZ];
     scanBuf[0] = '\0';
 
     int numFound = sscanf( ( char * )attrValue, " %s", scanBuf );
     if( numFound == EOF ) {
-        /*
-            if(Nullable()) {
-                error->GreaterSeverity (SEVERITY_NULL);
-            }
-            else {
-                error->GreaterSeverity (SEVERITY_INCOMPLETE);
-            }
-        */
         error->GreaterSeverity( SEVERITY_INCOMPLETE );
         return 1;
     }
     return 0;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// return SEVERITY_NULL if attrValue has a valid entity reference
-// This function accepts an entity reference in two forms that is with or
-// without the # sign: e.g. either #23 or 23 will be read.
-// If non-whitespace characters follow the entity reference an error is set.
-///////////////////////////////////////////////////////////////////////////////
-
-Severity
-EntityValidLevel( const char * attrValue, // string contain entity ref
+/**
+** return SEVERITY_NULL if attrValue has a valid entity reference
+** This function accepts an entity reference in two forms that is with or
+** without the # sign: e.g. either #23 or 23 will be read.
+** If non-whitespace characters follow the entity reference an error is set.
+*/
+Severity EntityValidLevel( const char * attrValue, // string contain entity ref
                   const TypeDescriptor * ed, // entity type that entity in
                   // attrValue (if it exists) needs
                   // to match. (this must be an
@@ -988,13 +773,6 @@ EntityValidLevel( const char * attrValue, // string contain entity ref
     if( clearError ) {
         err->ClearErrorMsg();
     }
-
-    /*
-      // the problem with doing this is that it will require having a # in front
-      // of the entity ref.
-        SCLP23(Application_instance) se = ReadEntityRef(attrValue, err, 0, im, 0);
-        return EntityValidLevel(se, ed, err);
-    */
 
     int fileId;
     MgrNode * mn = 0;
@@ -1040,17 +818,13 @@ EntityValidLevel( const char * attrValue, // string contain entity ref
     return SEVERITY_WARNING;
 }
 
-/******************************************************************
- ** Procedure:  NextAttribute
- ** Parameters:
- ** Returns:  reference to an attribute pointer
- ** Description:  used to cycle through the list of attributes
- ** Side Effects:  increments the current position in the attribute list
- ** Status:  untested 7/31/90
- ******************************************************************/
-
-STEPattribute *
-SCLP23( Application_instance )::NextAttribute()  {
+/**************************************************************//**
+** Description:  used to cycle through the list of attributes
+** Side Effects:  increments the current position in the attribute list
+** Status:  untested 7/31/90
+** \Returns  reference to an attribute pointer
+******************************************************************/
+STEPattribute * SCLP23( Application_instance )::NextAttribute()  {
     int i = AttributeCount();
     ++_cur;
     if( i < _cur ) {
@@ -1060,86 +834,6 @@ SCLP23( Application_instance )::NextAttribute()  {
 
 }
 
-int
-SCLP23( Application_instance )::AttributeCount()  {
+int SCLP23( Application_instance )::AttributeCount()  {
     return  attributes.list_length();
 }
-
-#ifdef OBSOLETE
-Severity
-SCLP23( Application_instance )::ReadAttrs( int id, int addFileId,
-        class InstMgr * instance_set, istream & in ) {
-    char c = '\0';
-    char errStr[BUFSIZ];
-    errStr[0] = '\0';
-    Severity severe;
-
-    ClearError( 1 );
-
-    int n = attributes.list_length();
-    for( int i = 0 ; i < n; i++ ) {
-        attributes[i].STEPread( in, instance_set, addFileId );
-
-        severe = attributes[i].Error().severity();
-
-        if( severe <= SEVERITY_USERMSG ) {
-            // if there\'s some type of error
-            if( _error.severity() == SEVERITY_NULL ) {
-                //  if there is not an error already
-                sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                         EntityName() );
-                _error.PrependToDetailMsg( errStr );
-            }
-            // set the severity for this entity
-            sprintf( errStr, "  %s :  ", attributes[i].Name() );
-            _error.AppendToDetailMsg( errStr );
-            _error.GreaterSeverity( severe );
-            _error.AppendToDetailMsg( ( char * )
-                                      attributes[i].Error().DetailMsg() );
-            _error.AppendToUserMsg( ( char * )attributes[i].Error().UserMsg() );
-
-        }
-        /*
-            if(severe <= SEVERITY_INPUT_ERROR)
-            {   // attribute\'s error is non-recoverable
-                // I believe if this error occurs then you cannot recover
-
-              //  TODO: can you just read to the next comma and try to continue ?
-                STEPread_error(c,i,in);
-                return _error.severity();
-            }
-        */
-        in >> c;
-        if( !( ( c == ',' ) || ( c == ')' ) ) ) { //  input is not a delimiter
-            if( _error.severity() == SEVERITY_NULL ) {
-                //  if there is not an error already
-                sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
-                         EntityName() );
-                _error.PrependToDetailMsg( errStr );
-            }
-            _error.AppendToDetailMsg(
-                "delimiter expected after attribute value.\n" );
-            CheckRemainingInput( in, &_error, "ENTITY", ",)" );
-            if( !in.good() ) {
-                return _error.severity();
-            }
-            if( _error.severity() <= SEVERITY_INPUT_ERROR ) {
-                STEPread_error( c, i, in );
-                return _error.severity();
-            }
-        } else if( c == ')' ) {
-            in >> ws;
-            char z = in.peek();
-            if( z == ';' ) {
-                in.get( c );
-                return _error.severity();
-            }
-        }
-    }
-    if( c != ')' ) {
-        STEPread_error( c, i, in );
-        return _error.severity();
-    }
-    return SEVERITY_NULL;
-}
-#endif

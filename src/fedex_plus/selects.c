@@ -1486,19 +1486,19 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case integer_:
             /*      fprintf(f, "    out << \"%s(\" << _%s << \")\";\n  else ",
                           StrToUpper(TYPEget_name(t)), dm);*/
-            fprintf( f, "    out << tmp.c_str() << \"(\" << _%s << \")\";\n  else ",
+            fprintf( f, "    out << tmp << \"(\" << _%s << \")\";\n  else ",
                      dm );
             break;
 
         case real_:
         case number_:
-            fprintf( f, "  {\n    out << tmp.c_str() << \"(\";\n" );
+            fprintf( f, "  {\n    out << tmp << \"(\";\n" );
             fprintf( f, "    WriteReal(_%s,out);\n", dm );
             fprintf( f, "    out << \")\";\n  }\n  else " );
             break;
 
         case entity_:
-            fprintf( f, "  {\n    out <<  tmp.c_str() << \"(\";\n" );
+            fprintf( f, "  {\n    out <<  tmp << \"(\";\n" );
             fprintf( f, "    _%s -> STEPwrite_reference (out);\n", dm );
             fprintf( f, "    out << \")\";\n  }\n  else " );
             break;
@@ -1507,7 +1507,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case logical_:
         case boolean_:
         case binary_:
-            fprintf( f, "  {\n    out << tmp.c_str() << \"(\";\n" );
+            fprintf( f, "  {\n    out << tmp << \"(\";\n" );
             fprintf( f, "    _%s.STEPwrite (out);\n", dm );
             fprintf( f, "    out << \")\";\n  }\n  else " );
             break;
@@ -1517,12 +1517,12 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case set_:
         case list_:
             /* Aggregates need currSch passed since they may be aggrs of sels. */
-            fprintf( f, "  {\n    out << tmp.c_str() << \"(\";\n" );
+            fprintf( f, "  {\n    out << tmp << \"(\";\n" );
             fprintf( f, "    _%s.STEPwrite (out, currSch);\n", dm );
             fprintf( f, "    out << \")\";\n  }\n  else " );
             break;
         case select_:
-            fprintf( f, "  {\n    out << tmp.c_str() << \"(\";\n" );
+            fprintf( f, "  {\n    out << tmp << \"(\";\n" );
             fprintf( f, "    _%s.STEPwrite_verbose (out, currSch);\n", dm );
             fprintf( f, "    out << \")\";\n  }\n  else " );
             break;

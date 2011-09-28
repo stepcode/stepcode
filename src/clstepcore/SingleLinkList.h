@@ -1,5 +1,5 @@
 #ifndef singlelinklist_h
-#define	singlelinklist_h
+#define singlelinklist_h
 
 /*
 * NIST STEP Core Class Library
@@ -12,16 +12,10 @@
 * and is not subject to copyright.
 */
 
-/* $Id: SingleLinkList.h,v 3.0.1.4 1997/11/05 21:59:22 sauderd DP3.1 $ */
-
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 class SingleLinkList  {
 
     // node which represents the value is contained in the subclass
-	//  since it may have different types for different lists
+    //  since it may have different types for different lists
     
   protected:
     

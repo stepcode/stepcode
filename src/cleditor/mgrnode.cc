@@ -28,7 +28,7 @@ void * MgrNode::SEE() {
 }
 
 int MgrNode::GetFileId() {
-    return ( se ? se->GetFileId() : -1 );
+    return ( se ? se->StepFileId() : -1 );
 }
 
 void MgrNode::Remove() {

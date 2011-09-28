@@ -16,27 +16,28 @@
 ///////////////////////////////////////////////////////////////////////////////
 // SCLP23(Application_instance) used to be STEPentity
 
-//class SCLP23_NAME(Application_instance) /* : public SCLP23(DAObject_SDAI) */
 class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
 {
   private:
     int _cur;        // provides a built-in way of accessing attributes in order.
 
- public:
+  public:
     STEPattributeList attributes;
     int               STEPfile_id;
     ErrorDescriptor   _error;
-    std::string              *p21Comment;
+    std::string       p21Comment;
                                         // registry additions
     EntityDescriptor *eDesc;
 
-        // head entity for multiple inheritance.  If it is null then this
-        // SCLP23_NAME(Application_instance) is not part of a multiply inherited entity.  If it
-        // points to a SCLP23_NAME(Application_instance) then this SCLP23_NAME(Application_instance) is part of a mi entity
-        // and head points at the root SCLP23_NAME(Application_instance) of the primary inheritance
-        // path (the one that is the root of the leaf entity).
+    /**
+    ** head entity for multiple inheritance.  If it is null then this
+    ** SCLP23_NAME(Application_instance) is not part of a multiply inherited entity.  If it
+    ** points to a SCLP23_NAME(Application_instance) then this SCLP23_NAME(Application_instance) is part of a mi entity
+    ** and head points at the root SCLP23_NAME(Application_instance) of the primary inheritance
+    ** path (the one that is the root of the leaf entity).
+    */
     SCLP23_NAME(Application_instance) *headMiEntity;
-        // these form a chain of other entity parents for multiple inheritance
+    /// these form a chain of other entity parents for multiple inheritance
     SCLP23_NAME(Application_instance) *nextMiEntity;
 
   protected:
@@ -52,18 +53,11 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
     void StepFileId (int fid) { STEPfile_id = fid; }
     int StepFileId() const  { return STEPfile_id; }
 
-    void AddP21Comment(std::string &s, int replace = 1);
-    void AddP21Comment(const char *s, int replace = 1);
-    void DeleteP21Comment() { delete p21Comment; p21Comment = 0; }
+    void AddP21Comment(const std::string &s, bool replace = true);
+    void AddP21Comment(const char *s, bool replace = true);
+    void DeleteP21Comment() { p21Comment = ""; }
 
-    // guaranteed a string (may be null string)
-    const char *P21Comment() 
-        { return ( p21Comment ? const_cast<char *>(p21Comment->c_str()) : "" ); }
-    // returns null if no comment exists
-    // Note: Jul-24-2011, confirm that we want to change p21Comment->rep() to
-    // const_cast<char *>(p21Comment->c_str())
-    const char *P21CommentRep() 
-        { return ( p21Comment ? const_cast<char *>(p21Comment->c_str()) : 0 ); }
+    const std::string P21Comment() const { return p21Comment; }
 
     const char *EntityName( const char *schnm =NULL) const;
 
@@ -76,7 +70,6 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
     void ClearError(int clearAttrs = 1);
                 // clears all attr's errors
     void ClearAttrError();
-//    void EnforceOptionality(int on = 1);
 
     virtual SCLP23_NAME(Application_instance) *Replicate();
 
@@ -103,7 +96,7 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
     void         STEPwrite_reference (ostream& out =cout);
     const char * STEPwrite_reference (std::string &buf);
 
-    void beginSTEPwrite(ostream& out =cout); // writes out the SCOPE section
+    void beginSTEPwrite(ostream& out =cout); ///< writes out the SCOPE section
     void endSTEPwrite(ostream& out =cout);
 
 // MULTIPLE INHERITANCE
@@ -124,43 +117,10 @@ class SCLP23_NAME(Application_instance) : public SCLP23_NAME(DAObject_SDAI)
 
     virtual void CopyAs (SCLP23_NAME(Application_instance) *);
     void PrependEntityErrMsg();
-  public:
-    // these functions are going to go away in the future.
-    int SetFileId(int fid) { return STEPfile_id = fid; }
-    int GetFileId() const  { return STEPfile_id; }
-    int FileId (int fid) { return STEPfile_id = fid; }
-    int FileId() const  { return STEPfile_id; }
+};
 
-}
-;
-
-// current style of CORBA handles for Part 23
+// current style of CORBA handles for Part 23 - NOTE - used for more than CORBA
 typedef SCLP23_NAME(Application_instance)* SCLP23_NAME(Application_instance_ptr);
 typedef SCLP23_NAME(Application_instance_ptr) SCLP23_NAME(Application_instance_var);
-
-// Everything below has been moved to sdai.h
-/*
-//#ifdef PART26
-//DEF_TIE_P26_IDL_Application_instance(SCLP23_NAME(Application_instance))
-//#endif
-*/
-///////////////////////////////////////////////////////////////////////////////
-
-//extern SCLP23_NAME(Application_instance) NilSTEPentity;
-//#define ENTITY_NULL	&NilSTEPentity
-//#define NULL_ENTITY	&NilSTEPentity
-
-//typedef SCLP23_NAME(Application_instance)* STEPentity_ptr;
-//typedef STEPentity_ptr STEPentity_var;
-
-//typedef SCLP23_NAME(Application_instance)* STEPentityPtr;
-//typedef SCLP23_NAME(Application_instance)* STEPentityH;
-
-//extern SCLP23_NAME(Application_instance) *
-//ReadEntityRef(istream &in, ErrorDescriptor *err, char *tokenList, 
-//	      InstMgr * instances, int addFileId);
-
-//typedef  SCLP23_NAME(Application_instance) * (* Creator) () const;
-//typedef  SCLP23_NAME(Application_instance) * (* Creator) () ;
 
 #endif

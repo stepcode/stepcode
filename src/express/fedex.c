@@ -71,10 +71,7 @@
  *
  */
 
-char * FEDEXversion( void ) {
-    return( "V2.11.4-beta CADDETC preval June 8, 1995" );
-}
-
+#include "scl_cf.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -91,11 +88,17 @@ extern int yydbg_verbose;
 
 extern int skip_exp_pause;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
+int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
-static void
-usage() {
+void print_fedex_version( void ) {
+    printf( "%s\nSCL version id (from git): %s\nhttp://github.com/mpictor/StepClassLibrary\n", EXPRESSprogram_name, SCL_COMMIT_ID );
+    no_need_to_work = 1;
+}
+
+static void usage() {
     fprintf( stderr, "usage: %s [-v] [-d # | -d 9 [-l nnn | -u nnn]] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
-    fprintf( stderr, "where\t-v produces a version description\n" );
+    fprintf( stderr, "where\t-v produces the following version description:\n" );
+    print_fedex_version();
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
     fprintf( stderr, "\t-n do not pause for internal errors (useful with delta script)\n" );
@@ -124,8 +127,6 @@ int main( int argc, char ** argv ) {
     char * cp;
     int no_warnings = 1;
     int resolve = 1;
-    int no_need_to_work = 0;/* TRUE if we can exit gracefully without */
-    /* doing any work */
 
     bool buffer_messages = false;
     char * filename = 0;
@@ -231,8 +232,7 @@ int main( int argc, char ** argv ) {
                 }
                 break;
             case 'v':
-                printf( "%s %s\n%s\n", EXPRESSprogram_name, FEDEXversion(), EXPRESSversion() );
-                no_need_to_work = 1;
+                print_fedex_version();
                 break;
             case 'z': /* to allow user to attach debugger and continue */
                 printf( "pid = %d\n", getpid() );
