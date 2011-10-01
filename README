@@ -10,9 +10,8 @@ Step Class Library v0.1 -- https://github.com/mpictor/StepClassLibrary
  
 * SCL is packaged along with some other tools. See 
   "THE NIST STEP TOOLSET", below. In particular, Data Probe
-  requires InterViews, an obsolete UI toolkit. A version of it is
-  still present in the git repository, but I have not had luck
-  building the data probe with it. It may be more productive
+  requires InterViews, an obsolete UI toolkit. I (mpictor) have not
+  had luck building the data probe with it. It may be more productive
   to replace InterViews with a modern toolkit such as Qt. I
   expect that this would be non-trivial.
 
@@ -66,6 +65,10 @@ to match the current formatting. The main points are:
   - line endings are LF (linux), not CRLF (windows)
   - brackets around single-line conditionals
   - spaces inside parentheses and around operators
+  - return type on the same line as the function name, unless that's
+    too long
+  - doxygen-style comments
+    (see http://www.stack.nl/~dimitri/doxygen/docblocks.html)
 
 If in doubt about a large patch, run astyle with the config file
 misc/astyle.cfg. 
@@ -87,8 +90,8 @@ Notes/TODO items specific to the STEP libraries as included in BRL-CAD:
   and should be a starting point for any debugging of EXPRESS
   parsing issues.
 
-* None of the original test codes have been incorporated into the
-  new build system, but they are still present in src/test
+* Of the original test code, only p21read has been incorporated into
+  the new build system, but they are still present in src/test
 
 * Express and exppp header files have been relocated to subdirectories
   in include.  The names of the library files being built have been
@@ -102,7 +105,7 @@ Notes/TODO items specific to the STEP libraries as included in BRL-CAD:
 
 =====================================================
 Much has changed since README.scl was written.
-It is reproduced in its entirety below.
+However, it is reproduced in its entirety below.
 =====================================================
 
 README.scl (top level README) February 1998

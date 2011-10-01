@@ -1,5 +1,26 @@
 STEP Class Library  ------  https://github.com/mpictor/StepClassLibrary
 ************************************************************************
+Release 0.2 (Oct 1, 2011)
+
+What's new since v0.1?
+
+* Retrieve aggregate type from the underlying type (issue #4)
+* Fix aggregate select types naming convention in fedex_plus (issue #59)
+* Fix several segfaults and double free's in p21read (issue #63)
+* Fix several file read/write bugs in p21read, including
+   *  don't write '$' for empty string
+   *  'abc\S\'def' is a valid string (issue #57)
+* Improve p21read execution time
+* Cleanup many files and delete src/clivfasd (but much more to do!) (issue #66)
+* Add BNF files, schemas, and CAX-IF Part 21 files
+
+For a detailed list of changes, see
+https://github.com/mpictor/StepClassLibrary/wiki/changelog-v0.2
+
+For a list of closed issues, see
+https://github.com/mpictor/StepClassLibrary/issues?state=closed&milestone=2
+
+************************************************************************
 
 Release 0.1 (Sept 2011)
 
@@ -39,7 +60,7 @@ Pre-BRL-CAD changes:
 ************************************************************************
 ************************************************************************
  Updates from http://www.statik.tu-cottbus.de/fileadmin/project_dth/scl/
-			Jan 2005 - Mar 2006
+                        Jan 2005 - Mar 2006
 
 The original SCL source distribution could not be cleanly un-archived 
 on case-insensitive file systems like Windows' NTFS because of a name 
@@ -68,8 +89,8 @@ accepted.
 
 ************************************************************************
 
-	   What's New in the STEP Class Library Release 3.2
-			     February 1998
+           What's New in the STEP Class Library Release 3.2
+                             February 1998
 
 
 mkProbe now prints a usage message showing allowable command line
@@ -161,8 +182,8 @@ comment.
 
 **********************************************************************
 
-	   What's New in the STEP Class Library Release 3.1
-			     October 1997
+           What's New in the STEP Class Library Release 3.1
+                             October 1997
 
 The following is a list of enhancements which are found in the version
 3.1 release of the SCL and Data Probe.  It assumes you are familiar
