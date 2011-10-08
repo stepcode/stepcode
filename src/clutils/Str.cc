@@ -149,7 +149,7 @@ std::string ToExpressStr( istream &in, ErrorDescriptor *err ) {
             // to handle a string like 'hi'''
             if ( c == STRING_DELIM) {
                 // to handle \S\'
-                found = s.find_last_of("\\S\\");
+                found = s.rfind("\\S\\");
                 if ( !(found != string::npos && (s.size() == found + 2)) ) {
                     i_quote++;
                 }
