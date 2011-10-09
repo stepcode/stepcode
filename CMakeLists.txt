@@ -96,6 +96,15 @@ IF(NOT WIN32)
 ENDIF(NOT WIN32)
 
 #---------------------------------------------------------------------
+# Testing option
+OPTION( ENABLE_TESTING "Enable unittesting framework" OFF )
+IF(ENABLE_TESTING)
+    INCLUDE(CTest)
+    ENABLE_TESTING()
+    SUBDIRS(test)
+ENDIF(ENABLE_TESTING)
+
+#---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in 
 # the build directory AND install directory.  Thanks to plplot for 
 # identifying the necessity of setting CMAKE_INSTALL_NAME_DIR on OSX.
