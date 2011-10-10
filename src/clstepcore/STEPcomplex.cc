@@ -62,7 +62,7 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
         enDesc = _registry->FindEntity( *eptr, schnm );
         if( enDesc ) {
             if( enDesc->Supertypes().EntryCount() > 1 ) {
-                eptr->multSuprs( TRUE );
+                eptr->multSuprs( true );
             }
             if( StrCmpIns( *eptr, enDesc->Name() ) ) {
                 // If this entity was referred by another name rather than the
