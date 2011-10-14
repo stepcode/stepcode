@@ -1,36 +1,38 @@
-SET(ap203_data
-  ap203/203wseds.exp
-  ap203/cube1.p21
-  ap203/cube2.p21
-  ap203/g_r_assembly1.p21
-  ap203/gasket1.p21
-  ap203/gasket2.p21
-  ap203/gasket3.p21
-  ap203/hex_prism1.p21
-  ap203/rod_aspect1.p21
-  ap203/star1.p21
-)
-INSTALL(FILES ${ap203_data} DESTINATION ${DATA_DIR}/data/ap203)
+IF( INSTALL_DATA )
+    SET(ap203_data
+    ap203/203wseds.exp
+    ap203/cube1.p21
+    ap203/cube2.p21
+    ap203/g_r_assembly1.p21
+    ap203/gasket1.p21
+    ap203/gasket2.p21
+    ap203/gasket3.p21
+    ap203/hex_prism1.p21
+    ap203/rod_aspect1.p21
+    ap203/star1.p21
+    )
+    INSTALL(FILES ${ap203_data} DESTINATION ${DATA_DIR}/data/ap203)
 
-SET(ap227_data
-  ap227/ap227.exp
-  ap227/mitre.p21
-  ap227/mitre.step.txt
-)
-INSTALL(FILES ${ap227_data} DESTINATION ${DATA_DIR}/data/ap227)
+    SET(ap227_data
+    ap227/ap227.exp
+    ap227/mitre.p21
+    ap227/mitre.step.txt
+    )
+    INSTALL(FILES ${ap227_data} DESTINATION ${DATA_DIR}/data/ap227)
 
-SET(step_example_data
-  example/example.exp
-)
-INSTALL(FILES ${step_example_data} DESTINATION ${DATA_DIR}/data/example)
+    SET(step_example_data
+    example/example.exp
+    )
+    INSTALL(FILES ${step_example_data} DESTINATION ${DATA_DIR}/data/example)
 
 
 
-SET(step_datafiles
-  pdmnet.exp
-  select.exp 
-)
-INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
+    SET(step_datafiles
+    pdmnet.exp
+    select.exp
+    )
+    INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
+ENDIF( INSTALL_DATA )
 
 # To build one or more schemas, configure with 
 # 'cmake -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
@@ -59,17 +61,18 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
     file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "SCHEMA .*")
     string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
-    string(TOUPPER ${SCHEMA_N} SCHEMA_NAME) #fedex_plus always uses upper case for file names
+    string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
+    get_filename_component(SCHEMA_SHORT_NAME ${SCHEMA_FILE} NAME_WE)
     
-    project( sdai_${SCHEMA_NAME} )
-    message( STATUS "Generating code for ${SCHEMA_NAME}.")
-    set( SCHEMA_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_NAME} )
+    project( sdai_${SCHEMA_SHORT_NAME} )
+    message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
+    set( SCHEMA_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
     #the names of the files that will be generated
     set( FEDEX_OUT ${SCHEMA_DIR}/compstructs.cc ${SCHEMA_DIR}/Sdaiclasses.h 
-                   ${SCHEMA_DIR}/schema.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.cc
-                   ${SCHEMA_DIR}/schema.h ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.h
-                   ${SCHEMA_DIR}/SdaiAll.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.init.cc )
+                   ${SCHEMA_DIR}/schema.cc ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.cc
+                   ${SCHEMA_DIR}/schema.h ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.h
+                   ${SCHEMA_DIR}/SdaiAll.cc ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc )
 
     # *cannot* use include_directories() because the includes keep piling up - if building
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
@@ -77,17 +80,19 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
     set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
 
+    add_custom_target( generate_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
     add_custom_command( OUTPUT ${SCHEMA_DIR}
-                        COMMAND cmake ARGS -E make_directory ${SCHEMA_DIR} 
-                        COMMENT "Creating ${SCHEMA_DIR} for schema ${SCHEMA_NAME}")
+                        COMMAND cmake ARGS -E make_directory ${SCHEMA_DIR}
+                        COMMENT "Creating ${SCHEMA_DIR} for schema ${SCHEMA_SHORT_NAME}")
     add_custom_command( OUTPUT ${FEDEX_OUT}
                         COMMAND fedex_plus ARGS ${SCHEMA_FILE}
                         DEPENDS ${SCHEMA_FILE} ${SCHEMA_DIR}
                         WORKING_DIRECTORY ${SCHEMA_DIR}
-                        COMMENT "Running fedex_plus for ${SCHEMA_NAME}..."
+                        COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
     add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
     target_link_libraries(${PROJECT_NAME} stepdai stepcore express stepeditor )
+    add_dependencies( ${PROJECT_NAME} generate_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
     
