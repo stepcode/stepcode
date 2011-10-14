@@ -107,22 +107,25 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     
     add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
     target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
-    set_target_properties( "p21read_${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS
-                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
+                           ${${PROJECT_NAME}_COMPILE_FLAGS} )
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
     file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
     foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
         add_test( NAME p21read_${PROJECT_NAME}_${FNAME}
-                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                    COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
+                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                  COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
 
-if(NOT BUILD_SCHEMAS STREQUAL "" )
-  foreach( ap ${BUILD_SCHEMAS} )
-    BUILD_A_SCHEMA( ${ap} )
-  endforeach()
+if( NOT BUILD_SCHEMAS STREQUAL "" )
+    if( BUILD_SCHEMAS STREQUAL "ALL" )
+        file( GLOB_RECURSE BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp ${SCL_SOURCE_DIR}/../notingit/*.exp )
+    endif()
+    foreach( ap ${BUILD_SCHEMAS} )
+        BUILD_A_SCHEMA( ${ap} )
+    endforeach()
 endif()
