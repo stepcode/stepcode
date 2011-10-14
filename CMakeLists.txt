@@ -245,3 +245,7 @@ ADD_SUBDIRECTORY(src/clutils)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(data)
 ADD_SUBDIRECTORY(doc)
+
+# this is for testing - 'make core' builds everything that isn't generated
+add_custom_target( core )
+add_dependencies( core stepdai check-express stepeditor fedex_plus )

@@ -66,28 +66,28 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     
     project( sdai_${SCHEMA_SHORT_NAME} )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
-    set( SCHEMA_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
+    set( SCHEMA_OUTPUT_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
     #the names of the files that will be generated
-    set( FEDEX_OUT ${SCHEMA_DIR}/compstructs.cc ${SCHEMA_DIR}/Sdaiclasses.h 
-                   ${SCHEMA_DIR}/schema.cc ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.cc
-                   ${SCHEMA_DIR}/schema.h ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.h
-                   ${SCHEMA_DIR}/SdaiAll.cc ${SCHEMA_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc )
+    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h
+                   ${SCHEMA_OUTPUT_DIR}/schema.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc
+                   ${SCHEMA_OUTPUT_DIR}/schema.h ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h
+                   ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc )
 
     # *cannot* use include_directories() because the includes keep piling up - if building
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
     # one header (schema.h) is always named the same, this will not work. only workaround
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
-    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
+    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
 
     add_custom_target( generate_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
-    add_custom_command( OUTPUT ${SCHEMA_DIR}
-                        COMMAND cmake ARGS -E make_directory ${SCHEMA_DIR}
-                        COMMENT "Creating ${SCHEMA_DIR} for schema ${SCHEMA_SHORT_NAME}")
+    add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
+                        COMMAND cmake ARGS -E make_directory ${SCHEMA_OUTPUT_DIR}
+                        COMMENT "Creating ${SCHEMA_OUTPUT_DIR} for schema ${SCHEMA_SHORT_NAME}")
     add_custom_command( OUTPUT ${FEDEX_OUT}
                         COMMAND fedex_plus ARGS ${SCHEMA_FILE}
-                        DEPENDS ${SCHEMA_FILE} ${SCHEMA_DIR}
-                        WORKING_DIRECTORY ${SCHEMA_DIR}
+                        DEPENDS ${SCHEMA_FILE} ${SCHEMA_OUTPUT_DIR}
+                        WORKING_DIRECTORY ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
     add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
@@ -95,13 +95,29 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     add_dependencies( ${PROJECT_NAME} generate_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+
+    #when running tests, do NOT build everything - use 'make core'.
+    #then 'make test' can generate and build schemas, etc
+    add_test( NAME generate_${SCHEMA_SHORT_NAME}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND make generate_${SCHEMA_SHORT_NAME} )
+    add_test( NAME build_${PROJECT_NAME}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND make p21read_${PROJECT_NAME} )
     
-    if( NOT DEFINED ${DISABLE_P21READ} )
-        add_executable( "p21read_${PROJECT_NAME}" ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
-        target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
-        set_target_properties( "p21read_${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS
-                               ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    endif()
+    add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
+    target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
+    set_target_properties( "p21read_${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS
+                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    #find all part 21 files in schema dir, add a test for each one
+    get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
+    file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
+    foreach( TEST_FILE ${P21_FILES} )
+    get_filename_component( FNAME ${TEST_FILE} NAME_WE )
+        add_test( NAME p21read_${PROJECT_NAME}_${FNAME}
+                    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                    COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
+    endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
 
