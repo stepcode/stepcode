@@ -99,6 +99,11 @@ ENDIF(NOT WIN32)
 # Testing option
 OPTION( ENABLE_TESTING "Enable unittesting framework" OFF )
 IF(ENABLE_TESTING)
+    set( CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" ) #for code coverage
+    set( CMAKE_SHARED_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" )
+    if( NOT DEFINED BUILD_SCHEMAS )
+        set( BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
+    endif()
     INCLUDE(CTest)
     ENABLE_TESTING()
     SUBDIRS(test)

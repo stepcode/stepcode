@@ -34,13 +34,20 @@ IF( INSTALL_DATA )
     INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
 ENDIF( INSTALL_DATA )
 
+#this sets a property so that the target doesn't get built by 'make' or 'make all'
+#useful when testing generation of schema code/compiling schem libs/etc
+FUNCTION( TESTABLE_TARGET target )
+    if(ENABLE_TESTING)
+        set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
+    endif()
+ENDFUNCTION( TESTABLE_TARGET )
+
 # To build one or more schemas, configure with 
 # 'cmake -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
 # This function runs fedex on one express file. The generated source goes in a dir 
 # in the build dir, and it is compiled into a library. A p21read executable is 
-# compiled and linked to the lib, unless DISABLE_P21READ is true. p21read is used
-# to test the lib.
+# compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #try absolute path. if that fails, must already be absolute.
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
@@ -78,7 +85,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
     # one header (schema.h) is always named the same, this will not work. only workaround
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
-    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
+    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore" )
 
     add_custom_target( generate_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
     add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
@@ -95,35 +102,45 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     add_dependencies( ${PROJECT_NAME} generate_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    TESTABLE_TARGET( ${PROJECT_NAME} )
 
-    #when running tests, do NOT build everything - use 'make core'.
-    #then 'make test' can generate and build schemas, etc
     add_test( NAME generate_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND make generate_${SCHEMA_SHORT_NAME} )
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target generate_${SCHEMA_SHORT_NAME}
+                                       --config $<CONFIGURATION> )
     add_test( NAME build_${PROJECT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND make p21read_${PROJECT_NAME} )
-    
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target p21read_${PROJECT_NAME}
+                                       --config $<CONFIGURATION> )
+
+    # label the tests and set dependencies
+    set_tests_properties( generate_${SCHEMA_SHORT_NAME} PROPERTIES LABELS schema_gen )
+    set_tests_properties( build_${PROJECT_NAME} PROPERTIES DEPENDS generate_${SCHEMA_SHORT_NAME} LABELS schema_build )
+
     add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
     target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    TESTABLE_TARGET( p21read_${PROJECT_NAME} )
+
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
     file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
     foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
-        add_test( NAME p21read_${PROJECT_NAME}_${FNAME}
+        add_test( NAME read_write_${SCHEMA_SHORT_NAME}_${FNAME}
                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                   COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
+        set_tests_properties( read_write_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_${PROJECT_NAME} LABELS schema_rw )
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
 
-if( NOT BUILD_SCHEMAS STREQUAL "" )
+if( DEFINED BUILD_SCHEMAS )
     if( BUILD_SCHEMAS STREQUAL "ALL" )
-        file( GLOB_RECURSE BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp ${SCL_SOURCE_DIR}/../notingit/*.exp )
+        file( GLOB_RECURSE BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
     endif()
     foreach( ap ${BUILD_SCHEMAS} )
         BUILD_A_SCHEMA( ${ap} )
