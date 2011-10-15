@@ -28,8 +28,8 @@ function count_we {
             echo "</td>"
         else #empty
             echo "<tr><td><b>$1</b></td>"
-            echo "<td><font color="red">0 errors</font></td>"
-            echo "<td><font color="blue">0 warnings</font></td>"
+            echo "<td>0 errors</td>"
+            echo "<td>0 warnings</td>"
             echo "<td>   ----   </td>"
         fi
         if [ -s $o ]; then
