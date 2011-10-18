@@ -12,7 +12,7 @@
 */
 
 #include <STEPfile.h>
-#include <s_HEADER_SCHEMA.h>
+#include <SdaiHEADER_SECTION_SCHEMA.h>
 #include <STEPaggregate.h>
 
 #include <cstring>
@@ -275,19 +275,19 @@ char * STEPfile::schemaName( char * schName )
  * schName is unset.
  */
 {
-    p21DIS_File_schema * fs;
+    SdaiFile_schema * fs;
     std::string tmp;
     STEPnode * n;
 
     if( _headerInstances == NULL ) {
         return NULL;
     }
-    fs = ( p21DIS_File_schema * )_headerInstances->GetApplication_instance( "File_Schema" );
+    fs = ( SdaiFile_schema * )_headerInstances->GetApplication_instance( "File_Schema" );
     if( fs == ENTITY_NULL ) {
         return NULL;
     }
 
-    n = ( STEPnode * )fs->schema_identifiers().GetHead();
+    n = ( STEPnode * )fs->schema_identifiers_()->GetHead();
     // (take the first one)
     if( n == NULL ) {
         return NULL;

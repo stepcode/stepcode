@@ -23,12 +23,13 @@
 **********************************************************************/
 #include <iostream>
 #include <iterator>
+#include <algorithm>
 
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
-#include <s_HEADER_SCHEMA.h>
+#include <SdaiHEADER_SECTION_SCHEMA.h>
 
 // STEPundefined contains
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)
@@ -60,7 +61,6 @@ returns:      Severity
 parameters:   (istream&) The input stream from which the file is read.
 description:
    This function reads in the header section of an exchange file. It
-   can read it in either version (N279) or (Part 21, July 1992). It
    parses the header section, popluates the _headerInstances, and
    returns an error descriptor.
    It expects to find the "HEADER;" symbol at the beginning of the
@@ -131,8 +131,10 @@ STEPfile::ReadHeader( istream & in ) {
             //create header instance
             buf[0] = '\0';
             if( _fileType == VERSION_OLD ) {
-                strcpy( buf, "N279_" );
-                strncat( buf, const_cast<char *>( keywd.c_str() ), BUFSIZ - 7 );
+                _error.AppendToDetailMsg( "N279 header detected. Files this old are no longer supported.\n" );
+                _error.GreaterSeverity( SEVERITY_EXIT );
+                delete im;
+                return SEVERITY_EXIT;
             } else {
                 strncpy( buf, const_cast<char *>( keywd.c_str() ), BUFSIZ );
             }
@@ -150,9 +152,6 @@ STEPfile::ReadHeader( istream & in ) {
                 break; //from while loop
             } else { //not userDefined
                 obj = _headerRegistry->ObjCreate( buf );
-#ifdef __O3DB__
-                obj -> persist();
-#endif
             }
 
             //read header instance
@@ -162,21 +161,14 @@ STEPfile::ReadHeader( istream & in ) {
                 cerr << "Unable to create header section entity: \'" <<
                      keywd << "\'.\n\tdata lost: " << strbuf << "\n";
                 _error.GreaterSeverity( SEVERITY_WARNING );
-            } else //not ENTITY_NULL
-                //read the header instance
-            {
+            } else { //not ENTITY_NULL
+                     //read the header instance
+
                 //check obj's Error Descriptor
                 objsev = AppendEntityErrorMsg( &( obj->Error() ) );
 
                 //set file_id to reflect the appropriate Header Section Entity
-                switch( _fileType ) {
-                    case VERSION_OLD:
-                        fileid = HeaderIdOld( const_cast<char *>( keywd.c_str() ) );
-                        break;
-                    default:
-                        fileid = HeaderId( const_cast<char *>( keywd.c_str() ) );
-                        break;
-                }
+                fileid = HeaderId( keywd );
 
                 //read the values from the istream
                 objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in );
@@ -199,131 +191,11 @@ STEPfile::ReadHeader( istream & in ) {
         cmtStr.clear();
     }
 
-    if( _fileType == VERSION_OLD ) {
-        InstMgr * tmp = HeaderConvertToNew( *im );
-        delete im;
-        im = tmp;
-    }
     HeaderVerifyInstances( im );
     HeaderMergeInstances( im ); // handles delete for im
 
     return _error.severity();
 }
-
-
-/***************************
-function:     HeaderConvertToNew
-returns:      (InstMgr*) List of instances of header section entities
-                         which semantically conform to the new version
-                         of the exchange file format.
-parameters:   (InstMgr&) List of instances of header section entities
-                         which semantically conform to the old version
-                         of the exchange file format.
-description:
-   This function converts the instances of the given InstMgr from the
-   old STEPfile format to the new file format. The InstMgr must
-   contain only instances of header section entities, and those entities
-   must be numbered in a specific way.
-
-      OLD FORMAT (N279)
-
-   #1=FILE_IDENTIFICATION
-   #2=FILE_DESCRIPTION
-   #3=IMP_LEVEL
-   #4=CLASSIFICATION
-   #5=MAXSIG
-
-side effects: This function allocates memory for an InstMgr using a
-   call to the new operator.
-   It also removes some instances from oldinst.
-***************************/
-InstMgr *
-STEPfile::HeaderConvertToNew( InstMgr & oldinst ) {
-    InstMgr * imtmp = new InstMgr;
-    SCLP23( Application_instance )* oldse;
-
-// FILE_NAME <== (N279)FILE_IDENTIFICATION
-    p21DIS_File_name * fn = 0;
-    oldse = oldinst.GetApplication_instance( "N279_File_Identification" );
-    if( oldse == ENTITY_NULL ) {
-        cerr << "Warning: STEPfile::HeaderConvertToNew. Unable to get " <<
-             "\'File_Identification\' from header instance manager.\n";
-        fn = ( p21DIS_File_name * ) HeaderDefaultFileName();
-    } else {
-
-        s_N279_file_identification * fi;
-        fi = ( s_N279_file_identification * ) oldse;
-
-        fn = new p21DIS_File_name;
-
-        fn->name( const_cast<char *>( ( fi->file_name() ).c_str() ) ); //STRING <- STRING
-        fn->time_stamp( const_cast<char *>( ( fi->date() ).c_str() ) ); //STRING <- STRING
-        //fn->author(fi->author());
-        //LIST OF STRING <- LIST OF STRING
-        ( fn->author() ).ShallowCopy( fi->author() );
-        //LIST OF STRING <- LIST OF STRING
-        ( fn->organization() ).ShallowCopy( fi->organization() );
-        fn->preprocessor_version( const_cast<char *>( ( fi->preprocessor_version() ).c_str() ) ); //STRING
-        fn->originating_system( const_cast<char *>( ( fi->originating_system() ).c_str() ) ); //STRING
-        fn->authorisation( "" );       //STRING
-        fn->STEPfile_id = HeaderId( "File_Name" );
-
-        oldinst.Delete( fi );
-    }
-
-    imtmp->Append( fn, completeSE );
-
-// FILE_DESCRIPTION <== (N279)FILE_DESCRIPTION & (N279)IMP_LEVEL
-    p21DIS_File_description * fd = new p21DIS_File_description;
-    // Get the (N279) File_Description Instance
-    oldse = oldinst.GetApplication_instance( "N279_File_Description" );
-    s_N279_file_description * ofd = ( s_N279_file_description * )oldse;
-    if( oldse != ENTITY_NULL ) {
-//  DAVE, is there a new way TODO this?
-        // copy a SCLP23(String) value into a StringAggregate
-        const char * tmpstr = const_cast<char *>( ( ofd->description() ).c_str() );
-        int l = strlen( tmpstr ) + 2;
-        char * str = new char[l];
-        str[0] = '\'';
-        str[1] = '\0';
-        strncat( str, tmpstr, l );
-        strncat( str, "\'", l );
-        StringNode * sn = new StringNode( str );
-        fd->description().AddNode( sn );
-        oldinst.Delete( ofd );
-        delete [] str;
-    } else {
-        StringNode * sn = new StringNode( "" );
-        fd->description().AddNode( sn );
-    }
-
-    // Get the (N279) Imp_Level Instance
-    oldse = oldinst.GetApplication_instance( "N279_Imp_Level" );
-    s_N279_imp_level * il = ( s_N279_imp_level * )oldse;
-    if( oldse != ENTITY_NULL ) {
-        fd->implementation_level( const_cast<char *>( ( il->implementation_level() ).c_str() ) );
-        oldinst.Delete( il );
-    } else {
-        fd->implementation_level( "" );
-    }
-    fd->STEPfile_id = HeaderId( "File_Description" );
-    imtmp->Append( fd, completeSE );
-
-// FILE_SCHEMA <== default values
-    // There is no entity for the file_schema in the old version
-    // Therefore, the schema_identifiers list is left empty
-    imtmp->Append( HeaderDefaultFileSchema(), completeSE );
-
-
-//append any extra instances from oldinst onto imtmp
-    for( int n = oldinst.InstanceCount() - 1; n >= 0; --n ) {
-        /*    imtmp->Append(oldinst.GetApplication_instance(oldinst[n]),completeSE);*/
-        imtmp->Append( oldinst.GetApplication_instance( oldinst.GetMgrNode( n ) ), completeSE );
-    }
-
-    return imtmp;
-}
-
 
 /***************************
 Verify the instances read from the header section of an exchange file.
@@ -380,21 +252,26 @@ STEPfile::HeaderVerifyInstances( InstMgr * im ) {
 
 SCLP23( Application_instance ) *
 STEPfile::HeaderDefaultFileName() {
-    p21DIS_File_name * fn = new p21DIS_File_name;
+    SdaiFile_name * fn = new SdaiFile_name;
+    StringAggregate_ptr tmp = new StringAggregate;
 
-    fn->name( "" );
-    fn->time_stamp( "" );
-    fn->author().StrToVal( "", &_error,
-                           fn->attributes[2].
-                           aDesc -> DomainType(),
-                           _headerInstances );
-    fn->organization().StrToVal( "", &_error,
-                                 fn->attributes[3].
-                                 aDesc -> DomainType(),
-                                 _headerInstances );
-    fn->preprocessor_version( "" );
-    fn->originating_system( "" );
-    fn->authorisation( "" );
+    fn->name_( "" );
+    fn->time_stamp_( "" );
+    tmp->StrToVal( "", &_error,
+                  fn->attributes[2].
+                  aDesc -> DomainType(),
+                  _headerInstances );
+    fn->author_(tmp);
+
+    tmp->StrToVal( "", &_error,
+                   fn->attributes[3].
+                   aDesc -> DomainType(),
+                   _headerInstances );
+    fn->organization_(tmp);
+
+    fn->preprocessor_version_( "" );
+    fn->originating_system_( "" );
+    fn->authorization_( "" );
 
     fn->STEPfile_id = HeaderId( "File_Name" );
 
@@ -403,9 +280,9 @@ STEPfile::HeaderDefaultFileName() {
 
 SCLP23( Application_instance ) *
 STEPfile::HeaderDefaultFileDescription() {
-    p21DIS_File_description * fd = new p21DIS_File_description;
+    SdaiFile_description * fd = new SdaiFile_description;
 
-    fd->implementation_level( "" );
+    fd->implementation_level_( "" );
 
     fd->STEPfile_id = HeaderId( "File_Description" );
 
@@ -414,12 +291,14 @@ STEPfile::HeaderDefaultFileDescription() {
 
 SCLP23( Application_instance ) *
 STEPfile::HeaderDefaultFileSchema() {
-    p21DIS_File_schema * fs = new p21DIS_File_schema;
+    SdaiFile_schema * fs = new SdaiFile_schema;
+    StringAggregate_ptr tmp = new StringAggregate;
 
-    fs->schema_identifiers().StrToVal( "", &_error,
-                                       fs->attributes[0].
-                                       aDesc -> DomainType(),
-                                       _headerInstances );
+    tmp->StrToVal( "", &_error,
+              fs->attributes[0].
+              aDesc -> DomainType(),
+              _headerInstances );
+    fs->schema_identifiers_(tmp);
 
     fs->STEPfile_id = HeaderId( "File_Schema" );
 
@@ -2030,7 +1909,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         case SEVERITY_BUG:
 
         case SEVERITY_INCOMPLETE:
-            if( ( _fileType == VERSION_CURRENT ) || ( _fileType == VERSION_OLD ) ) {
+            if( _fileType == VERSION_CURRENT ) {
                 cerr << "ERROR in EXCHANGE FILE: incomplete instance #"
                      << obj -> STEPfile_id << ".\n";
                 if( _fileType != WORKING_SESSION ) {
@@ -2201,40 +2080,22 @@ The header section entities must be numbered in the following manner:
 #2=FILE_NAME
 #3=FILE_SCHEMA
 ***************************/
-int
-STEPfile::HeaderId( const char * name ) {
-    std::string tmp;
-    if( !( strcmp( ( char * )StrToUpper( name, tmp ), "FILE_DESCRIPTION" ) ) ) {
+int STEPfile::HeaderId( const std::string name ) {
+    std::string tmp = name;
+
+    std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::toupper);
+
+    if( tmp == "FILE_DESCRIPTION" ) {
         return 1;
     }
-    if( !( strcmp( ( char * )StrToUpper( name, tmp ), "FILE_NAME" ) ) ) {
+    if( tmp == "FILE_NAME" ) {
         return 2;
     }
-    if( !( strcmp( ( char * )StrToUpper( name, tmp ), "FILE_SCHEMA" ) ) ) {
+    if( tmp == "FILE_SCHEMA" ) {
         return 3;
     }
     return ++_headerId;
 }
-
-/***************************
-***************************/
-int STEPfile::HeaderIdOld( const char * name ) {
-    const char * nms[5];
-    nms[0] = "FILE_IDENTIFICATION",
-    nms[1] = "FILE_DESCRIPTION";
-    nms[2] = "IMP_LEVEL";
-    nms[3] = "CLASSIFICATION";
-    nms[4] = "MAXSIG";
-
-    std::string tmp;
-    for( int i = 0; i < 5; ++i ) {
-        if( !strcmp( ( char * )StrToUpper( name, tmp ), nms[i] ) ) {
-            return ++i;
-        }
-    }
-    return ++_headerId;
-}
-
 
 /***************************
 ***************************/
@@ -2293,7 +2154,7 @@ STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
     }
 
 //set some of the attribute values at time of output
-    p21DIS_File_name * fn = ( p21DIS_File_name * )se;
+    SdaiFile_name * fn = ( SdaiFile_name * )se;
 
     /* I'm not sure this is a good idea that Peter did but I'll leave around - DAS
         // write time_stamp (as specified in ISO Standard 8601)
@@ -2305,7 +2166,7 @@ STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
     struct tm * timeptr = localtime( &t );
     char time_buf[26];
     strftime( time_buf, 26, "%Y-%m-%dT%H:%M:%S", timeptr );
-    fn->time_stamp( time_buf );
+    fn->time_stamp_( time_buf );
 
 //output the values to the file
     WriteHeaderInstance( se, out );
@@ -2387,13 +2248,6 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
                   strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
         exchange_file = 1;
         SetFileType( VERSION_CURRENT );
-    } else if( !strncmp( const_cast<char *>( keywd.c_str() ), "STEP",
-                         strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
-        _error.AppendToUserMsg( "Reading Old Version of exchange file.\n" );
-        _error.GreaterSeverity( SEVERITY_USERMSG );
-
-        exchange_file = 1;
-        SetFileType( VERSION_OLD );
     } else if( !strncmp( const_cast<char *>( keywd.c_str() ), "STEP_WORKING_SESSION",
                          strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
         exchange_file = 0;
@@ -2408,8 +2262,8 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
     else {
         sprintf( errbuf,
                  "Faulty input at beginning of file. \"ISO-10303-21;\" or"
-                 " \"STEP;\" or \"STEP_WORKING_SESSION;\" expected. File "
-                 "not read: %s\n", ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
+                 " \"STEP_WORKING_SESSION;\" expected. File not read: %s\n",
+                 ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
         _error.AppendToUserMsg( errbuf );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
         return SEVERITY_INPUT_ERROR;
@@ -2477,11 +2331,7 @@ STEPfile::AppendFile( istream * in, int useTechCor ) {
 
     switch( _fileType ) {
         case VERSION_CURRENT:
-        case VERSION_OLD:
         case VERSION_UNKNOWN:
-            valid_insts = ReadData2( *in2, useTechCor );
-            break;
-
         case WORKING_SESSION:
             valid_insts = ReadData2( *in2, useTechCor );
             break;
