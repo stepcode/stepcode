@@ -99,7 +99,7 @@ void Registry::DeleteContents() {
  * entity A from schema Y and renames it to B, X should only refer to A as
  * B.  Thus, if schNm here = "X", only e="B" would be valid but not e="A".
  */
-inline  const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const
+const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const
 {
     const EntityDescriptor * entd;
     const SchRename * altlist;
@@ -140,7 +140,7 @@ inline  const EntityDescriptor * Registry::FindEntity( const char * e, const cha
     return entd;
 }
 
-inline  const Schema * Registry::FindSchema( const char * n, int check_case ) const {
+const Schema * Registry::FindSchema( const char * n, int check_case ) const {
     if( check_case ) {
         return ( const Schema * ) HASHfind( active_schemas, ( char * ) n );
     }
@@ -149,7 +149,7 @@ inline  const Schema * Registry::FindSchema( const char * n, int check_case ) co
                                         ( char * )PrettyTmpName( n ) );
 }
 
-inline  const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
+const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
     if( check_case ) {
         return ( const TypeDescriptor * ) HASHfind( active_types, ( char * ) n );
     }
@@ -157,11 +157,11 @@ inline  const TypeDescriptor * Registry::FindType( const char * n, int check_cas
             ( char * )PrettyTmpName( n ) );
 }
 
-inline  void Registry::ResetTypes() {
+void Registry::ResetTypes() {
     HASHlistinit( active_types, &cur_type );
 }
 
-inline  const TypeDescriptor * Registry::NextType() {
+const TypeDescriptor * Registry::NextType() {
     if( 0 == HASHlist( &cur_type ) ) {
         return 0;
     }
@@ -191,7 +191,7 @@ void Registry::AddType( const TypeDescriptor & d ) {
  * so that if we comes across one of them in a Part 21 file, we'll recog-
  * nize it.
  */
-inline void Registry::AddClones( const EntityDescriptor & e )
+void Registry::AddClones( const EntityDescriptor & e )
 {
     const SchRename * alts = e.AltNameList();
 
@@ -232,7 +232,7 @@ static int uniqueNames( const char * entnm, const SchRename * altlist )
     return cnt;
 }
 
-inline void Registry::RemoveEntity( const char * n ) {
+void Registry::RemoveEntity( const char * n ) {
     const EntityDescriptor * e = FindEntity( n );
     struct Element tmp;
 
@@ -244,13 +244,13 @@ inline void Registry::RemoveEntity( const char * n ) {
 
 }
 
-inline void Registry::RemoveSchema( const char * n ) {
+void Registry::RemoveSchema( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
     HASHsearch( active_schemas, &tmp, HASH_DELETE );
 }
 
-inline void Registry::RemoveType( const char * n ) {
+void Registry::RemoveType( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
     HASHsearch( active_types, &tmp, HASH_DELETE );
@@ -259,7 +259,7 @@ inline void Registry::RemoveType( const char * n ) {
 /**
  * Remove all the "clones", or rename values of e.
  */
-inline void Registry::RemoveClones( const EntityDescriptor & e )
+void Registry::RemoveClones( const EntityDescriptor & e )
 {
     const SchRename * alts = e.AltNameList();
     struct Element * tmp;
@@ -294,27 +294,27 @@ SCLP23( Application_instance ) * Registry::ObjCreate( const char * nm, const cha
 }
 
 
-inline int Registry::GetEntityCnt() {
+int Registry::GetEntityCnt() {
     return entity_cnt;
 }
 
-inline void Registry::ResetEntities() {
+void Registry::ResetEntities() {
     HASHlistinit( primordialSwamp, &cur_entity );
 
 }
 
-inline  const EntityDescriptor * Registry::NextEntity() {
+const EntityDescriptor * Registry::NextEntity() {
     if( 0 == HASHlist( &cur_entity ) ) {
         return 0;
     }
     return ( const EntityDescriptor * ) cur_entity.e->data;
 }
 
-inline void Registry::ResetSchemas() {
+void Registry::ResetSchemas() {
     HASHlistinit( active_schemas, &cur_schema );
 }
 
-inline  const Schema * Registry::NextSchema() {
+const Schema * Registry::NextSchema() {
     if( 0 == HASHlist( &cur_schema ) ) {
         return 0;
     }
