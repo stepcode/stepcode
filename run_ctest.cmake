@@ -1,6 +1,52 @@
 # run_ctest.cmake
 # `ctest -S run_ctest.cmake`
 
+set( CTEST_SOURCE_DIRECTORY . )
+set( CTEST_BINARY_DIRECTORY build_ctest )
+set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
+set( CTEST_MEMORYCHECK_COMMAND /usr/bin/valgrind )
+set( CTEST_INITIAL_CACHE "
+SITE:STRING=${CTEST_SITE}
+BUILDNAME:STRING=${CTEST_BUILD_NAME}
+ENABLE_TESTING:BOOL=ON
+CMAKE_BUILD_TYPE:STRING=Debug
+")
+
+
+
+if( EXISTS "../.SCL_CTEST_PREFS.cmake" )
+    include( "../.SCL_CTEST_PREFS.cmake" )
+else()
+    message( WARNING "Did not find ../.SCL_CTEST_PREFS.cmake, containing config variables - result submission disabled" )
+    set( SKIP_SUBMISSION TRUE )
+endif()
+
+######################################################
+######################################################
+# use config variables such as these in
+#   ../.SCL_CTEST_PREFS.cmake
+#
+#set( CTEST_SITE "your name here")
+#set( CTEST_BUILD_NAME "build type, os, arch")
+#
+#
+# setting any of these to true causes that set of tests
+# to be skipped (unless another test depends on that test)
+# SKIP_CPP_TEST_SCHEMA_GEN
+# SKIP_CPP_TEST_SCHEMA_BUILD
+# SKIP_CPP_TEST_SCHEMA_RW
+#
+# setting this one disables result submission to my.cdash.org
+# SKIP_SUBMISSION
+######################################################
+######################################################
+
+
+function( SUBMIT_TEST part )
+    if( NOT SKIP_SUBMISSION )
+        ctest_submit( PARTS ${part} )
+    endif()
+endfunction( SUBMIT_TEST part )
 
 # find number of processors, for faster builds
 # from http://www.kitware.com/blog/home/post/63
@@ -33,54 +79,41 @@ endif()
 
 set(CTEST_BUILD_FLAGS "-j${PROCESSOR_COUNT}")
 
-######################################################
-###########   Set these variables   ##################
-######################################################
-set( CTEST_SITE "your name here")
-set( CTEST_BUILD_NAME "build type, os, arch")
-set( CTEST_COMPILER_NAME "cc version" )
-
-message( FATAL_ERROR "Set the above variables and comment this line out!" )
 
 ######################################################
-
-set( CTEST_SOURCE_DIRECTORY . )
-set( CTEST_BINARY_DIRECTORY build_ctest )
-set( CTEST_CMAKE_GENERATOR "Unix Makefiles" )
-set( CTEST_MEMORYCHECK_COMMAND /usr/bin/valgrind )
-set( CTEST_SITE "mpictor")
-set( CTEST_BUILD_NAME "Debug - Debian wheezy 64-bit")
-set( CTEST_COMPILER_NAME "gcc (Debian 4.6.1-4) 4.6.1" )
-set( CTEST_INITIAL_CACHE "
-SITE:STRING=${CTEST_SITE}
-BUILDNAME:STRING=${CTEST_BUILD_NAME}
-ENABLE_TESTING:BOOL=ON
-CMAKE_BUILD_TYPE:STRING=Debug
-")
-
-
-######################################################
-##### To disable a set of tests, comment out the
-##### ctest_submit line immediately following the set
-##### set you wish to disable. If other tests
+##### To disable reporting of a set of tests, comment
+##### out the SUBMIT_TEST line immediately following
+##### the set you wish to disable. If other tests
 ##### depend on those tests, they will be executed
 ##### but not reported.
+#####
+##### To do this for all tests:
+##### set( SKIP_SUBMISSION TRUE )
 ######################################################
-
 
 ctest_start(Experimental)
 ctest_empty_binary_directory(${CTEST_BINARY_DIRECTORY})
 
 ctest_configure( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND OPTIONS -DENABLE_TESTING=ON )
-ctest_submit( PARTS Configure )
+SUBMIT_TEST( Configure )
 ctest_build( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND )
-ctest_submit( PARTS Build )
+SUBMIT_TEST( Build )
 # ctest_memcheck( BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE res PARALLEL_LEVEL ${PROCESSOR_COUNT} )
-ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_gen" )
-ctest_submit( PARTS Test )
-ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_build" )
-ctest_submit( PARTS Test )
-ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_rw" )
-ctest_submit( PARTS Test )
+
+if(NOT SKIP_CPP_TEST_SCHEMA_GEN )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_gen" )
+    SUBMIT_TEST( Test )
+endif()
+if(NOT SKIP_CPP_TEST_SCHEMA_BUILD_CPP )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_build" )
+    SUBMIT_TEST( Test )
+endif()
+if(NOT SKIP_CPP_TEST_SCHEMA_RW )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_rw" )
+    SUBMIT_TEST( Test )
+endif()
 
 # ctest_coverage( )
