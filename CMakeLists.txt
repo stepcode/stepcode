@@ -96,6 +96,20 @@ IF(NOT WIN32)
 ENDIF(NOT WIN32)
 
 #---------------------------------------------------------------------
+# Testing option
+OPTION( ENABLE_TESTING "Enable unittesting framework" OFF )
+IF(ENABLE_TESTING)
+    set( CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" ) #for code coverage
+    set( CMAKE_SHARED_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" )
+    if( NOT DEFINED BUILD_SCHEMAS )
+        set( BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
+    endif()
+    INCLUDE(CTest)
+    ENABLE_TESTING()
+    SUBDIRS(test)
+ENDIF(ENABLE_TESTING)
+
+#---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in 
 # the build directory AND install directory.  Thanks to plplot for 
 # identifying the necessity of setting CMAKE_INSTALL_NAME_DIR on OSX.
@@ -236,3 +250,7 @@ ADD_SUBDIRECTORY(src/clutils)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(data)
 ADD_SUBDIRECTORY(doc)
+
+# this is for testing - 'make core' builds everything that isn't generated
+add_custom_target( core )
+add_dependencies( core stepdai check-express stepeditor fedex_plus )
