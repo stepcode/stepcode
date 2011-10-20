@@ -1,44 +1,53 @@
-SET(ap203_data
-  ap203/203wseds.exp
-  ap203/cube1.p21
-  ap203/cube2.p21
-  ap203/g_r_assembly1.p21
-  ap203/gasket1.p21
-  ap203/gasket2.p21
-  ap203/gasket3.p21
-  ap203/hex_prism1.p21
-  ap203/rod_aspect1.p21
-  ap203/star1.p21
-)
-INSTALL(FILES ${ap203_data} DESTINATION ${DATA_DIR}/data/ap203)
+IF( INSTALL_DATA )
+    SET(ap203_data
+    ap203/203wseds.exp
+    ap203/cube1.p21
+    ap203/cube2.p21
+    ap203/g_r_assembly1.p21
+    ap203/gasket1.p21
+    ap203/gasket2.p21
+    ap203/gasket3.p21
+    ap203/hex_prism1.p21
+    ap203/rod_aspect1.p21
+    ap203/star1.p21
+    )
+    INSTALL(FILES ${ap203_data} DESTINATION ${DATA_DIR}/data/ap203)
 
-SET(ap227_data
-  ap227/ap227.exp
-  ap227/mitre.p21
-  ap227/mitre.step.txt
-)
-INSTALL(FILES ${ap227_data} DESTINATION ${DATA_DIR}/data/ap227)
+    SET(ap227_data
+    ap227/ap227.exp
+    ap227/mitre.p21
+    ap227/mitre.step.txt
+    )
+    INSTALL(FILES ${ap227_data} DESTINATION ${DATA_DIR}/data/ap227)
 
-SET(step_example_data
-  example/example.exp
-)
-INSTALL(FILES ${step_example_data} DESTINATION ${DATA_DIR}/data/example)
+    SET(step_example_data
+    example/example.exp
+    )
+    INSTALL(FILES ${step_example_data} DESTINATION ${DATA_DIR}/data/example)
 
 
 
-SET(step_datafiles
-  pdmnet.exp
-  select.exp 
-)
-INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
+    SET(step_datafiles
+    pdmnet.exp
+    select.exp
+    )
+    INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
+ENDIF( INSTALL_DATA )
+
+#this sets a property so that the target doesn't get built by 'make' or 'make all'
+#useful when testing generation of schema code/compiling schem libs/etc
+FUNCTION( TESTABLE_TARGET target )
+    if(ENABLE_TESTING)
+        set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
+    endif()
+ENDFUNCTION( TESTABLE_TARGET )
 
 # To build one or more schemas, configure with 
 # 'cmake -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
 # This function runs fedex on one express file. The generated source goes in a dir 
 # in the build dir, and it is compiled into a library. A p21read executable is 
-# compiled and linked to the lib, unless DISABLE_P21READ is true. p21read is used
-# to test the lib.
+# compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #try absolute path. if that fails, must already be absolute.
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
@@ -59,49 +68,81 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
     file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "SCHEMA .*")
     string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
-    string(TOUPPER ${SCHEMA_N} SCHEMA_NAME) #fedex_plus always uses upper case for file names
+    string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
+    get_filename_component(SCHEMA_SHORT_NAME ${SCHEMA_FILE} NAME_WE)
     
-    project( sdai_${SCHEMA_NAME} )
-    message( STATUS "Generating code for ${SCHEMA_NAME}.")
-    set( SCHEMA_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_NAME} )
+    project( sdai_${SCHEMA_SHORT_NAME} )
+    message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
+    set( SCHEMA_OUTPUT_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
     #the names of the files that will be generated
-    set( FEDEX_OUT ${SCHEMA_DIR}/compstructs.cc ${SCHEMA_DIR}/Sdaiclasses.h 
-                   ${SCHEMA_DIR}/schema.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.cc
-                   ${SCHEMA_DIR}/schema.h ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.h
-                   ${SCHEMA_DIR}/SdaiAll.cc ${SCHEMA_DIR}/Sdai${SCHEMA_NAME}.init.cc )
+    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h
+                   ${SCHEMA_OUTPUT_DIR}/schema.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc
+                   ${SCHEMA_OUTPUT_DIR}/schema.h ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h
+                   ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc )
 
     # *cannot* use include_directories() because the includes keep piling up - if building
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
     # one header (schema.h) is always named the same, this will not work. only workaround
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
-    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -DHAVE_CONFIG_H" )
+    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore" )
 
-    add_custom_command( OUTPUT ${SCHEMA_DIR}
-                        COMMAND cmake ARGS -E make_directory ${SCHEMA_DIR} 
-                        COMMENT "Creating ${SCHEMA_DIR} for schema ${SCHEMA_NAME}")
+    add_custom_target( generate_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
+    add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
+                        COMMAND cmake ARGS -E make_directory ${SCHEMA_OUTPUT_DIR}
+                        COMMENT "Creating ${SCHEMA_OUTPUT_DIR} for schema ${SCHEMA_SHORT_NAME}")
     add_custom_command( OUTPUT ${FEDEX_OUT}
                         COMMAND fedex_plus ARGS ${SCHEMA_FILE}
-                        DEPENDS ${SCHEMA_FILE} ${SCHEMA_DIR}
-                        WORKING_DIRECTORY ${SCHEMA_DIR}
-                        COMMENT "Running fedex_plus for ${SCHEMA_NAME}..."
+                        DEPENDS ${SCHEMA_FILE} ${SCHEMA_OUTPUT_DIR}
+                        WORKING_DIRECTORY ${SCHEMA_OUTPUT_DIR}
+                        COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
     add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
     target_link_libraries(${PROJECT_NAME} stepdai stepcore express stepeditor )
+    add_dependencies( ${PROJECT_NAME} generate_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    
-    if( NOT DEFINED ${DISABLE_P21READ} )
-        add_executable( "p21read_${PROJECT_NAME}" ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
-        target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
-        set_target_properties( "p21read_${PROJECT_NAME}" PROPERTIES COMPILE_FLAGS
-                               ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    endif()
+    TESTABLE_TARGET( ${PROJECT_NAME} )
+
+    add_test( NAME generate_${SCHEMA_SHORT_NAME}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target generate_${SCHEMA_SHORT_NAME}
+                                       --config $<CONFIGURATION> )
+    add_test( NAME build_${PROJECT_NAME}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target p21read_${PROJECT_NAME}
+                                       --config $<CONFIGURATION> )
+
+    # label the tests and set dependencies
+    set_tests_properties( generate_${SCHEMA_SHORT_NAME} PROPERTIES LABELS schema_gen )
+    set_tests_properties( build_${PROJECT_NAME} PROPERTIES DEPENDS generate_${SCHEMA_SHORT_NAME} LABELS schema_build )
+
+    add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
+    target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
+    set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
+                           ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    TESTABLE_TARGET( p21read_${PROJECT_NAME} )
+
+    #find all part 21 files in schema dir, add a test for each one
+    get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
+    file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
+    foreach( TEST_FILE ${P21_FILES} )
+    get_filename_component( FNAME ${TEST_FILE} NAME_WE )
+        add_test( NAME read_write_${SCHEMA_SHORT_NAME}_${FNAME}
+                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                  COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
+        set_tests_properties( read_write_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_${PROJECT_NAME} LABELS schema_rw )
+    endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
 
-if(NOT BUILD_SCHEMAS STREQUAL "" )
-  foreach( ap ${BUILD_SCHEMAS} )
-    BUILD_A_SCHEMA( ${ap} )
-  endforeach()
+if( DEFINED BUILD_SCHEMAS )
+    if( BUILD_SCHEMAS STREQUAL "ALL" )
+        file( GLOB_RECURSE BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
+    endif()
+    foreach( ap ${BUILD_SCHEMAS} )
+        BUILD_A_SCHEMA( ${ap} )
+    endforeach()
 endif()
