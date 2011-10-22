@@ -14,13 +14,9 @@
 #include <STEPfile.h>
 #include <SdaiHeaderSchema.h>
 #include <STEPaggregate.h>
+#include <cmath>
 
 #include <cstring>
-
-extern "C" {
-    double  ceil( double );
-}
-
 
 extern void HeaderSchemaInit( Registry & reg );
 
