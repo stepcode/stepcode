@@ -66,7 +66,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     endif()
 
     # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
-    file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "SCHEMA .*")
+    file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "^SCHEMA .*")
     string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
     string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
     get_filename_component(SCHEMA_SHORT_NAME ${SCHEMA_FILE} NAME_WE)
