@@ -10,10 +10,10 @@ set(LIBSTEPEDITOR_SRCS
     mgrnodearray.cc 
     mgrnodelist.cc 
     needFunc.cc 
-    SdaiHEADER_SECTION_SCHEMA.cc
-    SdaiHEADER_SECTION_SCHEMA.All.cc
-    SdaiHEADER_SECTION_SCHEMA.init.cc
-    SdaiHEADER_SECTION_SCHEMA.schema.cc
+    SdaiHeaderSchema.cc
+    SdaiHeaderSchemaAll.cc
+    SdaiHeaderSchemaInit.cc
+    SdaiSchemaInit.cc
 )
 
 SET(LIBSTEPEDITOR_PRIVATE_HDRS
@@ -27,9 +27,9 @@ SET(LIBSTEPEDITOR_PRIVATE_HDRS
     mgrnodearray.h 
     mgrnodelist.h 
     needFunc.h 
-    SdaiHEADER_SECTION_SCHEMA.h
-    SdaiHEADER_SECTION_SCHEMA.classes.h
-    SdaiHEADER_SECTION_SCHEMA.schema.h
+    SdaiHeaderSchema.h
+    SdaiHeaderSchemaClasses.h
+    SdaiSchemaInit.h
     seeinfodefault.h
 )
 

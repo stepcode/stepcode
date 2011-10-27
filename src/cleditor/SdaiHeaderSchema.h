@@ -7,8 +7,8 @@
 #include <sdai.h>
 #include <Registry.h>
 #include <STEPaggregate.h>
-#include <SdaiHEADER_SECTION_SCHEMA.classes.h>
-#include <SdaiHEADER_SECTION_SCHEMA.schema.h>
+#include <SdaiHeaderSchemaClasses.h>
+#include <SdaiSchemaInit.h>
 
 /////////         ENTITY section_language
 

@@ -4,7 +4,7 @@
 // it since your modifications will be lost if fedex_plus is used to
 // regenerate it.
 
-#include <SdaiHEADER_SECTION_SCHEMA.schema.h>
+#include <SdaiHeaderSchema.h>
 
 void HeaderInitSchemasAndEnts (Registry & reg) {
     Uniqueness_rule_ptr ur;

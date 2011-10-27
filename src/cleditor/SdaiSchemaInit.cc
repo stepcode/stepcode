@@ -4,7 +4,7 @@
 // it since your modifications will be lost if fedex_plus is used to
 // regenerate it.
 
-#include <SdaiHEADER_SECTION_SCHEMA.schema.h>
+#include <SdaiSchemaInit.h>
 
 void HeaderSchemaInit (Registry & reg) {
         HeaderInitSchemasAndEnts (reg);

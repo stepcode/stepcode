@@ -12,7 +12,7 @@
 
 #include <ExpDict.h>
 #include <STEPattribute.h>
-#include <SdaiHEADER_SECTION_SCHEMA.h>
+#include <SdaiHeaderSchema.h>
 
 Schema *s_header_section_schema =0;
 

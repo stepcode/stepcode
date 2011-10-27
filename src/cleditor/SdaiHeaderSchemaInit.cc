@@ -7,7 +7,7 @@
 #include <Registry.h>
 #include <ExpDict.h>
 #include <STEPattribute.h>
-#include <SdaiHEADER_SECTION_SCHEMA.h>
+#include <SdaiHeaderSchema.h>
 
 void SdaiHEADER_SECTION_SCHEMAInit (Registry& reg)
 {

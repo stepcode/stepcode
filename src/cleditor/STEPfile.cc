@@ -29,7 +29,7 @@
 #include <sdai.h>
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
-#include <SdaiHEADER_SECTION_SCHEMA.h>
+#include <SdaiHeaderSchema.h>
 
 // STEPundefined contains
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)

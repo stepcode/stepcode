@@ -16,8 +16,8 @@
 #include <STEPattribute.h>
 #include <complexSupport.h>
 
-#include <SdaiHEADER_SECTION_SCHEMA.classes.h>
-#include <SdaiHEADER_SECTION_SCHEMA.h>
+#include <SdaiHeaderSchemaClasses.h>
+#include <SdaiHeaderSchema.h>
 
 void HeaderSchemaInit (Registry &);
 void HeaderInitSchemasAndEnts (Registry &);

@@ -12,7 +12,7 @@
 */
 
 #include <STEPfile.h>
-#include <SdaiHEADER_SECTION_SCHEMA.h>
+#include <SdaiHeaderSchema.h>
 #include <STEPaggregate.h>
 
 #include <cstring>
