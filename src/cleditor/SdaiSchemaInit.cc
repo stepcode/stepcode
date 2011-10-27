@@ -12,19 +12,4 @@ void HeaderSchemaInit (Registry & reg) {
         reg.SetCompCollect( 0 );
 }
 
-/*    Generated at /opt/step/scl/src/fedex_plus/classes_wrapper.cc:685.    */
-
-/* MAP 17 Oct 11
-// Generate a function to be called by Model to help it
-// create the necessary Model_contents without the
-// dictionary (Registry) handle since it doesn't have a
-// predetermined way to access to the handle.
-
-SCLP23(Model_contents_ptr) GetModelContents(char *schemaName)
-{
-    if(!strcmp(schemaName, "header_section_schema"))
-        return (SCLP23(Model_contents_ptr)) new SdaiModel_contents_header_section_schema; 
-    else return (SCLP23(Model_contents_ptr)) 0;
-}
-*/
 #endif

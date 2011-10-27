@@ -23,8 +23,4 @@ void HeaderSchemaInit (Registry &);
 void HeaderInitSchemasAndEnts (Registry &);
 void SdaiHEADER_SECTION_SCHEMAInit (Registry & r);
 
-/* MAP 17 Oct 11
- * ComplexCollect *gencomplex();
- * SCLP23(Model_contents_ptr) GetModelContents(char *schemaName);
- */
 #endif
