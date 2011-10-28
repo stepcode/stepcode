@@ -1,16 +1,4 @@
-(* AIM EXPRESS long form schema for ISO/IS 10303-235
-   ISO TC 184/SC 4/WG 3 N2545
-   2008-01-09
-   Norman Swindells
-*)
-
-(* ************************************************************************** *)
-
-
 SCHEMA engineering_properties_schema;
-
-
-
 (* ***********************************
 Constants in the schema engineering_properties_schema
 *********************************** *)
@@ -48,19 +36,14 @@ Constants in the schema engineering_properties_schema
 Entities in the schema engineering_properties_schema
 *********************************** *)
 
-
    ENTITY SQL_mappable_defined_function
    ABSTRACT SUPERTYPE
    SUBTYPE OF (defined_function);
    END_ENTITY;
 
-
-
    ENTITY abs_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY absorbed_dose_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -69,8 +52,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ABSORBED_DOSE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY absorbed_dose_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -78,7 +59,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.gray);
    END_ENTITY;
 
-
+	ENTITY si_absorbed_dose_unit
+     SUBTYPE OF (absorbed_dose_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.gray;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY abstracted_expression_function
    SUBTYPE OF (maths_function, quantifier_expression);
@@ -90,16 +76,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (operand <* SELF\multiple_arity_generic_expression.operands| NOT has_values_space(operand))) = 0;
    END_ENTITY;
 
-
-
    ENTITY acceleration_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.ACCELERATION_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY acceleration_unit
    SUBTYPE OF (derived_unit);
@@ -108,13 +90,9 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensional_exponents(1.00000, 0.00000, -2.00000, 0.00000, 0.00000, 0.00000, 0.00000);
    END_ENTITY;
 
-
-
    ENTITY acos_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY action;
       name : label;
@@ -127,8 +105,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY action_assignment
    ABSTRACT SUPERTYPE;
       assigned_action : action;
@@ -139,8 +115,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY action_directive;
       name : label;
       description : OPTIONAL text;
@@ -148,17 +122,12 @@ Entities in the schema engineering_properties_schema
       comment : text;
       requests : SET [1:?] OF versioned_action_request;
    END_ENTITY;
-
-
-
    ENTITY action_method;
       name : label;
       description : OPTIONAL text;
       consequence : text;
       purpose : text;
    END_ENTITY;
-
-
 
    ENTITY action_method_relationship;
       name : label;
@@ -167,14 +136,10 @@ Entities in the schema engineering_properties_schema
       related_method : action_method;
    END_ENTITY;
 
-
-
    ENTITY action_method_with_associated_documents
    SUBTYPE OF (action_method);
       documents : SET [1:?] OF document;
    END_ENTITY;
-
-
 
    ENTITY action_method_with_associated_documents_constrained
    SUBTYPE OF (action_method_with_associated_documents);
@@ -184,15 +149,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (item <* usage_constraints| NOT (item.source IN SELF\action_method_with_associated_documents.documents))) = 0;
    END_ENTITY;
 
-
-
    ENTITY action_property;
       name : label;
       description : text;
       definition : characterized_action_definition;
    END_ENTITY;
-
-
 
    ENTITY action_property_relationship;
       name : label;
@@ -204,8 +165,6 @@ Entities in the schema engineering_properties_schema
          relating_action_property :<>: related_action_property;
    END_ENTITY;
 
-
-
    ENTITY action_property_representation;
       name : label;
       description : text;
@@ -213,16 +172,12 @@ Entities in the schema engineering_properties_schema
       representation : representation;
    END_ENTITY;
 
-
-
    ENTITY action_relationship;
       name : label;
       description : OPTIONAL text;
       relating_action : action;
       related_action : action;
    END_ENTITY;
-
-
 
    ENTITY action_request_assignment
    ABSTRACT SUPERTYPE;
@@ -234,10 +189,8 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY action_request_solution;
-      method : action_method;
+     method : action_method;
       request : versioned_action_request;
    DERIVE
       description : text := get_description_value(SELF);
@@ -249,16 +202,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY action_resource;
       name : label;
       description : OPTIONAL text;
       usage : SET [1:?] OF supported_item;
       kind : action_resource_type;
    END_ENTITY;
-
-
 
    ENTITY action_resource_relationship;
       name : label;
@@ -267,16 +216,12 @@ Entities in the schema engineering_properties_schema
       related_resource : action_resource;
    END_ENTITY;
 
-
-
    ENTITY action_resource_requirement;
       name : label;
       description : text;
       kind : resource_requirement_type;
       OPERATIONS : SET [1:?] OF characterized_action_definition;
    END_ENTITY;
-
-
 
    ENTITY action_resource_requirement_relationship;
       name : label;
@@ -288,20 +233,14 @@ Entities in the schema engineering_properties_schema
          relating_action_resource_requirement :<>: related_action_resource_requirement;
    END_ENTITY;
 
-
-
    ENTITY action_resource_type;
       name : label;
    END_ENTITY;
-
-
 
    ENTITY action_status;
       status : label;
       assigned_action : executed_action;
    END_ENTITY;
-
-
 
    ENTITY address;
       internal_location : OPTIONAL label;
@@ -324,16 +263,12 @@ Entities in the schema engineering_properties_schema
          ((((((((((EXISTS(internal_location) OR EXISTS(street_number)) OR EXISTS(street)) OR EXISTS(postal_box)) OR EXISTS(town)) OR EXISTS(region)) OR EXISTS(postal_code)) OR EXISTS(country)) OR EXISTS(facsimile_number)) OR EXISTS(telephone_number)) OR EXISTS(electronic_mail_address)) OR EXISTS(telex_number);
    END_ENTITY;
 
-
-
    ENTITY amount_of_substance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.AMOUNT_OF_SUBSTANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY amount_of_substance_unit
    SUBTYPE OF (named_unit);
@@ -342,27 +277,19 @@ Entities in the schema engineering_properties_schema
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 1.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
 
-
-
    ENTITY and_expression
    SUBTYPE OF (multiple_arity_boolean_expression);
    END_ENTITY;
-
-
 
    ENTITY angular_location
    SUBTYPE OF (dimensional_location);
       angle_selection : angle_relator;
    END_ENTITY;
 
-
-
    ENTITY angular_size
    SUBTYPE OF (dimensional_size);
       angle_selection : angle_relator;
    END_ENTITY;
-
-
 
    ENTITY angularity_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
@@ -371,13 +298,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) < 3;
    END_ENTITY;
 
-
-
    ENTITY apex
    SUBTYPE OF (derived_shape_aspect);
    END_ENTITY;
-
-
 
    ENTITY application_context;
       application : label;
@@ -393,15 +316,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY application_context_element
    SUPERTYPE OF (ONEOF(product_concept_context, product_context, product_definition_context));
       name : label;
       frame_of_reference : application_context;
    END_ENTITY;
-
-
 
    ENTITY application_context_relationship;
       name : label;
@@ -409,8 +328,6 @@ Entities in the schema engineering_properties_schema
       relating_context : application_context;
       related_context : application_context;
    END_ENTITY;
-
-
 
    ENTITY application_defined_function
    SUBTYPE OF (maths_function);
@@ -424,84 +341,60 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(explicit_range);
    END_ENTITY;
 
-
-
    ENTITY applied_action_assignment
    SUBTYPE OF (action_assignment);
       item : action_item;
    END_ENTITY;
-
-
 
    ENTITY applied_action_request_assignment
    SUBTYPE OF (action_request_assignment);
       item : action_request_item;
    END_ENTITY;
 
-
-
    ENTITY applied_approval_assignment
    SUBTYPE OF (approval_assignment);
       item : approval_item;
    END_ENTITY;
-
-
 
    ENTITY applied_certification_assignment
    SUBTYPE OF (certification_assignment);
       item : certification_item;
    END_ENTITY;
 
-
-
    ENTITY applied_contract_assignment
    SUBTYPE OF (contract_assignment);
       item : contract_item;
    END_ENTITY;
-
-
 
    ENTITY applied_date_and_time_assignment
    SUBTYPE OF (date_and_time_assignment);
       item : date_and_time_item;
    END_ENTITY;
 
-
-
    ENTITY applied_date_assignment
    SUBTYPE OF (date_assignment);
       item : date_item;
    END_ENTITY;
-
-
 
    ENTITY applied_document_reference
    SUBTYPE OF (document_reference);
       item : document_item;
    END_ENTITY;
 
-
-
    ENTITY applied_document_usage_contraint_assignment
    SUBTYPE OF (document_usage_constraint_assignment);
       item : document_item;
    END_ENTITY;
-
-
 
    ENTITY applied_effectivity_assignment
    SUBTYPE OF (effectivity_assignment);
       item : effectivity_item;
    END_ENTITY;
 
-
-
    ENTITY applied_event_occurrence_assignment
    SUBTYPE OF (event_occurrence_assignment);
       item : event_occurred_item;
    END_ENTITY;
-
-
 
    ENTITY applied_external_identification_assignment
    SUBTYPE OF (external_identification_assignment);
@@ -511,105 +404,74 @@ Entities in the schema engineering_properties_schema
          NOT (SELF.role.name = 'version') OR item_correlation(SELF.items, [ 'EXTERNALLY_DEFINED_CLASS', 'EXTERNALLY_DEFINED_ENGINEERING_PROPERTY' ]);
    END_ENTITY;
 
-
-
    ENTITY applied_group_assignment
    SUBTYPE OF (group_assignment);
       items : SET [1:?] OF groupable_item;
    END_ENTITY;
-
-
 
    ENTITY applied_identification_assignment
    SUBTYPE OF (identification_assignment);
       item : identification_item;
    END_ENTITY;
 
-
-
    ENTITY applied_location_assignment
    SUBTYPE OF (location_assignment);
       item : location_item;
    END_ENTITY;
-
-
 
    ENTITY applied_location_representation_assignment
    SUBTYPE OF (location_representation_assignment);
       item : location_representation_item;
    END_ENTITY;
 
-
-
    ENTITY applied_organization_assignment
    SUBTYPE OF (organization_assignment);
       item : organization_item;
    END_ENTITY;
-
-
 
    ENTITY applied_organizational_project_assignment
    SUBTYPE OF (organizational_project_assignment);
       item : SET [1:?] OF organizational_project_item;
    END_ENTITY;
 
-
-
    ENTITY applied_person_and_organization_assignment
    SUBTYPE OF (person_and_organization_assignment);
       item : person_and_organization_item;
    END_ENTITY;
 
-
-
    ENTITY applied_person_assignment
    SUBTYPE OF (person_assignment);
       item : person_item;
    END_ENTITY;
-
-
-
    ENTITY applied_qualification_assignment
    SUBTYPE OF (qualification_type_assignment);
       item : qualification_item;
    END_ENTITY;
-
-
 
    ENTITY applied_security_classification_assignment
    SUBTYPE OF (security_classification_assignment);
       item : SET [1:?] OF security_classified_item;
    END_ENTITY;
 
-
-
    ENTITY applied_state_observed_assignment
    SUBTYPE OF (state_observed_assignment);
       item : state_observed_item;
    END_ENTITY;
-
-
 
    ENTITY applied_state_type_assignment
    SUBTYPE OF (state_type_assignment);
       item : state_item;
    END_ENTITY;
 
-
-
    ENTITY applied_time_interval_assignment
    SUBTYPE OF (time_interval_assignment);
       item : time_interval_item;
    END_ENTITY;
 
-
-
    ENTITY approval;
       status : approval_status;
       level : label;
    END_ENTITY;
-
-
 
    ENTITY approval_assignment
    ABSTRACT SUPERTYPE;
@@ -621,8 +483,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY approval_date_time;
       date_time : date_time_select;
       dated_approval : approval;
@@ -633,15 +493,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY approval_person_organization;
       person_organization : person_organization_select;
       authorized_approval : approval;
       role : approval_role;
    END_ENTITY;
-
-
 
    ENTITY approval_relationship;
       name : label;
@@ -649,8 +505,6 @@ Entities in the schema engineering_properties_schema
       relating_approval : approval;
       related_approval : approval;
    END_ENTITY;
-
-
 
    ENTITY approval_role;
       role : label;
@@ -661,13 +515,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY approval_status;
       name : label;
    END_ENTITY;
-
-
 
    ENTITY area_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -676,8 +526,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.AREA_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY area_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -685,17 +533,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensional_exponents(2.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000);
    END_ENTITY;
 
-
-
    ENTITY ascribable_state;
       name : label;
       description : OPTIONAL text;
       pertaining_state_type : state_type;
       ascribed_state_observed : state_observed;
    END_ENTITY;
-
-
-
    ENTITY ascribable_state_relationship;
       name : label;
       description : OPTIONAL text;
@@ -703,26 +546,18 @@ Entities in the schema engineering_properties_schema
       related_ascribable_state : ascribable_state;
    END_ENTITY;
 
-
-
    ENTITY asin_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY atan_function
    SUBTYPE OF (binary_function_call);
    END_ENTITY;
 
-
-
    ENTITY atom_based_literal
    SUBTYPE OF (generic_literal);
       lit_value : atom_based_value;
    END_ENTITY;
-
-
 
    ENTITY attribute_classification_assignment
    ABSTRACT SUPERTYPE;
@@ -730,8 +565,6 @@ Entities in the schema engineering_properties_schema
       attribute_name : label;
       role : classification_role;
    END_ENTITY;
-
-
 
    ENTITY attribute_language_assignment
    SUBTYPE OF (attribute_classification_assignment);
@@ -745,8 +578,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.' + 'LANGUAGE' IN TYPEOF(SELF\attribute_classification_assignment.assigned_class);
    END_ENTITY;
 
-
-
    ENTITY attribute_value_assignment
    ABSTRACT SUPERTYPE;
       attribute_name : label;
@@ -754,14 +585,10 @@ Entities in the schema engineering_properties_schema
       role : attribute_value_role;
    END_ENTITY;
 
-
-
    ENTITY attribute_value_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY axis1_placement
    SUBTYPE OF (placement);
@@ -773,8 +600,6 @@ Entities in the schema engineering_properties_schema
          SELF\geometric_representation_item.dim = 3;
    END_ENTITY;
 
-
-
    ENTITY axis2_placement_2d
    SUBTYPE OF (placement);
       ref_direction : OPTIONAL direction;
@@ -784,8 +609,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          SELF\geometric_representation_item.dim = 2;
    END_ENTITY;
-
-
 
    ENTITY axis2_placement_3d
    SUBTYPE OF (placement);
@@ -804,8 +627,6 @@ Entities in the schema engineering_properties_schema
          (NOT EXISTS(axis) OR NOT EXISTS(ref_direction)) OR (cross_product(axis, ref_direction).magnitude > 0.00000);
    END_ENTITY;
 
-
-
    ENTITY b_spline_basis
    SUBTYPE OF (maths_function, generic_literal);
       degree : nonnegative_integer;
@@ -821,8 +642,6 @@ Entities in the schema engineering_properties_schema
       WR3:
          repeated_knots[order] < repeated_knots[(num_basis + 1)];
    END_ENTITY;
-
-
 
    ENTITY b_spline_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -841,8 +660,6 @@ Entities in the schema engineering_properties_schema
          compare_basis_and_coef(basis, coef);
    END_ENTITY;
 
-
-
    ENTITY banded_matrix
    SUBTYPE OF (linearized_table_function);
       default_entry : maths_value;
@@ -857,8 +674,6 @@ Entities in the schema engineering_properties_schema
       WR3:
          member_of(default_entry, factor1(SELF\linearized_table_function.source.range));
    END_ENTITY;
-
-
 
    ENTITY basic_sparse_matrix
    SUBTYPE OF (explicit_table_function, multiple_arity_generic_expression);
@@ -888,21 +703,15 @@ Entities in the schema engineering_properties_schema
          member_of(default_entry, val.range);
    END_ENTITY;
 
-
-
    ENTITY binary_boolean_expression
    ABSTRACT SUPERTYPE OF (ONEOF(xor_expression, equals_expression))
    SUBTYPE OF (boolean_expression, binary_generic_expression);
    END_ENTITY;
 
-
-
    ENTITY binary_function_call
    ABSTRACT SUPERTYPE OF (atan_function)
    SUBTYPE OF (binary_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY binary_generic_expression
    ABSTRACT SUPERTYPE
@@ -910,22 +719,16 @@ Entities in the schema engineering_properties_schema
       operands : LIST [2:2] OF generic_expression;
    END_ENTITY;
 
-
-
    ENTITY binary_literal
    SUBTYPE OF (generic_literal);
       lit_value : BINARY;
    END_ENTITY;
-
-
 
    ENTITY binary_numeric_expression
    ABSTRACT SUPERTYPE OF (ONEOF(minus_expression, div_expression, mod_expression, power_expression, binary_function_call))
    SUBTYPE OF (numeric_expression, binary_generic_expression);
       SELF\binary_generic_expression.operands : LIST [2:2] OF numeric_expression;
    END_ENTITY;
-
-
 
    ENTITY block_volume
    SUBTYPE OF (volume);
@@ -935,40 +738,28 @@ Entities in the schema engineering_properties_schema
       z : positive_length_measure;
    END_ENTITY;
 
-
-
    ENTITY boolean_defined_function
    ABSTRACT SUPERTYPE
    SUBTYPE OF (defined_function, boolean_expression);
    END_ENTITY;
-
-
 
    ENTITY boolean_expression
    ABSTRACT SUPERTYPE OF (ONEOF(simple_boolean_expression, unary_boolean_expression, binary_boolean_expression, multiple_arity_boolean_expression, comparison_expression, interval_expression, boolean_defined_function))
    SUBTYPE OF (expression);
    END_ENTITY;
 
-
-
    ENTITY boolean_literal
    SUBTYPE OF (simple_boolean_expression, generic_literal);
       the_value : BOOLEAN;
    END_ENTITY;
 
-
-
    ENTITY boolean_variable
    SUBTYPE OF (simple_boolean_expression, variable);
    END_ENTITY;
 
-
-
    ENTITY bound_variable_semantics
    SUBTYPE OF (variable_semantics);
    END_ENTITY;
-
-
 
    ENTITY calendar_date
    SUBTYPE OF (date);
@@ -979,16 +770,12 @@ Entities in the schema engineering_properties_schema
          valid_calendar_date(SELF);
    END_ENTITY;
 
-
-
    ENTITY capacitance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.CAPACITANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY capacitance_unit
    SUBTYPE OF (derived_unit);
@@ -997,7 +784,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.farad);
    END_ENTITY;
 
-
+	ENTITY si_capacitance_unit
+     SUBTYPE OF (capacitance_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.farad;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY cartesian_complex_number_region
    SUBTYPE OF (maths_space, generic_literal);
@@ -1008,15 +800,11 @@ Entities in the schema engineering_properties_schema
          ((min_exists(real_constraint) OR max_exists(real_constraint)) OR min_exists(imag_constraint)) OR max_exists(imag_constraint);
    END_ENTITY;
 
-
-
    ENTITY cartesian_point
    SUPERTYPE OF (ONEOF(cylindrical_point, polar_point, spherical_point))
    SUBTYPE OF (point);
       coordinates : LIST [1:3] OF length_measure;
    END_ENTITY;
-
-
 
    ENTITY cartesian_transformation_operator
    SUPERTYPE OF (cartesian_transformation_operator_3d)
@@ -1032,8 +820,6 @@ Entities in the schema engineering_properties_schema
          scl > 0.00000;
    END_ENTITY;
 
-
-
    ENTITY cartesian_transformation_operator_3d
    SUBTYPE OF (cartesian_transformation_operator);
       axis3 : OPTIONAL direction;
@@ -1044,16 +830,12 @@ Entities in the schema engineering_properties_schema
          SELF\geometric_representation_item.dim = 3;
    END_ENTITY;
 
-
-
    ENTITY celsius_temperature_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.THERMODYNAMIC_TEMPERATURE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY centre_of_symmetry
    SUBTYPE OF (derived_shape_aspect);
@@ -1062,15 +844,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (sadr <* SELF\derived_shape_aspect.deriving_relationships| NOT ('ENGINEERING_PROPERTIES_SCHEMA.SYMMETRIC_SHAPE_ASPECT' IN TYPEOF(sadr\shape_aspect_relationship.related_shape_aspect)))) = 0;
    END_ENTITY;
 
-
-
    ENTITY certification;
       name : label;
       purpose : text;
       kind : certification_type;
    END_ENTITY;
-
-
 
    ENTITY certification_assignment
    ABSTRACT SUPERTYPE;
@@ -1082,20 +860,14 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY certification_type;
       description : label;
    END_ENTITY;
-
-
 
    ENTITY characterized_object;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY circle
    SUBTYPE OF (conic);
@@ -1106,21 +878,16 @@ Entities in the schema engineering_properties_schema
    SUBTYPE OF (group);
    END_ENTITY;
 
-
    ENTITY classification_assignment
    ABSTRACT SUPERTYPE;
       assigned_class : group;
       role : classification_role;
    END_ENTITY;
 
-
-
    ENTITY classification_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY coaxiality_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
@@ -1129,13 +896,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) <= 2;
    END_ENTITY;
 
-
-
    ENTITY comparison_equal
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
-
-
 
    ENTITY comparison_expression
    ABSTRACT SUPERTYPE OF (ONEOF(comparison_equal, comparison_greater, comparison_greater_equal, comparison_less, comparison_less_equal, comparison_not_equal, like_expression))
@@ -1146,37 +909,25 @@ Entities in the schema engineering_properties_schema
          (('ENGINEERING_PROPERTIES_SCHEMA.NUMERIC_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[1])) AND ('ENGINEERING_PROPERTIES_SCHEMA.NUMERIC_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[2])) OR ('ENGINEERING_PROPERTIES_SCHEMA.BOOLEAN_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[1])) AND ('ENGINEERING_PROPERTIES_SCHEMA.BOOLEAN_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[2]))) OR ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[1])) AND ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF\binary_generic_expression.operands[2]));
    END_ENTITY;
 
-
-
    ENTITY comparison_greater
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
-
-
 
    ENTITY comparison_greater_equal
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
 
-
-
    ENTITY comparison_less
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
-
-
 
    ENTITY comparison_less_equal
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
 
-
-
    ENTITY comparison_not_equal
    SUBTYPE OF (comparison_expression);
    END_ENTITY;
-
-
 
    ENTITY complex_number_literal
    SUBTYPE OF (generic_literal);
@@ -1184,29 +935,21 @@ Entities in the schema engineering_properties_schema
       imag_part : REAL;
    END_ENTITY;
 
-
-
    ENTITY composite_shape_aspect
    SUBTYPE OF (shape_aspect);
    INVERSE
       component_relationships : SET [2:?] OF shape_aspect_relationship FOR relating_shape_aspect;
    END_ENTITY;
 
-
-
    ENTITY compound_representation_item
    SUBTYPE OF (representation_item);
       item_element : compound_item_definition;
    END_ENTITY;
 
-
-
    ENTITY concat_expression
    SUBTYPE OF (string_expression, multiple_arity_generic_expression);
       SELF\multiple_arity_generic_expression.operands : LIST [2:?] OF string_expression;
    END_ENTITY;
-
-
 
    ENTITY concentricity_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
@@ -1215,13 +958,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) = 1;
    END_ENTITY;
 
-
-
    ENTITY concurrent_action_method
    SUBTYPE OF (action_method_relationship);
    END_ENTITY;
-
-
 
    ENTITY conductance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1230,8 +969,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.CONDUCTANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY conductance_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -1239,7 +976,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.siemens);
    END_ENTITY;
 
-
+	ENTITY si_conductance_unit
+     SUBTYPE OF (conductance_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.siemens;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY configuration_design;
       configuration : configuration_item;
@@ -1256,8 +998,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY configuration_item;
       id : identifier;
       name : label;
@@ -1266,15 +1006,11 @@ Entities in the schema engineering_properties_schema
       purpose : OPTIONAL label;
    END_ENTITY;
 
-
-
    ENTITY conic
    SUPERTYPE OF (ONEOF(circle, ellipse, hyperbola, parabola))
    SUBTYPE OF (curve);
       position : axis2_placement;
    END_ENTITY;
-
-
 
    ENTITY conical_surface
    SUBTYPE OF (elementary_surface);
@@ -1284,8 +1020,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          radius >= 0.00000;
    END_ENTITY;
-
-
 
    ENTITY constant_function
    SUBTYPE OF (maths_function, generic_literal);
@@ -1298,8 +1032,6 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(domain_from(source_of_domain));
    END_ENTITY;
 
-
-
    ENTITY context_dependent_action_method_relationship;
       name : label;
       relating_relationship : action_method_relationship;
@@ -1311,8 +1043,6 @@ Entities in the schema engineering_properties_schema
          relating_relationship.relating_method :=: related_relationship.relating_method;
    END_ENTITY;
 
-
-
    ENTITY context_dependent_action_relationship;
       name : label;
       relating_relationship : action_relationship;
@@ -1323,8 +1053,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          relating_relationship.relating_action :=: related_relationship.relating_action;
    END_ENTITY;
-
-
 
    ENTITY context_dependent_shape_representation;
       representation_relation : shape_representation_relationship;
@@ -1341,22 +1069,16 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY context_dependent_unit
    SUBTYPE OF (named_unit);
       name : label;
    END_ENTITY;
-
-
 
    ENTITY contract;
       name : label;
       purpose : text;
       kind : contract_type;
    END_ENTITY;
-
-
 
    ENTITY contract_assignment
    ABSTRACT SUPERTYPE;
@@ -1368,8 +1090,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY contract_relationship;
       id : identifier;
       name : label;
@@ -1378,13 +1098,9 @@ Entities in the schema engineering_properties_schema
       related_contract : contract;
    END_ENTITY;
 
-
-
    ENTITY contract_type;
       description : label;
    END_ENTITY;
-
-
 
    ENTITY conversion_based_unit
    SUBTYPE OF (named_unit);
@@ -1393,8 +1109,6 @@ Entities in the schema engineering_properties_schema
    DERIVE
       SELF\named_unit.dimensions : dimensional_exponents := derive_dimensional_exponents(conversion_factor\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY coordinated_universal_time_offset;
       hour_offset : INTEGER;
@@ -1411,20 +1125,14 @@ Entities in the schema engineering_properties_schema
          NOT (((hour_offset <> 0) OR (actual_minute_offset <> 0)) AND (sense = exact));
    END_ENTITY;
 
-
-
    ENTITY cos_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY curve
    SUPERTYPE OF (ONEOF(line, conic))
    SUBTYPE OF (geometric_representation_item);
    END_ENTITY;
-
-
 
    ENTITY cylindrical_point
    SUBTYPE OF (cartesian_point);
@@ -1438,14 +1146,10 @@ Entities in the schema engineering_properties_schema
          r >= 0.00000;
    END_ENTITY;
 
-
-
    ENTITY cylindrical_surface
    SUBTYPE OF (elementary_surface);
       radius : positive_length_measure;
    END_ENTITY;
-
-
 
    ENTITY cylindrical_volume
    SUBTYPE OF (volume);
@@ -1454,8 +1158,6 @@ Entities in the schema engineering_properties_schema
       height : positive_length_measure;
    END_ENTITY;
 
-
-
    ENTITY cylindricity_tolerance
    SUBTYPE OF (geometric_tolerance);
    WHERE
@@ -1463,15 +1165,11 @@ Entities in the schema engineering_properties_schema
          NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE' IN TYPEOF(SELF));
    END_ENTITY;
 
-
-
    ENTITY data_environment;
       name : label;
       description : text;
       elements : SET [1:?] OF property_definition_representation;
    END_ENTITY;
-
-
 
    ENTITY data_environment_relationship;
       name : label;
@@ -1480,21 +1178,15 @@ Entities in the schema engineering_properties_schema
       related_data_environment : data_environment;
    END_ENTITY;
 
-
-
    ENTITY date
    SUPERTYPE OF (ONEOF(calendar_date, ordinal_date, week_of_year_and_day_date, year_month));
       year_component : year_number;
    END_ENTITY;
 
-
-
    ENTITY date_and_time;
       date_component : date;
       time_component : local_time;
    END_ENTITY;
-
-
 
    ENTITY date_and_time_assignment
    ABSTRACT SUPERTYPE;
@@ -1502,15 +1194,11 @@ Entities in the schema engineering_properties_schema
       role : date_time_role;
    END_ENTITY;
 
-
-
    ENTITY date_assignment
    ABSTRACT SUPERTYPE;
       assigned_date : date;
       role : date_role;
    END_ENTITY;
-
-
 
    ENTITY date_role;
       name : label;
@@ -1521,8 +1209,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY date_time_role;
       name : label;
    DERIVE
@@ -1532,15 +1218,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY dated_effectivity
    SUBTYPE OF (effectivity);
       effectivity_end_date : OPTIONAL date_time_or_event_occurrence;
       effectivity_start_date : date_time_or_event_occurrence;
    END_ENTITY;
-
-
 
    ENTITY datum
    SUBTYPE OF (shape_aspect);
@@ -1551,8 +1233,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          SIZEOF(QUERY (x <* SELF\datum.established_by_relationships| (SIZEOF(TYPEOF(x\shape_aspect_relationship.relating_shape_aspect) * [ 'ENGINEERING_PROPERTIES_SCHEMA.DATUM_FEATURE', 'ENGINEERING_PROPERTIES_SCHEMA.DATUM_TARGET' ]) <> 1))) = 0;
    END_ENTITY;
-
-
 
    ENTITY datum_feature
    SUBTYPE OF (shape_aspect);
@@ -1565,8 +1245,6 @@ Entities in the schema engineering_properties_schema
          SELF\shape_aspect.product_definitional = TRUE;
    END_ENTITY;
 
-
-
    ENTITY datum_reference;
       precedence : INTEGER;
       referenced_datum : datum;
@@ -1574,8 +1252,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          precedence > 0;
    END_ENTITY;
-
-
 
    ENTITY datum_target
    SUBTYPE OF (shape_aspect);
@@ -1589,13 +1265,9 @@ Entities in the schema engineering_properties_schema
          SELF\shape_aspect.product_definitional = TRUE;
    END_ENTITY;
 
-
-
    ENTITY defined_function
    ABSTRACT SUPERTYPE OF (ONEOF(numeric_defined_function, string_defined_function, boolean_defined_function) ANDOR SQL_mappable_defined_function);
    END_ENTITY;
-
-
 
    ENTITY definite_integral_expression
    SUBTYPE OF (quantifier_expression);
@@ -1614,8 +1286,6 @@ Entities in the schema engineering_properties_schema
          definite_integral_expr_check(SELF\multiple_arity_generic_expression.operands, lower_limit_neg_infinity, upper_limit_pos_infinity);
    END_ENTITY;
 
-
-
    ENTITY definite_integral_function
    SUBTYPE OF (maths_function, unary_generic_expression);
       SELF\unary_generic_expression.operand : maths_function;
@@ -1631,15 +1301,11 @@ Entities in the schema engineering_properties_schema
          definite_integral_check(integrand.domain, variable_of_integration, lower_limit_neg_infinity, upper_limit_pos_infinity);
    END_ENTITY;
 
-
-
    ENTITY dependent_variable_definition
    SUBTYPE OF (unary_generic_expression);
       name : label;
       description : text;
    END_ENTITY;
-
-
 
    ENTITY derived_shape_aspect
    SUPERTYPE OF (ONEOF(apex, centre_of_symmetry, geometric_alignment, geometric_intersection, parallel_offset, perpendicular_to, extension, tangent))
@@ -1650,8 +1316,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          SIZEOF(QUERY (dr <* SELF\derived_shape_aspect.deriving_relationships| NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'SHAPE_ASPECT_DERIVING_RELATIONSHIP' IN TYPEOF(dr)))) = 0;
    END_ENTITY;
-
-
 
    ENTITY derived_unit
    SUPERTYPE OF (ONEOF(absorbed_dose_unit, acceleration_unit, radioactivity_unit, area_unit, capacitance_unit, dose_equivalent_unit, electric_charge_unit, conductance_unit, electric_potential_unit, energy_unit, magnetic_flux_density_unit, force_unit, frequency_unit, illuminance_unit, inductance_unit, magnetic_flux_unit, power_unit, pressure_unit, resistance_unit, volume_unit));
@@ -1665,42 +1329,30 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY derived_unit_element;
       unit : named_unit;
       exponent : REAL;
    END_ENTITY;
-
-
 
    ENTITY description_attribute;
       attribute_value : text;
       described_item : description_attribute_select;
    END_ENTITY;
 
-
-
    ENTITY descriptive_representation_item
    SUBTYPE OF (representation_item);
       description : text;
    END_ENTITY;
 
-
-
-   ENTITY dimension_related_tolerance_zone_element;
+  ENTITY dimension_related_tolerance_zone_element;
       related_dimension : dimensional_location;
       related_element : tolerance_zone_definition;
    END_ENTITY;
-
-
 
    ENTITY dimensional_characteristic_representation;
       dimension : dimensional_characteristic;
       representation : shape_dimension_representation;
    END_ENTITY;
-
-
 
    ENTITY dimensional_exponents;
       length_exponent : REAL;
@@ -1712,21 +1364,15 @@ Entities in the schema engineering_properties_schema
       luminous_intensity_exponent : REAL;
    END_ENTITY;
 
-
-
    ENTITY dimensional_location
    SUPERTYPE OF (ONEOF(angular_location, dimensional_location_with_path))
-   SUBTYPE OF (shape_aspect_relationship);
+  	SUBTYPE OF (shape_aspect_relationship);
    END_ENTITY;
-
-
 
    ENTITY dimensional_location_with_path
    SUBTYPE OF (dimensional_location);
       path : shape_aspect;
    END_ENTITY;
-
-
 
    ENTITY dimensional_size
    SUPERTYPE OF (ONEOF(angular_size, dimensional_size_with_path));
@@ -1737,14 +1383,10 @@ Entities in the schema engineering_properties_schema
          applies_to.product_definitional = TRUE;
    END_ENTITY;
 
-
-
    ENTITY dimensional_size_with_path
    SUBTYPE OF (dimensional_size);
       path : shape_aspect;
    END_ENTITY;
-
-
 
    ENTITY direction
    SUBTYPE OF (geometric_representation_item);
@@ -1754,13 +1396,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (tmp <* direction_ratios| (tmp <> 0.00000))) > 0;
    END_ENTITY;
 
-
-
    ENTITY div_expression
    SUBTYPE OF (binary_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY document;
       id : identifier;
@@ -1771,16 +1409,12 @@ Entities in the schema engineering_properties_schema
       representation_types : SET [0:?] OF document_representation_type FOR represented_document;
    END_ENTITY;
 
-
-
    ENTITY document_product_association;
       name : label;
       description : OPTIONAL text;
       relating_document : document;
       related_product : product_or_formation_or_definition;
    END_ENTITY;
-
-
 
    ENTITY document_reference
    ABSTRACT SUPERTYPE;
@@ -1793,8 +1427,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY document_relationship;
       name : label;
       description : OPTIONAL text;
@@ -1802,20 +1434,14 @@ Entities in the schema engineering_properties_schema
       related_document : document;
    END_ENTITY;
 
-
-
    ENTITY document_representation_type;
       name : label;
       represented_document : document;
    END_ENTITY;
 
-
-
    ENTITY document_type;
       product_data_type : label;
    END_ENTITY;
-
-
 
    ENTITY document_usage_constraint;
       source : document;
@@ -1823,22 +1449,16 @@ Entities in the schema engineering_properties_schema
       subject_element_value : text;
    END_ENTITY;
 
-
-
    ENTITY document_usage_constraint_assignment
    ABSTRACT SUPERTYPE;
       assigned_document_usage : document_usage_constraint;
       role : document_usage_role;
    END_ENTITY;
 
-
-
    ENTITY document_usage_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY dose_equivalent_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1847,8 +1467,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.DOSE_EQUIVALENT_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY dose_equivalent_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -1856,7 +1474,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.sievert);
    END_ENTITY;
 
-
+	ENTITY si_dose_equivalent_unit
+     SUBTYPE OF (dose_equivalent_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.sievert;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY effectivity
    SUPERTYPE OF (ONEOF(serial_numbered_effectivity, dated_effectivity, time_interval_based_effectivity));
@@ -1871,8 +1494,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY effectivity_assignment
    ABSTRACT SUPERTYPE;
       assigned_effectivity : effectivity;
@@ -1883,16 +1504,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY effectivity_relationship;
       name : label;
       description : OPTIONAL text;
       related_effectivity : effectivity;
       relating_effectivity : effectivity;
    END_ENTITY;
-
-
 
    ENTITY electric_charge_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1901,8 +1518,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ELECTRIC_CHARGE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY electric_charge_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -1910,7 +1525,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.coulomb);
    END_ENTITY;
 
-
+	ENTITY si_electric_charge_unit
+     SUBTYPE OF (electric_charge_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.coulomb;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY electric_current_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1919,16 +1539,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ELECTRIC_CURRENT_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY electric_current_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 1.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
-
-
 
    ENTITY electric_potential_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1937,8 +1553,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ELECTRIC_POTENTIAL_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY electric_potential_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -1946,21 +1560,22 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.volt);
    END_ENTITY;
 
-
+	ENTITY si_electric_potential_unit
+     SUBTYPE OF (electric_potential_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.volt;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY elementary_function
    SUBTYPE OF (maths_function, generic_literal);
       func_id : elementary_function_enumerators;
    END_ENTITY;
 
-
-
    ENTITY elementary_space
    SUBTYPE OF (maths_space, generic_literal);
       space_id : elementary_space_enumerators;
    END_ENTITY;
-
-
 
    ENTITY elementary_surface
    SUPERTYPE OF (ONEOF(plane, cylindrical_surface, conical_surface, spherical_surface))
@@ -1968,15 +1583,11 @@ Entities in the schema engineering_properties_schema
       position : axis2_placement_3d;
    END_ENTITY;
 
-
-
    ENTITY ellipse
    SUBTYPE OF (conic);
       semi_axis_1 : positive_length_measure;
       semi_axis_2 : positive_length_measure;
    END_ENTITY;
-
-
 
    ENTITY energy_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -1985,8 +1596,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ENERGY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY energy_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -1994,20 +1603,21 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.joule);
    END_ENTITY;
 
-
+	ENTITY si_energy_unit
+     SUBTYPE OF (energy_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.joule;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY environment;
       syntactic_representation : generic_variable;
       semantics : variable_semantics;
    END_ENTITY;
 
-
-
    ENTITY equals_expression
    SUBTYPE OF (binary_boolean_expression);
    END_ENTITY;
-
-
 
    ENTITY event_occurrence;
       id : identifier;
@@ -2015,41 +1625,29 @@ Entities in the schema engineering_properties_schema
       description : OPTIONAL text;
    END_ENTITY;
 
-
-
    ENTITY event_occurrence_assignment
    ABSTRACT SUPERTYPE;
       assigned_event_occurrence : event_occurrence;
       role : event_occurrence_role;
    END_ENTITY;
 
-
-
    ENTITY event_occurrence_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
 
-
-
    ENTITY executed_action
    SUBTYPE OF (action);
    END_ENTITY;
-
-
 
    ENTITY exp_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
 
-
-
    ENTITY expanded_uncertainty
    SUBTYPE OF (standard_uncertainty);
       coverage_factor : REAL;
    END_ENTITY;
-
-
 
    ENTITY explicit_table_function
    ABSTRACT SUPERTYPE OF (ONEOF(listed_real_data, listed_integer_data, listed_logical_data, listed_string_data, listed_complex_number_data, listed_data, externally_listed_data, linearized_table_function, basic_sparse_matrix))
@@ -2058,14 +1656,10 @@ Entities in the schema engineering_properties_schema
       shape : LIST [1:?] OF positive_integer;
    END_ENTITY;
 
-
-
    ENTITY expression
    ABSTRACT SUPERTYPE OF (ONEOF(numeric_expression, boolean_expression, string_expression))
    SUBTYPE OF (generic_expression);
    END_ENTITY;
-
-
 
    ENTITY expression_denoted_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -2075,8 +1669,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          schema_prefix + 'FUNCTION_SPACE' IN TYPEOF(values_space_of(expr));
    END_ENTITY;
-
-
 
    ENTITY extended_tuple_space
    SUBTYPE OF (maths_space, generic_literal);
@@ -2091,8 +1683,6 @@ Entities in the schema engineering_properties_schema
          extender <> the_empty_space;
    END_ENTITY;
 
-
-
    ENTITY extension
    SUBTYPE OF (derived_shape_aspect);
    WHERE
@@ -2100,15 +1690,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) = 1;
    END_ENTITY;
 
-
-
    ENTITY external_identification_assignment
    ABSTRACT SUPERTYPE
    SUBTYPE OF (identification_assignment);
       source : external_source;
    END_ENTITY;
-
-
 
    ENTITY external_referent_assignment
    ABSTRACT SUPERTYPE;
@@ -2122,8 +1708,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY external_source;
       source_id : source_item;
    DERIVE
@@ -2133,8 +1717,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY external_source_relationship;
       name : label;
       description : OPTIONAL text;
@@ -2142,32 +1724,22 @@ Entities in the schema engineering_properties_schema
       related_source : external_source;
    END_ENTITY;
 
-
-
    ENTITY externally_defined_action_property
    SUBTYPE OF (action_property, externally_defined_item);
    END_ENTITY;
-
-
 
    ENTITY externally_defined_class
    SUBTYPE OF (class, externally_defined_item);
    END_ENTITY;
 
-
-
    ENTITY externally_defined_engineering_property
    SUBTYPE OF (material_property, externally_defined_item);
    END_ENTITY;
-
-
 
    ENTITY externally_defined_item;
       item_id : source_item;
       source : external_source;
    END_ENTITY;
-
-
 
    ENTITY externally_defined_item_relationship;
       name : label;
@@ -2175,8 +1747,6 @@ Entities in the schema engineering_properties_schema
       relating_item : externally_defined_item;
       related_item : externally_defined_item;
    END_ENTITY;
-
-
 
    ENTITY externally_listed_data
    SUBTYPE OF (explicit_table_function, generic_literal, externally_defined_item);
@@ -2186,8 +1756,6 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(value_range);
    END_ENTITY;
 
-
-
    ENTITY finite_function
    SUBTYPE OF (maths_function, generic_literal);
       pairs : SET [1:?] OF LIST [2:2] OF maths_value;
@@ -2195,8 +1763,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          VALUE_UNIQUE(list_selected_components(pairs, 1));
    END_ENTITY;
-
-
 
    ENTITY finite_integer_interval
    SUBTYPE OF (maths_space, generic_literal);
@@ -2209,8 +1775,6 @@ Entities in the schema engineering_properties_schema
          min <= max;
    END_ENTITY;
 
-
-
    ENTITY finite_real_interval
    SUBTYPE OF (maths_space, generic_literal);
       min : REAL;
@@ -2221,8 +1785,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          min < max;
    END_ENTITY;
-
-
 
    ENTITY finite_space
    SUBTYPE OF (maths_space, generic_literal);
@@ -2236,16 +1798,12 @@ Entities in the schema engineering_properties_schema
          no_cyclic_space_reference(SELF, []);
    END_ENTITY;
 
-
-
    ENTITY flatness_tolerance
    SUBTYPE OF (geometric_tolerance);
    WHERE
       WR1:
          NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE' IN TYPEOF(SELF));
    END_ENTITY;
-
-
 
    ENTITY force_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -2254,8 +1812,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.FORCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY force_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -2263,7 +1819,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.newton);
    END_ENTITY;
 
-
+	ENTITY si_force_unit
+     SUBTYPE OF (force_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.newton;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY format_function
    SUBTYPE OF (string_expression, binary_generic_expression);
@@ -2275,18 +1836,19 @@ Entities in the schema engineering_properties_schema
          ('ENGINEERING_PROPERTIES_SCHEMA.NUMERIC_EXPRESSION' IN TYPEOF(value_to_format)) AND ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(format_string));
    END_ENTITY;
 
-
-
    ENTITY founded_item;
    END_ENTITY;
-
-
 
    ENTITY free_variable_semantics
    SUBTYPE OF (variable_semantics);
    END_ENTITY;
 
-
+	ENTITY frequency_measure_with_unit
+   SUBTYPE OF (measure_with_unit);
+   WHERE
+      WR1:
+         'ENGINEERING_PROPERTIES_SCHEMA.FREQUENCY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
+   END_ENTITY;
 
    ENTITY frequency_unit
    SUBTYPE OF (derived_unit);
@@ -2295,7 +1857,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.hertz);
    END_ENTITY;
 
-
+	ENTITY si_frequency_unit
+     SUBTYPE OF (frequency_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.hertz;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY function_application
    SUBTYPE OF (multiple_arity_generic_expression);
@@ -2307,8 +1874,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          function_applicability(func, arguments);
    END_ENTITY;
-
-
 
    ENTITY function_space
    SUBTYPE OF (maths_space, generic_literal);
@@ -2329,14 +1894,10 @@ Entities in the schema engineering_properties_schema
          NOT (any_space_satisfies(domain_constraint, domain_argument) AND any_space_satisfies(range_constraint, range_argument));
    END_ENTITY;
 
-
-
    ENTITY functionally_defined_transformation;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY general_linear_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -2351,15 +1912,11 @@ Entities in the schema engineering_properties_schema
          (space_dimension(mat.range) = 1) AND subspace_of_es(factor1(mat.range), es_numbers);
    END_ENTITY;
 
-
-
    ENTITY general_property;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY generic_expression
    ABSTRACT SUPERTYPE OF (ONEOF(simple_generic_expression, unary_generic_expression, binary_generic_expression, multiple_arity_generic_expression));
@@ -2368,14 +1925,10 @@ Entities in the schema engineering_properties_schema
          is_acyclic(SELF);
    END_ENTITY;
 
-
-
    ENTITY generic_literal
    ABSTRACT SUPERTYPE
    SUBTYPE OF (simple_generic_expression);
    END_ENTITY;
-
-
 
    ENTITY generic_variable
    ABSTRACT SUPERTYPE
@@ -2384,16 +1937,12 @@ Entities in the schema engineering_properties_schema
       interpretation : environment FOR syntactic_representation;
    END_ENTITY;
 
-
-
    ENTITY geometric_alignment
    SUBTYPE OF (derived_shape_aspect);
    WHERE
       WR1:
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) > 1;
    END_ENTITY;
-
-
 
    ENTITY geometric_intersection
    SUBTYPE OF (derived_shape_aspect);
@@ -2402,14 +1951,10 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) > 1;
    END_ENTITY;
 
-
-
    ENTITY geometric_representation_context
    SUBTYPE OF (representation_context);
       coordinate_space_dimension : dimension_count;
    END_ENTITY;
-
-
 
    ENTITY geometric_representation_item
    SUPERTYPE OF (ONEOF(point, direction, vector, placement, cartesian_transformation_operator, curve, surface, volume))
@@ -2421,8 +1966,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (using_rep <* using_representations(SELF)| NOT ('ENGINEERING_PROPERTIES_SCHEMA.GEOMETRIC_REPRESENTATION_CONTEXT' IN TYPEOF(using_rep.context_of_items)))) = 0;
    END_ENTITY;
 
-
-
    ENTITY geometric_tolerance;
       name : label;
       description : text;
@@ -2433,8 +1976,6 @@ Entities in the schema engineering_properties_schema
          ('NUMBER' IN TYPEOF(magnitude\measure_with_unit.value_component)) AND (magnitude\measure_with_unit.value_component >= 0.00000);
    END_ENTITY;
 
-
-
    ENTITY geometric_tolerance_relationship;
       name : label;
       description : text;
@@ -2442,14 +1983,10 @@ Entities in the schema engineering_properties_schema
       related_geometric_tolerance : geometric_tolerance;
    END_ENTITY;
 
-
-
    ENTITY geometric_tolerance_with_datum_reference
    SUBTYPE OF (geometric_tolerance);
       datum_system : SET [1:?] OF datum_reference;
    END_ENTITY;
-
-
 
    ENTITY geometric_tolerance_with_defined_unit
    SUBTYPE OF (geometric_tolerance);
@@ -2459,21 +1996,15 @@ Entities in the schema engineering_properties_schema
          ('NUMBER' IN TYPEOF(unit_size\measure_with_unit.value_component)) AND (unit_size\measure_with_unit.value_component > 0.00000);
    END_ENTITY;
 
-
-
    ENTITY global_uncertainty_assigned_context
    SUBTYPE OF (representation_context);
       uncertainty : SET [1:?] OF uncertainty_measure_with_unit;
    END_ENTITY;
 
-
-
    ENTITY global_unit_assigned_context
    SUBTYPE OF (representation_context);
       units : SET [1:?] OF unit;
    END_ENTITY;
-
-
 
    ENTITY group;
       name : label;
@@ -2485,8 +2016,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY group_assignment
    ABSTRACT SUPERTYPE;
       assigned_group : group;
@@ -2497,16 +2026,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY group_relationship;
       name : label;
       description : OPTIONAL text;
       relating_group : group;
       related_group : group;
    END_ENTITY;
-
-
 
    ENTITY homogeneous_linear_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -2521,30 +2046,22 @@ Entities in the schema engineering_properties_schema
          (space_dimension(mat.range) = 1) AND subspace_of_es(factor1(mat.range), es_numbers);
    END_ENTITY;
 
-
-
    ENTITY hyperbola
    SUBTYPE OF (conic);
       semi_axis : positive_length_measure;
       semi_imag_axis : positive_length_measure;
    END_ENTITY;
 
-
-
    ENTITY id_attribute;
       attribute_value : identifier;
       identified_item : id_attribute_select;
    END_ENTITY;
-
-
 
    ENTITY identification_assignment
    ABSTRACT SUPERTYPE;
       assigned_id : identifier;
       role : identification_role;
    END_ENTITY;
-
-
 
    ENTITY identification_assignment_relationship;
       name : label;
@@ -2553,14 +2070,10 @@ Entities in the schema engineering_properties_schema
       related_identification_assignment : identification_assignment;
    END_ENTITY;
 
-
-
    ENTITY identification_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY illuminance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -2569,8 +2082,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.ILLUMINANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY illuminance_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -2578,7 +2089,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.lux);
    END_ENTITY;
 
-
+	ENTITY si_illuminance_unit
+     SUBTYPE OF (illuminance_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.lux;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY imported_curve_function
    SUBTYPE OF (maths_function, generic_literal);
@@ -2589,14 +2105,10 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(parametric_domain);
    END_ENTITY;
 
-
-
    ENTITY imported_point_function
    SUBTYPE OF (maths_function, generic_literal);
       geometry : point;
    END_ENTITY;
-
-
 
    ENTITY imported_surface_function
    SUBTYPE OF (maths_function, generic_literal);
@@ -2607,8 +2119,6 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(parametric_domain);
    END_ENTITY;
 
-
-
    ENTITY imported_volume_function
    SUBTYPE OF (maths_function, generic_literal);
       geometry : volume;
@@ -2617,8 +2127,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          expression_is_constant(parametric_domain);
    END_ENTITY;
-
-
 
    ENTITY index_expression
    SUBTYPE OF (string_expression, binary_generic_expression);
@@ -2632,16 +2140,12 @@ Entities in the schema engineering_properties_schema
          is_int_expr(index);
    END_ENTITY;
 
-
-
    ENTITY inductance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.INDUCTANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY inductance_unit
    SUBTYPE OF (derived_unit);
@@ -2650,54 +2154,45 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.henry);
    END_ENTITY;
 
-
+	 ENTITY si_inductance_unit
+     SUBTYPE OF (inductance_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.henry;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY int_literal
    SUBTYPE OF (literal_number);
       SELF\literal_number.the_value : INTEGER;
    END_ENTITY;
 
-
-
    ENTITY int_numeric_variable
    SUBTYPE OF (numeric_variable);
    END_ENTITY;
 
-
-
    ENTITY int_value_function
    SUBTYPE OF (value_function);
    END_ENTITY;
-
-
 
    ENTITY integer_defined_function
    ABSTRACT SUPERTYPE
    SUBTYPE OF (numeric_defined_function);
    END_ENTITY;
 
-
-
    ENTITY integer_interval_from_min
    SUBTYPE OF (maths_space, generic_literal);
       min : INTEGER;
    END_ENTITY;
-
-
 
    ENTITY integer_interval_to_max
    SUBTYPE OF (maths_space, generic_literal);
       max : INTEGER;
    END_ENTITY;
 
-
-
    ENTITY integer_tuple_literal
    SUBTYPE OF (generic_literal);
       lit_value : LIST [1:?] OF INTEGER;
    END_ENTITY;
-
-
 
    ENTITY interval_expression
    SUBTYPE OF (boolean_expression, multiple_arity_generic_expression);
@@ -2712,16 +2207,12 @@ Entities in the schema engineering_properties_schema
          (('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF.interval_low)) AND ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF.interval_high))) AND ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF.interval_item)) OR (('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF.interval_low)) AND ('ENGINEERING_PROPERTIES_SCHEMA.NUMERIC_EXPRESSION' IN TYPEOF(SELF.interval_item))) AND ('ENGINEERING_PROPERTIES_SCHEMA.NUMERIC_EXPRESSION' IN TYPEOF(SELF.interval_high));
    END_ENTITY;
 
-
-
    ENTITY item_defined_transformation;
       name : label;
       description : OPTIONAL text;
       transform_item_1 : representation_item;
       transform_item_2 : representation_item;
    END_ENTITY;
-
-
 
    ENTITY item_identified_representation_usage;
       name : label;
@@ -2734,16 +2225,12 @@ Entities in the schema engineering_properties_schema
          SELF.used_representation IN using_representations(SELF.identified_item);
    END_ENTITY;
 
-
-
    ENTITY language
    SUBTYPE OF (group);
    WHERE
       WR1:
          (SIZEOF(QUERY (ca <* USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'CLASSIFICATION_ASSIGNMENT.' + 'ASSIGNED_CLASS')| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'LANGUAGE_ASSIGNMENT' IN TYPEOF(ca)))) > 0) OR (SIZEOF(QUERY (aca <* USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ATTRIBUTE_CLASSIFICATION_ASSIGNMENT.' + 'ASSIGNED_CLASS')| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'ATTRIBUTE_LANGUAGE_ASSIGNMENT' IN TYPEOF(aca)))) > 0);
    END_ENTITY;
-
-
 
    ENTITY language_assignment
    SUBTYPE OF (classification_assignment);
@@ -2757,14 +2244,10 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF.items) = SIZEOF(QUERY (i <* SELF.items| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'REPRESENTATION' IN TYPEOF(i)) AND (i\representation.name = 'document content')));
    END_ENTITY;
 
-
-
    ENTITY length_function
    SUBTYPE OF (numeric_expression, unary_generic_expression);
       SELF\unary_generic_expression.operand : string_expression;
    END_ENTITY;
-
-
 
    ENTITY length_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -2773,16 +2256,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.LENGTH_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY length_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          ((((((SELF\named_unit.dimensions.length_exponent = 1.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
-
-
 
    ENTITY like_expression
    SUBTYPE OF (comparison_expression);
@@ -2791,16 +2270,12 @@ Entities in the schema engineering_properties_schema
          ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF\comparison_expression.operands[1])) AND ('ENGINEERING_PROPERTIES_SCHEMA.STRING_EXPRESSION' IN TYPEOF(SELF\comparison_expression.operands[2]));
    END_ENTITY;
 
-
-
    ENTITY limits_and_fits;
       form_variance : label;
       zone_variance : label;
       grade : label;
       source : text;
    END_ENTITY;
-
-
 
    ENTITY line
    SUBTYPE OF (curve);
@@ -2810,8 +2285,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          dir.dim = pnt.dim;
    END_ENTITY;
-
-
 
    ENTITY linearized_table_function
    SUPERTYPE OF (ONEOF(standard_table_function, regular_table_function, triangular_matrix, symmetric_matrix, banded_matrix))
@@ -2827,8 +2300,6 @@ Entities in the schema engineering_properties_schema
          member_of(first, source.domain);
    END_ENTITY;
 
-
-
    ENTITY listed_complex_number_data
    SUBTYPE OF (explicit_table_function, generic_literal);
       values : LIST [2:?] OF REAL;
@@ -2838,8 +2309,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          NOT ODD(SIZEOF(values));
    END_ENTITY;
-
-
 
    ENTITY listed_data
    SUBTYPE OF (explicit_table_function, generic_literal);
@@ -2854,8 +2323,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (val <* values| NOT member_of(val, value_range))) = 0;
    END_ENTITY;
 
-
-
    ENTITY listed_integer_data
    SUBTYPE OF (explicit_table_function, generic_literal);
       values : LIST [1:?] OF INTEGER;
@@ -2863,16 +2330,12 @@ Entities in the schema engineering_properties_schema
       SELF\explicit_table_function.shape : LIST [1:?] OF positive_integer := [ SIZEOF(values) ];
    END_ENTITY;
 
-
-
    ENTITY listed_logical_data
    SUBTYPE OF (explicit_table_function, generic_literal);
       values : LIST [1:?] OF LOGICAL;
    DERIVE
       SELF\explicit_table_function.shape : LIST [1:?] OF positive_integer := [ SIZEOF(values) ];
    END_ENTITY;
-
-
 
    ENTITY listed_product_space
    SUBTYPE OF (maths_space, generic_literal);
@@ -2886,16 +2349,12 @@ Entities in the schema engineering_properties_schema
          NOT (the_empty_space IN factors);
    END_ENTITY;
 
-
-
    ENTITY listed_real_data
    SUBTYPE OF (explicit_table_function, generic_literal);
       values : LIST [1:?] OF REAL;
    DERIVE
       SELF\explicit_table_function.shape : LIST [1:?] OF positive_integer := [ SIZEOF(values) ];
    END_ENTITY;
-
-
 
    ENTITY listed_string_data
    SUBTYPE OF (explicit_table_function, generic_literal);
@@ -2904,15 +2363,11 @@ Entities in the schema engineering_properties_schema
       SELF\explicit_table_function.shape : LIST [1:?] OF positive_integer := [ SIZEOF(values) ];
    END_ENTITY;
 
-
-
    ENTITY literal_number
    ABSTRACT SUPERTYPE OF (ONEOF(int_literal, real_literal))
    SUBTYPE OF (simple_numeric_expression, generic_literal);
       the_value : NUMBER;
    END_ENTITY;
-
-
 
    ENTITY local_time;
       hour_component : hour_in_day;
@@ -2924,15 +2379,11 @@ Entities in the schema engineering_properties_schema
          valid_time(SELF);
    END_ENTITY;
 
-
-
    ENTITY location;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY location_assignment
    ABSTRACT SUPERTYPE;
@@ -2943,8 +2394,6 @@ Entities in the schema engineering_properties_schema
       role : location_role;
    END_ENTITY;
 
-
-
    ENTITY location_relationship;
       id : identifier;
       name : label;
@@ -2952,8 +2401,6 @@ Entities in the schema engineering_properties_schema
       relating_location : location;
       related_location : location;
    END_ENTITY;
-
-
 
    ENTITY location_representation_assignment
    ABSTRACT SUPERTYPE;
@@ -2964,15 +2411,11 @@ Entities in the schema engineering_properties_schema
       role : location_representation_role;
    END_ENTITY;
 
-
-
    ENTITY location_representation_role;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY location_role;
       id : identifier;
@@ -2980,32 +2423,22 @@ Entities in the schema engineering_properties_schema
       description : OPTIONAL text;
    END_ENTITY;
 
-
-
    ENTITY log10_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY log2_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
 
-
-
    ENTITY log_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY logical_literal
    SUBTYPE OF (generic_literal);
       lit_value : LOGICAL;
    END_ENTITY;
-
-
 
    ENTITY luminous_flux_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3014,16 +2447,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.LUMINOUS_FLUX_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY luminous_flux_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.lumen);
    END_ENTITY;
-
-
 
    ENTITY luminous_intensity_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3032,8 +2461,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.LUMINOUS_INTENSITY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY luminous_intensity_unit
    SUBTYPE OF (named_unit);
    WHERE
@@ -3041,17 +2468,12 @@ Entities in the schema engineering_properties_schema
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 1.00000);
    END_ENTITY;
 
-
-
    ENTITY magnetic_flux_density_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.MAGNETIC_FLUX_DENSITY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
-
    ENTITY magnetic_flux_density_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -3059,7 +2481,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.tesla);
    END_ENTITY;
 
-
+	ENTITY si_magnetic_flux_density_unit
+     SUBTYPE OF (magnetic_flux_density_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.tesla;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY magnetic_flux_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3068,8 +2495,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.MAGNETIC_FLUX_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY magnetic_flux_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -3077,7 +2502,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.weber);
    END_ENTITY;
 
-
+	ENTITY si_magnetic_flux_unit
+     SUBTYPE OF (magnetic_flux_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.weber;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY mapped_item
    SUBTYPE OF (representation_item);
@@ -3088,17 +2518,12 @@ Entities in the schema engineering_properties_schema
          acyclic_mapped_representation(using_representations(SELF), [ SELF ]);
    END_ENTITY;
 
-
-
    ENTITY mass_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.MASS_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
-
    ENTITY mass_unit
    SUBTYPE OF (named_unit);
    WHERE
@@ -3106,14 +2531,10 @@ Entities in the schema engineering_properties_schema
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 1.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
 
-
-
    ENTITY material_designation;
       name : label;
       definitions : SET [1:?] OF characterized_definition;
    END_ENTITY;
-
-
 
    ENTITY material_designation_characterization;
       name : label;
@@ -3121,8 +2542,6 @@ Entities in the schema engineering_properties_schema
       designation : material_designation;
       property : characterized_material_property;
    END_ENTITY;
-
-
 
    ENTITY material_property
    SUBTYPE OF (property_definition);
@@ -3133,22 +2552,16 @@ Entities in the schema engineering_properties_schema
          ('ENGINEERING_PROPERTIES_SCHEMA.CHARACTERIZED_OBJECT' IN TYPEOF(SELF\property_definition.definition)) OR (SIZEOF(bag_to_set(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'PROPERTY_DEFINITION_REPRESENTATION.DEFINITION')) - QUERY (temp <* bag_to_set(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'PROPERTY_DEFINITION_REPRESENTATION.DEFINITION'))| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'MATERIAL_PROPERTY_REPRESENTATION' IN TYPEOF(temp)))) = 0);
    END_ENTITY;
 
-
-
    ENTITY material_property_representation
    SUBTYPE OF (property_definition_representation);
       dependent_environment : data_environment;
    END_ENTITY;
-
-
 
    ENTITY mathematical_description;
       described : maths_expression;
       describing : STRING;
       encoding : label;
    END_ENTITY;
-
-
 
    ENTITY maths_boolean_variable
    SUBTYPE OF (maths_variable, boolean_variable);
@@ -3157,14 +2570,10 @@ Entities in the schema engineering_properties_schema
          subspace_of_es(SELF\maths_variable.values_space, es_booleans);
    END_ENTITY;
 
-
-
    ENTITY maths_enum_literal
    SUBTYPE OF (generic_literal);
       lit_value : maths_enum_atom;
    END_ENTITY;
-
-
 
    ENTITY maths_function
    ABSTRACT SUPERTYPE OF (ONEOF(finite_function, constant_function, selector_function, elementary_function, restriction_function, repackaging_function, reindexed_array_function, series_composed_function, parallel_composed_function, explicit_table_function, homogeneous_linear_function, general_linear_function, b_spline_basis, b_spline_function, rationalize_function, partial_derivative_function, definite_integral_function, abstracted_expression_function, expression_denoted_function, imported_point_function, imported_curve_function, imported_surface_function, imported_volume_function, application_defined_function))
@@ -3174,16 +2583,12 @@ Entities in the schema engineering_properties_schema
       range : tuple_space := derive_function_range(SELF);
    END_ENTITY;
 
-
-
    ENTITY maths_integer_variable
    SUBTYPE OF (maths_variable, int_numeric_variable);
    WHERE
       WR1:
          subspace_of_es(SELF\maths_variable.values_space, es_integers);
    END_ENTITY;
-
-
 
    ENTITY maths_real_variable
    SUBTYPE OF (maths_variable, real_numeric_variable);
@@ -3192,14 +2597,10 @@ Entities in the schema engineering_properties_schema
          subspace_of_es(SELF\maths_variable.values_space, es_reals);
    END_ENTITY;
 
-
-
    ENTITY maths_space
    ABSTRACT SUPERTYPE OF (ONEOF(elementary_space, finite_integer_interval, integer_interval_from_min, integer_interval_to_max, finite_real_interval, real_interval_from_min, real_interval_to_max, cartesian_complex_number_region, polar_complex_number_region, finite_space, uniform_product_space, listed_product_space, extended_tuple_space, function_space))
    SUBTYPE OF (generic_expression);
    END_ENTITY;
-
-
 
    ENTITY maths_string_variable
    SUBTYPE OF (maths_variable, string_variable);
@@ -3208,14 +2609,10 @@ Entities in the schema engineering_properties_schema
          subspace_of_es(SELF\maths_variable.values_space, es_strings);
    END_ENTITY;
 
-
-
    ENTITY maths_tuple_literal
    SUBTYPE OF (generic_literal);
       lit_value : LIST OF maths_value;
    END_ENTITY;
-
-
 
    ENTITY maths_value_qualification;
       name : label;
@@ -3227,20 +2624,14 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (temp <* qualifiers| ('ENGINEERING_PROPERTIES_SCHEMA.PRECISION_QUALIFIER' IN TYPEOF(temp)))) < 2;
    END_ENTITY;
 
-
-
    ENTITY maths_value_representation_item
    SUBTYPE OF (representation_item, maths_value_with_unit);
    END_ENTITY;
-
-
 
    ENTITY maths_value_with_unit;
       value_component : maths_value;
       unit_component : unit;
    END_ENTITY;
-
-
 
    ENTITY maths_variable
    SUBTYPE OF (generic_variable);
@@ -3251,13 +2642,9 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(values_space);
    END_ENTITY;
 
-
-
    ENTITY maximum_function
    SUBTYPE OF (multiple_arity_function_call);
    END_ENTITY;
-
-
 
    ENTITY measure_qualification;
       name : label;
@@ -3269,13 +2656,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (temp <* qualifiers| ('ENGINEERING_PROPERTIES_SCHEMA.PRECISION_QUALIFIER' IN TYPEOF(temp)))) < 2;
    END_ENTITY;
 
-
-
    ENTITY measure_representation_item
    SUBTYPE OF (representation_item, measure_with_unit);
    END_ENTITY;
-
-
 
    ENTITY measure_with_unit
    SUPERTYPE OF (ONEOF(length_measure_with_unit, mass_measure_with_unit, time_measure_with_unit, electric_current_measure_with_unit, thermodynamic_temperature_measure_with_unit, celsius_temperature_measure_with_unit, amount_of_substance_measure_with_unit, luminous_intensity_measure_with_unit, plane_angle_measure_with_unit, solid_angle_measure_with_unit, area_measure_with_unit, volume_measure_with_unit, ratio_measure_with_unit, acceleration_measure_with_unit, capacitance_measure_with_unit, electric_charge_measure_with_unit, conductance_measure_with_unit, electric_potential_measure_with_unit, energy_measure_with_unit, magnetic_flux_density_measure_with_unit, force_measure_with_unit, illuminance_measure_with_unit, inductance_measure_with_unit, luminous_flux_measure_with_unit, magnetic_flux_measure_with_unit, power_measure_with_unit, pressure_measure_with_unit, resistance_measure_with_unit, velocity_measure_with_unit, absorbed_dose_measure_with_unit, radioactivity_measure_with_unit, dose_equivalent_measure_with_unit));
@@ -3286,44 +2669,30 @@ Entities in the schema engineering_properties_schema
          valid_units(SELF);
    END_ENTITY;
 
-
-
    ENTITY minimum_function
    SUBTYPE OF (multiple_arity_function_call);
    END_ENTITY;
-
-
 
    ENTITY minus_expression
    SUBTYPE OF (binary_numeric_expression);
    END_ENTITY;
 
-
-
    ENTITY minus_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
 
-
-
    ENTITY mod_expression
    SUBTYPE OF (binary_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY modified_geometric_tolerance
    SUBTYPE OF (geometric_tolerance);
       modifier : limit_condition;
    END_ENTITY;
 
-
-
    ENTITY mult_expression
    SUBTYPE OF (multiple_arity_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY multi_language_attribute_assignment
    SUBTYPE OF (attribute_value_assignment);
@@ -3337,22 +2706,16 @@ Entities in the schema engineering_properties_schema
           (SIZEOF(USEDIN(SELF.items[1], 'ENGINEERING_PROPERTIES_SCHEMA.ATTRIBUTE_LANGUAGE_ASSIGNMENT.ITEMS')) = 1) AND (SIZEOF(QUERY (ala <* USEDIN(SELF.items[1], 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ATTRIBUTE_LANGUAGE_ASSIGNMENT.' + 'ITEMS')| (ala.attribute_name = 'attribute_value'))) = 1);
    END_ENTITY;
 
-
-
    ENTITY multiple_arity_boolean_expression
    ABSTRACT SUPERTYPE OF (ONEOF(and_expression, or_expression))
    SUBTYPE OF (boolean_expression, multiple_arity_generic_expression);
       SELF\multiple_arity_generic_expression.operands : LIST [2:?] OF boolean_expression;
    END_ENTITY;
 
-
-
    ENTITY multiple_arity_function_call
    ABSTRACT SUPERTYPE OF (ONEOF(maximum_function, minimum_function))
    SUBTYPE OF (multiple_arity_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY multiple_arity_generic_expression
    ABSTRACT SUPERTYPE
@@ -3360,15 +2723,11 @@ Entities in the schema engineering_properties_schema
       operands : LIST [2:?] OF generic_expression;
    END_ENTITY;
 
-
-
    ENTITY multiple_arity_numeric_expression
    ABSTRACT SUPERTYPE OF (ONEOF(plus_expression, mult_expression, multiple_arity_function_call))
    SUBTYPE OF (numeric_expression, multiple_arity_generic_expression);
       SELF\multiple_arity_generic_expression.operands : LIST [2:?] OF numeric_expression;
    END_ENTITY;
-
-
 
    ENTITY name_assignment
    ABSTRACT SUPERTYPE;
@@ -3380,35 +2739,25 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY name_attribute;
       attribute_value : label;
       named_item : name_attribute_select;
    END_ENTITY;
-
-
 
    ENTITY named_unit
    SUPERTYPE OF (ONEOF(si_unit, conversion_based_unit, context_dependent_unit) ANDOR ONEOF(length_unit, mass_unit, time_unit, electric_current_unit, thermodynamic_temperature_unit, amount_of_substance_unit, luminous_flux_unit, luminous_intensity_unit, plane_angle_unit, solid_angle_unit, ratio_unit));
       dimensions : dimensional_exponents;
    END_ENTITY;
 
-
-
    ENTITY not_expression
    SUBTYPE OF (unary_boolean_expression);
       SELF\unary_generic_expression.operand : boolean_expression;
    END_ENTITY;
 
-
-
    ENTITY numeric_defined_function
    ABSTRACT SUPERTYPE OF (ONEOF(integer_defined_function, real_defined_function))
    SUBTYPE OF (numeric_expression, defined_function);
    END_ENTITY;
-
-
 
    ENTITY numeric_expression
    ABSTRACT SUPERTYPE OF (ONEOF(simple_numeric_expression, unary_numeric_expression, binary_numeric_expression, multiple_arity_numeric_expression, length_function, value_function, numeric_defined_function))
@@ -3418,8 +2767,6 @@ Entities in the schema engineering_properties_schema
       sql_mappable : BOOLEAN := is_SQL_mappable(SELF);
    END_ENTITY;
 
-
-
    ENTITY numeric_variable
    SUPERTYPE OF (ONEOF(int_numeric_variable, real_numeric_variable))
    SUBTYPE OF (simple_numeric_expression, variable);
@@ -3428,14 +2775,10 @@ Entities in the schema engineering_properties_schema
          ('ENGINEERING_PROPERTIES_SCHEMA.INT_NUMERIC_VARIABLE' IN TYPEOF(SELF)) OR ('ENGINEERING_PROPERTIES_SCHEMA.REAL_NUMERIC_VARIABLE' IN TYPEOF(SELF));
    END_ENTITY;
 
-
-
    ENTITY object_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY odd_function
    SUBTYPE OF (unary_boolean_expression);
@@ -3445,13 +2788,9 @@ Entities in the schema engineering_properties_schema
          is_int_expr(SELF);
    END_ENTITY;
 
-
-
    ENTITY or_expression
    SUBTYPE OF (multiple_arity_boolean_expression);
    END_ENTITY;
-
-
 
    ENTITY ordinal_date
    SUBTYPE OF (date);
@@ -3461,15 +2800,11 @@ Entities in the schema engineering_properties_schema
          NOT leap_year(SELF.year_component) AND ((1 <= day_component) AND (day_component <= 365)) OR leap_year(SELF.year_component) AND ((1 <= day_component) AND (day_component <= 366));
    END_ENTITY;
 
-
-
    ENTITY organization;
       id : OPTIONAL identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY organization_assignment
    ABSTRACT SUPERTYPE;
@@ -3477,16 +2812,12 @@ Entities in the schema engineering_properties_schema
       role : organization_role;
    END_ENTITY;
 
-
-
    ENTITY organization_relationship;
       name : label;
       description : OPTIONAL text;
       relating_organization : organization;
       related_organization : organization;
    END_ENTITY;
-
-
 
    ENTITY organization_role;
       name : label;
@@ -3497,15 +2828,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY organizational_address
    SUBTYPE OF (address);
       organizations : SET [1:?] OF organization;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY organizational_project;
       name : label;
@@ -3518,15 +2845,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY organizational_project_assignment
    ABSTRACT SUPERTYPE;
       assigned_organizational_project : organizational_project;
       role : organizational_project_role;
    END_ENTITY;
-
-
 
    ENTITY organizational_project_relationship;
       name : label;
@@ -3535,21 +2858,15 @@ Entities in the schema engineering_properties_schema
       related_organizational_project : organizational_project;
    END_ENTITY;
 
-
-
    ENTITY organizational_project_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
 
-
-
    ENTITY oriented_surface
    SUBTYPE OF (surface);
       orientation : BOOLEAN;
    END_ENTITY;
-
-
 
    ENTITY parabola
    SUBTYPE OF (conic);
@@ -3558,8 +2875,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          focal_dist <> 0.00000;
    END_ENTITY;
-
-
 
    ENTITY parallel_composed_function
    SUBTYPE OF (maths_function, multiple_arity_generic_expression);
@@ -3579,8 +2894,6 @@ Entities in the schema engineering_properties_schema
          parallel_composed_function_composability_check(prep_functions, final_function);
    END_ENTITY;
 
-
-
    ENTITY parallel_offset
    SUBTYPE OF (derived_shape_aspect);
       offset : measure_with_unit;
@@ -3589,8 +2902,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) = 1;
    END_ENTITY;
 
-
-
    ENTITY parallelism_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
    WHERE
@@ -3598,13 +2909,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) < 3;
    END_ENTITY;
 
-
-
    ENTITY parametric_representation_context
    SUBTYPE OF (representation_context);
    END_ENTITY;
-
-
 
    ENTITY partial_derivative_expression
    SUBTYPE OF (unary_generic_expression);
@@ -3621,8 +2928,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (vbl <* d_variables| NOT subspace_of(values_space_of(vbl), the_reals) AND NOT subspace_of(values_space_of(vbl), the_complex_numbers))) = 0;
    END_ENTITY;
 
-
-
    ENTITY partial_derivative_function
    SUBTYPE OF (maths_function, unary_generic_expression);
       SELF\unary_generic_expression.operand : maths_function;
@@ -3637,8 +2942,6 @@ Entities in the schema engineering_properties_schema
          partial_derivative_check(derivand.domain, d_variables);
    END_ENTITY;
 
-
-
    ENTITY perpendicular_to
    SUBTYPE OF (derived_shape_aspect);
    WHERE
@@ -3646,16 +2949,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) = 1;
    END_ENTITY;
 
-
-
    ENTITY perpendicularity_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
    WHERE
       WR1:
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) <= 3;
    END_ENTITY;
-
-
 
    ENTITY person;
       id : identifier;
@@ -3668,8 +2967,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          EXISTS(last_name) OR EXISTS(first_name);
    END_ENTITY;
-
-
 
    ENTITY person_and_organization;
       the_person : person;
@@ -3684,15 +2981,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY person_and_organization_assignment
    ABSTRACT SUPERTYPE;
       assigned_person_and_organization : person_and_organization;
       role : person_and_organization_role;
    END_ENTITY;
-
-
 
    ENTITY person_and_organization_role;
       name : label;
@@ -3703,15 +2996,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY person_assignment
    ABSTRACT SUPERTYPE;
       assigned_person : person;
       role : person_role;
    END_ENTITY;
-
-
 
    ENTITY person_role;
       name : label;
@@ -3722,15 +3011,11 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY person_type;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY person_type_definition;
       id : identifier;
@@ -3739,16 +3024,12 @@ Entities in the schema engineering_properties_schema
       formation : person_type_definition_formation;
    END_ENTITY;
 
-
-
    ENTITY person_type_definition_formation;
       id : identifier;
       name : label;
       description : OPTIONAL text;
       of_person_type : person_type;
    END_ENTITY;
-
-
 
    ENTITY person_type_definition_relationship;
       id : identifier;
@@ -3758,15 +3039,11 @@ Entities in the schema engineering_properties_schema
       related_person_type_definition : person_type_definition;
    END_ENTITY;
 
-
-
    ENTITY personal_address
    SUBTYPE OF (address);
       people : SET [1:?] OF person;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY placement
    SUPERTYPE OF (ONEOF(axis1_placement, axis2_placement_2d, axis2_placement_3d))
@@ -3774,13 +3051,9 @@ Entities in the schema engineering_properties_schema
       location : cartesian_point;
    END_ENTITY;
 
-
-
    ENTITY plane
    SUBTYPE OF (elementary_surface);
    END_ENTITY;
-
-
 
    ENTITY plane_angle_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3789,8 +3062,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.PLANE_ANGLE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY plane_angle_unit
    SUBTYPE OF (named_unit);
    WHERE
@@ -3798,13 +3069,9 @@ Entities in the schema engineering_properties_schema
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
 
-
-
    ENTITY plus_expression
    SUBTYPE OF (multiple_arity_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY plus_minus_tolerance;
       range : tolerance_method_definition;
@@ -3813,14 +3080,10 @@ Entities in the schema engineering_properties_schema
       UR1 : toleranced_dimension;
    END_ENTITY;
 
-
-
    ENTITY point
    SUPERTYPE OF (ONEOF(cartesian_point, point_on_curve, point_on_surface, point_in_volume))
    SUBTYPE OF (geometric_representation_item);
    END_ENTITY;
-
-
 
    ENTITY point_in_volume
    SUBTYPE OF (point);
@@ -3830,15 +3093,11 @@ Entities in the schema engineering_properties_schema
       point_parameter_w : parameter_value;
    END_ENTITY;
 
-
-
    ENTITY point_on_curve
    SUBTYPE OF (point);
       basis_curve : curve;
       point_parameter : parameter_value;
    END_ENTITY;
-
-
 
    ENTITY point_on_surface
    SUBTYPE OF (point);
@@ -3846,8 +3105,6 @@ Entities in the schema engineering_properties_schema
       point_parameter_u : parameter_value;
       point_parameter_v : parameter_value;
    END_ENTITY;
-
-
 
    ENTITY polar_complex_number_region
    SUBTYPE OF (maths_space, generic_literal);
@@ -3869,8 +3126,6 @@ Entities in the schema engineering_properties_schema
          (((real_min(distance_constraint) > 0.00000) OR max_exists(distance_constraint)) OR (direction_constraint.max - direction_constraint.min < 2.00000 * 3.14159)) OR (direction_constraint.max_closure = open);
    END_ENTITY;
 
-
-
    ENTITY polar_point
    SUBTYPE OF (cartesian_point);
       r : length_measure;
@@ -3882,8 +3137,6 @@ Entities in the schema engineering_properties_schema
          r >= 0.00000;
    END_ENTITY;
 
-
-
    ENTITY position_tolerance
    SUBTYPE OF (geometric_tolerance);
    WHERE
@@ -3891,13 +3144,9 @@ Entities in the schema engineering_properties_schema
          NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE' IN TYPEOF(SELF)) OR (SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) <= 3);
    END_ENTITY;
 
-
-
    ENTITY power_expression
    SUBTYPE OF (binary_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY power_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3906,8 +3155,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.POWER_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY power_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -3915,19 +3162,20 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.watt);
    END_ENTITY;
 
-
+	ENTITY si_power_unit
+     SUBTYPE OF (power_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.watt;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY pre_defined_item;
       name : label;
    END_ENTITY;
 
-
-
    ENTITY precision_qualifier;
       precision_value : INTEGER;
    END_ENTITY;
-
-
 
    ENTITY pressure_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -3936,8 +3184,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.PRESSURE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY pressure_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -3945,14 +3191,17 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.pascal);
    END_ENTITY;
 
-
+	ENTITY si_pressure_unit
+     SUBTYPE OF (pressure_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.pascal;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY process_or_process_relationship_effectivity
    SUBTYPE OF (effectivity);
       effective_process_or_process_relationship : process_or_process_relationship;
    END_ENTITY;
-
-
 
    ENTITY process_product_association;
       name : label;
@@ -3961,16 +3210,12 @@ Entities in the schema engineering_properties_schema
       process : product_definition_process;
    END_ENTITY;
 
-
-
    ENTITY process_property_association;
       name : label;
       description : text;
       process : property_process;
       property_or_shape : property_or_shape_select;
    END_ENTITY;
-
-
 
    ENTITY product;
       id : identifier;
@@ -3979,26 +3224,18 @@ Entities in the schema engineering_properties_schema
       frame_of_reference : SET [1:?] OF product_context;
    END_ENTITY;
 
-
-
    ENTITY product_as_individual
    ABSTRACT SUPERTYPE OF (ONEOF(product_as_planned, product_as_realised))
    SUBTYPE OF (product_definition_formation);
    END_ENTITY;
 
-
-
    ENTITY product_as_planned
    SUBTYPE OF (product_as_individual);
    END_ENTITY;
 
-
-
    ENTITY product_as_realised
    SUBTYPE OF (product_as_individual);
    END_ENTITY;
-
-
 
    ENTITY product_category;
       name : label;
@@ -4010,8 +3247,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY product_category_relationship;
       name : label;
       description : OPTIONAL text;
@@ -4022,8 +3257,6 @@ Entities in the schema engineering_properties_schema
          acyclic_product_category_relationship(SELF, [ SELF.sub_category ]);
    END_ENTITY;
 
-
-
    ENTITY product_concept;
       id : identifier;
       name : label;
@@ -4033,21 +3266,15 @@ Entities in the schema engineering_properties_schema
       UR1 : id;
    END_ENTITY;
 
-
-
    ENTITY product_concept_context
    SUBTYPE OF (application_context_element);
       market_segment_type : label;
    END_ENTITY;
 
-
-
    ENTITY product_context
    SUBTYPE OF (application_context_element);
       discipline_type : label;
    END_ENTITY;
-
-
 
    ENTITY product_definition;
       id : identifier;
@@ -4061,14 +3288,10 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY product_definition_context
    SUBTYPE OF (application_context_element);
       life_cycle_stage : label;
    END_ENTITY;
-
-
 
    ENTITY product_definition_formation;
       id : identifier;
@@ -4078,8 +3301,6 @@ Entities in the schema engineering_properties_schema
       UR1 : id, of_product;
    END_ENTITY;
 
-
-
    ENTITY product_definition_formation_relationship;
       id : identifier;
       name : label;
@@ -4088,17 +3309,12 @@ Entities in the schema engineering_properties_schema
       related_product_definition_formation : product_definition_formation;
    END_ENTITY;
 
-
-
    ENTITY product_definition_process
    SUBTYPE OF (action);
       identification : identifier;
    INVERSE
       product_definitions : SET [1:?] OF process_product_association FOR process;
    END_ENTITY;
-
-
-
    ENTITY product_definition_relationship;
       id : identifier;
       name : label;
@@ -4107,18 +3323,13 @@ Entities in the schema engineering_properties_schema
       related_product_definition : product_definition;
    END_ENTITY;
 
-
-
    ENTITY product_definition_shape
    SUBTYPE OF (property_definition);
    UNIQUE
       UR1 : SELF\property_definition.definition;
    WHERE
-      WR1:
-         SIZEOF([ 'ENGINEERING_PROPERTIES_SCHEMA.CHARACTERIZED_PRODUCT_DEFINITION', 'ENGINEERING_PROPERTIES_SCHEMA.CHARACTERIZED_OBJECT' ] * TYPEOF(SELF\property_definition.definition)) > 0;
+      WR1:         SIZEOF([ 'ENGINEERING_PROPERTIES_SCHEMA.CHARACTERIZED_PRODUCT_DEFINITION', 'ENGINEERING_PROPERTIES_SCHEMA.CHARACTERIZED_OBJECT' ] * TYPEOF(SELF\property_definition.definition)) > 0;
    END_ENTITY;
-
-
 
    ENTITY product_definition_substitute;
       description : OPTIONAL text;
@@ -4133,14 +3344,10 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY product_definition_with_associated_documents
    SUBTYPE OF (product_definition);
       documentation_ids : SET [1:?] OF document;
    END_ENTITY;
-
-
 
    ENTITY product_material_composition_relationship
    SUBTYPE OF (product_definition_relationship);
@@ -4150,8 +3357,6 @@ Entities in the schema engineering_properties_schema
       determination_method : text;
    END_ENTITY;
 
-
-
    ENTITY product_relationship;
       id : identifier;
       name : label;
@@ -4160,8 +3365,6 @@ Entities in the schema engineering_properties_schema
       related_product : product;
    END_ENTITY;
 
-
-
    ENTITY projected_zone_definition
    SUBTYPE OF (tolerance_zone_definition);
       projection_end : shape_aspect;
@@ -4169,11 +3372,8 @@ Entities in the schema engineering_properties_schema
    WHERE
       WR1:
          ('NUMBER' IN TYPEOF(projected_length\measure_with_unit.value_component)) AND (projected_length\measure_with_unit.value_component > 0.00000);
-      WR2:
-         derive_dimensional_exponents(projected_length\measure_with_unit.unit_component) = dimensional_exponents(1, 0, 0, 0, 0, 0, 0);
+      WR2:         derive_dimensional_exponents(projected_length\measure_with_unit.unit_component) = dimensional_exponents(1, 0, 0, 0, 0, 0, 0);
    END_ENTITY;
-
-
 
    ENTITY property_definition;
       name : label;
@@ -4186,16 +3386,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY property_definition_relationship;
       name : label;
       description : text;
       relating_property_definition : property_definition;
       related_property_definition : property_definition;
    END_ENTITY;
-
-
 
    ENTITY property_definition_representation;
       definition : represented_definition;
@@ -4210,8 +3406,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY property_process
    SUBTYPE OF (action);
       identification : identifier;
@@ -4219,15 +3413,11 @@ Entities in the schema engineering_properties_schema
       properties : SET [1:?] OF process_property_association FOR process;
    END_ENTITY;
 
-
-
    ENTITY qualification;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY qualification_relationship;
       id : identifier;
@@ -4237,15 +3427,11 @@ Entities in the schema engineering_properties_schema
       related_qualification : qualification;
    END_ENTITY;
 
-
-
    ENTITY qualification_type;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY qualification_type_assignment
    ABSTRACT SUPERTYPE;
@@ -4256,15 +3442,11 @@ Entities in the schema engineering_properties_schema
       role : qualification_type_role;
    END_ENTITY;
 
-
-
    ENTITY qualification_type_role;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY qualified_representation_item
    SUBTYPE OF (representation_item);
@@ -4274,14 +3456,10 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (temp <* qualifiers| ('ENGINEERING_PROPERTIES_SCHEMA.PRECISION_QUALIFIER' IN TYPEOF(temp)))) < 2;
    END_ENTITY;
 
-
-
    ENTITY qualitative_uncertainty
    SUBTYPE OF (uncertainty_qualifier);
       uncertainty_value : text;
    END_ENTITY;
-
-
 
    ENTITY quantifier_expression
    ABSTRACT SUPERTYPE
@@ -4294,16 +3472,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (vrbl <* variables| NOT (schema_prefix + 'BOUND_VARIABLE_SEMANTICS' IN TYPEOF(vrbl.interpretation.semantics)))) = 0;
    END_ENTITY;
 
-
-
    ENTITY radioactivity_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.RADIOACTIVITY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY radioactivity_unit
    SUBTYPE OF (derived_unit);
@@ -4312,7 +3486,12 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.becquerel);
    END_ENTITY;
 
-
+	ENTITY si_radioactivity_unit
+     SUBTYPE OF (radioactivity_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.becquerel;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY ratio_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -4321,16 +3500,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.RATIO_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY ratio_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
-
-
 
    ENTITY rationalize_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -4346,14 +3521,10 @@ Entities in the schema engineering_properties_schema
          space_dimension(factor1(fun.range)) > 1;
    END_ENTITY;
 
-
-
    ENTITY real_defined_function
    ABSTRACT SUPERTYPE
    SUBTYPE OF (numeric_defined_function);
    END_ENTITY;
-
-
 
    ENTITY real_interval_from_min
    SUBTYPE OF (maths_space, generic_literal);
@@ -4361,42 +3532,30 @@ Entities in the schema engineering_properties_schema
       min_closure : open_closed;
    END_ENTITY;
 
-
-
    ENTITY real_interval_to_max
    SUBTYPE OF (maths_space, generic_literal);
       max : REAL;
       max_closure : open_closed;
    END_ENTITY;
 
-
-
    ENTITY real_literal
    SUBTYPE OF (literal_number);
       SELF\literal_number.the_value : REAL;
    END_ENTITY;
 
-
-
    ENTITY real_numeric_variable
    SUBTYPE OF (numeric_variable);
    END_ENTITY;
-
-
 
    ENTITY real_tuple_literal
    SUBTYPE OF (generic_literal);
       lit_value : LIST [1:?] OF REAL;
    END_ENTITY;
 
-
-
    ENTITY referenced_modified_datum
    SUBTYPE OF (datum_reference);
       modifier : limit_condition;
    END_ENTITY;
-
-
 
    ENTITY regular_table_function
    SUBTYPE OF (linearized_table_function);
@@ -4408,8 +3567,6 @@ Entities in the schema engineering_properties_schema
          extremal_position_check(SELF);
    END_ENTITY;
 
-
-
    ENTITY reindexed_array_function
    SUBTYPE OF (maths_function, unary_generic_expression);
       SELF\unary_generic_expression.operand : maths_function;
@@ -4420,8 +3577,6 @@ Entities in the schema engineering_properties_schema
       WR2:
          SIZEOF(starting_indices) = SIZEOF(shape_of_array(SELF\unary_generic_expression.operand));
    END_ENTITY;
-
-
 
    ENTITY repackaging_function
    SUBTYPE OF (maths_function, unary_generic_expression);
@@ -4438,8 +3593,6 @@ Entities in the schema engineering_properties_schema
          selected_output <= space_dimension(repackage(operand.range, output_repack));
    END_ENTITY;
 
-
-
    ENTITY representation;
       name : label;
       items : SET [1:?] OF representation_item;
@@ -4454,16 +3607,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY representation_context;
       context_identifier : identifier;
       context_type : text;
    INVERSE
       representations_in_context : SET [1:?] OF representation FOR context_of_items;
    END_ENTITY;
-
-
 
    ENTITY representation_item;
       name : label;
@@ -4472,16 +3621,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(using_representations(SELF)) > 0;
    END_ENTITY;
 
-
-
    ENTITY representation_item_relationship;
       name : label;
       description : OPTIONAL text;
       relating_representation_item : representation_item;
       related_representation_item : representation_item;
    END_ENTITY;
-
-
 
    ENTITY representation_map;
       mapping_origin : representation_item;
@@ -4493,16 +3638,12 @@ Entities in the schema engineering_properties_schema
          item_in_context(SELF.mapping_origin, SELF.mapped_representation.context_of_items);
    END_ENTITY;
 
-
-
    ENTITY representation_relationship;
       name : label;
       description : OPTIONAL text;
       rep_1 : representation;
       rep_2 : representation;
    END_ENTITY;
-
-
 
    ENTITY representation_relationship_with_transformation
    SUBTYPE OF (representation_relationship);
@@ -4512,14 +3653,10 @@ Entities in the schema engineering_properties_schema
          SELF\representation_relationship.rep_1.context_of_items :<>: SELF\representation_relationship.rep_2.context_of_items;
    END_ENTITY;
 
-
-
    ENTITY requirement_for_action_resource
    SUBTYPE OF (action_resource_requirement);
       resources : SET [1:?] OF action_resource;
    END_ENTITY;
-
-
 
    ENTITY resistance_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -4528,8 +3665,6 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.RESISTANCE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY resistance_unit
    SUBTYPE OF (derived_unit);
    WHERE
@@ -4537,15 +3672,18 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensions_for_si_unit(si_unit_name.ohm);
    END_ENTITY;
 
-
+	ENTITY si_resistance_unit
+     SUBTYPE OF (resistance_unit,si_unit);
+  WHERE
+    WR1: SELF\si_unit.name = si_unit_name.ohm;
+    WR2: NOT EXISTS(SELF\derived_unit.name);
+  END_ENTITY;
 
    ENTITY resource_property;
       name : label;
       description : text;
       resource : characterized_resource_definition;
    END_ENTITY;
-
-
 
    ENTITY resource_property_relationship;
       name : label;
@@ -4557,8 +3695,6 @@ Entities in the schema engineering_properties_schema
          relating_resource_property :<>: related_resource_property;
    END_ENTITY;
 
-
-
    ENTITY resource_property_representation;
       name : label;
       description : text;
@@ -4566,14 +3702,10 @@ Entities in the schema engineering_properties_schema
       representation : representation;
    END_ENTITY;
 
-
-
    ENTITY resource_requirement_type;
       name : label;
       description : text;
    END_ENTITY;
-
-
 
    ENTITY resource_requirement_type_relationship;
       name : label;
@@ -4585,21 +3717,15 @@ Entities in the schema engineering_properties_schema
          relating_requirement_type :<>: related_requirement_type;
    END_ENTITY;
 
-
-
    ENTITY restriction_function
    SUBTYPE OF (maths_function, unary_generic_expression);
       SELF\unary_generic_expression.operand : maths_space;
    END_ENTITY;
 
-
-
    ENTITY role_association;
       role : object_role;
       item_with_role : role_select;
    END_ENTITY;
-
-
 
    ENTITY roundness_tolerance
    SUBTYPE OF (geometric_tolerance);
@@ -4608,35 +3734,25 @@ Entities in the schema engineering_properties_schema
          NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE' IN TYPEOF(SELF));
    END_ENTITY;
 
-
-
    ENTITY runout_zone_definition
    SUBTYPE OF (tolerance_zone_definition);
       orientation : runout_zone_orientation;
    END_ENTITY;
 
-
-
    ENTITY runout_zone_orientation;
       angle : measure_with_unit;
    END_ENTITY;
-
-
 
    ENTITY runout_zone_orientation_reference_direction
    SUBTYPE OF (runout_zone_orientation);
       orientation_defining_relationship : shape_aspect_relationship;
    END_ENTITY;
 
-
-
    ENTITY security_classification;
       name : label;
       purpose : text;
       security_level : security_classification_level;
    END_ENTITY;
-
-
 
    ENTITY security_classification_assignment
    ABSTRACT SUPERTYPE;
@@ -4648,13 +3764,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ROLE_ASSOCIATION.ITEM_WITH_ROLE')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY security_classification_level;
       name : label;
    END_ENTITY;
-
-
 
    ENTITY selector_function
    SUBTYPE OF (maths_function, generic_literal);
@@ -4667,28 +3779,20 @@ Entities in the schema engineering_properties_schema
          expression_is_constant(domain_from(source_of_domain));
    END_ENTITY;
 
-
-
    ENTITY sequential_method
    SUBTYPE OF (serial_action_method);
       sequence_position : count_measure;
    END_ENTITY;
 
-
-
    ENTITY serial_action_method
    SUBTYPE OF (action_method_relationship);
    END_ENTITY;
-
-
 
    ENTITY serial_numbered_effectivity
    SUBTYPE OF (effectivity);
       effectivity_start_id : identifier;
       effectivity_end_id : OPTIONAL identifier;
    END_ENTITY;
-
-
 
    ENTITY series_composed_function
    SUBTYPE OF (maths_function, multiple_arity_generic_expression);
@@ -4697,8 +3801,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          composable_sequence(SELF\multiple_arity_generic_expression.operands);
    END_ENTITY;
-
-
 
    ENTITY shape_aspect;
       name : label;
@@ -4712,16 +3814,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY shape_aspect_deriving_relationship
    SUBTYPE OF (shape_aspect_relationship);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.DERIVED_SHAPE_ASPECT' IN TYPEOF(SELF\shape_aspect_relationship.relating_shape_aspect);
    END_ENTITY;
-
-
 
    ENTITY shape_aspect_relationship;
       name : label;
@@ -4735,8 +3833,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'ID_ATTRIBUTE.IDENTIFIED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY shape_definition_representation
    SUBTYPE OF (property_definition_representation);
    WHERE
@@ -4745,8 +3841,6 @@ Entities in the schema engineering_properties_schema
       WR2:
          'ENGINEERING_PROPERTIES_SCHEMA.SHAPE_REPRESENTATION' IN TYPEOF(SELF.used_representation);
    END_ENTITY;
-
-
 
    ENTITY shape_dimension_representation
    SUBTYPE OF (shape_representation);
@@ -4759,13 +3853,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (pos_mri <* QUERY (real_mri <* SELF\representation.items| ('REAL' IN TYPEOF(real_mri\measure_with_unit.value_component)))| NOT (pos_mri\measure_with_unit.value_component > 0.00000))) = 0;
    END_ENTITY;
 
-
-
    ENTITY shape_representation
    SUBTYPE OF (representation);
    END_ENTITY;
-
-
 
    ENTITY shape_representation_relationship
    SUBTYPE OF (representation_relationship);
@@ -4773,8 +3863,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.SHAPE_REPRESENTATION' IN TYPEOF(SELF\representation_relationship.rep_1) + TYPEOF(SELF\representation_relationship.rep_2);
    END_ENTITY;
-
-
 
    ENTITY si_unit
    SUBTYPE OF (named_unit);
@@ -4787,41 +3875,29 @@ Entities in the schema engineering_properties_schema
          NOT (('ENGINEERING_PROPERTIES_SCHEMA.MASS_UNIT' IN TYPEOF(SELF)) AND (SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.DERIVED_UNIT_ELEMENT.UNIT')) > 0)) OR (prefix = si_prefix.kilo);
    END_ENTITY;
 
-
-
    ENTITY simple_boolean_expression
    ABSTRACT SUPERTYPE OF (ONEOF(boolean_literal, boolean_variable))
    SUBTYPE OF (boolean_expression, simple_generic_expression);
    END_ENTITY;
-
-
 
    ENTITY simple_generic_expression
    ABSTRACT SUPERTYPE OF (ONEOF(generic_literal, generic_variable))
    SUBTYPE OF (generic_expression);
    END_ENTITY;
 
-
-
    ENTITY simple_numeric_expression
    ABSTRACT SUPERTYPE OF (ONEOF(literal_number, numeric_variable))
    SUBTYPE OF (numeric_expression, simple_generic_expression);
    END_ENTITY;
-
-
 
    ENTITY simple_string_expression
    ABSTRACT SUPERTYPE OF (ONEOF(string_literal, string_variable))
    SUBTYPE OF (string_expression, simple_generic_expression);
    END_ENTITY;
 
-
-
    ENTITY sin_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY solid_angle_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -4830,16 +3906,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.SOLID_ANGLE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
-
    ENTITY solid_angle_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
-
-
 
    ENTITY spherical_point
    SUBTYPE OF (cartesian_point);
@@ -4853,14 +3925,10 @@ Entities in the schema engineering_properties_schema
          r >= 0.00000;
    END_ENTITY;
 
-
-
    ENTITY spherical_surface
    SUBTYPE OF (elementary_surface);
       radius : positive_length_measure;
    END_ENTITY;
-
-
 
    ENTITY spherical_volume
    SUBTYPE OF (volume);
@@ -4868,13 +3936,9 @@ Entities in the schema engineering_properties_schema
       radius : positive_length_measure;
    END_ENTITY;
 
-
-
    ENTITY square_root_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY standard_table_function
    SUBTYPE OF (linearized_table_function);
@@ -4884,22 +3948,16 @@ Entities in the schema engineering_properties_schema
          extremal_position_check(SELF);
    END_ENTITY;
 
-
-
    ENTITY standard_uncertainty
    SUPERTYPE OF (expanded_uncertainty)
    SUBTYPE OF (uncertainty_qualifier);
       uncertainty_value : REAL;
    END_ENTITY;
 
-
-
    ENTITY state_observed;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY state_observed_assignment
    ABSTRACT SUPERTYPE;
@@ -4907,38 +3965,27 @@ Entities in the schema engineering_properties_schema
       role : state_observed_role;
    END_ENTITY;
 
-
-
    ENTITY state_observed_relationship;
       name : label;
       description : OPTIONAL text;
       relating_state_observed : SET [1:?] OF state_observed;
       related_state_observed : SET [1:?] OF state_observed;
    END_ENTITY;
-
-
-
    ENTITY state_observed_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY state_type;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
 
-
-
    ENTITY state_type_assignment
    ABSTRACT SUPERTYPE;
       assigned_state_type : state_type;
       role : state_type_role;
    END_ENTITY;
-
-
 
    ENTITY state_type_relationship;
       name : label;
@@ -4947,14 +3994,10 @@ Entities in the schema engineering_properties_schema
       related_state_type : SET [1:?] OF state_type;
    END_ENTITY;
 
-
-
    ENTITY state_type_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY statistical_distribution_for_tolerance
    SUBTYPE OF (representation);
@@ -4963,8 +4006,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (item <* SELF\representation.items| NOT ('ENGINEERING_PROPERTIES_SCHEMA.MEASURE_REPRESENTATION_ITEM' IN TYPEOF(item)))) = 0;
    END_ENTITY;
 
-
-
    ENTITY straightness_tolerance
    SUBTYPE OF (geometric_tolerance);
    WHERE
@@ -4972,41 +4013,29 @@ Entities in the schema engineering_properties_schema
          NOT ('ENGINEERING_PROPERTIES_SCHEMA.' + 'GEOMETRIC_TOLERANCE_WITH_DATUM_REFERENCE' IN TYPEOF(SELF));
    END_ENTITY;
 
-
-
    ENTITY strict_triangular_matrix
    SUBTYPE OF (triangular_matrix);
       main_diagonal_value : maths_value;
    END_ENTITY;
-
-
 
    ENTITY string_defined_function
    ABSTRACT SUPERTYPE
    SUBTYPE OF (defined_function, string_expression);
    END_ENTITY;
 
-
-
    ENTITY string_expression
    ABSTRACT SUPERTYPE OF (ONEOF(simple_string_expression, index_expression, substring_expression, concat_expression, format_function, string_defined_function))
    SUBTYPE OF (expression);
    END_ENTITY;
-
-
 
    ENTITY string_literal
    SUBTYPE OF (simple_string_expression, generic_literal);
       the_value : STRING;
    END_ENTITY;
 
-
-
    ENTITY string_variable
    SUBTYPE OF (simple_string_expression, variable);
    END_ENTITY;
-
-
 
    ENTITY substring_expression
    SUBTYPE OF (string_expression, multiple_arity_generic_expression);
@@ -5025,14 +4054,10 @@ Entities in the schema engineering_properties_schema
          is_int_expr(index2);
    END_ENTITY;
 
-
-
    ENTITY surface
    SUPERTYPE OF (elementary_surface)
    SUBTYPE OF (geometric_representation_item);
    END_ENTITY;
-
-
 
    ENTITY symmetric_banded_matrix
    SUBTYPE OF (symmetric_matrix);
@@ -5042,8 +4067,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          member_of(default_entry, factor1(SELF\linearized_table_function.source.range));
    END_ENTITY;
-
-
 
    ENTITY symmetric_matrix
    SUBTYPE OF (linearized_table_function);
@@ -5061,8 +4084,6 @@ Entities in the schema engineering_properties_schema
          NOT ((symmetry = hermitian) OR (symmetry = skew_hermitian)) OR (space_dimension(SELF\linearized_table_function.source.range) = 1) AND subspace_of_es(factor1(SELF\linearized_table_function.source.range), es_complex_numbers);
    END_ENTITY;
 
-
-
    ENTITY symmetric_shape_aspect
    SUBTYPE OF (shape_aspect);
    INVERSE
@@ -5072,8 +4093,6 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (x <* SELF\symmetric_shape_aspect.basis_relationships| ('ENGINEERING_PROPERTIES_SCHEMA.CENTRE_OF_SYMMETRY' IN TYPEOF(x\shape_aspect_relationship.related_shape_aspect)))) >= 1;
    END_ENTITY;
 
-
-
    ENTITY symmetry_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
    WHERE
@@ -5081,13 +4100,9 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) <= 3;
    END_ENTITY;
 
-
-
    ENTITY tan_function
    SUBTYPE OF (unary_function_call);
    END_ENTITY;
-
-
 
    ENTITY tangent
    SUBTYPE OF (derived_shape_aspect);
@@ -5096,16 +4111,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(SELF\derived_shape_aspect.deriving_relationships) = 1;
    END_ENTITY;
 
-
-
    ENTITY thermodynamic_temperature_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.THERMODYNAMIC_TEMPERATURE_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY thermodynamic_temperature_unit
    SUBTYPE OF (named_unit);
@@ -5114,15 +4125,11 @@ Entities in the schema engineering_properties_schema
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 0.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 1.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
 
-
-
    ENTITY time_interval;
       id : identifier;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY time_interval_assignment
    ABSTRACT SUPERTYPE;
@@ -5130,14 +4137,10 @@ Entities in the schema engineering_properties_schema
       role : time_interval_role;
    END_ENTITY;
 
-
-
    ENTITY time_interval_based_effectivity
    SUBTYPE OF (effectivity);
       effectivity_period : time_interval;
    END_ENTITY;
-
-
 
    ENTITY time_interval_relationship;
       name : label;
@@ -5146,14 +4149,10 @@ Entities in the schema engineering_properties_schema
       related_time_interval : time_interval;
    END_ENTITY;
 
-
-
    ENTITY time_interval_role;
       name : label;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY time_interval_with_bounds
    SUBTYPE OF (time_interval);
@@ -5167,16 +4166,12 @@ Entities in the schema engineering_properties_schema
          EXISTS(primary_bound) OR EXISTS(secondary_bound);
    END_ENTITY;
 
-
-
    ENTITY time_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.TIME_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY time_role;
       name : label;
@@ -5187,16 +4182,12 @@ Entities in the schema engineering_properties_schema
          SIZEOF(USEDIN(SELF, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM')) <= 1;
    END_ENTITY;
 
-
-
    ENTITY time_unit
    SUBTYPE OF (named_unit);
    WHERE
       WR1:
          ((((((SELF\named_unit.dimensions.length_exponent = 0.00000) AND (SELF\named_unit.dimensions.mass_exponent = 0.00000)) AND (SELF\named_unit.dimensions.time_exponent = 1.00000)) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.00000)) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.00000)) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.00000)) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.00000);
    END_ENTITY;
-
-
 
    ENTITY tolerance_value;
       lower_bound : measure_with_unit;
@@ -5208,14 +4199,10 @@ Entities in the schema engineering_properties_schema
          upper_bound\measure_with_unit.unit_component = lower_bound\measure_with_unit.unit_component;
    END_ENTITY;
 
-
-
    ENTITY tolerance_with_statistical_distribution;
       associated_tolerance : shape_tolerance_select;
       tolerance_allocation : statistical_distribution_for_tolerance;
    END_ENTITY;
-
-
 
    ENTITY tolerance_zone
    SUBTYPE OF (shape_aspect);
@@ -5223,21 +4210,15 @@ Entities in the schema engineering_properties_schema
       form : tolerance_zone_form;
    END_ENTITY;
 
-
-
    ENTITY tolerance_zone_definition
    SUPERTYPE OF (ONEOF(projected_zone_definition, runout_zone_definition));
       zone : tolerance_zone;
       boundaries : SET [1:?] OF shape_aspect;
    END_ENTITY;
 
-
-
    ENTITY tolerance_zone_form;
       name : label;
    END_ENTITY;
-
-
 
    ENTITY total_runout_tolerance
    SUBTYPE OF (geometric_tolerance_with_datum_reference);
@@ -5245,8 +4226,6 @@ Entities in the schema engineering_properties_schema
       WR1:
          SIZEOF(SELF\geometric_tolerance_with_datum_reference.datum_system) <= 2;
    END_ENTITY;
-
-
 
    ENTITY triangular_matrix
    SUBTYPE OF (linearized_table_function);
@@ -5260,27 +4239,19 @@ Entities in the schema engineering_properties_schema
          member_of(default_entry, SELF\maths_function.range);
    END_ENTITY;
 
-
-
    ENTITY type_qualifier;
       name : label;
    END_ENTITY;
-
-
 
    ENTITY unary_boolean_expression
    ABSTRACT SUPERTYPE OF (ONEOF(not_expression, odd_function))
    SUBTYPE OF (boolean_expression, unary_generic_expression);
    END_ENTITY;
 
-
-
    ENTITY unary_function_call
    ABSTRACT SUPERTYPE OF (ONEOF(abs_function, minus_function, sin_function, cos_function, tan_function, asin_function, acos_function, exp_function, log_function, log2_function, log10_function, square_root_function))
    SUBTYPE OF (unary_numeric_expression);
    END_ENTITY;
-
-
 
    ENTITY unary_generic_expression
    ABSTRACT SUPERTYPE
@@ -5288,22 +4259,16 @@ Entities in the schema engineering_properties_schema
       operand : generic_expression;
    END_ENTITY;
 
-
-
    ENTITY unary_numeric_expression
    ABSTRACT SUPERTYPE OF (unary_function_call)
    SUBTYPE OF (numeric_expression, unary_generic_expression);
       SELF\unary_generic_expression.operand : numeric_expression;
    END_ENTITY;
 
-
-
    ENTITY uncertainty_assigned_representation
    SUBTYPE OF (representation);
       uncertainty : SET [1:?] OF uncertainty_measure_with_unit;
    END_ENTITY;
-
-
 
    ENTITY uncertainty_measure_with_unit
    SUBTYPE OF (measure_with_unit);
@@ -5314,15 +4279,11 @@ Entities in the schema engineering_properties_schema
          valid_measure_value(SELF\measure_with_unit.value_component);
    END_ENTITY;
 
-
-
    ENTITY uncertainty_qualifier
    SUPERTYPE OF (ONEOF(standard_uncertainty, qualitative_uncertainty));
       measure_name : label;
       description : text;
    END_ENTITY;
-
-
 
    ENTITY uniform_product_space
    SUBTYPE OF (maths_space, generic_literal);
@@ -5337,15 +4298,11 @@ Entities in the schema engineering_properties_schema
          base <> the_empty_space;
    END_ENTITY;
 
-
-
    ENTITY value_function
    SUPERTYPE OF (int_value_function)
    SUBTYPE OF (numeric_expression, unary_generic_expression);
       SELF\unary_generic_expression.operand : string_expression;
    END_ENTITY;
-
-
 
    ENTITY value_representation_item
    SUBTYPE OF (representation_item);
@@ -5355,20 +4312,14 @@ Entities in the schema engineering_properties_schema
          SIZEOF(QUERY (rep <* using_representations(SELF)| NOT ('ENGINEERING_PROPERTIES_SCHEMA.GLOBAL_UNIT_ASSIGNED_CONTEXT' IN TYPEOF(rep.context_of_items)))) = 0;
    END_ENTITY;
 
-
-
    ENTITY variable
    ABSTRACT SUPERTYPE OF (ONEOF(numeric_variable, boolean_variable, string_variable))
    SUBTYPE OF (generic_variable);
    END_ENTITY;
 
-
-
    ENTITY variable_semantics
    ABSTRACT SUPERTYPE;
    END_ENTITY;
-
-
 
    ENTITY vector
    SUBTYPE OF (geometric_representation_item);
@@ -5379,8 +4330,6 @@ Entities in the schema engineering_properties_schema
          magnitude >= 0.00000;
    END_ENTITY;
 
-
-
    ENTITY velocity_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
@@ -5388,7 +4337,12 @@ Entities in the schema engineering_properties_schema
          'ENGINEERING_PROPERTIES_SCHEMA.VELOCITY_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
 
-
+	ENTITY velocity_unit
+  SUBTYPE OF (derived_unit);
+  WHERE
+  WR1: derive_dimensional_exponents(SELF) = 
+       dimensional_exponents ( 1.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0 );
+  END_ENTITY;
 
    ENTITY versioned_action_request;
       id : identifier;
@@ -5396,8 +4350,6 @@ Entities in the schema engineering_properties_schema
       purpose : text;
       description : OPTIONAL text;
    END_ENTITY;
-
-
 
    ENTITY volume
    SUPERTYPE OF (ONEOF(block_volume, spherical_volume, cylindrical_volume))
@@ -5407,16 +4359,12 @@ Entities in the schema engineering_properties_schema
          SELF\geometric_representation_item.dim = 3;
    END_ENTITY;
 
-
-
    ENTITY volume_measure_with_unit
    SUBTYPE OF (measure_with_unit);
    WHERE
       WR1:
          'ENGINEERING_PROPERTIES_SCHEMA.VOLUME_UNIT' IN TYPEOF(SELF\measure_with_unit.unit_component);
    END_ENTITY;
-
-
 
    ENTITY volume_unit
    SUBTYPE OF (derived_unit);
@@ -5425,22 +4373,16 @@ Entities in the schema engineering_properties_schema
          derive_dimensional_exponents(SELF) = dimensional_exponents(3.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 0.00000);
    END_ENTITY;
 
-
-
    ENTITY week_of_year_and_day_date
    SUBTYPE OF (date);
       week_component : week_in_year_number;
       day_component : OPTIONAL day_in_week_number;
    END_ENTITY;
 
-
-
    ENTITY xor_expression
    SUBTYPE OF (binary_boolean_expression);
       SELF\binary_generic_expression.operands : LIST [2:2] OF boolean_expression;
    END_ENTITY;
-
-
 
    ENTITY year_month
    SUBTYPE OF (date);
@@ -5452,16 +4394,11 @@ Entities in the schema engineering_properties_schema
 Types in the schema engineering_properties_schema
 *********************************** *)
 
-
    TYPE absorbed_dose_measure = REAL;
    END_TYPE;
 
-
-
    TYPE acceleration_measure = REAL;
    END_TYPE;
-
-
 
    TYPE action_item = SELECT
       (approval,
@@ -5473,8 +4410,6 @@ Types in the schema engineering_properties_schema
        property_definition,
        property_definition_representation);
    END_TYPE;
-
-
 
    TYPE action_request_item = SELECT
       (action,
@@ -5492,28 +4427,20 @@ Types in the schema engineering_properties_schema
        security_classification_level);
    END_TYPE;
 
-
-
    TYPE ahead_or_behind = ENUMERATION OF
       (ahead,
        exact,
        behind);
    END_TYPE;
 
-
-
    TYPE amount_of_substance_measure = REAL;
    END_TYPE;
-
-
 
    TYPE angle_relator = ENUMERATION OF
       (equal,
        large,
        small);
    END_TYPE;
-
-
 
    TYPE approval_item = SELECT
       (material_property,
@@ -5525,24 +4452,16 @@ Types in the schema engineering_properties_schema
        versioned_action_request);
    END_TYPE;
 
-
-
    TYPE area_measure = REAL;
    END_TYPE;
 
-
-
    TYPE atom_based_tuple = LIST OF atom_based_value;
    END_TYPE;
-
-
 
    TYPE atom_based_value = SELECT
       (maths_atom,
        atom_based_tuple);
    END_TYPE;
-
-
 
    TYPE attribute_language_item = SELECT
       (action,
@@ -5563,31 +4482,21 @@ Types in the schema engineering_properties_schema
        representation);
    END_TYPE;
 
-
-
    TYPE attribute_type = SELECT
       (label,
        text);
    END_TYPE;
-
-
 
    TYPE axis2_placement = SELECT
       (axis2_placement_2d,
        axis2_placement_3d);
    END_TYPE;
 
-
-
    TYPE capacitance_measure = REAL;
    END_TYPE;
 
-
-
    TYPE celsius_temperature_measure = REAL;
    END_TYPE;
-
-
 
    TYPE certification_item = SELECT
       (action,
@@ -5601,8 +4510,6 @@ Types in the schema engineering_properties_schema
        property_definition);
    END_TYPE;
 
-
-
    TYPE characterized_action_definition = SELECT
       (action,
        action_method,
@@ -5610,35 +4517,26 @@ Types in the schema engineering_properties_schema
        action_relationship);
    END_TYPE;
 
-
-
    TYPE characterized_definition = SELECT
       (characterized_object,
        characterized_product_definition,
        shape_definition);
    END_TYPE;
 
-
-
    TYPE characterized_material_property = SELECT
-      (material_property_representation);
+      (material_property_representation,
+	 product_material_composition_relationship);
    END_TYPE;
-
-
 
    TYPE characterized_product_composition_value = SELECT
       (maths_value_with_unit,
        measure_with_unit);
    END_TYPE;
 
-
-
    TYPE characterized_product_definition = SELECT
       (product_definition,
        product_definition_relationship);
    END_TYPE;
-
-
 
    TYPE characterized_resource_definition = SELECT
       (action_resource,
@@ -5647,31 +4545,21 @@ Types in the schema engineering_properties_schema
        action_resource_requirement_relationship);
    END_TYPE;
 
-
-
    TYPE compound_item_definition = SELECT
       (list_representation_item,
        set_representation_item);
    END_TYPE;
 
-
-
    TYPE conductance_measure = REAL;
    END_TYPE;
-
-
 
    TYPE configuration_design_item = SELECT
       (product_definition,
        product_definition_formation);
    END_TYPE;
 
-
-
    TYPE context_dependent_measure = REAL;
    END_TYPE;
-
-
 
    TYPE contract_item = SELECT
       (action,
@@ -5682,12 +4570,8 @@ Types in the schema engineering_properties_schema
        property_definition);
    END_TYPE;
 
-
-
    TYPE count_measure = NUMBER;
    END_TYPE;
-
-
 
    TYPE date_and_time_item = SELECT
       (action,
@@ -5695,8 +4579,6 @@ Types in the schema engineering_properties_schema
        representation,
        versioned_action_request);
    END_TYPE;
-
-
 
    TYPE date_item = SELECT
       (action,
@@ -5709,14 +4591,10 @@ Types in the schema engineering_properties_schema
        versioned_action_request);
    END_TYPE;
 
-
-
    TYPE date_time_or_event_occurrence = SELECT
       (date_time_select,
        event_occurrence);
    END_TYPE;
-
-
 
    TYPE date_time_select = SELECT
       (date,
@@ -5724,15 +4602,11 @@ Types in the schema engineering_properties_schema
        local_time);
    END_TYPE;
 
-
-
    TYPE day_in_month_number = INTEGER;
    WHERE
       WR1:
          (1 <= SELF) AND (SELF <= 31);
    END_TYPE;
-
-
 
    TYPE day_in_week_number = INTEGER;
    WHERE
@@ -5740,23 +4614,17 @@ Types in the schema engineering_properties_schema
          (1 <= SELF) AND (SELF <= 7);
    END_TYPE;
 
-
-
    TYPE day_in_year_number = INTEGER;
    WHERE
       WR1:
          (1 <= SELF) AND (SELF <= 366);
    END_TYPE;
 
-
-
    TYPE derived_property_select = SELECT
       (property_definition,
        action_property,
        resource_property);
    END_TYPE;
-
-
 
    TYPE description_attribute_select = SELECT
       (action_request_solution,
@@ -5777,22 +4645,16 @@ Types in the schema engineering_properties_schema
        time_role);
    END_TYPE;
 
-
-
    TYPE descriptive_measure = STRING;
    END_TYPE;
 
-
    TYPE dimension_count = positive_integer;
    END_TYPE;
-
 
    TYPE dimensional_characteristic = SELECT
       (dimensional_location,
        dimensional_size);
    END_TYPE;
-
-
 
    TYPE document_item = SELECT
       (action,
@@ -5810,12 +4672,8 @@ Types in the schema engineering_properties_schema
        representation);
    END_TYPE;
 
-
-
    TYPE dose_equivalent_measure = REAL;
    END_TYPE;
-
-
 
    TYPE dotted_express_identifier = STRING;
    WHERE
@@ -5823,30 +4681,20 @@ Types in the schema engineering_properties_schema
          dotted_identifiers_syntax(SELF);
    END_TYPE;
 
-
-
    TYPE effectivity_item = SELECT
       (action,
        document,
        product_definition_formation);
    END_TYPE;
 
-
-
    TYPE electric_charge_measure = REAL;
    END_TYPE;
-
-
 
    TYPE electric_current_measure = REAL;
    END_TYPE;
 
-
-
    TYPE electric_potential_measure = REAL;
    END_TYPE;
-
-
 
    TYPE elementary_function_enumerators = ENUMERATION OF
       (ef_and,
@@ -5983,8 +4831,6 @@ Types in the schema engineering_properties_schema
        ef_member_of);
    END_TYPE;
 
-
-
    TYPE elementary_space_enumerators = ENUMERATION OF
       (es_numbers,
        es_complex_numbers,
@@ -5999,18 +4845,12 @@ Types in the schema engineering_properties_schema
        es_generics);
    END_TYPE;
 
-
-
    TYPE energy_measure = REAL;
    END_TYPE;
-
-
 
    TYPE event_occurred_item = SELECT
       (action);
    END_TYPE;
-
-
 
    TYPE express_identifier = dotted_express_identifier;
    WHERE
@@ -6018,16 +4858,12 @@ Types in the schema engineering_properties_schema
          dot_count(SELF) = 0;
    END_TYPE;
 
-
-
    TYPE extension_options = ENUMERATION OF
       (eo_none,
        eo_cont,
        eo_cont_right,
        eo_cont_left);
    END_TYPE;
-
-
 
    TYPE external_identification_item = SELECT
       (document,
@@ -6037,32 +4873,22 @@ Types in the schema engineering_properties_schema
        externally_defined_engineering_property);
    END_TYPE;
 
-
-
    TYPE force_measure = REAL;
    END_TYPE;
-
-
 
    TYPE founded_item_select = SELECT
       (founded_item,
        representation_item);
    END_TYPE;
 
-
-
    TYPE frequency_measure = REAL;
    END_TYPE;
-
-
 
    TYPE geometric_set_select = SELECT
       (point,
        curve,
        surface);
    END_TYPE;
-
-
 
    TYPE groupable_item = SELECT
       (action,
@@ -6073,15 +4899,11 @@ Types in the schema engineering_properties_schema
        product_definition);
    END_TYPE;
 
-
-
    TYPE hour_in_day = INTEGER;
    WHERE
       WR1:
          (0 <= SELF) AND (SELF < 24);
    END_TYPE;
-
-
 
    TYPE id_attribute_select = SELECT
       (action,
@@ -6096,8 +4918,6 @@ Types in the schema engineering_properties_schema
        representation);
    END_TYPE;
 
-
-
    TYPE identification_item = SELECT
       (certification,
        document,
@@ -6107,32 +4927,20 @@ Types in the schema engineering_properties_schema
        person_and_organization);
    END_TYPE;
 
-
-
    TYPE identifier = STRING;
    END_TYPE;
-
-
 
    TYPE illuminance_measure = REAL;
    END_TYPE;
 
-
-
    TYPE inductance_measure = REAL;
    END_TYPE;
-
-
 
    TYPE input_selector = positive_integer;
    END_TYPE;
 
-
-
    TYPE label = STRING;
    END_TYPE;
-
-
 
    TYPE language_item = SELECT
       (action,
@@ -6153,12 +4961,8 @@ Types in the schema engineering_properties_schema
        representation);
    END_TYPE;
 
-
-
    TYPE length_measure = REAL;
    END_TYPE;
-
-
 
    TYPE limit_condition = ENUMERATION OF
       (maximum_material_condition,
@@ -6166,12 +4970,8 @@ Types in the schema engineering_properties_schema
        regardless_of_feature_size);
    END_TYPE;
 
-
-
    TYPE list_representation_item = LIST [1:?] OF representation_item;
    END_TYPE;
-
-
 
    TYPE location_item = SELECT
       (action,
@@ -6181,62 +4981,40 @@ Types in the schema engineering_properties_schema
        product_definition_formation);
    END_TYPE;
 
-
-
    TYPE location_representation_item = SELECT
       (representation);
    END_TYPE;
-
-
 
    TYPE lower_upper = ENUMERATION OF
       (lower,
        upper);
    END_TYPE;
 
-
-
    TYPE luminous_flux_measure = REAL;
    END_TYPE;
-
-
 
    TYPE luminous_intensity_measure = REAL;
    END_TYPE;
 
-
-
    TYPE magnetic_flux_density_measure = REAL;
    END_TYPE;
-
-
 
    TYPE magnetic_flux_measure = REAL;
    END_TYPE;
 
-
-
    TYPE mass_measure = REAL;
    END_TYPE;
-
-
 
    TYPE maths_atom = SELECT
       (maths_simple_atom,
        maths_enum_atom);
    END_TYPE;
 
-
-
    TYPE maths_binary = BINARY;
    END_TYPE;
 
-
-
    TYPE maths_boolean = BOOLEAN;
    END_TYPE;
-
-
 
    TYPE maths_enum_atom = SELECT
       (elementary_space_enumerators,
@@ -6250,42 +5028,28 @@ Types in the schema engineering_properties_schema
        extension_options);
    END_TYPE;
 
-
-
    TYPE maths_expression = SELECT
       (atom_based_value,
        maths_tuple,
        generic_expression);
    END_TYPE;
 
-
-
    TYPE maths_function_select = SELECT
       (maths_function,
        elementary_function_enumerators);
    END_TYPE;
 
-
-
    TYPE maths_integer = INTEGER;
    END_TYPE;
-
-
 
    TYPE maths_logical = LOGICAL;
    END_TYPE;
 
-
-
    TYPE maths_number = NUMBER;
    END_TYPE;
 
-
-
    TYPE maths_real = REAL;
    END_TYPE;
-
-
 
    TYPE maths_simple_atom = SELECT
       (maths_number,
@@ -6296,24 +5060,16 @@ Types in the schema engineering_properties_schema
        maths_binary);
    END_TYPE;
 
-
-
    TYPE maths_space_or_function = SELECT
       (maths_space,
        maths_function);
    END_TYPE;
 
-
-
    TYPE maths_string = STRING;
    END_TYPE;
 
-
-
    TYPE maths_tuple = LIST [0:?] OF maths_value;
    END_TYPE;
-
-
 
    TYPE maths_value = SELECT
       (atom_based_value,
@@ -6323,8 +5079,6 @@ Types in the schema engineering_properties_schema
       constancy:
          NOT ('GENERIC_EXPRESSION' IN stripped_typeof(SELF)) OR expression_is_constant(SELF);
    END_TYPE;
-
-
 
    TYPE measure_value = SELECT
       (absorbed_dose_measure,
@@ -6371,12 +5125,8 @@ Types in the schema engineering_properties_schema
        volume_measure);
    END_TYPE;
 
-
-
    TYPE message = STRING;
    END_TYPE;
-
-
 
    TYPE minute_in_hour = INTEGER;
    WHERE
@@ -6384,15 +5134,11 @@ Types in the schema engineering_properties_schema
          (0 <= SELF) AND (SELF <= 59);
    END_TYPE;
 
-
-
    TYPE month_in_year_number = INTEGER;
    WHERE
       WR1:
          (1 <= SELF) AND (SELF <= 12);
    END_TYPE;
-
-
 
    TYPE multi_language_attribute_item = SELECT
       (action,
@@ -6413,8 +5159,6 @@ Types in the schema engineering_properties_schema
        representation);
    END_TYPE;
 
-
-
    TYPE name_attribute_select = SELECT
       (action_request_solution,
        address,
@@ -6428,15 +5172,11 @@ Types in the schema engineering_properties_schema
        property_definition_representation);
    END_TYPE;
 
-
-
    TYPE non_negative_length_measure = length_measure;
    WHERE
       WR1:
          SELF >= 0.00000;
    END_TYPE;
-
-
 
    TYPE nonnegative_integer = INTEGER;
    WHERE
@@ -6444,12 +5184,8 @@ Types in the schema engineering_properties_schema
          SELF >= 0;
    END_TYPE;
 
-
-
    TYPE numeric_measure = NUMBER;
    END_TYPE;
-
-
 
    TYPE one_or_two = positive_integer;
    WHERE
@@ -6457,21 +5193,15 @@ Types in the schema engineering_properties_schema
          (SELF = 1) OR (SELF = 2);
    END_TYPE;
 
-
-
    TYPE open_closed = ENUMERATION OF
       (open,
        closed);
    END_TYPE;
 
-
-
    TYPE ordering_type = ENUMERATION OF
       (by_rows,
        by_columns);
    END_TYPE;
-
-
 
    TYPE organization_item = SELECT
       (action,
@@ -6482,8 +5212,6 @@ Types in the schema engineering_properties_schema
        versioned_action_request);
    END_TYPE;
 
-
-
    TYPE organizational_project_item = SELECT
       (action,
        action_method,
@@ -6492,18 +5220,12 @@ Types in the schema engineering_properties_schema
        material_property);
    END_TYPE;
 
-
-
    TYPE parameter_value = REAL;
    END_TYPE;
-
-
 
    TYPE pcurve_or_surface = SELECT
       (surface);
    END_TYPE;
-
-
 
    TYPE person_and_organization_item = SELECT
       (action,
@@ -6512,15 +5234,11 @@ Types in the schema engineering_properties_schema
        versioned_action_request);
    END_TYPE;
 
-
-
    TYPE person_item = SELECT
       (action,
        document,
        versioned_action_request);
    END_TYPE;
-
-
 
    TYPE person_organization_select = SELECT
       (person,
@@ -6528,12 +5246,8 @@ Types in the schema engineering_properties_schema
        person_and_organization);
    END_TYPE;
 
-
-
    TYPE plane_angle_measure = REAL;
    END_TYPE;
-
-
 
    TYPE positive_integer = nonnegative_integer;
    WHERE
@@ -6541,15 +5255,11 @@ Types in the schema engineering_properties_schema
          SELF > 0;
    END_TYPE;
 
-
-
    TYPE positive_length_measure = non_negative_length_measure;
    WHERE
       WR1:
          SELF > 0.00000;
    END_TYPE;
-
-
 
    TYPE positive_plane_angle_measure = plane_angle_measure;
    WHERE
@@ -6557,25 +5267,17 @@ Types in the schema engineering_properties_schema
          SELF > 0.00000;
    END_TYPE;
 
-
-
    TYPE positive_ratio_measure = ratio_measure;
    WHERE
       WR1:
          SELF > 0.00000;
    END_TYPE;
 
-
-
    TYPE power_measure = REAL;
    END_TYPE;
 
-
-
    TYPE pressure_measure = REAL;
    END_TYPE;
-
-
 
    TYPE process_or_process_relationship = SELECT
       (product_definition_process,
@@ -6583,47 +5285,32 @@ Types in the schema engineering_properties_schema
        relationship_with_condition);
    END_TYPE;
 
-
-
    TYPE product_or_formation_or_definition = SELECT
       (product,
        product_definition_formation,
        product_definition);
    END_TYPE;
 
-
-
    TYPE product_space = SELECT
       (uniform_product_space,
        listed_product_space);
    END_TYPE;
 
-
-
    TYPE property_or_shape_select = SELECT
       (property_definition,
        shape_definition);
    END_TYPE;
-
-
-
    TYPE qualification_item = SELECT
       (person,
        person_and_organization,
        organization);
    END_TYPE;
 
-
-
    TYPE radioactivity_measure = REAL;
    END_TYPE;
 
-
-
    TYPE ratio_measure = REAL;
    END_TYPE;
-
-
 
    TYPE real_interval = SELECT
       (real_interval_from_min,
@@ -6635,8 +5322,6 @@ Types in the schema engineering_properties_schema
          NOT ('ELEMENTARY_SPACE' IN stripped_typeof(SELF)) OR (SELF\elementary_space.space_id = es_reals);
    END_TYPE;
 
-
-
    TYPE relationship_with_condition = SELECT
       (action_method_relationship,
        action_relationship,
@@ -6644,15 +5329,11 @@ Types in the schema engineering_properties_schema
        context_dependent_action_relationship);
    END_TYPE;
 
-
-
    TYPE repackage_options = ENUMERATION OF
       (ro_nochange,
        ro_wrap_as_tuple,
        ro_unwrap_tuple);
    END_TYPE;
-
-
 
    TYPE represented_definition = SELECT
       (general_property,
@@ -6662,12 +5343,8 @@ Types in the schema engineering_properties_schema
        shape_aspect_relationship);
    END_TYPE;
 
-
-
    TYPE resistance_measure = REAL;
    END_TYPE;
-
-
 
    TYPE role_select = SELECT
       (action_assignment,
@@ -6684,15 +5361,11 @@ Types in the schema engineering_properties_schema
        security_classification_assignment);
    END_TYPE;
 
-
-
    TYPE second_in_minute = REAL;
    WHERE
       WR1:
          (0 <= SELF) AND (SELF <= 60.0000);
    END_TYPE;
-
-
 
    TYPE security_classified_item = SELECT
       (action,
@@ -6703,12 +5376,8 @@ Types in the schema engineering_properties_schema
        representation_item);
    END_TYPE;
 
-
-
    TYPE set_representation_item = SET [1:?] OF representation_item;
    END_TYPE;
-
-
 
    TYPE shape_definition = SELECT
       (product_definition_shape,
@@ -6716,14 +5385,10 @@ Types in the schema engineering_properties_schema
        shape_aspect_relationship);
    END_TYPE;
 
-
-
    TYPE shape_tolerance_select = SELECT
       (geometric_tolerance,
        plus_minus_tolerance);
    END_TYPE;
-
-
 
    TYPE si_prefix = ENUMERATION OF
       (exa,
@@ -6743,8 +5408,6 @@ Types in the schema engineering_properties_schema
        femto,
        atto);
    END_TYPE;
-
-
 
    TYPE si_unit_name = ENUMERATION OF
       (metre,
@@ -6777,27 +5440,19 @@ Types in the schema engineering_properties_schema
        sievert);
    END_TYPE;
 
-
-
    TYPE solid_angle_measure = REAL;
    END_TYPE;
-
-
 
    TYPE source_item = SELECT
       (identifier,
        message);
    END_TYPE;
 
-
-
    TYPE space_constraint_type = ENUMERATION OF
       (sc_equal,
        sc_subspace,
        sc_member);
    END_TYPE;
-
-
 
    TYPE state_item = SELECT
       (action,
@@ -6810,8 +5465,6 @@ Types in the schema engineering_properties_schema
        material_property_representation);
    END_TYPE;
 
-
-
    TYPE state_observed_item = SELECT
       (action,
        action_method,
@@ -6823,15 +5476,11 @@ Types in the schema engineering_properties_schema
        material_property_representation);
    END_TYPE;
 
-
-
    TYPE supported_item = SELECT
       (action_directive,
        action,
        action_method);
    END_TYPE;
-
-
 
    TYPE symmetry_type = ENUMERATION OF
       (identity,
@@ -6840,17 +5489,11 @@ Types in the schema engineering_properties_schema
        skew_hermitian);
    END_TYPE;
 
-
-
    TYPE text = STRING;
    END_TYPE;
 
-
-
    TYPE thermodynamic_temperature_measure = REAL;
    END_TYPE;
-
-
 
    TYPE time_interval_item = SELECT
       (action,
@@ -6860,47 +5503,33 @@ Types in the schema engineering_properties_schema
        qualification);
    END_TYPE;
 
-
-
    TYPE time_measure = REAL;
    END_TYPE;
-
-
 
    TYPE tolerance_method_definition = SELECT
       (tolerance_value,
        limits_and_fits);
    END_TYPE;
 
-
-
    TYPE transformation = SELECT
       (item_defined_transformation,
        functionally_defined_transformation);
    END_TYPE;
-
-
 
    TYPE trimming_select = SELECT
       (cartesian_point,
        parameter_value);
    END_TYPE;
 
-
-
    TYPE tuple_space = SELECT
       (product_space,
        extended_tuple_space);
    END_TYPE;
 
-
-
    TYPE unit = SELECT
       (derived_unit,
        named_unit);
    END_TYPE;
-
-
 
    TYPE value_qualifier = SELECT
       (precision_qualifier,
@@ -6908,24 +5537,16 @@ Types in the schema engineering_properties_schema
        uncertainty_qualifier);
    END_TYPE;
 
-
-
    TYPE vector_or_direction = SELECT
       (vector,
        direction);
    END_TYPE;
 
-
-
    TYPE velocity_measure = REAL;
    END_TYPE;
 
-
-
    TYPE volume_measure = REAL;
    END_TYPE;
-
-
 
    TYPE week_in_year_number = INTEGER;
    WHERE
@@ -6933,12 +5554,8 @@ Types in the schema engineering_properties_schema
          (1 <= SELF) AND (SELF <= 53);
    END_TYPE;
 
-
-
    TYPE year_number = INTEGER;
    END_TYPE;
-
-
 
    TYPE zero_or_one = nonnegative_integer;
    WHERE
@@ -6950,7 +5567,6 @@ Types in the schema engineering_properties_schema
 (* ***********************************
 Functions in the schema engineering_properties_schema
 *********************************** *)
-
 
    FUNCTION acyclic
       (arg1 : generic_expression;
@@ -6978,8 +5594,6 @@ Functions in the schema engineering_properties_schema
          RETURN (result);
       END_IF;
    END_FUNCTION;
-
-
 
    FUNCTION acyclic_mapped_representation
       (parent_set : SET OF representation;
@@ -7011,8 +5625,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION acyclic_product_category_relationship
       (relation : product_category_relationship;
        children : SET OF product_category ) : BOOLEAN;
@@ -7036,8 +5648,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION all_members_of_es
       (sv : SET OF maths_value;
@@ -7114,8 +5724,6 @@ Functions in the schema engineering_properties_schema
       RETURN (cum);
    END_FUNCTION;
 
-
-
    FUNCTION any_space_satisfies
       (sc : space_constraint_type;
        spc : maths_space ) : BOOLEAN;
@@ -7134,8 +5742,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION assoc_product_space
       (ts1 : tuple_space;
@@ -7257,8 +5863,6 @@ Functions in the schema engineering_properties_schema
       RETURN (tspace);
    END_FUNCTION;
 
-
-
    FUNCTION atan2
       (y : REAL;
        x : REAL ) : REAL;
@@ -7279,8 +5883,6 @@ Functions in the schema engineering_properties_schema
       RETURN (r);
    END_FUNCTION;
 
-
-
    FUNCTION bag_to_set
       (the_bag : BAG OF GENERIC : intype ) : SET OF GENERIC : intype;
    LOCAL
@@ -7293,8 +5895,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (the_set);
    END_FUNCTION;
-
-
 
    FUNCTION base_axis
       (dim : INTEGER;
@@ -7336,8 +5936,6 @@ Functions in the schema engineering_properties_schema
       RETURN (u);
    END_FUNCTION;
 
-
-
    FUNCTION bool
       (lgcl : LOGICAL ) : BOOLEAN;
       IF NOT EXISTS(lgcl) THEN
@@ -7349,8 +5947,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION build_2axes
       (ref_direction : direction ) : LIST [2:2] OF direction;
    LOCAL
@@ -7358,8 +5954,6 @@ Functions in the schema engineering_properties_schema
    END_LOCAL;
       RETURN ([ d, orthogonal_complement(d) ]);
    END_FUNCTION;
-
-
 
    FUNCTION build_axes
       (axis : direction;
@@ -7372,8 +5966,6 @@ Functions in the schema engineering_properties_schema
       d2 := first_proj_axis(d1, ref_direction);
       RETURN ([ d2, normalise(cross_product(d1, d2)).orientation, d1 ]);
    END_FUNCTION;
-
-
 
    FUNCTION check_sparse_index_domain
       (idxdom : tuple_space;
@@ -7394,8 +5986,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (bool((interval.min <= base) AND (interval.max >= base + shape[i])));
    END_FUNCTION;
-
-
 
    FUNCTION check_sparse_index_to_loc
       (index_range : tuple_space;
@@ -7424,8 +6014,6 @@ Functions in the schema engineering_properties_schema
       RETURN (bool((loc_dmn_itvl.min <= idx_rng_itvl.min) AND (idx_rng_itvl.max <= loc_dmn_itvl.max + 1)));
    END_FUNCTION;
 
-
-
    FUNCTION check_sparse_loc_range
       (locrng : tuple_space;
        base : zero_or_one;
@@ -7452,8 +6040,6 @@ Functions in the schema engineering_properties_schema
       RETURN (bool((interval.min >= base) AND (interval.max <= base + shape[i] - 1)));
    END_FUNCTION;
 
-
-
    FUNCTION compare_basis_and_coef
       (basis : LIST [1:?] OF b_spline_basis;
        coef : maths_function ) : BOOLEAN;
@@ -7477,8 +6063,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION compatible_complex_number_regions
       (sp1 : maths_space;
@@ -7550,8 +6134,6 @@ Functions in the schema engineering_properties_schema
       RETURN (compatible_complex_number_regions(prgn1, prgn2c1) AND compatible_complex_number_regions(prgn1c2, prgn2));
    END_FUNCTION;
 
-
-
    FUNCTION compatible_es_values
       (esval1 : elementary_space_enumerators;
        esval2 : elementary_space_enumerators ) : BOOLEAN;
@@ -7575,8 +6157,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION compatible_intervals
       (sp1 : maths_space;
@@ -7607,8 +6187,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION compatible_spaces
       (sp1 : maths_space;
@@ -7900,8 +6478,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION composable_sequence
       (operands : LIST [2:?] OF maths_function ) : BOOLEAN;
       REPEAT i := 1 TO SIZEOF(operands) - 1;
@@ -7911,8 +6487,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION convert_to_literal
       (val : maths_atom ) : generic_literal;
@@ -7943,8 +6517,6 @@ Functions in the schema engineering_properties_schema
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION convert_to_maths_function
       (func : maths_function_select ) : maths_function;
    LOCAL
@@ -7959,8 +6531,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (mthfun);
    END_FUNCTION;
-
-
 
    FUNCTION convert_to_maths_value
       (val : GENERIC : G ) : maths_value;
@@ -8020,8 +6590,6 @@ Functions in the schema engineering_properties_schema
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION convert_to_operand
       (val : maths_value ) : generic_expression;
    LOCAL
@@ -8042,8 +6610,6 @@ Functions in the schema engineering_properties_schema
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION convert_to_operands
       (values : AGGREGATE OF maths_value ) : LIST OF generic_expression;
    LOCAL
@@ -8060,8 +6626,6 @@ Functions in the schema engineering_properties_schema
       RETURN (operands);
    END_FUNCTION;
 
-
-
    FUNCTION convert_to_operands_prcmfn
       (srcdom : maths_space_or_function;
        prepfun : LIST OF maths_function;
@@ -8076,8 +6640,6 @@ Functions in the schema engineering_properties_schema
       INSERT( operands, convert_to_maths_function(finfun), SIZEOF(prepfun) + 1 );
       RETURN (operands);
    END_FUNCTION;
-
-
 
    FUNCTION cross_product
       (arg1 : direction;
@@ -8110,8 +6672,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
    END_FUNCTION;
 
-
-
    FUNCTION definite_integral_check
       (domain : tuple_space;
        vrblint : input_selector;
@@ -8143,8 +6703,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION definite_integral_expr_check
       (operands : LIST [2:?] OF generic_expression;
@@ -8206,8 +6764,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION derive_definite_integral_domain
       (igrl : definite_integral_function ) : tuple_space;
@@ -8279,8 +6835,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
    END_FUNCTION;
 
-
-
    FUNCTION derive_dimensional_exponents
       (x : unit ) : dimensional_exponents;
    LOCAL
@@ -8301,8 +6855,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (result);
    END_FUNCTION;
-
-
 
    FUNCTION derive_elementary_function_domain
       (ef_val : elementary_function_enumerators ) : tuple_space;
@@ -8565,8 +7117,6 @@ Functions in the schema engineering_properties_schema
       END_CASE;
    END_FUNCTION;
 
-
-
    FUNCTION derive_elementary_function_range
       (ef_val : elementary_function_enumerators ) : tuple_space;
       IF NOT EXISTS(ef_val) THEN
@@ -8828,8 +7378,6 @@ Functions in the schema engineering_properties_schema
       END_CASE;
    END_FUNCTION;
 
-
-
    FUNCTION derive_finite_function_domain
       (pairs : SET [1:?] OF LIST [2:2] OF maths_value ) : tuple_space;
    LOCAL
@@ -8839,8 +7387,6 @@ Functions in the schema engineering_properties_schema
       RETURN (one_tuples_of(make_finite_space(result)));
    END_FUNCTION;
 
-
-
    FUNCTION derive_finite_function_range
       (pairs : SET [1:?] OF LIST [2:2] OF maths_value ) : tuple_space;
    LOCAL
@@ -8849,8 +7395,6 @@ Functions in the schema engineering_properties_schema
       result := result + list_selected_components(pairs, 2);
       RETURN (one_tuples_of(make_finite_space(result)));
    END_FUNCTION;
-
-
 
    FUNCTION derive_function_domain
       (func : maths_function ) : tuple_space;
@@ -8976,8 +7520,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION derive_function_range
       (func : maths_function ) : tuple_space;
@@ -9115,8 +7657,6 @@ Functions in the schema engineering_properties_schema
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION dimension_of
       (item : geometric_representation_item ) : dimension_count;
    LOCAL
@@ -9141,8 +7681,6 @@ Functions in the schema engineering_properties_schema
       dim := y\geometric_representation_context.coordinate_space_dimension;
       RETURN (dim);
    END_FUNCTION;
-
-
 
    FUNCTION dimensions_for_si_unit
       (n : si_unit_name ) : dimensional_exponents;
@@ -9208,8 +7746,6 @@ Functions in the schema engineering_properties_schema
       END_CASE;
    END_FUNCTION;
 
-
-
    FUNCTION domain_from
       (ref : maths_space_or_function ) : tuple_space;
    LOCAL
@@ -9238,8 +7774,6 @@ Functions in the schema engineering_properties_schema
       RETURN (func.domain);
    END_FUNCTION;
 
-
-
    FUNCTION dot_count
       (str : STRING ) : INTEGER;
    LOCAL
@@ -9252,8 +7786,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (n);
    END_FUNCTION;
-
-
 
    FUNCTION dot_product
       (arg1 : direction;
@@ -9284,8 +7816,6 @@ Functions in the schema engineering_properties_schema
       RETURN (scalar);
    END_FUNCTION;
 
-
-
    FUNCTION dotted_identifiers_syntax
       (str : STRING ) : BOOLEAN;
    LOCAL
@@ -9311,8 +7841,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION drop_numeric_constraints
       (spc : maths_space ) : maths_space;
@@ -9341,8 +7869,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (spc);
    END_FUNCTION;
-
-
 
    FUNCTION enclose_cregion_in_pregion
       (crgn : cartesian_complex_number_region;
@@ -9697,8 +8223,6 @@ Functions in the schema engineering_properties_schema
       RETURN (make_polar_complex_number_region(centre, ritv, aitv));
    END_FUNCTION;
 
-
-
    FUNCTION enclose_pregion_in_cregion
       (prgn : polar_complex_number_region ) : cartesian_complex_number_region;
       PROCEDURE nearest_good_direction
@@ -9888,8 +8412,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (make_cartesian_complex_number_region(xitv, yitv));
    END_FUNCTION;
-
-
 
    FUNCTION enclose_pregion_in_pregion
       (prgn : polar_complex_number_region;
@@ -10521,8 +9043,6 @@ Functions in the schema engineering_properties_schema
       RETURN (make_polar_complex_number_region(centre, ritv, aitv));
    END_FUNCTION;
 
-
-
    FUNCTION equal_cregion_pregion
       (crgn : cartesian_complex_number_region;
        prgn : polar_complex_number_region ) : LOGICAL;
@@ -10584,8 +9104,6 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION equal_maths_functions
       (fun1 : maths_function;
        fun2 : maths_function ) : LOGICAL;
@@ -10605,8 +9123,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (UNKNOWN);
    END_FUNCTION;
-
-
 
    FUNCTION equal_maths_spaces
       (spc1 : maths_space;
@@ -10781,8 +9297,6 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION equal_maths_values
       (val1 : maths_value;
        val2 : maths_value ) : LOGICAL;
@@ -10903,8 +9417,6 @@ Functions in the schema engineering_properties_schema
       RETURN (UNKNOWN);
    END_FUNCTION;
 
-
-
    FUNCTION es_subspace_of_es
       (es1 : elementary_space_enumerators;
        es2 : elementary_space_enumerators ) : BOOLEAN;
@@ -10926,14 +9438,10 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION expression_is_constant
       (expr : generic_expression ) : BOOLEAN;
       RETURN (bool(SIZEOF(free_variables_of(expr)) = 0));
    END_FUNCTION;
-
-
 
    FUNCTION extract_factors
       (tspace : tuple_space;
@@ -10947,8 +9455,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (tsp);
    END_FUNCTION;
-
-
 
    FUNCTION extremal_position_check
       (fun : linearized_table_function ) : BOOLEAN;
@@ -11010,8 +9516,6 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION factor1
       (tspace : tuple_space ) : maths_space;
    LOCAL
@@ -11028,8 +9532,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION factor_space
       (tspace : tuple_space;
@@ -11057,8 +9559,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION first_proj_axis
       (z_axis : direction;
@@ -11095,8 +9595,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (x_axis);
    END_FUNCTION;
-
-
 
    FUNCTION free_variables_of
       (expr : generic_expression ) : SET OF generic_variable;
@@ -11138,8 +9636,6 @@ Functions in the schema engineering_properties_schema
       RETURN (result);
    END_FUNCTION;
 
-
-
    FUNCTION function_applicability
       (func : maths_function_select;
        arguments : LIST [1:?] OF maths_value ) : BOOLEAN;
@@ -11174,8 +9670,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION function_is_1d_array
       (func : maths_function ) : BOOLEAN;
    LOCAL
@@ -11199,8 +9693,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION function_is_1d_table
       (func : maths_function ) : BOOLEAN;
@@ -11227,8 +9719,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION function_is_2d_table
       (func : maths_function ) : BOOLEAN;
@@ -11265,8 +9755,6 @@ Functions in the schema engineering_properties_schema
       RETURN (bool((itvl1.min = itvl2.min) AND ((itvl1.min = 0) OR (itvl1.min = 1))));
    END_FUNCTION;
 
-
-
    FUNCTION function_is_array
       (func : maths_function ) : BOOLEAN;
    LOCAL
@@ -11291,8 +9779,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION function_is_table
       (func : maths_function ) : BOOLEAN;
@@ -11331,8 +9817,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION get_description_value
       (obj : description_attribute_select ) : text;
    LOCAL
@@ -11344,8 +9828,6 @@ Functions in the schema engineering_properties_schema
          RETURN (?);
       END_IF;
    END_FUNCTION;
-
-
 
    FUNCTION get_id_value
       (obj : id_attribute_select ) : identifier;
@@ -11370,7 +9852,6 @@ Functions in the schema engineering_properties_schema
         RETURN (?);
   	END_FUNCTION;
 
-
    FUNCTION get_name_value
       (obj : name_attribute_select ) : label;
    LOCAL
@@ -11383,8 +9864,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
    END_FUNCTION;
 
-
-
    FUNCTION get_role
       (obj : role_select ) : object_role;
    LOCAL
@@ -11396,8 +9875,6 @@ Functions in the schema engineering_properties_schema
          RETURN (?);
       END_IF;
    END_FUNCTION;
-
-
 
    FUNCTION has_values_space
       (expr : generic_expression ) : BOOLEAN;
@@ -11454,8 +9931,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION is_SQL_mappable
       (arg : expression ) : BOOLEAN;
@@ -11526,14 +10001,10 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION is_acyclic
       (arg : generic_expression ) : BOOLEAN;
       RETURN (acyclic(arg, []));
    END_FUNCTION;
-
-
 
    FUNCTION is_int_expr
       (arg : numeric_expression ) : BOOLEAN;
@@ -11625,7 +10096,6 @@ Functions in the schema engineering_properties_schema
         END_IF;
   	END_FUNCTION;
 
-
    FUNCTION item_in_context
       (item : representation_item;
        cntxt : representation_context ) : BOOLEAN;
@@ -11647,8 +10117,6 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION leap_year
       (year : year_number ) : BOOLEAN;
       IF (year MOD 4 = 0) AND (year MOD 100 <> 0) OR (year MOD 400 = 0) THEN
@@ -11657,8 +10125,6 @@ Functions in the schema engineering_properties_schema
          RETURN (FALSE);
       END_IF;
    END_FUNCTION;
-
-
 
    FUNCTION list_selected_components
       (aggr : AGGREGATE OF LIST OF maths_value;
@@ -11676,28 +10142,20 @@ Functions in the schema engineering_properties_schema
       RETURN (result);
    END_FUNCTION;
 
-
-
    FUNCTION make_atom_based_literal
       (lit_value : atom_based_value ) : atom_based_literal;
       RETURN (atom_based_literal(lit_value) || generic_literal() || simple_generic_expression() || generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_binary_literal
       (lit_value : BINARY ) : binary_literal;
       RETURN (binary_literal(lit_value) || generic_literal() || simple_generic_expression() || generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_boolean_literal
       (lit_value : BOOLEAN ) : boolean_literal;
       RETURN (boolean_literal(lit_value) || simple_boolean_expression() || boolean_expression() || expression() || generic_expression() || simple_generic_expression() || generic_literal());
    END_FUNCTION;
-
-
 
    FUNCTION make_cartesian_complex_number_region
       (real_constraint : real_interval;
@@ -11712,20 +10170,15 @@ Functions in the schema engineering_properties_schema
         || generic_expression() );
   END_FUNCTION;  -- make_complex_number_literal
 
-
    FUNCTION make_elementary_function
       (func_id : elementary_function_enumerators ) : elementary_function;
       RETURN (elementary_function(func_id) || maths_function() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_elementary_space
       (space_id : elementary_space_enumerators ) : elementary_space;
       RETURN (elementary_space(space_id) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_extended_tuple_space
       (base : product_space;
@@ -11733,15 +10186,11 @@ Functions in the schema engineering_properties_schema
       RETURN (extended_tuple_space(base, extender) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_finite_integer_interval
       (min : INTEGER;
        max : INTEGER ) : finite_integer_interval;
       RETURN (finite_integer_interval(min, max) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_finite_real_interval
       (min : REAL;
@@ -11751,22 +10200,16 @@ Functions in the schema engineering_properties_schema
       RETURN (finite_real_interval(min, minclo, max, maxclo) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_finite_space
       (members : SET OF maths_value ) : finite_space;
       RETURN (finite_space(members) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_function_application
       (afunction : maths_function_select;
        arguments : LIST [1:?] OF maths_value ) : function_application;
       RETURN (function_application(afunction, arguments) || multiple_arity_generic_expression((convert_to_maths_function(afunction) + convert_to_operands(arguments))) || generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_function_space
       (domain_constraint : space_constraint_type;
@@ -11776,42 +10219,30 @@ Functions in the schema engineering_properties_schema
       RETURN (function_space(domain_constraint, domain_argument, range_constraint, range_argument) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_int_literal
       (lit_value : INTEGER ) : int_literal;
       RETURN (int_literal() || literal_number(lit_value) || simple_numeric_expression() || numeric_expression() || expression() || generic_expression() || simple_generic_expression() || generic_literal());
    END_FUNCTION;
-
-
 
    FUNCTION make_listed_product_space
       (factors : LIST OF maths_space ) : listed_product_space;
       RETURN (listed_product_space(factors) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_logical_literal
       (lit_value : LOGICAL ) : logical_literal;
       RETURN (logical_literal(lit_value) || generic_literal() || simple_generic_expression() || generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_maths_enum_literal
       (lit_value : maths_enum_atom ) : maths_enum_literal;
       RETURN (maths_enum_literal(lit_value) || generic_literal() || simple_generic_expression() || generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_maths_tuple_literal
       (lit_value : LIST OF maths_value ) : maths_tuple_literal;
       RETURN (maths_tuple_literal(lit_value) || generic_literal() || simple_generic_expression() || generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_parallel_composed_function
       (srcdom : maths_space_or_function;
@@ -11820,8 +10251,6 @@ Functions in the schema engineering_properties_schema
       RETURN (parallel_composed_function(srcdom, prepfuncs, finfunc) || maths_function() || generic_expression() || multiple_arity_generic_expression(convert_to_operands_prcmfn(srcdom, prepfuncs, finfunc)));
    END_FUNCTION;
 
-
-
    FUNCTION make_polar_complex_number_region
       (centre : complex_number_literal;
        dis_constraint : real_interval;
@@ -11829,15 +10258,11 @@ Functions in the schema engineering_properties_schema
       RETURN (polar_complex_number_region(centre, dis_constraint, dir_constraint) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_real_interval_from_min
       (min : REAL;
        minclo : open_closed ) : real_interval_from_min;
       RETURN (real_interval_from_min(min, minclo) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION make_real_interval_to_max
       (max : REAL;
@@ -11845,29 +10270,21 @@ Functions in the schema engineering_properties_schema
       RETURN (real_interval_to_max(max, maxclo) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
 
-
-
    FUNCTION make_real_literal
       (lit_value : REAL ) : real_literal;
       RETURN (real_literal() || literal_number(lit_value) || simple_numeric_expression() || numeric_expression() || expression() || generic_expression() || simple_generic_expression() || generic_literal());
    END_FUNCTION;
-
-
 
    FUNCTION make_string_literal
       (lit_value : STRING ) : string_literal;
       RETURN (string_literal(lit_value) || simple_string_expression() || string_expression() || expression() || generic_expression() || simple_generic_expression() || generic_literal());
    END_FUNCTION;
 
-
-
    FUNCTION make_uniform_product_space
       (base : maths_space;
        exponent : positive_integer ) : uniform_product_space;
       RETURN (uniform_product_space(base, exponent) || maths_space() || generic_expression() || generic_literal() || simple_generic_expression());
    END_FUNCTION;
-
-
 
    FUNCTION max_exists
       (spc : maths_space ) : BOOLEAN;
@@ -11876,8 +10293,6 @@ Functions in the schema engineering_properties_schema
    END_LOCAL;
       RETURN (bool((((schema_prefix + 'FINITE_INTEGER_INTERVAL' IN types) OR (schema_prefix + 'INTEGER_INTERVAL_TO_MAX' IN types)) OR (schema_prefix + 'FINITE_REAL_INTERVAL' IN types)) OR (schema_prefix + 'REAL_INTERVAL_TO_MAX' IN types)));
    END_FUNCTION;
-
-
 
    FUNCTION max_included
       (spc : maths_space ) : BOOLEAN;
@@ -11895,8 +10310,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION member_of
       (val : GENERIC : G;
@@ -12150,8 +10563,6 @@ Functions in the schema engineering_properties_schema
       RETURN (UNKNOWN);
    END_FUNCTION;
 
-
-
    FUNCTION min_exists
       (spc : maths_space ) : BOOLEAN;
    LOCAL
@@ -12159,8 +10570,6 @@ Functions in the schema engineering_properties_schema
    END_LOCAL;
       RETURN (bool((((schema_prefix + 'FINITE_INTEGER_INTERVAL' IN types) OR (schema_prefix + 'INTEGER_INTERVAL_FROM_MIN' IN types)) OR (schema_prefix + 'FINITE_REAL_INTERVAL' IN types)) OR (schema_prefix + 'REAL_INTERVAL_FROM_MIN' IN types)));
    END_FUNCTION;
-
-
 
    FUNCTION min_included
       (spc : maths_space ) : BOOLEAN;
@@ -12178,8 +10587,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION no_cyclic_domain_reference
       (ref : maths_space_or_function;
@@ -12210,8 +10617,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION no_cyclic_space_reference
       (spc : maths_space;
        refs : SET OF maths_space ) : BOOLEAN;
@@ -12239,8 +10644,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION nondecreasing
       (lr : LIST OF REAL ) : BOOLEAN;
       IF NOT EXISTS(lr) THEN
@@ -12253,8 +10656,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION normalise
       (arg : vector_or_direction ) : vector_or_direction;
@@ -12303,8 +10704,6 @@ Functions in the schema engineering_properties_schema
       RETURN (result);
    END_FUNCTION;
 
-
-
    FUNCTION number_superspace_of
       (spc : maths_space ) : elementary_space;
       IF subspace_of_es(spc, es_integers) THEN
@@ -12321,8 +10720,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION number_tuple_subspace_check
       (spc : maths_space ) : LOGICAL;
@@ -12349,14 +10746,10 @@ Functions in the schema engineering_properties_schema
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION one_tuples_of
       (spc : maths_space ) : tuple_space;
       RETURN (make_uniform_product_space(spc, 1));
    END_FUNCTION;
-
-
 
    FUNCTION orthogonal_complement
       (vec : direction ) : direction;
@@ -12371,8 +10764,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
    END_FUNCTION;
 
-
-
    FUNCTION parallel_composed_function_composability_check
       (funcs : LIST OF maths_function;
        final : maths_function_select ) : BOOLEAN;
@@ -12386,8 +10777,6 @@ Functions in the schema engineering_properties_schema
       RETURN (compatible_spaces(tplsp, finfun.domain));
    END_FUNCTION;
 
-
-
    FUNCTION parallel_composed_function_domain_check
       (comdom : tuple_space;
        funcs : LIST OF maths_function ) : BOOLEAN;
@@ -12398,8 +10787,6 @@ Functions in the schema engineering_properties_schema
       END_REPEAT;
       RETURN (TRUE);
    END_FUNCTION;
-
-
 
    FUNCTION parse_express_identifier
       (s : STRING;
@@ -12417,8 +10804,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (k);
    END_FUNCTION;
-
-
 
    FUNCTION partial_derivative_check
       (domain : tuple_space;
@@ -12446,8 +10831,6 @@ Functions in the schema engineering_properties_schema
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION real_max
       (spc : maths_space ) : REAL;
    LOCAL
@@ -12468,8 +10851,6 @@ Functions in the schema engineering_properties_schema
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION real_min
       (spc : maths_space ) : REAL;
    LOCAL
@@ -12489,8 +10870,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION regular_indexing
       (sub : LIST OF INTEGER;
@@ -12522,8 +10901,6 @@ Functions in the schema engineering_properties_schema
       RETURN (index);
    END_FUNCTION;
 
-
-
    FUNCTION remove_first
       (alist : LIST OF GENERIC : GEN ) : LIST OF GENERIC : GEN;
    LOCAL
@@ -12534,8 +10911,6 @@ Functions in the schema engineering_properties_schema
       END_IF;
       RETURN (blist);
    END_FUNCTION;
-
-
 
    FUNCTION repackage
       (tspace : tuple_space;
@@ -12551,8 +10926,6 @@ Functions in the schema engineering_properties_schema
             RETURN (?);
       END_CASE;
    END_FUNCTION;
-
-
 
    FUNCTION scalar_times_vector
       (scalar : REAL;
@@ -12583,8 +10956,6 @@ Functions in the schema engineering_properties_schema
       RETURN (result);
    END_FUNCTION;
 
-
-
    FUNCTION second_proj_axis
       (z_axis : direction;
        x_axis : direction;
@@ -12606,8 +10977,6 @@ Functions in the schema engineering_properties_schema
       y_axis := normalise(y_axis);
       RETURN (y_axis.orientation);
    END_FUNCTION;
-
-
 
    FUNCTION shape_of_array
       (func : maths_function ) : LIST OF positive_integer;
@@ -12633,8 +11002,6 @@ Functions in the schema engineering_properties_schema
       RETURN (result);
    END_FUNCTION;
 
-
-
    FUNCTION simplify_function_application(expr : function_application) : maths_value;
   FUNCTION ctmv(x : GENERIC:G) : maths_value;
     RETURN (convert_to_maths_value(x));
@@ -12646,7 +11013,8 @@ Functions in the schema engineering_properties_schema
   FUNCTION makec(x, y : REAL) : complex_number_literal;
     RETURN (make_complex_number_literal(x,y));
   END_FUNCTION;  -- local abbreviation for make_complex_number_literal function
-  FUNCTION good_t(v  : maths_value;
+ 
+ FUNCTION good_t(v  : maths_value;
                   tn : STRING) : BOOLEAN;
     LOCAL
       tpl : LIST OF maths_value;
@@ -13352,7 +11720,7 @@ Functions in the schema engineering_properties_schema
       IF good_t(v1,cnlit) THEN
         tpl := v1;  p := 1.0;  q := 0.0;
         REPEAT i := 1 TO SIZEOF (tpl);
-          parts(tpl[i],r,s);  p := p*r-q*s;  q := p*s+q*r;
+         parts(tpl[i],r,s);  p := p*r-q*s;  q := p*s+q*r;
         END_REPEAT;
         RETURN (makec(p,q));
       END_IF;
@@ -13438,9 +11806,6 @@ Functions in the schema engineering_properties_schema
   RETURN (expr);
 END_FUNCTION;  -- simplify_function_application
 
-
-
-
    FUNCTION simplify_generic_expression(expr : generic_expression) : maths_value;
   FUNCTION restore_unary(expr : unary_generic_expression;
                          opnd : generic_expression) : generic_expression;
@@ -13458,7 +11823,8 @@ END_FUNCTION;  -- simplify_function_application
     expr.operands := ops;
     RETURN (expr);
   END_FUNCTION;  -- restore_mulary
-  FUNCTION make_number_literal(nmb : NUMBER) : generic_literal;
+ 
+ FUNCTION make_number_literal(nmb : NUMBER) : generic_literal;
     IF 'INTEGER' IN TYPEOF (nmb) THEN  RETURN (make_int_literal(nmb));  END_IF;
     RETURN (make_real_literal(nmb));
   END_FUNCTION;  -- make_number_literal;
@@ -13779,9 +12145,6 @@ END_FUNCTION;  -- simplify_function_application
   RETURN (expr);
 END_FUNCTION;  -- simplify_generic_expression
 
-
-
-
    FUNCTION simplify_maths_space
       (spc : maths_space ) : maths_space;
    LOCAL
@@ -13849,8 +12212,6 @@ END_FUNCTION;  -- simplify_generic_expression
       RETURN (spc);
    END_FUNCTION;
 
-
-
    FUNCTION simplify_maths_value
       (val : maths_value ) : maths_value;
    LOCAL
@@ -13870,8 +12231,6 @@ END_FUNCTION;  -- simplify_generic_expression
       END_IF;
       RETURN (val);
    END_FUNCTION;
-
-
 
    FUNCTION singleton_member_of
       (spc : maths_space ) : maths_value;
@@ -13893,8 +12252,6 @@ END_FUNCTION;  -- simplify_generic_expression
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION space_dimension
       (tspace : tuple_space ) : nonnegative_integer;
    LOCAL
@@ -13911,8 +12268,6 @@ END_FUNCTION;  -- simplify_generic_expression
       END_IF;
       RETURN (?);
    END_FUNCTION;
-
-
 
    FUNCTION space_is_continuum
       (space : maths_space ) : BOOLEAN;
@@ -13944,8 +12299,6 @@ END_FUNCTION;  -- simplify_generic_expression
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION space_is_singleton
       (spc : maths_space ) : BOOLEAN;
    LOCAL
@@ -13959,8 +12312,6 @@ END_FUNCTION;  -- simplify_generic_expression
       END_IF;
       RETURN (FALSE);
    END_FUNCTION;
-
-
 
    FUNCTION stripped_typeof(arg : GENERIC:G) : SET OF STRING;
   LOCAL
@@ -13977,8 +12328,6 @@ END_FUNCTION;  -- simplify_generic_expression
   END_REPEAT;
   RETURN (stypes);
 END_FUNCTION;  -- stripped_typeof
-
-
 
    FUNCTION subspace_of
       (space1 : maths_space;
@@ -14318,8 +12667,6 @@ END_FUNCTION;  -- stripped_typeof
       RETURN (UNKNOWN);
    END_FUNCTION;
 
-
-
    FUNCTION subspace_of_es
       (spc : maths_space;
        es : elementary_space_enumerators ) : LOGICAL;
@@ -14361,8 +12708,6 @@ END_FUNCTION;  -- stripped_typeof
       END_CASE;
       RETURN (UNKNOWN);
    END_FUNCTION;
-
-
 
    FUNCTION substitute(expr : generic_expression;
                     vars : LIST [1:?] OF generic_variable;
@@ -14445,9 +12790,6 @@ END_FUNCTION;  -- stripped_typeof
   RETURN (expr);
 END_FUNCTION;  -- substitute
 
-
-
-
    FUNCTION using_items
       (item : founded_item_select;
        checked_items : SET OF founded_item_select ) : SET OF founded_item_select;
@@ -14468,8 +12810,6 @@ END_FUNCTION;  -- substitute
       END_IF;
       RETURN (result_items);
    END_FUNCTION;
-
-
 
    FUNCTION using_representations
       (item : founded_item_select ) : SET OF representation;
@@ -14498,8 +12838,6 @@ END_FUNCTION;  -- substitute
       END_IF;
       RETURN (results);
    END_FUNCTION;
-
-
 
    FUNCTION valid_calendar_date
       (date : calendar_date ) : LOGICAL;
@@ -14538,8 +12876,6 @@ END_FUNCTION;  -- substitute
       RETURN (FALSE);
    END_FUNCTION;
 
-
-
    FUNCTION valid_measure_value
       (m : measure_value ) : BOOLEAN;
       IF 'REAL' IN TYPEOF(m) THEN
@@ -14553,8 +12889,6 @@ END_FUNCTION;  -- substitute
       END_IF;
    END_FUNCTION;
 
-
-
    FUNCTION valid_time
       (time : local_time ) : BOOLEAN;
       IF EXISTS(time.second_component) THEN
@@ -14563,8 +12897,6 @@ END_FUNCTION;  -- substitute
          RETURN (TRUE);
       END_IF;
    END_FUNCTION;
-
-
 
    FUNCTION valid_units
       (m : measure_with_unit ) : BOOLEAN;
@@ -14746,8 +13078,6 @@ END_FUNCTION;  -- substitute
       RETURN (TRUE);
    END_FUNCTION;
 
-
-
    FUNCTION values_space_of
       (expr : generic_expression ) : maths_space;
    LOCAL
@@ -14842,8 +13172,6 @@ END_FUNCTION;  -- substitute
       RETURN (?);
    END_FUNCTION;
 
-
-
    FUNCTION vector_difference
       (arg1 : vector_or_direction;
        arg2 : vector_or_direction ) : vector;
@@ -14894,11 +13222,9 @@ END_FUNCTION;  -- substitute
       RETURN (result);
    END_FUNCTION;
 
-
 (* ***********************************
 Rules in the schema engineering_properties_schema
 *********************************** *)
-
 
    RULE compatible_dimension FOR (cartesian_point, direction, representation_context, geometric_representation_context );
    WHERE
@@ -14908,15 +13234,11 @@ Rules in the schema engineering_properties_schema
          SIZEOF(QUERY (x <* direction| (SIZEOF(QUERY (y <* geometric_representation_context| item_in_context(x, y) AND (HIINDEX(x.direction_ratios) <> y.coordinate_space_dimension))) > 0))) = 0;
    END_RULE;
 
-
-
    RULE dependent_instantiable_attribute_value_role FOR (attribute_value_role );
    WHERE
       WR1:
          SIZEOF(QUERY (a <* attribute_value_role| NOT (SIZEOF(USEDIN(a, '')) > 0))) = 0;
    END_RULE;
-
-
 
    RULE dependent_instantiable_classification_role FOR (classification_role );
    WHERE
@@ -14924,15 +13246,11 @@ Rules in the schema engineering_properties_schema
          SIZEOF(QUERY (c <* classification_role| NOT (SIZEOF(USEDIN(c, '')) > 0))) = 0;
    END_RULE;
 
-
-
    RULE dependent_instantiable_identification_role FOR (identification_role );
    WHERE
       WR1:
          SIZEOF(QUERY (i <* identification_role| NOT (SIZEOF(USEDIN(i, '')) > 0))) = 0;
    END_RULE;
-
-
 
    RULE plib_class_reference_requires_version FOR (externally_defined_class );
    WHERE
@@ -14942,27 +13260,15 @@ Rules in the schema engineering_properties_schema
          SIZEOF(QUERY (edc <* externally_defined_class| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNAL_SOURCE' IN TYPEOF(edc.source)) AND (SIZEOF(QUERY (aei <* USEDIN(edc, 'ENGINEERING_PROPERTIES_SCHEMA.APPLIED_EXTERNAL_IDENTIFICATION_ASSIGNMENT.ITEMS')| (aei.role.name = 'version'))) > 0))) = 0;
    END_RULE;
 
-
-
    RULE plib_property_reference_requires_name_scope FOR (externally_defined_engineering_property );
    WHERE
       WR1:
          SIZEOF(QUERY (edep <* externally_defined_engineering_property| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNAL_SOURCE' IN TYPEOF(edep.source)) AND (SIZEOF(QUERY (edir <* USEDIN(edep, 'ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNALLY_DEFINED_ITEM_RELATIONSHIP.' + 'RELATING_ITEM')| ((edir.name = 'name scope') AND ('ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNALLY_DEFINED_CLASS' IN TYPEOF(edir.related_item))) AND ('ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNAL_SOURCE' IN TYPEOF(edir.related_item.source)))) <> 1))) = 0;
    END_RULE;
 
-
-
    RULE plib_property_reference_requires_version FOR (externally_defined_engineering_property );
    WHERE
       WR1:
          SIZEOF(QUERY (edep <* externally_defined_engineering_property| ('ENGINEERING_PROPERTIES_SCHEMA.' + 'EXTERNAL_SOURCE' IN TYPEOF(edep.source)) AND (SIZEOF(QUERY (edir <* USEDIN(edep, 'ENGINEERING_PROPERTIES_SCHEMA.APPLIED_EXTERNAL_IDENTIFICATION_ASSIGNMENT.ITEMS')| (edir.role.name = 'version'))) <> 1))) = 0;
    END_RULE;
-
-
-(* *********************************** *)
-
-
 END_SCHEMA;
-
-
-(* ************************************************************************** *)
