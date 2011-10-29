@@ -1,5 +1,17 @@
 STEP Class Library  ------  https://github.com/mpictor/StepClassLibrary
 ************************************************************************
+Release 0.3 (Oct 29, 2011)
+
+What's new since v0.2?
+
+* Start using CTest
+* Add a number of schemas, update IFC2X4 to RC3, update AP235 to TC
+* Update the exchange file header schema to edition two; drop support
+  for N279 files
+* In p21read, check that the schema name for the file and library match
+* Fix bug with exchange files that contain strings ending in 'S'
+************************************************************************
+
 Release 0.2 (Oct 1, 2011)
 
 What's new since v0.1?

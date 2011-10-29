@@ -1,5 +1,5 @@
 ***********************************************************************
-Step Class Library v0.2 -- https://github.com/mpictor/StepClassLibrary
+Step Class Library v0.3 -- https://github.com/mpictor/StepClassLibrary
 
 * What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
   C++ source code that can read and write Part 21 files conforming 
@@ -39,11 +39,18 @@ Step Class Library v0.2 -- https://github.com/mpictor/StepClassLibrary
       otherwise, the input and output files should be identical. If
       they are not identical, either the file does not match the
       schema, or SCL generated incorrect source code.
-  -DDISABLE_P21READ=TRUE
-    - disable p21read. probably not a useful option.
+   -DBUILD_SCHEMAS=ALL
+    - Added to make use of ctest easier. If BUILD_SCHEMAS == ALL,
+      then CMake adds each *.exp file found in data/.
   -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
     - without this, cmake defaults to a Debug build
+
+* Using CTest to test SCL:
+  - Read the comments in run_ctest.cmake
+  - (OPTIONAL) Create scl/../.SCL_CTEST_PREFS.cmake, and set variables
+    in it (this file is required for CDash submission to be enabled)
+  - Run tests with `ctest -S run_ctest.cmake`
 
 ***********************************************************************
 

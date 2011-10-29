@@ -39,8 +39,9 @@ Installation
       otherwise, the input and output files should be identical. If
       they are not identical, either the file does not match the
       schema, or SCL generated incorrect source code.
-  -DDISABLE_P21READ=TRUE
-    - disable p21read. probably not a useful option.
+  -DBUILD_SCHEMAS=ALL
+    - Added to make use of ctest easier. If BUILD_SCHEMAS == ALL,
+      then CMake adds each *.exp file found in data/.
   -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
     - without this, cmake defaults to a Debug build
