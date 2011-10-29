@@ -69,7 +69,8 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "^SCHEMA .*")
     string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
     string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
-    get_filename_component(SCHEMA_SHORT_NAME ${SCHEMA_FILE} NAME_WE)
+    get_filename_component( SCHEMA_SN ${SCHEMA_FILE} NAME )
+    string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_SHORT_NAME ${SCHEMA_SN} )
     
     project( sdai_${SCHEMA_SHORT_NAME} )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")

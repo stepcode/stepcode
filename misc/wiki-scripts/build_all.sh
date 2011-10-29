@@ -9,7 +9,7 @@ result_dir="."
 mk="make -j4"
 
 #separated by ; for cmake
-schemas="../data/ap203/203wseds.exp;../data/ap203e2/ap203e2_mim_lf.exp;../data/ap210e3/ap210e3_wip1.41_mim_lf.exp;../data/ap214e3/AP214E3_2010.exp;../data/ap227/ap227.exp;../data/ap235/AP235-aim-long.exp;../data/ap240/AP240_aim_lf.exp;../data/cd209/part409cdts_wg3n2617mim_lf.exp;../data/cd242/242_n2813_mim_lf.exp;../data/ifc2x3/IFC2X3_TC1.exp;../data/ifc2x4/IFC2X4_RC2.exp;../data/ISO15926/15926-0002-lifecycle_integration.exp"
+schemas="../data/203wseds/203wseds.exp;../data/ap203e2/ap203e2_mim_lf.exp;../data/ap210e3/ap210e3_wip1.41_mim_lf.exp;../data/ap214e3/AP214E3_2010.exp;../data/ap227/ap227.exp;../data/ap235/AP235_TC_engineering_properties_schema_20110222.exp;../data/ap240/AP240_aim_lf.exp;../data/cd209/part409cdts_wg3n2617mim_lf.exp;../data/cd242/242_n2813_mim_lf.exp;../data/ifc2x3/IFC2X3_TC1.exp;../data/ifc2x4/IFC2X4_RC3.exp;../data/ISO15926/15926-0002-lifecycle_integration.exp"
 #count warnings and errors, append to $matrix_file. creates hypertext links to stderr,stdout txt
 # $1 is the name of the row, $2 is the path and first part of the filename, $3 is the schema
 function count_we {
@@ -78,11 +78,12 @@ function fedex_details {
 function build_one_schema {
     #set $i to the schema name, all caps (to match fedex_plus output)
     i=`sed -ne '0,/^\s*SCHEMA/s/^.*SCHEMA\s\+\(.*\);.*$/\1/p;' $1|tr a-z A-Z`
+    d=`echo $1|sed -e 's|^.*/\([^/]*\)\.exp$|\1|;'`
 
     echo "Running fedex_plus and gcc for $i..."
-    make -f data/CMakeFiles/sdai_$i.dir/build.make $i/compstructs.cc  2>"$result_dir/fedex_"$i"_stderr.txt" >"$result_dir/fedex_"$i"_stdout.txt" && \
-    $mk sdai_$i >/dev/null 2>"$result_dir/compile_libsdai_"$i"_stderr.txt" && \
-    $mk p21read_sdai_$i >/dev/null 2>"$result_dir/compile_p21read_sdai_"$i"_stderr.txt"
+    make generate_$d 2>"$result_dir/fedex_"$i"_stderr.txt" >"$result_dir/fedex_"$i"_stdout.txt" && \
+    $mk sdai_$d >/dev/null 2>"$result_dir/compile_libsdai_"$i"_stderr.txt" && \
+    $mk p21read_sdai_$d >/dev/null 2>"$result_dir/compile_p21read_sdai_"$i"_stderr.txt"
 
     #todo: test p21read_sdai_$i
 }
