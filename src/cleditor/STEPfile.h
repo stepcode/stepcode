@@ -143,8 +143,7 @@ class STEPfile
 
   protected:    
 //member functions
-    char *schemaName( char * ); // returns and copies out schema name from
-                                // header instances
+    const std::string schemaName(); // returns and copies out schema name from header instances
 //called by ReadExchangeFile
     istream* OpenInputFile (const std::string filename = "");
     void CloseInputFile(istream* in);
