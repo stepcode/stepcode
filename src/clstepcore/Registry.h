@@ -76,7 +76,7 @@ class Registry {
     const ComplexCollect *CompCol() { return col; }
     void        SetCompCollect( ComplexCollect *c ) { col = c; }
 
-    SCLP23(Application_instance)* ObjCreate (const char * nm, const char * =0,
+    SDAI_Application_instance* ObjCreate (const char * nm, const char * =0,
                            int check_case =0) const;
 };
 

@@ -5,6 +5,6 @@
 
 const char * SCLversion = "STEP Class Library, github.com/mpictor/StepClassLibrary";
 
-const SCLP23( Integer ) SCLP23( INT_NULL ) = LONG_MAX;
-const SCLP23( Real )    SCLP23( REAL_NULL ) = FLT_MIN;
-const SCLP23( Real )    SCLP23( NUMBER_NULL ) = FLT_MIN;
+const SDAI_Integer SDAI_INT_NULL = LONG_MAX;
+const SDAI_Real    SDAI_REAL_NULL = FLT_MIN;
+const SDAI_Real    SDAI_NUMBER_NULL = FLT_MIN;

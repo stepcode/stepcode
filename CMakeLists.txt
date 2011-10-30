@@ -231,9 +231,7 @@ endif()
 # Now that all the tests are done, configure the scl_cf.h file:
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
 
-add_definitions(
-    -DHAVE_CONFIG_H -Wall
-    )
+add_definitions( -Wall )
 
 include_directories(
     ${SCL_SOURCE_DIR}/include

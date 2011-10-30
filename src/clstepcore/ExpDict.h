@@ -14,7 +14,7 @@
 
 #include <sdai.h>
 
-typedef  SCLP23(Application_instance) * (* Creator) () ;
+typedef  SDAI_Application_instance * (* Creator) () ;
 
 enum AttrType_Enum {
         AttrType_Explicit = 0,
@@ -563,7 +563,7 @@ private:
 typedef Uniqueness_rule__set* Uniqueness_rule__set_ptr;
 typedef Uniqueness_rule__set_ptr Uniqueness_rule__set_var;
 
-typedef  SCLP23(Model_contents_ptr) (* ModelContentsCreator) () ;
+typedef  SDAI_Model_contents_ptr (* ModelContentsCreator) () ;
 
 /**
  * \class Schema (was SchemaDescriptor) - a class of this type is generated and contains schema info.
@@ -737,8 +737,8 @@ class AttrDescriptor {
         const char *  _name ;        // the attributes name
                 // this defines the domain of the attribute
         const TypeDescriptor * _domainType ;
-        SCLP23(LOGICAL) _optional;
-        SCLP23(LOGICAL) _unique;
+        SDAI_LOGICAL _optional;
+        SDAI_LOGICAL _unique;
         AttrType_Enum _attrType; // former attribute _derived
         const EntityDescriptor & _owner ;  // the owning entityDescriptor
   public:  
@@ -810,14 +810,14 @@ class AttrDescriptor {
         void DomainType (const TypeDescriptor *td)  { _domainType = td; }
         void ReferentType(const TypeDescriptor *td) { _domainType = td; }
 
-        const SCLP23(LOGICAL) & Optional() const { return _optional; }
-        void Optional (SCLP23(LOGICAL) &opt)        { _optional.put(opt.asInt()); }
+        const SDAI_LOGICAL & Optional() const { return _optional; }
+        void Optional (SDAI_LOGICAL &opt)        { _optional.put(opt.asInt()); }
 
         void Optional (Logical opt)        { _optional.put(opt); }
         void Optional (const char *opt) { _optional.put(opt); }
 
-        const SCLP23(LOGICAL) & Unique() const { return _unique; }
-        void Unique (SCLP23(LOGICAL) uniq)        { _unique.put(uniq.asInt()); }
+        const SDAI_LOGICAL & Unique() const { return _unique; }
+        void Unique (SDAI_LOGICAL uniq)        { _unique.put(uniq.asInt()); }
         void Unique (Logical uniq)        { _unique.put(uniq); }
         void Unique (const char *uniq)        { _unique.put(uniq); }
 
@@ -832,16 +832,16 @@ class AttrDescriptor {
         //outdated functions, use AttrType func above, new support of redefined
         Logical Derived() const { return Deriving(); }
         void Derived (Logical x);     // outdated DAS
-        void Derived (SCLP23(LOGICAL) x); // outdated DAS
+        void Derived (SDAI_LOGICAL x); // outdated DAS
         void Derived (const char *x); // outdated DAS
 
-        const SCLP23(LOGICAL) & Optionality() const { return _optional; }
-        void Optionality (SCLP23(LOGICAL) &opt) { _optional.put(opt.asInt()); }
+        const SDAI_LOGICAL & Optionality() const { return _optional; }
+        void Optionality (SDAI_LOGICAL &opt) { _optional.put(opt.asInt()); }
         void Optionality (Logical opt)           { _optional.put(opt); }
         void Optionality (const char *opt) { _optional.put(opt); }
 
-        const SCLP23(LOGICAL) & Uniqueness() const        { return _unique; }
-        void Uniqueness (SCLP23(LOGICAL) uniq)        { _unique.put(uniq.asInt()); }
+        const SDAI_LOGICAL & Uniqueness() const        { return _unique; }
+        void Uniqueness (SDAI_LOGICAL uniq)        { _unique.put(uniq.asInt()); }
         void Uniqueness (Logical uniq)                { _unique.put(uniq); }
         void Uniqueness (const char *uniq)        { _unique.put(uniq); }
 
@@ -1207,7 +1207,7 @@ class TypeDescriptor {
                 // is USE/REFERENCE'ing us (added to altNames).
 };
 
-typedef  SCLP23(Enum) * (* EnumCreator) () ;
+typedef  SDAI_Enum * (* EnumCreator) () ;
 
 class EnumTypeDescriptor  :    public TypeDescriptor  { 
   public:
@@ -1220,7 +1220,7 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
         CreateNewEnum = f;
     }
 
-    SCLP23(Enum) *CreateEnum();
+    SDAI_Enum *CreateEnum();
 
     EnumTypeDescriptor ( ) { }
     EnumTypeDescriptor (const char * nm, PrimitiveType ft, 
@@ -1244,8 +1244,8 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
 class EntityDescriptor  :    public TypeDescriptor  { 
 
   protected:
-        SCLP23(LOGICAL) _abstractEntity;
-        SCLP23(LOGICAL) _extMapping;
+        SDAI_LOGICAL _abstractEntity;
+        SDAI_LOGICAL _extMapping;
           // does external mapping have to be used to create an instance of
           // us (see STEP Part 21, sect 11.2.5.1)
 
@@ -1257,7 +1257,7 @@ class EntityDescriptor  :    public TypeDescriptor  {
   public:
         Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
-       // pointer to a function that will create a new instance of a SCLP23(Application_instance)
+       // pointer to a function that will create a new instance of a SDAI_Application_instance
         Creator NewSTEPentity;
 
         EntityDescriptor ( );
@@ -1274,12 +1274,12 @@ class EntityDescriptor  :    public TypeDescriptor  {
 
         const char * QualifiedName(std::string &s) const;
 
-        const SCLP23(LOGICAL) & AbstractEntity() const
+        const SDAI_LOGICAL & AbstractEntity() const
                                         { return _abstractEntity;}
-        const SCLP23(LOGICAL) & ExtMapping() const   { return _extMapping; }
-        void AbstractEntity (SCLP23(LOGICAL) &ae)
+        const SDAI_LOGICAL & ExtMapping() const   { return _extMapping; }
+        void AbstractEntity (SDAI_LOGICAL &ae)
                                         { _abstractEntity.put(ae.asInt()); }
-        void ExtMapping (SCLP23(LOGICAL) &em)
+        void ExtMapping (SDAI_LOGICAL &em)
                                         { _extMapping.put(em.asInt());     }
         void AbstractEntity (Logical ae) { _abstractEntity.put(ae); }
         void ExtMapping     (Logical em) { _extMapping.put(em);     }
@@ -1403,9 +1403,9 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 
   protected:
 
-    SCLP23(Integer)  _bound1 ;
-    SCLP23(Integer)  _bound2 ;
-    SCLP23(LOGICAL) _uniqueElements ;
+    SDAI_Integer  _bound1 ;
+    SDAI_Integer  _bound2 ;
+    SDAI_LOGICAL _uniqueElements ;
     TypeDescriptor * _aggrDomainType ;
     AggregateCreator CreateNewAggr;
 
@@ -1419,7 +1419,7 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
     STEPaggregate *CreateAggregate();
 
     AggrTypeDescriptor ( ); 
-    AggrTypeDescriptor(SCLP23(Integer) b1, SCLP23(Integer) b2, 
+    AggrTypeDescriptor(SDAI_Integer b1, SDAI_Integer b2, 
                        Logical uniqElem,
                        TypeDescriptor *aggrDomType);
     AggrTypeDescriptor (const char * nm, PrimitiveType ft, 
@@ -1429,14 +1429,14 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
     virtual ~AggrTypeDescriptor ();
 
 
-    SCLP23(Integer) & Bound1()                { return _bound1; }
-    void Bound1 (SCLP23(Integer)  b1)   { _bound1 = b1; } 
+    SDAI_Integer & Bound1()                { return _bound1; }
+    void Bound1 (SDAI_Integer  b1)   { _bound1 = b1; } 
 
-    SCLP23(Integer) & Bound2()                 { return _bound2; }
-    void Bound2 (SCLP23(Integer)  b2)   { _bound2 = b2; } 
+    SDAI_Integer & Bound2()                 { return _bound2; }
+    void Bound2 (SDAI_Integer  b2)   { _bound2 = b2; } 
 
-    SCLP23(LOGICAL)& UniqueElements()        { return _uniqueElements; }
-    void UniqueElements (SCLP23(LOGICAL) &ue) 
+    SDAI_LOGICAL& UniqueElements()        { return _uniqueElements; }
+    void UniqueElements (SDAI_LOGICAL &ue) 
                                         { _uniqueElements.put(ue.asInt()); }
     void UniqueElements (Logical ue)     { _uniqueElements.put(ue); }
     void UniqueElements (const char *ue) { _uniqueElements.put(ue); }
@@ -1451,7 +1451,7 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 class ArrayTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
-        SCLP23(LOGICAL) _optionalElements ;
+        SDAI_LOGICAL _optionalElements ;
   public:  
 
     ArrayTypeDescriptor ( ) : _optionalElements((char *)"UNKNOWN_TYPE") { } 
@@ -1467,8 +1467,8 @@ class ArrayTypeDescriptor  :    public AggrTypeDescriptor  {
     virtual ~ArrayTypeDescriptor () {}
 
 
-    SCLP23(LOGICAL)& OptionalElements()       { return _optionalElements; } 
-    void OptionalElements (SCLP23(LOGICAL) &oe) 
+    SDAI_LOGICAL& OptionalElements()       { return _optionalElements; } 
+    void OptionalElements (SDAI_LOGICAL &oe) 
                                      { _optionalElements.put(oe.asInt()); }
     void OptionalElements (Logical oe)     { _optionalElements.put(oe); }
     void OptionalElements (const char *oe) { _optionalElements.put(oe); }
@@ -1515,7 +1515,7 @@ class BagTypeDescriptor  :    public AggrTypeDescriptor  {
 
 };
 
-typedef  SCLP23(Select) * (* SelectCreator) () ;
+typedef  SDAI_Select * (* SelectCreator) () ;
 
 class SelectTypeDescriptor  :    public TypeDescriptor  { 
 
@@ -1532,7 +1532,7 @@ class SelectTypeDescriptor  :    public TypeDescriptor  {
             CreateNewSelect = f;
         }
 
-        SCLP23(Select) *CreateSelect();
+        SDAI_Select *CreateSelect();
 
         SelectTypeDescriptor (int b, const char * nm, PrimitiveType ft, 
                               Schema *origSchema,
@@ -1557,33 +1557,33 @@ class SelectTypeDescriptor  :    public TypeDescriptor  {
 class StringTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-        SCLP23(Integer)  _width ;    //  OPTIONAL
-        SCLP23(LOGICAL) _fixedSize ;
+        SDAI_Integer  _width ;    //  OPTIONAL
+        SDAI_LOGICAL _fixedSize ;
   public:  
 
         StringTypeDescriptor ( ) : _fixedSize((char *)"UNKNOWN_TYPE") { _width = 0; }
         virtual ~StringTypeDescriptor () { }
 
 
-        SCLP23(Integer) Width()                { return _width; }
-        void Width (SCLP23(Integer)  w)        { _width = w; }
+        SDAI_Integer Width()                { return _width; }
+        void Width (SDAI_Integer  w)        { _width = w; }
 
-        SCLP23(LOGICAL)& FixedSize()                { return _fixedSize; }
-        void FixedSize (SCLP23(LOGICAL) fs)        { _fixedSize.put(fs.asInt()); }
+        SDAI_LOGICAL& FixedSize()                { return _fixedSize; }
+        void FixedSize (SDAI_LOGICAL fs)        { _fixedSize.put(fs.asInt()); }
         void FixedSize (Logical fs)        { _fixedSize.put(fs); }
 };
 
 class RealTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
-        SCLP23(Integer)  _precisionSpec ;    //  OPTIONAL
+        SDAI_Integer  _precisionSpec ;    //  OPTIONAL
   public:  
 
         RealTypeDescriptor ( ) { _precisionSpec = 0; }
         virtual ~RealTypeDescriptor () { }
 
-        SCLP23(Integer) PrecisionSpec()                 { return _precisionSpec; }
-        void PrecisionSpec (SCLP23(Integer)  ps) { _precisionSpec = ps; }
+        SDAI_Integer PrecisionSpec()                 { return _precisionSpec; }
+        void PrecisionSpec (SDAI_Integer  ps) { _precisionSpec = ps; }
 };
 
 

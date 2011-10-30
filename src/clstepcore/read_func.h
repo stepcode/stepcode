@@ -11,32 +11,32 @@ extern void PrintErrorState(ErrorDescriptor &err);
 // print istream error information for debugging purposes
 extern void IStreamState(istream &in);
 
-extern int ReadInteger(SCLP23(Integer) &val, istream &in, ErrorDescriptor *err,
+extern int ReadInteger(SDAI_Integer &val, istream &in, ErrorDescriptor *err,
                        const char *tokenList);
 
-extern int ReadInteger(SCLP23(Integer) &val, const char *s, ErrorDescriptor *err,
+extern int ReadInteger(SDAI_Integer &val, const char *s, ErrorDescriptor *err,
                        const char *tokenList);
 
 extern Severity IntValidLevel (const char *attrValue, ErrorDescriptor *err,
                                int clearError, int optional, char *tokenList);
 
-extern std::string WriteReal(SCLP23(Real) val );
+extern std::string WriteReal(SDAI_Real val );
 
-extern void WriteReal(SCLP23(Real) val, ostream &out);
+extern void WriteReal(SDAI_Real val, ostream &out);
 
-extern int ReadReal(SCLP23(Real) &val, istream &in, ErrorDescriptor *err,
+extern int ReadReal(SDAI_Real &val, istream &in, ErrorDescriptor *err,
                     const char *tokenList);
 
-extern int ReadReal(SCLP23(Real) &val, const char *s, ErrorDescriptor *err,
+extern int ReadReal(SDAI_Real &val, const char *s, ErrorDescriptor *err,
                     const char *tokenList);
 
 extern Severity RealValidLevel (const char *attrValue, ErrorDescriptor *err,
                                 int clearError, int optional, char *tokenList);
 
-extern int ReadNumber(SCLP23(Real) &val, istream &in, ErrorDescriptor *err,
+extern int ReadNumber(SDAI_Real &val, istream &in, ErrorDescriptor *err,
                       const char *tokenList);
 
-extern int ReadNumber(SCLP23(Real) &val, const char *s, ErrorDescriptor *err,
+extern int ReadNumber(SDAI_Real &val, const char *s, ErrorDescriptor *err,
                       const char *tokenList);
 
 extern Severity NumberValidLevel (const char *attrValue, ErrorDescriptor *err,
