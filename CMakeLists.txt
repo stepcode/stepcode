@@ -106,7 +106,6 @@ IF(ENABLE_TESTING)
     endif()
     INCLUDE(CTest)
     ENABLE_TESTING()
-    SUBDIRS(test)
 ENDIF(ENABLE_TESTING)
 
 #---------------------------------------------------------------------
@@ -247,6 +246,9 @@ ADD_SUBDIRECTORY(src/cldai)
 ADD_SUBDIRECTORY(src/clutils)
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(data)
+IF(ENABLE_TESTING)
+    ADD_SUBDIRECTORY( test )
+ENDIF(ENABLE_TESTING)
 ADD_SUBDIRECTORY(doc)
 
 # this is for testing - 'make core' builds everything that isn't generated

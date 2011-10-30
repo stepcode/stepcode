@@ -26,7 +26,7 @@ endif()
 # use config variables such as these in
 #   ../.SCL_CTEST_PREFS.cmake
 #
-#set( CTEST_SITE "your name here")
+#set( CTEST_SITE "username")
 #set( CTEST_BUILD_NAME "build type, os, arch")
 #
 #
@@ -35,6 +35,8 @@ endif()
 # SKIP_CPP_TEST_SCHEMA_GEN
 # SKIP_CPP_TEST_SCHEMA_BUILD
 # SKIP_CPP_TEST_SCHEMA_RW
+# SKIP_TEST_UNITARY_SCHEMAS
+# SKIP_TEST_EXCHANGE_FILE
 #
 # setting this one disables result submission to my.cdash.org
 # SKIP_SUBMISSION
@@ -83,9 +85,7 @@ set(CTEST_BUILD_FLAGS "-j${PROCESSOR_COUNT}")
 ######################################################
 ##### To disable reporting of a set of tests, comment
 ##### out the SUBMIT_TEST line immediately following
-##### the set you wish to disable. If other tests
-##### depend on those tests, they will be executed
-##### but not reported.
+##### the set you wish to disable.
 #####
 ##### To do this for all tests:
 ##### set( SKIP_SUBMISSION TRUE )
@@ -100,19 +100,36 @@ ctest_build( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND )
 SUBMIT_TEST( Build )
 # ctest_memcheck( BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE res PARALLEL_LEVEL ${PROCESSOR_COUNT} )
 
+if(NOT SKIP_TEST_UNITARY_SCHEMAS )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "unitary_schemas" )
+    SUBMIT_TEST( Test )
+endif()
+
 if(NOT SKIP_CPP_TEST_SCHEMA_GEN )
     ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_gen" )
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "cpp_schema_gen" )
     SUBMIT_TEST( Test )
+    if(NOT SKIP_CPP_TEST_SCHEMA_BUILD )
+        ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                    PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "cpp_schema_build" )
+        SUBMIT_TEST( Test )
+        if(NOT SKIP_CPP_TEST_SCHEMA_RW )
+            ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                        PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "cpp_schema_rw" )
+            SUBMIT_TEST( Test )
+        endif()
+    endif()
 endif()
-if(NOT SKIP_CPP_TEST_SCHEMA_BUILD_CPP )
+
+if(NOT SKIP_TEST_EXCHANGE_FILE )
+    if( SKIP_CPP_TEST_SCHEMA_BUILD )
+        ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE "build_cpp_sdai_AP214E3_2010" )
+        SUBMIT_TEST( Test )
+    endif()
     ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_build" )
-    SUBMIT_TEST( Test )
-endif()
-if(NOT SKIP_CPP_TEST_SCHEMA_RW )
-    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "schema_rw" )
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "exchange_file" )
     SUBMIT_TEST( Test )
 endif()
 

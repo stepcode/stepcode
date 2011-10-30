@@ -1,38 +1,3 @@
-IF( INSTALL_DATA )
-    SET(ap203_data
-    ap203/203wseds.exp
-    ap203/cube1.p21
-    ap203/cube2.p21
-    ap203/g_r_assembly1.p21
-    ap203/gasket1.p21
-    ap203/gasket2.p21
-    ap203/gasket3.p21
-    ap203/hex_prism1.p21
-    ap203/rod_aspect1.p21
-    ap203/star1.p21
-    )
-    INSTALL(FILES ${ap203_data} DESTINATION ${DATA_DIR}/data/ap203)
-
-    SET(ap227_data
-    ap227/ap227.exp
-    ap227/mitre.p21
-    ap227/mitre.step.txt
-    )
-    INSTALL(FILES ${ap227_data} DESTINATION ${DATA_DIR}/data/ap227)
-
-    SET(step_example_data
-    example/example.exp
-    )
-    INSTALL(FILES ${step_example_data} DESTINATION ${DATA_DIR}/data/example)
-
-
-
-    SET(step_datafiles
-    pdmnet.exp
-    select.exp
-    )
-    INSTALL(FILES ${step_datafiles} DESTINATION ${DATA_DIR}/data)
-ENDIF( INSTALL_DATA )
 
 #this sets a property so that the target doesn't get built by 'make' or 'make all'
 #useful when testing generation of schema code/compiling schem libs/etc
@@ -88,7 +53,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
     set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore" )
 
-    add_custom_target( generate_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
+    add_custom_target( generate_cpp_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
     add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
                         COMMAND cmake ARGS -E make_directory ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Creating ${SCHEMA_OUTPUT_DIR} for schema ${SCHEMA_SHORT_NAME}")
@@ -100,25 +65,25 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         VERBATIM )
     add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
     target_link_libraries(${PROJECT_NAME} stepdai stepcore express stepeditor )
-    add_dependencies( ${PROJECT_NAME} generate_${SCHEMA_SHORT_NAME} )
+    add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
     TESTABLE_TARGET( ${PROJECT_NAME} )
 
-    add_test( NAME generate_${SCHEMA_SHORT_NAME}
+    add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
-                                       --target generate_${SCHEMA_SHORT_NAME}
+                                       --target generate_cpp_${SCHEMA_SHORT_NAME}
                                        --config $<CONFIGURATION> )
-    add_test( NAME build_${PROJECT_NAME}
+    add_test( NAME build_cpp_${PROJECT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
                                        --target p21read_${PROJECT_NAME}
                                        --config $<CONFIGURATION> )
 
     # label the tests and set dependencies
-    set_tests_properties( generate_${SCHEMA_SHORT_NAME} PROPERTIES LABELS schema_gen )
-    set_tests_properties( build_${PROJECT_NAME} PROPERTIES DEPENDS generate_${SCHEMA_SHORT_NAME} LABELS schema_build )
+    set_tests_properties( generate_cpp_${SCHEMA_SHORT_NAME} PROPERTIES LABELS cpp_schema_gen )
+    set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
     add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
     target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
@@ -131,10 +96,10 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
     foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
-        add_test( NAME read_write_${SCHEMA_SHORT_NAME}_${FNAME}
+        add_test( NAME read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                   COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
-        set_tests_properties( read_write_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_${PROJECT_NAME} LABELS schema_rw )
+        set_tests_properties( read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
