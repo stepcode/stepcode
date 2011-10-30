@@ -1,0 +1,6105 @@
+%!PS-Adobe-3.0
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%PageOrder: (atend)
+%%DocumentFonts: (atend)
+%%Creator: Frame 4.0
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+%
+% Frame ps_prolog 4.0, for use with Frame 4.0 products
+% This ps_prolog file is Copyright (c) 1986-1993 Frame Technology
+% Corporation.  All rights reserved.  This ps_prolog file may be
+% freely copied and distributed in conjunction with documents created
+% using FrameMaker, FrameBuilder and FrameViewer as long as this 
+% copyright notice is preserved.
+%
+% Frame products normally print colors as their true color on a color printer
+% or as shades of gray, based on luminance, on a black-and white printer. The
+% following flag, if set to True, forces all non-white colors to print as pure
+% black. This has no effect on bitmap images.
+/FMPrintAllColorsAsBlack             false def
+%
+% Frame products can either set their own line screens or use a printer's 
+% default settings. Three flags below control this separately for no 
+% separations, spot separations and process separations. If a flag
+% is true, then the default printer settings will not be changed. If it is
+% false, Frame products will use their own settings from a table based on
+% the printer's resolution.
+/FMUseDefaultNoSeparationScreen      true  def
+/FMUseDefaultSpotSeparationScreen    true  def
+/FMUseDefaultProcessSeparationScreen false def
+%
+% For any given PostScript printer resolution, Frame products have two sets of 
+% screen angles and frequencies for printing process separations, which are 
+% recomended by Adobe. The following variable chooses the higher frequencies
+% when set to true or the lower frequencies when set to false. This is only
+% effective if the appropriate FMUseDefault...SeparationScreen flag is false.
+/FMUseHighFrequencyScreens true def
+%
+% PostScript Level 2 printers contain an "Accurate Screens" feature which can
+% improve process separation rendering at the expense of compute time. This 
+% flag is ignored by PostScript Level 1 printers.
+/FMUseAcccurateScreens true def
+%
+% The following PostScript procedure defines the spot function that Frame
+% products will use for process separations. You may un-comment-out one of
+% the alternative functions below, or use your own.
+%
+% Dot function
+/FMSpotFunction {abs exch abs 2 copy add 1 gt 
+		{1 sub dup mul exch 1 sub dup mul add 1 sub }
+		{dup mul exch dup mul add 1 exch sub }ifelse } def
+%
+% Line function
+% /FMSpotFunction { pop } def
+%
+% Elipse function
+% /FMSpotFunction { dup 5 mul 8 div mul exch dup mul exch add 
+%		sqrt 1 exch sub } def
+%
+%
+/FMversion (4.0) def 
+/FMLevel1 /languagelevel where {pop languagelevel} {1} ifelse 2 lt def
+/FMPColor
+	FMLevel1 {
+		false
+		/colorimage where {pop pop true} if
+	} {
+		true
+	} ifelse
+def
+/FrameDict 400 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in PS 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} bind def
+	} if
+/FMshowpage /showpage load def
+/FMquit /quit load def
+/FMFAILURE { 
+	dup = flush 
+	FMshowpage 
+	/Helvetica findfont 12 scalefont setfont
+	72 200 moveto
+	show FMshowpage 
+	FMquit 
+	} def 
+/FMVERSION {
+	FMversion ne {
+		(Frame product version does not match ps_prolog!) FMFAILURE
+		} if
+	} def 
+/FMBADEPSF { 
+	(PostScript Lang. Ref. Man., 2nd Ed., H.2.4 says EPS must not call X              )
+	dup dup (X) search pop exch pop exch pop length 
+	4 -1 roll 
+	putinterval 
+	FMFAILURE
+	} def
+/FMLOCAL {
+	FrameDict begin
+	0 def 
+	end 
+	} def 
+/concatprocs
+	{
+	/proc2 exch cvlit def/proc1 exch cvlit def/newproc proc1 length proc2 length add array def
+	newproc 0 proc1 putinterval newproc proc1 length proc2 putinterval newproc cvx
+}def
+FrameDict begin 
+/FMnone 0 def
+/FMcyan 1 def
+/FMmagenta 2 def
+/FMyellow 3 def
+/FMblack 4 def
+/FMcustom 5 def
+/FrameNegative false def 
+/FrameSepIs FMnone def 
+/FrameSepBlack 0 def
+/FrameSepYellow 0 def
+/FrameSepMagenta 0 def
+/FrameSepCyan 0 def
+/FrameSepRed 1 def
+/FrameSepGreen 1 def
+/FrameSepBlue 1 def
+/FrameCurGray 1 def
+/FrameCurPat null def
+/FrameCurColors [ 0 0 0 1 0 0 0 ] def 
+/FrameColorEpsilon .001 def	
+/eqepsilon {		
+	sub dup 0 lt {neg} if
+	FrameColorEpsilon le
+} bind def
+/FrameCmpColorsCMYK { 
+	2 copy 0 get exch 0 get eqepsilon {
+		2 copy 1 get exch 1 get eqepsilon {
+			2 copy 2 get exch 2 get eqepsilon {
+				3 get exch 3 get eqepsilon
+			} {pop pop false} ifelse
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/FrameCmpColorsRGB { 
+	2 copy 4 get exch 0 get eqepsilon {
+		2 copy 5 get exch 1 get eqepsilon {
+			6 get exch 2 get eqepsilon
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/RGBtoCMYK { 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	3 copy 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	dup dup dup 
+	6 1 roll 
+	4 1 roll 
+	7 1 roll 
+	sub 
+	6 1 roll 
+	sub 
+	5 1 roll 
+	sub 
+	4 1 roll 
+} bind def
+/CMYKtoRGB { 
+	dup dup 4 -1 roll add 						  
+	5 1 roll 3 -1 roll add 						  
+	4 1 roll add 								  
+	1 exch sub dup 0 lt {pop 0} if 3 1 roll 	  
+	1 exch sub dup 0 lt {pop 0} if exch 	      
+	1 exch sub dup 0 lt {pop 0} if exch	  		  
+} bind def
+/FrameSepInit {
+	1.0 RealSetgray
+} bind def
+/FrameSetSepColor { 
+	/FrameSepBlue exch def
+	/FrameSepGreen exch def
+	/FrameSepRed exch def
+	/FrameSepBlack exch def
+	/FrameSepYellow exch def
+	/FrameSepMagenta exch def
+	/FrameSepCyan exch def
+	/FrameSepIs FMcustom def
+	setCurrentScreen	
+} bind def
+/FrameSetCyan {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 1.0 def
+	/FrameSepIs FMcyan def
+	setCurrentScreen	
+} bind def
+ 
+/FrameSetMagenta {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 1.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMmagenta def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetYellow {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 1.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMyellow def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetBlack {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 1.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMblack def
+	setCurrentScreen
+} bind def
+ 
+/FrameNoSep { 
+	/FrameSepIs FMnone def
+	setCurrentScreen
+} bind def
+/FrameSetSepColors { 
+	FrameDict begin
+	[ exch 1 add 1 roll ]
+	/FrameSepColors  
+	exch def end
+	} bind def
+/FrameColorInSepListCMYK { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsCMYK 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/FrameColorInSepListRGB { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsRGB 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/RealSetgray /setgray load def
+/RealSetrgbcolor /setrgbcolor load def
+/RealSethsbcolor /sethsbcolor load def
+end 
+/setgray { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+		{ RealSetgray } 
+		{ 
+		FrameSepIs FMblack eq 
+			{ RealSetgray } 
+			{ FrameSepIs FMcustom eq 
+			  FrameSepRed 0 eq and
+			  FrameSepGreen 0 eq and
+			  FrameSepBlue 0 eq and {
+			  	RealSetgray
+			  } {
+				1 RealSetgray pop 
+			  } ifelse
+			} ifelse
+		} ifelse
+	end
+} bind def
+/setrgbcolor { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+	{  RealSetrgbcolor }
+	{
+		3 copy [ 4 1 roll ] 
+		FrameColorInSepListRGB
+		{
+				FrameSepBlue eq exch 
+			 	FrameSepGreen eq and exch 
+			 	FrameSepRed eq and
+			 	{ 0 } { 1 } ifelse
+		}
+		{
+			FMPColor {
+				RealSetrgbcolor
+				currentcmykcolor
+			} {
+				RGBtoCMYK
+			} ifelse
+			FrameSepIs FMblack eq
+			{1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		RealSetgray
+	} 
+	ifelse
+	end
+} bind def
+/sethsbcolor {
+	FrameDict begin
+	FrameSepIs FMnone eq 
+	{ RealSethsbcolor } 
+	{
+		RealSethsbcolor 
+		currentrgbcolor  
+		setrgbcolor 
+	} 
+	ifelse
+	end
+} bind def
+FrameDict begin
+/setcmykcolor where {
+	pop /RealSetcmykcolor /setcmykcolor load def
+} {
+	/RealSetcmykcolor {
+		4 1 roll
+		3 { 3 index add 0 max 1 min 1 exch sub 3 1 roll} repeat 
+		setrgbcolor pop
+	} bind def
+} ifelse
+userdict /setcmykcolor { 
+		FrameDict begin
+		FrameSepIs FMnone eq
+		{ RealSetcmykcolor } 
+		{
+			4 copy [ 5 1 roll ]
+			FrameColorInSepListCMYK
+			{
+				FrameSepBlack eq exch 
+				FrameSepYellow eq and exch 
+				FrameSepMagenta eq and exch 
+				FrameSepCyan eq and 
+				{ 0 } { 1 } ifelse
+			}
+			{
+				FrameSepIs FMblack eq
+				{1.0 exch sub 4 1 roll pop pop pop} {
+				FrameSepIs FMyellow eq
+				{pop 1.0 exch sub 3 1 roll pop pop} {
+				FrameSepIs FMmagenta eq
+				{pop pop 1.0 exch sub exch pop } {
+				FrameSepIs FMcyan eq
+				{pop pop pop 1.0 exch sub } 
+				{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+			} ifelse
+			RealSetgray
+		}
+		ifelse
+		end
+	} bind put
+FMLevel1 not { 
+	
+	/patProcDict 5 dict dup begin
+		<0f1e3c78f0e1c387> { 3 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<0f87c3e1f0783c1e> { 3 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+		<8142241818244281> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke
+											-1 -1 moveto 9 9 lineto stroke } bind def
+		<03060c183060c081> { 1 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<8040201008040201> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+	end def
+	/patDict 15 dict dup begin
+		/PatternType 1 def		
+		/PaintType 2 def		
+		/TilingType 3 def		
+		/BBox [ 0 0 8 8 ] def 	
+		/XStep 8 def			
+		/YStep 8 def			
+		/PaintProc {
+			begin
+			patProcDict bstring known {
+				patProcDict bstring get exec
+			} {
+				8 8 true [1 0 0 -1 0 8] bstring imagemask
+			} ifelse
+			end
+		} bind def
+	end def
+} if
+/combineColor {
+    FrameSepIs FMnone eq
+	{
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceCMYK]] setcolorspace
+			FrameCurColors 0 4 getinterval aload pop FrameCurPat setcolor
+		} {
+			FrameCurColors 3 get 1.0 ge {
+				FrameCurGray RealSetgray
+			} {
+				FMPColor graymode and {
+					0 1 3 { 
+						FrameCurColors exch get
+						1 FrameCurGray sub mul
+					} for
+					RealSetcmykcolor
+				} {
+					4 1 6 {
+						FrameCurColors exch get
+						graymode {
+							1 exch sub 1 FrameCurGray sub mul 1 exch sub
+						} {
+							1.0 lt {FrameCurGray} {1} ifelse
+						} ifelse
+					} for
+					RealSetrgbcolor
+				} ifelse
+			} ifelse
+		} ifelse
+	} { 
+		FrameCurColors 0 4 getinterval aload
+		FrameColorInSepListCMYK {
+			FrameSepBlack eq exch 
+			FrameSepYellow eq and exch 
+			FrameSepMagenta eq and exch 
+			FrameSepCyan eq and
+			FrameSepIs FMcustom eq and
+			{ FrameCurGray } { 1 } ifelse
+		} {
+			FrameSepIs FMblack eq
+			{FrameCurGray 1.0 exch sub mul 1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop FrameCurGray 1.0 exch sub mul 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceGray]] setcolorspace
+			FrameCurPat setcolor
+		} { 
+			graymode not FMLevel1 and {
+				
+				dup 1 lt {pop FrameCurGray} if
+			} if
+			RealSetgray
+		} ifelse
+	} ifelse
+} bind def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/dmatrix matrix def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+	
+/freq dpi dup 72 div round dup 0 eq {pop 1} if 8 mul div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/dpiranges   [  2540    2400    1693     1270    1200     635      600      0      ] def
+/CMLowFreqs  [ 100.402  94.8683 89.2289 100.402  94.8683  66.9349  63.2456 47.4342 ] def
+/YLowFreqs   [  95.25   90.0    84.65    95.25   90.0     70.5556  66.6667 50.0    ] def
+/KLowFreqs   [  89.8026 84.8528 79.8088  89.8026 84.8528  74.8355  70.7107 53.033  ] def
+/CLowAngles  [  71.5651 71.5651 71.5651 71.5651  71.5651  71.5651  71.5651 71.5651 ] def
+/MLowAngles  [  18.4349 18.4349 18.4349 18.4349  18.4349  18.4349  18.4349 18.4349 ] def
+/YLowTDot    [  true    true    false    true    true     false    false   false   ] def
+/CMHighFreqs [ 133.87  126.491 133.843  108.503 102.523  100.402   94.8683 63.2456 ] def
+/YHighFreqs  [ 127.0   120.0   126.975  115.455 109.091   95.25    90.0    60.0    ] def
+/KHighFreqs  [ 119.737 113.137 119.713  128.289 121.218   89.8026  84.8528 63.6395 ] def
+/CHighAngles [  71.5651 71.5651 71.5651  70.0169 70.0169  71.5651  71.5651 71.5651 ] def
+/MHighAngles [  18.4349 18.4349 18.4349  19.9831 19.9831  18.4349  18.4349 18.4349 ] def
+/YHighTDot   [  false   false   true     false   false    true     true    false   ] def
+/PatFreq     [	10.5833 10.0     9.4055  10.5833 10.0	  10.5833  10.0	   9.375   ] def
+/screenIndex {
+	0 1 dpiranges length 1 sub { dup dpiranges exch get 1 sub dpi le {exit} {pop} ifelse } for
+} bind def
+/getCyanScreen {
+	FMUseHighFrequencyScreens { CHighAngles CMHighFreqs} {CLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getMagentaScreen {
+	FMUseHighFrequencyScreens { MHighAngles CMHighFreqs } {MLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getYellowScreen {
+	FMUseHighFrequencyScreens { YHighTDot YHighFreqs} { YLowTDot YLowFreqs } ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get { 3 div
+			{2 { 1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch} repeat
+			FMSpotFunction } } {/FMSpotFunction load } ifelse
+			0.0 exch
+} bind def
+/getBlackScreen  {
+	FMUseHighFrequencyScreens { KHighFreqs } { KLowFreqs } ifelse
+		screenIndex get 45.0 /FMSpotFunction load 
+} bind def
+/getSpotScreen {
+	getBlackScreen
+} bind def
+/getCompositeScreen {
+	getBlackScreen
+} bind def
+/FMSetScreen 
+	FMLevel1 { /setscreen load 
+	}{ {
+		8 dict begin
+		/HalftoneType 1 def
+		/SpotFunction exch def
+		/Angle exch def
+		/Frequency exch def
+		/AccurateScreens FMUseAcccurateScreens def
+		currentdict end sethalftone
+	} bind } ifelse
+def
+/setDefaultScreen {
+	FMPColor {
+		orgrxfer cvx orggxfer cvx orgbxfer cvx orgxfer cvx setcolortransfer
+	}
+	{
+		orgxfer cvx settransfer
+	} ifelse
+	orgfreq organgle orgproc cvx setscreen
+} bind def
+/setCurrentScreen {
+	FrameSepIs FMnone eq {
+		FMUseDefaultNoSeparationScreen {
+			setDefaultScreen
+		} {
+			getCompositeScreen FMSetScreen
+		} ifelse
+	} {
+		FrameSepIs FMcustom eq {
+			FMUseDefaultSpotSeparationScreen {
+				setDefaultScreen
+			} {
+				getSpotScreen FMSetScreen
+			} ifelse
+		} {
+			FMUseDefaultProcessSeparationScreen {
+				setDefaultScreen
+			} {
+				FrameSepIs FMcyan eq {
+					getCyanScreen FMSetScreen
+				} {
+					FrameSepIs FMmagenta eq {
+						getMagentaScreen FMSetScreen
+					} {
+						FrameSepIs FMyellow eq {
+							getYellowScreen FMSetScreen
+						} {
+							getBlackScreen FMSetScreen
+						} ifelse
+					} ifelse
+				} ifelse
+			} ifelse
+		} ifelse
+	} ifelse 
+} bind def
+end
+	/gstring FMLOCAL
+	/gfile FMLOCAL
+	/gindex FMLOCAL
+	/orgrxfer FMLOCAL
+	/orggxfer FMLOCAL
+	/orgbxfer FMLOCAL
+	/orgxfer FMLOCAL
+	/orgproc FMLOCAL
+	/orgrproc FMLOCAL
+	/orggproc FMLOCAL
+	/orgbproc FMLOCAL
+	/organgle FMLOCAL
+	/orgrangle FMLOCAL
+	/orggangle FMLOCAL
+	/orgbangle FMLOCAL
+	/orgfreq FMLOCAL
+	/orgrfreq FMLOCAL
+	/orggfreq FMLOCAL
+	/orgbfreq FMLOCAL
+	/yscale FMLOCAL
+	/xscale FMLOCAL
+	/edown FMLOCAL
+	/manualfeed FMLOCAL
+	/paperheight FMLOCAL
+	/paperwidth FMLOCAL
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne /manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	0 ne /FrameNegative exch def 
+	0 ne /edown exch def 
+	/yscale exch def
+	/xscale exch def
+	FMLevel1 {
+		manualfeed {setmanualfeed} if
+		/FMdicttop countdictstack 1 add def 
+		/FMoptop count def 
+		setpapername 
+		manualfeed {true} {papersize} ifelse 
+		{manualpapersize} {false} ifelse 
+		{desperatepapersize} {false} ifelse 
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		count -1 FMoptop {pop pop} for
+		countdictstack -1 FMdicttop {pop end} for 
+		}
+		{{1 dict dup /PageSize [paperwidth paperheight]put setpagedevice}stopped
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		 {1 dict dup /ManualFeed manualfeed put setpagedevice } stopped pop }
+	ifelse 
+	
+	FMPColor {
+		currentcolorscreen
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+			cvlit /orgbproc exch def
+				  /orgbangle exch def 
+				  /orgbfreq exch def
+			cvlit /orggproc exch def
+				  /orggangle exch def 
+				  /orggfreq exch def
+			cvlit /orgrproc exch def
+				  /orgrangle exch def 
+				  /orgrfreq exch def
+			currentcolortransfer 
+			FrameNegative {
+				1 1 4 { 
+					pop { 1 exch sub } concatprocs 4 1 roll
+				} for
+				4 copy
+				setcolortransfer
+			} if
+			cvlit /orgxfer exch def
+			cvlit /orgbxfer exch def
+			cvlit /orggxfer exch def
+			cvlit /orgrxfer exch def
+	} {
+		currentscreen 
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+				  
+		currenttransfer 
+		FrameNegative {
+			{ 1 exch sub } concatprocs
+			dup settransfer
+		} if 
+		cvlit /orgxfer exch def
+	} ifelse
+	end 
+} def 
+/pagesave FMLOCAL
+/orgmatrix FMLOCAL
+/landscape FMLOCAL
+/pwid FMLOCAL
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch dup /pwid exch def neg translate pop 
+	}{
+		pop /pwid exch def
+	} ifelse
+	edown { [-1 0 0 1 pwid 0] concat } if
+	0 0 moveto paperwidth 0 lineto paperwidth paperheight lineto 
+	0 paperheight lineto 0 0 lineto 1 setgray fill
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin dup
+	array /fillvals exch def
+	dict /patCache exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	0.0 0.0 moveto
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+	/fx FMLOCAL
+	/fy FMLOCAL
+	/fh FMLOCAL
+	/fw FMLOCAL
+	/llx FMLOCAL
+	/lly FMLOCAL
+	/urx FMLOCAL
+	/ury FMLOCAL
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+% See Adobe's "PostScript Language Reference Manual, 2nd Edition", page 714.
+% "...the following operators MUST NOT be used in an EPS file:" (emphasis ours)
+	/banddevice {(banddevice) FMBADEPSF} def
+	/clear {(clear) FMBADEPSF} def
+	/cleardictstack {(cleardictstack) FMBADEPSF} def 
+	/copypage {(copypage) FMBADEPSF} def
+	/erasepage {(erasepage) FMBADEPSF} def
+	/exitserver {(exitserver) FMBADEPSF} def
+	/framedevice {(framedevice) FMBADEPSF} def
+	/grestoreall {(grestoreall) FMBADEPSF} def
+	/initclip {(initclip) FMBADEPSF} def
+	/initgraphics {(initgraphics) FMBADEPSF} def
+	/initmatrix {(initmatrix) FMBADEPSF} def
+	/quit {(quit) FMBADEPSF} def
+	/renderbands {(renderbands) FMBADEPSF} def
+	/setglobal {(setglobal) FMBADEPSF} def
+	/setpagedevice {(setpagedevice) FMBADEPSF} def
+	/setshared {(setshared) FMBADEPSF} def
+	/startjob {(startjob) FMBADEPSF} def
+	/lettertray {(lettertray) FMBADEPSF} def
+	/letter {(letter) FMBADEPSF} def
+	/lettersmall {(lettersmall) FMBADEPSF} def
+	/11x17tray {(11x17tray) FMBADEPSF} def
+	/11x17 {(11x17) FMBADEPSF} def
+	/ledgertray {(ledgertray) FMBADEPSF} def
+	/ledger {(ledger) FMBADEPSF} def
+	/legaltray {(legaltray) FMBADEPSF} def
+	/legal {(legal) FMBADEPSF} def
+	/statementtray {(statementtray) FMBADEPSF} def
+	/statement {(statement) FMBADEPSF} def
+	/executivetray {(executivetray) FMBADEPSF} def
+	/executive {(executive) FMBADEPSF} def
+	/a3tray {(a3tray) FMBADEPSF} def
+	/a3 {(a3) FMBADEPSF} def
+	/a4tray {(a4tray) FMBADEPSF} def
+	/a4 {(a4) FMBADEPSF} def
+	/a4small {(a4small) FMBADEPSF} def
+	/b4tray {(b4tray) FMBADEPSF} def
+	/b4 {(b4) FMBADEPSF} def
+	/b5tray {(b5tray) FMBADEPSF} def
+	/b5 {(b5) FMBADEPSF} def
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fw 2 div add fy fh 2 div add  translate
+	rotate
+	fw 2 div neg fh 2 div neg translate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count def 
+	} bind def
+/FMENDEPSF {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} bind def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} bind def
+	/papersizedict FMLOCAL
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} bind def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	statusdict begin stopped end 
+	} bind def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} bind def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped 
+		end
+		} {true} ifelse 
+	} bind def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+FMPColor 
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	}
+ifelse
+/K { 
+	FMPrintAllColorsAsBlack {
+		dup 1 eq 2 index 1 eq and 3 index 1 eq and not
+			{7 {pop} repeat 0 0 0 1 0 0 0} if
+	} if 
+	FrameCurColors astore 
+	pop combineColor
+} bind def
+/graymode true def
+	/bwidth FMLOCAL
+	/bpside FMLOCAL
+	/bstring FMLOCAL
+	/onbits FMLOCAL
+	/offbits FMLOCAL
+	/xindex FMLOCAL
+	/yindex FMLOCAL
+	/x FMLOCAL
+	/y FMLOCAL
+/setPatternMode {
+	FMLevel1 {
+		/bwidth  exch def
+		/bpside  exch def
+		/bstring exch def
+		/onbits 0 def  /offbits 0 def
+		freq sangle landscape {90 add} if 
+			{/y exch def
+			 /x exch def
+			 /xindex x 1 add 2 div bpside mul cvi def
+			 /yindex y 1 add 2 div bpside mul cvi def
+			 bstring yindex bwidth mul xindex 8 idiv add get
+			 1 7 xindex 8 mod sub bitshift and 0 ne FrameNegative {not} if
+			 {/onbits  onbits  1 add def 1}
+			 {/offbits offbits 1 add def 0}
+			 ifelse
+			}
+			setscreen
+		offbits offbits onbits add div FrameNegative {1.0 exch sub} if
+		/FrameCurGray exch def
+	} { 
+		pop pop
+		dup patCache exch known {
+			patCache exch get
+		} { 
+			dup
+			patDict /bstring 3 -1 roll put
+			patDict 
+			9 PatFreq screenIndex get div dup matrix scale
+			makepattern
+			dup 
+			patCache 4 -1 roll 3 -1 roll put
+		} ifelse
+		/FrameCurGray 0 def
+		/FrameCurPat exch def
+	} ifelse
+	/graymode false def
+	combineColor
+} bind def
+/setGrayScaleMode {
+	graymode not {
+		/graymode true def
+		FMLevel1 {
+			setCurrentScreen
+		} if
+	} if
+	/FrameCurGray exch def
+	combineColor
+} bind def
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	
+/PFill {
+	graymode FMLevel1 or not {
+		gsave 1 setgray eofill grestore
+	} if
+} bind def
+/PStroke {
+	graymode FMLevel1 or not {
+		gsave 1 setgray stroke grestore
+	} if
+	stroke
+} bind def
+	/fillvals FMLOCAL
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setPatternMode} 
+	{setGrayScaleMode}
+	ifelse
+	} bind def
+/V { 
+	PFill gsave eofill grestore
+	} bind def
+/Vclip {
+	clip
+	} bind def
+/Vstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/N { 
+	PStroke
+	} bind def
+/Nclip {
+	strokepath clip newpath
+	} bind def
+/Nstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+	/n FMLOCAL
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+	/x1 FMLOCAL
+	/x2 FMLOCAL
+	/y1 FMLOCAL
+	/y2 FMLOCAL
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+	/rad FMLOCAL
+/rarc 
+	{rad 
+	 arcto
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	mark
+	newpath
+	{
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rarc
+	x2 y2 x2 y1 rarc
+	x2 y1 x1 y1 rarc
+	x1 y1 x1 y2 rarc
+	closepath
+	} stopped {x1 y1 x2 y2 R} if 
+	cleartomark
+	} bind def
+/RRR { 
+	/rad exch def
+	normalize /y4 exch def /x4 exch def
+	normalize /y3 exch def /x3 exch def
+	normalize /y2 exch def /x2 exch def
+	normalize /y1 exch def /x1 exch def
+	newpath
+	normalize moveto 
+	mark
+	{
+	x2 y2 x3 y3 rarc
+	x3 y3 x4 y4 rarc
+	x4 y4 x1 y1 rarc
+	x1 y1 x2 y2 rarc
+	closepath
+	} stopped
+	 {x1 y1 x2 y2 x3 y3 x4 y4 newpath moveto lineto lineto lineto closepath} if
+	cleartomark
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	setCurrentScreen
+} bind def
+/CP { 
+	grestore
+	gsave
+	Y 
+	clip
+	setCurrentScreen
+} bind def
+	/FMpointsize FMLOCAL
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	PFill fill
+	grestore
+	} bind def
+/Gstrk {
+	savematrix
+    newpath
+    2 index 2 div add exch 3 index 2 div sub exch 
+    normalize 2 index 2 div sub exch 3 index 2 div add exch 
+    translate
+    scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+    } bind def
+/Gclip { 
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	clip newpath
+	restorematrix
+	} bind def
+/GG { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	rotate 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath
+	PFill
+	fill
+	grestore
+	} bind def
+/GGclip { 
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	clip newpath
+	restorematrix
+	} bind def
+/GGstrk { 
+	savematrix
+    newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath 
+	restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/Aclip {
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	strokepath clip newpath
+	restorematrix
+} bind def
+/Astrk {
+	Gstrk
+} bind def
+/AA { 
+	gsave
+	savematrix
+	newpath
+	
+	3 index 2 div add exch 4 index 2 div sub exch 
+	
+	normalize 3 index 2 div sub exch 4 index 2 div add exch
+	translate 
+	rotate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/AAclip {
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	strokepath clip newpath
+	restorematrix
+} bind def
+/AAstrk {
+	GGstrk
+} bind def
+	/x FMLOCAL
+	/y FMLOCAL
+	/w FMLOCAL
+	/h FMLOCAL
+	/xx FMLOCAL
+	/yy FMLOCAL
+	/ww FMLOCAL
+	/hh FMLOCAL
+	/FMsaveobject FMLOCAL
+	/FMoptop FMLOCAL
+	/FMdicttop FMLOCAL
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 7 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+	/str FMLOCAL
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+	/sl FMLOCAL
+	/val FMLOCAL
+	/ws FMLOCAL
+	/im FMLOCAL
+	/bs FMLOCAL
+	/cs FMLOCAL
+	/len FMLOCAL
+	/pos FMLOCAL
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/rip { 
+	   
+	  
+	  bis ris copy pop 
+      is
+      0
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop 
+	  ris gis copy pop 
+	  dup is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  gis bis copy pop 
+	  dup add is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+      pop 
+      
+      } bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+	/h FMLOCAL
+	/w FMLOCAL
+	/d FMLOCAL
+	/lb FMLOCAL
+	/bitmapsave FMLOCAL
+	/is FMLOCAL
+	/cf FMLOCAL
+/wbytes { 
+      dup dup
+      24 eq { pop pop 3 mul }
+      { 8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse } ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+		 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	r                    
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def 
+	r                    
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+	/gryt FMLOCAL
+	/blut FMLOCAL
+	/grnt FMLOCAL
+	/redt FMLOCAL
+	/indx FMLOCAL
+	/cynu FMLOCAL
+	/magu FMLOCAL
+	/yelu FMLOCAL
+	/k FMLOCAL
+	/u FMLOCAL
+FMLevel1 {
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/k cynu magu min yelu min def
+		/u k currentundercolorremoval exec def
+%		/u 0 def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 k currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+}
+{
+/colorSetup2 {
+	[ /Indexed /DeviceRGB 255 
+		{dup red exch get 255 div 
+		 exch dup green exch get 255 div 
+		 exch blue exch get 255 div}
+	] setcolorspace
+} bind def
+} ifelse
+	/tran FMLOCAL
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch concatprocs settransfer
+} bind def
+/BITMAPCOLOR { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def
+	FMLevel1 {	
+		colorsetup
+		/is w d wbytes string def
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	} {
+		colorSetup2
+		/is w d wbytes string def
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {cf is readhexstring pop} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	FMLevel1 {	
+		colorsetup
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{ip} {is} {is} true 3 colorimage
+	} {
+		colorSetup2
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {ip} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+	/d 24 def
+        gsave
+ 	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris} {gis} {bis} true 3 colorimage
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUECOLOR { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+	/d 24 def
+        gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris gis bis w gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/ww FMLOCAL
+/r FMLOCAL
+/g FMLOCAL
+/b FMLOCAL
+/i FMLOCAL
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop w gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDsave FMLOCAL
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+/I { setdash } bind def
+/J { [] 0 setdash } bind def
+%%EndProlog
+%%BeginSetup
+(4.0) FMVERSION
+1 1 0 0 612 792 0 1 6 FMDOCUMENT
+0 0 /Helvetica-Bold FMFONTDEFINE
+1 0 /Times-Bold FMFONTDEFINE
+2 0 /Times-Roman FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 0.1 FMFILL
+2 0.3 FMFILL
+3 0.5 FMFILL
+4 0.7 FMFILL
+5 0.9 FMFILL
+6 0.97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 0.9 FMFILL
+18 0.7 FMFILL
+19 0.5 FMFILL
+20 0.3 FMFILL
+21 0.1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "1" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+J
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 750.02 558 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+72 730.15 558 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 207 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 235.01 736.18 T
+72 726.98 558 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+72 74.02 558 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+72 55.01 558 66.96 R
+7 X
+V
+0 10 Q
+0 X
+-2.78 (1) 552.44 60.29 P
+72 85.97 558 684 R
+7 X
+V
+75.6 90.8 554.4 674 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+352.8 260 525.6 306.8 R
+7 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+2 Z
+0 X
+N
+306 324.8 522 357.2 R
+7 X
+V
+0 X
+N
+306 378.8 460.8 396.8 R
+7 X
+V
+0 X
+N
+306 472.4 435.6 490.4 R
+7 X
+V
+0 X
+N
+306 522.8 442.8 540.8 R
+7 X
+V
+0 X
+N
+97.2 116 313.2 209.6 R
+7 X
+V
+0 X
+N
+104.17 116 306.23 202.4 R
+7 X
+V
+1 10 Q
+0 X
+(EntityDescriptor) 104.17 195.73 T
+2 F
+(const SchemaDescriptor * _originatingSchema;) 104.17 181.73 T
+(SdaiLogical _abstractEntity;) 104.17 167.73 T
+(EntityDescriptorList _subtypes;) 104.17 153.73 T
+(EntityDescriptorList _supertypes;) 104.17 139.73 T
+(AttrDescriptorList _explicitAttr;) 104.17 125.73 T
+97.2 191.6 313.2 191.6 2 L
+N
+97.2 411.2 277.2 490.4 R
+7 X
+V
+0 X
+N
+106.68 411.2 273.52 483.2 R
+7 X
+V
+1 F
+0 X
+(T) 106.68 476.53 T
+(ypeDescriptor) 112.61 476.53 T
+2 F
+(const char * _name;) 106.68 462.53 T
+(BASE_TYPE _fundamentalT) 106.68 448.53 T
+(ype;) 225.14 448.53 T
+(const T) 106.68 434.53 T
+(ypeDescriptor *_referentT) 135.7 434.53 T
+(ype;) 241.35 434.53 T
+(const char * _description;) 106.68 420.53 T
+97.2 472.4 277.19 472.4 2 L
+N
+97.2 209.6 313.2 288.8 R
+7 X
+V
+0 X
+N
+104.17 209.6 306.23 281.6 R
+7 X
+V
+1 F
+0 X
+(T) 104.17 274.93 T
+(ypeDescriptor) 110.1 274.93 T
+2 F
+(const char * _name;) 104.17 260.93 T
+(BASE_TYPE _fundamentalT) 104.17 246.93 T
+(ype;) 222.63 246.93 T
+(const T) 104.17 232.93 T
+(ypeDescriptor *_referentT) 133.19 232.93 T
+(ype;) 238.84 232.93 T
+(const char * _description;) 104.17 218.93 T
+97.2 270.8 313.2 270.8 2 L
+N
+97.2 303.2 277.2 396.8 R
+7 X
+V
+0 X
+N
+104.55 303.2 273.52 389.6 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 104.55 382.93 T
+2 F
+(const char * _name;) 104.55 368.93 T
+(const T) 104.55 354.93 T
+(ypeDescriptor *_domainT) 133.57 354.93 T
+(ype;) 238.13 354.93 T
+(SdaiLogical _optional;) 104.55 340.93 T
+(SdaiLogical _derived;) 104.55 326.93 T
+(const EntityDescriptor & _owner;) 104.55 312.93 T
+97.2 378.8 277.19 378.8 2 L
+N
+97.2 504.8 234 540.8 R
+7 X
+V
+0 X
+N
+100.8 508.4 212.4 533.6 R
+7 X
+V
+1 F
+0 X
+(SchemaDescriptor) 100.8 526.93 T
+2 F
+(const char * _name;) 100.8 512.93 T
+97.2 522.8 234 522.8 2 L
+N
+446.4 101.6 543.6 234.8 R
+7 X
+V
+0 X
+N
+450 224 536.4 231.2 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 450 224.53 T
+450 184.4 540 220.4 R
+7 X
+V
+0 X
+N
+453.6 188 540 213.2 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 453.6 206.53 T
+2 F
+(AttrDescriptor *) 453.6 192.53 T
+450 202.4 540 202.4 2 L
+N
+450 144.8 540 180.8 R
+7 X
+V
+0 X
+N
+453.6 148.4 540 173.6 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 453.6 166.93 T
+2 F
+(AttrDescriptor *) 453.6 152.93 T
+450 162.8 540 162.8 2 L
+N
+450 105.2 540 141.2 R
+7 X
+V
+0 X
+N
+453.6 108.8 540 134 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 453.6 127.34 T
+2 F
+(AttrDescriptor *) 453.6 113.34 T
+450 123.2 540 123.2 2 L
+N
+327.6 101.6 439.2 234.8 R
+7 X
+V
+0 X
+N
+331.73 224 430.93 231.2 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptorList) 331.73 224.53 T
+331.73 184.4 435.07 220.4 R
+7 X
+V
+0 X
+N
+335.87 188 435.06 213.2 R
+7 X
+V
+0 X
+(EntityDescLinkNode) 335.87 206.53 T
+2 F
+(EntityDescriptor *) 335.87 192.53 T
+331.73 202.4 435.06 202.4 2 L
+N
+331.73 144.8 435.07 180.8 R
+7 X
+V
+0 X
+N
+335.87 148.4 435.06 173.6 R
+7 X
+V
+1 F
+0 X
+(EntityDescLinkNode) 335.87 166.93 T
+2 F
+(EntityDescriptor *) 335.87 152.93 T
+331.73 162.8 435.06 162.8 2 L
+N
+331.73 105.2 435.07 141.2 R
+7 X
+V
+0 X
+N
+335.87 108.8 435.06 134 R
+7 X
+V
+1 F
+0 X
+(EntityDescLinkNode) 335.87 127.34 T
+2 F
+(EntityDescriptor *) 335.87 113.34 T
+331.73 123.2 435.06 123.2 2 L
+N
+97.2 634.4 306 652.4 R
+7 X
+V
+1 18 Q
+0 X
+(Expr) 97.2 640.4 T
+(ess Dictionary Classes) 135.88 640.4 T
+97.2 558.08 428.4 619.28 R
+7 X
+V
+0 X
+N
+100.8 561.68 424.8 615.68 R
+7 X
+V
+1 10 Q
+0 X
+(Registry) 100.8 609.01 T
+2 F
+(HashT) 100.8 595.01 T
+(able primordialSwamp; // Dictionary of entities i.e. EntityDescriptors) 126.76 595.01 T
+(HashT) 100.8 581.01 T
+(able active_schemas; // Dictionary of schemas i.e. SchemaDescriptors) 126.76 581.01 T
+(HashT) 100.8 567.01 T
+(able active_types; // Dictionary of types i.e. T) 126.76 567.01 T
+(ypeDescriptors) 309.09 567.01 T
+97.2 604.88 428.39 604.88 2 L
+N
+309.6 526.4 439.2 537.2 R
+7 X
+V
+0 X
+(Dictionary entry for a Schema) 309.6 530.53 T
+309.6 476 432 486.8 R
+7 X
+V
+0 X
+(Dictionary entry for a T) 309.6 480.13 T
+(ype.) 404.43 480.13 T
+309.6 382.4 457.2 393.2 R
+7 X
+V
+0 X
+(Dictionary entry for an Attribute.) 309.6 386.53 T
+309.6 328.4 518.4 353.6 R
+7 X
+V
+0 X
+(Dictionary entry for an Entity) 309.6 346.93 T
+(.) 427.82 346.93 T
+(EntityDescriptor is derived from T) 309.6 332.93 T
+(ypeDescriptor) 447.77 332.93 T
+(.) 503.87 332.93 T
+356.4 263.6 522 303.2 R
+7 X
+V
+0 X
+(List of EntityDescriptors and) 356.4 296.53 T
+(List of AttributeDescriptors.) 356.4 282.53 T
+(Implemented as a linked list of nodes.) 356.4 268.53 T
+J
+234 533.6 306 533.6 2 L
+J
+234 533.6 237.75 533.6 2 L
+N
+[7.74 6.708] 7.74 I
+237.75 533.6 302.25 533.6 2 L
+N
+J
+302.25 533.6 306 533.6 2 L
+N
+J
+277.2 483.2 306 483.2 2 L
+J
+277.2 483.2 280.95 483.2 2 L
+N
+[7.793 6.754] 7.793 I
+280.95 483.2 302.25 483.2 2 L
+N
+J
+302.25 483.2 306 483.2 2 L
+N
+J
+277.2 389.6 306 389.6 2 L
+J
+277.2 389.6 280.95 389.6 2 L
+N
+[7.793 6.754] 7.793 I
+280.95 389.6 302.25 389.6 2 L
+N
+J
+302.25 389.6 306 389.6 2 L
+N
+J
+306 288.8 306 324.8 2 L
+J
+306 288.8 306 292.55 2 L
+N
+[6.196 5.37] 6.196 I
+306 292.55 306 321.05 2 L
+N
+J
+306 321.05 306 324.8 2 L
+N
+J
+378 234.8 378 260 2 L
+J
+378 234.8 378 238.55 2 L
+N
+[6.476 5.612] 6.476 I
+378 238.55 378 256.25 2 L
+N
+J
+378 256.25 378 260 2 L
+N
+J
+496.8 234.8 496.8 260 2 L
+J
+496.8 234.8 496.8 238.55 2 L
+N
+[6.476 5.612] 6.476 I
+496.8 238.55 496.8 256.25 2 L
+N
+J
+496.8 256.25 496.8 260 2 L
+N
+J
+352.8 634.4 507.6 652.4 R
+7 X
+V
+0 X
+N
+356.87 638 503.52 648.8 R
+7 X
+V
+0 X
+(Dictionary of Express information) 356.87 642.13 T
+J
+460.8 634.4 460.8 612.8 428.4 612.8 3 L
+J
+460.8 634.4 460.8 630.65 2 L
+N
+[5.158 4.471] 5.158 I
+460.8 630.65 460.8 616.55 2 L
+N
+J
+460.8 616.55 460.8 612.8 457.05 612.8 3 L
+N
+[9.11 7.895] 9.11 I
+457.05 612.8 432.15 612.8 2 L
+N
+J
+432.15 612.8 428.4 612.8 2 L
+N
+J
+0 -208 1000 792 C
+FMENDPAGE
+%%EndPage: "1" 1
+%%Page: "2" 2
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+54 750.02 540 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+54 730.15 540 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 189 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 217.01 736.18 T
+54 726.98 540 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+54 74.02 540 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+54 55.01 540 66.96 R
+7 X
+V
+0 10 Q
+0 X
+(2) 54 60.29 T
+54 87.98 540 686.02 R
+7 X
+V
+57.6 92.82 536.4 676.02 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+320.4 244.02 525.6 362.82 R
+7 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+2 Z
+0 X
+N
+320.4 402.42 525.6 607.62 R
+7 X
+V
+0 X
+N
+82.8 282.42 280.8 361.62 R
+7 X
+V
+0 X
+N
+89.19 286.02 274.41 354.42 R
+7 X
+V
+1 10 Q
+0 X
+(STEPentity) 89.19 347.75 T
+2 F
+(STEPattributeList attributes;) 89.19 333.75 T
+(int STEP\336le_id;) 89.19 319.75 T
+(ErrorDescriptor _error;) 89.19 305.75 T
+(const EntityDescriptor * EntityDescriptor;) 89.19 291.75 T
+82.8 343.62 280.8 343.62 2 L
+N
+82.8 385.62 262.8 605.22 R
+7 X
+V
+0 X
+N
+87.3 389.22 255.68 596.75 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 87.3 590.08 T
+2 F
+(ErrorDescriptor _error;) 87.3 576.08 T
+(unsigned int _derive;) 87.3 562.08 T
+(const AttrDescriptor * AttrDescriptor;) 87.3 548.08 T
+(union {) 87.3 534.08 T
+(SdaiInteger *i;) 105.3 520.08 T
+(class SdaiString *S;) 105.3 506.08 T
+(class SdaiBinary *b;) 105.3 492.08 T
+(SdaiReal *r;) 105.3 478.08 T
+(class STEPentity *c;) 105.3 464.08 T
+(class STEPaggregate *a;) 105.3 450.08 T
+(class STEPenumeration *e;) 105.3 436.08 T
+(class SdaiSelect *sh;) 105.3 422.08 T
+(class SCLunde\336ned *u;) 105.3 408.08 T
+(} ptr;) 87.3 394.08 T
+82.8 587.22 262.8 587.22 2 L
+N
+82.8 125.22 180 258.42 R
+7 X
+V
+0 X
+N
+86.4 247.62 172.8 254.82 R
+7 X
+V
+1 F
+0 X
+(STEPattrList) 86.4 248.15 T
+86.4 208.02 176.4 244.02 R
+7 X
+V
+0 X
+N
+90 211.62 176.4 236.82 R
+7 X
+V
+0 X
+(AttrListNode) 90 230.15 T
+2 F
+(STEPattribute *attr;) 90 216.15 T
+86.4 226.02 176.4 226.02 2 L
+N
+86.4 168.42 176.4 204.42 R
+7 X
+V
+0 X
+N
+90 172.02 176.4 197.22 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 90 190.55 T
+2 F
+(STEPattribute *attr;) 90 176.55 T
+86.4 186.42 176.4 186.42 2 L
+N
+86.4 128.82 176.4 164.82 R
+7 X
+V
+0 X
+N
+90 132.42 176.4 157.62 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 90 150.95 T
+2 F
+(STEPattribute *attr;) 90 136.95 T
+86.4 146.82 176.4 146.82 2 L
+N
+82.8 629.22 385.2 647.22 R
+7 X
+V
+1 18 Q
+0 X
+(Classes Used for Entity Instances) 82.8 635.22 T
+324 247.62 522 359.22 R
+7 X
+V
+2 10 Q
+0 X
+(Base class of all generated entity classes.) 324 352.55 T
+-0.1 (attributes - is a list that provides a generic way to) 324 338.55 P
+(access and manipulate the attributes associated) 324 330.55 T
+(with the derived entity class.) 324 322.55 T
+-0.03 (STEP\336le_id - is the numeric part of what Part 21) 324 308.55 P
+(calls ENTITY_NAME.) 324 300.55 T
+(_error - may contain an error level and message) 324 286.55 T
+(associated with the entity instance.) 324 278.55 T
+(EntityDescriptor - is a pointer to the Express) 324 264.55 T
+(dictionary entry for the entity) 324 256.55 T
+(.) 441.11 256.55 T
+J
+324 406.02 522 604.02 R
+7 X
+V
+0 X
+(An element in STEPentity\325) 324 597.35 T
+(s list of attributes.) 432.06 597.35 T
+(_error - may contain an error level and message) 324 583.35 T
+(associated with the attribute value.) 324 575.35 T
+-0.56 (_derive - boolean specifying whether the attribute) 324 561.35 P
+(has had its value overridden by the instantiation) 324 553.35 T
+-0.04 (of an inheriting entity which contains a DERIVE) 324 545.35 P
+(statement in the Express de\336nition. If true the) 324 537.35 T
+(attribute is not allowed to have a value and Part) 324 529.35 T
+(21 speci\336es that an asterisk represent its value in) 324 521.35 T
+(an Exchange File. This may be true or false) 324 513.35 T
+(depending on which child entity has been instan-) 324 505.35 T
+(tiated \050the one containing the DERIVE attribute) 324 497.35 T
+(or not\051.) 324 489.35 T
+(AttrDescriptor - points at the Express dictionary) 324 475.35 T
+(entry for this attribute. An Enum variable found) 324 467.35 T
+-0.04 (in the dictionary entry speci\336es the attribute type) 324 459.35 P
+-0.26 (and is used to know how to access and use the ptr) 324 451.35 P
+(member variable.) 324 443.35 T
+-0.15 (ptr - points at the data storage area de\336ned by the) 324 429.35 P
+(generated entity class to represent the attribute\325) 324 421.35 T
+(s) 512.85 421.35 T
+(data value.) 324 413.35 T
+J
+J
+J
+320.4 596.82 262.8 596.82 2 L
+J
+320.4 596.82 316.65 596.82 2 L
+N
+[7.747 6.714] 7.747 I
+316.65 596.82 266.55 596.82 2 L
+N
+J
+266.55 596.82 262.8 596.82 2 L
+N
+J
+320.4 352.02 280.8 352.02 2 L
+J
+320.4 352.02 316.65 352.02 2 L
+N
+[6.978 6.048] 6.978 I
+316.65 352.02 284.55 352.02 2 L
+N
+J
+284.55 352.02 280.8 352.02 2 L
+N
+J
+216 182.82 388.8 215.22 R
+7 X
+V
+0 X
+N
+219.6 186.42 385.2 211.62 R
+7 X
+V
+0 X
+(List of STEPattributes.) 219.6 204.95 T
+(Implemented as a linked list of nodes.) 219.6 190.95 T
+J
+216 204.42 180 204.42 2 L
+J
+216 204.42 212.25 204.42 2 L
+N
+[6.196 5.37] 6.196 I
+212.25 204.42 183.75 204.42 2 L
+N
+J
+183.75 204.42 180 204.42 2 L
+N
+J
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "2" 2
+%%Page: "3" 3
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 750.02 558 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+72 730.15 558 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 207 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 235.01 736.18 T
+72 726.98 558 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+72 74.02 558 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+72 55.01 558 66.96 R
+7 X
+V
+0 10 Q
+0 X
+-2.78 (3) 552.44 60.29 P
+32.4 85.97 583.2 684 R
+7 X
+V
+36.58 90.8 579.02 674 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+43.78 512 212.98 587.61 R
+7 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+2 Z
+0 X
+N
+49.23 512 207.51 580.41 R
+7 X
+V
+1 10 Q
+0 X
+(EntityDescriptor) 49.23 573.74 T
+2 F
+(_originatingSchema) 49.23 559.74 T
+(_supertypes) 49.23 545.74 T
+(_subtypes) 49.23 531.74 T
+(_explicitAttr) 49.23 517.74 T
+43.78 569.61 212.97 569.61 2 L
+N
+43.78 587.61 212.98 666.8 R
+7 X
+V
+0 X
+N
+49.23 587.61 207.51 659.6 R
+7 X
+V
+1 F
+0 X
+(T) 49.23 652.93 T
+(ypeDescriptor) 55.16 652.93 T
+2 F
+(_name = \322shape\323) 49.23 638.93 T
+(_fundamentalT) 49.23 624.93 T
+(ype = ENTITY_TYPE) 109.63 624.93 T
+(_referentT) 49.23 610.93 T
+(ype = null) 90.73 610.93 T
+(_description = \322shape\323) 49.23 596.93 T
+43.78 648.8 212.97 648.8 2 L
+N
+396.57 486.8 493.77 620 R
+7 X
+V
+0 X
+N
+400.17 609.2 486.57 616.4 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 400.17 609.73 T
+400.17 569.6 490.17 605.6 R
+7 X
+V
+0 X
+N
+403.77 573.2 490.17 598.4 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 403.77 591.73 T
+2 F
+(AttrDescriptor *) 403.77 577.73 T
+400.17 587.6 490.17 587.6 2 L
+N
+400.17 530 490.17 566 R
+7 X
+V
+0 X
+N
+403.77 533.6 490.17 558.8 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 403.77 552.13 T
+2 F
+(AttrDescriptor *) 403.77 538.13 T
+400.17 548 490.17 548 2 L
+N
+400.17 490.4 490.17 526.4 R
+7 X
+V
+0 X
+N
+403.77 494 490.17 519.2 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 403.77 512.53 T
+2 F
+(AttrDescriptor *) 403.77 498.53 T
+400.17 508.4 490.17 508.4 2 L
+N
+234.57 450.8 346.17 584 R
+7 X
+V
+0 X
+N
+238.71 573.2 342.57 580.4 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptorList) 238.71 573.73 T
+238.71 533.6 342.04 569.6 R
+7 X
+V
+0 X
+N
+242.84 537.2 342.04 562.4 R
+7 X
+V
+0 X
+(EntityDescLinkNode) 242.84 555.73 T
+2 F
+(EntityDescriptor *) 242.84 541.73 T
+238.71 551.6 342.04 551.6 2 L
+N
+238.71 494 342.04 530 R
+7 X
+V
+0 X
+N
+242.84 497.6 342.04 522.8 R
+7 X
+V
+1 F
+0 X
+(EntityDescLinkNode) 242.84 516.13 T
+2 F
+(EntityDescriptor *) 242.84 502.13 T
+238.71 512 342.04 512 2 L
+N
+238.71 454.4 342.04 490.4 R
+7 X
+V
+0 X
+N
+242.84 458 342.04 483.2 R
+7 X
+V
+1 F
+0 X
+(EntityDescLinkNode) 242.84 476.53 T
+2 F
+(EntityDescriptor *) 242.84 462.53 T
+238.71 472.4 342.04 472.4 2 L
+N
+83.38 198.8 220.18 234.8 R
+7 X
+V
+0 X
+N
+86.97 202.4 216.58 227.6 R
+7 X
+V
+1 F
+0 X
+(SchemaDescriptor) 86.97 220.93 T
+2 F
+(_name = \322Example_Schema\322) 86.97 206.93 T
+83.38 216.8 220.17 216.8 2 L
+N
+400.17 278 569.37 353.61 R
+7 X
+V
+0 X
+N
+405.63 278 563.91 346.41 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 405.63 339.74 T
+2 F
+(_originatingSchema) 405.63 325.74 T
+(_supertypes) 405.63 311.74 T
+(_subtypes) 405.63 297.74 T
+(_explicitAttr) 405.63 283.74 T
+400.17 335.61 569.37 335.61 2 L
+N
+400.17 353.61 569.37 432.8 R
+7 X
+V
+0 X
+N
+405.63 353.61 563.91 425.6 R
+7 X
+V
+1 F
+0 X
+(T) 405.63 418.93 T
+(ypeDescriptor) 411.56 418.93 T
+2 F
+(_name = \322Rectangle\323) 405.63 404.93 T
+(_fundamentalT) 405.63 390.93 T
+(ype = ENTITY_TYPE) 466.03 390.93 T
+(_referentT) 405.63 376.93 T
+(ype = null) 447.13 376.93 T
+(_description = \322Rectangle\323) 405.63 362.93 T
+400.17 414.8 569.37 414.8 2 L
+N
+43.78 278 212.98 353.61 R
+7 X
+V
+0 X
+N
+49.23 278 207.51 346.41 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 49.23 339.74 T
+2 F
+(_originatingSchema) 49.23 325.74 T
+(_supertypes) 49.23 311.74 T
+(_subtypes) 49.23 297.74 T
+(_explicitAttr) 49.23 283.74 T
+43.78 335.61 212.97 335.61 2 L
+N
+43.78 353.61 212.98 432.8 R
+7 X
+V
+0 X
+N
+49.23 353.61 207.51 425.6 R
+7 X
+V
+1 F
+0 X
+(T) 49.23 418.93 T
+(ypeDescriptor) 55.16 418.93 T
+2 F
+(_name = \322Circle\323) 49.23 404.93 T
+(_fundamentalT) 49.23 390.93 T
+(ype = ENTITY_TYPE) 109.63 390.93 T
+(_referentT) 49.23 376.93 T
+(ype = null) 90.73 376.93 T
+(_description = \322Circle\323) 49.23 362.93 T
+43.78 414.8 212.97 414.8 2 L
+N
+221.97 278 391.17 353.61 R
+7 X
+V
+0 X
+N
+227.43 278 385.71 346.41 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 227.43 339.74 T
+2 F
+(_originatingSchema) 227.43 325.74 T
+(_supertypes) 227.43 311.74 T
+(_subtypes) 227.43 297.74 T
+(_explicitAttr) 227.43 283.74 T
+221.97 335.61 391.17 335.61 2 L
+N
+221.97 353.61 391.17 432.8 R
+7 X
+V
+0 X
+N
+227.43 353.61 385.71 425.6 R
+7 X
+V
+1 F
+0 X
+(T) 227.43 418.93 T
+(ypeDescriptor) 233.36 418.93 T
+2 F
+(_name = \322T) 227.43 404.93 T
+(riangle\323) 274.93 404.93 T
+(_fundamentalT) 227.43 390.93 T
+(ype = ENTITY_TYPE) 287.83 390.93 T
+(_referentT) 227.43 376.93 T
+(ype = null) 268.93 376.93 T
+(_description = \322T) 227.43 362.93 T
+(riangle\323) 297.71 362.93 T
+221.97 414.8 391.17 414.8 2 L
+N
+400.17 108.8 569.37 184.41 R
+7 X
+V
+0 X
+N
+405.63 108.8 563.91 177.21 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 405.63 170.54 T
+2 F
+(_originatingSchema) 405.63 156.54 T
+(_supertypes) 405.63 142.54 T
+(_subtypes) 405.63 128.54 T
+(_explicitAttr) 405.63 114.54 T
+400.17 166.41 569.37 166.41 2 L
+N
+400.17 184.41 569.37 263.6 R
+7 X
+V
+0 X
+N
+405.63 184.41 563.91 256.4 R
+7 X
+V
+1 F
+0 X
+(T) 405.63 249.73 T
+(ypeDescriptor) 411.56 249.73 T
+2 F
+(_name = \322Square\323) 405.63 235.73 T
+(_fundamentalT) 405.63 221.73 T
+(ype = ENTITY_TYPE) 466.03 221.73 T
+(_referentT) 405.63 207.73 T
+(ype = null) 447.13 207.73 T
+(_description = \322Square\323) 405.63 193.73 T
+400.17 245.6 569.37 245.6 2 L
+N
+362.53 444.35 359.17 432.83 355.92 444.39 359.23 444.37 4 Y
+V
+324.57 504.8 M
+ 352.18 505.53 369.05 481.73 360.99 456.17 D
+ 359.76 452.26 359.36 448.33 359.24 444.39 D
+N
+420.31 445.67 420 433.67 413.9 444.01 417.11 444.84 4 Y
+V
+324.57 465.2 M
+ 351.76 461.73 403.81 474.42 417.12 444.83 D
+N
+94.18 292.4 162.58 306.8 R
+N
+97.78 296 158.98 303.2 R
+7 X
+V
+0 X
+(EDL null list) 97.78 296.53 T
+104.97 540.8 173.38 555.2 R
+N
+108.57 544.4 169.77 551.6 R
+7 X
+V
+0 X
+(EDL null list) 108.57 544.93 T
+274.17 292.4 342.57 306.8 R
+N
+277.77 296 338.97 303.2 R
+7 X
+V
+0 X
+(EDL null list) 277.77 296.53 T
+[7.088 7.088] 3.544 I
+104.97 519.2 M
+ 288.57 512 141.55 582.9 256.17 602 D
+ 299.37 609.2 349.77 612.8 396.57 609.2 D
+1 H
+N
+J
+450.57 292.4 518.97 306.8 R
+0.5 H
+N
+454.17 296 515.37 303.2 R
+7 X
+V
+0 X
+(EDL EDLN) 454.17 296.53 T
+461.37 306.8 529.77 321.2 R
+N
+464.97 310.4 526.17 317.6 R
+7 X
+V
+0 X
+(EDL EDLN) 464.97 310.93 T
+225 656.89 213.33 659.7 224.72 663.5 224.86 660.19 4 Y
+V
+516.36 314 M
+ 581.84 315.97 558.71 407.49 556.09 448.86 D
+ 551.34 524.07 568.39 653.03 462.48 661.31 D
+ 383.26 667.5 303.93 663.61 224.87 660.19 D
+1 H
+N
+101.38 306.8 169.77 321.2 R
+0.5 H
+N
+104.97 310.4 166.18 317.6 R
+7 X
+V
+0 X
+(EDL EDLN) 104.97 310.93 T
+281.37 306.8 349.77 321.2 R
+N
+284.97 310.4 346.17 317.6 R
+7 X
+V
+0 X
+(EDL EDLN) 284.97 310.93 T
+194 499.93 196.35 511.7 200.59 500.48 197.29 500.21 4 Y
+V
+341.46 313.94 M
+ 370.95 310.4 391.82 347.27 374.95 362.92 D
+ 346.17 389.6 353.33 441 299.37 443.6 D
+ 261.54 445.42 202.15 435.14 196.21 482.1 D
+ 195.46 488.07 196.82 494.14 197.3 500.2 D
+1 H
+N
+450.57 123.2 518.97 137.6 R
+0.5 H
+N
+454.17 126.8 515.37 134 R
+7 X
+V
+0 X
+(EDL null list) 454.17 127.34 T
+461.37 137.6 522.57 152 R
+N
+464.22 139.4 518.97 148.4 R
+7 X
+V
+0 X
+(EDL EDLN) 464.22 141.73 T
+173.37 500.53 176.89 512 179.98 500.41 176.67 500.47 4 Y
+V
+162.57 313.74 M
+ 176.72 317.6 175.91 391.1 176.72 422 D
+ 177.43 448.67 176.41 474.03 176.68 500.45 D
+1 H
+N
+124.56 443.41 120.83 432 117.94 443.65 121.25 443.53 4 Y
+V
+320.97 544.4 M
+ 299.47 525.42 263.86 539.32 238.17 526.4 D
+ 212.55 513.51 229.82 490.59 205.77 479.6 D
+ 179.94 467.8 131.84 494.86 122.48 457.83 D
+ 121.27 453.05 121.24 448.29 121.25 443.53 D
+N
+67.49 221.07 79.04 217.84 67.53 214.45 67.51 217.76 4 Y
+V
+129.76 562.4 M
+ 135.61 497.44 81.11 481.32 64.24 458 D
+ 31.7 413.04 43.54 368 38.91 326.17 D
+ 35.6 296.25 46.85 228.22 51.52 222.83 D
+ 55.52 218.21 61.38 217.64 67.51 217.73 D
+N
+197 245.93 193.33 234.5 190.39 246.14 193.7 246.03 4 Y
+V
+133.77 328.4 M
+ 194.25 341.02 195.04 288.68 193.71 246.01 D
+N
+212.65 243.2 208.33 232.01 206.06 243.79 209.36 243.5 4 Y
+V
+313.77 328.4 M
+ 342.23 332.65 381.71 310.99 358.58 277.83 D
+ 334.11 242.75 281.82 268.27 242.5 266.65 D
+ 228.12 266.05 213.67 256.69 209.38 243.51 D
+N
+231.55 223.75 220 227 231.52 230.36 231.53 227.06 4 Y
+V
+410.97 328.4 M
+ 385.77 324.8 402.08 281.5 389.15 261.16 D
+ 368.17 228.16 330.61 236.53 299.37 231.2 D
+ 276.74 227.34 253.96 227.09 231.55 227.03 D
+N
+232.06 215.39 220.17 217.01 231.11 221.93 231.59 218.66 4 Y
+V
+407.37 159.2 M
+ 352.09 187.19 297.2 225.45 231.66 218.64 D
+N
+541.27 275.59 540.56 263.61 534.82 274.15 538.04 274.87 4 Y
+V
+504.57 299.6 M
+ 518.78 299.4 532.55 288.71 538.08 274.86 D
+N
+559.72 266.26 562.16 278.01 566.32 266.76 563.02 266.51 4 Y
+V
+515.37 144.8 M
+ 570.94 141.68 565.44 218.04 563.18 256.16 D
+ 562.98 259.55 563.06 263.01 563.05 266.48 D
+N
+[6.881 6.881] 3.44 I
+94.18 533.6 M
+ 159.95 533.6 200.6 533.79 234.57 573.2 D
+N
+J
+0 0 612 792 C
+226.8 702 435.6 720 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 18 Q
+0 X
+(Expr) 226.8 708 T
+(ess Dictionary Classes) 265.48 708 T
+FMENDPAGE
+%%EndPage: "3" 3
+%%Page: "4" 4
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+54 750.02 540 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+54 730.15 540 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 189 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 217.01 736.18 T
+54 726.98 540 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+54 74.02 540 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+54 55.01 540 66.96 R
+7 X
+V
+0 10 Q
+0 X
+(4) 54 60.29 T
+54 87.98 540 686.02 R
+7 X
+V
+25.78 92.82 568.22 676.02 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+40.18 103.62 166.18 121.62 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 H
+2 Z
+0 X
+N
+32.98 514.02 202.18 589.63 R
+7 X
+V
+0.5 H
+0 X
+N
+38.43 514.02 196.71 582.43 R
+7 X
+V
+1 10 Q
+0 X
+(EntityDescriptor) 38.43 575.76 T
+2 F
+(_originatingSchema) 38.43 561.76 T
+(_supertypes) 38.43 547.76 T
+(_subtypes) 38.43 533.76 T
+(_explicitAttr) 38.43 519.76 T
+32.98 571.63 202.18 571.63 2 L
+N
+32.98 589.63 202.18 668.82 R
+7 X
+V
+0 X
+N
+38.43 589.63 196.71 661.62 R
+7 X
+V
+1 F
+0 X
+(T) 38.43 654.95 T
+(ypeDescriptor) 44.36 654.95 T
+2 F
+(_name = \322shape\323) 38.43 640.95 T
+(_fundamentalT) 38.43 626.95 T
+(ype = ENTITY_TYPE) 98.83 626.95 T
+(_referentT) 38.43 612.95 T
+(ype = null) 79.93 612.95 T
+(_description = \322shape\323) 38.43 598.95 T
+32.98 650.82 202.18 650.82 2 L
+N
+216.57 575.22 349.77 668.82 R
+7 X
+V
+0 X
+N
+222.01 575.22 347.05 661.62 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 222.01 654.95 T
+2 F
+(_name = \322Item_Name\323) 222.01 640.95 T
+(_domainT) 222.01 626.95 T
+(ype) 262.42 626.95 T
+(_optional = 0) 222.01 612.95 T
+(_derived = 0) 222.01 598.95 T
+(_owner) 222.01 584.95 T
+216.57 650.82 349.76 650.82 2 L
+N
+94.18 395.22 191.38 528.42 R
+7 X
+V
+0 X
+N
+97.78 517.62 184.17 524.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 97.78 518.15 T
+97.78 478.02 187.77 514.02 R
+7 X
+V
+0 X
+N
+101.38 481.62 187.77 506.82 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 101.38 500.15 T
+2 F
+(AttrDescriptor *) 101.38 486.15 T
+97.78 496.02 187.77 496.02 2 L
+N
+97.78 438.42 187.77 474.42 R
+7 X
+V
+0 X
+N
+101.38 442.02 187.77 467.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 101.38 460.55 T
+2 F
+(AttrDescriptor *) 101.38 446.55 T
+97.78 456.42 187.77 456.42 2 L
+N
+97.78 398.82 187.77 434.82 R
+7 X
+V
+0 X
+N
+101.38 402.42 187.77 427.62 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 101.38 420.95 T
+2 F
+(AttrDescriptor *) 101.38 406.95 T
+97.78 416.82 187.77 416.82 2 L
+N
+36.58 208.02 205.78 283.63 R
+7 X
+V
+0 X
+N
+42.03 208.02 200.32 276.43 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 42.03 269.76 T
+2 F
+(_originatingSchema) 42.03 255.76 T
+(_supertypes) 42.03 241.76 T
+(_subtypes) 42.03 227.76 T
+(_explicitAttr) 42.03 213.76 T
+36.58 265.63 205.77 265.63 2 L
+N
+36.58 283.63 205.78 362.82 R
+7 X
+V
+0 X
+N
+42.03 283.63 200.32 355.62 R
+7 X
+V
+1 F
+0 X
+(T) 42.03 348.95 T
+(ypeDescriptor) 47.96 348.95 T
+2 F
+(_name = \322Rectangle\323) 42.03 334.95 T
+(_fundamentalT) 42.03 320.95 T
+(ype = ENTITY_TYPE) 102.43 320.95 T
+(_referentT) 42.03 306.95 T
+(ype = null) 83.53 306.95 T
+(_description = \322Rectangle\323) 42.03 292.95 T
+36.58 344.82 205.77 344.82 2 L
+N
+90.57 542.82 158.98 557.22 R
+N
+94.18 546.42 155.38 553.62 R
+7 X
+V
+0 X
+(EDL null list) 94.18 546.95 T
+90.57 222.42 158.98 236.82 R
+N
+94.18 226.02 155.38 233.22 R
+7 X
+V
+0 X
+(EDL EDLN) 94.18 226.55 T
+90.57 528.42 198.57 542.82 R
+N
+96.26 532.02 192.89 539.22 R
+7 X
+V
+0 X
+(EDL EDLN EDLN etc) 96.26 532.55 T
+97.78 128.82 194.98 222.42 R
+7 X
+V
+0 X
+N
+101.38 211.62 187.77 218.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 101.38 212.15 T
+101.38 172.02 191.37 208.02 R
+7 X
+V
+0 X
+N
+104.98 175.62 191.38 200.82 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 104.98 194.15 T
+2 F
+(AttrDescriptor *) 104.98 180.15 T
+101.38 190.02 191.37 190.02 2 L
+N
+101.38 132.42 191.37 168.42 R
+7 X
+V
+0 X
+N
+104.98 136.02 191.38 161.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 104.98 154.55 T
+2 F
+(AttrDescriptor *) 104.98 140.55 T
+101.38 150.42 191.37 150.42 2 L
+N
+216.57 373.62 349.77 467.22 R
+7 X
+V
+0 X
+N
+222.01 373.62 347.05 460.02 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 222.01 453.35 T
+2 F
+(_name = \322Number_Of_Sides\323) 222.01 439.35 T
+(_domainT) 222.01 425.35 T
+(ype) 262.42 425.35 T
+(_optional = 0) 222.01 411.35 T
+(_derived = 0) 222.01 397.35 T
+(_owner) 222.01 383.35 T
+216.57 449.22 349.76 449.22 2 L
+N
+216.57 474.42 349.77 568.02 R
+7 X
+V
+0 X
+N
+222.01 474.42 347.05 560.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 222.01 554.15 T
+2 F
+(_name = \322Item_Color\323) 222.01 540.15 T
+(_domainT) 222.01 526.15 T
+(ype) 262.42 526.15 T
+(_optional = 1) 222.01 512.15 T
+(_derived = 0) 222.01 498.15 T
+(_owner) 222.01 484.15 T
+216.57 550.02 349.76 550.02 2 L
+N
+371.38 125.22 551.37 204.42 R
+7 X
+V
+0 X
+N
+380.86 125.22 547.7 197.22 R
+7 X
+V
+1 F
+0 X
+(T) 380.86 190.55 T
+(ypeDescriptor) 386.79 190.55 T
+2 F
+(_name = \322REAL\323) 380.86 176.55 T
+(_fundamentalT) 380.86 162.55 T
+(ype = REAL_TYPE) 441.26 162.55 T
+(_referentT) 380.86 148.55 T
+(ype = null) 422.36 148.55 T
+(_description = \322Real\323) 380.86 134.55 T
+371.38 186.42 551.37 186.42 2 L
+N
+371.38 499.62 551.37 578.82 R
+7 X
+V
+0 X
+N
+380.86 499.62 547.7 571.62 R
+7 X
+V
+1 F
+0 X
+(T) 380.86 564.95 T
+(ypeDescriptor) 386.79 564.95 T
+2 F
+(_name = \322STRING\323) 380.86 550.95 T
+(_fundamentalT) 380.86 536.95 T
+(ype = STRING_TYPE) 441.26 536.95 T
+(_referentT) 380.86 522.95 T
+(ype = null) 422.36 522.95 T
+(_description = \322String\323) 380.86 508.95 T
+371.38 560.82 551.37 560.82 2 L
+N
+371.38 589.62 551.37 668.82 R
+7 X
+V
+0 X
+N
+380.85 589.62 547.69 661.62 R
+7 X
+V
+1 F
+0 X
+(T) 380.85 654.95 T
+(ypeDescriptor) 386.78 654.95 T
+2 F
+(_name = \322Label\323) 380.85 640.95 T
+(_fundamentalT) 380.85 626.95 T
+(ype = STRING_TYPE) 441.25 626.95 T
+(_referentT) 380.85 612.95 T
+(ype) 422.35 612.95 T
+(_description = \322STRING\323) 380.85 598.95 T
+371.38 650.82 551.36 650.82 2 L
+N
+371.38 395.22 551.37 488.82 R
+7 X
+V
+0 X
+N
+380.86 398.82 547.7 481.62 R
+7 X
+V
+1 F
+0 X
+(T) 380.86 474.95 T
+(ypeDescriptor) 386.79 474.95 T
+2 F
+(_name = \322Color\323) 380.86 460.95 T
+(_fundamentalT) 380.86 446.95 T
+(ype = ENUM_TYPE) 441.26 446.95 T
+(_referentT) 380.86 432.95 T
+(ype) 422.36 432.95 T
+(_description = \322ENUMERA) 380.86 418.95 T
+(TION of) 493.7 418.95 T
+(\050red, green, blue, yellow) 380.86 410.95 T
+(, orange, white,) 477.95 410.95 T
+(black brown\051\323) 380.86 402.95 T
+371.38 470.82 551.37 470.82 2 L
+N
+371.38 305.22 551.37 384.42 R
+7 X
+V
+0 X
+N
+380.86 305.22 547.7 377.22 R
+7 X
+V
+1 F
+0 X
+(T) 380.86 370.55 T
+(ypeDescriptor) 386.79 370.55 T
+2 F
+(_name = \322INTEGER\323) 380.86 356.55 T
+(_fundamentalT) 380.86 342.55 T
+(ype = INTEGER_TYPE) 441.26 342.55 T
+(_referentT) 380.86 328.55 T
+(ype = null) 422.36 328.55 T
+(_description = \322Integer\323) 380.86 314.55 T
+371.38 366.42 551.37 366.42 2 L
+N
+371.38 215.22 551.37 294.42 R
+7 X
+V
+0 X
+N
+380.86 215.22 547.7 287.22 R
+7 X
+V
+1 F
+0 X
+(T) 380.86 280.55 T
+(ypeDescriptor) 386.79 280.55 T
+2 F
+(_name = \322Length_Measure\323) 380.86 266.55 T
+(_fundamentalT) 380.86 252.55 T
+(ype = REAL_TYPE) 441.26 252.55 T
+(_referentT) 380.86 238.55 T
+(ype) 422.36 238.55 T
+(_description = \322Real\323) 380.86 224.55 T
+371.38 276.42 551.37 276.42 2 L
+N
+216.57 233.22 349.77 326.82 R
+7 X
+V
+0 X
+N
+222.01 233.22 347.05 319.62 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 222.01 312.95 T
+2 F
+(_name = \322Height\323) 222.01 298.95 T
+(_domainT) 222.01 284.95 T
+(ype) 262.42 284.95 T
+(_optional = 0) 222.01 270.95 T
+(_derived = 0) 222.01 256.95 T
+(_owner) 222.01 242.95 T
+216.57 308.82 349.76 308.82 2 L
+N
+216.57 128.82 349.77 222.42 R
+7 X
+V
+0 X
+N
+222.01 128.82 347.05 215.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 222.01 208.55 T
+2 F
+(_name = \322W) 222.01 194.55 T
+(idth\323) 272.79 194.55 T
+(_domainT) 222.01 180.55 T
+(ype) 262.42 180.55 T
+(_optional = 0) 222.01 166.55 T
+(_derived = 0) 222.01 152.55 T
+(_owner) 222.01 138.55 T
+216.57 204.42 349.76 204.42 2 L
+N
+359.84 632.52 371.38 629.22 359.84 625.91 359.84 629.22 4 Y
+V
+281.38 629.22 359.84 629.22 2 L
+1 H
+N
+362.92 486.54 371.37 478.02 359.69 480.77 361.3 483.66 4 Y
+V
+281.38 528.42 361.31 483.65 2 L
+N
+363.18 382.39 371.37 373.62 359.78 376.72 361.48 379.56 4 Y
+V
+281.38 427.62 361.48 379.55 2 L
+N
+504.59 215.58 500 204.5 498.02 216.33 501.3 215.95 4 Y
+V
+443.38 240.42 M
+ 464.59 245.74 499.31 239.78 501.31 215.94 D
+N
+525.2 590.47 522.34 578.82 518.59 590.22 521.9 590.34 4 Y
+V
+443.38 614.82 M
+ 469.33 613.05 515.99 620.85 521.95 590.34 D
+N
+207.98 580.42 215.83 589.5 213.99 577.65 210.98 579.03 4 Y
+V
+173.38 488.82 M
+ 224.45 490.04 201.99 546.79 211 579.02 D
+N
+205.52 480.54 216.57 485.22 209.68 475.4 207.6 477.97 4 Y
+V
+173.38 449.21 M
+ 195.77 441.57 199.09 465.2 207.61 477.96 D
+N
+205.04 412.92 216.57 409.62 205.04 406.31 205.04 409.62 4 Y
+V
+173.38 409.62 205.04 409.62 2 L
+N
+207.6 225.17 217.49 231.94 212.7 220.95 210.15 223.06 4 Y
+V
+176.98 182.82 M
+ 210 176.41 202.76 205.82 210.16 223.02 D
+N
+205.04 146.53 216.57 143.22 205.04 139.91 205.04 143.22 4 Y
+V
+176.98 143.22 205.04 143.22 2 L
+N
+58.37 374.21 54.58 362.82 51.76 374.49 55.06 374.35 4 Y
+V
+126.57 532.02 M
+ 56.74 512.28 57.26 433.8 55.07 374.34 D
+N
+43.78 502.85 48.13 514.02 50.36 502.24 47.07 502.54 4 Y
+V
+148.61 244.02 M
+ 169.33 272.82 185.74 370.02 143.28 371.71 D
+ 64.93 374.85 43.03 440.86 47.08 502.52 D
+N
+43.78 107.22 162.58 118.02 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 43.78 111.35 T
+2 F
+( for Square) 115.99 111.35 T
+97.78 236.82 166.18 251.22 R
+0.5 H
+N
+101.38 240.42 162.57 247.62 R
+7 X
+V
+0 X
+(EDL EDLN) 101.38 240.95 T
+359.84 290.52 371.38 287.22 359.84 283.91 359.84 287.22 4 Y
+V
+281.38 287.22 359.84 287.22 2 L
+1 H
+N
+359.78 233.73 371.37 236.83 363.18 228.05 361.48 230.89 4 Y
+V
+281.38 182.82 361.48 230.88 2 L
+N
+55.84 133.89 54.17 122.01 49.29 132.98 52.57 133.44 4 Y
+V
+126.57 226.02 M
+ 80.44 218.7 49.03 179.13 52.57 133.42 D
+N
+205.49 621.62 202.17 632.82 210.92 625.08 208.21 623.35 4 Y
+V
+256.17 589.59 M
+ 265.5 587.13 269.11 602.92 260.83 604.91 D
+ 243.01 609.19 211.38 600.22 208.21 623.35 D
+ 208.21 623.35 208.21 623.35 208.21 623.35 D
+0.5 H
+N
+208.33 539.73 202.17 550.02 212.85 544.55 210.59 542.14 4 Y
+V
+252.57 384.42 M
+ 270.08 391.37 257.3 423 240.83 426.31 D
+ 186.84 437.16 227.47 513.43 210.61 542.12 D
+N
+205.38 557.29 201.66 568.67 210.84 560.98 208.11 559.14 4 Y
+V
+252.57 485.22 M
+ 268.61 489.82 264.81 518.61 250.83 520.36 D
+ 228.19 523.2 218.53 542.47 208.13 559.12 D
+N
+0 0 612 792 C
+226.8 702 435.6 720 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 18 Q
+0 X
+(Expr) 226.8 708 T
+(ess Dictionary Classes) 265.48 708 T
+FMENDPAGE
+%%EndPage: "4" 4
+%%Page: "5" 5
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 750.02 558 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+72 730.15 558 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 207 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 235.01 736.18 T
+72 726.98 558 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+72 74.02 558 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+72 55.01 558 66.96 R
+7 X
+V
+0 10 Q
+0 X
+-2.78 (5) 552.44 60.29 P
+72.4 85.97 558.4 684 R
+7 X
+V
+44.17 90.8 586.62 674 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+414.97 540.8 558.97 602 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 H
+2 Z
+0 X
+N
+51.38 512 220.57 587.61 R
+7 X
+V
+0.5 H
+0 X
+N
+56.83 512 215.11 580.41 R
+7 X
+V
+1 10 Q
+0 X
+(EntityDescriptor) 56.83 573.74 T
+2 F
+(_originatingSchema) 56.83 559.74 T
+(_supertypes) 56.83 545.74 T
+(_subtypes) 56.83 531.74 T
+(_explicitAttr) 56.83 517.74 T
+51.38 569.61 220.57 569.61 2 L
+N
+51.38 587.61 220.57 666.8 R
+7 X
+V
+0 X
+N
+56.83 587.61 215.11 659.6 R
+7 X
+V
+1 F
+0 X
+(T) 56.83 652.93 T
+(ypeDescriptor) 62.76 652.93 T
+2 F
+(_name = \322shape\323) 56.83 638.93 T
+(_fundamentalT) 56.83 624.93 T
+(ype = ENTITY_TYPE) 117.23 624.93 T
+(_referentT) 56.83 610.93 T
+(ype = null) 98.33 610.93 T
+(_description = \322shape\323) 56.83 596.93 T
+51.38 648.8 220.57 648.8 2 L
+N
+224.18 476 357.37 508.4 R
+7 X
+V
+0 X
+N
+229.61 476 354.65 501.2 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 229.61 494.53 T
+2 F
+(_name = \322Item_Name\323) 229.61 480.53 T
+224.18 490.4 357.36 490.4 2 L
+N
+112.57 393.2 209.77 526.4 R
+7 X
+V
+0 X
+N
+116.18 515.6 202.57 522.8 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 116.18 516.13 T
+116.18 476 206.17 512 R
+7 X
+V
+0 X
+N
+119.78 479.6 206.17 504.8 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 119.78 498.13 T
+2 F
+(AttrDescriptor *) 119.78 484.13 T
+116.18 494 206.17 494 2 L
+N
+116.18 436.4 206.17 472.4 R
+7 X
+V
+0 X
+N
+119.78 440 206.17 465.2 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 119.78 458.53 T
+2 F
+(AttrDescriptor *) 119.78 444.53 T
+116.18 454.4 206.17 454.4 2 L
+N
+116.18 396.8 206.17 432.8 R
+7 X
+V
+0 X
+N
+119.78 400.4 206.17 425.6 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 119.78 418.93 T
+2 F
+(AttrDescriptor *) 119.78 404.93 T
+116.18 414.8 206.17 414.8 2 L
+N
+108.97 540.8 177.38 555.2 R
+N
+112.57 544.4 173.77 551.6 R
+7 X
+V
+0 X
+(EDL null list) 112.57 544.93 T
+108.97 526.4 216.98 540.8 R
+N
+114.66 530 211.29 537.2 R
+7 X
+V
+0 X
+(EDL EDLN EDLN etc) 114.66 530.53 T
+224.18 396.8 357.37 429.2 R
+7 X
+V
+0 X
+N
+229.61 396.8 354.65 422 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 229.61 415.33 T
+2 F
+(_name = \322Number_Of_Sides\323) 229.61 401.33 T
+224.18 411.2 357.36 411.2 2 L
+N
+224.18 436.4 357.37 468.8 R
+7 X
+V
+0 X
+N
+229.61 436.4 354.65 461.6 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 229.61 454.93 T
+2 F
+(_name = \322Item_Color\323) 229.61 440.93 T
+224.18 450.8 357.36 450.8 2 L
+N
+227.77 162.8 360.97 195.2 R
+7 X
+V
+0 X
+N
+233.21 162.8 358.25 188 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 233.21 181.34 T
+2 F
+(_name = \322Height\323) 233.21 167.34 T
+227.77 177.2 360.96 177.2 2 L
+N
+227.77 119.6 360.97 152 R
+7 X
+V
+0 X
+N
+233.21 119.6 358.25 144.8 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 233.21 138.14 T
+2 F
+(_name = \322W) 233.21 124.14 T
+(idth\323) 283.99 124.14 T
+227.77 134 360.96 134 2 L
+N
+414.98 602 558.97 663.2 R
+7 X
+V
+0 X
+N
+417.76 602 555.38 656 R
+7 X
+V
+1 F
+0 X
+(STEPentity) 417.76 649.33 T
+2 F
+(attributes) 417.76 635.33 T
+(STEP\336le_id = 1) 417.76 621.33 T
+(EntityDescriptor) 417.76 607.33 T
+414.97 645.2 558.97 645.2 2 L
+N
+378.98 476 558.97 526.4 R
+7 X
+V
+0 X
+N
+383.47 479.6 551.85 517.93 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 383.47 511.26 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 383.47 497.26 T
+(union { class SdaiString *S; } ptr;) 383.47 483.26 T
+378.98 508.4 558.97 508.4 2 L
+N
+378.98 346.4 558.97 396.8 R
+7 X
+V
+0 X
+N
+383.48 350 551.86 388.33 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 383.48 381.66 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 383.48 367.66 T
+(union { SdaiInteger *i; } ptr;) 383.48 353.66 T
+378.98 378.8 558.97 378.8 2 L
+N
+378.98 411.2 558.97 461.6 R
+7 X
+V
+0 X
+N
+383.48 414.8 551.86 453.13 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 383.48 446.46 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 383.48 432.46 T
+-0.05 (union { class STEPenumeration *e; } ptr;) 383.48 418.46 P
+378.98 443.6 558.97 443.6 2 L
+N
+418.57 544.4 555.37 598.4 R
+7 X
+V
+1 F
+0 X
+(Shape) 418.57 591.73 T
+2 F
+(SdaiString _item_name;) 418.57 577.73 T
+(SdaiColor _item_color;) 418.57 563.73 T
+(SdaiInteger _number_of_sides;) 418.57 549.73 T
+414.97 587.6 558.97 587.6 2 L
+1 H
+N
+367.02 491.89 355.83 496.17 367.58 498.47 367.3 495.18 4 Y
+V
+382.58 501.2 M
+ 377.81 499.33 372.61 496.41 367.32 495.17 D
+N
+361.93 447.54 355.83 457.83 366.46 452.34 364.2 449.94 4 Y
+V
+382.58 436.4 M
+ 372.01 434.07 368.67 442.78 364.22 449.92 D
+N
+361.58 389.2 357.37 400.4 366.88 393.14 364.23 391.17 4 Y
+V
+382.58 368 M
+ 365.33 370.41 367.2 381.8 364.25 391.16 D
+N
+560.08 550.19 548.17 551.6 559.01 556.72 559.54 553.46 4 Y
+V
+472.57 357.2 M
+ 504.99 379.17 563.53 342.88 570.71 387.83 D
+ 578.86 438.86 577.55 479.1 580.57 530 D
+ 581.5 545.53 570.37 552.73 559.57 553.45 D
+N
+527.66 565.16 515.83 567 526.84 571.71 527.25 568.44 4 Y
+V
+526.57 422 M
+ 544.15 434.02 571.83 430.4 568.96 464.5 D
+ 566.17 497.6 589.45 550.43 555 565.34 D
+ 545.8 569.33 536.5 569.36 527.27 568.43 D
+N
+524.53 576.85 513.33 581.17 525.12 583.44 524.82 580.15 4 Y
+V
+497.77 486.8 M
+ 515.08 505.24 550.21 479.37 554.6 506.17 D
+ 558.82 531.93 591.94 561.19 569.17 573.79 D
+ 554.48 581.92 539.58 579.78 524.84 580.14 D
+N
+234.98 519.2 332.17 652.4 R
+7 X
+V
+0.5 H
+0 X
+N
+238.57 641.6 324.97 648.8 R
+7 X
+V
+1 F
+0 X
+(STEPattrList) 238.57 642.13 T
+238.57 602 328.57 638 R
+7 X
+V
+0 X
+N
+242.18 605.6 328.57 630.8 R
+7 X
+V
+0 X
+(AttrListNode) 242.18 624.13 T
+2 F
+(STEPattribute *attr;) 242.18 610.13 T
+238.57 620 328.57 620 2 L
+N
+238.57 562.4 328.57 598.4 R
+7 X
+V
+0 X
+N
+242.18 566 328.57 591.2 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 242.18 584.53 T
+2 F
+(STEPattribute *attr;) 242.18 570.53 T
+238.57 580.4 328.57 580.4 2 L
+N
+238.57 522.8 328.57 558.8 R
+7 X
+V
+0 X
+N
+242.18 526.4 328.57 551.6 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 242.18 544.93 T
+2 F
+(STEPattribute *attr;) 242.18 530.93 T
+238.57 540.8 328.57 540.8 2 L
+N
+J
+418.57 638 332.17 645.2 2 L
+J
+418.57 638 415.09 638.29 2 L
+1 H
+N
+[7.245 7.245] 7.245 I
+415.09 638.29 335.66 644.91 2 L
+N
+J
+335.66 644.91 332.17 645.2 2 L
+N
+J
+232.17 657.3 220.57 660.34 232.02 663.9 232.09 660.6 4 Y
+V
+414.97 609.19 M
+ 371.18 600.17 368.93 656.28 334.34 661.02 D
+ 300.2 665.71 266.03 661.74 232.1 660.6 D
+N
+374.17 407.21 381.66 397.84 370.34 401.81 372.25 404.51 4 Y
+V
+324.98 533.6 M
+ 336.25 485.57 332.2 436.52 372.27 404.5 D
+N
+369.74 469.28 378.97 461.6 367.08 463.22 368.41 466.25 4 Y
+V
+324.98 573.2 M
+ 354.32 544.09 329.27 488.55 368.43 466.24 D
+N
+375.28 532.34 382.57 522.8 371.34 527.03 373.31 529.69 4 Y
+V
+324.98 612.8 M
+ 346.28 588.73 348.69 551.8 373.31 529.69 D
+N
+215.77 497.46 227.77 497.6 217.68 491.12 216.73 494.29 4 Y
+V
+191.77 486.8 216.73 494.29 2 L
+N
+215.77 457.86 227.77 458 217.68 451.52 216.73 454.69 4 Y
+V
+191.77 447.2 216.73 454.69 2 L
+N
+215.8 421.17 227.77 422 218.06 414.95 216.93 418.06 4 Y
+V
+188.18 407.6 216.93 418.06 2 L
+N
+54.05 101.6 180.05 119.6 R
+7 X
+V
+0 X
+N
+50.45 206 219.65 281.61 R
+7 X
+V
+0.5 H
+0 X
+N
+55.91 206 214.19 274.41 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 55.91 267.74 T
+2 F
+(_originatingSchema) 55.91 253.74 T
+(_supertypes) 55.91 239.74 T
+(_subtypes) 55.91 225.74 T
+(_explicitAttr) 55.91 211.74 T
+50.45 263.61 219.65 263.61 2 L
+N
+50.45 281.61 219.65 360.8 R
+7 X
+V
+0 X
+N
+55.91 281.61 214.19 353.6 R
+7 X
+V
+1 F
+0 X
+(T) 55.91 346.93 T
+(ypeDescriptor) 61.84 346.93 T
+2 F
+(_name = \322Rectangle\323) 55.91 332.93 T
+(_fundamentalT) 55.91 318.93 T
+(ype = ENTITY_TYPE) 116.31 318.93 T
+(_referentT) 55.91 304.93 T
+(ype = null) 97.41 304.93 T
+(_description = \322Rectangle\323) 55.91 290.93 T
+50.45 342.8 219.65 342.8 2 L
+N
+104.45 220.4 172.85 234.8 R
+N
+108.05 224 169.25 231.2 R
+7 X
+V
+0 X
+(EDL EDLN) 108.05 224.53 T
+111.65 126.8 208.85 220.4 R
+7 X
+V
+0 X
+N
+115.25 209.6 201.65 216.8 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 115.25 210.14 T
+115.25 170 205.25 206 R
+7 X
+V
+0 X
+N
+118.85 173.6 205.25 198.8 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 118.85 192.14 T
+2 F
+(AttrDescriptor *) 118.85 178.14 T
+115.25 188 205.25 188 2 L
+N
+115.25 130.4 205.25 166.4 R
+7 X
+V
+0 X
+N
+118.85 134 205.25 159.2 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 118.85 152.53 T
+2 F
+(AttrDescriptor *) 118.85 138.53 T
+115.25 148.4 205.25 148.4 2 L
+N
+216.24 144.51 227.77 141.2 216.24 137.89 216.24 141.2 4 Y
+V
+190.85 141.2 216.24 141.2 2 L
+1 H
+N
+72.25 372.19 68.45 360.81 65.64 372.47 68.94 372.33 4 Y
+V
+140.45 530 M
+ 70.61 510.26 71.14 431.79 68.94 372.32 D
+N
+57.66 500.83 62.01 512 64.24 500.22 60.95 500.52 4 Y
+V
+162.48 242 M
+ 183.2 270.8 199.62 368 157.16 369.7 D
+ 78.81 372.83 56.9 438.85 60.95 500.5 D
+N
+57.65 105.2 176.45 116 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 57.65 109.34 T
+2 F
+( for Square) 129.86 109.34 T
+111.65 234.8 180.05 249.2 R
+0.5 H
+N
+115.25 238.4 176.45 245.6 R
+7 X
+V
+0 X
+(EDL EDLN) 115.25 238.93 T
+69.72 131.86 68.04 119.98 63.17 130.95 66.44 131.41 4 Y
+V
+140.45 224 M
+ 94.32 216.68 62.9 177.11 66.44 131.4 D
+1 H
+N
+216.24 184.11 227.77 180.8 216.24 177.49 216.24 180.8 4 Y
+V
+188.18 180.8 216.24 180.8 2 L
+N
+0 0 612 792 C
+144 702 529.2 720 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 18 Q
+0 X
+(Expr) 144 708 T
+(ess Dictionary and Entity Instance Classes) 182.68 708 T
+FMENDPAGE
+%%EndPage: "5" 5
+%%Page: "6" 6
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+54 750.02 540 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+54 730.15 540 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 189 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 217.01 736.18 T
+54 726.98 540 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+54 74.02 540 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+54 55.01 540 66.96 R
+7 X
+V
+0 10 Q
+0 X
+(6) 54 60.29 T
+54 87.98 540 686.02 R
+7 X
+V
+25.78 92.82 568.22 676.02 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+32.98 514.02 202.18 589.63 R
+7 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+2 Z
+0 X
+N
+38.43 514.02 196.71 582.43 R
+7 X
+V
+1 10 Q
+0 X
+(EntityDescriptor) 38.43 575.76 T
+2 F
+(_originatingSchema) 38.43 561.76 T
+(_supertypes) 38.43 547.76 T
+(_subtypes) 38.43 533.76 T
+(_explicitAttr) 38.43 519.76 T
+32.98 571.63 202.18 571.63 2 L
+N
+32.98 589.63 202.18 668.82 R
+7 X
+V
+0 X
+N
+38.43 589.63 196.71 661.62 R
+7 X
+V
+1 F
+0 X
+(T) 38.43 654.95 T
+(ypeDescriptor) 44.36 654.95 T
+2 F
+(_name = \322shape\323) 38.43 640.95 T
+(_fundamentalT) 38.43 626.95 T
+(ype = ENTITY_TYPE) 98.83 626.95 T
+(_referentT) 38.43 612.95 T
+(ype = null) 79.93 612.95 T
+(_description = \322shape\323) 38.43 598.95 T
+32.98 650.82 202.18 650.82 2 L
+N
+205.78 442.02 338.98 474.42 R
+7 X
+V
+0 X
+N
+211.21 442.02 336.25 467.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 211.21 460.55 T
+2 F
+(_name = \322Item_Name\323) 211.21 446.55 T
+205.77 456.42 338.96 456.42 2 L
+N
+94.18 395.22 191.38 528.42 R
+7 X
+V
+0 X
+N
+97.78 517.62 184.17 524.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 97.78 518.15 T
+97.78 478.02 187.77 514.02 R
+7 X
+V
+0 X
+N
+101.38 481.62 187.77 506.82 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 101.38 500.15 T
+2 F
+(AttrDescriptor *) 101.38 486.15 T
+97.78 496.02 187.77 496.02 2 L
+N
+97.78 438.42 187.77 474.42 R
+7 X
+V
+0 X
+N
+101.38 442.02 187.77 467.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 101.38 460.55 T
+2 F
+(AttrDescriptor *) 101.38 446.55 T
+97.78 456.42 187.77 456.42 2 L
+N
+97.78 398.82 187.77 434.82 R
+7 X
+V
+0 X
+N
+101.38 402.42 187.77 427.62 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 101.38 420.95 T
+2 F
+(AttrDescriptor *) 101.38 406.95 T
+97.78 416.82 187.77 416.82 2 L
+N
+90.57 542.82 158.98 557.22 R
+N
+94.18 546.42 155.38 553.62 R
+7 X
+V
+0 X
+(EDL null list) 94.18 546.95 T
+90.57 528.42 198.57 542.82 R
+N
+96.26 532.02 192.89 539.22 R
+7 X
+V
+0 X
+(EDL EDLN EDLN etc) 96.26 532.55 T
+205.78 362.82 338.98 395.22 R
+7 X
+V
+0 X
+N
+211.21 362.82 336.25 388.02 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 211.21 381.35 T
+2 F
+(_name = \322Number_Of_Sides\323) 211.21 367.35 T
+205.77 377.22 338.96 377.22 2 L
+N
+205.78 402.42 338.98 434.82 R
+7 X
+V
+0 X
+N
+211.21 402.42 336.25 427.62 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 211.21 420.95 T
+2 F
+(_name = \322Item_Color\323) 211.21 406.95 T
+205.77 416.82 338.96 416.82 2 L
+N
+209.38 164.82 342.58 197.22 R
+7 X
+V
+0 X
+N
+214.81 164.82 339.85 190.02 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 214.81 183.35 T
+2 F
+(_name = \322Height\323) 214.81 169.35 T
+209.38 179.22 342.56 179.22 2 L
+N
+209.38 121.62 342.58 154.02 R
+7 X
+V
+0 X
+N
+214.81 121.62 339.85 146.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 214.81 140.15 T
+2 F
+(_name = \322W) 214.81 126.15 T
+(idth\323) 265.59 126.15 T
+209.38 136.02 342.56 136.02 2 L
+N
+360.58 442.02 540.57 492.42 R
+7 X
+V
+0 X
+N
+365.08 445.62 533.45 483.95 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 365.08 477.28 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 365.08 463.28 T
+(union { class SdaiString *S; } ptr;) 365.08 449.28 T
+360.58 474.42 540.57 474.42 2 L
+N
+360.58 314.22 540.57 364.62 R
+7 X
+V
+0 X
+N
+365.08 317.82 533.46 356.15 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 365.08 349.48 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 365.08 335.48 T
+(union { SdaiInteger *i; } ptr;) 365.08 321.48 T
+360.58 346.62 540.57 346.62 2 L
+N
+360.58 378.12 540.57 428.52 R
+7 X
+V
+0 X
+N
+365.08 381.72 533.46 420.05 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 365.08 413.38 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 365.08 399.38 T
+-0.05 (union { class STEPenumeration *e; } ptr;) 365.08 385.38 P
+360.58 410.52 540.57 410.52 2 L
+N
+348.62 457.91 337.43 462.18 349.18 464.48 348.9 461.2 4 Y
+V
+364.17 467.22 M
+ 359.41 465.35 354.21 462.42 348.92 461.19 D
+1 H
+N
+343.53 413.56 337.43 423.85 348.06 418.36 345.79 415.96 4 Y
+V
+364.17 402.42 M
+ 353.61 400.09 350.27 408.8 345.82 415.94 D
+N
+343.18 355.23 338.96 366.43 348.48 359.16 345.83 357.19 4 Y
+V
+364.17 334.02 M
+ 346.93 336.43 348.8 347.82 345.85 357.17 D
+N
+216.57 524.82 313.77 652.28 R
+7 X
+V
+0.5 H
+0 X
+N
+223.64 641.48 310.04 648.68 R
+7 X
+V
+1 F
+0 X
+(STEPattrList) 223.64 642.02 T
+219.91 601.88 309.91 637.88 R
+7 X
+V
+0 X
+N
+223.51 605.48 309.91 630.68 R
+7 X
+V
+0 X
+(AttrListNode) 223.51 624.02 T
+2 F
+(STEPattribute *attr;) 223.51 610.02 T
+219.91 619.88 309.91 619.88 2 L
+N
+219.91 583.68 309.91 598.09 R
+7 X
+V
+0 X
+N
+J
+400.17 640.02 313.77 647.22 2 L
+J
+400.17 640.02 396.69 640.31 2 L
+1 H
+N
+[7.245 7.245] 7.245 I
+396.69 640.31 317.26 646.92 2 L
+N
+J
+317.26 646.92 313.77 647.22 2 L
+N
+J
+35.65 103.62 161.65 121.62 R
+7 X
+V
+0 X
+N
+32.05 208.02 201.25 283.63 R
+7 X
+V
+0.5 H
+0 X
+N
+37.51 208.02 195.79 276.43 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 37.51 269.76 T
+2 F
+(_originatingSchema) 37.51 255.76 T
+(_supertypes) 37.51 241.76 T
+(_subtypes) 37.51 227.76 T
+(_explicitAttr) 37.51 213.76 T
+32.05 265.63 201.25 265.63 2 L
+N
+32.05 283.63 201.25 362.82 R
+7 X
+V
+0 X
+N
+37.51 283.63 195.79 355.62 R
+7 X
+V
+1 F
+0 X
+(T) 37.51 348.95 T
+(ypeDescriptor) 43.44 348.95 T
+2 F
+(_name = \322Rectangle\323) 37.51 334.95 T
+(_fundamentalT) 37.51 320.95 T
+(ype = ENTITY_TYPE) 97.91 320.95 T
+(_referentT) 37.51 306.95 T
+(ype = null) 79.01 306.95 T
+(_description = \322Rectangle\323) 37.51 292.95 T
+32.05 344.82 201.25 344.82 2 L
+N
+86.05 222.42 154.45 236.82 R
+N
+89.65 226.02 150.85 233.22 R
+7 X
+V
+0 X
+(EDL EDLN) 89.65 226.55 T
+93.25 128.82 190.45 222.42 R
+7 X
+V
+0 X
+N
+96.85 211.62 183.25 218.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 96.85 212.15 T
+96.85 172.02 186.85 208.02 R
+7 X
+V
+0 X
+N
+100.45 175.62 186.85 200.82 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 100.45 194.15 T
+2 F
+(AttrDescriptor *) 100.45 180.15 T
+96.85 190.02 186.85 190.02 2 L
+N
+96.85 132.42 186.85 168.42 R
+7 X
+V
+0 X
+N
+100.45 136.02 186.85 161.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 100.45 154.55 T
+2 F
+(AttrDescriptor *) 100.45 140.55 T
+96.85 150.42 186.85 150.42 2 L
+N
+197.84 146.53 209.38 143.22 197.84 139.91 197.84 143.22 4 Y
+V
+172.45 143.22 197.84 143.22 2 L
+1 H
+N
+53.85 374.21 50.05 362.82 47.24 374.49 50.54 374.35 4 Y
+V
+122.05 532.02 M
+ 52.21 512.28 52.74 433.8 50.54 374.34 D
+N
+39.26 502.84 43.61 514.02 45.84 502.24 42.55 502.54 4 Y
+V
+144.08 244.02 M
+ 164.8 272.82 181.22 370.02 138.76 371.71 D
+ 60.41 374.85 38.5 440.86 42.55 502.52 D
+N
+39.25 107.22 158.05 118.02 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 39.25 111.35 T
+2 F
+( for Square) 111.46 111.35 T
+93.25 236.82 161.65 251.22 R
+0.5 H
+N
+96.85 240.42 158.05 247.62 R
+7 X
+V
+0 X
+(EDL EDLN) 96.85 240.95 T
+51.32 133.88 49.64 122 44.77 132.96 48.04 133.42 4 Y
+V
+122.05 226.02 M
+ 75.92 218.7 44.5 179.13 48.04 133.42 D
+1 H
+N
+197.84 186.12 209.38 182.82 197.84 179.51 197.84 182.82 4 Y
+V
+169.77 182.82 197.84 182.82 2 L
+N
+360.58 250.32 540.57 300.72 R
+7 X
+V
+0.5 H
+0 X
+N
+364.99 253.92 533.37 292.25 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 364.99 285.58 T
+2 F
+(const AttrDescriptor * [AttrDescriptor;) 364.99 271.58 T
+(union { SdaiReal *r; } ptr;) 364.99 257.58 T
+360.58 282.72 540.57 282.72 2 L
+N
+400.17 503.22 536.97 600.42 R
+7 X
+V
+1 F
+0 X
+(Shape) 400.17 593.75 T
+2 F
+(SdaiString _item_name;) 400.17 579.75 T
+(SdaiColor _item_color;) 400.17 565.75 T
+(SdaiInteger _number_of_sides;) 400.17 551.75 T
+1 F
+(Rectangle) 400.17 537.75 T
+2 F
+(SdaiReal _height;) 400.17 523.75 T
+(SdaiReal _width;) 400.17 509.75 T
+396.58 604.02 540.58 665.22 R
+7 X
+V
+0 X
+N
+399.36 604.02 536.97 658.02 R
+7 X
+V
+1 F
+0 X
+(STEPentity) 399.36 651.35 T
+2 F
+(attributes) 399.36 637.35 T
+(STEP\336le_id = 1) 399.36 623.35 T
+(EntityDescriptor) 399.36 609.35 T
+396.58 647.22 540.57 647.22 2 L
+N
+396.58 499.62 540.58 604.02 R
+1 H
+N
+396.58 589.62 540.57 589.62 2 L
+N
+396.58 546.42 540.57 546.42 2 L
+N
+396.58 534.52 540.57 534.52 2 L
+N
+222.14 585.35 285.54 596.15 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 222.14 589.48 T
+289.47 586.03 306.13 596.03 R
+7 X
+V
+2 F
+0 X
+(attr) 289.47 589.37 T
+285.3 597.7 285.3 583.53 2 L
+N
+219.91 564.85 309.91 579.25 R
+7 X
+V
+0.5 H
+0 X
+N
+222.14 566.52 285.54 577.32 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 222.14 570.65 T
+289.47 567.2 306.13 577.2 R
+7 X
+V
+2 F
+0 X
+(attr) 289.47 570.53 T
+285.3 578.87 285.3 564.7 2 L
+1 H
+N
+219.91 528.52 309.91 542.92 R
+7 X
+V
+0.5 H
+0 X
+N
+222.14 530.18 285.54 540.98 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 222.14 534.32 T
+289.47 530.87 306.13 540.87 R
+7 X
+V
+2 F
+0 X
+(attr) 289.47 534.2 T
+285.3 542.53 285.3 528.37 2 L
+1 H
+N
+219.91 546.35 309.91 560.75 R
+7 X
+V
+0.5 H
+0 X
+N
+222.14 548.02 285.54 558.82 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 222.14 552.15 T
+289.47 548.7 306.13 558.7 R
+7 X
+V
+2 F
+0 X
+(attr) 289.47 552.03 T
+285.3 560.37 285.3 546.2 2 L
+1 H
+N
+360.58 186.42 540.57 236.82 R
+7 X
+V
+0.5 H
+0 X
+N
+364.99 190.02 533.37 228.35 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 364.99 221.68 T
+2 F
+(const AttrDescriptor * [AttrDescriptor;) 364.99 207.68 T
+(union { SdaiReal *r; } ptr;) 364.99 193.68 T
+360.58 218.82 540.57 218.82 2 L
+N
+198.7 473.31 205.77 463.62 194.64 468.09 196.67 470.7 4 Y
+V
+173.38 488.82 196.67 470.7 2 L
+1 H
+N
+198.7 433.71 205.77 424.02 194.64 428.49 196.67 431.1 4 Y
+V
+173.38 449.22 196.67 431.1 2 L
+N
+198.7 394.11 205.77 384.42 194.64 388.89 196.67 391.5 4 Y
+V
+173.38 409.62 196.67 391.5 2 L
+N
+332.55 208.4 328.17 197.22 325.96 209.02 329.25 208.71 4 Y
+V
+364.17 272.82 M
+ 338.41 265.2 332.04 233.95 329.28 208.69 D
+N
+353.61 148.43 341.67 149.5 352.36 154.92 352.98 151.68 4 Y
+V
+364.17 211.62 M
+ 332.57 203.59 367.78 173.33 358.46 156.16 D
+ 357.24 153.91 355.29 152.56 352.98 151.68 D
+N
+482.5 509.32 470.82 512.02 482.16 515.92 482.33 512.61 4 Y
+V
+450.58 193.62 M
+ 481.5 224.49 526.79 187.59 540.57 215.02 D
+ 560.24 254.15 567.53 286.54 562.17 328.92 D
+ 554.97 385.87 577.47 478.16 533.37 503.33 D
+ 513.4 514.73 500.02 513.72 482.36 512.61 D
+N
+487.34 521.83 475.77 524.82 487.17 528.41 487.26 525.12 4 Y
+V
+450.58 258.42 M
+ 476.41 287.88 524.51 245.16 533.93 274.5 D
+ 558.11 349.77 550.73 428.3 543.55 504.5 D
+ 541.15 529.99 511.24 526.39 487.29 525.11 D
+N
+385.09 587.36 395.83 582 383.88 580.86 384.49 584.11 4 Y
+V
+479.37 452.82 M
+ 464.98 460.02 457.77 478.02 439.17 480.51 D
+ 401.64 485.53 356.63 510.69 356.67 554.5 D
+ 356.68 571.83 369.45 583.91 384.49 584.11 D
+N
+384.72 569.95 396.57 568.02 385.5 563.38 385.11 566.67 4 Y
+V
+508.17 388.02 M
+ 526.32 412.64 494.31 434.99 470.83 433.93 D
+ 414.37 431.37 373.48 487.33 366.92 537 D
+ 364.95 551.89 372.1 562.93 385.14 566.66 D
+N
+388.1 551.51 399.17 556.17 392.25 546.36 390.18 548.94 4 Y
+V
+457.77 323.22 M
+ 470.95 367.82 438.43 374.24 407.38 395.22 D
+ 373.81 417.89 359.86 480.78 382.17 524.82 D
+ 386.26 532.88 385.93 542.12 390.18 548.92 D
+N
+355.22 504.28 360.82 493.67 350.45 499.7 352.83 501.99 4 Y
+V
+306.58 614.82 M
+ 347.99 591.58 327.23 535.46 352.84 502 D
+N
+350.6 430.7 360.57 424.02 348.58 424.4 349.58 427.55 4 Y
+V
+306.58 589.62 M
+ 348.25 576.34 324.58 517.62 328.17 485.22 D
+ 330.7 462.51 331.04 437.28 349.61 427.53 D
+N
+356.22 374.01 360.57 362.83 350.95 370.01 353.58 372.01 4 Y
+V
+310.17 571.62 M
+ 338.66 526.97 309.77 467.25 324.28 418 D
+ 329.72 399.55 342.41 385.94 353.6 371.99 D
+N
+354.79 311.82 360 301.01 349.85 307.41 352.32 309.61 4 Y
+V
+306.58 553.62 M
+ 311.94 498.72 305 441.78 321.53 387 D
+ 329.39 360.94 335.67 331.23 352.34 309.6 D
+N
+359.94 245.61 363 234 354.26 242.22 357.1 243.91 4 Y
+V
+295.77 532.02 M
+ 313.77 438.42 288.58 330.42 353.34 251 D
+ 354.83 249.16 355.92 246.62 357.11 243.9 D
+N
+0 0 612 792 C
+144 702 529.2 720 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 18 Q
+0 X
+(Expr) 144 708 T
+(ess Dictionary and Entity Instance Classes) 182.68 708 T
+FMENDPAGE
+%%EndPage: "6" 6
+%%Page: "7" 7
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 750.02 558 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+72 730.15 558 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 207 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 235.01 736.18 T
+72 726.98 558 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+72 74.02 558 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+72 55.01 558 66.96 R
+7 X
+V
+0 10 Q
+0 X
+-2.78 (7) 552.44 60.29 P
+72.4 85.97 558.4 684 R
+7 X
+V
+72.4 668.98 558.4 672 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+207.4 670.49 558.4 670.49 2 L
+0.25 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+72.4 670.49 198.4 670.49 2 L
+0 Z
+N
+0 0 612 792 C
+0 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(Classes for STEPattribute Instance Data V) 207.4 676 T
+(alues) 446.81 676 T
+2 10 Q
+(STEPentity) 207.4 652.31 T
+(STEPaggregate, STEPnode) 207.4 634.31 T
+(STEPenumeration) 207.4 616.31 T
+(SdaiSelect) 207.4 598.31 T
+(SdaiString) 207.4 580.31 T
+(SdaiBinary) 207.4 562.31 T
+(SCLunde\336ned) 207.4 544.31 T
+72.4 500.95 558.4 503.98 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+207.4 502.46 558.4 502.46 2 L
+0.25 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+72.4 502.46 198.4 502.46 2 L
+0 Z
+N
+0 0 612 792 C
+0 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(V) 207.4 507.98 T
+(irtual Functions for the above classes) 215.19 507.98 T
+2 10 Q
+(STEPread\050\051 - read Exchange File format) 207.4 484.29 T
+(STEPwrite\050\051 - write Exchange File format) 207.4 466.29 T
+(StrT) 207.4 448.29 T
+(oV) 224.48 448.29 T
+(al\050\051 - read user interface format) 235.59 448.29 T
+(asStr\050\051 - write user interface format) 207.4 430.29 T
+(V) 207.4 412.29 T
+(alidate functions) 213.51 412.29 T
+FMENDPAGE
+%%EndPage: "7" 7
+%%Page: "8" 8
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+54 750.02 540 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+54 730.15 540 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 189 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 217.01 736.18 T
+54 726.98 540 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+54 74.02 540 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+54 55.01 540 66.96 R
+7 X
+V
+0 10 Q
+0 X
+(8) 54 60.29 T
+54 87.98 540 686.02 R
+7 X
+V
+16.49 102.82 577.51 686.02 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+28.39 203.62 207.29 279.22 R
+7 X
+0 0 0 1 0 0 0 K
+V
+0.5 H
+2 Z
+0 X
+N
+30.89 203.62 203.61 275.62 R
+7 X
+V
+1 10 Q
+0 X
+(T) 30.89 268.95 T
+(ypeDescriptor) 36.82 268.95 T
+2 F
+(_name = null) 30.89 254.95 T
+-0.25 (_fundamentalT) 30.89 240.95 P
+-0.25 (ype=AGGREGA) 91.29 240.95 P
+-0.25 (TE_TYPE) 159.14 240.95 P
+(_referentT) 30.89 226.95 T
+(ype) 72.39 226.95 T
+(_description = \322SET [1:5} OF Color\323) 30.89 212.95 T
+41.69 286.42 174.89 380.02 R
+7 X
+V
+0 X
+N
+47.13 286.42 172.17 372.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 47.13 366.15 T
+2 F
+(_name = \322Mixed_Color\323) 47.13 352.15 T
+(_domainT) 47.13 338.15 T
+(ype) 87.54 338.15 T
+(_optional = 1) 47.13 324.15 T
+(_derived = 0) 47.13 310.15 T
+(_owner) 47.13 296.15 T
+41.69 362.02 174.88 362.02 2 L
+N
+28.39 264.82 207.28 264.82 2 L
+N
+383.69 401.62 570.89 563.62 R
+7 X
+V
+1 H
+0 X
+N
+20.09 387.22 153.29 434.02 R
+7 X
+V
+0.5 H
+0 X
+N
+25.53 390.82 150.57 426.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptor) 25.53 420.15 T
+2 F
+(_name = \322Single_Color\323) 25.53 406.15 T
+(_domainT) 25.53 392.15 T
+(ype) 65.94 392.15 T
+20.09 416.02 153.27 416.02 2 L
+N
+383.69 563.62 570.89 624.82 R
+7 X
+V
+0 X
+N
+386.48 563.62 524.09 617.62 R
+7 X
+V
+1 F
+0 X
+(STEPentity) 386.48 610.95 T
+2 F
+(attributes) 386.48 596.95 T
+(STEP\336le_id = 1) 386.48 582.95 T
+(EntityDescriptor) 386.48 568.95 T
+383.69 606.82 570.89 606.82 2 L
+N
+218.09 304.42 398.09 354.82 R
+7 X
+V
+0 X
+N
+222.59 308.02 390.97 346.35 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 222.59 339.68 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 222.59 325.68 T
+(union { class STEPaggregate * a } ptr;) 222.59 311.68 T
+218.09 336.82 398.08 336.82 2 L
+N
+182.09 383.62 362.09 434.02 R
+7 X
+V
+0 X
+N
+186.59 387.22 354.97 425.55 R
+7 X
+V
+1 F
+0 X
+(STEPattribute) 186.59 418.88 T
+2 F
+(const AttrDescriptor * AttrDescriptor;) 186.59 404.88 T
+(union { class STEPenumeration *e } ptr;) 186.59 390.88 T
+182.09 416.02 362.08 416.02 2 L
+N
+387.29 549.22 524.09 560.02 R
+7 X
+V
+1 F
+0 X
+(Shape) 387.29 553.35 T
+383.69 549.22 570.89 549.22 2 L
+1 H
+N
+210.89 516.82 308.09 610.42 R
+7 X
+V
+0.5 H
+0 X
+N
+214.49 599.62 300.89 606.82 R
+7 X
+V
+0 X
+(STEPattrList) 214.49 600.15 T
+214.49 560.02 304.49 596.02 R
+7 X
+V
+0 X
+N
+218.09 563.62 304.49 588.82 R
+7 X
+V
+0 X
+(AttrListNode) 218.09 582.15 T
+2 F
+(STEPattribute *attr;) 218.09 568.15 T
+214.49 578.02 304.49 578.02 2 L
+N
+214.49 520.42 304.49 556.42 R
+7 X
+V
+0 X
+N
+218.09 524.02 304.49 549.22 R
+7 X
+V
+1 F
+0 X
+(AttrListNode) 218.09 542.55 T
+2 F
+(STEPattribute *attr;) 218.09 528.55 T
+214.49 538.42 304.49 538.42 2 L
+N
+387.29 477.22 452.09 545.62 R
+7 X
+V
+0 X
+(_single_color;) 387.29 538.95 T
+(_mixed_color;) 387.29 482.95 T
+20.09 524.02 189.29 599.63 R
+7 X
+V
+0 X
+N
+25.55 524.02 183.83 592.43 R
+7 X
+V
+1 F
+0 X
+(EntityDescriptor) 25.55 585.76 T
+2 F
+(_originatingSchema) 25.55 571.76 T
+(_supertypes) 25.55 557.76 T
+(_subtypes) 25.55 543.76 T
+(_explicitAttr) 25.55 529.76 T
+20.09 581.63 189.29 581.63 2 L
+N
+20.09 599.63 189.29 678.82 R
+7 X
+V
+0 X
+N
+25.55 599.63 183.83 671.62 R
+7 X
+V
+1 F
+0 X
+(T) 25.55 664.95 T
+(ypeDescriptor) 31.48 664.95 T
+2 F
+(_name = \322Color_Rep\323) 25.55 650.95 T
+(_fundamentalT) 25.55 636.95 T
+(ype = ENTITY_TYPE) 85.95 636.95 T
+(_referentT) 25.55 622.95 T
+(ype = null) 67.05 622.95 T
+(_description = \322Color_Rep\323) 25.55 608.95 T
+20.09 660.82 189.29 660.82 2 L
+N
+81.29 444.82 178.49 538.42 R
+7 X
+V
+0 X
+N
+84.89 527.62 171.29 534.82 R
+7 X
+V
+1 F
+0 X
+(AttrDescriptorList) 84.89 528.15 T
+84.89 488.02 174.89 524.02 R
+7 X
+V
+0 X
+N
+88.49 491.62 174.89 516.82 R
+7 X
+V
+0 X
+(AttrDescLinkNode) 88.49 510.15 T
+2 F
+(AttrDescriptor *) 88.49 496.15 T
+84.89 506.02 174.89 506.02 2 L
+N
+84.89 448.42 174.89 484.42 R
+7 X
+V
+0 X
+N
+88.49 452.02 174.89 477.22 R
+7 X
+V
+1 F
+0 X
+(AttrDescLinkNode) 88.49 470.55 T
+2 F
+(AttrDescriptor *) 88.49 456.55 T
+84.89 466.42 174.89 466.42 2 L
+N
+59.15 445.62 56.09 434.02 52.53 445.48 55.84 445.55 4 Y
+V
+84.89 498.82 M
+ 57.1 502.38 55.49 469.02 55.84 445.55 D
+N
+329.1 445.63 326.09 434.02 322.48 445.46 325.79 445.55 4 Y
+V
+300.89 570.82 M
+ 329.52 570.99 325.92 532.35 326.09 513.22 D
+ 326.32 487.45 325.47 467.93 325.81 445.55 D
+N
+322.51 366.26 318.89 354.82 315.89 366.44 319.2 366.35 4 Y
+V
+304.49 531.22 M
+ 315.09 530.71 319.29 406.08 319.21 366.35 D
+N
+164.82 405.51 153.29 408.82 164.82 412.12 164.82 408.82 4 Y
+V
+185.69 408.82 164.82 408.82 2 L
+N
+186.42 322.71 174.89 326.02 186.42 329.33 186.42 326.02 4 Y
+V
+221.69 326.02 186.42 326.02 2 L
+N
+J
+308.09 599.62 386.67 599.62 2 L
+J
+308.09 599.62 311.84 599.62 2 L
+N
+[6.969 6.039] 6.969 I
+311.84 599.62 382.92 599.62 2 L
+N
+J
+382.92 599.62 386.67 599.62 2 L
+N
+J
+201.5 637.74 190 641.17 201.57 644.35 201.53 641.05 4 Y
+V
+387.29 570.82 M
+ 336.97 596.9 315.08 639.22 232.49 639.22 D
+ 222.18 639.22 211.55 640.52 201.55 641.04 D
+N
+452.09 498.82 552.89 545.62 R
+N
+455.69 502.42 549.29 513.22 R
+7 X
+V
+1 F
+0 X
+(SdaiColor) 455.69 506.55 T
+455.69 516.82 549.29 542.02 R
+7 X
+V
+0 X
+(STEPenumeration) 455.69 535.35 T
+2 F
+(int v;) 455.69 521.35 T
+452.09 516.82 552.89 516.82 2 L
+N
+454.59 407.15 558.42 417.95 R
+7 X
+V
+1 F
+0 X
+(SdaiColors) 454.59 411.28 T
+455.69 419.62 560.09 444.82 R
+7 X
+V
+0 X
+(STEPaggr) 455.69 438.15 T
+(egate) 499.96 438.15 T
+2 F
+(int _null = 0) 455.69 424.15 T
+455.69 448.42 560.09 488.02 R
+7 X
+V
+1 F
+0 X
+(SingleLinkList) 455.69 481.35 T
+2 F
+(SingleLinkNode * head;) 455.69 467.35 T
+(SingleLinkNode * tail;) 455.69 453.35 T
+452.09 448.42 560.09 448.42 2 L
+N
+452.09 434.02 560.09 434.02 2 L
+N
+452.09 419.62 560.09 419.62 2 L
+N
+452.09 477.22 560.09 477.22 2 L
+N
+452.09 405.22 560.09 488.02 R
+N
+440.8 523.42 452.08 519.33 440.35 516.82 440.58 520.12 4 Y
+V
+329.69 394.42 M
+ 382.17 412.27 370.92 451.56 385.2 499.49 D
+ 391.44 520.42 418.58 521.33 440.59 520.11 D
+N
+440.84 420.21 452.08 416.02 440.33 413.61 440.59 416.91 4 Y
+V
+362.09 315.22 M
+ 446.35 335.44 391.76 415.62 440.6 416.9 D
+N
+336.89 120.82 437.69 167.62 R
+N
+340.49 124.42 434.09 135.22 R
+7 X
+V
+1 F
+0 X
+(SdaiColor) 340.49 128.55 T
+340.49 138.82 434.09 164.02 R
+7 X
+V
+0 X
+(STEPenumeration) 340.49 157.35 T
+2 F
+(int v;) 340.49 143.35 T
+336.89 138.82 437.69 138.82 2 L
+N
+339.39 189.22 448.49 210.82 R
+7 X
+V
+1 F
+0 X
+(EnumNode) 339.39 204.15 T
+2 F
+(STEPenumeration * node;) 339.39 190.15 T
+340.49 243.22 448.49 268.42 R
+7 X
+V
+1 F
+0 X
+(SingleLinkNode) 340.49 261.75 T
+2 F
+(SingleLinkNode *next;) 340.49 247.75 T
+336.89 243.22 452.09 243.22 2 L
+N
+336.89 214.42 444.89 214.42 2 L
+N
+336.89 214.42 452.09 214.42 2 L
+N
+336.89 257.62 452.09 257.62 2 L
+N
+336.89 185.62 452.09 268.42 R
+N
+340.49 214.42 448.49 239.62 R
+7 X
+V
+1 F
+0 X
+(STEPnode) 340.49 232.95 T
+2 F
+(int _null;) 340.49 218.95 T
+336.89 228.82 452.09 228.82 2 L
+N
+230.87 276.15 221.68 268.43 225.38 279.84 228.13 278 4 Y
+V
+552.89 470.02 M
+ 577.39 447.8 572.56 389.91 544.17 366.24 D
+ 465.01 300.25 385.75 291.19 286.49 286.42 D
+ 271.21 285.68 241.86 288.99 228.16 277.98 D
+N
+503.24 279.6 498.89 268.42 496.65 280.21 499.95 279.9 4 Y
+V
+549.29 455.62 M
+ 564.71 421.77 549.16 379.4 532.85 347 D
+ 522.2 325.82 504.57 304.04 500 279.92 D
+N
+64.34 391.68 61.48 380.02 57.73 391.42 61.03 391.55 4 Y
+V
+88.49 459.22 M
+ 54.13 445.12 59.21 415.33 61.04 391.54 D
+N
+28.25 512.91 32.8 524.02 34.83 512.19 31.54 512.55 4 Y
+V
+48.89 297.22 M
+ 11.54 337.21 24.56 432.05 30.5 496.1 D
+ 30.89 500.33 31.13 506.61 31.54 512.54 D
+N
+23.16 108.08 196.49 196.42 R
+7 X
+V
+0 X
+N
+25.97 111.68 192.81 194.48 R
+7 X
+V
+1 F
+0 X
+(T) 25.97 187.82 T
+(ypeDescriptor) 31.9 187.82 T
+2 F
+(_name = \322Color\323) 25.97 173.82 T
+(_fundamentalT) 25.97 159.82 T
+(ype = ENUM_TYPE) 86.37 159.82 T
+(_referentT) 25.97 145.82 T
+(ype = null) 67.47 145.82 T
+(_description = \322ENUMERA) 25.97 131.82 T
+(TION of) 138.82 131.82 T
+(\050red, green, blue, yellow) 25.97 123.82 T
+(, orange, white,) 123.07 123.82 T
+(black brown\051\323) 25.97 115.82 T
+23.16 183.68 196.48 183.68 2 L
+N
+449.63 163.79 438.77 158.68 445.27 168.77 447.45 166.28 4 Y
+V
+446.29 192 M
+ 450.56 185.25 451.8 174.07 447.49 166.24 D
+N
+214.49 120.82 315.29 167.62 R
+N
+218.09 124.42 311.69 135.22 R
+7 X
+V
+1 F
+0 X
+(SdaiColor) 218.09 128.55 T
+218.09 138.82 311.69 164.02 R
+7 X
+V
+0 X
+(STEPenumeration) 218.09 157.35 T
+2 F
+(int v;) 218.09 143.35 T
+214.49 138.82 315.29 138.82 2 L
+N
+216.99 189.22 326.09 210.82 R
+7 X
+V
+1 F
+0 X
+(EnumNode) 216.99 204.15 T
+2 F
+(STEPenumeration * node;) 216.99 190.15 T
+218.09 243.22 326.09 268.42 R
+7 X
+V
+1 F
+0 X
+(SingleLinkNode) 218.09 261.75 T
+2 F
+(SingleLinkNode *next;) 218.09 247.75 T
+214.49 243.22 329.69 243.22 2 L
+N
+214.49 214.42 322.49 214.42 2 L
+N
+214.49 214.42 329.69 214.42 2 L
+N
+214.49 257.62 329.69 257.62 2 L
+N
+214.49 185.62 329.69 268.42 R
+N
+218.09 214.42 326.09 239.62 R
+7 X
+V
+1 F
+0 X
+(STEPnode) 218.09 232.95 T
+2 F
+(int _null;) 218.09 218.95 T
+214.49 228.82 329.69 228.82 2 L
+N
+327.24 163.78 316.38 158.67 322.89 168.76 325.07 166.27 4 Y
+V
+323.89 192 M
+ 328.16 185.25 329.4 174.07 325.09 166.24 D
+N
+459.29 120.82 560.09 167.62 R
+N
+462.89 124.42 556.49 135.22 R
+7 X
+V
+1 F
+0 X
+(SdaiColor) 462.89 128.55 T
+462.89 138.82 556.49 164.02 R
+7 X
+V
+0 X
+(STEPenumeration) 462.89 157.35 T
+2 F
+(int v;) 462.89 143.35 T
+459.29 138.82 560.09 138.82 2 L
+N
+461.79 189.22 570.89 210.82 R
+7 X
+V
+1 F
+0 X
+(EnumNode) 461.79 204.15 T
+2 F
+(STEPenumeration * node;) 461.79 190.15 T
+462.89 243.22 570.89 268.42 R
+7 X
+V
+1 F
+0 X
+(SingleLinkNode) 462.89 261.75 T
+2 F
+(SingleLinkNode *next;) 462.89 247.75 T
+459.29 243.22 574.49 243.22 2 L
+N
+459.29 214.42 567.29 214.42 2 L
+N
+459.29 214.42 574.49 214.42 2 L
+N
+459.29 257.62 574.49 257.62 2 L
+N
+459.29 185.62 574.49 268.42 R
+N
+462.89 214.42 570.89 239.62 R
+7 X
+V
+1 F
+0 X
+(STEPnode) 462.89 232.95 T
+2 F
+(int _null;) 462.89 218.95 T
+459.29 228.82 574.49 228.82 2 L
+N
+572.03 163.78 561.18 158.67 567.68 168.75 569.85 166.27 4 Y
+V
+568.69 192 M
+ 572.96 185.25 574.21 174.07 569.89 166.24 D
+N
+27.03 207.95 23.69 196.43 20.42 207.97 23.73 207.96 4 Y
+V
+30.89 394.42 M
+ 18.97 334.53 23.61 269.25 23.73 208 D
+N
+141.99 291.16 139.17 279.5 135.38 290.89 138.69 291.03 4 Y
+V
+106.49 340.42 M
+ 134.27 344.89 137.65 314.14 138.7 291.02 D
+N
+121.46 207.62 117.17 196.42 114.87 208.2 118.17 207.91 4 Y
+V
+88.49 228.82 M
+ 109.33 228.84 118.39 226.25 118.17 207.91 D
+N
+325.35 253.72 336.89 250.42 325.35 247.11 325.35 250.42 4 Y
+V
+311.69 250.42 325.35 250.42 2 L
+N
+447.75 253.72 459.29 250.42 447.75 247.11 447.75 250.42 4 Y
+V
+434.09 250.42 447.75 250.42 2 L
+N
+0 0 612 792 C
+144 702 529.2 720 R
+7 X
+0 0 0 1 0 0 0 K
+V
+1 18 Q
+0 X
+(Expr) 144 708 T
+(ess Dictionary and Entity Instance Classes) 182.68 708 T
+FMENDPAGE
+%%EndPage: "8" 8
+%%Page: "9" 9
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 750.02 558 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+72 730.15 558 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 207 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 235.01 736.18 T
+72 726.98 558 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+72 74.02 558 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+72 55.01 558 66.96 R
+7 X
+V
+0 10 Q
+0 X
+-2.78 (9) 552.44 60.29 P
+72.4 85.97 558.4 684 R
+7 X
+V
+2 F
+0 X
+(SCHEMA example_schema;) 207.4 677.33 T
+(TYPE label = STRING;) 207.4 653.33 T
+(END_TYPE;) 207.4 639.33 T
+(TYPE color = ENUMERA) 207.4 615.33 T
+(TION OF \050red, green, blue, yellow) 314.42 615.33 T
+(, orange, white, black,) 453.18 615.33 T
+(brown\051;) 207.4 603.33 T
+(END_TYPE;) 207.4 589.33 T
+(TYPE length_measure = REAL;) 207.4 565.33 T
+(END_TYPE;) 207.4 551.33 T
+(TYPE point = REAL;) 207.4 527.33 T
+(END_TYPE;) 207.4 513.33 T
+(ENTITY color_rep;) 207.4 489.33 T
+(single_color : OPTIONAL color;) 220.94 475.33 T
+(mixed_color : OPTIONAL set [1:5] of color;) 220.94 461.33 T
+(END_ENTITY) 207.4 447.33 T
+(;) 268.13 447.33 T
+(ENTITY shape) 207.4 423.33 T
+(SUPER) 207.4 409.33 T
+(TYPE OF \050ONEOF \050circle, triangle, rectangle\051\051;) 237.92 409.33 T
+(item_name : label;) 220.94 395.33 T
+(item_color : OPTIONAL color;) 220.94 381.33 T
+(number_of_sides : INTEGER;) 220.94 367.33 T
+(END_ENTITY) 207.4 353.33 T
+(;) 268.13 353.33 T
+(ENTITY circle) 207.4 329.33 T
+(SUBTYPE OF \050shape\051;) 207.4 315.33 T
+(radius : real;) 220.94 301.33 T
+(END_ENTITY) 207.4 287.33 T
+(;) 268.13 287.33 T
+(ENTITY triangle) 207.4 263.33 T
+(SUBTYPE OF \050shape\051;) 207.4 249.33 T
+(side1_length, side2_length, side3_length : length_measure;) 220.94 235.33 T
+(END_ENTITY) 207.4 221.33 T
+(;) 268.13 221.33 T
+(ENTITY rectangle) 207.4 197.33 T
+(SUPER) 207.4 183.33 T
+(TYPE OF \050square\051) 237.92 183.33 T
+(SUBTYPE OF \050shape\051;) 207.4 169.33 T
+(height : length_measure;) 220.94 155.33 T
+(width : length_measure;) 220.94 141.33 T
+(END_ENTITY) 207.4 127.33 T
+(;) 268.13 127.33 T
+219.6 702 453.6 720 R
+7 X
+V
+1 18 Q
+0 X
+(Expr) 219.6 708 T
+(ess Used in These Notes) 258.28 708 T
+FMENDPAGE
+%%EndPage: "9" 9
+%%Page: "10" 10
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 7 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+54 750.02 540 750.02 2 L
+7 X
+0 0 0 1 0 0 0 K
+V
+2 H
+0 Z
+0 X
+N
+54 730.15 540 742.18 R
+7 X
+V
+0 9 Q
+0 X
+(NIST F) 189 736.18 T
+(ASD STEP Class Library Data Structures \050Draft Notes\051) 217.01 736.18 T
+54 726.98 540 726.98 2 L
+7 X
+V
+0.25 H
+0 X
+N
+54 74.02 540 74.02 2 L
+7 X
+V
+2 Z
+0 X
+N
+54 55.01 540 66.96 R
+7 X
+V
+0 10 Q
+0 X
+(10) 54 60.29 T
+54 87.98 540 686.02 R
+7 X
+V
+2 F
+0 X
+(ENTITY square) 189 679.35 T
+(SUBTYPE OF \050rectangle\051;) 189 665.35 T
+(END_ENTITY) 189 651.35 T
+(;) 249.73 651.35 T
+(ENTITY cartesian_point;) 189 627.35 T
+(x : point;) 202.54 613.35 T
+(y : point;) 202.54 599.35 T
+(z : OPTIONAL point;) 202.54 585.35 T
+(END_ENTITY) 189 571.35 T
+(;) 249.73 571.35 T
+(ENTITY line;) 189 547.35 T
+(end_point_one : cartesian_point;) 202.54 533.35 T
+(end_point_two : cartesian_point;) 202.54 519.35 T
+(END_ENTITY) 189 505.35 T
+(;) 249.73 505.35 T
+(ENTITY poly_line;) 189 481.35 T
+(points : LIST OF line;) 202.54 467.35 T
+(END_ENTITY) 189 453.35 T
+(;) 249.73 453.35 T
+(END_SCHEMA;) 189 429.35 T
+219.6 702 579.6 720 R
+7 X
+V
+1 18 Q
+0 X
+(Expr) 219.6 708 T
+(ess Used in These Notes \050continued\051) 258.28 708 T
+FMENDPAGE
+%%EndPage: "10" 10
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%PageOrder: Ascend
+%%Pages: 10
+%%DocumentFonts: Helvetica-Bold
+%%+ Times-Bold
+%%+ Times-Roman
+%%EOF
