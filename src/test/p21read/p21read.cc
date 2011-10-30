@@ -61,7 +61,7 @@ void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
     const Schema * sc;
     reg.ResetSchemas();
     //file id 3 is always the schema name
-    SCLP23_NAME(Application_instance) *ai =
+    SDAI_Application_instance *ai =
                     sf.HeaderInstances()->FindFileId(3)->GetApplication_instance();
     while( ( attr = ai->NextAttribute() ) ) {
         attr->asStr(sname);

@@ -11,7 +11,7 @@
 
 /* $Id: probe.cc,v 3.0.1.6 1997/11/05 23:01:07 sauderd DP3.2 $ */
 
-#include <sclprefixes.h>
+
 
 #ifdef __O3DB__
 #include <OpenOODB.h>

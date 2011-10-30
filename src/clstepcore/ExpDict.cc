@@ -723,7 +723,7 @@ EnumTypeDescriptor::EnumTypeDescriptor( const char * nm, PrimitiveType ft,
     : TypeDescriptor( nm, ft, origSchema, d ), CreateNewEnum( f ) {
 }
 
-SCLP23( Enum ) * EnumTypeDescriptor::CreateEnum() {
+SDAI_Enum * EnumTypeDescriptor::CreateEnum() {
     if( CreateNewEnum ) {
         return CreateNewEnum();
     } else {
@@ -1653,7 +1653,7 @@ const TypeDescriptor * TypeDescriptor::BaseTypeDescriptor() const {
 // SelectTypeDescriptor functions
 ///////////////////////////////////////////////////////////////////////////////
 
-SCLP23( Select ) * SelectTypeDescriptor::CreateSelect() {
+SDAI_Select * SelectTypeDescriptor::CreateSelect() {
     if( CreateNewSelect ) {
         return CreateNewSelect();
     } else {
@@ -1764,8 +1764,8 @@ AggrTypeDescriptor::AggrTypeDescriptor( ) :
     _aggrDomainType = 0;
 }
 
-AggrTypeDescriptor::AggrTypeDescriptor( SCLP23( Integer ) b1,
-                                        SCLP23( Integer ) b2,
+AggrTypeDescriptor::AggrTypeDescriptor( SDAI_Integer b1,
+                                        SDAI_Integer b2,
                                         Logical uniqElem,
                                         TypeDescriptor * aggrDomType )
     : _bound1( b1 ), _bound2( b2 ), _uniqueElements( uniqElem ) {

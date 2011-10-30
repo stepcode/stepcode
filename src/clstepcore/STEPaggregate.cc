@@ -588,7 +588,7 @@ EntityNode::EntityNode() {
 EntityNode::~EntityNode() {
 }
 
-EntityNode::EntityNode( SCLP23( Application_instance ) * e ) : node( e ) {
+EntityNode::EntityNode( SDAI_Application_instance * e ) : node( e ) {
 }
 
 SingleLinkNode * EntityNode::NewNode() {
@@ -599,7 +599,7 @@ SingleLinkNode * EntityNode::NewNode() {
 Severity EntityNode::StrToVal( const char * s, ErrorDescriptor * err,
                       const TypeDescriptor * elem_type,
                       InstMgr * insts, int addFileId ) {
-    SCLP23( Application_instance ) *se = ReadEntityRef( s, err, ",)", insts,
+    SDAI_Application_instance *se = ReadEntityRef( s, err, ",)", insts,
                                          addFileId );
     if( se != S_ENTITY_NULL ) {
         ErrorDescriptor error;
@@ -633,7 +633,7 @@ Severity EntityNode::STEPread( const char * s, ErrorDescriptor * err,
 Severity EntityNode::STEPread( istream & in, ErrorDescriptor * err,
                       const TypeDescriptor * elem_type,
                       InstMgr * insts, int addFileId ) {
-    SCLP23( Application_instance ) *se = ReadEntityRef( in, err, ",)", insts,
+    SDAI_Application_instance *se = ReadEntityRef( in, err, ",)", insts,
                                          addFileId );
     if( se != S_ENTITY_NULL ) {
         ErrorDescriptor error;
@@ -821,7 +821,7 @@ SingleLinkNode * SelectAggregate::NewNode() {
 // SelectNode
 ///////////////////////////////////////////////////////////////////////////////
 
-SelectNode::SelectNode( SCLP23( Select ) * s ) :  node( s ) {
+SelectNode::SelectNode( SDAI_Select * s ) :  node( s ) {
 }
 
 SelectNode::SelectNode() {
@@ -950,7 +950,7 @@ StringNode::StringNode( StringNode & sn ) {
 }
 
 StringNode::StringNode( const char * sStr ) {
-    // value is an SCLP23(String) (the memory is copied)
+    // value is an SDAI_String (the memory is copied)
     value = sStr;
 }
 
@@ -1056,7 +1056,7 @@ BinaryNode::BinaryNode( BinaryNode & bn ) {
 }
 
 BinaryNode::BinaryNode( const char * sStr ) {
-    // value is an SCLP23(Binary) (the memory is copied)
+    // value is an SDAI_Binary (the memory is copied)
     value = sStr;
 }
 
@@ -1164,7 +1164,7 @@ SingleLinkNode * EnumAggregate::NewNode() {
 // EnumNode
 ///////////////////////////////////////////////////////////////////////////////
 
-EnumNode::EnumNode( SCLP23( Enum ) * e ) :  node( e ) {
+EnumNode::EnumNode( SDAI_Enum * e ) :  node( e ) {
 }
 
 EnumNode::EnumNode() {
@@ -1242,7 +1242,7 @@ LOGICALS::~LOGICALS() {
 }
 
 SingleLinkNode * LOGICALS::NewNode() {
-    return new EnumNode( new SCLP23( LOGICAL ) );
+    return new EnumNode( new SDAI_LOGICAL );
 }
 
 LOGICALS * create_LOGICALS() {
@@ -1260,7 +1260,7 @@ BOOLEANS::~BOOLEANS() {
 }
 
 SingleLinkNode * BOOLEANS::NewNode() {
-    return new EnumNode( new SCLP23( BOOLEAN ) );
+    return new EnumNode( new SDAI_BOOLEAN );
 }
 
 BOOLEANS * create_BOOLEANS() {

@@ -19,32 +19,32 @@ STEPattribute::STEPattribute( const STEPattribute & a )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( a.aDesc ) {}
 
 ///  INTEGER
-STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Integer ) *p )
+STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Integer *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )  {
     ptr.i = p;
 }
 
 ///  BINARY
-STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Binary ) *p )
+STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Binary *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.b = p;
 }
 
 ///  STRING
-STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( String ) *p )
+STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_String *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.S = p;
 }
 
 ///  REAL & NUMBER
-STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Real ) *p )
+STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Real *p )
     : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
     ptr.r = p;
 }
 
 ///  ENTITY
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
-                              SCLP23( Application_instance )* *p )
+                              SDAI_Application_instance* *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.c = p;
 }
@@ -56,14 +56,14 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, STEPaggregate * p 
 }
 
 ///  ENUMERATION  and Logical
-STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLP23( Enum ) *p )
+STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Enum *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
     ptr.e = p;
 }
 
 ///  SELECT
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
-                              class SCLP23( Select ) *p )
+                              class SDAI_Select *p )
     : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d )  {
     ptr.sh = p;
 }

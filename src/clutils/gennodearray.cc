@@ -10,11 +10,8 @@
 * and is not subject to copyright.
 */
 
-/* $Id: gennodearray.cc,v 3.0.1.4 1997/11/05 22:33:48 sauderd DP3.1 $  */
 
-#ifdef HAVE_CONFIG_H
 # include <scl_cf.h>
-#endif
 
 #include <gennode.h>
 #include <gennodelist.h>

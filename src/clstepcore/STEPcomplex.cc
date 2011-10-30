@@ -10,12 +10,12 @@ extern const char * ReadStdKeyword( istream & in, std::string & buf, int skipIni
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
-    : SCLP23( Application_instance )( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
 }
 
 STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
                           int fileid, const char * schnm )
-    : SCLP23( Application_instance )( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
     char * nms[BUFSIZ];
     int j, k;
 
@@ -33,7 +33,7 @@ STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
 
 STEPcomplex::STEPcomplex( Registry * registry, const char ** names, int fileid,
                           const char * schnm )
-    : SCLP23( Application_instance )( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
     Initialize( names, schnm );
 }
 
@@ -295,7 +295,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
 
             stepc = EntityPart( typeNm.c_str(), currSch );
             if( stepc )
-                stepc->SCLP23( Application_instance )::STEPread( id, addFileId,
+                stepc->SDAI_Application_instance::STEPread( id, addFileId,
                         instance_set, in,
                         currSch );
             else {
@@ -363,7 +363,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
 
         cout << s << endl;
         BuildAttrs( s.c_str() );
-        SCLP23( Application_instance )::STEPread( id, addFileId, instance_set,
+        SDAI_Application_instance::STEPread( id, addFileId, instance_set,
                 in, currSch );
 
         in >> ws;
@@ -394,7 +394,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
             STEPcomplex * stepc = new STEPcomplex( _registry );
             AppendEntity( stepc );
             stepc->BuildAttrs( s.c_str() );
-            stepc->SCLP23( Application_instance )::STEPread( id, addFileId,
+            stepc->SDAI_Application_instance::STEPread( id, addFileId,
                     instance_set, in,
                     currSch );
             in >> ws;
@@ -428,33 +428,33 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 
                 switch( ad->NonRefType() ) {
                     case INTEGER_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( Integer ) );
+                        a = new STEPattribute( *ad,  new SDAI_Integer );
                         break;
 
                     case STRING_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( String ) );
+                        a = new STEPattribute( *ad,  new SDAI_String );
                         break;
 
                     case BINARY_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( Binary ) );
+                        a = new STEPattribute( *ad,  new SDAI_Binary );
                         break;
 
                     case REAL_TYPE:
                     case NUMBER_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( Real ) );
+                        a = new STEPattribute( *ad,  new SDAI_Real );
                         break;
 
                     case BOOLEAN_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( BOOLEAN ) );
+                        a = new STEPattribute( *ad,  new SDAI_BOOLEAN );
                         break;
 
                     case LOGICAL_TYPE:
-                        a = new STEPattribute( *ad,  new SCLP23( LOGICAL ) );
+                        a = new STEPattribute( *ad,  new SDAI_LOGICAL );
                         break;
 
                     case ENTITY_TYPE:
                         a = new STEPattribute( *ad,
-                                               new( SCLP23( Application_instance ) * ) );
+                                               new( SDAI_Application_instance * ) );
                         break;
 
                     case ENUM_TYPE: {
@@ -575,7 +575,7 @@ const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * c
     return const_cast<char *>( buf.c_str() );
 }
 
-void STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
+void STEPcomplex::CopyAs( SDAI_Application_instance *se ) {
     if( !se->IsComplex() ) {
         char errStr[BUFSIZ];
         cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "
@@ -592,16 +592,16 @@ void STEPcomplex::CopyAs( SCLP23( Application_instance ) *se ) {
         STEPcomplex * scpartCpyTo = head;
         STEPcomplex * scpartCpyFrom = ( ( STEPcomplex * )se )->head;
         while( scpartCpyTo && scpartCpyFrom ) {
-            scpartCpyTo->SCLP23( Application_instance )::CopyAs( scpartCpyFrom );
+            scpartCpyTo->SDAI_Application_instance::CopyAs( scpartCpyFrom );
             scpartCpyTo = scpartCpyTo->sc;
             scpartCpyFrom = scpartCpyFrom->sc;
         }
     }
 }
 
-SCLP23( Application_instance ) * STEPcomplex::Replicate() {
+SDAI_Application_instance * STEPcomplex::Replicate() {
     if( !IsComplex() ) {
-        return SCLP23( Application_instance )::Replicate();
+        return SDAI_Application_instance::Replicate();
     } else if( !_registry ) {
         return S_ENTITY_NULL;
     } else {
