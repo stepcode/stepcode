@@ -45,10 +45,10 @@ SdaiSection_language::SdaiSection_language( )
     attributes.push (a);
 }
 SdaiSection_language::SdaiSection_language (SdaiSection_language& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiSection_language::~SdaiSection_language () {  }
 
-SdaiSection_language::SdaiSection_language( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiSection_language::SdaiSection_language( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -128,10 +128,10 @@ SdaiFile_population::SdaiFile_population( )
     attributes.push (a);
 }
 SdaiFile_population::SdaiFile_population (SdaiFile_population& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiFile_population::~SdaiFile_population () {  }
 
-SdaiFile_population::SdaiFile_population( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiFile_population::SdaiFile_population( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -247,10 +247,10 @@ SdaiFile_name::SdaiFile_name( )
     attributes.push (a);
 }
 SdaiFile_name::SdaiFile_name (SdaiFile_name& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiFile_name::~SdaiFile_name () {  }
 
-SdaiFile_name::SdaiFile_name( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiFile_name::SdaiFile_name( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -323,14 +323,14 @@ SdaiFile_name::SdaiFile_name( SCLP23(Application_instance) *se, int *addAttrs)
         se->attributes.push (a);
 }
 
-const SCLP23(String) 
+const SDAI_String 
 SdaiFile_name::name_() const
 {
-    return (const SCLP23(String)) _name; 
+    return (const SDAI_String) _name; 
 }
 
 void 
-SdaiFile_name::name_ (const SCLP23(String) x)
+SdaiFile_name::name_ (const SDAI_String x)
 
 {
     _name = x; 
@@ -371,40 +371,40 @@ SdaiFile_name::organization_ (const StringAggregate_ptr x)
 
         { _organization.ShallowCopy (*x); }
 
-const SCLP23(String) 
+const SDAI_String 
 SdaiFile_name::preprocessor_version_() const
 {
-    return (const SCLP23(String)) _preprocessor_version; 
+    return (const SDAI_String) _preprocessor_version; 
 }
 
 void 
-SdaiFile_name::preprocessor_version_ (const SCLP23(String) x)
+SdaiFile_name::preprocessor_version_ (const SDAI_String x)
 
 {
     _preprocessor_version = x; 
 }
 
-const SCLP23(String) 
+const SDAI_String 
 SdaiFile_name::originating_system_() const
 {
-    return (const SCLP23(String)) _originating_system; 
+    return (const SDAI_String) _originating_system; 
 }
 
 void 
-SdaiFile_name::originating_system_ (const SCLP23(String) x)
+SdaiFile_name::originating_system_ (const SDAI_String x)
 
 {
     _originating_system = x; 
 }
 
-const SCLP23(String) 
+const SDAI_String 
 SdaiFile_name::authorization_() const
 {
-    return (const SCLP23(String)) _authorization; 
+    return (const SDAI_String) _authorization; 
 }
 
 void 
-SdaiFile_name::authorization_ (const SCLP23(String) x)
+SdaiFile_name::authorization_ (const SDAI_String x)
 
 {
     _authorization = x; 
@@ -432,10 +432,10 @@ SdaiSection_context::SdaiSection_context( )
     attributes.push (a);
 }
 SdaiSection_context::SdaiSection_context (SdaiSection_context& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiSection_context::~SdaiSection_context () {  }
 
-SdaiSection_context::SdaiSection_context( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiSection_context::SdaiSection_context( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -509,10 +509,10 @@ SdaiFile_description::SdaiFile_description( )
     attributes.push (a);
 }
 SdaiFile_description::SdaiFile_description (SdaiFile_description& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiFile_description::~SdaiFile_description () {  }
 
-SdaiFile_description::SdaiFile_description( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiFile_description::SdaiFile_description( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -551,14 +551,14 @@ SdaiFile_description::description_ (const StringAggregate_ptr x)
 
         { _description.ShallowCopy (*x); }
 
-const SCLP23(String) 
+const SDAI_String 
 SdaiFile_description::implementation_level_() const
 {
-    return (const SCLP23(String)) _implementation_level; 
+    return (const SDAI_String) _implementation_level; 
 }
 
 void 
-SdaiFile_description::implementation_level_ (const SCLP23(String) x)
+SdaiFile_description::implementation_level_ (const SDAI_String x)
 
 {
     _implementation_level = x; 
@@ -582,10 +582,10 @@ SdaiFile_schema::SdaiFile_schema( )
     attributes.push (a);
 }
 SdaiFile_schema::SdaiFile_schema (SdaiFile_schema& e ) 
-        {  CopyAs((SCLP23(Application_instance_ptr)) &e);        }
+        {  CopyAs((SDAI_Application_instance_ptr) &e);        }
 SdaiFile_schema::~SdaiFile_schema () {  }
 
-SdaiFile_schema::SdaiFile_schema( SCLP23(Application_instance) *se, int *addAttrs)
+SdaiFile_schema::SdaiFile_schema( SDAI_Application_instance *se, int *addAttrs)
 {
         /* Set this to point to the head entity. */
     HeadEntity(se); 
@@ -618,34 +618,34 @@ SdaiFile_schema::schema_identifiers_ (const StringAggregate_ptr x)
 /////////         END_ENTITY file_schema
 
 
-SCLP23(Model_contents_ptr) create_SdaiModel_contents_header_section_schema()
+SDAI_Model_contents_ptr create_SdaiModel_contents_header_section_schema()
 { return new SdaiModel_contents_header_section_schema ; }
 
 SdaiModel_contents_header_section_schema::SdaiModel_contents_header_section_schema()
 {
-    SCLP23(Entity_extent_ptr) eep = (SCLP23(Entity_extent_ptr))0;
+    SDAI_Entity_extent_ptr eep = (SDAI_Entity_extent_ptr)0;
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_section_language);
     _folders.Append(eep);
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_file_population);
     _folders.Append(eep);
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_file_name);
     _folders.Append(eep);
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_section_context);
     _folders.Append(eep);
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_file_description);
     _folders.Append(eep);
 
-        eep = new SCLP23(Entity_extent);
+        eep = new SDAI_Entity_extent;
     eep->definition_(header_section_schemae_file_schema);
     _folders.Append(eep);
 

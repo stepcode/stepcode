@@ -16,12 +16,12 @@ extern Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
                      const char * typeName, // used in error message
                      const char * tokenList ); // e.g. ",)"
                      
-SCLP23( Binary ) & SCLP23( Binary )::operator= ( const char * s ) {
+SDAI_Binary & SDAI_Binary::operator= ( const char * s ) {
     std::string::operator= ( s );
     return *this;
 }
 
-void SCLP23( Binary )::STEPwrite( ostream & out ) const {
+void SDAI_Binary::STEPwrite( ostream & out ) const {
     const char * str = 0;
     if( empty() ) {
         out << "$";
@@ -36,7 +36,7 @@ void SCLP23( Binary )::STEPwrite( ostream & out ) const {
     }
 }
 
-const char * SCLP23( Binary )::STEPwrite( std::string & s ) const {
+const char * SDAI_Binary::STEPwrite( std::string & s ) const {
     const char * str = 0;
     if( empty() ) {
         s = "$";
@@ -52,7 +52,7 @@ const char * SCLP23( Binary )::STEPwrite( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-Severity SCLP23( Binary )::ReadBinary( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int AssignVal,
                               int needDelims ) {
     if( AssignVal ) {
         clear();
@@ -123,7 +123,7 @@ Severity SCLP23( Binary )::ReadBinary( istream & in, ErrorDescriptor * err, int 
     return err->severity();
 }
 
-Severity SCLP23( Binary )::StrToVal( const char * s, ErrorDescriptor * err ) {
+Severity SDAI_Binary::StrToVal( const char * s, ErrorDescriptor * err ) {
     istringstream in( ( char * )s ); // sz defaults to length of s
     return ReadBinary( in, err, 1, 0 );
 }
@@ -131,11 +131,11 @@ Severity SCLP23( Binary )::StrToVal( const char * s, ErrorDescriptor * err ) {
 /////////////////////////////////////////////////
 
 /// reads a binary in exchange file format delimited by double quotes
-Severity SCLP23( Binary )::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity SDAI_Binary::STEPread( istream & in, ErrorDescriptor * err ) {
     return ReadBinary( in, err, 1, 1 );
 }
 
-Severity SCLP23( Binary )::STEPread( const char * s, ErrorDescriptor * err ) {
+Severity SDAI_Binary::STEPread( const char * s, ErrorDescriptor * err ) {
     istringstream in( ( char * )s );
     return STEPread( in, err );
 }
@@ -159,7 +159,7 @@ Severity SCLP23( Binary )::STEPread( const char * s, ErrorDescriptor * err ) {
 **   null then attrValue must only contain a valid value and nothing else
 **   following.
 ******************************************************************************/
-Severity SCLP23( Binary )::BinaryValidLevel( istream & in, ErrorDescriptor * err,
+Severity SDAI_Binary::BinaryValidLevel( istream & in, ErrorDescriptor * err,
                                     int optional, char * tokenList,
                                     int needDelims, int clearError ) {
     if( clearError ) {
@@ -194,7 +194,7 @@ Severity SCLP23( Binary )::BinaryValidLevel( istream & in, ErrorDescriptor * err
     return err->severity();
 }
 
-Severity SCLP23( Binary )::BinaryValidLevel( const char * value, ErrorDescriptor * err,
+Severity SDAI_Binary::BinaryValidLevel( const char * value, ErrorDescriptor * err,
                                     int optional, char * tokenList,
                                     int needDelims, int clearError ) {
     istringstream in( ( char * )value );

@@ -23,47 +23,47 @@ extern ofstream * logStream;
 #endif
 
 /**********
-    (member) functions for the select class SCLP23(Select)
+    (member) functions for the select class SDAI_Select
 **********/
-SCLP23( Select )::SCLP23_NAME( Select )( const SelectTypeDescriptor * s,
+SDAI_Select::SDAI_Select( const SelectTypeDescriptor * s,
         const TypeDescriptor * td )
     : _type( s ), underlying_type( td ) {
 #ifdef SCL_LOGGING
-    *logStream << "Exiting SCLP23(Select) constructor." << endl;
+    *logStream << "Exiting SDAI_Select constructor." << endl;
 #endif
 }
 
-SCLP23( Select )::~SCLP23_NAME( Select )() {
+SDAI_Select::~SDAI_Select() {
 }
 
-Severity SCLP23( Select )::severity() const {
+Severity SDAI_Select::severity() const {
     return _error.severity();
 }
 
-Severity  SCLP23( Select )::severity( Severity s ) {
+Severity  SDAI_Select::severity( Severity s ) {
     return _error.severity( s );
 }
 
-const std::string SCLP23( Select )::Error() {
+const std::string SDAI_Select::Error() {
     return _error.DetailMsg();
 }
 
-void SCLP23( Select )::Error( const char * e ) {
+void SDAI_Select::Error( const char * e ) {
     _error.DetailMsg( e );
 }
 
-void  SCLP23( Select )::ClearError() {
+void  SDAI_Select::ClearError() {
     _error.ClearErrorMsg();
 }
 
 const TypeDescriptor *
-SCLP23( Select )::CanBe( const char * n ) const {
+SDAI_Select::CanBe( const char * n ) const {
     return _type -> CanBe( n );
 }
 
 
 const TypeDescriptor *
-SCLP23( Select )::CanBe( BASE_TYPE bt ) const {
+SDAI_Select::CanBe( BASE_TYPE bt ) const {
     const TypeDescLinkNode * tdn =
         ( const TypeDescLinkNode * ) _type -> GetElements().GetHead();
     const TypeDescriptor * td = tdn -> TypeDesc();
@@ -84,17 +84,17 @@ SCLP23( Select )::CanBe( BASE_TYPE bt ) const {
 }
 
 const TypeDescriptor *
-SCLP23( Select )::CanBe( const TypeDescriptor * td ) const {
+SDAI_Select::CanBe( const TypeDescriptor * td ) const {
     return _type -> CanBe( td );
 }
 
 const TypeDescriptor *
-SCLP23( Select )::CanBeSet( const char * n, const char * schnm ) const {
+SDAI_Select::CanBeSet( const char * n, const char * schnm ) const {
     return _type -> CanBeSet( n, schnm );
 }
 
 const int
-SCLP23( Select )::IsUnique( const BASE_TYPE bt ) const {
+SDAI_Select::IsUnique( const BASE_TYPE bt ) const {
     if( bt == ARRAY_TYPE ||
             bt == LIST_TYPE ||
             bt == BAG_TYPE ||
@@ -106,16 +106,16 @@ SCLP23( Select )::IsUnique( const BASE_TYPE bt ) const {
 }
 
 
-SCLP23( String ) SCLP23( Select )::UnderlyingTypeName() const {
+SDAI_String SDAI_Select::UnderlyingTypeName() const {
     return underlying_type -> Name();
 }
 
-const TypeDescriptor  * SCLP23( Select )::CurrentUnderlyingType() const {
+const TypeDescriptor  * SDAI_Select::CurrentUnderlyingType() const {
     return underlying_type;
 }
 
 const TypeDescriptor *
-SCLP23( Select )::SetUnderlyingType( const TypeDescriptor * td ) {
+SDAI_Select::SetUnderlyingType( const TypeDescriptor * td ) {
     //  don\'t do anything if the descriptor is bad
     if( !td || !( _type -> CanBe( td ) ) ) {
         return 0;
@@ -126,17 +126,17 @@ SCLP23( Select )::SetUnderlyingType( const TypeDescriptor * td ) {
     return underlying_type = td;
 }
 
-bool SCLP23( Select )::exists() const {
+bool SDAI_Select::exists() const {
     return underlying_type != NULL;
 }
 
-void SCLP23( Select )::nullify() {
+void SDAI_Select::nullify() {
     underlying_type = 0;
 }
 
-Severity SCLP23( Select )::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
+Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
                                     InstMgr * im, int clearError ) {
-    SCLP23( Select ) * tmp = NewSelect();
+    SDAI_Select * tmp = NewSelect();
     Severity s = SEVERITY_NULL;
 
     istringstream strtmp( attrValue );
@@ -145,7 +145,7 @@ Severity SCLP23( Select )::SelectValidLevel( const char * attrValue, ErrorDescri
     return s;
 }
 
-Severity SCLP23( Select )::StrToVal( const char * Val, const char * selectType,
+Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
                             ErrorDescriptor * err, InstMgr * instances ) {
     severity( SEVERITY_NULL );
     if( SetUnderlyingType( CanBe( selectType ) ) )
@@ -207,14 +207,14 @@ Severity SCLP23( Select )::StrToVal( const char * Val, const char * selectType,
 /** updated to Technical Corrigendum. DAS 2/4/97
  * This function does the following:
  */
-Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
+Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
                             InstMgr * instances, const char * utype,
                             int addFileId, const char * currSch ) {
     char c = '\0';
     std::string tmp;
 
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Entering SCLP23(Select)::STEPread." << endl;
+//    *logStream << "DAVE ERR Entering SDAI_Select::STEPread." << endl;
 #endif
     // find out what case we have
     //  NOTE case C falls out of recursive calls in cases A and B
@@ -314,7 +314,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 STEPread_content( in, instances, tmp.c_str(), addFileId,
                                   currSch );
                 // STEPread_content uses the ErrorDesc data member from the
-                // SCLP23(Select) class
+                // SDAI_Select class
             }
             err->AppendToDetailMsg( Error() );
             err->GreaterSeverity( severity() );
@@ -325,19 +325,19 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 err->GreaterSeverity( SEVERITY_WARNING );
                 in.putback( c );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_WARNING;
             }
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
             return err->severity();
         } else { // ERROR  -- the type wasn't one of the choices
             if( !in.good() ) {
                 err->GreaterSeverity( SEVERITY_INPUT_ERROR );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_INPUT_ERROR;
             } else {
@@ -345,7 +345,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                     "The type name for the SELECT type is not valid.\n" );
                 err->GreaterSeverity( SEVERITY_WARNING );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_WARNING;
             }
@@ -365,7 +365,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 nullify();
                 err->GreaterSeverity( SEVERITY_INCOMPLETE );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_INCOMPLETE;
 
@@ -376,7 +376,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 err->AppendToDetailMsg( "No value found for SELECT type.\n" );
                 err->GreaterSeverity( SEVERITY_WARNING );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_WARNING;
 
@@ -455,7 +455,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 in.putback( c );
                 err->GreaterSeverity( SEVERITY_WARNING );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_WARNING;
         }
@@ -477,7 +477,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 ReadEntityRef( in, err, ",)", instances, addFileId );
             if( tmp && ( tmp != ENTITY_NULL ) && AssignEntity( tmp ) ) {
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_NULL;
             } else {
@@ -486,7 +486,7 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 nullify();
                 err->GreaterSeverity( SEVERITY_WARNING );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
                 return SEVERITY_WARNING;
             }
@@ -499,21 +499,21 @@ Severity SCLP23( Select )::STEPread( istream & in, ErrorDescriptor * err,
                 "The type of the SELECT type is not valid.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
             return SEVERITY_WARNING;
         }
     }
 //    if (!in.good())   severity (SEVERITY_INPUT_ERROR);
 #ifdef SCL_LOGGING
-//    *logStream << "DAVE ERR Exiting SCLP23(Select)::STEPread for " << _type->Name() << endl;
+//    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
     return err->severity();
 }
 
 
 /// updated to Technical Corrigendum DAS Feb 4, 1997
-void SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
+void SDAI_Select::STEPwrite( ostream & out, const char * currSch )  const {
     if( !exists() ) {
         out << "$";
         return;
@@ -552,19 +552,19 @@ void SCLP23( Select )::STEPwrite( ostream & out, const char * currSch )  const {
         }
         case REFERENCE_TYPE: // this should never happen? DAS
         default:
-            out << "ERROR Should not have gone here in SCLP23(Select)::STEPwrite()"
+            out << "ERROR Should not have gone here in SDAI_Select::STEPwrite()"
                 << endl;
     }
 }
 
-void SCLP23( Select )::STEPwrite_verbose( ostream & out, const char * currSch ) const {
+void SDAI_Select::STEPwrite_verbose( ostream & out, const char * currSch ) const {
     std::string tmp;
     out << StrToUpper( CurrentUnderlyingType()->Name( currSch ), tmp ) << "(";
     STEPwrite_content( out );
     out << ")";
 }
 
-const char * SCLP23( Select )::STEPwrite( std::string & s, const char * currSch )  const {
+const char * SDAI_Select::STEPwrite( std::string & s, const char * currSch )  const {
     ostringstream buf;
     STEPwrite( buf, currSch );
     buf << ends;  // add the terminating \0 char
@@ -572,11 +572,11 @@ const char * SCLP23( Select )::STEPwrite( std::string & s, const char * currSch 
     return const_cast<char *>( s.c_str() );
 }
 
-int SCLP23( Select )::set_null() {
+int SDAI_Select::set_null() {
     nullify();
     return 1;
 }
 
-int SCLP23( Select )::is_null() {
+int SDAI_Select::is_null() {
     return ( !exists() );
 }

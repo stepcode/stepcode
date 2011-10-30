@@ -18,19 +18,19 @@
 // class Logical
 ///////////////////////////////////////////////////////////////////////////////
 
-SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( char * val ) {
+SDAI_LOGICAL::SDAI_LOGICAL( char * val ) {
     set_value( val );
 }
 
-SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( Logical state ) {
+SDAI_LOGICAL::SDAI_LOGICAL( Logical state ) {
     set_value( state );
 }
 
-SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( const SCLP23( LOGICAL )& source ) {
+SDAI_LOGICAL::SDAI_LOGICAL( const SDAI_LOGICAL& source ) {
     set_value( source.asInt() );
 }
 
-SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( int i ) {
+SDAI_LOGICAL::SDAI_LOGICAL( int i ) {
     if( i == 0 ) {
         v =  LFalse ;
     } else {
@@ -38,18 +38,18 @@ SCLP23( LOGICAL )::SCLP23_NAME( LOGICAL )( int i ) {
     }
 }
 
-SCLP23( LOGICAL )::~SCLP23_NAME( LOGICAL )() {
+SDAI_LOGICAL::~SDAI_LOGICAL() {
 }
 
-const char * SCLP23( LOGICAL )::Name() const {
+const char * SDAI_LOGICAL::Name() const {
     return "Logical";
 }
 
-int SCLP23( LOGICAL )::no_elements() const {
+int SDAI_LOGICAL::no_elements() const {
     return 3;
 }
 
-const char * SCLP23( LOGICAL )::element_at( int n ) const {
+const char * SDAI_LOGICAL::element_at( int n ) const {
     switch( n )  {
         case  LUnknown :
             return "U";
@@ -62,15 +62,15 @@ const char * SCLP23( LOGICAL )::element_at( int n ) const {
     }
 }
 
-int SCLP23( LOGICAL )::exists() const { // return 0 if unset otherwise return 1
+int SDAI_LOGICAL::exists() const { // return 0 if unset otherwise return 1
     return !( v == 2 );
 }
 
-void SCLP23( LOGICAL )::nullify() { // change the receiver to an unset status
+void SDAI_LOGICAL::nullify() { // change the receiver to an unset status
     v = 2;
 }
 
-SCLP23( LOGICAL )::operator  Logical() const  {
+SDAI_LOGICAL::operator  Logical() const  {
     switch( v ) {
         case  LFalse :
             return  LFalse ;
@@ -86,19 +86,19 @@ SCLP23( LOGICAL )::operator  Logical() const  {
 
 
 
-SCLP23( LOGICAL ) & SCLP23( LOGICAL )::operator= ( const SCLP23( LOGICAL )& t ) {
+SDAI_LOGICAL & SDAI_LOGICAL::operator= ( const SDAI_LOGICAL& t ) {
     set_value( t.asInt() );
     return *this;
 }
 
-SCLP23( LOGICAL ) SCLP23( LOGICAL )::operator ==( const SCLP23( LOGICAL )& t ) const {
+SDAI_LOGICAL SDAI_LOGICAL::operator ==( const SDAI_LOGICAL& t ) const {
     if( v == t.asInt() ) {
         return  LTrue ;
     }
     return  LFalse ;
 }
 
-int SCLP23( LOGICAL )::set_value( const int i )  {
+int SDAI_LOGICAL::set_value( const int i )  {
     if( i > no_elements() + 1 )  {
         v = 2;
         return v;
@@ -114,7 +114,7 @@ int SCLP23( LOGICAL )::set_value( const int i )  {
     return  no_elements() + 1 ;
 }
 
-int SCLP23( LOGICAL )::set_value( const char * n )  {
+int SDAI_LOGICAL::set_value( const char * n )  {
     //  assigns the appropriate value based on n
     if( !n || ( !strcmp( n, "" ) ) ) {
         nullify();
@@ -136,7 +136,7 @@ int SCLP23( LOGICAL )::set_value( const char * n )  {
 }
 
 
-Severity SCLP23( LOGICAL )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
                              int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -259,30 +259,30 @@ Severity SCLP23( LOGICAL )::ReadEnum( istream & in, ErrorDescriptor * err, int A
 // class BOOLEAN  Jan 97
 ///////////////////////////////////////////////////////////////////////////////
 
-const char * SCLP23( BOOLEAN )::Name() const {
+const char * SDAI_BOOLEAN::Name() const {
     return "Bool";
 }
 
-SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( char * val ) {
+SDAI_BOOLEAN::SDAI_BOOLEAN( char * val ) {
     set_value( val );
 }
 
-SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( Boolean state ) {
+SDAI_BOOLEAN::SDAI_BOOLEAN( Boolean state ) {
     set_value( state );
 }
 
-SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( const SCLP23_NAME( BOOLEAN )& source ) {
+SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_BOOLEAN& source ) {
     set_value( source.asInt() );
 }
 
-SCLP23( BOOLEAN )::~SCLP23_NAME( BOOLEAN )() {
+SDAI_BOOLEAN::~SDAI_BOOLEAN() {
 }
 
-int SCLP23( BOOLEAN )::no_elements() const {
+int SDAI_BOOLEAN::no_elements() const {
     return 2;
 }
 
-SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( int i ) {
+SDAI_BOOLEAN::SDAI_BOOLEAN( int i ) {
     if( i == 0 ) {
         v =  BFalse ;
     } else {
@@ -290,7 +290,7 @@ SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( int i ) {
     }
 }
 
-SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( const SCLP23( LOGICAL )& val )  {
+SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_LOGICAL& val )  {
     if( val.asInt() == LUnknown ) {
         // this should set error code sdaiVT_NVLD i.e. Invalid value type.
         v = BUnset;
@@ -299,7 +299,7 @@ SCLP23( BOOLEAN )::SCLP23_NAME( BOOLEAN )( const SCLP23( LOGICAL )& val )  {
     set_value( val );
 }
 
-SCLP23( BOOLEAN )::operator  Boolean() const  {
+SDAI_BOOLEAN::operator  Boolean() const  {
     switch( v ) {
         case  BFalse :
             return  BFalse ;
@@ -311,17 +311,17 @@ SCLP23( BOOLEAN )::operator  Boolean() const  {
     }
 }
 
-SCLP23( BOOLEAN ) & SCLP23( BOOLEAN )::operator= ( const SCLP23( LOGICAL )& t ) {
+SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_LOGICAL& t ) {
     set_value( t.asInt() );
     return *this;
 }
 
-SCLP23( BOOLEAN ) & SCLP23( BOOLEAN )::operator= ( const  Boolean t ) {
+SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const  Boolean t ) {
     v = t;
     return *this;
 }
 
-const char * SCLP23( BOOLEAN )::element_at( int n )  const {
+const char * SDAI_BOOLEAN::element_at( int n )  const {
     switch( n )  {
         case  BFalse :
             return "F";
@@ -332,7 +332,7 @@ const char * SCLP23( BOOLEAN )::element_at( int n )  const {
     }
 }
 
-SCLP23( LOGICAL ) SCLP23( BOOLEAN )::operator ==( const SCLP23( LOGICAL )& t ) const {
+SDAI_LOGICAL SDAI_BOOLEAN::operator ==( const SDAI_LOGICAL& t ) const {
     if( v == t.asInt() ) {
         return  LTrue ;
     }
@@ -341,36 +341,36 @@ SCLP23( LOGICAL ) SCLP23( BOOLEAN )::operator ==( const SCLP23( LOGICAL )& t ) c
 
 ///////////////////////////////////////////////////////////////////////////////
 
-SCLP23( Enum )::SCLP23_NAME( Enum )() {
+SDAI_Enum::SDAI_Enum() {
     v = 0;
 }
 
-SCLP23( Enum )::~SCLP23_NAME( Enum )() {
+SDAI_Enum::~SDAI_Enum() {
 }
 
 /**
  * \copydoc set_value( const char * n )
  */
-int SCLP23( Enum )::put( int val ) {
+int SDAI_Enum::put( int val ) {
     return set_value( val );
 }
 
 /**
  * \copydoc set_value( const char * n )
  */
-int SCLP23( Enum )::put( const char * n ) {
+int SDAI_Enum::put( const char * n ) {
     return set_value( n );
 }
 
 /// return 0 if unset otherwise return 1
-int SCLP23( Enum )::exists() const {
+int SDAI_Enum::exists() const {
     return !( v > no_elements() );
 }
 /**
  * change the receiver to an unset status
  * unset is generated to be 1 greater than last element
  */
-void SCLP23( Enum )::nullify() {
+void SDAI_Enum::nullify() {
     set_value( no_elements() + 1 );
 }
 
@@ -379,7 +379,7 @@ void SCLP23( Enum )::nullify() {
  ** debugging purposes
  ** Status:  ok 2/1/91
  ******************************************************************/
-void SCLP23( Enum )::DebugDisplay( ostream & out ) const {
+void SDAI_Enum::DebugDisplay( ostream & out ) const {
     std::string tmp;
     out << "Current " << Name() << " value: " << endl
         << "  cardinal: " <<  v  << endl
@@ -405,14 +405,14 @@ void SCLP23( Enum )::DebugDisplay( ostream & out ) const {
 ** \returns Severity of the error.
 ** \param err error message and error Severity is written to ErrorDescriptor *err.
 ** \param AssignVal is:
-**  true => value is assigned to the SCLP23(Enum);
+**  true => value is assigned to the SDAI_Enum;
 **  true or false => value is read and appropriate error info is set and returned.
 ** \param int needDelims is:
 **  false => absence of the period delimiters is not an error;
 **  true => delimiters must be valid;
 **  true or false => non-matching delimiters are flagged as an error
 */
-Severity SCLP23( Enum )::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
                           int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -531,7 +531,7 @@ Severity SCLP23( Enum )::ReadEnum( istream & in, ErrorDescriptor * err, int Assi
     return err->severity();
 }
 
-Severity SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
+Severity SDAI_Enum::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
     istringstream in( ( char * )s ); // sz defaults to length of s
 
     ReadEnum( in, err, 1, 0 );
@@ -543,13 +543,13 @@ Severity SCLP23( Enum )::StrToVal( const char * s, ErrorDescriptor * err, int op
 }
 
 /// reads an enumerated value in STEP file format
-Severity SCLP23( Enum )::STEPread( const char * s, ErrorDescriptor * err, int optional ) {
+Severity SDAI_Enum::STEPread( const char * s, ErrorDescriptor * err, int optional ) {
     istringstream in( ( char * )s );
     return STEPread( in, err, optional );
 }
 
 /// reads an enumerated value in STEP file format
-Severity SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
+Severity SDAI_Enum::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
     ReadEnum( in, err, 1, 1 );
     if( ( err->severity() == SEVERITY_INCOMPLETE ) && optional ) {
         err->severity( SEVERITY_NULL );
@@ -558,7 +558,7 @@ Severity SCLP23( Enum )::STEPread( istream & in, ErrorDescriptor * err, int opti
     return err->severity();
 }
 
-const char * SCLP23( Enum )::asStr( std::string & s ) const  {
+const char * SDAI_Enum::asStr( std::string & s ) const  {
     if( exists() ) {
         return const_cast<char *>( ( s = element_at( v ) ).c_str() );
     } else {
@@ -566,7 +566,7 @@ const char * SCLP23( Enum )::asStr( std::string & s ) const  {
     }
 }
 
-void SCLP23( Enum )::STEPwrite( ostream & out )  const  {
+void SDAI_Enum::STEPwrite( ostream & out )  const  {
     if( is_null() ) {
         out << '$';
     } else {
@@ -575,7 +575,7 @@ void SCLP23( Enum )::STEPwrite( ostream & out )  const  {
     }
 }
 
-const char * SCLP23( Enum )::STEPwrite( std::string & s ) const {
+const char * SDAI_Enum::STEPwrite( std::string & s ) const {
     if( is_null() ) {
         s.clear();
     } else {
@@ -587,7 +587,7 @@ const char * SCLP23( Enum )::STEPwrite( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-Severity SCLP23( Enum )::EnumValidLevel( istream & in, ErrorDescriptor * err,
+Severity SDAI_Enum::EnumValidLevel( istream & in, ErrorDescriptor * err,
                                 int optional, char * tokenList,
                                 int needDelims, int clearError ) {
     if( clearError ) {
@@ -624,7 +624,7 @@ Severity SCLP23( Enum )::EnumValidLevel( istream & in, ErrorDescriptor * err,
     return err->severity();
 }
 
-Severity SCLP23( Enum )::EnumValidLevel( const char * value, ErrorDescriptor * err,
+Severity SDAI_Enum::EnumValidLevel( const char * value, ErrorDescriptor * err,
                                 int optional, char * tokenList,
                                 int needDelims, int clearError ) {
     istringstream in( ( char * )value );
@@ -643,7 +643,7 @@ Severity SCLP23( Enum )::EnumValidLevel( const char * value, ErrorDescriptor * e
 ** Status:  ok 2.91
 ** \returns:  value set
 ******************************************************************/
-int SCLP23( Enum )::set_value( const char * n )  {
+int SDAI_Enum::set_value( const char * n )  {
     //  assigns the appropriate value based on n
 //    if  ( !n || (!strcmp (n, "")) )  return set_value (ENUM_NULL);
     if( !n || ( !strcmp( n, "" ) ) ) {
@@ -668,7 +668,7 @@ int SCLP23( Enum )::set_value( const char * n )  {
 /**
  * \copydoc set_value( const char * n )
  */
-int SCLP23( Enum )::set_value( const int i )  {
+int SDAI_Enum::set_value( const int i )  {
     if( i > no_elements() )  {
         v = no_elements() + 1;
         return v;
@@ -685,17 +685,17 @@ int SCLP23( Enum )::set_value( const int i )  {
 
 }
 
-SCLP23( Enum ) & SCLP23( Enum )::operator= ( const int i ) {
+SDAI_Enum & SDAI_Enum::operator= ( const int i ) {
     put( i );
     return *this;
 }
 
-SCLP23( Enum ) & SCLP23( Enum )::operator= ( const SCLP23( Enum )& Senum ) {
+SDAI_Enum & SDAI_Enum::operator= ( const SDAI_Enum& Senum ) {
     put( Senum.asInt() );
     return *this;
 }
 
-ostream & operator<< ( ostream & out, const SCLP23( Enum )& a ) {
+ostream & operator<< ( ostream & out, const SDAI_Enum& a ) {
     std::string tmp;
     out << a.asStr( tmp );
     return out;

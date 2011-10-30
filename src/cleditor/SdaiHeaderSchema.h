@@ -15,14 +15,14 @@
 extern AttrDescriptor *a_0section;
 extern AttrDescriptor *a_1default_language;
 
-class SdaiSection_language  :    public SCLP23(Application_instance) {
+class SdaiSection_language  :    public SDAI_Application_instance {
   protected:
-        SCLP23(String) _section ;    //  OPTIONAL
-        SCLP23(String) _default_language ;
+        SDAI_String _section ;    //  OPTIONAL
+        SDAI_String _default_language ;
   public:  
 
         SdaiSection_language ( );
-        SdaiSection_language (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiSection_language (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiSection_language (SdaiSection_language& e );
         ~SdaiSection_language ();
 
@@ -47,16 +47,16 @@ extern AttrDescriptor *a_2governing_schema;
 extern AttrDescriptor *a_3determination_method;
 extern AttrDescriptor *a_4governed_sections;
 
-class SdaiFile_population  :    public SCLP23(Application_instance) {
+class SdaiFile_population  :    public SDAI_Application_instance {
   protected:
-        SCLP23(String) _governing_schema ;
-        SCLP23(String) _determination_method ;
+        SDAI_String _governing_schema ;
+        SDAI_String _determination_method ;
         StringAggregate _governed_sections ;    //  OPTIONAL          //  of  section_name
 
   public:  
 
         SdaiFile_population ( );
-        SdaiFile_population (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiFile_population (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiFile_population (SdaiFile_population& e );
         ~SdaiFile_population ();
 
@@ -88,25 +88,25 @@ extern AttrDescriptor *a_9preprocessor_version;
 extern AttrDescriptor *a_10originating_system;
 extern AttrDescriptor *a_11authorization;
 
-class SdaiFile_name  :    public SCLP23(Application_instance) {
+class SdaiFile_name  :    public SDAI_Application_instance {
   protected:
-        SCLP23(String) _name ;
-        SCLP23(String) _time_stamp ;
+        SDAI_String _name ;
+        SDAI_String _time_stamp ;
         StringAggregate _author ;
         StringAggregate _organization ;
-        SCLP23(String) _preprocessor_version ;
-        SCLP23(String) _originating_system ;
-        SCLP23(String) _authorization ;
+        SDAI_String _preprocessor_version ;
+        SDAI_String _originating_system ;
+        SDAI_String _authorization ;
   public:  
 
         SdaiFile_name ( );
-        SdaiFile_name (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiFile_name (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiFile_name (SdaiFile_name& e );
         ~SdaiFile_name ();
 
         int opcode ()  { return 2 ; }
-        const SCLP23(String) name_() const;
-        void name_ (const SCLP23(String) x);
+        const SDAI_String name_() const;
+        void name_ (const SDAI_String x);
 
         const SdaiTime_stamp_text time_stamp_() const;
         void time_stamp_ (const SdaiTime_stamp_text x);
@@ -117,14 +117,14 @@ class SdaiFile_name  :    public SCLP23(Application_instance) {
         const StringAggregate_ptr organization_() const;
         void organization_ (const StringAggregate_ptr x);
 
-        const SCLP23(String) preprocessor_version_() const;
-        void preprocessor_version_ (const SCLP23(String) x);
+        const SDAI_String preprocessor_version_() const;
+        void preprocessor_version_ (const SDAI_String x);
 
-        const SCLP23(String) originating_system_() const;
-        void originating_system_ (const SCLP23(String) x);
+        const SDAI_String originating_system_() const;
+        void originating_system_ (const SDAI_String x);
 
-        const SCLP23(String) authorization_() const;
-        void authorization_ (const SCLP23(String) x);
+        const SDAI_String authorization_() const;
+        void authorization_ (const SDAI_String x);
 
 };
 
@@ -139,15 +139,15 @@ create_SdaiFile_name () {  return  new SdaiFile_name ;  }
 extern AttrDescriptor *a_12section;
 extern AttrDescriptor *a_13context_identifiers;
 
-class SdaiSection_context  :    public SCLP23(Application_instance) {
+class SdaiSection_context  :    public SDAI_Application_instance {
   protected:
-        SCLP23(String) _section ;    //  OPTIONAL
+        SDAI_String _section ;    //  OPTIONAL
         StringAggregate _context_identifiers ;          //  of  context_name
 
   public:  
 
         SdaiSection_context ( );
-        SdaiSection_context (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiSection_context (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiSection_context (SdaiSection_context& e );
         ~SdaiSection_context ();
 
@@ -171,14 +171,14 @@ create_SdaiSection_context () {  return  new SdaiSection_context ;  }
 extern AttrDescriptor *a_14description;
 extern AttrDescriptor *a_15implementation_level;
 
-class SdaiFile_description  :    public SCLP23(Application_instance) {
+class SdaiFile_description  :    public SDAI_Application_instance {
   protected:
         StringAggregate _description ;
-        SCLP23(String) _implementation_level ;
+        SDAI_String _implementation_level ;
   public:  
 
         SdaiFile_description ( );
-        SdaiFile_description (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiFile_description (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiFile_description (SdaiFile_description& e );
         ~SdaiFile_description ();
 
@@ -186,8 +186,8 @@ class SdaiFile_description  :    public SCLP23(Application_instance) {
         const StringAggregate_ptr description_() const;
         void description_ (const StringAggregate_ptr x);
 
-        const SCLP23(String) implementation_level_() const;
-        void implementation_level_ (const SCLP23(String) x);
+        const SDAI_String implementation_level_() const;
+        void implementation_level_ (const SDAI_String x);
 
 };
 
@@ -201,14 +201,14 @@ create_SdaiFile_description () {  return  new SdaiFile_description ;  }
 
 extern AttrDescriptor *a_16schema_identifiers;
 
-class SdaiFile_schema  :    public SCLP23(Application_instance) {
+class SdaiFile_schema  :    public SDAI_Application_instance {
   protected:
         StringAggregate _schema_identifiers ;          //  of  schema_name
 
   public:  
 
         SdaiFile_schema ( );
-        SdaiFile_schema (SCLP23(Application_instance) *se, int *addAttrs = 0);
+        SdaiFile_schema (SDAI_Application_instance *se, int *addAttrs = 0);
         SdaiFile_schema (SdaiFile_schema& e );
         ~SdaiFile_schema ();
 
@@ -226,7 +226,7 @@ create_SdaiFile_schema () {  return  new SdaiFile_schema ;  }
 
 //        ***** generate Model related pieces
 
-class SdaiModel_contents_header_section_schema : public SCLP23(Model_contents) {
+class SdaiModel_contents_header_section_schema : public SDAI_Model_contents {
 
   public:
     SdaiModel_contents_header_section_schema();
@@ -248,5 +248,5 @@ class SdaiModel_contents_header_section_schema : public SCLP23(Model_contents) {
 
 typedef SdaiModel_contents_header_section_schema * SdaiModel_contents_header_section_schema_ptr;
 typedef SdaiModel_contents_header_section_schema_ptr SdaiModel_contents_header_section_schema_var;
-SCLP23(Model_contents_ptr) create_SdaiModel_contents_header_section_schema();
+SDAI_Model_contents_ptr create_SdaiModel_contents_header_section_schema();
 #endif

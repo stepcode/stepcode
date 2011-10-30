@@ -23,7 +23,7 @@ class MgrNode;
 class DisplayNode;
 class DisplayNodelist;
 #include <sdai.h>
-//class SCLP23(Application_instance);
+//class SDAI_Application_instance;
 
 #include <editordefines.h>
 
@@ -31,13 +31,13 @@ class seeInfo : public DisplayNode
 {
 public:
     seeInfo(MgrNode *node, 
-	    SCLP23(Application_instance) *se,
+	    SDAI_Application_instance *se,
 	    DisplayNodeList *dnl, displayStateEnum displaySt = mappedWrite);
 
     void *GetSEE()		{ return see; }
 };
 
-inline seeInfo::seeInfo(MgrNode *node, SCLP23(Application_instance) *se,
+inline seeInfo::seeInfo(MgrNode *node, SDAI_Application_instance *se,
 		 DisplayNodeList *dnl, displayStateEnum displaySt)
 {
     mn = node; 

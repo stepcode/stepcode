@@ -42,9 +42,7 @@
 #include <dirobj.h>
 #include <dirent.h>
 
-#ifdef HAVE_CONFIG_H
 # include <scl_cf.h>
-#endif
 
 /* for stat() file status */
 #ifdef HAVE_SYS_STAT_H

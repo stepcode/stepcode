@@ -27,8 +27,6 @@ include_directories(
     ${SCL_SOURCE_DIR}/include/express
 )
 
-add_definitions( -DHAVE_CONFIG_H )
-
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging )
 ENDIF()

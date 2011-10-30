@@ -273,10 +273,10 @@ void Registry::RemoveClones( const EntityDescriptor & e )
 }
 
 
-SCLP23( Application_instance ) * Registry::ObjCreate( const char * nm, const char * schnm, int check_case ) const {
+SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * schnm, int check_case ) const {
     const EntityDescriptor  * entd = FindEntity( nm, schnm, check_case );
     if( entd ) {
-        SCLP23( Application_instance ) *se =
+        SDAI_Application_instance *se =
             ( ( EntityDescriptor * )entd ) -> NewSTEPentity();
 
         // See comment in previous function.

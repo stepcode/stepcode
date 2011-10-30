@@ -7,7 +7,7 @@
 #include <ExpDict.h>
 #include <Registry.h>
 
-class STEPcomplex : public SCLP23(Application_instance) {
+class STEPcomplex : public SDAI_Application_instance {
   public:
     STEPcomplex * sc;
     STEPcomplex * head;
@@ -43,7 +43,7 @@ class STEPcomplex : public SCLP23(Application_instance) {
                            int writeComment = 1);
     virtual const char * STEPwrite(std::string &buf, const char *currSch =NULL);
 
-    SCLP23(Application_instance) *Replicate();
+    SDAI_Application_instance *Replicate();
 
     virtual void WriteExtMapEntities(ostream& out =cout,
                                      const char *currSch =NULL);
@@ -52,7 +52,7 @@ class STEPcomplex : public SCLP23(Application_instance) {
     virtual void AppendEntity(STEPcomplex *stepc);
 
   protected:
-    virtual void CopyAs(SCLP23(Application_instance) *);
+    virtual void CopyAs(SDAI_Application_instance *);
     void BuildAttrs(const char *s);
     void AddEntityPart(const char *name);
     void AssignDerives();

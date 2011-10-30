@@ -62,9 +62,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_definitions(
-    -DHAVE_CONFIG_H -DFLEX
-)
+add_definitions( -DFLEX )
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
 
