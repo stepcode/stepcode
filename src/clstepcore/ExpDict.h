@@ -1094,9 +1094,9 @@ class TypeDescriptor {
       protected:
                 // Functions used to check the current name of the type (may
                 // != _name if altNames has diff name for current schema).
-        int PossName (const char *) const;
-        int OurName  (const char *) const;
-        int AltName  (const char *) const;
+        bool PossName (const char *) const;
+        bool OurName  (const char *) const;
+        bool AltName  (const char *) const;
 
   public:  
 
@@ -1201,7 +1201,7 @@ class TypeDescriptor {
         virtual const TypeDescriptor * CanBeSet (const char *n,
                                                  const char *schNm =0) const
                 {  return ( CurrName( n, schNm ) ? this : 0 ); }
-        int CurrName( const char *, const char * =0 ) const;
+        bool CurrName( const char *, const char * =0 ) const;
         void addAltName( const char *schnm, const char *newnm );
                 // Adds an additional name, newnm, to be use when schema schnm
                 // is USE/REFERENCE'ing us (added to altNames).

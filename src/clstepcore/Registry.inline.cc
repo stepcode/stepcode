@@ -280,10 +280,10 @@ SCLP23( Application_instance ) * Registry::ObjCreate( const char * nm, const cha
             ( ( EntityDescriptor * )entd ) -> NewSTEPentity();
 
         // See comment in previous function.
-        if( entd->AbstractEntity().asInt() == TRUE ) {
+        if( entd->AbstractEntity().asInt() == true ) {
             se->Error().severity( SEVERITY_WARNING );
             se->Error().UserMsg( "ENTITY is abstract supertype" );
-        } else if( entd->ExtMapping().asInt() == TRUE ) {
+        } else if( entd->ExtMapping().asInt() == true ) {
             se->Error().severity( SEVERITY_WARNING );
             se->Error().UserMsg( "ENTITY requires external mapping" );
         }
