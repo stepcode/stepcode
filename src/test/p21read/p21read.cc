@@ -142,4 +142,8 @@ int main( int argc, char * argv[] ) {
     sfile.WriteExchangeFile( flnm );
     sfile.Error().PrintContents(cout);
     cout << flnm << " written"  << endl;
+
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) { //lower is worse
+        exit(1);
+    }
 }
