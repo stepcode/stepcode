@@ -17,3 +17,6 @@ set_target_properties(libexppp PROPERTIES PREFIX "")
 
 #SCL_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp express")
 
+if(APPLE)
+    set_target_properties(libexppp PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+endif(APPLE)

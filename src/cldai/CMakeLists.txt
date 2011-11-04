@@ -29,3 +29,7 @@ include_directories(
 )
 
 SCL_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils stepcore")
+
+if(APPLE)
+    set_target_properties(stepdai PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+endif(APPLE)
