@@ -41,3 +41,7 @@ include_directories(
 )
 
 SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" stepcore)
+
+if(APPLE)
+    set_target_properties(stepeditor PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+endif(APPLE)

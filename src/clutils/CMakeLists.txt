@@ -32,6 +32,9 @@ include_directories(
 SCL_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "")
 
 IF(MINGW)
-	TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
+    TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
 ENDIF(MINGW)
 
+if(APPLE)
+    set_target_properties(steputils PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+endif(APPLE)
