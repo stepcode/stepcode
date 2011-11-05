@@ -421,9 +421,10 @@ generate_attribute_name( Variable a, char * out ) {
                 *q = tolower( *p );
             }
             q++;
-            p++;
         }
+        p++;
     }
+    *q = '\0';
     free( temp );
     return out;
 }
