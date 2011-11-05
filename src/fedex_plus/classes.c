@@ -402,13 +402,12 @@ int Handle_FedPlus_Args( int i, char * arg ) {
  ** Side Effects:
  ** Status:  complete 8/5/93
  ******************************************************************/
-char *
-generate_attribute_name( Variable a, char * out ) {
+char * generate_attribute_name( Variable a, char * out ) {
     char * temp, *p, *q = out;
 
     temp = EXPRto_string( VARget_name( a ) );
-    p = temp;
-    if( ! strncmp(p, "SELF\\", 5 ) ) {
+    p = (char*)StrToLower(temp);
+    if( ! strncmp(p, "self\\", 5 ) ) {
         p += 5;
     }
     while (*p) {
@@ -418,7 +417,7 @@ generate_attribute_name( Variable a, char * out ) {
             if( *p == '.' ) {
                 *q = '_';
             } else {
-                *q = tolower( *p );
+                *q = *p;
             }
             q++;
         }
