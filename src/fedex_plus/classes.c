@@ -428,10 +428,9 @@ char * generate_attribute_name( Variable a, char * out ) {
     return out;
 }
 
-char *
-generate_attribute_func_name( Variable a, char * out ) {
+char * generate_attribute_func_name( Variable a, char * out ) {
     generate_attribute_name( a, out );
-    strncpy( out, CheckWord( StrToLower( out ) ), BUFSIZ );
+    strncpy( out, StrToLower( out ), BUFSIZ );
     if( old_accessors ) {
         out[0] = toupper( out[0] );
     } else {
