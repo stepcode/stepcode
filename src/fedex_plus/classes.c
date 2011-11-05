@@ -404,17 +404,14 @@ int Handle_FedPlus_Args( int i, char * arg ) {
  ******************************************************************/
 char *
 generate_attribute_name( Variable a, char * out ) {
-    char * temp, *p, *q;
-    int j;
+    char * temp, *p, *q = out;
 
     temp = EXPRto_string( VARget_name( a ) );
     p = temp;
-    if( ! strncmp( StrToLower( p ), "self\\", 5 ) ) {
-        p = p + 5;
+    if( ! strncmp(p, "SELF\\", 5 ) ) {
+        p += 5;
     }
-    /*  copy p to out  */
-    /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; j < BUFSIZ; p++ ) {
+    while (*p) {
         /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
@@ -423,8 +420,8 @@ generate_attribute_name( Variable a, char * out ) {
             } else {
                 *q = tolower( *p );
             }
-            j++;
             q++;
+            p++;
         }
     }
     free( temp );
