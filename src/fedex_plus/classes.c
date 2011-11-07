@@ -402,39 +402,35 @@ int Handle_FedPlus_Args( int i, char * arg ) {
  ** Side Effects:
  ** Status:  complete 8/5/93
  ******************************************************************/
-char *
-generate_attribute_name( Variable a, char * out ) {
-    char * temp, *p, *q;
-    int j;
+char * generate_attribute_name( Variable a, char * out ) {
+    char * temp, *p, *q = out;
 
     temp = EXPRto_string( VARget_name( a ) );
-    p = temp;
-    if( ! strncmp( StrToLower( p ), "self\\", 5 ) ) {
-        p = p + 5;
+    p = (char*)StrToLower(temp);
+    if( ! strncmp(p, "self\\", 5 ) ) {
+        p += 5;
     }
-    /*  copy p to out  */
-    /* DAR - fixed so that '\n's removed */
-    for( j = 0, q = out; j < BUFSIZ; p++ ) {
+    while (*p) {
         /* copy p to out, 1 char at time.  Skip \n's and spaces, convert */
         /*  '.' to '_', and convert to lowercase. */
         if( ( *p != '\n' ) && ( *p != ' ' ) ) {
             if( *p == '.' ) {
                 *q = '_';
             } else {
-                *q = tolower( *p );
+                *q = *p;
             }
-            j++;
             q++;
         }
+        p++;
     }
+    *q = '\0';
     free( temp );
     return out;
 }
 
-char *
-generate_attribute_func_name( Variable a, char * out ) {
+char * generate_attribute_func_name( Variable a, char * out ) {
     generate_attribute_name( a, out );
-    strncpy( out, CheckWord( StrToLower( out ) ), BUFSIZ );
+    strncpy( out, StrToLower( out ), BUFSIZ );
     if( old_accessors ) {
         out[0] = toupper( out[0] );
     } else {

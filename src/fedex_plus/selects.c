@@ -156,13 +156,16 @@ utype_member( const Linked_List list, const Type check, int rename ) {
     static char r [BUFSIZ];
 
     LISTdo( list, t, Type )
-    strncpy( r, TYPEget_utype( t ), BUFSIZ );
-    if( strcmp( r, TYPEget_utype( check ) ) == 0 ) {
-        return r;
-    }
-    if( rename && compareOrigTypes( check, t ) ) {
-        return r;
-    }
+        if( TYPEis_entity( t ) && TYPEis_entity( check ) ) {
+            return "SDAI_Application_instance_ptr";
+        }
+        strncpy( r, TYPEget_utype( t ), BUFSIZ );
+        if( strcmp( r, TYPEget_utype( check ) ) == 0 ) {
+            return r;
+        }
+        if( rename && compareOrigTypes( check, t ) ) {
+            return r;
+        }
     LISTod;
     return 0;
 }
