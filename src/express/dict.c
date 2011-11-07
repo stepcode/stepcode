@@ -100,17 +100,23 @@ DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type )
     if( 0 == ( old = HASHsearch( dict, &new, HASH_INSERT ) ) ) {
         return( 0 );
     }
-
-    /* allow multiple definitions of an enumeration id in its */
-    /* first scope of visibility.  *don't* allow enum id to be */
-    /* shadowed by another type of symbol in the first scope */
-    /* of visibility.  this changed (back) in the IS. */
+    
+    /* allow multiple definitions of an enumeration id in its
+     * first scope of visibility.  *don't* allow enum id to be
+     * shadowed by another type of symbol in the first scope
+     * of visibility.  this changed (back) in the IS.
+     *
+     * Nov 2011 - Apparently, this changed again; I (MP) am
+     * told that it is legal for an enum value and an entity
+     * to have the same name. To fix this, I changed the
+     * else-if below from || to &&.
+     */
     if( ( type == OBJ_ENUM ) && ( old->type == OBJ_ENUM ) ) {
         /* if we're adding an enum, but we've already seen one */
         /* (and only one enum), mark it ambiguous */
         DICTchange_type( old, OBJ_AMBIG_ENUM );
-    } else if( ( type != OBJ_ENUM ) || ( !IS_ENUM( old->type ) ) ) {
-        /* if we're adding a non-enum, or we've already added a */
+    } else if( ( type != OBJ_ENUM ) && ( !IS_ENUM( old->type ) ) ) {
+        /* if we're adding a non-enum, and we've already added a */
         /* non-enum, complain */
         if( sym->filename == old->symbol->filename ) {
             ERRORreport_with_symbol( ERROR_duplicate_decl, sym, name, old->symbol->line );
