@@ -55,15 +55,8 @@ DICTprint( Dictionary dict ) {
     }
 }
 
-/*
-** Procedure:   DICTinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Dictionary module
-*/
-
-void
-DICTinitialize( void ) {
+/** Initialize the Dictionary module */
+void DICTinitialize( void ) {
     ERROR_duplicate_decl = ERRORcreate(
                                "Redeclaration of %s.  Previous declaration was on line %d.", SEVERITY_ERROR );
     ERROR_duplicate_decl_diff_file = ERRORcreate(
@@ -75,21 +68,17 @@ DICTinitialize( void ) {
 ** Parameters:  int  size   - estimated (initial) max # of entries
 ** Returns: Dictionary  - a new dictionary of the specified size
 */
-
 /* now a macro */
 
-/*
-** Procedure:   DICTdefine
-** Parameters:  Dictionary dictionary   - dictionary to modify
-**      Generic    entry    - entry to be added
-**      Error*     experrc      - buffer for error code
-** Returns: int failure     - 0 on success, 1 on failure
-** Description: Define anything in a dictionary.  Generates an error
-**      directly if there is a duplicate value.
-*/
-
-int
-DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
+/**
+ * Define anything in a dictionary.  Generates an
+ * error directly if there is a duplicate value.
+ * \param dictionary dictionary to modify
+ * \param entry entry to be added
+ * \param experrc buffer for error code
+ * \return 0 on success, 1 on failure
+ */
+int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
     struct Element_ new, *old;
 
     new.key = name;
@@ -101,17 +90,23 @@ DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type )
         return( 0 );
     }
 
-    /* allow multiple definitions of an enumeration id in its */
-    /* first scope of visibility.  *don't* allow enum id to be */
-    /* shadowed by another type of symbol in the first scope */
-    /* of visibility.  this changed (back) in the IS. */
+    /* allow multiple definitions of an enumeration id in its
+     * first scope of visibility.  *don't* allow enum id to be
+     * shadowed by another type of symbol in the first scope
+     * of visibility.  this changed (back) in the IS.
+     *
+     * Nov 2011 - Apparently, this changed again; I (MP) am
+     * told that it is legal for an enum value and an entity
+     * to have the same name. To fix this, I replaced the
+     * || with && in the else-if below.
+     */
     if( ( type == OBJ_ENUM ) && ( old->type == OBJ_ENUM ) ) {
         /* if we're adding an enum, but we've already seen one */
         /* (and only one enum), mark it ambiguous */
         DICTchange_type( old, OBJ_AMBIG_ENUM );
-    } else if( ( type != OBJ_ENUM ) || ( !IS_ENUM( old->type ) ) ) {
-        /* if we're adding a non-enum, or we've already added a */
-        /* non-enum, complain */
+    } else if( ( type != OBJ_ENUM ) && ( !IS_ENUM( old->type ) ) ) {
+        /* if we're adding a non-enum, and we've  *
+         * already added a non-enum, complain     */
         if( sym->filename == old->symbol->filename ) {
             ERRORreport_with_symbol( ERROR_duplicate_decl, sym, name, old->symbol->line );
         } else {
@@ -121,38 +116,16 @@ DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type )
         return( 1 );
     }
     return 0;
-
-#if 0
-    /* following code is a little tricky and accounts for the fact */
-    /* that enumerations are entered into their first scope of */
-    /* visibility but may be shadowed by other objects that are declared */
-    /* in that scope */
-    if( type == OBJ_ENUM ) {
-        if( old->type == OBJ_ENUM ) {
-            DICTchange( old, obj, sym, OBJ_AMBIG_ENUM );
-        }
-    } else if( IS_ENUM( old->type ) ) {
-        DICTchange( old, obj, sym, type );
-    } else {
-        if( sym->filename == old->symbol->filename ) {
-            ERRORreport_with_symbol( ERROR_duplicate_decl, sym, name, old->symbol->line );
-        } else {
-            ERRORreport_with_symbol( ERROR_duplicate_decl_diff_file, sym, name, old->symbol->line, old->symbol->filename );
-        }
-        experrc = ERROR_subordinate_failed;
-        return( 1 );
-    }
-    return 0;
-#endif
 }
 
-/* this version is used for defining things within an enumeration scope */
-/* I.e., the only error it would pick up would be an error such as */
-/* ENUMERATION OF ( A, A ) which has happened! */
-/* This is the way DICTdefine used to look before enumerations gained */
-/* their unusual behavior with respect to scoping and visibility rules */
-int
-DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
+/**
+ * This version is used for defining things within an enumeration scope
+ * I.e., the only error it would pick up would be an error such as
+ * ENUMERATION OF ( A, A ) which has happened!
+ * This is the way DICTdefine used to look before enumerations gained
+ * their unusual behavior with respect to scoping and visibility rules
+ */
+int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
 
     e.key = name;
