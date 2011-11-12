@@ -1405,8 +1405,10 @@ local_body        : /* no local_variables */
                 | local_variable local_body
                 ;
 
-local_decl        : TOK_LOCAL local_body TOK_END_LOCAL semicolon
-                  { }
+local_decl        : TOK_LOCAL
+                    { tag_count = 0; /* for generic_type */}
+                      local_body TOK_END_LOCAL semicolon
+                    { tag_count = -1; }
 /*                | TOK_LOCAL error TOK_END_LOCAL semicolon
                   { }*/
                 ;
