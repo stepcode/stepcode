@@ -9,7 +9,7 @@ result_dir="."
 mk="make -j4"
 
 #separated by ; for cmake
-schemas="../data/203wseds/203wseds.exp;../data/ap203e2/ap203e2_mim_lf.exp;../data/ap210e3/ap210e3_wip1.41_mim_lf.exp;../data/ap214e3/AP214E3_2010.exp;../data/ap227/ap227.exp;../data/ap235/AP235_TC_engineering_properties_schema_20110222.exp;../data/ap240/AP240_aim_lf.exp;../data/cd209/part409cdts_wg3n2617mim_lf.exp;../data/cd242/242_n2813_mim_lf.exp;../data/ifc2x3/IFC2X3_TC1.exp;../data/ifc2x4/IFC2X4_RC3.exp;../data/ISO15926/15926-0002-lifecycle_integration.exp"
+schemas="../data/203wseds/203wseds.exp;../data/ap203e2/ap203e2_mim_lf.exp;../data/ap210e2/ap210e2_v1_40_mim_lf.exp;../data/wip210e3/210e3_wip_v1_41_mim_lf.exp;../data/ap214e3/AP214E3_2010.exp;../data/ap227/ap227.exp;../data/ap235/AP235_TC_engineering_properties_schema_20110222.exp;../data/ap240/AP240_aim_lf.exp;../data/cd209/part409cdts_wg3n2617mim_lf.exp;../data/cd242/242_n2813_mim_lf.exp;../data/ifc2x3/IFC2X3_TC1.exp;../data/ifc2x4/IFC2X4_RC3.exp;../data/ISO15926/15926-0002-lifecycle_integration.exp"
 #count warnings and errors, append to $matrix_file. creates hypertext links to stderr,stdout txt
 # $1 is the name of the row, $2 is the path and first part of the filename, $3 is the schema
 function count_we {
@@ -81,7 +81,7 @@ function build_one_schema {
     d=`echo $1|sed -e 's|^.*/\([^/]*\)\.exp$|\1|;'`
 
     echo "Running fedex_plus and gcc for $i..."
-    make generate_$d 2>"$result_dir/fedex_"$i"_stderr.txt" >"$result_dir/fedex_"$i"_stdout.txt" && \
+    make generate_cpp_$d 2>"$result_dir/fedex_"$i"_stderr.txt" >"$result_dir/fedex_"$i"_stdout.txt" && \
     $mk sdai_$d >/dev/null 2>"$result_dir/compile_libsdai_"$i"_stderr.txt" && \
     $mk p21read_sdai_$d >/dev/null 2>"$result_dir/compile_p21read_sdai_"$i"_stderr.txt"
 
@@ -131,6 +131,7 @@ function gen_wiki {
     git log --decorate=short -n1 |\
         head -n1 |\
         sed -e 's|^.*commit \([a-z0-9]\+\) .*$|### Current as of commit [\1](http://github.com/mpictor/StepClassLibrary/commit/\1)|;' >>$matrix_file
+    echo -e "\n## See also [PLIB build matrix](http://github.com/mpictor/StepClassLibrary/wiki/PLIB-build-matrix)\n\n" >>$matrix_file
     echo "<table border=1>" >>$matrix_file
     echo "<tr><th>Key</th></tr><tr><td><table width=100%>" >>$matrix_file
     echo "<tr><th>Item</th><th>Description</th></tr>" >>$matrix_file
