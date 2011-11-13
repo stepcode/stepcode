@@ -1,5 +1,5 @@
 ***********************************************************************
-Step Class Library v0.3 -- https://github.com/mpictor/StepClassLibrary
+Step Class Library v0.4 -- http://github.com/mpictor/StepClassLibrary
 
 * What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
   C++ source code that can read and write Part 21 files conforming 

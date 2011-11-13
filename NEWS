@@ -1,5 +1,18 @@
-STEP Class Library  ------  https://github.com/mpictor/StepClassLibrary
+STEP Class Library  ------  http://github.com/mpictor/StepClassLibrary
 ************************************************************************
+Release 0.4 (Nov 13, 2011)
+
+New since v0.3:
+* Improve p21read performance by ~30%
+* Improve fedex_plus performance by ~4300% (!)
+* A variable defined in a LOCAL is not required to have a type label
+  (affected ap242,210e3,209)
+* Enums and entities are allowed to have the same names
+  (affected ap242,210e3,209)
+* Remove the SCLP23 macro
+http://github.com/mpictor/StepClassLibrary/wiki/changelog-v0.4
+************************************************************************
+
 Release 0.3 (Oct 29, 2011)
 
 What's new since v0.2?
