@@ -5,7 +5,7 @@
 (* The schema is converted from ISO10303 P11-2003 to ISO10303 P11-1994                     *)
 (* ===================================================================================== *)
 
-SCHEMA Ap210_electronic_assembly_interconnect_and_packaging_design_mim_LF;
+SCHEMA wip210_electronic_assembly_interconnect_and_packaging_design_mim_LF;
 
 
 CONSTANT
@@ -15,7 +15,7 @@ CONSTANT
 
   dummy_gri : geometric_representation_item :=  representation_item('')||
                                    geometric_representation_item();
-  schema_prefix : STRING := 'AP210_ELECTRONIC_ASSEMBLY_INTERCONNECT_AND_PACKAGING_DESIGN_MIM_LF.';
+  schema_prefix : STRING := 'WIP210_ELECTRONIC_ASSEMBLY_INTERCONNECT_AND_PACKAGING_DESIGN_MIM_LF.';
 
   the_empty_maths_tuple      : maths_tuple := [];
 
