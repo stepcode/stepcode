@@ -171,7 +171,7 @@ STEPfile::ReadHeader( istream & in ) {
                 fileid = HeaderId( keywd );
 
                 //read the values from the istream
-                objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in );
+                objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in, NULL, true, _strict );
                 if( !cmtStr.empty() ) {
                     obj->AddP21Comment( cmtStr );
                 }
@@ -1828,7 +1828,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
     if( c == '(' ) {
         // TODO
         sev = obj->STEPread( fileid, idIncrNum, &instances(), in, currSch.c_str(),
-                             useTechCor );
+                             useTechCor, _strict );
 
         ReadTokenSeparator( in, &cmtStr );
 
@@ -1875,7 +1875,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         // (WORKING_SESSION included)
 
         sev = obj->STEPread( fileid, idIncrNum, &instances(), in, currSch.c_str(),
-                             useTechCor );
+                             useTechCor, _strict );
 
         ReadTokenSeparator( in, &cmtStr );
 

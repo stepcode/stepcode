@@ -75,6 +75,8 @@ class STEPfile
 
     int _maxErrorCount;
 
+    bool _strict;       ///< If false, "missing and required" attributes are replaced with a generic value when file is read
+
   protected:
     
 //file type information
@@ -138,7 +140,7 @@ class STEPfile
     void Renumber ();
 
 //constructors
-    STEPfile (Registry& r, InstMgr& i, const std::string filename = "");
+    STEPfile (Registry& r, InstMgr& i, const std::string filename = "", bool strict = true );
     virtual ~STEPfile();
 
   protected:    

@@ -193,7 +193,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFi
 **         value <= SEVERITY_INPUT_ERROR  is fatal read error
 ******************************************************************/
 Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFileId,
-                         const char * currSch ) {
+                         const char * currSch, bool strict ) {
 
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
