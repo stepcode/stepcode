@@ -1,5 +1,5 @@
 #ifndef _STEPFILE_H
-#define	_STEPFILE_H
+#define        _STEPFILE_H
 
 /*
 * NIST STEP Core Class Library
@@ -27,11 +27,11 @@
 #define READ_INCOMPLETE  20
 
 enum  FileTypeCode {
-    TYPE_UNKNOWN	= -2,
-    VERSION_OLD		= -1,
-    VERSION_UNKNOWN	=  0,
-    VERSION_CURRENT	=  1,
-    WORKING_SESSION	=  2,
+    TYPE_UNKNOWN        = -2,
+    VERSION_OLD                = -1,
+    VERSION_UNKNOWN        =  0,
+    VERSION_CURRENT        =  1,
+    WORKING_SESSION        =  2,
     OLD_WORKING_SESSION =  3
   };
 
@@ -91,9 +91,9 @@ class STEPfile
     InstMgr* HeaderInstances() { return _headerInstances; }
     const Registry *HeaderRegistry() { return _headerRegistry; }
 // to create header instances
-    SDAI_Application_instance* HeaderDefaultFileName();	
-    SDAI_Application_instance* HeaderDefaultFileDescription();	
-    SDAI_Application_instance* HeaderDefaultFileSchema();	
+    SDAI_Application_instance* HeaderDefaultFileName();
+    SDAI_Application_instance* HeaderDefaultFileDescription();
+    SDAI_Application_instance* HeaderDefaultFileSchema();
 
 //file information
     const std::string FileName() const { return _fileName; }
@@ -101,14 +101,14 @@ class STEPfile
     const std::string TruncFileName (const std::string name) const;
 
 //error information
-    ErrorDescriptor& Error() /* const */  { return _error;        }
+    ErrorDescriptor& Error() /* const */  { return _error; }
     int ErrorCount() const  { return _errorCount;   }
     int WarningCount() const { return _warningCount; }
-    Severity AppendEntityErrorMsg (ErrorDescriptor *e);	
+    Severity AppendEntityErrorMsg (ErrorDescriptor *e);
     
 //version information
     FileTypeCode FileType() const   { return _fileType; }
-    void FileType (FileTypeCode ft) { _fileType = ft; }	
+    void FileType (FileTypeCode ft) { _fileType = ft; }
     int SetFileType (FileTypeCode ft = VERSION_CURRENT);
     
 //Reading and Writing 
@@ -121,17 +121,17 @@ class STEPfile
     Severity AppendFile (istream* in, bool useTechCor = true ) ;
 
     Severity WriteExchangeFile (ostream& out, int validate =1,
-				int clearError = 1, int writeComments = 1);
+                                int clearError = 1, int writeComments = 1);
     Severity WriteExchangeFile (const std::string filename = "", int validate =1,
-				int clearError = 1, int writeComments = 1);
+                                int clearError = 1, int writeComments = 1);
     Severity WriteValuePairsFile(ostream& out, int validate =1, 
-				 int clearError =1, 
-				 int writeComments = 1, int mixedCase = 1);
+                                 int clearError =1,
+                                 int writeComments = 1, int mixedCase = 1);
 
     Severity WriteWorkingFile (ostream& out, int clearError = 1, 
-			       int writeComments = 1);
+                               int writeComments = 1);
     Severity WriteWorkingFile (const std::string filename = "", int clearError = 1,
-			       int writeComments = 1);
+                               int writeComments = 1);
 
     stateEnum EntityWfState(char c);
     
@@ -166,13 +166,13 @@ class STEPfile
 
     void ReadRestOfFile(istream& in);
 
-	// create instance - used by ReadData1()
+        // create instance - used by ReadData1()
     SDAI_Application_instance *  CreateInstance(istream& in, ostream& out);
-	// create complex instance - used by CreateInstance()
+        // create complex instance - used by CreateInstance()
     SDAI_Application_instance * CreateSubSuperInstance(istream& in, int fileid,
-					ErrorDescriptor &);
+                                        ErrorDescriptor &);
 
-	// read the instance - used by ReadData2()
+        // read the instance - used by ReadData2()
     SDAI_Application_instance * ReadInstance(istream& in, ostream& out, 
                                         std::string &cmtStr, bool useTechCor = true );
 
@@ -200,7 +200,7 @@ class STEPfile
 
     void WriteData (ostream& out, int writeComments = 1);
     void WriteValuePairsData(ostream& out, int writeComments = 1, 
-			     int mixedCase = 1);
+                             int mixedCase = 1);
     
     int IncrementFileId (int fileid);
     int FileIdIncr() { return _fileIdIncr; }
