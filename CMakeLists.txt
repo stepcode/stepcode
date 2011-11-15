@@ -230,7 +230,7 @@ endif()
 # Now that all the tests are done, configure the scl_cf.h file:
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
 
-add_definitions( -Wall )
+add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
 
 include_directories(
     ${SCL_SOURCE_DIR}/include
