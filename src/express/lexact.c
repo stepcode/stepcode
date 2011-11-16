@@ -429,8 +429,8 @@ SCANprocess_semicolon( int commentp ) {
 
 void
 SCANsave_comment( void ) {
-    strcpy( last_comment_, yytext );
-    last_comment = last_comment;
+    strncpy( last_comment_ , yytext, 255 );
+    last_comment = last_comment_;
 }
 
 bool
