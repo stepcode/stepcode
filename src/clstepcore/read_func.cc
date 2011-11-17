@@ -364,25 +364,25 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
     return err->severity();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//  ReadNumber - read as a real number
-// * This function reads a number if possible
-// * If a number is read it is assigned to val and 1 (true) is returned.
-// * If a number is not read because of an error then val is left unchanged
-//   and 0 (false) is returned.
-// * If there is an error then the ErrorDescriptor err is set accordingly with
-//   a severity level and error message (no error MESSAGE is set for severity
-//   incomplete).
-// * tokenList contains characters that terminate reading the value.
-// * If tokenList is not zero then the istream will be read until a character
-//   is found matching a character in tokenlist.  All values read up to the
-//   terminating character (delimiter) must be valid or err will be set with an
-//   appropriate error message.  A valid value may still have been assigned
-//   but it may be followed by garbage thus an error will result.  White
-//   space between the value and the terminating character is not considered
-//   to be invalid.  If tokenList is null then the value must not be followed
-//   by any characters other than white space (i.e. EOF must happen)
-///////////////////////////////////////////////////////////////////////////////
+/**
+ *  ReadNumber - read as a real number
+ * * This function reads a number if possible
+ * * If a number is read it is assigned to val and 1 (true) is returned.
+ * * If a number is not read because of an error then val is left unchanged
+ *   and 0 (false) is returned.
+ * * If there is an error then the ErrorDescriptor err is set accordingly with
+ *   a severity level and error message (no error MESSAGE is set for severity
+ *   incomplete).
+ * * tokenList contains characters that terminate reading the value.
+ * * If tokenList is not zero then the istream will be read until a character
+ *   is found matching a character in tokenlist.  All values read up to the
+ *   terminating character (delimiter) must be valid or err will be set with an
+ *   appropriate error message.  A valid value may still have been assigned
+ *   but it may be followed by garbage thus an error will result.  White
+ *   space between the value and the terminating character is not considered
+ *   to be invalid.  If tokenList is null then the value must not be followed
+ *   by any characters other than white space (i.e. EOF must happen)
+ */
 int ReadNumber( SDAI_Real &val, istream & in, ErrorDescriptor * err,
             const char * tokenList ) {
     SDAI_Real d = 0;
@@ -863,7 +863,7 @@ const char * ReadComment( istream & in, std::string & s ) {
                  << "Will try to recover...\n";
             std::string tmp;
             SkipInstance( in, tmp );
-            return const_cast<char *>( s.c_str() );
+            return s.c_str();
         }
         // leave slash read from stream... assume caller already knew there was
         //  a slash, leave it off stream so they don't think this funct needs

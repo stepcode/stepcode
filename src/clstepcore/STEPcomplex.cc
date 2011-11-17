@@ -259,7 +259,7 @@ void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
 
 // READ
 Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
-                       istream & in, const char * currSch, int useTechCor ) {
+                       istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
     char c;
     std::string typeNm;
     STEPcomplex * stepc = 0;
@@ -496,7 +496,13 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 }
 
 void STEPcomplex::STEPread_error( char c, int index, istream & in ) {
-    cout << "STEPcomplex::STEPread_error() \n";
+    cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << endl;
+    streampos p = in.tellg();
+    std::string q,r;
+    getline(in,q);
+    getline(in,r);
+    cout << "Remainder of this line:" << endl << c << q << endl << "Next line:" << endl << r << endl;
+    in.seekg(p);
 }
 
 /** 
