@@ -95,10 +95,8 @@ const BASE_TYPE STEPattribute::Type() const {
 }
 
 const BASE_TYPE STEPattribute::NonRefType() const {
-    if( _redefAttr )  {
-        return _redefAttr->NonRefType();
-    }
-    return aDesc->NonRefType();
+    return ( _redefAttr ? _redefAttr->NonRefType() :
+                ( aDesc ? aDesc->NonRefType() : UNKNOWN_TYPE ) );
 }
 
 const BASE_TYPE STEPattribute::BaseType() const {
