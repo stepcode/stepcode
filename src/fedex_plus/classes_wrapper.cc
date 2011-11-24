@@ -472,20 +472,10 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     }
     fprintf( incfile, "/* %cId$  */\n", '\044' );
 
-    fprintf( incfile, "#ifdef __O3DB__\n" );
-    fprintf( incfile, "#include <OpenOODB.h>\n" );
-    fprintf( incfile, "#endif\n\n" );
     fprintf( incfile,
              "#ifndef  SCHEMA_H\n"
              "#include <schema.h>\n"
              "#endif\n" );
-    fprintf( incfile,
-             "\n#ifdef PART26\n"
-             "#include <corbaIncludes.h> \n"
-             "// Create a corbaSchema.h file in this directory with a #include in \n"
-             "// it for your IDL generated schema-specific .hh file.\n"
-             "#include <corbaSchema.h> \n"
-             "#endif \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -516,9 +506,6 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
              "#endif \n" );
 
     fprintf( libfile, "\nstatic int debug_access_hooks = 0;\n" );
-    fprintf( libfile, "\n#ifdef PART26\n" );
-    fprintf( libfile, "\nconst char * sclHostName = CORBA::Orbix.myHost(); // Default is local host\n" );
-    fprintf( libfile, "#endif\n" );
 
     /*  3.  source code to initialize entity registry   */
     /*  prints header of file for input function    */

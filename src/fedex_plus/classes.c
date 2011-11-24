@@ -1854,11 +1854,6 @@ MemberFunctionSign( Entity entity, Linked_List nonInheritedAttrList, FILE * file
     /*  destructor: */
     fprintf( file, "	~%s ();\n", entnm );
 
-    /*  Open OODB reconstructor  */
-    fprintf( file, "\n#ifdef __O3DB__\n" );
-    fprintf( file, "\tvoid oodb_reInit();\n" );
-    fprintf( file, "#endif\n\n" );
-
     fprintf( file, "	int opcode ()  { return %d ; } \n",
              entcode++ );
 
@@ -1885,28 +1880,11 @@ MemberFunctionSign( Entity entity, Linked_List nonInheritedAttrList, FILE * file
 
     }
     /* //////////////// */
-    if( corba_binding ) {
-        fprintf( file, "\n//\t%s_ptr create_TIE();\n\tIDL_Application_instance_ptr create_TIE();\n",
-                 ENTITYget_CORBAname( entity ) );
-        /*
-            fprintf(file, "\n//\t%s_ptr create_TIE();\n\tP26::Application_instance_ptr create_TIE();\n",
-                ENTITYget_CORBAname(entity));
-        */
-    }
     fprintf( file, "};\n" );
-    if( corba_binding ) {
-        fprintf( file, "\n// Associate IDL interface generated code with implementation object\nDEF_TIE_%s(%s)\n", ENTITYget_CORBAname( entity ), entnm );
-    }
 
     /*  print creation function for class   */
-    fprintf( file, "\n#if defined(__O3DB__)\n" );
-    fprintf( file, "inline SDAI_Application_instance_ptr \ncreate_%s () {  return (SDAI_Application_instance_ptr) new %s ;  }\n",
-             entnm, entnm );
-    fprintf( file, "#else\n" );
     fprintf( file, "inline %s *\ncreate_%s () {  return  new %s ;  }\n",
              entnm, entnm, entnm );
-    fprintf( file, "#endif\n" );
-
 }
 
 /******************************************************************
@@ -2145,11 +2123,9 @@ get_attribute_number( Entity entity ) {
     return -1;
 }
 
-/******************************************************************
- ** Procedure:  LIBstructor_print
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
+/**************************************************************//**
+ ** \param  Entity *entity --  entity being processed
+ ** \param  FILE* file  --  file being written to
  ** Description:  prints the c++ code for entity class's
  **     constructor and destructor.  goes to .cc file
  ** Side Effects:  generates codes segment in c++ .cc file
@@ -2161,8 +2137,7 @@ get_attribute_number( Entity entity ) {
  ** Changes: Modified STEPattribute constructors to take fewer arguments
  **     21-Dec-1992 -kcm
  ******************************************************************/
-void
-LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
@@ -2322,12 +2297,11 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 }
 
 /********************/
-/* print the constructor that accepts a SDAI_Application_instance as an argument used
+/** print the constructor that accepts a SDAI_Application_instance as an argument used
    when building multiply inherited entities.
+   \sa LIBstructor_print()
 */
-
-void
-LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
