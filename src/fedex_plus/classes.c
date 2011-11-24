@@ -2319,35 +2319,6 @@ LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     entnm = ENTITYget_classname( entity );
     fprintf( file, "%s::~%s () {  }\n", entnm, entnm );
-
-    /*  Open OODB reInit function  */
-    fprintf( file, "\n#ifdef __O3DB__\n" );
-    fprintf( file, "void \n%s::oodb_reInit ()\n{", entnm );
-    fprintf( file, "\teDesc = %s%s%s;\n",
-             SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-
-    count = attr_count;
-    attr_list = ENTITYget_attributes( entity );
-    index = get_attribute_number( entity );
-
-    LISTdo( attr_list, a, Variable )
-    /*  if the attribute is Explicit, assign the Descriptor  */
-    if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
-        generate_attribute_name( a, attrnm );
-        /*  1. assign the Descriptor for the STEPattributes */
-        fprintf( file, "\tattributes [%d].aDesc = %s%d%s%s;\n",
-                 index,
-                 ATTR_PREFIX, count,
-                 ( VARis_type_shifter( a ) ? "R" : "" ),
-                 attrnm );
-    }
-    index++,
-          count++;
-    LISTod;
-    fprintf( file, "}\n"
-             "#endif\n\n" );
-
-
 }
 
 /********************/
