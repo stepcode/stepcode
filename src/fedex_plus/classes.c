@@ -2505,10 +2505,8 @@ ENTITYlib_print( Entity entity, Linked_List nonInheritedAttrList, FILE * file, S
     LIBmemberFunctionPrint( entity, nonInheritedAttrList, file );
 }
 
-//FIXME should return bool
-/* return 1 if types are predefined by us */
-int
-TYPEis_builtin( const Type t ) {
+/** return true if types are predefined by us */
+bool TYPEis_builtin( const Type t ) {
     switch( TYPEget_body( t )->type ) { /* dunno if correct*/
         case integer_:
         case real_:
@@ -2517,12 +2515,12 @@ TYPEis_builtin( const Type t ) {
         case boolean_:
         case number_:
         case logical_:
-            return 1;
+            return true;
             break;
         default:
             break;
     }
-    return 0;
+    return false;
 }
 
 /* go down through a type'sbase type chain,
