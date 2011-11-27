@@ -86,6 +86,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
     add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
+    add_dependencies( p21read_${PROJECT_NAME} version_string )
     target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )

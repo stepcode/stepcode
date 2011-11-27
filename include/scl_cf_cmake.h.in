@@ -9,5 +9,3 @@
 #cmakedefine HAVE_MEMMOVE 1
 #cmakedefine HAVE_SSIZE_T 1
 
-//cmake updates this at build time
-#define SCL_COMMIT_ID "@GIT_COMMIT_ID@"
