@@ -171,7 +171,7 @@ STEPfile::ReadHeader( istream & in ) {
                 fileid = HeaderId( keywd );
 
                 //read the values from the istream
-                objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in );
+                objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in, NULL, true, _strict );
                 if( !cmtStr.empty() ) {
                     obj->AddP21Comment( cmtStr );
                 }
@@ -830,7 +830,7 @@ STEPfile::ReadWorkingData1( istream & in ) {
  **               in an exchange file
  ******************************************************************/
 int
-STEPfile::ReadData2( istream & in, int useTechCor ) {
+STEPfile::ReadData2( istream & in, bool useTechCor ) {
     _entsInvalid = 0;
     _entsIncomplete = 0;
     _entsWarning = 0;
@@ -1133,7 +1133,7 @@ STEPfile::ReadData2( istream & in ) {
 #endif
 
 int
-STEPfile::ReadWorkingData2( istream & in, int useTechCor ) {
+STEPfile::ReadWorkingData2( istream & in, bool useTechCor ) {
     return ReadData2( in, useTechCor );
 #ifdef junk
     _errorCount = 0;  // reset error count
@@ -1745,7 +1745,7 @@ void ReadEntityError( char c, int i, istream & in ) {
 *****************************************************/
 SDAI_Application_instance *
 STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
-                        int useTechCor ) {
+                        bool useTechCor ) {
     Severity sev = SEVERITY_NULL;
 
     std::string tmpbuf;
@@ -1828,7 +1828,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
     if( c == '(' ) {
         // TODO
         sev = obj->STEPread( fileid, idIncrNum, &instances(), in, currSch.c_str(),
-                             useTechCor );
+                             useTechCor, _strict );
 
         ReadTokenSeparator( in, &cmtStr );
 
@@ -1857,7 +1857,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         if( !in.good() ) {
             out << "ERROR: instance #" << fileid
                 << " Unexpected file problem in "
-                << "STEPfile::CreateInstance.\n";
+                << "STEPfile::ReadInstance." << endl;;
         }
         ReadTokenSeparator( in, &cmtStr );
 
@@ -1865,8 +1865,8 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         if( userDefined ) {
             SkipInstance( in, tmpbuf );
             out << "WARNING: #" << fileid <<
-                ". Ignoring User defined entity.\n\tdata lost: !"
-                << objnm << tmpbuf << "\n";
+                ". Ignoring User defined entity."<< endl << "    data lost: !"
+                << objnm << tmpbuf << endl;
             ++_warningCount;
             return ENTITY_NULL;
         }
@@ -1875,7 +1875,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         // (WORKING_SESSION included)
 
         sev = obj->STEPread( fileid, idIncrNum, &instances(), in, currSch.c_str(),
-                             useTechCor );
+                             useTechCor, _strict );
 
         ReadTokenSeparator( in, &cmtStr );
 
@@ -2220,7 +2220,7 @@ void STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedC
     }
 }
 
-Severity STEPfile::AppendFile( istream * in, int useTechCor ) {
+Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     Severity rval = SEVERITY_NULL;
     char errbuf[BUFSIZ];
 

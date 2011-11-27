@@ -18,6 +18,7 @@ extern void SchemaInit( class Registry & );
 #include <STEPattribute.h>
 #include <ExpDict.h>
 #include <Registry.h>
+#include <errordesc.h>
 #include <algorithm>
 #include <string>
 #include <unistd.h>
@@ -83,22 +84,27 @@ void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
 
 void printUse(const char * exe) {
     std::cout << "p21read - read a STEP Part 21 exchange file using SCL, and write the data to another file." << std::endl;
-    std::cout << "Syntax:  " << exe << " [-i] infile [outfile]" << std::endl;
+    std::cout << "Syntax:  " << exe << " [-i] [-s] infile [outfile]" << std::endl;
     std::cout << "Use '-i' to ignore a schema name mismatch." << std::endl;
+    std::cout << "Use '-s' for strict interpretation (attributes that are \"missing and required\" will cause errors)." << std::endl;
     std::cout << "Use '--' as the last argument if a file name starts with a dash." << std::endl;
     exit( 1 );
 }
 
 int main( int argc, char * argv[] ) {
     bool ignoreErr = false;
+    bool strict = false;
     char c;
     if( argc > 4 || argc < 2 ) {
         printUse(argv[0]);
     }
-    while( ( c = getopt( argc, argv, "i" ) ) != -1 ) {
+    while( ( c = getopt( argc, argv, "is" ) ) != -1 ) {
         switch( c ) {
             case 'i':
                 ignoreErr = true;
+                break;
+            case 's':
+                strict = true;
                 break;
             case '?':
             default:
@@ -119,7 +125,7 @@ int main( int argc, char * argv[] ) {
 
     Registry  registry( SchemaInit );
     InstMgr   instance_list;
-    STEPfile  sfile( registry, instance_list );
+    STEPfile  sfile( registry, instance_list, "", strict );
     char   *  flnm;
 
     cout << "\nEXAMPLE :  load file ..." << endl;
@@ -133,6 +139,8 @@ int main( int argc, char * argv[] ) {
 
     checkSchemaName( registry, sfile, ignoreErr );
 
+    Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
+
     cout << "EXAMPLE :  write file ..." << endl;
     if( argc == optind+2 ) {
         flnm = argv[optind+1];
@@ -143,7 +151,7 @@ int main( int argc, char * argv[] ) {
     sfile.Error().PrintContents(cout);
     cout << flnm << " written"  << endl;
 
-    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) { //lower is worse
+    if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
         exit(1);
     }
 }

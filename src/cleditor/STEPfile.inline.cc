@@ -24,11 +24,11 @@ extern void HeaderSchemaInit( Registry & reg );
 
 //constructor & destructor
 
-STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename ) :
+STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool strict ) :
     _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
     _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
     _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
-    _maxErrorCount( 5000 )
+    _maxErrorCount( 5000 ), _strict(strict)
 {
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
@@ -102,7 +102,7 @@ const std::string STEPfile::TruncFileName( const std::string filename ) const {
 
 
 /******************************************************/
-Severity STEPfile::ReadExchangeFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -121,7 +121,7 @@ Severity STEPfile::ReadExchangeFile( const std::string filename, int useTechCor 
     return rval;
 }
 
-Severity STEPfile::AppendExchangeFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::AppendExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -135,7 +135,7 @@ Severity STEPfile::AppendExchangeFile( const std::string filename, int useTechCo
 }
 
 /******************************************************/
-Severity STEPfile::ReadWorkingFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::ReadWorkingFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
@@ -155,7 +155,7 @@ Severity STEPfile::ReadWorkingFile( const std::string filename, int useTechCor )
 }
 
 
-Severity STEPfile::AppendWorkingFile( const std::string filename, int useTechCor ) {
+Severity STEPfile::AppendWorkingFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
     istream * in = OpenInputFile( filename );
