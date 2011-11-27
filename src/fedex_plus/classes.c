@@ -1010,11 +1010,12 @@ ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
  **   FILE* file  --  file being written to
  ** Returns:
  ** Description:  prints the beginning of the entity class definition for the
- **               c++ code and the declaration of extern attr descriptors for
+ **               c++ code and the declaration of attr descriptors for
  **       the registry.  In the .h file
  ** Side Effects:  generates c++ code
  ** Status:  good 1/15/91
  **          added registry things 12-Apr-1993
+ **          remove extern keyword - MAP - Nov 2011
  ******************************************************************/
 
 void
@@ -1028,15 +1029,17 @@ ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
 
     /* DAS print all the attr descriptors and inverse attr descriptors for an
-       entity as extern defs in the .h file. */
+       entity as defs in the .h file. */
+    fprintf( file, "namespace %s {\n", SCHEMAget_name(schema) );
     LISTdo( ENTITYget_attributes( entity ), v, Variable )
     generate_attribute_name( v, attrnm );
-    fprintf( file, "extern %s *%s%d%s%s;\n",
+    fprintf( file, "    %s *%s%d%s%s;\n",
              ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
              ATTR_PREFIX, attr_count_tmp++,
              ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
              attrnm );
     LISTod;
+    fprintf( file, "} //namespace %s\n", SCHEMAget_name(schema) );
 
     fprintf( file, "\nclass %s  :  ", entnm );
 
@@ -1258,17 +1261,19 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ];
 
-    fprintf( file, "EntityDescriptor *%s%s%s =0;\n",
-             SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    //fprintf( file, "namespace %s {\n", SCHEMAget_name(schema) );
+    fprintf( file, "EntityDescriptor * %s::%s%s%s = 0;\n",
+             SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
     LISTdo( ENTITYget_attributes( entity ), v, Variable )
     generate_attribute_name( v, attrnm );
-    fprintf( file, "%s *%s%d%s%s =0;\n",
+    fprintf( file, "%s * %s::%s%d%s%s = 0;\n",
              ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-             ATTR_PREFIX, attr_count_tmp++,
+             SCHEMAget_name( schema ), ATTR_PREFIX, attr_count_tmp++,
              ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
              attrnm );
     LISTod
+    //fprintf( file, "} //namespace %s\n", SCHEMAget_name(schema) );
 
 }
 
@@ -1571,9 +1576,11 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     }
     /* ////MULTIPLE INHERITANCE//////// */
 
-    /* what if entity comes from other schema? */
-    fprintf( file, "\n    eDesc = %s%s%s;\n",
-             SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    /* what if entity comes from other schema?
+     * It appears that entity.superscope.symbol.name is the schema name (but only if entity.superscope.type == 's'?)  --MAP 27Nov11
+     */
+    fprintf( file, "\n    eDesc = %s::%s%s%s;\n",
+             SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
     attr_list = ENTITYget_attributes( entity );
 
@@ -1591,9 +1598,9 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             /*  1. create a new STEPattribute */
 
             fprintf( file, "    "
-                     "%sa = new STEPattribute(*%s%d%s%s, %s &_%s);\n",
-                     ( first ? "STEPattribute *" : "" ),
-                     /*  first time through declare a */
+                     "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
+                     ( first ? "STEPattribute *" : "" ), //  first time through, declare a
+                     SCHEMAget_name( schema ),
                      ATTR_PREFIX, count,
                      ( VARis_type_shifter( a ) ? "R" : "" ),
                      attrnm,
@@ -1756,8 +1763,8 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         /* ////MULTIPLE INHERITANCE//////// */
 
         /* what if entity comes from other schema? */
-        fprintf( file, "\n    eDesc = %s%s%s;\n",
-                 SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+        fprintf( file, "\n    eDesc = %s::%s%s%s;\n",
+                 SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         attr_list = ENTITYget_attributes( entity );
 
@@ -1775,9 +1782,9 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                 /*  1. create a new STEPattribute */
 
                 fprintf( file, "    "
-                         "%sa = new STEPattribute(*%s%d%s%s, %s &_%s);\n",
-                         ( first ? "STEPattribute *" : "" ),
-                         /*  first time through declare a */
+                         "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
+                         ( first ? "STEPattribute *" : "" ), //  first time through, declare a
+                         SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
                          ( VARis_type_shifter( a ) ? "R" : "" ),
                          attrnm,
@@ -2045,9 +2052,9 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            fprintf( file, "        %s%d%s%s =\n          new %s"
+            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s%s%s,\n          %s,%s%s,\n          *%s%s%s);\n",
-                     ATTR_PREFIX, attr_count,
+                     SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2078,9 +2085,9 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                      schema_name, ENT_PREFIX, TYPEget_name( entity )
                    );
         } else {
-            fprintf( file, "  %s%d%s%s =\n          new %s"
+            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s%s%s,\n          %s,%s%s,\n          *%s%s%s);\n",
-                     ATTR_PREFIX, attr_count,
+                     SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2108,9 +2115,9 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     } else if( TYPEis_builtin( v->type ) ) {
         /*  the type wasn\'t named -- it must be built in or aggregate  */
 
-        fprintf( file, "  %s%d%s%s =\n          new %s"
+        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s%s,\n          %s,%s%s,\n          *%s%s%s);\n",
-                 ATTR_PREFIX, attr_count,
+                 SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2134,9 +2141,9 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
         /* manufacture new one(s) on the spot */
         char typename_buf[MAX_LEN];
         print_typechain( file, v->type, typename_buf, schema );
-        fprintf( file, "  %s%d%s%s =\n          new %s"
+        fprintf( file, "  %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s%s%s);\n",
-                 ATTR_PREFIX, attr_count,
+                 SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2158,10 +2165,10 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                );
     }
 
-    fprintf( file, "        %s%s%s->Add%sAttr (%s%d%s%s);\n",
+    fprintf( file, "        %s%s%s->Add%sAttr (%s::%s%d%s%s);\n",
              schema_name, ENT_PREFIX, TYPEget_name( entity ),
              ( VARget_inverse( v ) ? "Inverse" : "Explicit" ),
-             ATTR_PREFIX, attr_count,
+             SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
              ( VARis_derived( v ) ? "D" :
                ( VARis_type_shifter( v ) ? "R" :
                  ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2521,8 +2528,8 @@ ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
     fprintf( files->classes,
              "#define %s__set_var         SDAI_DAObject__set_var\n", n );
 
-    fprintf( files ->classes, "extern EntityDescriptor         *%s%s%s;\n",
-             SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( files ->classes, "extern EntityDescriptor         *%s::%s%s%s;\n",
+             SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
 }
 

@@ -475,6 +475,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
 
     fprintf( libfile, "\n/* static int debug_access_hooks = 0; */\n" );
 
+    fprintf( libfile, "\n#include \"%s.h\"\n", schnm );
     /*  3.  source code to initialize entity registry   */
     /*  prints header of file for input function    */
 
@@ -576,8 +577,10 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
         if( tmpstr_size > 0 ) {
             free( tmpstr );
         }
+        fprintf( files->classes, "#include \"%s.h\"\n", schnm );
 
         fprintf( files->classes, "\n// Schema:  %s", schnm );
+//         fprintf( files->classes, "\nnamespace %s;\n", SCHEMAget_name( schema ) );
         fprintf( files->classes,
                  "\nextern Schema *  %s%s;\n",
                  SCHEMA_PREFIX, SCHEMAget_name( schema ) );
