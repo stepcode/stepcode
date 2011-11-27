@@ -606,13 +606,10 @@ void
 ATTRsign_access_methods( Variable a, FILE * file ) {
 
     Type t = VARget_type( a );
-    Class_Of_Type class;
     char ctype [BUFSIZ];
     char attrnm [BUFSIZ];
 
     generate_attribute_func_name( a, attrnm );
-
-    class = TYPEget_type( t );
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
     fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
@@ -674,7 +671,6 @@ ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * file )
     Type t = VARget_type( a );
     char ctype [BUFSIZ];
     char funcnm [BUFSIZ];
-    Class_Of_Type class = TYPEget_type( t );
 
     generate_attribute_func_name( a, funcnm );
 
@@ -688,11 +684,6 @@ ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * file )
 void
 AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
                           char * ctype, char * attrnm ) {
-    char aggrnode_name [BUFSIZ];
-    Type bt;
-    Class_Of_Type class = TYPEget_type( t );
-    char nm [BUFSIZ];
-
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
     fprintf( file, "    return (%s) &_%s; \n}\n", ctype, attrnm );
@@ -1509,7 +1500,6 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     const char * entnm = ENTITYget_classname( entity );
     int count = attr_count;
-    int index = 0;
     int first = 1;
 
     /*  constructor definition  */
