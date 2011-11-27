@@ -72,6 +72,7 @@
  */
 
 #include "scl_cf.h"
+#include "scl_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -91,7 +92,7 @@ char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
 int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
 void print_fedex_version( void ) {
-    printf( "%s\nSCL version id (from git): %s\nhttp://github.com/mpictor/StepClassLibrary\n", EXPRESSprogram_name, SCL_COMMIT_ID );
+    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/mpictor/StepClassLibrary\n", EXPRESSprogram_name, scl_version() );
     no_need_to_work = 1;
 }
 
