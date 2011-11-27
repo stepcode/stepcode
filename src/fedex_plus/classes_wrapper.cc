@@ -505,7 +505,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
              "#define SCLLOGFILE \"scl.log\"\n"
              "#endif \n" );
 
-    fprintf( libfile, "\nstatic int debug_access_hooks = 0;\n" );
+    fprintf( libfile, "\n/* static int debug_access_hooks = 0; */\n" );
 
     /*  3.  source code to initialize entity registry   */
     /*  prints header of file for input function    */
