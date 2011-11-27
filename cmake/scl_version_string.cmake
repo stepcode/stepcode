@@ -6,23 +6,26 @@
 # http://www.cmake.org/pipermail/cmake/2009-February/027014.html
 
 #scl_version_string.h defines scl_version() which returns a pretty commit description and a build timestamp.
+
+set(VERS_FILE ${SOURCE_DIR}/SCL_VERSION.txt )
 if( EXISTS ${SOURCE_DIR}/.git )
     find_package(Git QUIET)
     if(GIT_FOUND)
-        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags RESULT_VARIABLE res_var OUTPUT_VARIABLE GIT_COM_ID )
+        execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags RESULT_VARIABLE res_var OUTPUT_VARIABLE GIT_COMMIT_ID )
         if( NOT ${res_var} EQUAL 0 )
-            set( GIT_COMMIT_ID "unknown (no tags?)")
-            message( WARNING "Git failed (invalid repo, or no tags). Build will not contain git revision info." )
+            file( READ ${VERS_FILE} GIT_COMMIT_ID LIMIT 255 )
+            message( WARNING "Git failed (probably no tags in repo). Build will contain revision info from ${VERS_FILE}." )
         endif()
-        string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COM_ID} )
     else(GIT_FOUND)
-        set( GIT_COMMIT_ID "unknown (git not found!)")
-        message( WARNING "Git not found. Build will not contain git revision info." )
+        file( READ ${VERS_FILE} GIT_COMMIT_ID LIMIT 255 )
+        message( WARNING "Git not found. Build will contain revision info from ${VERS_FILE}." )
     endif(GIT_FOUND)
 else()
-    set( GIT_COMMIT_ID "unknown (not a repository!)")
-    message( WARNING "Git failed (.git not found). Build will not contain git revision info." )
+    file( READ ${VERS_FILE} GIT_COMMIT_ID LIMIT 255 )
+    message( WARNING "Git failed ('.git' not found). Build will contain revision info from ${VERS_FILE}." )
 endif()
+
+string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COMMIT_ID} )
 
 set( res_var 1 )
 IF (WIN32)
