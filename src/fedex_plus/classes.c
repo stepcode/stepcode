@@ -1293,8 +1293,6 @@ LIBmemberFunctionPrint( Entity entity, Linked_List nonInheritedAttrList, FILE * 
     Linked_List attr_list;
     char entnm [BUFSIZ];
 
-    /* added for calling multiple_inheritance */
-    __attribute__( ( unused ) ) Entity super = 0;
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm */
 
@@ -1359,7 +1357,6 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
     int count = attr_count;
 
     const char * entnm = ENTITYget_classname( ent );
-    __attribute__( ( unused ) ) bool opt;
     const char * StrToLower( const char * word );
 
     /*mjm7/10/91 copy constructor definition  */
@@ -1374,7 +1371,6 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
         generate_attribute_name( a, attrnm );
         t = VARget_type( a );
         class = TYPEget_type( t );
-        opt = VARget_optional( a );
 
         /*  1. initialize everything to NULL (even if not optional)  */
 
@@ -1499,7 +1495,6 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    __attribute__( ( unused ) ) Entity super = 0;
     int super_cnt = 0;
     Entity principalSuper = 0;
 
@@ -1523,7 +1518,6 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             */
             fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
 
-            super = e;
             super_cnt++;
             if( super_cnt == 1 ) {
                 /* ignore the 1st parent */
@@ -1664,7 +1658,6 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    __attribute__( ( unused ) ) Entity super = 0;
     int super_cnt = 0;
 
     /* added for calling parents constructor if there is one */
@@ -1720,7 +1713,6 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                 */
             fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
 
-            super = e;
             super_cnt++;
             if( super_cnt == 1 ) {
                 /* ignore the 1st parent */
