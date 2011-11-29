@@ -1358,9 +1358,9 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
          *b = buffer;
     int count = attr_count;
 
-    String entnm = ENTITYget_classname( ent );
+    const char * entnm = ENTITYget_classname( ent );
     __attribute__( ( unused ) ) bool opt;
-    String StrToLower( String word );
+    const char * StrToLower( const char * word );
 
     /*mjm7/10/91 copy constructor definition  */
     fprintf( file, "        %s::%s(%s& e ) \n", entnm, entnm, entnm );
@@ -2340,7 +2340,7 @@ MODELPrint( Entity entity, FILES * files, Schema schema, int index ) {
     DEBUG( "DONE MODELPrint\n" )    ;
 }
 
-/* print in include file: class forward prototype, class typedefs, and
+/** print in include file: class forward prototype, class typedefs, and
    extern EntityDescriptor.  `externMap' = 1 if entity must be instantiated
    with external mapping (see Part 21, sect 11.2.5.1).  */
 void
