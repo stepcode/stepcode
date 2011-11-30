@@ -33,3 +33,4 @@ ENDIF()
 
 SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES}" "libexppp express")
 
+add_dependencies( fedex_plus version_string )

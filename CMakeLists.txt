@@ -48,7 +48,7 @@ ENDIF(COMMAND CMAKE_POLICY)
 PROJECT(SCL)
 
 if( CMAKE_BUILD_TYPE STREQUAL "" )
-  message( "Debug build - to override, rerun cmake with '-DCMAKE_BUILD_TYPE=Release'." )
+  message( "-- Debug build - to override, rerun cmake with '-DCMAKE_BUILD_TYPE=Release'." )
   set( CMAKE_BUILD_TYPE Debug )
 endif()
 
@@ -176,8 +176,8 @@ IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
         IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
             SET(CMAKE_INSTALL_PREFIX "/usr")
         ELSEIF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-            MESSAGE("setting debug output dir")
             SET(CMAKE_INSTALL_PREFIX "${SCL_SOURCE_DIR}/../scl-install")
+            MESSAGE("---  Setting debug install dir to ${CMAKE_INSTALL_PREFIX}")
         ELSE("${CMAKE_BUILD_TYPE}" MATCHES "Release")
             SET(CMAKE_INSTALL_PREFIX "/usr/local")
         ENDIF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
@@ -213,22 +213,25 @@ CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
 
-#set GIT_COMMIT_ID to the output of `git describe`
-find_package(Git)
-if(GIT_FOUND)
-    execute_process(COMMAND ${GIT_EXECUTABLE} describe --tags RESULT_VARIABLE res_var OUTPUT_VARIABLE GIT_COM_ID )
-    if( NOT ${res_var} EQUAL 0 )
-        set( GIT_COMMIT_ID "unknown (git failed!)")
-        message( WARNING "Git failed (not a repo?). Build will not contain git revision info." )
-    endif()
-    string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COM_ID} )
-else()
-    set( GIT_COMMIT_ID "unknown (git not found!)")
-    message( WARNING "Git not found. Build will not contain git revision info." )
-endif()
-
 # Now that all the tests are done, configure the scl_cf.h file:
 configure_file(${SCL_BINARY_DIR}/include/scl_cf.h.in ${SCL_BINARY_DIR}/include/scl_cf.h)
+
+################ create scl_version_string.h, http://stackoverflow.com/questions/3780667
+# Using 'ver_string' instead of 'scl_version_string.h' is a trick to force the
+# command to always execute when the custom target is built. It works because
+# a file by that name never exists.
+add_custom_target(version_string ALL
+                                 DEPENDS ver_string )
+# creates scl_version_string.h using cmake script
+add_custom_command(OUTPUT ver_string ${CMAKE_CURRENT_BINARY_DIR}/include/scl_version_string.h
+                   COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${SCL_SOURCE_DIR}
+                                            -DBINARY_DIR=${SCL_BINARY_DIR}
+                                            -P ${SCL_CMAKE_DIR}/scl_version_string.cmake)
+# scl_version_string.h is a generated file
+set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/include/scl_version_string.h
+    PROPERTIES GENERATED TRUE
+    HEADER_FILE_ONLY TRUE )
+################
 
 add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
 
