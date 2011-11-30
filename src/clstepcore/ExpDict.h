@@ -1315,7 +1315,7 @@ class EntityDescriptor  :    public TypeDescriptor  {
         void AddSubtype(EntityDescriptor *ed)
                 { _subtypes.AddNode(ed); }
         void AddSupertype_Stmt(const char *s) { _supertype_stmt = s; }
-        const char * Supertype_Stmt() { return const_cast<char *>(_supertype_stmt.c_str()); }
+        const char * Supertype_Stmt() { return _supertype_stmt.c_str(); }
         std::string& supertype_stmt_() { return _supertype_stmt; }
 
         void AddSupertype(EntityDescriptor *ed)

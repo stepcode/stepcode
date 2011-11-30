@@ -2,12 +2,7 @@
 #include <stddef.h>
 #include <string.h>
 
-//extern "C"
-//{
-//}
-
 #include "complexSupport.h"
-extern int corba_binding;
 
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
@@ -59,39 +54,17 @@ create_builtin_type_defn( FILES * files, char * name ) {
  ** Status:  ok 1/15/91
  ******************************************************************/
 
-/*ARGSUSED*/
-void
-print_file_header( Express express, FILES * files ) {
-    FILE * corbafile = 0;
-    /*  create file for user to #include the CORBA-generated header file in. */
-    if( corba_binding ) {
-        if( ( corbafile = fopen( "corbaSchema.h", "w" ) ) == NULL ) {
-            printf( "**Error in print_file_header:  unable to create file corbaSchema.h ** \n" );
-        }
-        fprintf( corbafile,
-                 "// #include the idl generated .hh C++ file that defines the code that \n" );
-        fprintf( corbafile,
-                 "// is turned off in the fedex_plus generated file using #ifdef PART26.\n" );
-        fprintf( corbafile, "//#include <your-idl-generated-file.hh>\n\n" );
-        fprintf( corbafile, "// #include the osdb_SdaiXX.h file that is generated from fedex_os if \n// you plan to use ObjectStore.\n" );
-        fprintf( corbafile, "//#include <osdb_SdaiXX-file.h>\n" );
-        fclose( corbafile );
-    }
+void print_file_header( Express express, FILES * files ) {
 
     /*  open file which unifies all schema specific header files
     of input Express source */
     files -> incall = FILEcreate( "schema.h" );
 
-    /* prevent RCS from expanding this! */
-    fprintf( files->incall, "/* %cId$ */\n", '$' );
 
     fprintf( files->incall, "#ifdef SCL_LOGGING\n" );
     fprintf( files->incall, "#include <sys/time.h>\n" );
     fprintf( files->incall, "#endif\n" );
 
-    fprintf( files->incall, "#ifdef __O3DB__\n" );
-    fprintf( files->incall, "#include <OpenOODB.h>\n" );
-    fprintf( files->incall, "#endif\n\n" );
     fprintf( files->incall, "#include <sdai.h>\n\n" );
     fprintf( files->incall, "\n#include <Registry.h>\n" );
     fprintf( files->incall, "\n#include <STEPaggregate.h>\n" );
@@ -105,7 +78,6 @@ print_file_header( Express express, FILES * files ) {
     fprintf( files->incall, "extern void InitSchemasAndEnts (Registry &);\n" );
 
     files -> initall = FILEcreate( "schema.cc" );
-    fprintf( files->initall, "/* %cId$  */ \n", '\044' );
     fprintf( files->initall, "#include <schema.h>\n" );
     fprintf( files-> initall, "class Registry;\n" );
 
@@ -118,7 +90,6 @@ print_file_header( Express express, FILES * files ) {
     // entities in the express file.  (They must all be in separate function
     // called first by SchemaInit() so that all entities will exist
     files -> create = FILEcreate( "SdaiAll.cc" );
-    fprintf( files->create, "/* %cId$  */ \n", '\044' );
     fprintf( files->create, "#include <schema.h>\n" );
     fprintf( files->create, "\nvoid\nInitSchemasAndEnts (Registry & reg)\n{\n" );
 
@@ -126,7 +97,6 @@ print_file_header( Express express, FILES * files ) {
     // allow all the .h files to reference all .h's.  We can then have e.g.,
     // entX from schemaA have attribute attr1 = entY from schemaB.
     files -> classes = FILEcreate( "Sdaiclasses.h" );
-    fprintf( files->classes, "/* %cId$  */ \n", '$' );
     fprintf( files->classes, "#include <schema.h>\n" );
 }
 
@@ -470,22 +440,11 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
         return;
     }
-    fprintf( incfile, "/* %cId$  */\n", '\044' );
 
-    fprintf( incfile, "#ifdef __O3DB__\n" );
-    fprintf( incfile, "#include <OpenOODB.h>\n" );
-    fprintf( incfile, "#endif\n\n" );
     fprintf( incfile,
              "#ifndef  SCHEMA_H\n"
              "#include <schema.h>\n"
              "#endif\n" );
-    fprintf( incfile,
-             "\n#ifdef PART26\n"
-             "#include <corbaIncludes.h> \n"
-             "// Create a corbaSchema.h file in this directory with a #include in \n"
-             "// it for your IDL generated schema-specific .hh file.\n"
-             "#include <corbaSchema.h> \n"
-             "#endif \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -494,7 +453,6 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }
-    fprintf( libfile, "/* %cId$  */ \n", '$' );
 //TODO: Looks like this switches between 'schema.h' and a non-generic name. What is that name,
 //and how do we fully enable this feature (i.e. how to write the file with different name)?
 #ifdef SCHEMA_HANDLING
@@ -515,10 +473,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
              "#define SCLLOGFILE \"scl.log\"\n"
              "#endif \n" );
 
-    fprintf( libfile, "\nstatic int debug_access_hooks = 0;\n" );
-    fprintf( libfile, "\n#ifdef PART26\n" );
-    fprintf( libfile, "\nconst char * sclHostName = CORBA::Orbix.myHost(); // Default is local host\n" );
-    fprintf( libfile, "#endif\n" );
+    fprintf( libfile, "\n/* static int debug_access_hooks = 0; */\n" );
 
     /*  3.  source code to initialize entity registry   */
     /*  prints header of file for input function    */
@@ -531,8 +486,6 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
         if( !( initfile = ( files -> init ) = FILEcreate( fnm ) ) ) {
             return;
         }
-        /* prevent RCS from expanding this! */
-        fprintf( initfile, "/* $Id%c */\n", '$' );
 #ifdef SCHEMA_HANDLING
         if( suffix == 0 ) {
             fprintf( initfile, "#include <%s.h>\n", schnm );

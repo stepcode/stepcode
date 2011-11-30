@@ -180,7 +180,7 @@ class STEPattribute {
            //  UNDEFINED
    STEPattribute (const class AttrDescriptor& d, SCLundefined *p);
 
-  friend int operator == (STEPattribute &a1, STEPattribute &a2);
+  friend bool operator == (STEPattribute &a1, STEPattribute &a2);
 };
 
 #endif
