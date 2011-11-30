@@ -29,8 +29,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 void use_ref( Schema, Express, FILES * );
 
-void
-create_builtin_type_decl( FILES * files, char * name ) {
+void create_builtin_type_decl( FILES * files, char * name ) {
     fprintf( files->incall, "extern TypeDescriptor *%s%s_TYPE;\n",
              TD_PREFIX, name );
 }
@@ -42,7 +41,7 @@ void create_builtin_type_defn( FILES * files, char * name ) {
              PrettyTmpName( name ), StrToUpper( name ), StrToLower( name ) );
 }
 
-/******************************************************************
+/** ****************************************************************
  ** Procedure:  print_file_header
  ** Parameters: const Schema schema - top-level schema being printed
  **     FILE*        file   - file on which to print header
@@ -101,7 +100,7 @@ void print_file_header( Express express, FILES * files ) {
     fprintf( files->classes, "#include <schema.h>\n" );
 }
 
-/******************************************************************
+/** ****************************************************************
  ** Procedure:  print_file_trailer
  ** Parameters: const Schema schema - top-level schema printed
  **     FILE*        file   - file on which to print trailer
@@ -109,10 +108,7 @@ void print_file_header( Express express, FILES * files ) {
  ** Description:  handles cleaning up things at end of processing
  ** Status:  ok 1/15/91
  ******************************************************************/
-
-/*ARGSUSED*/
-void
-print_file_trailer( Express express, FILES * files ) {
+void print_file_trailer( Express express, FILES * files ) {
     FILEclose( files->incall );
     FILEclose( files->initall );
     fprintf( files->create, "}\n\n" );
@@ -124,7 +120,7 @@ print_file_trailer( Express express, FILES * files ) {
 /******************************************************************
  **  SCHEMA SECTION                      **/
 
-/******************************************************************
+/** ****************************************************************
  ** Procedure:  SCOPEPrint
  ** Parameters: const Scope scope   - scope to print
  **     FILE*       file    - file on which to print
@@ -136,9 +132,7 @@ print_file_trailer( Express express, FILES * files ) {
  ** and what the relationship is between this organization and the
  ** organization of the schemas in the input Express
  ******************************************************************/
-
-void
-SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
+void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
             ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     DictionaryEntry de;
@@ -394,7 +388,7 @@ void PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
 
 }
 
-/******************************************************************
+/** ****************************************************************
  ** Procedure:  SCHEMAprint
  ** Parameters: const Schema schema - schema to print
  **     FILES *file     - file on which to print
@@ -407,9 +401,7 @@ void PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
  ** Side Effects:
  ** Status:
  ******************************************************************/
-
-void
-SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
+void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
              int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
@@ -623,7 +615,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     }
 }
 
-/******************************************************************
+/** ****************************************************************
  ** Procedure:  getMCPrint
  ** Parameters:
        Express express   - in memory representation of an express model
@@ -636,8 +628,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
  ** Side Effects:  generates code
  ** Status:  24-Feb-1992 new -kcm
  ******************************************************************/
-void
-getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
+void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
     DictionaryEntry de;
     Schema schema;
 

@@ -116,8 +116,7 @@ StrToConstant( const char * word ) {
  ** Status:  complete
  ******************************************************************/
 
-FILE *
-FILEcreate( const char * filename ) {
+FILE * FILEcreate( const char * filename ) {
     FILE * file;
     const char * fn;
 
