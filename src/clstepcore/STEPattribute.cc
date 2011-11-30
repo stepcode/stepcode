@@ -816,13 +816,13 @@ int STEPattribute::is_null()  const {
 /**************************************************************//**
 ** evaluates the equality of two attributes
 ** Side Effects:  none
-** \return int -- if 0 => not equal
+** \return bool -- if false => not equal
 ******************************************************************/
-int operator == ( STEPattribute & a1, STEPattribute & a2 ) {
+bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
     if ( a1.aDesc == a2.aDesc ) {
-        return 1;
+        return true;
     }
-    return 0;
+    return false;
 }
 
 
