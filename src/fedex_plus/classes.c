@@ -2103,7 +2103,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
         /* manufacture new one(s) on the spot */
         char typename_buf[MAX_LEN];
         print_typechain( file, v->type, typename_buf, schema );
-        fprintf( file, "  %s::%s%d%s%s =\n          new %s"
+        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s%s%s);\n",
                  SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
@@ -2311,26 +2311,26 @@ ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
     Linked_List uniqs;
     int i;
 
-    fprintf( files->create, "        %s%s%s = new EntityDescriptor(\n                ",
+    fprintf( files->create, "    %s%s%s = new EntityDescriptor(\n        ",
              SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
     fprintf( files->create, "  \"%s\", %s%s, %s, ",
              PrettyTmpName( ENTITYget_name( entity ) ),
              SCHEMA_PREFIX, SCHEMAget_name( schema ),
              ( ENTITYget_abstract( entity ) ? "LTrue" :
                "LFalse" ) );
-    fprintf( files->create, "%s,\n                ", externMap ? "LTrue" :
+    fprintf( files->create, "%s,\n          ", externMap ? "LTrue" :
              "LFalse" );
 
-    fprintf( files->create, "  (Creator) create_%s );\n",
+    fprintf( files->create, "(Creator) create_%s );\n",
              ENTITYget_classname( entity ) );
     /* add the entity to the Schema dictionary entry */
-    fprintf( files->create, "        %s%s->AddEntity(%s%s%s);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( files->create, "    %s%s->AddEntity(%s%s%s);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
     wheres = TYPEget_where( entity );
 
     if( wheres ) {
         fprintf( files->create,
-                 "        %s%s%s->_where_rules = new Where_rule__list;\n",
+                 "    %s%s%s->_where_rules = new Where_rule__list;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         LISTdo( wheres, w, Where )
