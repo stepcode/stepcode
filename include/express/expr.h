@@ -62,6 +62,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include <math.h>
 #include "expbasic.h"   /* get basic definitions */
 
@@ -198,23 +199,23 @@ struct EXPop_entry {
 #include "decstart.h"
 #endif /*EXPRESSION_C*/
 
-GLOBAL struct EXPop_entry EXPop_table[OP_LAST];
+GLOBAL SCL_EXPRESS_EXPORT struct EXPop_entry EXPop_table[OP_LAST];
 
-GLOBAL Expression   LITERAL_E       INITIALLY( EXPRESSION_NULL );
-GLOBAL Expression   LITERAL_INFINITY    INITIALLY( EXPRESSION_NULL );
-GLOBAL Expression   LITERAL_PI      INITIALLY( EXPRESSION_NULL );
-GLOBAL Expression   LITERAL_ZERO        INITIALLY( EXPRESSION_NULL );
-GLOBAL Expression   LITERAL_ONE;
+GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_E       INITIALLY( EXPRESSION_NULL );
+GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_INFINITY    INITIALLY( EXPRESSION_NULL );
+GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_PI      INITIALLY( EXPRESSION_NULL );
+GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_ZERO        INITIALLY( EXPRESSION_NULL );
+GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_ONE;
 
-GLOBAL Error    ERROR_bad_qualification         INITIALLY( ERROR_none );
-GLOBAL Error    ERROR_integer_expression_expected   INITIALLY( ERROR_none );
-GLOBAL Error    ERROR_implicit_downcast         INITIALLY( ERROR_none );
-GLOBAL Error    ERROR_ambig_implicit_downcast       INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_bad_qualification         INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_integer_expression_expected   INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_implicit_downcast         INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambig_implicit_downcast       INITIALLY( ERROR_none );
 
-GLOBAL struct freelist_head EXP_fl;
-GLOBAL struct freelist_head OP_fl;
-GLOBAL struct freelist_head QUERY_fl;
-GLOBAL struct freelist_head QUAL_ATTR_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head EXP_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head OP_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head QUERY_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 
 #include "de_end.h"
 
@@ -269,16 +270,16 @@ GLOBAL struct freelist_head QUAL_ATTR_fl;
 /* function prototypes */
 /***********************/
 
-extern Expression   EXPcreate PROTO( ( Type ) );
-extern Expression   EXPcreate_simple PROTO( ( Type ) );
-extern Expression   EXPcreate_from_symbol PROTO( ( Type, Symbol * ) );
-extern Expression   UN_EXPcreate PROTO( ( Op_Code, Expression ) );
-extern Expression   BIN_EXPcreate PROTO( ( Op_Code, Expression, Expression ) );
-extern Expression   TERN_EXPcreate PROTO( ( Op_Code, Expression, Expression, Expression ) );
-extern Expression   QUERYcreate PROTO( ( Symbol *, Expression ) );
-extern void     EXPinitialize PROTO( ( void ) );
-extern Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
-extern int      EXPget_integer_value PROTO( ( Expression ) );
+extern SCL_EXPRESS_EXPORT Expression   EXPcreate PROTO( ( Type ) );
+extern SCL_EXPRESS_EXPORT Expression   EXPcreate_simple PROTO( ( Type ) );
+extern SCL_EXPRESS_EXPORT Expression   EXPcreate_from_symbol PROTO( ( Type, Symbol * ) );
+extern SCL_EXPRESS_EXPORT Expression   UN_EXPcreate PROTO( ( Op_Code, Expression ) );
+extern SCL_EXPRESS_EXPORT Expression   BIN_EXPcreate PROTO( ( Op_Code, Expression, Expression ) );
+extern SCL_EXPRESS_EXPORT Expression   TERN_EXPcreate PROTO( ( Op_Code, Expression, Expression, Expression ) );
+extern SCL_EXPRESS_EXPORT Expression   QUERYcreate PROTO( ( Symbol *, Expression ) );
+extern SCL_EXPRESS_EXPORT void     EXPinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
+extern SCL_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
 
 /********************/
 /* inline functions */

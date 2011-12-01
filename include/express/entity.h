@@ -62,6 +62,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 #include "scope.h"
@@ -116,9 +117,9 @@ struct Entity_ {
 #include "decstart.h"
 #endif    /*  ENTITY_C  */
 
-GLOBAL struct freelist_head ENTITY_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ENTITY_fl;
 
-GLOBAL int  ENTITY_MARK INITIALLY( 0 );
+GLOBAL SCL_EXPRESS_EXPORT int  ENTITY_MARK INITIALLY( 0 );
 
 #include "de_end.h"
 
@@ -157,20 +158,20 @@ GLOBAL int  ENTITY_MARK INITIALLY( 0 );
 /* function prototypes */
 /***********************/
 
-extern struct Scope_  * ENTITYcreate PROTO( ( struct Symbol_ * ) );
-extern void     ENTITYinitialize PROTO( ( void ) );
-extern void     ENTITYadd_attribute PROTO( ( struct Scope_ *, struct Variable_ * ) );
-extern struct Scope_  * ENTITYcopy PROTO( ( struct Scope_ * ) );
-extern Entity       ENTITYfind_inherited_entity PROTO( ( struct Scope_ *, char *, int ) );
-extern Variable     ENTITYfind_inherited_attribute PROTO( ( struct Scope_ *, char *, struct Symbol_ ** ) );
-extern Variable     ENTITYresolve_attr_ref PROTO( ( Entity, Symbol *, Symbol * ) );
-extern bool      ENTITYhas_immediate_supertype PROTO( ( Entity, Entity ) );
-extern Variable     ENTITYget_named_attribute PROTO( ( Entity, char * ) );
-extern Linked_List  ENTITYget_all_attributes PROTO( ( Entity ) );
-extern bool      ENTITYhas_supertype PROTO( ( Entity, Entity ) );
-extern void     ENTITYadd_instance PROTO( ( Entity, Generic ) );
-extern int      ENTITYget_initial_offset PROTO( ( Entity ) );
-extern bool      ENTITYdeclares_variable PROTO( ( Entity, struct Variable_ * ) );
+extern SCL_EXPRESS_EXPORT struct Scope_  * ENTITYcreate PROTO( ( struct Symbol_ * ) );
+extern SCL_EXPRESS_EXPORT void     ENTITYinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void     ENTITYadd_attribute PROTO( ( struct Scope_ *, struct Variable_ * ) );
+extern SCL_EXPRESS_EXPORT struct Scope_  * ENTITYcopy PROTO( ( struct Scope_ * ) );
+extern SCL_EXPRESS_EXPORT Entity       ENTITYfind_inherited_entity PROTO( ( struct Scope_ *, char *, int ) );
+extern SCL_EXPRESS_EXPORT Variable     ENTITYfind_inherited_attribute PROTO( ( struct Scope_ *, char *, struct Symbol_ ** ) );
+extern SCL_EXPRESS_EXPORT Variable     ENTITYresolve_attr_ref PROTO( ( Entity, Symbol *, Symbol * ) );
+extern SCL_EXPRESS_EXPORT bool      ENTITYhas_immediate_supertype PROTO( ( Entity, Entity ) );
+extern SCL_EXPRESS_EXPORT Variable     ENTITYget_named_attribute PROTO( ( Entity, char * ) );
+extern SCL_EXPRESS_EXPORT Linked_List  ENTITYget_all_attributes PROTO( ( Entity ) );
+extern SCL_EXPRESS_EXPORT bool      ENTITYhas_supertype PROTO( ( Entity, Entity ) );
+extern SCL_EXPRESS_EXPORT void     ENTITYadd_instance PROTO( ( Entity, Generic ) );
+extern SCL_EXPRESS_EXPORT int      ENTITYget_initial_offset PROTO( ( Entity ) );
+extern SCL_EXPRESS_EXPORT bool      ENTITYdeclares_variable PROTO( ( Entity, struct Variable_ * ) );
 
 #if 0
 extern void     ENTITYdelete_instance PROTO( ( Entity, Generic ) );

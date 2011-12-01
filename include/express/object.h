@@ -57,6 +57,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include "basic.h"  /* get basic definitions */
 #include "symbol.h"
 
@@ -89,7 +90,7 @@ struct Object {
 #include "decstart.h"
 #endif /*OBJECT_C */
 
-GLOBAL struct Object * OBJ;
+GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 
 #include "de_end.h"
 
@@ -113,9 +114,9 @@ GLOBAL struct Object * OBJ;
 /* function prototypes */
 /***********************/
 
-extern void OBJinitialize PROTO( ( void ) );
-extern void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
-extern Symbol * UNK_get_symbol PROTO( ( Generic x ) );
+extern SCL_EXPRESS_EXPORT void OBJinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
+extern SCL_EXPRESS_EXPORT Symbol * UNK_get_symbol PROTO( ( Generic x ) );
 #if 0
 extern void OBJcreate( char, struct Symbol * ( * )( Generic ), char *, int );
 #endif
