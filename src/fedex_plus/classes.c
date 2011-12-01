@@ -1289,9 +1289,13 @@ LIBmemberFunctionPrint( Entity entity, Linked_List nonInheritedAttrList, FILE * 
     char entnm [BUFSIZ];
 
     /* added for calling multiple_inheritance */
-    __attribute__( ( unused ) ) Entity super = 0;
-
-    strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm */
+	#ifdef __MSVC__
+	Entity super = 0;
+	#else
+	__attribute__( ( unused ) ) Entity super = 0;
+	#endif
+    
+	strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm */
 
     /*  1. put in member functions which belong to all entities */
     /*  the common function are still in the class definition 17-Feb-1992 */
@@ -1354,7 +1358,11 @@ LIBcopy_constructor( Entity ent, FILE * file ) {
     int count = attr_count;
 
     String entnm = ENTITYget_classname( ent );
-    __attribute__( ( unused ) ) bool opt;
+	#ifdef __MSVC__
+	bool opt;
+	#else
+	__attribute__( ( unused ) ) bool opt;
+	#endif
     String StrToLower( String word );
 
     /*mjm7/10/91 copy constructor definition  */
@@ -1494,7 +1502,11 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    __attribute__( ( unused ) ) Entity super = 0;
+	#ifdef __MSVC__
+	Entity super = 0;
+	#else
+	__attribute__( ( unused ) ) Entity super = 0;
+	#endif
     int super_cnt = 0;
     Entity principalSuper = 0;
 
@@ -1657,7 +1669,11 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
     Linked_List list;
-    __attribute__( ( unused ) ) Entity super = 0;
+	#ifdef __MSVC__
+	Entity super = 0;
+	#else
+	__attribute__( ( unused ) ) Entity super = 0;
+	#endif
     int super_cnt = 0;
 
     /* added for calling parents constructor if there is one */
@@ -2257,49 +2273,59 @@ ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
 
     // multiple inheritance
     // collect the non inherited attributes to add to the current element
-    Linked_List nonInheritedAttrList = LISTcreate();
-    if (multiple_inheritance) {
-        // create list of attr inherited from the parents in C++
-        Linked_List inheritedAttrList = LISTcreate();
-        collectAttributes(inheritedAttrList, entity, 1);
+	{
+		Linked_List nonInheritedAttrList = LISTcreate();
+		if (multiple_inheritance) {
+			// create list of attr inherited from the parents in C++
+			Linked_List inheritedAttrList = LISTcreate();
+			collectAttributes(inheritedAttrList, entity, 1);
 
-        // create list of attr that have to be inherited in EXPRESS
-        Linked_List allInheritedAttrList = LISTcreate();
-        collectAttributes(allInheritedAttrList, entity, -1);
+			{
+				// create list of attr that have to be inherited in EXPRESS
+				Linked_List allInheritedAttrList = LISTcreate();
+				collectAttributes(allInheritedAttrList, entity, -1);
 
-        // check in the curList of attr if it has been inherited,
-        // if not, add it to the list of non inherited attr
-        LISTdo( allInheritedAttrList, a, Variable )
-        int found = 0;
-        // can't use ENTITYget_named_attribute because it loops on *all* supertypes
-        LISTdo( inheritedAttrList, a2, Variable )
-        if( streq( VARget_simple_name( a ), VARget_simple_name( a2 ) )) {
-            found = 1;
-        }
-        LISTod;
-        if (!found) {
-            LISTadd_first( nonInheritedAttrList, a );
-        }
-        LISTod;
-        // clean
-        LIST_destroy (inheritedAttrList);
-        LIST_destroy (allInheritedAttrList);
-    }
+				// check in the curList of attr if it has been inherited,
+				// if not, add it to the list of non inherited attr
+				LISTdo( allInheritedAttrList, a, Variable )
+				{		
+					int found = 0;
+					{
+						// can't use ENTITYget_named_attribute because it loops on *all* supertypes
+						LISTdo( inheritedAttrList, a2, Variable )
+						{
+							if( streq( VARget_simple_name( a ), VARget_simple_name( a2 ) )) {
+								found = 1;
+							}
+						}
+						LISTod;
+					}
+					if (!found) {
+						LISTadd_first( nonInheritedAttrList, a );
+					}
+				}
+				LISTod;
+				// clean
+				LIST_destroy (inheritedAttrList);
+				LIST_destroy (allInheritedAttrList);
+			}
+		}
 
-    fprintf( files->inc, "\n/////////         ENTITY %s\n\n", n );
-    ENTITYinc_print( entity, nonInheritedAttrList, files -> inc, schema );
-    fprintf( files->inc, "\n/////////         END_ENTITY %s\n\n", n );
+		fprintf( files->inc, "\n/////////         ENTITY %s\n\n", n );
+		ENTITYinc_print( entity, nonInheritedAttrList, files -> inc, schema );
+		fprintf( files->inc, "\n/////////         END_ENTITY %s\n\n", n );
 
-    fprintf( files->lib, "\n/////////         ENTITY %s\n\n", n );
-    ENTITYlib_print( entity, nonInheritedAttrList, files -> lib, schema );
-    fprintf( files->lib, "\n/////////         END_ENTITY %s\n\n", n );
+		fprintf( files->lib, "\n/////////         ENTITY %s\n\n", n );
+		ENTITYlib_print( entity, nonInheritedAttrList, files -> lib, schema );
+		fprintf( files->lib, "\n/////////         END_ENTITY %s\n\n", n );
 
-    fprintf( files->init, "\n/////////         ENTITY %s\n\n", n );
-    ENTITYincode_print( entity, files -> init, schema );
-    fprintf( files->init, "/////////         END_ENTITY %s\n", n );
+		fprintf( files->init, "\n/////////         ENTITY %s\n\n", n );
+		ENTITYincode_print( entity, files -> init, schema );
+		fprintf( files->init, "/////////         END_ENTITY %s\n", n );
 
-    DEBUG( "DONE ENTITYPrint\n" )    ;
-    LIST_destroy (nonInheritedAttrList);
+		DEBUG( "DONE ENTITYPrint\n" )    ;
+		LIST_destroy (nonInheritedAttrList);
+	}
 }
 
 void

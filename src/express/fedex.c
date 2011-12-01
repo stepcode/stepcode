@@ -72,6 +72,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_export.h>
 #include "scl_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -79,7 +80,7 @@
 # include <unistd.h>
 #endif
 #ifndef HAVE_GETOPT
-# include <xgetopt.h>
+# include "xgetopt.h"
 #endif
 #include "express/error.h"
 #include "express/express.h"
@@ -92,7 +93,7 @@ extern int yydbg_lower_limit;
 extern int yydbg_verbose;
 #endif /*YYDEBUG*/
 
-extern int skip_exp_pause;
+extern SCL_EXPRESS_EXPORT int skip_exp_pause;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
 int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
