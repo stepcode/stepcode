@@ -162,7 +162,11 @@ SCANnextchar( char * buffer ) {
         SCANbuffer.numRead--;
 #endif
         buffer[0] = *( SCANcurrent++ );
-        if( !isascii( buffer[0] ) ) {
+#ifdef __MSVC__
+		if( !__isascii( buffer[0] ) ) {
+#else
+		if( !isascii( buffer[0] ) ) {
+#endif
             ERRORreport_with_line( ERROR_nonascii_char, yylineno,
                                    0xff & buffer[0] );
             buffer[0] = ' ';    /* substitute space */
