@@ -33,10 +33,13 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <scl_cf.h>
 #include <stdlib.h>
 
 #include <string.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAMS_H
+# include <sys/param.h>
+#endif
 
 #include <string>
 

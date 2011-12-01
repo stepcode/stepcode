@@ -1,10 +1,17 @@
+#include <scl_cf.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <stdbool.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# include <scl_stdbool.h>
+#endif
 
 #ifdef __STDC__
 #include <stdarg.h>

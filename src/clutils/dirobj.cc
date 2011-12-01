@@ -39,10 +39,11 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <scl_cf.h>
 #include <dirobj.h>
-#include <dirent.h>
-
-# include <scl_cf.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif
 
 /* for stat() file status */
 #ifdef HAVE_SYS_STAT_H

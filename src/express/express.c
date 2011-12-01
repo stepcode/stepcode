@@ -67,6 +67,7 @@
  *
  */
 
+#include <scl_cf.h>
 #define EXPRESS_C
 #include "conf.h"
 #include "express/basic.h"
@@ -74,7 +75,9 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "express/express.h"
 #include "express/resolve.h"
