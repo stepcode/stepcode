@@ -239,7 +239,7 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/include/scl_version_stri
 
 if(MSVC)
 # add_definitions( -Wall )
-add_definitions( -D__MSVC__ -D__STDC__ -D__WIN32__ )
+add_definitions( -D__MSVC__ -D__WIN32__ )
 # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
 add_definitions( -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS )
 else()
