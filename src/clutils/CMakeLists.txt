@@ -35,6 +35,10 @@ IF(MINGW)
     TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
 ENDIF(MINGW)
 
+IF(MSVC)
+	TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
+ENDIF(MSVC)
+
 if(APPLE)
     set_target_properties(steputils PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif(APPLE)
