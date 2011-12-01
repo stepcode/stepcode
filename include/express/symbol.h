@@ -48,6 +48,7 @@
 #ifdef SYMBOL_C
 #endif    /*  SYMBOL_C  */
 
+#include <scl_export.h>
 #include "basic.h"  /* get basic definitions */
 #include "memory.h"
 
@@ -82,7 +83,7 @@ struct Symbol_ {
 #include "decstart.h"
 #endif    /*  SYMBOL_C  */
 
-GLOBAL struct freelist_head SYMBOL_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 
 #include "de_end.h"
 
@@ -102,8 +103,8 @@ GLOBAL struct freelist_head SYMBOL_fl;
 /* function prototypes */
 /***********************/
 
-extern void SYMBOLinitialize PROTO( ( void ) );
-Symbol * SYMBOLcreate PROTO( ( char *, int, char * ) );
+extern SCL_EXPRESS_EXPORT void SYMBOLinitialize PROTO( ( void ) );
+SCL_EXPRESS_EXPORT Symbol * SYMBOLcreate PROTO( ( char *, int, char * ) );
 
 /********************/
 /* inline functions */

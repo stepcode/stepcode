@@ -111,6 +111,7 @@ enum type_enum {
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 #include "object.h"
@@ -223,41 +224,41 @@ struct TypeBody_ {
 
 /* Very commonly-used read-only types */
 /* non-constant versions probably aren't necessary? */
-GLOBAL Type Type_Bad;
-GLOBAL Type Type_Unknown;
-GLOBAL Type Type_Dont_Care;
-GLOBAL Type Type_Runtime;   /* indicates that this object can't be */
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Bad;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Unknown;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Dont_Care;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Runtime;   /* indicates that this object can't be */
 /* calculated now but must be deferred */
 /* til (the mythical) runtime */
-GLOBAL Type Type_Binary;
-GLOBAL Type Type_Boolean;
-GLOBAL Type Type_Enumeration;
-GLOBAL Type Type_Expression;
-GLOBAL Type Type_Aggregate;
-GLOBAL Type Type_Integer;
-GLOBAL Type Type_Integer;
-GLOBAL Type Type_Number;
-GLOBAL Type Type_Real;
-GLOBAL Type Type_String;
-GLOBAL Type Type_String_Encoded;
-GLOBAL Type Type_Logical;
-GLOBAL Type Type_Set;
-GLOBAL Type Type_Attribute;
-GLOBAL Type Type_Entity;
-GLOBAL Type Type_Funcall;
-GLOBAL Type Type_Generic;
-GLOBAL Type Type_Identifier;
-GLOBAL Type Type_Oneof;
-GLOBAL Type Type_Query;
-GLOBAL Type Type_Self;
-GLOBAL Type Type_Set_Of_String;
-GLOBAL Type Type_Set_Of_Generic;
-GLOBAL Type Type_Bag_Of_Generic;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Binary;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Boolean;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Enumeration;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Expression;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Aggregate;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Integer;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Integer;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Number;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Real;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_String;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_String_Encoded;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Logical;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Set;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Attribute;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Entity;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Funcall;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Generic;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Identifier;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Oneof;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Query;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Self;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Set_Of_String;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Set_Of_Generic;
+GLOBAL SCL_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
 
-GLOBAL struct freelist_head TYPEHEAD_fl;
-GLOBAL struct freelist_head TYPEBODY_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
 
-GLOBAL Error ERROR_corrupted_type   INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error ERROR_corrupted_type   INITIALLY( ERROR_none );
 
 #include "de_end.h"
 
@@ -338,26 +339,26 @@ GLOBAL Error ERROR_corrupted_type   INITIALLY( ERROR_none );
 /* function prototypes */
 /***********************/
 
-extern Type TYPEcreate_partial PROTO( ( struct Symbol_ *, Scope ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_partial PROTO( ( struct Symbol_ *, Scope ) );
 
-extern Type TYPEcreate PROTO( ( enum type_enum ) );
-extern Type TYPEcreate_from_body_anonymously PROTO( ( TypeBody ) );
-extern Type TYPEcreate_name PROTO( ( struct Symbol_ * ) );
-extern Type TYPEcreate_nostab PROTO( ( struct Symbol_ *, Scope, char ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate PROTO( ( enum type_enum ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_from_body_anonymously PROTO( ( TypeBody ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_name PROTO( ( struct Symbol_ * ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_nostab PROTO( ( struct Symbol_ *, Scope, char ) );
 /*extern Type   TYPEcreate_typedef PROTO((Type, TypeBody,
                         Scope,struct Symbol *));*/
-extern TypeBody TYPEBODYcreate PROTO( ( enum type_enum ) );
+extern SCL_EXPRESS_EXPORT TypeBody TYPEBODYcreate PROTO( ( enum type_enum ) );
 /*extern Type   TYPEcopy_shallow PROTO((Type));*/
-extern void TYPEinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void TYPEinitialize PROTO( ( void ) );
 
 #if 0
 extern Dictionary TYPEget_enum_tags PROTO( ( Type ) );
 #endif
-extern bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
-extern Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
+extern SCL_EXPRESS_EXPORT bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
+extern SCL_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
 
-extern Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
-extern Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
+extern SCL_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * ) );
 
 #if 0
 extern int      TYPEget_size PROTO( ( Type ) );

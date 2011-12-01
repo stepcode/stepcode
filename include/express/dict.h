@@ -81,7 +81,7 @@ typedef HashEntry       DictionaryEntry;
 #include "decstart.h"
 #endif /*DICTIONARY_C*/
 
-GLOBAL char DICT_type;  /* set as a side-effect of DICT lookup routines */
+GLOBAL SCL_EXPRESS_EXPORT char DICT_type;  /* set as a side-effect of DICT lookup routines */
 /* to type of object found */
 
 #include "de_end.h"
@@ -109,14 +109,14 @@ GLOBAL char DICT_type;  /* set as a side-effect of DICT lookup routines */
 /* function prototypes */
 /***********************/
 
-extern void     DICTinitialize PROTO( ( void ) );
-extern int      DICTdefine PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
-extern int      DICT_define PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
-extern void     DICTundefine PROTO( ( Dictionary, char * ) );
-extern Generic      DICTlookup PROTO( ( Dictionary, char * ) );
-extern Generic      DICTlookup_symbol PROTO( ( Dictionary, char *, Symbol ** ) );
-extern Generic      DICTdo PROTO( ( DictionaryEntry * ) );
-extern void     DICTprint PROTO( ( Dictionary ) );
+extern SCL_EXPRESS_EXPORT void     DICTinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int      DICTdefine PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
+extern SCL_EXPRESS_EXPORT int      DICT_define PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
+extern SCL_EXPRESS_EXPORT void     DICTundefine PROTO( ( Dictionary, char * ) );
+extern SCL_EXPRESS_EXPORT Generic      DICTlookup PROTO( ( Dictionary, char * ) );
+extern SCL_EXPRESS_EXPORT Generic      DICTlookup_symbol PROTO( ( Dictionary, char *, Symbol ** ) );
+extern SCL_EXPRESS_EXPORT Generic      DICTdo PROTO( ( DictionaryEntry * ) );
+extern SCL_EXPRESS_EXPORT void     DICTprint PROTO( ( Dictionary ) );
 
 /********************/
 /* inline functions */

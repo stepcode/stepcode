@@ -66,6 +66,7 @@ add_definitions( -DFLEX )
 
 if(MSVC)
 add_definitions( -DYY_NO_UNISTD_H )
+add_definitions( -DSCL_EXPRESS_DLL_EXPORTS )
 endif(MSVC)
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")

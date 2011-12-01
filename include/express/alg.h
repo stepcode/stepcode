@@ -47,6 +47,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 #include "scope.h"
@@ -128,11 +129,11 @@ struct Where_ {
 #include "decstart.h"
 #endif /* ALGORITHM_C */
 
-GLOBAL struct freelist_head ALG_fl;
-GLOBAL struct freelist_head FUNC_fl;
-GLOBAL struct freelist_head RULE_fl;
-GLOBAL struct freelist_head PROC_fl;
-GLOBAL struct freelist_head WHERE_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ALG_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head FUNC_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head RULE_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head PROC_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 
 #include "de_end.h"
 
@@ -192,9 +193,9 @@ extern void     RULEput_where_clause PROTO( ( Algorithm, Linked_List ) );
 /* function prototypes */
 /***********************/
 
-extern Scope        ALGcreate PROTO( ( char ) );
-extern void     ALGinitialize PROTO( ( void ) );
-extern void     ALGput_full_text PROTO( ( Scope, int, int ) );
+extern SCL_EXPRESS_EXPORT Scope    ALGcreate PROTO( ( char ) );
+extern SCL_EXPRESS_EXPORT void     ALGinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void     ALGput_full_text PROTO( ( Scope, int, int ) );
 
 /********************/
 /* inline functions */

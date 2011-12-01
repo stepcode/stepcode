@@ -57,6 +57,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 
@@ -110,7 +111,7 @@ struct Variable_ {
 #include "decstart.h"
 #endif    /*  VARIABLE_C  */
 
-GLOBAL struct freelist_head VAR_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
 
 #include "de_end.h"
 
@@ -140,9 +141,9 @@ GLOBAL struct freelist_head VAR_fl;
 /* function prototypes */
 /***********************/
 
-extern Variable VARcreate PROTO( ( Expression, Type ) );
-extern void VARinitialize PROTO( ( void ) );
-extern char * VARget_simple_name PROTO( ( Variable ) );
+extern SCL_EXPRESS_EXPORT Variable VARcreate PROTO( ( Expression, Type ) );
+extern SCL_EXPRESS_EXPORT void VARinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT char * VARget_simple_name PROTO( ( Variable ) );
 
 #if 0
 extern void     VARput_type PROTO( ( Variable *, Type ) );
