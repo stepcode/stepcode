@@ -237,7 +237,14 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/include/scl_version_stri
     HEADER_FILE_ONLY TRUE )
 ################
 
+if(MSVC)
+# add_definitions( -Wall )
+add_definitions( -D__STDC__ -D__WIN32__ )
+# Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
+add_definitions( -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS )
+else()
 add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
+endif()
 
 include_directories(
     ${SCL_SOURCE_DIR}/include
