@@ -72,14 +72,18 @@
  *
  */
 
+#include <scl_cf.h>
 #include <stdio.h>
 
 /******************************/
 /* type Boolean and constants */
 /******************************/
 
-#include <stdbool.h>
-
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# include <scl_stdbool.h>
+#endif
 
 /************************/
 /* Generic pointer type */

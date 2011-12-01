@@ -45,8 +45,11 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include <scl_cf.h>
 #define SCHEMA_C
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include "express/expbasic.h"
 #include "express/schema.h"
 #include "express/object.h"

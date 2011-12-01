@@ -51,10 +51,13 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include <scl_cf.h>
 #include <stdlib.h>
 #include "conf.h"
 #include <setjmp.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #define ERROR_C
 #include "signal.h"

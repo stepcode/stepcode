@@ -64,6 +64,10 @@ include_directories(
 
 add_definitions( -DFLEX )
 
+if(MSVC)
+add_definitions( -DYY_NO_UNISTD_H )
+endif(MSVC)
+
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
 
 if(APPLE)
