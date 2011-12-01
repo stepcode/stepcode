@@ -583,7 +583,7 @@ SCOPEalgs_out( Scope s, int level ) {
 }
 
 static int
-min( int a, int b, int c ) {
+minimum( int a, int b, int c ) {
     if( a < b ) {
         return ( ( a < c ) ? a : c );
     } else {
@@ -619,7 +619,7 @@ copy_file_chunk( char * filename, int start, int end, int level ) {
     /* copy the rest */
     for( i = end - start; i--; ) {
         fgets( buff, 255, infile );
-        fix = min( undent, strlen( buff ), strspn( buff, " " ) );
+        fix = minimum( undent, strlen( buff ), strspn( buff, " " ) );
         raw( "%*s%s", indent + fix, "", buff + fix );
     }
 

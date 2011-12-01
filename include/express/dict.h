@@ -52,7 +52,6 @@
 
 #include "hash.h"
 #include "error.h"
-#include "dict.h"
 
 /************/
 /* typedefs */

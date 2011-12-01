@@ -100,7 +100,7 @@ char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );
 }
 
-int skip_exp_pause = false;
+SCL_EXPRESS_EXPORT int skip_exp_pause = false;
 void exp_pause() {
     if( !skip_exp_pause ) {
         #ifdef __WIN32__
