@@ -29,6 +29,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+if (MSVC)
+add_definitions( -DSCL_UTILS_DLL_EXPORTS )
+endif(MSVC)
+
 SCL_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "")
 
 IF(MINGW)

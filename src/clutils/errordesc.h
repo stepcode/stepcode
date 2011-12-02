@@ -13,7 +13,7 @@
 * and is not subject to copyright.
 */
 
-
+#include <scl_export.h>
 #include <string>
 #include <iostream>
 using namespace std;
@@ -56,7 +56,7 @@ enum  DebugLevel  {
  ** Status:  
  ******************************************************************/
 
-class ErrorDescriptor {
+class SCL_UTILS_EXPORT ErrorDescriptor {
     protected:
         Severity    _severity;
 
