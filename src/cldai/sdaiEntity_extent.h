@@ -1,6 +1,8 @@
 #ifndef ENTITYEXTENT_H
 #define ENTITYEXTENT_H 1
 
+#include <scl_export.h>
+
 /*
 //#include <sdaiDefs.h>
 //#include <ApplInstanceSet.h>
@@ -16,7 +18,7 @@ class SDAI_Entity_extent;
 typedef SDAI_Entity_extent * SDAI_Entity_extent_ptr;
 typedef SDAI_Entity_extent_ptr SDAI_Entity_extent_var;
 
-class SDAI_Entity_extent : public SDAI_Session_instance { 
+class SCL_DAI_EXPORT SDAI_Entity_extent : public SDAI_Session_instance { 
 
 friend class SDAI_Model_contents;
     /*

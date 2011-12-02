@@ -11,7 +11,9 @@
 * and is not subject to copyright.
 */
 
-class SDAI_String : public std::string {
+#include <scl_export.h>
+
+class SCL_DAI_EXPORT SDAI_String : public std::string {
 public:
 
   //constructor(s) & destructor    
