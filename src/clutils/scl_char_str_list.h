@@ -1,9 +1,11 @@
 #ifndef SCL_CHAR_STR_LIST_H
 #define SCL_CHAR_STR_LIST_H
 
+#include <scl_export.h>
+
 typedef char * scl_char_str_ptr;
 
-class scl_char_str__list {
+class SCL_UTILS_EXPORT scl_char_str__list {
 public:
     scl_char_str__list(int = 16);
     ~scl_char_str__list();

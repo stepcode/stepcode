@@ -21,6 +21,7 @@
  * Copyright (c) 1990 Stanford University
  */
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -41,7 +42,7 @@
 // DeleteEntries().
 //////////////////////////////////////////////////////////////////////////////
 
-class GenNodeArray 
+class SCL_UTILS_EXPORT GenNodeArray 
 {
 public:
 
