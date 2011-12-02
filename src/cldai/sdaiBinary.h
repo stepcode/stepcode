@@ -1,6 +1,7 @@
 #ifndef SDAIBINARY_H
 #define SDAIBINARY_H 1
 
+#include <scl_export.h>
 #include <string>
 
 /*
@@ -13,7 +14,7 @@
 * and is not subject to copyright.
 */
 
-class SDAI_Binary : public std::string
+class SCL_DAI_EXPORT SDAI_Binary : public std::string
 {
   public:
 

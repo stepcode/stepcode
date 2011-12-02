@@ -1,6 +1,8 @@
 #ifndef SDAIDAOBJECT_H
 #define SDAIDAOBJECT_H 1
 
+#include <scl_export.h>
+
 typedef char* SDAI_DAObjectID;
 
      // interface PID (ISO/DIS 10303-23:1996(E) 5.3.10.1)
@@ -24,7 +26,7 @@ typedef char* SDAI_DAObjectID;
    SDAI_DAObjectID as follows:
  */
 
-class SDAI_PID : public SDAI_sdaiObject
+class SCL_DAI_EXPORT SDAI_PID : public SDAI_sdaiObject
 {
   public:
 
@@ -80,7 +82,7 @@ typedef SDAI_PID_ptr SDAI_PID_var;
      // interface.
      //
 
-class SDAI_PID_DA: public SDAI_PID 
+class SCL_DAI_EXPORT SDAI_PID_DA: public SDAI_PID 
 {
   public:
 
@@ -114,7 +116,7 @@ typedef SDAI_PID_DA_ptr SDAI_PID_DA_var;
      //    The PID_SDAI class maintains the persistent object identifier for
      // a Model_contents object.
      //
-class SDAI_PID_SDAI : public SDAI_PID
+class SCL_DAI_EXPORT SDAI_PID_SDAI : public SDAI_PID
 {
   public:
     SDAI_String _modelid ;
@@ -152,7 +154,7 @@ class SDAI_DAObject;
 typedef SDAI_DAObject* SDAI_DAObject_ptr;
 typedef SDAI_DAObject_ptr SDAI_DAObject_var;
 
-class SDAI_DAObject : public SDAI_sdaiObject
+class SCL_DAI_EXPORT SDAI_DAObject : public SDAI_sdaiObject
 {
   public:
 
@@ -249,7 +251,7 @@ class SDAI_DAObject : public SDAI_sdaiObject
    5.3.10.1  DAObject_SDAI
 */
 
-class SDAI_DAObject_SDAI : public SDAI_DAObject { 
+class SCL_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject { 
 
   public:    
     SDAI_DAObject_SDAI();
@@ -472,7 +474,7 @@ class SDAI_DAObject_SDAI : public SDAI_DAObject {
 typedef SDAI_DAObject_SDAI* SDAI_DAObject_SDAI_ptr;
 typedef SDAI_DAObject_SDAI_ptr SDAI_DAObject_SDAI_var;
 
-class SDAI_DAObject__set {
+class SCL_DAI_EXPORT SDAI_DAObject__set {
 public:
     SDAI_DAObject__set(int = 16);
     ~SDAI_DAObject__set();

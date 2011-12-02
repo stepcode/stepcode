@@ -2,9 +2,10 @@
 #ifndef SESSION_INSTANCE_H
 #define SESSION_INSTANCE_H 1
 
+#include <scl_export.h>
 //#include <sdai.h>
 
-class SDAI_Session_instance : public SDAI_sdaiObject 
+class SCL_DAI_EXPORT SDAI_Session_instance : public SDAI_sdaiObject 
 {
 
   public:

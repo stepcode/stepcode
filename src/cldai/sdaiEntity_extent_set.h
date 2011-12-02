@@ -35,7 +35,7 @@
 //#include <EntityExtent.h>
 */
 
-class SDAI_Entity_extent__set {
+class SCL_DAI_EXPORT SDAI_Entity_extent__set {
 public:
 
     SDAI_Entity_extent__set(int = 16);
