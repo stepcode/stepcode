@@ -14,11 +14,13 @@
 */
 
 class STEPattribute;
+
+#include <scl_export.h>
 #include <SingleLinkList.h>
 
 class STEPattributeList;
 
-class AttrListNode :  public SingleLinkNode 
+class SCL_CORE_EXPORT AttrListNode :  public SingleLinkNode 
 {
   friend class STEPattributeList;
 
@@ -31,7 +33,7 @@ class AttrListNode :  public SingleLinkNode
 
 };
 
-class STEPattributeList : public SingleLinkList
+class SCL_CORE_EXPORT STEPattributeList : public SingleLinkList
 {
   public:
     STEPattributeList();
