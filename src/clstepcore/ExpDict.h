@@ -12,6 +12,7 @@
 * and is not subject to copyright.
 */
 
+#include <scl_export.h>
 #include <sdai.h>
 
 typedef  SDAI_Application_instance * (* Creator) () ;
@@ -31,19 +32,19 @@ enum AttrType_Enum {
 #include <scl_char_str_list.h>
 
 // defined and created in Registry.inline.cc
-extern const TypeDescriptor *  t_sdaiINTEGER;
-extern const TypeDescriptor *  t_sdaiREAL;
-extern const TypeDescriptor *  t_sdaiNUMBER;
-extern const TypeDescriptor *  t_sdaiSTRING;
-extern const TypeDescriptor *  t_sdaiBINARY;
-extern const TypeDescriptor *  t_sdaiBOOLEAN;
-extern const TypeDescriptor *  t_sdaiLOGICAL;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiINTEGER;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiREAL;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiNUMBER;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiSTRING;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiBINARY;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiBOOLEAN;
+extern SCL_CORE_EXPORT const TypeDescriptor *  t_sdaiLOGICAL;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dictionary_instance
 ///////////////////////////////////////////////////////////////////////////////
 
-class Dictionary_instance {
+class SCL_CORE_EXPORT Dictionary_instance {
 
   protected:
     Dictionary_instance() {}
@@ -54,7 +55,7 @@ class Dictionary_instance {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class TypeDescLinkNode : public SingleLinkNode {
+class SCL_CORE_EXPORT TypeDescLinkNode : public SingleLinkNode {
   private:
   protected:
     TypeDescriptor *_typeDesc;
@@ -66,7 +67,7 @@ class TypeDescLinkNode : public SingleLinkNode {
     void TypeDesc(TypeDescriptor *td) { _typeDesc = td; }
 };
 
-class TypeDescriptorList : public SingleLinkList {
+class SCL_CORE_EXPORT TypeDescriptorList : public SingleLinkList {
   private:
   protected:
   public:
@@ -83,7 +84,7 @@ class TypeDescriptorList : public SingleLinkList {
     }    
 };
 
-class TypeDescItr
+class SCL_CORE_EXPORT TypeDescItr
 {
   protected:
     const TypeDescriptorList &tdl;
@@ -100,7 +101,7 @@ class TypeDescItr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class EntityDescLinkNode : public SingleLinkNode {
+class SCL_CORE_EXPORT EntityDescLinkNode : public SingleLinkNode {
 
   private:
   protected:
@@ -114,7 +115,7 @@ class EntityDescLinkNode : public SingleLinkNode {
     void EntityDesc(EntityDescriptor *ed) { _entityDesc = ed; }
 };
 
-class EntityDescriptorList : public SingleLinkList {
+class SCL_CORE_EXPORT EntityDescriptorList : public SingleLinkList {
 
   private:
   protected:
@@ -135,7 +136,7 @@ class EntityDescriptorList : public SingleLinkList {
 typedef EntityDescriptorList * Entity__set_ptr;
 typedef Entity__set_ptr Entity__set_var;
 
-class EntityDescItr
+class SCL_CORE_EXPORT EntityDescItr
 {
   protected:
     const EntityDescriptorList &edl;
@@ -158,7 +159,7 @@ class EntityDescItr
 // Interfaced_item
 ///////////////////////////////////////////////////////////////////////////////
 
-class Interfaced_item : public Dictionary_instance {
+class SCL_CORE_EXPORT Interfaced_item : public Dictionary_instance {
   protected:
     Interfaced_item();
     Interfaced_item(const Interfaced_item&);
@@ -176,7 +177,7 @@ class Interfaced_item : public Dictionary_instance {
 // Explicit_item_id
 ///////////////////////////////////////////////////////////////////////////////
 
-class Explicit_item_id : public Interfaced_item{
+class SCL_CORE_EXPORT Explicit_item_id : public Interfaced_item{
   protected:
     Explicit_item_id();
     Explicit_item_id(const Explicit_item_id&);
@@ -225,7 +226,7 @@ class Explicit_item_id : public Interfaced_item{
 
 typedef Explicit_item_id * Explicit_item_id_ptr;
 
-class Used_item : public Explicit_item_id {
+class SCL_CORE_EXPORT Used_item : public Explicit_item_id {
   public:
     Used_item() {}
     Used_item(const char *foreign_schema, TypeDescriptor *ld, 
@@ -238,7 +239,7 @@ class Used_item : public Explicit_item_id {
 
 typedef Used_item * Used_item_ptr;
 
-class Referenced_item : public Explicit_item_id {
+class SCL_CORE_EXPORT Referenced_item : public Explicit_item_id {
   public:
     Referenced_item() {}
     Referenced_item(const char *foreign_schema, TypeDescriptor *ld, 
@@ -251,7 +252,7 @@ class Referenced_item : public Explicit_item_id {
 
 typedef Referenced_item * Referenced_item_ptr;
 
-class Explicit_item_id__set {
+class SCL_CORE_EXPORT Explicit_item_id__set {
 public:
     Explicit_item_id__set(int = 16);
     ~Explicit_item_id__set();
@@ -279,7 +280,7 @@ typedef Explicit_item_id__set_ptr Explicit_item_id__set_var;
 // Implicit_item_id
 ///////////////////////////////////////////////////////////////////////////////
 
-class Implicit_item_id : public Interfaced_item {
+class SCL_CORE_EXPORT Implicit_item_id : public Interfaced_item {
   protected:
     Implicit_item_id();
     Implicit_item_id(Implicit_item_id&);
@@ -301,7 +302,7 @@ typedef Implicit_item_id * Implicit_item_id_ptr;
 // Implicit_item_id__set
 ///////////////////////////////////////////////////////////////////////////////
 
-class Implicit_item_id__set {
+class SCL_CORE_EXPORT Implicit_item_id__set {
 public:
     Implicit_item_id__set(int = 16);
     ~Implicit_item_id__set();
@@ -329,7 +330,7 @@ typedef Implicit_item_id__set_ptr Implicit_item_id__set_var;
 // Interface_spec
 ///////////////////////////////////////////////////////////////////////////////
 
-class Interface_spec : public Dictionary_instance {
+class SCL_CORE_EXPORT Interface_spec : public Dictionary_instance {
   public:
     Express_id _current_schema_id; // schema containing the USE/REF stmt
         // set of objects from USE/REFERENCE stmt(s)
@@ -372,7 +373,7 @@ class Interface_spec : public Dictionary_instance {
 
 typedef Interface_spec * Interface_spec_ptr;
 
-class Interface_spec__set {
+class SCL_CORE_EXPORT Interface_spec__set {
 public:
     Interface_spec__set(int = 16);
     ~Interface_spec__set();
@@ -397,7 +398,7 @@ typedef Interface_spec__set* Interface_spec__set_ptr;
 typedef Interface_spec__set_ptr Interface_spec__set_var;
 
 
-class Type_or_rule : public Dictionary_instance {
+class SCL_CORE_EXPORT Type_or_rule : public Dictionary_instance {
   public:
     Type_or_rule();
     Type_or_rule(const Type_or_rule&);
@@ -407,7 +408,7 @@ class Type_or_rule : public Dictionary_instance {
 typedef Type_or_rule* Type_or_rule_ptr;
 typedef Type_or_rule_ptr Type_or_rule_var;
 
-class Where_rule : public Dictionary_instance {
+class SCL_CORE_EXPORT Where_rule : public Dictionary_instance {
   public:
     Express_id _label;
     Type_or_rule_var _type_or_rule;
@@ -434,7 +435,7 @@ class Where_rule : public Dictionary_instance {
 
 typedef Where_rule * Where_rule_ptr;
 
-class Where_rule__list {
+class SCL_CORE_EXPORT Where_rule__list {
 public:
     Where_rule__list(int = 16);
     ~Where_rule__list();
@@ -458,7 +459,7 @@ private:
 typedef Where_rule__list* Where_rule__list_ptr;
 typedef Where_rule__list_ptr Where_rule__list_var;
 
-class Global_rule : public Dictionary_instance {
+class SCL_CORE_EXPORT Global_rule : public Dictionary_instance {
   public:
     Express_id _name;
     Entity__set_var _entities; // not implemented
@@ -487,7 +488,7 @@ class Global_rule : public Dictionary_instance {
 
 typedef Global_rule * Global_rule_ptr;
 
-class Global_rule__set {
+class SCL_CORE_EXPORT Global_rule__set {
 public:
     Global_rule__set(int = 16);
     ~Global_rule__set();
@@ -511,7 +512,7 @@ private:
 typedef Global_rule__set* Global_rule__set_ptr;
 typedef Global_rule__set_ptr Global_rule__set_var;
 
-class Uniqueness_rule : public Dictionary_instance {
+class SCL_CORE_EXPORT Uniqueness_rule : public Dictionary_instance {
   public:
     Express_id _label;
     const EntityDescriptor * _parent_entity;
@@ -539,7 +540,7 @@ class Uniqueness_rule : public Dictionary_instance {
 
 typedef Uniqueness_rule * Uniqueness_rule_ptr;
 
-class Uniqueness_rule__set {
+class SCL_CORE_EXPORT Uniqueness_rule__set {
 public:
     Uniqueness_rule__set(int = 16);
     ~Uniqueness_rule__set();
@@ -568,7 +569,7 @@ typedef  SDAI_Model_contents_ptr (* ModelContentsCreator) () ;
 /**
  * \class Schema (was SchemaDescriptor) - a class of this type is generated and contains schema info.
  */
-class Schema : public Dictionary_instance { 
+class SCL_CORE_EXPORT Schema : public Dictionary_instance { 
 
   protected:
     const char *  _name ;
@@ -646,7 +647,7 @@ typedef Schema SchemaDescriptor;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class AttrDescLinkNode : public SingleLinkNode {
+class SCL_CORE_EXPORT AttrDescLinkNode : public SingleLinkNode {
   private:
   protected:
     AttrDescriptor *_attrDesc;
@@ -658,7 +659,7 @@ class AttrDescLinkNode : public SingleLinkNode {
     void AttrDesc(AttrDescriptor *ad) { _attrDesc = ad; }
 };
 
-class AttrDescriptorList : public SingleLinkList {
+class SCL_CORE_EXPORT AttrDescriptorList : public SingleLinkList {
   private:
   protected:
   public:
@@ -670,7 +671,7 @@ class AttrDescriptorList : public SingleLinkList {
     AttrDescLinkNode * AddNode (AttrDescriptor * ad);
 };
 
-class AttrDescItr
+class SCL_CORE_EXPORT AttrDescItr
 {
   protected:
     const AttrDescriptorList &adl;
@@ -687,7 +688,7 @@ class AttrDescItr
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class Inverse_attributeLinkNode : public  SingleLinkNode {
+class SCL_CORE_EXPORT Inverse_attributeLinkNode : public  SingleLinkNode {
   private:
   protected:
     Inverse_attribute *_invAttr;
@@ -699,7 +700,7 @@ class Inverse_attributeLinkNode : public  SingleLinkNode {
     void Inverse_attr(Inverse_attribute *ia) { _invAttr = ia; }
 };
 
-class Inverse_attributeList : public  SingleLinkList {
+class SCL_CORE_EXPORT Inverse_attributeList : public  SingleLinkList {
   private:
   protected:
   public:
@@ -710,7 +711,7 @@ class Inverse_attributeList : public  SingleLinkList {
     Inverse_attributeLinkNode * AddNode (Inverse_attribute * ia);
 };
 
-class InverseAItr
+class SCL_CORE_EXPORT InverseAItr
 {
   protected:
     const Inverse_attributeList &ial;
@@ -731,7 +732,7 @@ class InverseAItr
  * An instance of this class will be generated for each attribute for
  * an Entity.  They will be pointed to by the EntityTypeDescriptors.
  */
-class AttrDescriptor { 
+class SCL_CORE_EXPORT AttrDescriptor { 
 
   protected:
         const char *  _name ;        // the attributes name
@@ -853,7 +854,7 @@ class AttrDescriptor {
 // Derived_attribute
 ///////////////////////////////////////////////////////////////////////////////
 
-class Derived_attribute  :    public AttrDescriptor  { 
+class SCL_CORE_EXPORT Derived_attribute  :    public AttrDescriptor  { 
   public:
     const char *_initializer;
 
@@ -877,7 +878,7 @@ class Derived_attribute  :    public AttrDescriptor  {
 // Inverse_attribute
 ///////////////////////////////////////////////////////////////////////////////
 
-class Inverse_attribute  :    public AttrDescriptor  { 
+class SCL_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  { 
 
   public:  
     const char *_inverted_attr_id;
@@ -939,7 +940,7 @@ class Inverse_attribute  :    public AttrDescriptor  {
  * schema is determined by the file schema section of the header section of a
  * part21 file (the _headerInstances of STEPfile).
  */
-class SchRename {
+class SCL_CORE_EXPORT SchRename {
   public:
     SchRename( const char *sch="\0", const char *newnm="\0" ) : next(0)
       { strcpy( schName, sch ); strcpy( newName, newnm ); }
@@ -1044,7 +1045,7 @@ class SchRename {
     * It is the same as _name for EXPRESS base types TypeDescriptors (with
     * the possible exception of upper or lower case differences).
 */
-class TypeDescriptor { 
+class SCL_CORE_EXPORT TypeDescriptor { 
 
   protected:
 
@@ -1209,7 +1210,7 @@ class TypeDescriptor {
 
 typedef  SDAI_Enum * (* EnumCreator) () ;
 
-class EnumTypeDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT EnumTypeDescriptor  :    public TypeDescriptor  { 
   public:
     EnumCreator CreateNewEnum;
 
@@ -1241,7 +1242,7 @@ class EnumTypeDescriptor  :    public TypeDescriptor  {
  * will be building the same thing but using the new schema info.
  * nodes (i.e. EntityDesc nodes) for each entity.
  */
-class EntityDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  { 
 
   protected:
         SDAI_LOGICAL _abstractEntity;
@@ -1337,7 +1338,7 @@ class EntityDescriptor  :    public TypeDescriptor  {
  * FIXME not implemented
 */
 #ifdef NOT_YET
-class EnumerationTypeDescriptor  :    public TypeDescriptor  {
+class SCL_CORE_EXPORT EnumerationTypeDescriptor  :    public TypeDescriptor  {
 
 protected:
         StringAggregate  *_elements ;          //  of  (null)
@@ -1372,21 +1373,21 @@ typedef  BinaryAggregate * (* BinaryAggregateCreator) () ;
 typedef  RealAggregate * (* RealAggregateCreator) () ;
 typedef  IntAggregate * (* IntAggregateCreator) () ;
 
-EnumAggregate * create_EnumAggregate();
+SCL_CORE_EXPORT EnumAggregate * create_EnumAggregate();
 
-GenericAggregate * create_GenericAggregate();
+SCL_CORE_EXPORT GenericAggregate * create_GenericAggregate();
 
-EntityAggregate * create_EntityAggregate();
+SCL_CORE_EXPORT EntityAggregate * create_EntityAggregate();
 
-SelectAggregate * create_SelectAggregate();
+SCL_CORE_EXPORT SelectAggregate * create_SelectAggregate();
 
-StringAggregate * create_StringAggregate();
+SCL_CORE_EXPORT StringAggregate * create_StringAggregate();
 
-BinaryAggregate * create_BinaryAggregate();
+SCL_CORE_EXPORT BinaryAggregate * create_BinaryAggregate();
 
-RealAggregate * create_RealAggregate();
+SCL_CORE_EXPORT RealAggregate * create_RealAggregate();
 
-IntAggregate * create_IntAggregate();
+SCL_CORE_EXPORT IntAggregate * create_IntAggregate();
 
 /**
  * \class AggrTypeDescriptor
@@ -1399,7 +1400,7 @@ IntAggregate * create_IntAggregate();
  * together by the _aggrDomainType variables.  If you can make this
  * work then go for it.
  */
-class AggrTypeDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
 
@@ -1448,7 +1449,7 @@ class AggrTypeDescriptor  :    public TypeDescriptor  {
 ///////////////////////////////////////////////////////////////////////////////
 // ArrayTypeDescriptor
 ///////////////////////////////////////////////////////////////////////////////
-class ArrayTypeDescriptor  :    public AggrTypeDescriptor  { 
+class SCL_CORE_EXPORT ArrayTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
         SDAI_LOGICAL _optionalElements ;
@@ -1474,7 +1475,7 @@ class ArrayTypeDescriptor  :    public AggrTypeDescriptor  {
     void OptionalElements (const char *oe) { _optionalElements.put(oe); }
 };
 
-class ListTypeDescriptor  :    public AggrTypeDescriptor  { 
+class SCL_CORE_EXPORT ListTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
   public:  
@@ -1487,7 +1488,7 @@ class ListTypeDescriptor  :    public AggrTypeDescriptor  {
 
 };
 
-class SetTypeDescriptor  :    public AggrTypeDescriptor  { 
+class SCL_CORE_EXPORT SetTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
   public:  
@@ -1501,7 +1502,7 @@ class SetTypeDescriptor  :    public AggrTypeDescriptor  {
 
 };
 
-class BagTypeDescriptor  :    public AggrTypeDescriptor  { 
+class SCL_CORE_EXPORT BagTypeDescriptor  :    public AggrTypeDescriptor  { 
 
   protected:
   public:  
@@ -1517,7 +1518,7 @@ class BagTypeDescriptor  :    public AggrTypeDescriptor  {
 
 typedef  SDAI_Select * (* SelectCreator) () ;
 
-class SelectTypeDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT SelectTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
         TypeDescriptorList _elements ;          //  of  TYPE_DESCRIPTOR
@@ -1554,7 +1555,7 @@ class SelectTypeDescriptor  :    public TypeDescriptor  {
           const;
 };
 
-class StringTypeDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT StringTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
         SDAI_Integer  _width ;    //  OPTIONAL
@@ -1573,7 +1574,7 @@ class StringTypeDescriptor  :    public TypeDescriptor  {
         void FixedSize (Logical fs)        { _fixedSize.put(fs); }
 };
 
-class RealTypeDescriptor  :    public TypeDescriptor  { 
+class SCL_CORE_EXPORT RealTypeDescriptor  :    public TypeDescriptor  { 
 
   protected:
         SDAI_Integer  _precisionSpec ;    //  OPTIONAL
