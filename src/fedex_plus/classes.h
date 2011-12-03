@@ -54,7 +54,6 @@ typedef  struct file_holder  {
     FILE*  lib;                ///<  library file
     FILE*  incall;             ///<  include file for collecting all include files
     FILE*  initall;            ///<  for registering all entities from all schemas
-    FILE*  code;
     FILE*  init;               ///<  contains function to initialize program to use schema's entities
     FILE*  create;             /**<  DAR - added - to create all schema & ent descriptors.  In multiple
                                 *    interrelated schemas, must be done before attribute descriptors and
@@ -64,6 +63,7 @@ typedef  struct file_holder  {
                                 *    classes, so that all the .h files can refer any of the entity classes.
                                 *    Nec. if ent1 of schemaA has attribute ent2 from schemaB.
                                 */
+    FILE*  names;               ///< MAP Nov 2011 - header with namespace for entity and attr descriptors
 }  File_holder, FILES;
 
 
