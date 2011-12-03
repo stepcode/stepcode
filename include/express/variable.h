@@ -57,7 +57,6 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 

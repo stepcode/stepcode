@@ -73,6 +73,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_export.h>
 #include <stdio.h>
 
 /******************************/
