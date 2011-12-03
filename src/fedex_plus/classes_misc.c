@@ -408,25 +408,8 @@ ClassName( const char * oldname ) {
     }
     newname [j] = '\0';
     return ( newname );
-
-    /******  This procedure gets rid of '_' and is no longer being used
-        if (oldname [i] != '_') newname [j] = ToLower (oldname [i]);
-        else {  *//*  character is '_'  *//*
-newname [j] = ToUpper (oldname [++i]);
-if (oldname [i] == '\0') --i;
-}
-++i;
-++j;
-*******/
 }
 
-const char *
-ENTITYget_CORBAname( Entity ent ) {
-    static char newname [BUFSIZ];
-    strcpy( newname, ENTITYget_name( ent ) );
-    newname[0] = ToUpper( newname [0] );
-    return newname;
-}
 
 /******************************************************************
  ** Procedure:  ENTITYget_classname

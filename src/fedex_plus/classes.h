@@ -89,6 +89,7 @@ struct  SelectTag_ {
   unsigned int complete :1;   ///<  marks the end of processing
 };
 
+const char *    GetTypeDescriptorName( Type t );
 char *          format_for_stringout(char *orig_buf, char* return_buf);
 const char *    CheckWord( const char *);
 const char *    StrToLower(const char *);

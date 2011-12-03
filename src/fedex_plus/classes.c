@@ -31,8 +31,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
-const char * ENTITYget_CORBAname( Entity ent );
-const char * GetTypeDescriptorName( Type t );
 
 char * FundamentalType( const Type t, int report_reftypes );
 
