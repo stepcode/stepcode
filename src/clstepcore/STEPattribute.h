@@ -41,10 +41,6 @@ class EntityDescriptor;
 
 extern SCL_CORE_EXPORT int SetErrOnNull(const char *attrValue, ErrorDescriptor *error);
 
-extern SCL_CORE_EXPORT Severity CheckRemainingInput(istream &in, ErrorDescriptor *err,
-                    const char *typeName, // used in error message
-                    const char *tokenList); // e.g. ",)"
-
 extern SCL_CORE_EXPORT SDAI_Application_instance * ReadEntityRef(istream &in, ErrorDescriptor *err, const char *tokenList, 
               InstMgr * instances, int addFileId);
 

@@ -1,5 +1,5 @@
 #ifndef STEPENTITY_H
-#define        STEPENTITY_H 1
+#define STEPENTITY_H 1
 
 /*
 * NIST STEP Core Class Library
