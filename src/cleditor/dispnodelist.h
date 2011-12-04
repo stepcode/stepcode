@@ -15,6 +15,7 @@
 
 /* $Id: dispnodelist.h,v 3.0.1.2 1997/11/05 22:11:40 sauderd DP3.1 $ */ 
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -31,7 +32,7 @@
 //	This will be used to represent the display state lists.
 //////////////////////////////////////////////////////////////////////////////
 
-class DisplayNodeList : public GenNodeList
+class SCL_EDITOR_EXPORT DisplayNodeList : public GenNodeList
 {
 public:
     DisplayNodeList(displayStateEnum type);

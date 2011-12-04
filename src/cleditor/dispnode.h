@@ -15,6 +15,7 @@
 
 /* $Id: dispnode.h,v 3.0.1.2 1997/11/05 22:11:39 sauderd DP3.1 $ */ 
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -34,7 +35,7 @@ class MgrNode;
 // class DisplayNode
 //////////////////////////////////////////////////////////////////////////////
 
-class DisplayNode : public GenericNode
+class SCL_EDITOR_EXPORT DisplayNode : public GenericNode
 {
 protected:
     friend class GenNodeList;

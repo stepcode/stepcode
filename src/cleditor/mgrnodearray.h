@@ -15,6 +15,7 @@
 
 /* $Id: mgrnodearray.h,v 3.0.1.3 1997/11/05 22:11:38 sauderd DP3.1 $ */ 
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -40,7 +41,7 @@
 // If you delete this object it deletes all of the entries it points to.
 //////////////////////////////////////////////////////////////////////////////
 
-class MgrNodeArray : public GenNodeArray
+class SCL_EDITOR_EXPORT MgrNodeArray : public GenNodeArray
 {
 public:
     MgrNodeArray(int defaultSize = ARRAY_DEFAULT_SIZE);
@@ -69,7 +70,7 @@ public:
 // If you delete this object it won't delete the entries it points to.
 //////////////////////////////////////////////////////////////////////////////
 
-class MgrNodeArraySorted : public GenNodeArray {
+class SCL_EDITOR_EXPORT MgrNodeArraySorted : public GenNodeArray {
 public:
     MgrNodeArraySorted(int defaultSize = ARRAY_DEFAULT_SIZE);
     ~MgrNodeArraySorted() { }

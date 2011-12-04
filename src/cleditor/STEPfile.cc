@@ -76,7 +76,11 @@ STEPfile::ReadHeader( istream & in ) {
 
     InstMgr * im = new InstMgr;
     SDAI_Application_instance* obj;
-    __attribute__( ( unused ) ) Severity objsev = SEVERITY_NULL;
+    #ifdef __MSVC__
+	Severity objsev = SEVERITY_NULL;
+	#else
+	__attribute__( ( unused ) ) Severity objsev = SEVERITY_NULL;
+	#endif
 
     int endsec = 0;
     int userDefined = 0;
@@ -2226,7 +2230,11 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     SetFileIdIncrement();
     int total_insts = 0,  valid_insts = 0;
+	#ifdef __MSVC__
+	int exchange_file = -1;
+	#else
     __attribute__( ( unused ) ) int exchange_file = -1;
+	#endif
 
     ReadTokenSeparator( *in );
     std::string keywd = GetKeyword( *in, "; #", _error );

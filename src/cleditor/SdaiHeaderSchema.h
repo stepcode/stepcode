@@ -4,6 +4,7 @@
 // it since your modifications will be lost if fedex_plus is used to
 // regenerate it.
 
+#include <scl_export.h>
 #include <sdai.h>
 #include <Registry.h>
 #include <STEPaggregate.h>
@@ -12,10 +13,10 @@
 
 /////////         ENTITY section_language
 
-extern AttrDescriptor *a_0section;
-extern AttrDescriptor *a_1default_language;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_0section;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_1default_language;
 
-class SdaiSection_language  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiSection_language  :    public SDAI_Application_instance {
   protected:
         SDAI_String _section ;    //  OPTIONAL
         SDAI_String _default_language ;
@@ -43,11 +44,11 @@ create_SdaiSection_language () {  return  new SdaiSection_language ;  }
 
 /////////         ENTITY file_population
 
-extern AttrDescriptor *a_2governing_schema;
-extern AttrDescriptor *a_3determination_method;
-extern AttrDescriptor *a_4governed_sections;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_2governing_schema;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_3determination_method;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_4governed_sections;
 
-class SdaiFile_population  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiFile_population  :    public SDAI_Application_instance {
   protected:
         SDAI_String _governing_schema ;
         SDAI_String _determination_method ;
@@ -88,7 +89,7 @@ extern AttrDescriptor *a_9preprocessor_version;
 extern AttrDescriptor *a_10originating_system;
 extern AttrDescriptor *a_11authorization;
 
-class SdaiFile_name  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiFile_name  :    public SDAI_Application_instance {
   protected:
         SDAI_String _name ;
         SDAI_String _time_stamp ;
@@ -136,10 +137,10 @@ create_SdaiFile_name () {  return  new SdaiFile_name ;  }
 
 /////////         ENTITY section_context
 
-extern AttrDescriptor *a_12section;
-extern AttrDescriptor *a_13context_identifiers;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_12section;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_13context_identifiers;
 
-class SdaiSection_context  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiSection_context  :    public SDAI_Application_instance {
   protected:
         SDAI_String _section ;    //  OPTIONAL
         StringAggregate _context_identifiers ;          //  of  context_name
@@ -168,10 +169,10 @@ create_SdaiSection_context () {  return  new SdaiSection_context ;  }
 
 /////////         ENTITY file_description
 
-extern AttrDescriptor *a_14description;
-extern AttrDescriptor *a_15implementation_level;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_14description;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_15implementation_level;
 
-class SdaiFile_description  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiFile_description  :    public SDAI_Application_instance {
   protected:
         StringAggregate _description ;
         SDAI_String _implementation_level ;
@@ -199,9 +200,9 @@ create_SdaiFile_description () {  return  new SdaiFile_description ;  }
 
 /////////         ENTITY file_schema
 
-extern AttrDescriptor *a_16schema_identifiers;
+extern SCL_EDITOR_EXPORT AttrDescriptor *a_16schema_identifiers;
 
-class SdaiFile_schema  :    public SDAI_Application_instance {
+class SCL_EDITOR_EXPORT SdaiFile_schema  :    public SDAI_Application_instance {
   protected:
         StringAggregate _schema_identifiers ;          //  of  schema_name
 
@@ -226,7 +227,7 @@ create_SdaiFile_schema () {  return  new SdaiFile_schema ;  }
 
 //        ***** generate Model related pieces
 
-class SdaiModel_contents_header_section_schema : public SDAI_Model_contents {
+class SCL_EDITOR_EXPORT SdaiModel_contents_header_section_schema : public SDAI_Model_contents {
 
   public:
     SdaiModel_contents_header_section_schema();
@@ -248,5 +249,5 @@ class SdaiModel_contents_header_section_schema : public SDAI_Model_contents {
 
 typedef SdaiModel_contents_header_section_schema * SdaiModel_contents_header_section_schema_ptr;
 typedef SdaiModel_contents_header_section_schema_ptr SdaiModel_contents_header_section_schema_var;
-SDAI_Model_contents_ptr create_SdaiModel_contents_header_section_schema();
+SCL_EDITOR_EXPORT SDAI_Model_contents_ptr create_SdaiModel_contents_header_section_schema();
 #endif

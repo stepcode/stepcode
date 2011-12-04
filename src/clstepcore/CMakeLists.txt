@@ -38,13 +38,6 @@ if(MINGW)
 endif(MINGW)
 
 if(MSVC)
-	set(LIBDEPEND_SRCS
-		${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
-		${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
-	)
 	add_definitions( -DSCL_CORE_DLL_EXPORTS )
 	add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
 	add_definitions( -DSCL_UTILS_DLL_IMPORTS )

@@ -20,8 +20,7 @@
 //	start a new undo list and delete the old undo list. 
 /////////////////////
 
-
-extern char * EntityClassName ( char *);
+#include <scl_export.h>
 
 // IT IS VERY IMPORTANT THAT THE ORDER OF THE FOLLOWING INCLUDE FILES
 // BE PRESERVED
@@ -38,7 +37,7 @@ extern char * EntityClassName ( char *);
 
 #include <mgrnodearray.h>
 
-class InstMgr
+class SCL_EDITOR_EXPORT InstMgr
 {
 protected:
     int maxFileId;
