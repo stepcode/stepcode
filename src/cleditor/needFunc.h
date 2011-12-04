@@ -1,3 +1,4 @@
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -5,7 +6,7 @@
 // define this to be the name of the display window object for 
 // STEP entity instance editing or define your own.
 
-class StepEntityEditor
+class SCL_EDITOR_EXPORT StepEntityEditor
 {
   public:
     StepEntityEditor() {};

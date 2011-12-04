@@ -15,6 +15,7 @@
 
 /* $Id: mgrnodelist.h,v 3.0.1.2 1997/11/05 22:11:38 sauderd DP3.1 $ */ 
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -31,7 +32,7 @@
 
 class MgrNode;
 
-class MgrNodeList : public GenNodeList
+class SCL_EDITOR_EXPORT MgrNodeList : public GenNodeList
 {
 public:
     MgrNodeList(stateEnum type);

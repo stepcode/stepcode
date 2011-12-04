@@ -15,6 +15,7 @@
 // this is a default seeinfo that does nothing... thus it is not
 //	dependent on a user interface toolkit
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -27,7 +28,7 @@ class DisplayNodelist;
 
 #include <editordefines.h>
 
-class seeInfo : public DisplayNode
+class SCL_EDITOR_EXPORT seeInfo : public DisplayNode
 {
 public:
     seeInfo(MgrNode *node, 
