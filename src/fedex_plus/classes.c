@@ -2146,8 +2146,8 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( VARis_derived( v ) && v->initializer ) {
         tmp = EXPRto_string( v->initializer );
         tmp2 = ( char * )malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
-        fprintf( file, "        %s%d%s%s->initializer_(\"%s\");\n",
-                 ATTR_PREFIX, attr_count,
+        fprintf( file, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
+                 schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -2156,16 +2156,16 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
         free( tmp2 );
     }
     if( VARget_inverse( v ) ) {
-        fprintf( file, "        %s%d%s%s->inverted_attr_id_(\"%s\");\n",
-                 ATTR_PREFIX, attr_count,
+        fprintf( file, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
+                 schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm, v->inverse_attribute->name->symbol.name );
         if( v->type->symbol.name ) {
             fprintf( file,
-                     "        %s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                     ATTR_PREFIX, attr_count,
+                     "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
+                     schema_name, ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -2175,8 +2175,8 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
             switch( TYPEget_body( v->type )->type ) {
                 case entity_:
                     fprintf( file,
-                             "        %s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                             ATTR_PREFIX, attr_count,
+                             "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
+                             schema_name, ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -2189,8 +2189,8 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                 case set_:
                 case list_:
                     fprintf( file,
-                             "        %s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                             ATTR_PREFIX, attr_count,
+                             "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
+                             schema_name, ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -2340,7 +2340,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
 
     if( wheres ) {
         fprintf( files->create,
-                 "    %s%s%s->_where_rules = new Where_rule__list;\n",
+                 "    %s::%s%s->_where_rules = new Where_rule__list;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         LISTdo( wheres, w, Where )
@@ -2424,7 +2424,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
             strcat( ptr, ");\\n" );
         }
         fprintf( files->create, "        wr = new Where_rule(\"%s\");\n", whereRule_formatted );
-        fprintf( files->create, "        %s%s%s->_where_rules->Append(wr);\n",
+        fprintf( files->create, "        %s::%s%s->_where_rules->Append(wr);\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         free( whereRule );
@@ -2436,7 +2436,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
 
     if( uniqs ) {
         fprintf( files->create,
-                 "        %s%s%s->_uniqueness_rules = new Uniqueness_rule__set;\n",
+                 "        %s::%s%s->_uniqueness_rules = new Uniqueness_rule__set;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         if( whereRule_formatted_size == 0 ) {
@@ -2472,7 +2472,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
         }
         LISTod
         fprintf( files->create, ";\\n\");\n" );
-        fprintf( files->create, "        %s%s%s->_uniqueness_rules->Append(ur);\n",
+        fprintf( files->create, "        %s::%s%s->_uniqueness_rules->Append(ur);\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
         LISTod
         /********/
