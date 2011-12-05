@@ -466,7 +466,7 @@ EnumName( const char * oldname ) {
     strcpy( newname, ENUM_PREFIX )    ;
     j = strlen( ENUM_PREFIX )    ;
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j );
+    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
@@ -484,7 +484,7 @@ SelectName( const char * oldname ) {
     newname [0] = ToUpper( newname [0] );
     j = strlen( TYPE_PREFIX );
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j );
+    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
