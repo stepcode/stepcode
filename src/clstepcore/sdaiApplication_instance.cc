@@ -623,7 +623,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                 SDAI_Application_instance* inst;
                 /* If there is a ManagerNode it should have a SDAI_Application_instance */
                 MgrNode * mn = 0;
-                //mn = instances->FindFileId( id );
+                mn = instances->FindFileId( id );
                 if( mn ) {
                     inst =  mn->GetSTEPentity() ;
                     if( inst ) {
@@ -790,7 +790,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
             err->AppendToDetailMsg( messageBuf );
             err->GreaterSeverity( SEVERITY_WARNING );
         }
-        //mn = im->FindFileId( fileId );
+        mn = im->FindFileId( fileId );
         if( mn ) {
             SDAI_Application_instance *se = mn->GetSTEPentity();
             return EntityValidLevel( se, ed, err );
