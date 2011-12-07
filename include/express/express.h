@@ -98,6 +98,13 @@ struct Express_ {
 # define INITIALLY(value)
 #endif /*EXPRESS_C*/
 
+#ifdef YYDEBUG
+extern SCL_EXPRESS_EXPORT int yydebug;
+extern SCL_EXPRESS_EXPORT int yydbg_upper_limit;
+extern SCL_EXPRESS_EXPORT int yydbg_lower_limit;
+extern SCL_EXPRESS_EXPORT int yydbg_verbose;
+#endif
+
 GLOBAL SCL_EXPRESS_EXPORT Linked_List EXPRESS_path;
 GLOBAL SCL_EXPRESS_EXPORT int EXPRESSpass;
 
@@ -274,7 +281,7 @@ extern SCL_EXPRESS_EXPORT void     EXPRESSresolve PROTO( ( Express ) );
 extern SCL_EXPRESS_EXPORT char    *EXPRESSversion PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT int      EXPRESS_fail PROTO( ( Express ) );
 extern SCL_EXPRESS_EXPORT int      EXPRESS_succeed PROTO( ( Express ) );
-extern SCL_EXPRESS_EXPORT void     EXPRESSinit_init PROTO( ( void ) );
+extern void     EXPRESSinit_init PROTO( ( void ) );
 #if 0
 extern void     EXPRESSdump_model PROTO( ( Express ) );
 #endif /*0*/
