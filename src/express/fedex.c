@@ -87,10 +87,10 @@
 #include "express/resolve.h"
 
 #ifdef YYDEBUG
-extern int yydebug;
-extern int yydbg_upper_limit;
-extern int yydbg_lower_limit;
-extern int yydbg_verbose;
+extern SCL_EXPRESS_EXPORT int yydebug;
+extern SCL_EXPRESS_EXPORT int yydbg_upper_limit;
+extern SCL_EXPRESS_EXPORT int yydbg_lower_limit;
+extern SCL_EXPRESS_EXPORT int yydbg_verbose;
 #endif /*YYDEBUG*/
 
 extern SCL_EXPRESS_EXPORT int skip_exp_pause;
