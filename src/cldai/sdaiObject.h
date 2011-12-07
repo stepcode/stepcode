@@ -2,6 +2,8 @@
 #ifndef SDAIOBJECT_H
 #define SDAIOBJECT_H 1
 
+#include <scl_export.h>
+
 /*
 
 */
@@ -11,7 +13,7 @@
    The class Entity_instance shall be a subtype of the C++ class Object:
 */
 
-class SDAI_sdaiObject 
+class SCL_DAI_EXPORT SDAI_sdaiObject 
 {
   public:
     SDAI_sdaiObject();

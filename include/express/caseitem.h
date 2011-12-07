@@ -78,7 +78,7 @@ struct Case_Item_ {
 #include "decstart.h"
 #endif /*CASE_ITEM_C*/
 
-GLOBAL struct freelist_head CASE_IT_fl;
+GLOBAL SCL_EXPRESS_EXPORT struct freelist_head CASE_IT_fl;
 
 #include "de_end.h"
 
@@ -96,8 +96,8 @@ GLOBAL struct freelist_head CASE_IT_fl;
 #define CASE_IT_new()       (struct Case_Item_ *)MEM_new(&CASE_IT_fl)
 #define CASE_IT_destroy(x)  MEM_destroy(&CASE_IT_fl,(Freelist *)(Generic)x)
 
-extern Case_Item    CASE_ITcreate PROTO( ( Linked_List, struct Statement_ * ) );
-extern void     CASE_ITinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT Case_Item    CASE_ITcreate PROTO( ( Linked_List, struct Statement_ * ) );
+extern SCL_EXPRESS_EXPORT void     CASE_ITinitialize PROTO( ( void ) );
 
 /********************/
 /* inline functions */

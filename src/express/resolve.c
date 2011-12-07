@@ -55,9 +55,12 @@
  *
  */
 
+#include <scl_cf.h>
 #define RESOLVE_C
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include "express/resolve.h"
 #include "stack.h"
 #include "express/schema.h"

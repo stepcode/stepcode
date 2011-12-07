@@ -12,7 +12,9 @@
 * and is not subject to copyright.
 */
 
-class SingleLinkList  {
+#include <scl_export.h>
+
+class SCL_CORE_EXPORT SingleLinkList  {
 
     // node which represents the value is contained in the subclass
     //  since it may have different types for different lists
@@ -41,7 +43,7 @@ class SingleLinkList  {
 ;
 
 
-class SingleLinkNode {
+class SCL_CORE_EXPORT SingleLinkNode {
     friend class SingleLinkList;
   protected:
 

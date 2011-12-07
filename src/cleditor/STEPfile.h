@@ -13,6 +13,7 @@
 * and is not subject to copyright.
 */
 
+#include <scl_export.h>
 #include <instmgr.h>
 #include <Registry.h>
 #include <fstream>
@@ -35,7 +36,7 @@ enum  FileTypeCode {
     OLD_WORKING_SESSION =  3
   };
 
-class STEPfile
+class SCL_EDITOR_EXPORT STEPfile
 {
   protected:
     //data members

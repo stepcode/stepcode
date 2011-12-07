@@ -17,7 +17,6 @@ ENDIF()
 
 add_definitions( -DYYDEBUG )  #always define this. equivalent to 'bison -t'
 
-
 YACC_TARGET(ExpParser expparse.y ${CMAKE_CURRENT_BINARY_DIR}/expparse.c COMPILE_FLAGS ${YACC_FLAGS})
 LEX_TARGET(ExpScanner expscan.l ${CMAKE_CURRENT_BINARY_DIR}/expscan.c COMPILE_FLAGS ${LEX_FLAGS})
 ADD_LEX_YACC_DEPENDENCY(ExpScanner ExpParser)
@@ -48,8 +47,15 @@ set(EXPRESS_SOURCES
 )
 
 SET(CHECK_EXPRESS_SOURCES
-     fedex.c
+    fedex.c
 )
+
+IF(MSVC)
+set(CHECK_EXPRESS_MSVC_SOURCES
+    xgetopt.cc
+	inithook.c
+)
+ENDIF(MSVC) 
 
 SET(EXPRESS_PRIVATE_HDRS
     conf.h
@@ -64,10 +70,19 @@ include_directories(
 
 add_definitions( -DFLEX )
 
+if(MSVC)
+add_definitions( -DYY_NO_UNISTD_H )
+endif(MSVC)
+
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
 
 if(APPLE)
     set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif(APPLE)
 
-SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" express)
+SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_MSVC_SOURCES}" express)
+
+if(MSVC)
+set_target_properties(express PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_EXPORTS)
+set_target_properties("check-express" PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_IMPORTS)
+endif(MSVC)

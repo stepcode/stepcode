@@ -24,10 +24,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "exppp.h"
 #include "dict.h"
 
+#ifndef CONST
 #ifdef __CENTERLINE__
 #define CONST
 #else
 #define CONST const
+#endif
 #endif
 
 #define MAX_LEN		240

@@ -40,6 +40,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 #include <ctype.h>
 #include "basic.h"
 #include "error.h"
@@ -77,19 +78,19 @@ typedef struct Scan_Buffer {
 # define INITIALLY(value)
 #endif /* LEX_ACTIONS_C */
 
-GLOBAL Scan_Buffer  SCAN_buffers[SCAN_NESTING_DEPTH];
-GLOBAL int      SCAN_current_buffer INITIALLY( 0 );
-GLOBAL char    *    SCANcurrent;
+GLOBAL SCL_EXPRESS_EXPORT Scan_Buffer  SCAN_buffers[SCAN_NESTING_DEPTH];
+GLOBAL SCL_EXPRESS_EXPORT int      SCAN_current_buffer INITIALLY( 0 );
+GLOBAL SCL_EXPRESS_EXPORT char    *    SCANcurrent;
 
-GLOBAL Error        ERROR_include_file      INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_unmatched_close_comment   INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_unmatched_open_comment    INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_unterminated_string   INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_encoded_string_bad_digit  INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_encoded_string_bad_count  INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_bad_identifier        INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_unexpected_character  INITIALLY( ERROR_none );
-GLOBAL Error        ERROR_nonascii_char;
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_include_file      INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_unmatched_close_comment   INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_unmatched_open_comment    INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_unterminated_string   INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_encoded_string_bad_digit  INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_encoded_string_bad_count  INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_bad_identifier        INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_unexpected_character  INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error        ERROR_nonascii_char;
 
 
 #undef GLOBAL
@@ -112,27 +113,27 @@ GLOBAL Error        ERROR_nonascii_char;
 /* function prototypes */
 /***********************/
 
-extern int  yylex PROTO( ( void ) ); /* the scanner */
+extern SCL_EXPRESS_EXPORT int  yylex PROTO( ( void ) ); /* the scanner */
 
-extern void SCANinitialize PROTO( ( void ) );
-extern int  SCANprocess_real_literal PROTO( ( void ) );
-extern int  SCANprocess_integer_literal PROTO( ( void ) );
-extern int  SCANprocess_binary_literal PROTO( ( void ) );
-extern int  SCANprocess_logical_literal PROTO( ( char * ) );
-extern int  SCANprocess_identifier_or_keyword PROTO( ( void ) );
-extern int  SCANprocess_string PROTO( ( void ) );
-extern int  SCANprocess_encoded_string PROTO( ( void ) );
-extern int  SCANprocess_semicolon PROTO( ( int ) );
-extern void SCANsave_comment PROTO( ( void ) );
-extern bool  SCANread PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void SCANinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_real_literal PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_integer_literal PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_binary_literal PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_logical_literal PROTO( ( char * ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_identifier_or_keyword PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_string PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_encoded_string PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT int  SCANprocess_semicolon PROTO( ( int ) );
+extern SCL_EXPRESS_EXPORT void SCANsave_comment PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT bool  SCANread PROTO( ( void ) );
 #if macros_bit_the_dust
-extern void SCANdefine_macro PROTO( ( char *, char * ) );
+extern SCL_EXPRESS_EXPORT void SCANdefine_macro PROTO( ( char *, char * ) );
 #endif
-extern void SCANinclude_file PROTO( ( char * ) );
-void        SCANlowerize PROTO( ( char * ) );
-void        SCANupperize PROTO( ( char * ) );
-extern char  *  SCANstrdup PROTO( ( char * ) );
-extern long SCANtell PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void SCANinclude_file PROTO( ( char * ) );
+SCL_EXPRESS_EXPORT void        SCANlowerize PROTO( ( char * ) );
+SCL_EXPRESS_EXPORT void        SCANupperize PROTO( ( char * ) );
+extern SCL_EXPRESS_EXPORT char  *  SCANstrdup PROTO( ( char * ) );
+extern SCL_EXPRESS_EXPORT long SCANtell PROTO( ( void ) );
 
 /*******************************/
 /* inline function definitions */
@@ -162,7 +163,11 @@ SCANnextchar( char * buffer ) {
         SCANbuffer.numRead--;
 #endif
         buffer[0] = *( SCANcurrent++ );
-        if( !isascii( buffer[0] ) ) {
+#ifdef __MSVC__
+		if( !__isascii( buffer[0] ) ) {
+#else
+		if( !isascii( buffer[0] ) ) {
+#endif
             ERRORreport_with_line( ERROR_nonascii_char, yylineno,
                                    0xff & buffer[0] );
             buffer[0] = ' ';    /* substitute space */

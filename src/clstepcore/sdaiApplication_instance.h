@@ -1,5 +1,5 @@
 #ifndef STEPENTITY_H
-#define        STEPENTITY_H 1
+#define STEPENTITY_H 1
 
 /*
 * NIST STEP Core Class Library
@@ -12,11 +12,12 @@
 * and is not subject to copyright.
 */
 
+#include <scl_export.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // SDAI_Application_instance used to be STEPentity
 
-class SDAI_Application_instance : public SDAI_DAObject_SDAI
+class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI
 {
   private:
     int _cur;        // provides a built-in way of accessing attributes in order.

@@ -33,17 +33,21 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+#include <scl_cf.h>
+#include <scl_export.h>
 #include <stdlib.h>
 
 #include <string.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 
 #include <string>
 
 
 /*****************************************************************************/
 
-class DirObj {       
+class SCL_UTILS_EXPORT DirObj {       
 public:
     DirObj(const char* dirName);
     virtual ~DirObj();
