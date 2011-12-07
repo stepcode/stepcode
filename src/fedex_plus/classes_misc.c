@@ -116,8 +116,7 @@ StrToConstant( const char * word ) {
  ** Status:  complete
  ******************************************************************/
 
-FILE *
-FILEcreate( const char * filename ) {
+FILE * FILEcreate( const char * filename ) {
     FILE * file;
     const char * fn;
 
@@ -409,25 +408,8 @@ ClassName( const char * oldname ) {
     }
     newname [j] = '\0';
     return ( newname );
-
-    /******  This procedure gets rid of '_' and is no longer being used
-        if (oldname [i] != '_') newname [j] = ToLower (oldname [i]);
-        else {  *//*  character is '_'  *//*
-newname [j] = ToUpper (oldname [++i]);
-if (oldname [i] == '\0') --i;
-}
-++i;
-++j;
-*******/
 }
 
-const char *
-ENTITYget_CORBAname( Entity ent ) {
-    static char newname [BUFSIZ];
-    strcpy( newname, ENTITYget_name( ent ) );
-    newname[0] = ToUpper( newname [0] );
-    return newname;
-}
 
 /******************************************************************
  ** Procedure:  ENTITYget_classname
@@ -563,12 +545,11 @@ FundamentalType( const Type t, int report_reftypes ) {
     }
 }
 
-/* this actually gets you the name of the variable that will be generated to
+/** this actually gets you the name of the variable that will be generated to
    be a TypeDescriptor or subtype of TypeDescriptor to represent Type t in
    the dictionary. */
 
-const char *
-TypeDescriptorName( Type t ) {
+const char * TypeDescriptorName( Type t ) {
     static char b [BUFSIZ];
     Schema parent = t->superscope;
     /* NOTE - I corrected a prev bug here in which the *current* schema was
@@ -583,7 +564,7 @@ TypeDescriptorName( Type t ) {
         ** by following through the entity they reference, as above. */
     }
 
-    sprintf( b, "%s%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
+    sprintf( b, "%s::%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
              TYPEget_name( t ) );
     return b;
 }
