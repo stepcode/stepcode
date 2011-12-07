@@ -38,7 +38,7 @@
 #include <stdlib.h>
 
 #include <string.h>
-#ifdef HAVE_SYS_PARAMS_H
+#ifdef HAVE_SYS_PARAM_H
 # include <sys/param.h>
 #endif
 
