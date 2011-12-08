@@ -15,59 +15,67 @@
 #include <scl_export.h>
 
 class SCL_DAI_EXPORT SDAI_Enum  {
-    friend     ostream &operator<< ( ostream&, const SDAI_Enum& );
-  protected:
-    int v;  //  integer value of enumeration instance
-            //  mapped to a symbolic value in the elements
+        friend     ostream & operator<< ( ostream &, const SDAI_Enum & );
+    protected:
+        int v;  //  integer value of enumeration instance
+        //  mapped to a symbolic value in the elements
 
-    virtual int set_value (const char * n);
-    virtual int set_value (const int n);
-    SDAI_Enum();
-    virtual ~SDAI_Enum();
+        virtual int set_value( const char * n );
+        virtual int set_value( const int n );
+        SDAI_Enum();
+        virtual ~SDAI_Enum();
 
-  public:
+    public:
 
-    void PrintContents(ostream &out = cout) const 
-            { DebugDisplay(out); }
-    
-    virtual int no_elements () const =0;
-    virtual const char * Name () const =0;
-    const char * get_value_at (int n) const { return element_at (n);  }
-    virtual const char * element_at (int n) const =0; 
+        void PrintContents( ostream & out = cout ) const {
+            DebugDisplay( out );
+        }
 
-    Severity EnumValidLevel(const char *value, ErrorDescriptor *err,
-                            int optional, char *tokenList,
-                            int needDelims = 0, int clearError = 1);
+        virtual int no_elements() const = 0;
+        virtual const char * Name() const = 0;
+        const char * get_value_at( int n ) const {
+            return element_at( n );
+        }
+        virtual const char * element_at( int n ) const = 0;
 
-    Severity EnumValidLevel(istream &in, ErrorDescriptor *err, 
-                            int optional, char *tokenList,
-                            int needDelims = 0, int clearError = 1);
+        Severity EnumValidLevel( const char * value, ErrorDescriptor * err,
+                                 int optional, char * tokenList,
+                                 int needDelims = 0, int clearError = 1 );
 
-    const int asInt () const { return v; }
-    
-    const char * asStr (std::string& s) const;
-    void STEPwrite (ostream& out = cout)  const;
-    const char * STEPwrite (std::string& s) const;
+        Severity EnumValidLevel( istream & in, ErrorDescriptor * err,
+                                 int optional, char * tokenList,
+                                 int needDelims = 0, int clearError = 1 );
 
-    Severity StrToVal (const char * s, ErrorDescriptor *err, int optional = 1);
-    Severity STEPread(istream& in, ErrorDescriptor *err, int optional = 1);
-    Severity STEPread(const char *s, ErrorDescriptor *err, int optional = 1);
+        const int asInt() const {
+            return v;
+        }
 
-    virtual int put (int val);
-    virtual int put (const char * n);
-    int is_null () const
-                { return ! (exists()); }
-    void set_null() { nullify(); } 
-    SDAI_Enum& operator= (const int);
-    SDAI_Enum& operator= (const SDAI_Enum&);
+        const char * asStr( std::string & s ) const;
+        void STEPwrite( ostream & out = cout )  const;
+        const char * STEPwrite( std::string & s ) const;
 
-    virtual int exists() const;
-    virtual void nullify();
-    void DebugDisplay (ostream& out =cout) const;
+        Severity StrToVal( const char * s, ErrorDescriptor * err, int optional = 1 );
+        Severity STEPread( istream & in, ErrorDescriptor * err, int optional = 1 );
+        Severity STEPread( const char * s, ErrorDescriptor * err, int optional = 1 );
 
-  protected:
-    virtual Severity ReadEnum(istream& in, ErrorDescriptor *err, 
-                              int AssignVal = 1, int needDelims = 1);
+        virtual int put( int val );
+        virtual int put( const char * n );
+        int is_null() const {
+            return !( exists() );
+        }
+        void set_null() {
+            nullify();
+        }
+        SDAI_Enum & operator= ( const int );
+        SDAI_Enum & operator= ( const SDAI_Enum & );
+
+        virtual int exists() const;
+        virtual void nullify();
+        void DebugDisplay( ostream & out = cout ) const;
+
+    protected:
+        virtual Severity ReadEnum( istream & in, ErrorDescriptor * err,
+                                   int AssignVal = 1, int needDelims = 1 );
 };
 
 
@@ -79,64 +87,64 @@ enum Boolean { BFalse, BTrue, BUnset };
 enum Logical { LFalse, LTrue, LUnset, LUnknown };
 
 class SCL_DAI_EXPORT SDAI_LOGICAL  :
-public SDAI_Enum  {
-  public:
-    const char * Name() const;
+    public SDAI_Enum  {
+    public:
+        const char * Name() const;
 
-    SDAI_LOGICAL (char * val =0);
-    SDAI_LOGICAL (Logical state);
-    SDAI_LOGICAL (const SDAI_LOGICAL& source);
-    SDAI_LOGICAL (int i);
+        SDAI_LOGICAL( char * val = 0 );
+        SDAI_LOGICAL( Logical state );
+        SDAI_LOGICAL( const SDAI_LOGICAL & source );
+        SDAI_LOGICAL( int i );
 
-    virtual ~SDAI_LOGICAL ();
+        virtual ~SDAI_LOGICAL();
 
-    virtual int no_elements () const;
-    virtual const char * element_at (int n) const;
+        virtual int no_elements() const;
+        virtual const char * element_at( int n ) const;
 
-    operator Logical () const;
-    SDAI_LOGICAL& operator=(const SDAI_LOGICAL& t);
+        operator Logical() const;
+        SDAI_LOGICAL & operator=( const SDAI_LOGICAL & t );
 
-    SDAI_LOGICAL operator==( const SDAI_LOGICAL& t ) const;
+        SDAI_LOGICAL operator==( const SDAI_LOGICAL & t ) const;
 
-    // these 2 are redefined because LUnknown has cardinal value > LUnset
-    int exists() const; // return 0 if unset otherwise return 1
-    void nullify(); // change the receiver to an unset status
+        // these 2 are redefined because LUnknown has cardinal value > LUnset
+        int exists() const; // return 0 if unset otherwise return 1
+        void nullify(); // change the receiver to an unset status
 
-  protected:
-    virtual int set_value (const int n);
-    virtual int set_value (const char * n);
-    virtual Severity ReadEnum(istream& in, ErrorDescriptor *err, 
-                              int AssignVal = 1, int needDelims = 1);
+    protected:
+        virtual int set_value( const int n );
+        virtual int set_value( const char * n );
+        virtual Severity ReadEnum( istream & in, ErrorDescriptor * err,
+                                   int AssignVal = 1, int needDelims = 1 );
 
 };
 
 class SCL_DAI_EXPORT SDAI_BOOLEAN  :
-public SDAI_Enum  {
-  public:
-    const char * Name() const;
+    public SDAI_Enum  {
+    public:
+        const char * Name() const;
 
-    SDAI_BOOLEAN (char * val = 0);
-    SDAI_BOOLEAN (Boolean state);
-    SDAI_BOOLEAN (const SDAI_BOOLEAN& source);
-    SDAI_BOOLEAN (int i);
-    SDAI_BOOLEAN (const SDAI_LOGICAL& val);
-    virtual ~SDAI_BOOLEAN ();
+        SDAI_BOOLEAN( char * val = 0 );
+        SDAI_BOOLEAN( Boolean state );
+        SDAI_BOOLEAN( const SDAI_BOOLEAN & source );
+        SDAI_BOOLEAN( int i );
+        SDAI_BOOLEAN( const SDAI_LOGICAL & val );
+        virtual ~SDAI_BOOLEAN();
 
-    virtual int no_elements () const;
-    virtual const char * element_at (int n) const;
+        virtual int no_elements() const;
+        virtual const char * element_at( int n ) const;
 
-    operator Boolean() const;
-    SDAI_BOOLEAN& operator=(const SDAI_LOGICAL& t);
+        operator Boolean() const;
+        SDAI_BOOLEAN & operator=( const SDAI_LOGICAL & t );
 
-    SDAI_BOOLEAN& operator=(const Boolean t);
-    SDAI_LOGICAL operator==( const SDAI_LOGICAL& t ) const;
+        SDAI_BOOLEAN & operator=( const Boolean t );
+        SDAI_LOGICAL operator==( const SDAI_LOGICAL & t ) const;
 
 };
 
-  static const SDAI_BOOLEAN SDAI_TRUE;
-  static const SDAI_BOOLEAN SDAI_FALSE;
-  static const SDAI_BOOLEAN SDAI_UNSET;
-  static const SDAI_LOGICAL SDAI_UNKNOWN;
+static const SDAI_BOOLEAN SDAI_TRUE;
+static const SDAI_BOOLEAN SDAI_FALSE;
+static const SDAI_BOOLEAN SDAI_UNSET;
+static const SDAI_LOGICAL SDAI_UNKNOWN;
 
 
-#endif 
+#endif

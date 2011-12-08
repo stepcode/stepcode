@@ -36,21 +36,21 @@ extern void SchemaInit( class Registry & );
  * ASN.1 identifiers and compare again. Returns true for a match.
  */
 bool compareOneSchName( std::string lib, std::string file ) {
-    size_t b,e,ls,fs;
-    b = lib.find_first_of('\'')+1;
-    e = lib.find_last_of('\'');
-    lib = lib.substr(b,e-b);
-    std::transform(lib.begin(), lib.end(), lib.begin(), ::toupper);
-    std::transform(file.begin(), file.end(), file.begin(), ::toupper);
-    if(lib == file) {
+    size_t b, e, ls, fs;
+    b = lib.find_first_of( '\'' ) + 1;
+    e = lib.find_last_of( '\'' );
+    lib = lib.substr( b, e - b );
+    std::transform( lib.begin(), lib.end(), lib.begin(), ::toupper );
+    std::transform( file.begin(), file.end(), file.begin(), ::toupper );
+    if( lib == file ) {
         return true;
     }
 
     //There are no spaces, unless there is an ASN.1 identifier. If
     //the strings don't already match, try to remove this identifier.
-    ls = lib.find_first_of(' ');
-    fs = file.find_first_of(' ');
-    if(  lib.substr(0,ls) == file.substr(0,fs) ) {
+    ls = lib.find_first_of( ' ' );
+    fs = file.find_first_of( ' ' );
+    if( lib.substr( 0, ls ) == file.substr( 0, fs ) ) {
         return true;
     }
     std::cerr << "This pair of schema names do not match - " << lib << " and " << file << std::endl;
@@ -64,42 +64,44 @@ bool compareOneSchName( std::string lib, std::string file ) {
 void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
     bool match = false;
     std::string sname;
-    STEPattribute *attr;
+    STEPattribute * attr;
     const Schema * sc;
     reg.ResetSchemas();
     //file id 3 is always the schema name
-    SDAI_Application_instance *ai =
-                    sf.HeaderInstances()->FindFileId(3)->GetApplication_instance();
+    SDAI_Application_instance * ai =
+        sf.HeaderInstances()->FindFileId( 3 )->GetApplication_instance();
     while( ( attr = ai->NextAttribute() ) ) {
-        attr->asStr(sname);
-        while( (sc = reg.NextSchema() ) ) {
-            if( compareOneSchName(sname, sc->Name() ) ) {
+        attr->asStr( sname );
+        while( ( sc = reg.NextSchema() ) ) {
+            if( compareOneSchName( sname, sc->Name() ) ) {
                 match = true;
                 break;
             }
         }
-        if(match) break;
+        if( match ) {
+            break;
+        }
     }
-    if (!match) {
+    if( !match ) {
         std::cerr << "ERROR - schema name mismatch. Tried all available combinations." << std::endl;
         if( !ignoreErr ) {
-            exit(1);
+            exit( 1 );
         }
     }
 }
 
-void printVersion(const char * exe) {
+void printVersion( const char * exe ) {
     std::cout << exe << " build info: " << scl_version() << std::endl;
 }
 
-void printUse(const char * exe) {
+void printUse( const char * exe ) {
     std::cout << "p21read - read a STEP Part 21 exchange file using SCL, and write the data to another file." << std::endl;
     std::cout << "Syntax:  " << exe << " [-i] [-s] infile [outfile]" << std::endl;
     std::cout << "Use '-i' to ignore a schema name mismatch." << std::endl;
     std::cout << "Use '-s' for strict interpretation (attributes that are \"missing and required\" will cause errors)." << std::endl;
     std::cout << "Use '-v' to print the version info below and exit." << std::endl;
     std::cout << "Use '--' as the last argument if a file name starts with a dash." << std::endl;
-    printVersion(exe);
+    printVersion( exe );
     exit( 1 );
 }
 
@@ -108,7 +110,7 @@ int main( int argc, char * argv[] ) {
     bool strict = false;
     char c;
     if( argc > 4 || argc < 2 ) {
-        printUse(argv[0]);
+        printUse( argv[0] );
     }
     while( ( c = getopt( argc, argv, "isv" ) ) != -1 ) {
         switch( c ) {
@@ -119,11 +121,11 @@ int main( int argc, char * argv[] ) {
                 strict = true;
                 break;
             case 'v':
-                printVersion(argv[0]);
-                exit(0);
+                printVersion( argv[0] );
+                exit( 0 );
             case '?':
             default:
-                printUse(argv[0]);
+                printUse( argv[0] );
         }
     }
 
@@ -148,23 +150,23 @@ int main( int argc, char * argv[] ) {
         flnm = ( char * )"testfile.step";
     }
     sfile.ReadExchangeFile( flnm );
-    sfile.Error().PrintContents(cout);
+    sfile.Error().PrintContents( cout );
 
     checkSchemaName( registry, sfile, ignoreErr );
 
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
 
     cout << "EXAMPLE :  write file ..." << endl;
-    if( argc == optind+2 ) {
-        flnm = argv[optind+1];
+    if( argc == optind + 2 ) {
+        flnm = argv[optind + 1];
     } else {
         flnm = ( char * )"file.out";
     }
     sfile.WriteExchangeFile( flnm );
-    sfile.Error().PrintContents(cout);
+    sfile.Error().PrintContents( cout );
     cout << flnm << " written"  << endl;
 
     if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
-        exit(1);
+        exit( 1 );
     }
 }

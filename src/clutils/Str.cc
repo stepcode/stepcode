@@ -42,8 +42,7 @@ char ToUpper( const char c ) {
 }
 
 // Place in strNew a lowercase version of strOld.
-char * StrToLower( const char * strOld, char * strNew )
-{
+char * StrToLower( const char * strOld, char * strNew ) {
     int i = 0;
 
     while( strOld[i] != '\0' ) {
@@ -138,44 +137,44 @@ char * PrettyNewName( const char * oldname ) {
 /**
  *  Extract the string conforming to P21 from the istream
  */
-std::string ToExpressStr( istream &in, ErrorDescriptor *err ) {
+std::string ToExpressStr( istream & in, ErrorDescriptor * err ) {
     char c;
     in >> ws; // skip white space
     in >> c;
     int i_quote = 0;
     size_t found;
     string s = "";
-    if ( c == STRING_DELIM ) {
+    if( c == STRING_DELIM ) {
         s += c;
-        while ( i_quote != -1 && in.get(c) ) {
+        while( i_quote != -1 && in.get( c ) ) {
             s += c;
             // to handle a string like 'hi'''
-            if ( c == STRING_DELIM) {
+            if( c == STRING_DELIM ) {
                 // to handle \S\'
-                found = s.rfind("\\S\\");
-                if ( !(found != string::npos && (s.size() == found + 2)) ) {
+                found = s.rfind( "\\S\\" );
+                if( !( found != string::npos && ( s.size() == found + 2 ) ) ) {
                     i_quote++;
                 }
             } else {
                 // # of quotes is odd
-                if ( i_quote % 2 != 0 ) {
+                if( i_quote % 2 != 0 ) {
                     i_quote = -1;
                     // put back last char, take it off from s and update c
-                    in.putback(c);
-                    s = s.substr(0, s.size() - 1);
+                    in.putback( c );
+                    s = s.substr( 0, s.size() - 1 );
                     c = *s.rbegin();
                 }
             }
         }
 
-        if ( c != STRING_DELIM ) {
+        if( c != STRING_DELIM ) {
             // non-recoverable error
-            err->AppendToDetailMsg("Missing closing quote on string value.\n");
-            err->AppendToUserMsg("Missing closing quote on string value.\n");
-            err->GreaterSeverity(SEVERITY_INPUT_ERROR);
+            err->AppendToDetailMsg( "Missing closing quote on string value.\n" );
+            err->AppendToUserMsg( "Missing closing quote on string value.\n" );
+            err->GreaterSeverity( SEVERITY_INPUT_ERROR );
         }
     } else {
-        in.putback(c);
+        in.putback( c );
     }
 
     return s;
@@ -218,8 +217,8 @@ std::string ToExpressStr( istream &in, ErrorDescriptor *err ) {
 ***    no way to know when to stop.
 **/
 Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
-                     const char * typeName, // used in error message
-                     const char * tokenList ) { // e.g. ",)"
+                              const char * typeName, // used in error message
+                              const char * tokenList ) { // e.g. ",)"
     std::string skipBuf;
     char name[64];
     name[0] = 0;

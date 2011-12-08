@@ -135,7 +135,7 @@ void print_file_trailer( Express express, FILES * files ) {
  ** organization of the schemas in the input Express
  ******************************************************************/
 void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
-            ComplexCollect * col, int cnt ) {
+                 ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     DictionaryEntry de;
     Type i;
@@ -188,7 +188,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     /* fill in the values for the type descriptors */
     /* and print the enumerations */
     fprintf( files -> inc, "\n/*    **************  TYPES      */\n" );
-        fprintf( files -> lib, "\n/*    **************  TYPES      */\n" );
+    fprintf( files -> lib, "\n/*    **************  TYPES      */\n" );
     SCOPEdo_types( scope, t, de )
     // First check for one exception:  Say enumeration type B is defined
     // to be a rename of enum A.  If A is in this schema but has not been
@@ -311,7 +311,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
 
 
 void PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
-                          Express model ) {
+                               Express model ) {
     Linked_List list;
     char nm[BUFSIZ];
     DictionaryEntry de;
@@ -410,15 +410,15 @@ void PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
  ** Status:
  ******************************************************************/
 void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
-             int suffix ) {
+                  int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile,
          *incfile,
          *schemafile = files->incall,
           *schemainit = files->initall,
-            *initfile,
-            *createall = files->create;
+           *initfile,
+           *createall = files->create;
     Rule r;
     Function f;
     Procedure p;
@@ -518,7 +518,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
         /* Add the SdaiModel_contents_<schema_name> class constructor to the
            schema descriptor create function for it */
         fprintf( createall, "    %s::schema->AssignModelContentsCreator( (ModelContentsCreator) create_SdaiModel_contents_%s);\n",
-                            SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+                 SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
 
         fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
         /**************/
@@ -533,7 +533,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
                 tmpstr = ( char * )malloc( sizeof( char ) * tmpstr_size );
                 tmpstr[0] = '\0';
             }
-            
+
             fprintf( createall,
                      "    gr = new Global_rule(\"%s\",%s::schema,\"%s\");\n",
                      r->symbol.name,
@@ -635,7 +635,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
 
     fprintf( schema_h,
              "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName);\n" );
-    fprintf( schema_cc, "/*    Generated at %s:%d.    */\n\n", __FILE__, __LINE__);
+    fprintf( schema_cc, "/*    Generated at %s:%d.    */\n\n", __FILE__, __LINE__ );
     fprintf( schema_cc, "%s%s%s%s",
              "// Generate a function to be called by Model to help it\n",
              "// create the necessary Model_contents without the\n",

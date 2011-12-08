@@ -109,7 +109,7 @@ SDAI_DAObject__set::~SDAI_DAObject__set() {
 
 void SDAI_DAObject__set::Check( int index ) {
 
-    SDAI_DAObject_ptr* newbuf;
+    SDAI_DAObject_ptr * newbuf;
 
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
@@ -123,7 +123,7 @@ void SDAI_DAObject__set::Check( int index ) {
 void
 SDAI_DAObject__set::Insert( SDAI_DAObject_ptr v, int index ) {
 
-    SDAI_DAObject_ptr* spot;
+    SDAI_DAObject_ptr * spot;
     index = ( index < 0 ) ? _count : index;
 
     if( index < _count ) {
@@ -142,7 +142,7 @@ SDAI_DAObject__set::Insert( SDAI_DAObject_ptr v, int index ) {
 void SDAI_DAObject__set::Append( SDAI_DAObject_ptr v ) {
 
     int index = _count;
-    SDAI_DAObject_ptr* spot;
+    SDAI_DAObject_ptr * spot;
 
     if( index < _count ) {
         Check( _count + 1 );
@@ -161,7 +161,7 @@ void SDAI_DAObject__set::Remove( int index ) {
 
     if( 0 <= index && index < _count ) {
         --_count;
-        SDAI_DAObject_ptr* spot = &_buf[index];
+        SDAI_DAObject_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_DAObject_ptr ) );
     }
 }

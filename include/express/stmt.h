@@ -247,7 +247,7 @@ extern SCL_EXPRESS_EXPORT Statement    PCALLcreate PROTO( ( Linked_List ) );
 extern SCL_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
 extern SCL_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
-																	Expression end, Expression increment ) );
+        Expression end, Expression increment ) );
 
 /********************/
 /* inline functions */

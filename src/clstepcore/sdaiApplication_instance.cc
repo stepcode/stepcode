@@ -60,7 +60,7 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
         _error.GreaterSeverity( SEVERITY_BUG );
         return S_ENTITY_NULL;
     } else {
-        SDAI_Application_instance *seNew = eDesc->NewSTEPentity();
+        SDAI_Application_instance * seNew = eDesc->NewSTEPentity();
         seNew -> CopyAs( this );
         return seNew;
     }
@@ -99,12 +99,12 @@ const char * SDAI_Application_instance::STEPwrite_reference( std::string & buf )
     return const_cast<char *>( buf.c_str() );
 }
 
-void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance *se ) {
+void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * se ) {
     if( nextMiEntity == 0 ) {
         nextMiEntity = se;
     } else {
-        SDAI_Application_instance *link = nextMiEntity;
-        SDAI_Application_instance *linkTrailing = 0;
+        SDAI_Application_instance * link = nextMiEntity;
+        SDAI_Application_instance * linkTrailing = 0;
         while( link ) {
             linkTrailing = link;
             link = link->nextMiEntity;
@@ -299,7 +299,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         const char * currSch,
         int writeComments, int mixedCase ) {
     std::string s, tmp, tmp2;
-    
+
     if( writeComments && !p21Comment.empty() ) {
         out << p21Comment;
     }
@@ -578,7 +578,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
-               InstMgr * instances, int addFileId ) {
+        InstMgr * instances, int addFileId ) {
     char c;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
@@ -620,7 +620,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                 }
 
                 //  lookup which object has id as its instance id
-                SDAI_Application_instance* inst;
+                SDAI_Application_instance * inst;
                 /* If there is a ManagerNode it should have a SDAI_Application_instance */
                 MgrNode * mn = 0;
                 mn = instances->FindFileId( id );
@@ -662,17 +662,17 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
-               InstMgr * instances, int addFileId ) {
+        InstMgr * instances, int addFileId ) {
     istringstream in( ( char * )s );
     return ReadEntityRef( in, err, tokenList, instances, addFileId );
 }
 
 /// return SEVERITY_NULL if se's entity type matches the supplied entity type
-Severity EntityValidLevel( SDAI_Application_instance *se,
-                  const TypeDescriptor * ed, // entity type that entity se needs
-                  // to match. (this must be an
-                  // EntityDescriptor)
-                  ErrorDescriptor * err ) {
+Severity EntityValidLevel( SDAI_Application_instance * se,
+                           const TypeDescriptor * ed, // entity type that entity se needs
+                           // to match. (this must be an
+                           // EntityDescriptor)
+                           ErrorDescriptor * err ) {
     char messageBuf [BUFSIZ];
     messageBuf[0] = '\0';
 
@@ -760,11 +760,11 @@ int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
 ** If non-whitespace characters follow the entity reference an error is set.
 */
 Severity EntityValidLevel( const char * attrValue, // string contain entity ref
-                  const TypeDescriptor * ed, // entity type that entity in
-                  // attrValue (if it exists) needs
-                  // to match. (this must be an
-                  // EntityDescriptor)
-                  ErrorDescriptor * err, InstMgr * im, int clearError ) {
+                           const TypeDescriptor * ed, // entity type that entity in
+                           // attrValue (if it exists) needs
+                           // to match. (this must be an
+                           // EntityDescriptor)
+                           ErrorDescriptor * err, InstMgr * im, int clearError ) {
     char tmp [BUFSIZ];
     tmp[0] = '\0';
     char messageBuf [BUFSIZ];
@@ -792,7 +792,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
         }
         mn = im->FindFileId( fileId );
         if( mn ) {
-            SDAI_Application_instance *se = mn->GetSTEPentity();
+            SDAI_Application_instance * se = mn->GetSTEPentity();
             return EntityValidLevel( se, ed, err );
         } else {
             sprintf( messageBuf,

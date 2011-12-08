@@ -47,7 +47,7 @@ SDAI_Model_contents__list::~SDAI_Model_contents__list() {
 
 void SDAI_Model_contents__list::Check( int index ) {
 
-    SDAI_Model_contents_ptr* newbuf;
+    SDAI_Model_contents_ptr * newbuf;
 
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
@@ -61,7 +61,7 @@ void SDAI_Model_contents__list::Check( int index ) {
 void
 SDAI_Model_contents__list::Insert( SDAI_Model_contents_ptr v, int index ) {
 
-    SDAI_Model_contents_ptr* spot;
+    SDAI_Model_contents_ptr * spot;
     index = ( index < 0 ) ? _count : index;
 
     if( index < _count ) {
@@ -80,7 +80,7 @@ SDAI_Model_contents__list::Insert( SDAI_Model_contents_ptr v, int index ) {
 void SDAI_Model_contents__list::Append( SDAI_Model_contents_ptr v ) {
 
     int index = _count;
-    SDAI_Model_contents_ptr* spot;
+    SDAI_Model_contents_ptr * spot;
 
     if( index < _count ) {
         Check( _count + 1 );
@@ -99,7 +99,7 @@ void SDAI_Model_contents__list::Remove( int index ) {
 
     if( 0 <= index && index < _count ) {
         --_count;
-        SDAI_Model_contents_ptr* spot = &_buf[index];
+        SDAI_Model_contents_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_Model_contents_ptr ) );
     }
 }

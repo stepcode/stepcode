@@ -26,7 +26,7 @@ extern ofstream * logStream;
     (member) functions for the select class SDAI_Select
 **********/
 SDAI_Select::SDAI_Select( const SelectTypeDescriptor * s,
-        const TypeDescriptor * td )
+                          const TypeDescriptor * td )
     : _type( s ), underlying_type( td ) {
 #ifdef SCL_LOGGING
     *logStream << "Exiting SDAI_Select constructor." << endl;
@@ -135,7 +135,7 @@ void SDAI_Select::nullify() {
 }
 
 Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
-                                    InstMgr * im, int clearError ) {
+                                        InstMgr * im, int clearError ) {
     SDAI_Select * tmp = NewSelect();
     Severity s = SEVERITY_NULL;
 
@@ -146,7 +146,7 @@ Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor 
 }
 
 Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
-                            ErrorDescriptor * err, InstMgr * instances ) {
+                                ErrorDescriptor * err, InstMgr * instances ) {
     severity( SEVERITY_NULL );
     if( SetUnderlyingType( CanBe( selectType ) ) )
 
@@ -208,8 +208,8 @@ Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
  * This function does the following:
  */
 Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
-                            InstMgr * instances, const char * utype,
-                            int addFileId, const char * currSch ) {
+                                InstMgr * instances, const char * utype,
+                                int addFileId, const char * currSch ) {
     char c = '\0';
     std::string tmp;
 

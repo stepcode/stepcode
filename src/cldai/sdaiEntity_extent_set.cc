@@ -55,7 +55,7 @@ SDAI_Entity_extent__set::~SDAI_Entity_extent__set() {
 
 void SDAI_Entity_extent__set::Check( int index ) {
 
-    SDAI_Entity_extent_ptr* newbuf;
+    SDAI_Entity_extent_ptr * newbuf;
 
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
@@ -69,7 +69,7 @@ void SDAI_Entity_extent__set::Check( int index ) {
 void
 SDAI_Entity_extent__set::Insert( SDAI_Entity_extent_ptr v, int index ) {
 
-    SDAI_Entity_extent_ptr* spot;
+    SDAI_Entity_extent_ptr * spot;
     index = ( index < 0 ) ? _count : index;
 
     if( index < _count ) {
@@ -88,7 +88,7 @@ SDAI_Entity_extent__set::Insert( SDAI_Entity_extent_ptr v, int index ) {
 void SDAI_Entity_extent__set::Append( SDAI_Entity_extent_ptr v ) {
 
     int index = _count;
-    SDAI_Entity_extent_ptr* spot;
+    SDAI_Entity_extent_ptr * spot;
 
     if( index < _count ) {
         Check( _count + 1 );
@@ -107,7 +107,7 @@ void SDAI_Entity_extent__set::Remove( int index ) {
 
     if( 0 <= index && index < _count ) {
         --_count;
-        SDAI_Entity_extent_ptr* spot = &_buf[index];
+        SDAI_Entity_extent_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_Entity_extent_ptr ) );
     }
 }

@@ -35,31 +35,30 @@
 
 class SDAI_Application_instance__set;
 typedef SDAI_Application_instance__set *
-				SDAI_Application_instance__set_ptr;
-typedef SDAI_Application_instance__set_ptr 
-				SDAI_Application_instance__set_var;
+SDAI_Application_instance__set_ptr;
+typedef SDAI_Application_instance__set_ptr
+SDAI_Application_instance__set_var;
 
-class SCL_DAI_EXPORT SDAI_Application_instance__set 
-{
-public:
-    SDAI_Application_instance__set(int = 16);
-    ~SDAI_Application_instance__set();
+class SCL_DAI_EXPORT SDAI_Application_instance__set {
+    public:
+        SDAI_Application_instance__set( int = 16 );
+        ~SDAI_Application_instance__set();
 
-    SDAI_Application_instance_ptr& operator[](int index);
-    void Insert(SDAI_Application_instance_ptr, int index);
-    void Append(SDAI_Application_instance_ptr);
-    void Remove(int index);
-    void Remove(SDAI_Application_instance_ptr);
-    int Index(SDAI_Application_instance_ptr);
+        SDAI_Application_instance_ptr & operator[]( int index );
+        void Insert( SDAI_Application_instance_ptr, int index );
+        void Append( SDAI_Application_instance_ptr );
+        void Remove( int index );
+        void Remove( SDAI_Application_instance_ptr );
+        int Index( SDAI_Application_instance_ptr );
 
-    int Count();
-    void Clear();
-private:
-    void Check(int index);
-private:
-    SDAI_Application_instance_ptr* _buf;
-    int _bufsize;
-    int _count;
+        int Count();
+        void Clear();
+    private:
+        void Check( int index );
+    private:
+        SDAI_Application_instance_ptr * _buf;
+        int _bufsize;
+        int _count;
 };
 
 #endif

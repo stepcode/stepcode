@@ -20,8 +20,8 @@
 #include <SdaiHeaderSchemaClasses.h>
 #include <SdaiHeaderSchema.h>
 
-SCL_EDITOR_EXPORT void HeaderSchemaInit (Registry &);
-SCL_EDITOR_EXPORT void HeaderInitSchemasAndEnts (Registry &);
-SCL_EDITOR_EXPORT void SdaiHEADER_SECTION_SCHEMAInit (Registry & r);
+SCL_EDITOR_EXPORT void HeaderSchemaInit( Registry & );
+SCL_EDITOR_EXPORT void HeaderInitSchemasAndEnts( Registry & );
+SCL_EDITOR_EXPORT void SdaiHEADER_SECTION_SCHEMAInit( Registry & r );
 
 #endif

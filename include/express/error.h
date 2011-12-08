@@ -163,7 +163,7 @@ static_inline
 void
 ERRORbuffer_messages( bool flag ) {
 #ifndef __MSVC__
-	extern void ERROR_start_message_buffer( void ),
+    extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
 #endif
     __ERROR_buffer_errors = flag;

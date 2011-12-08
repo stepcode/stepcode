@@ -118,9 +118,9 @@ GLOBAL SCL_EXPRESS_EXPORT Linked_List LINK__l;     /* for LISTcreate_with macro 
         (elt) = (type)((__p)->data);
 
 #define LISTdo_links(list, link)                    \
-   {Linked_List     __i = (list);                  	\
-    Link        link;                       		\
-    if (__i != LIST_NULL) {                        	\
+   {Linked_List     __i = (list);                   \
+    Link        link;                               \
+    if (__i != LIST_NULL) {                         \
     for ((link) = __i->mark; ((link) = (link)->next) != __i->mark; ) {
 #define LISTod  }}}
 

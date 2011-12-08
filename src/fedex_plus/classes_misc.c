@@ -18,7 +18,7 @@ for the STEP Standard Data Access Interface as defined in document
 N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
 
-extern char* scl_version();
+extern char * scl_version();
 
 extern int multiple_inheritance;
 /*extern int corba_binding; */

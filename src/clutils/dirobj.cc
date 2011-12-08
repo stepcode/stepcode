@@ -142,21 +142,20 @@ int DirObj::Index( const char * name ) {
 bool DirObj::Reset( const std::string & path ) {
     bool successful = IsADirectory( path.c_str() );
     if( successful ) {
-		#ifdef __WIN32__
-		WIN32_FIND_DATA FindFileData;
-		HANDLE hFind;
+#ifdef __WIN32__
+        WIN32_FIND_DATA FindFileData;
+        HANDLE hFind;
 
-		ClearFileList();
-		hFind = FindFirstFile( path.c_str(), &FindFileData );
-		if (hFind != INVALID_HANDLE_VALUE)
-		{
-			int i = 0;
-			do {
-				InsertFile( FindFileData.cFileName, i++ );
-			} while ( FindNextFile( hFind, &FindFileData ) );
-			FindClose( hFind );
-		}
-		#else
+        ClearFileList();
+        hFind = FindFirstFile( path.c_str(), &FindFileData );
+        if( hFind != INVALID_HANDLE_VALUE ) {
+            int i = 0;
+            do {
+                InsertFile( FindFileData.cFileName, i++ );
+            } while( FindNextFile( hFind, &FindFileData ) );
+            FindClose( hFind );
+        }
+#else
         DIR * dir = opendir( path.c_str() );
         ClearFileList();
 
@@ -164,8 +163,10 @@ bool DirObj::Reset( const std::string & path ) {
             InsertFile( d->d_name, Position( d->d_name ) );
         }
         closedir( dir );
-		#endif
-    } else std::cout << "not a directory: " << path << "!" << std::endl;
+#endif
+    } else {
+        std::cout << "not a directory: " << path << "!" << std::endl;
+    }
     return successful;
 }
 
@@ -212,26 +213,26 @@ const std::string DirObj::Normalize( const std::string & path ) {
     const char * slash;
 #if defined(__WIN32__)
     char b[MAX_PATH];
-    PathCanonicalize(b, path.c_str());
+    PathCanonicalize( b, path.c_str() );
     slash = "\\";
 #else
     char * b;
-    b = realpath(path.c_str(),0);
+    b = realpath( path.c_str(), 0 );
     slash = "/";
 #endif
     if( b == 0 ) {
         buf.clear();
     } else {
-        buf.assign(b);
+        buf.assign( b );
     }
 
     if( buf.empty() ) {
         buf = ".";
-        buf.append(slash);
+        buf.append( slash );
 
         // if buf is a path to a directory and doesn't end with '/'
     } else if( IsADirectory( buf.c_str() ) && buf[buf.size()] != slash[0] ) {
-        buf.append(slash);
+        buf.append( slash );
     }
     return buf;
 }
@@ -243,11 +244,11 @@ const std::string DirObj::Normalize( const std::string & path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 const char * DirObj::ValidDirectories( const char * path ) {
-	#ifdef __WIN32__
-	static char buf[MAX_PATH + 1];
-	#else
-	static char buf[MAXPATHLEN + 1];
-	#endif
+#ifdef __WIN32__
+    static char buf[MAX_PATH + 1];
+#else
+    static char buf[MAXPATHLEN + 1];
+#endif
     strcpy( buf, path );
     int i = strlen( path );
 
@@ -297,12 +298,12 @@ void DirObj::InsertFile( const char * f, int index ) {
         CheckIndex( index );
         spot = &fileList[index];
     }
-	#ifdef __WIN32__
-	char * string = _strdup( f );
-	#else
-	char * string = strdup( f );
-	#endif
-	*spot = string;
+#ifdef __WIN32__
+    char * string = _strdup( f );
+#else
+    char * string = strdup( f );
+#endif
+    *spot = string;
     ++fileCount;
 }
 

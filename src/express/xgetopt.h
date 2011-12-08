@@ -21,10 +21,10 @@
 extern "C" {
 #endif
 
-extern int optind, opterr;
-extern TCHAR *optarg;
+    extern int optind, opterr;
+    extern TCHAR * optarg;
 
-int getopt(int argc, TCHAR *argv[], TCHAR *optstring);
+    int getopt( int argc, TCHAR * argv[], TCHAR * optstring );
 
 #ifdef __cplusplus
 }

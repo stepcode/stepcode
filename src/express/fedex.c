@@ -201,10 +201,10 @@ int main( int argc, char ** argv ) {
                 break;
 #ifdef YYDEBUG
             case 'u':
-                yydbg_upper_limit = atoi(optarg);
+                yydbg_upper_limit = atoi( optarg );
                 break;
             case 'l':
-                yydbg_lower_limit = atoi(optarg);
+                yydbg_lower_limit = atoi( optarg );
                 break;
 #endif /* YYDEBUG */
             case 'B':
@@ -243,12 +243,12 @@ int main( int argc, char ** argv ) {
                 break;
             case 'z': /* to allow user to attach debugger and continue */
                 printf( "pid = %d\n", getpid() );
-                #ifndef __WIN32__
-                    pause();
-                #else     //windows
-                    getchar();
-                    abort();
-                #endif
+#ifndef __WIN32__
+                pause();
+#else     //windows
+                getchar();
+                abort();
+#endif
                 break;
             default:
                 rc = 1;

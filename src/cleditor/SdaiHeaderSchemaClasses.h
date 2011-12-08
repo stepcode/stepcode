@@ -7,69 +7,69 @@
 #include <scl_export.h>
 
 // Schema:  SdaiHEADER_SECTION_SCHEMA
-extern SCL_EDITOR_EXPORT Schema *  s_header_section_schema;
+extern SCL_EDITOR_EXPORT Schema  * s_header_section_schema;
 
 // Types:
 typedef SDAI_String         SdaiTime_stamp_text;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_time_stamp_text;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_time_stamp_text;
 typedef SDAI_String         SdaiSection_name;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_section_name;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_section_name;
 typedef SDAI_String         SdaiContext_name;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_context_name;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_context_name;
 typedef SDAI_String         SdaiSchema_name;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_schema_name;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_schema_name;
 typedef SDAI_String         SdaiLanguage_name;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_language_name;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_language_name;
 typedef SDAI_String         SdaiExchange_structure_identifier;
-extern SCL_EDITOR_EXPORT TypeDescriptor         *header_section_schemat_exchange_structure_identifier;
+extern SCL_EDITOR_EXPORT TypeDescriptor     *    header_section_schemat_exchange_structure_identifier;
 
 // Entities:
 class SdaiSection_language;
-typedef SdaiSection_language *          SdaiSection_languageH;
-typedef SdaiSection_language *          SdaiSection_language_ptr;
+typedef SdaiSection_language      *     SdaiSection_languageH;
+typedef SdaiSection_language      *     SdaiSection_language_ptr;
 typedef SdaiSection_language_ptr        SdaiSection_language_var;
 #define SdaiSection_language__set         SDAI_DAObject__set
 #define SdaiSection_language__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_section_language;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_section_language;
 
 class SdaiFile_population;
-typedef SdaiFile_population *          SdaiFile_populationH;
-typedef SdaiFile_population *          SdaiFile_population_ptr;
+typedef SdaiFile_population      *     SdaiFile_populationH;
+typedef SdaiFile_population      *     SdaiFile_population_ptr;
 typedef SdaiFile_population_ptr        SdaiFile_population_var;
 #define SdaiFile_population__set         SDAI_DAObject__set
 #define SdaiFile_population__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_file_population;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_file_population;
 
 class SdaiFile_name;
-typedef SdaiFile_name *          SdaiFile_nameH;
-typedef SdaiFile_name *          SdaiFile_name_ptr;
+typedef SdaiFile_name      *     SdaiFile_nameH;
+typedef SdaiFile_name      *     SdaiFile_name_ptr;
 typedef SdaiFile_name_ptr        SdaiFile_name_var;
 #define SdaiFile_name__set         SDAI_DAObject__set
 #define SdaiFile_name__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_file_name;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_file_name;
 
 class SdaiSection_context;
-typedef SdaiSection_context *          SdaiSection_contextH;
-typedef SdaiSection_context *          SdaiSection_context_ptr;
+typedef SdaiSection_context      *     SdaiSection_contextH;
+typedef SdaiSection_context      *     SdaiSection_context_ptr;
 typedef SdaiSection_context_ptr        SdaiSection_context_var;
 #define SdaiSection_context__set         SDAI_DAObject__set
 #define SdaiSection_context__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_section_context;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_section_context;
 
 class SdaiFile_description;
-typedef SdaiFile_description *          SdaiFile_descriptionH;
-typedef SdaiFile_description *          SdaiFile_description_ptr;
+typedef SdaiFile_description      *     SdaiFile_descriptionH;
+typedef SdaiFile_description      *     SdaiFile_description_ptr;
 typedef SdaiFile_description_ptr        SdaiFile_description_var;
 #define SdaiFile_description__set         SDAI_DAObject__set
 #define SdaiFile_description__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_file_description;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_file_description;
 
 class SdaiFile_schema;
-typedef SdaiFile_schema *          SdaiFile_schemaH;
-typedef SdaiFile_schema *          SdaiFile_schema_ptr;
+typedef SdaiFile_schema      *     SdaiFile_schemaH;
+typedef SdaiFile_schema      *     SdaiFile_schema_ptr;
 typedef SdaiFile_schema_ptr        SdaiFile_schema_var;
 #define SdaiFile_schema__set         SDAI_DAObject__set
 #define SdaiFile_schema__set_var         SDAI_DAObject__set_var
-extern SCL_EDITOR_EXPORT EntityDescriptor         *header_section_schemae_file_schema;
+extern SCL_EDITOR_EXPORT EntityDescriptor     *    header_section_schemae_file_schema;
 
 #endif

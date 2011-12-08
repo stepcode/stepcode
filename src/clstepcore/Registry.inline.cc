@@ -99,8 +99,7 @@ void Registry::DeleteContents() {
  * entity A from schema Y and renames it to B, X should only refer to A as
  * B.  Thus, if schNm here = "X", only e="B" would be valid but not e="A".
  */
-const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const
-{
+const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const {
     const EntityDescriptor * entd;
     const SchRename * altlist;
     char schformat[BUFSIZ], altName[BUFSIZ];
@@ -191,8 +190,7 @@ void Registry::AddType( const TypeDescriptor & d ) {
  * so that if we comes across one of them in a Part 21 file, we'll recog-
  * nize it.
  */
-void Registry::AddClones( const EntityDescriptor & e )
-{
+void Registry::AddClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
 
     while( alts ) {
@@ -209,8 +207,7 @@ void Registry::AddClones( const EntityDescriptor & e )
  * does the same (or if C simply uses yy from B), altlist will contain 2
  * entries with the same alt name.
  */
-static int uniqueNames( const char * entnm, const SchRename * altlist )
-{
+static int uniqueNames( const char * entnm, const SchRename * altlist ) {
     int cnt = 0;
     const SchRename * alt = altlist;
 
@@ -259,8 +256,7 @@ void Registry::RemoveType( const char * n ) {
 /**
  * Remove all the "clones", or rename values of e.
  */
-void Registry::RemoveClones( const EntityDescriptor & e )
-{
+void Registry::RemoveClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
     struct Element * tmp;
 
@@ -276,7 +272,7 @@ void Registry::RemoveClones( const EntityDescriptor & e )
 SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * schnm, int check_case ) const {
     const EntityDescriptor  * entd = FindEntity( nm, schnm, check_case );
     if( entd ) {
-        SDAI_Application_instance *se =
+        SDAI_Application_instance * se =
             ( ( EntityDescriptor * )entd ) -> NewSTEPentity();
 
         // See comment in previous function.

@@ -164,9 +164,9 @@ SCANnextchar( char * buffer ) {
 #endif
         buffer[0] = *( SCANcurrent++ );
 #ifdef __MSVC__
-		if( !__isascii( buffer[0] ) ) {
+        if( !__isascii( buffer[0] ) ) {
 #else
-		if( !isascii( buffer[0] ) ) {
+        if( !isascii( buffer[0] ) ) {
 #endif
             ERRORreport_with_line( ERROR_nonascii_char, yylineno,
                                    0xff & buffer[0] );

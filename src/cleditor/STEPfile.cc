@@ -75,12 +75,12 @@ STEPfile::ReadHeader( istream & in ) {
     std::string cmtStr;
 
     InstMgr * im = new InstMgr;
-    SDAI_Application_instance* obj;
-    #ifdef __MSVC__
-	Severity objsev = SEVERITY_NULL;
-	#else
-	__attribute__( ( unused ) ) Severity objsev = SEVERITY_NULL;
-	#endif
+    SDAI_Application_instance * obj;
+#ifdef __MSVC__
+    Severity objsev = SEVERITY_NULL;
+#else
+    __attribute__( ( unused ) ) Severity objsev = SEVERITY_NULL;
+#endif
 
     int endsec = 0;
     int userDefined = 0;
@@ -166,7 +166,7 @@ STEPfile::ReadHeader( istream & in ) {
                      keywd << "\'.\n\tdata lost: " << strbuf << "\n";
                 _error.GreaterSeverity( SEVERITY_WARNING );
             } else { //not ENTITY_NULL
-                     //read the header instance
+                //read the header instance
 
                 //check obj's Error Descriptor
                 objsev = AppendEntityErrorMsg( &( obj->Error() ) );
@@ -214,7 +214,7 @@ Severity
 STEPfile::HeaderVerifyInstances( InstMgr * im ) {
     int err = 0;
     int fileid;
-    SDAI_Application_instance* obj;
+    SDAI_Application_instance * obj;
 
     //check File_Name
     fileid = HeaderId( "File_Name" );
@@ -262,16 +262,16 @@ STEPfile::HeaderDefaultFileName() {
     fn->name_( "" );
     fn->time_stamp_( "" );
     tmp->StrToVal( "", &_error,
-                  fn->attributes[2].
-                  aDesc -> DomainType(),
-                  _headerInstances );
-    fn->author_(tmp);
+                   fn->attributes[2].
+                   aDesc -> DomainType(),
+                   _headerInstances );
+    fn->author_( tmp );
 
     tmp->StrToVal( "", &_error,
                    fn->attributes[3].
                    aDesc -> DomainType(),
                    _headerInstances );
-    fn->organization_(tmp);
+    fn->organization_( tmp );
 
     fn->preprocessor_version_( "" );
     fn->originating_system_( "" );
@@ -299,10 +299,10 @@ STEPfile::HeaderDefaultFileSchema() {
     StringAggregate_ptr tmp = new StringAggregate;
 
     tmp->StrToVal( "", &_error,
-              fs->attributes[0].
-              aDesc -> DomainType(),
-              _headerInstances );
-    fs->schema_identifiers_(tmp);
+                   fs->attributes[0].
+                   aDesc -> DomainType(),
+                   _headerInstances );
+    fs->schema_identifiers_( tmp );
 
     fs->STEPfile_id = HeaderId( "File_Schema" );
 
@@ -332,8 +332,8 @@ header section entites. The file id numbers are important.
 ***************************/
 void
 STEPfile::HeaderMergeInstances( InstMgr * im ) {
-    SDAI_Application_instance* se = 0;
-    SDAI_Application_instance* from = 0;
+    SDAI_Application_instance * se = 0;
+    SDAI_Application_instance * from = 0;
 
     int idnum;
 
@@ -1323,7 +1323,7 @@ STEPfile::CreateInstance( istream & in, ostream & out ) {
     int fileid = -1;
     SDAI_Application_instance_ptr * scopelist = 0;
 
-    SDAI_Application_instance* obj;
+    SDAI_Application_instance * obj;
     ErrorDescriptor result;
     // Sent down to CreateSubSuperInstance() to receive error info
 
@@ -1501,7 +1501,7 @@ STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance_ptr ** s
     in.putback( c );
     *scopelist = new SDAI_Application_instance_ptr [i];
     while( i > 0 ) {
-        *scopelist [i-1] = inscope [i];
+        *scopelist [i - 1] = inscope [i];
         i--;
     }
 
@@ -1760,7 +1760,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
 
     char c;
     int fileid;
-    SDAI_Application_instance* obj = ENTITY_NULL;
+    SDAI_Application_instance * obj = ENTITY_NULL;
     int idIncrNum = FileIdIncr();
 
     ReadComment( in, cmtStr );
@@ -1869,7 +1869,7 @@ STEPfile::ReadInstance( istream & in, ostream & out, std::string & cmtStr,
         if( userDefined ) {
             SkipInstance( in, tmpbuf );
             out << "WARNING: #" << fileid <<
-                ". Ignoring User defined entity."<< endl << "    data lost: !"
+                ". Ignoring User defined entity." << endl << "    data lost: !"
                 << objnm << tmpbuf << endl;
             ++_warningCount;
             return ENTITY_NULL;
@@ -1965,17 +1965,17 @@ BUG: doesn't check to see if the backup command works.
 void
 STEPfile::MakeBackupFile() {
     std::string bckup = FileName();
-    bckup.append(".bak");
+    bckup.append( ".bak" );
 
-    std::fstream f(FileName().c_str(), std::fstream::in|std::fstream::binary);
+    std::fstream f( FileName().c_str(), std::fstream::in | std::fstream::binary );
     f << std::noskipws;
-    std::istream_iterator<unsigned char> begin(f);
+    std::istream_iterator<unsigned char> begin( f );
     std::istream_iterator<unsigned char> end;
 
-    std::fstream f2(bckup.c_str(), std::fstream::out|std::fstream::trunc|std::fstream::binary);
-    std::ostream_iterator<char> begin2(f2);
+    std::fstream f2( bckup.c_str(), std::fstream::out | std::fstream::trunc | std::fstream::binary );
+    std::ostream_iterator<char> begin2( f2 );
 
-    copy(begin, end, begin2);
+    copy( begin, end, begin2 );
 
     _error.AppendToDetailMsg( "Making backup file: " );
     _error.AppendToDetailMsg( bckup.c_str() );
@@ -2084,7 +2084,7 @@ The header section entities must be numbered in the following manner:
 int STEPfile::HeaderId( const std::string name ) {
     std::string tmp = name;
 
-    std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::toupper);
+    std::transform( tmp.begin(), tmp.end(), tmp.begin(), ::toupper );
 
     if( tmp == "FILE_DESCRIPTION" ) {
         return 1;
@@ -2109,7 +2109,7 @@ STEPfile::WriteHeader( ostream & out ) {
     WriteHeaderInstanceFileSchema( out );
 
     // Write the rest of the header instances
-    SDAI_Application_instance* se;
+    SDAI_Application_instance * se;
     int n = _headerInstances->InstanceCount();
     for( int i = 0; i < n; ++i ) {
         se = _headerInstances->GetMgrNode( i ) ->GetApplication_instance();
@@ -2127,7 +2127,7 @@ STEPfile::WriteHeader( ostream & out ) {
 /***************************
 ***************************/
 void
-STEPfile::WriteHeaderInstance( SDAI_Application_instance* obj, ostream & out ) {
+STEPfile::WriteHeaderInstance( SDAI_Application_instance * obj, ostream & out ) {
     std::string tmp;
     if( !obj->P21Comment().empty() ) {
         out << obj->P21Comment();
@@ -2148,7 +2148,7 @@ STEPfile::WriteHeaderInstance( SDAI_Application_instance* obj, ostream & out ) {
 void
 STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
 // Get the FileName instance from _headerInstances
-    SDAI_Application_instance *se = 0;
+    SDAI_Application_instance * se = 0;
     se = _headerInstances->GetApplication_instance( "File_Name" );
     if( se == ENTITY_NULL ) {
         se = ( SDAI_Application_instance * )HeaderDefaultFileName();
@@ -2175,7 +2175,7 @@ STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
 
 void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
 // Get the FileDescription instance from _headerInstances
-    SDAI_Application_instance *se = 0;
+    SDAI_Application_instance * se = 0;
     se = _headerInstances->GetApplication_instance( "File_Description" );
     if( se == ENTITY_NULL ) {
         se = ( SDAI_Application_instance * )HeaderDefaultFileDescription();
@@ -2185,7 +2185,7 @@ void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
 }
 
 void STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
-    SDAI_Application_instance *se = 0;
+    SDAI_Application_instance * se = 0;
 
     // Get the FileName instance from _headerInstances
     se = _headerInstances->GetApplication_instance( "File_Schema" );
@@ -2204,8 +2204,7 @@ void STEPfile::WriteData( ostream & out, int writeComments ) {
     out << "DATA;\n";
 
     int n = instances().InstanceCount();
-    for( int i = 0; i < n; ++i )
-    {
+    for( int i = 0; i < n; ++i ) {
         instances().GetMgrNode( i )->GetApplication_instance()->STEPwrite( out, currSch.c_str(), writeComments );
     }
 
@@ -2218,8 +2217,7 @@ void STEPfile::WriteData( ostream & out, int writeComments ) {
 void STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedCase ) {
     std::string currSch = schemaName();
     int n = instances().InstanceCount();
-    for( int i = 0; i < n; ++i )
-    {
+    for( int i = 0; i < n; ++i ) {
         instances().GetMgrNode( i )->GetApplication_instance()->WriteValuePairs( out, currSch.c_str(), writeComments, mixedCase );
     }
 }
@@ -2230,11 +2228,11 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     SetFileIdIncrement();
     int total_insts = 0,  valid_insts = 0;
-	#ifdef __MSVC__
-	int exchange_file = -1;
-	#else
+#ifdef __MSVC__
+    int exchange_file = -1;
+#else
     __attribute__( ( unused ) ) int exchange_file = -1;
-	#endif
+#endif
 
     ReadTokenSeparator( *in );
     std::string keywd = GetKeyword( *in, "; #", _error );
@@ -2414,7 +2412,7 @@ Severity STEPfile::WriteWorkingFile( ostream & out, int clearError, int writeCom
 
 /******************************************************/
 Severity STEPfile::WriteWorkingFile( const std::string filename, int clearError,
-                            int writeComments ) {
+                                     int writeComments ) {
     if( clearError ) {
         _error.ClearErrorMsg();
     }
