@@ -12,7 +12,7 @@
 * and is not subject to copyright.
 */
 
-
+#include <scl_export.h>
 #include <gennode.h>
 #include <gennodelist.h>
 #include <gennodearray.h>
@@ -25,8 +25,8 @@
 #include <SingleLinkList.h>
 
 //#define NUM_CMDMGR_CMDS 9
-        // this is the number of columns that contain cmds (as opposed
-        // to state info)
+// this is the number of columns that contain cmds (as opposed
+// to state info)
 #define NUM_CMD_COLUMNS 3
 
 // **** each of CMD_CHAR must be a unique char.
@@ -52,7 +52,7 @@
 #define DELETE_STATE_CHAR                'D'
 #define DELETE_STATE_COL                 4
 
-        // close will try to save it to its previous status
+// close will try to save it to its previous status
 #define CLOSE_CMD_CHAR                        'c'
 #define CLOSE_CMD_COL                         2
 
@@ -77,102 +77,124 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class ReplicateLinkNode : public SingleLinkNode {
-  private:
-  protected:
-    MgrNode * _repNode;
-  public:
-    ReplicateLinkNode() { _repNode = 0; }
-    ~ReplicateLinkNode() { }
+class SCL_EDITOR_EXPORT ReplicateLinkNode : public SingleLinkNode {
+    private:
+    protected:
+        MgrNode * _repNode;
+    public:
+        ReplicateLinkNode() {
+            _repNode = 0;
+        }
+        ~ReplicateLinkNode() { }
 
-    const char *ClassName () { return "ReplicateLinkNode"; }
+        const char * ClassName() {
+            return "ReplicateLinkNode";
+        }
 
-    MgrNode *ReplicateNode() { return _repNode; }
-    void ReplicateNode(MgrNode *rn) { _repNode = rn; }
+        MgrNode * ReplicateNode() {
+            return _repNode;
+        }
+        void ReplicateNode( MgrNode * rn ) {
+            _repNode = rn;
+        }
 };
 
-class ReplicateList : public SingleLinkList {
-  private:
-  protected:
-  public:
-    ReplicateList()  { }
-    ~ReplicateList() { }
+class SCL_EDITOR_EXPORT ReplicateList : public SingleLinkList {
+    private:
+    protected:
+    public:
+        ReplicateList()  { }
+        ~ReplicateList() { }
 
-    virtual SingleLinkNode * NewNode () { return new ReplicateLinkNode; }
+        virtual SingleLinkNode * NewNode() {
+            return new ReplicateLinkNode;
+        }
 
-    bool IsOnList(MgrNode *mn);
-    ReplicateLinkNode *FindNode(MgrNode *mn);
-    
-    ReplicateLinkNode * AddNode (MgrNode * rn) { 
-        ReplicateLinkNode *node = (ReplicateLinkNode *) NewNode();
-        node->ReplicateNode(rn);
-        SingleLinkList::AppendNode(node);
-        return node;
-    }    
+        bool IsOnList( MgrNode * mn );
+        ReplicateLinkNode * FindNode( MgrNode * mn );
 
-    bool Remove(ReplicateLinkNode *rln);
-    bool Remove(MgrNode *rn);
+        ReplicateLinkNode * AddNode( MgrNode * rn ) {
+            ReplicateLinkNode * node = ( ReplicateLinkNode * ) NewNode();
+            node->ReplicateNode( rn );
+            SingleLinkList::AppendNode( node );
+            return node;
+        }
 
-    const char *ClassName () { return "ReplicateList"; }
+        bool Remove( ReplicateLinkNode * rln );
+        bool Remove( MgrNode * rn );
+
+        const char * ClassName() {
+            return "ReplicateList";
+        }
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class CmdMgr 
-{
-protected:
-    MgrNodeList *completeList;
-    MgrNodeList *incompleteList;
-    MgrNodeList *cancelList;
-    MgrNodeList *deleteList;
+class SCL_EDITOR_EXPORT CmdMgr {
+    protected:
+        MgrNodeList * completeList;
+        MgrNodeList * incompleteList;
+        MgrNodeList * cancelList;
+        MgrNodeList * deleteList;
 
-    DisplayNodeList *mappedWriteList;
-    DisplayNodeList *mappedViewList;
-    DisplayNodeList *closeList;
+        DisplayNodeList * mappedWriteList;
+        DisplayNodeList * mappedViewList;
+        DisplayNodeList * closeList;
 
-    ReplicateList *replicateList;
-  public:
+        ReplicateList * replicateList;
+    public:
 
-    CmdMgr();
+        CmdMgr();
 
 // STATE LIST OPERATIONS
-    MgrNode     *GetHead(stateEnum listType);
-    DisplayNode *GetHead(displayStateEnum listType);
-    ReplicateLinkNode        *GetReplicateHead()
-        { return (ReplicateLinkNode *)(replicateList->GetHead()); }
-
-    void ClearEntries(stateEnum listType);
-    void ClearEntries(displayStateEnum listType);
-    void ClearReplicateEntries() { replicateList->Empty(); } 
-    ReplicateList *RepList() { return replicateList; } 
-
-                        // searches current list for fileId
-    MgrNode *StateFindFileId(stateEnum s, int fileId);
-                        // returns stateNext or statePrev member variables
-                        // i.e. next or previous node on curr state list
-
-    int SaveCompleteCmdList(MgrNode *mn)
-        { return mn->ChangeList(completeList); }
-    int SaveIncompleteCmdList(MgrNode *mn)
-        { return mn->ChangeList(incompleteList); }
-    int CancelCmdList(MgrNode *mn)
-        { return mn->ChangeList(cancelList); }
-    int DeleteCmdList(MgrNode *mn)
-        { return mn->ChangeList(deleteList); }
-    int ModifyCmdList(MgrNode *mn)
-        { return mn->ChangeList(mappedWriteList); }
-    int ViewCmdList(MgrNode *mn)
-        { return mn->ChangeList(mappedViewList); }
-    int CloseCmdList(MgrNode *mn)
-        { return ( ( mn->DisplayState() == mappedWrite ) ||
-                   ( mn->DisplayState() == mappedView ) ) ?
-                       mn->ChangeList(closeList) : 0;
+        MgrNode   *  GetHead( stateEnum listType );
+        DisplayNode * GetHead( displayStateEnum listType );
+        ReplicateLinkNode    *    GetReplicateHead() {
+            return ( ReplicateLinkNode * )( replicateList->GetHead() );
         }
-        
-    void ReplicateCmdList(MgrNode *mn);
 
-    void ClearInstances();
-protected:
+        void ClearEntries( stateEnum listType );
+        void ClearEntries( displayStateEnum listType );
+        void ClearReplicateEntries() {
+            replicateList->Empty();
+        }
+        ReplicateList * RepList() {
+            return replicateList;
+        }
+
+        // searches current list for fileId
+        MgrNode * StateFindFileId( stateEnum s, int fileId );
+        // returns stateNext or statePrev member variables
+        // i.e. next or previous node on curr state list
+
+        int SaveCompleteCmdList( MgrNode * mn ) {
+            return mn->ChangeList( completeList );
+        }
+        int SaveIncompleteCmdList( MgrNode * mn ) {
+            return mn->ChangeList( incompleteList );
+        }
+        int CancelCmdList( MgrNode * mn ) {
+            return mn->ChangeList( cancelList );
+        }
+        int DeleteCmdList( MgrNode * mn ) {
+            return mn->ChangeList( deleteList );
+        }
+        int ModifyCmdList( MgrNode * mn ) {
+            return mn->ChangeList( mappedWriteList );
+        }
+        int ViewCmdList( MgrNode * mn ) {
+            return mn->ChangeList( mappedViewList );
+        }
+        int CloseCmdList( MgrNode * mn ) {
+            return ( ( mn->DisplayState() == mappedWrite ) ||
+                     ( mn->DisplayState() == mappedView ) ) ?
+                   mn->ChangeList( closeList ) : 0;
+        }
+
+        void ReplicateCmdList( MgrNode * mn );
+
+        void ClearInstances();
+    protected:
 
 };
 

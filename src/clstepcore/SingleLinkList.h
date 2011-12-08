@@ -12,46 +12,48 @@
 * and is not subject to copyright.
 */
 
-class SingleLinkList  {
+#include <scl_export.h>
 
-    // node which represents the value is contained in the subclass
-    //  since it may have different types for different lists
-    
-  protected:
-    
-    class  SingleLinkNode *  head;
-    SingleLinkNode *  tail;
+class SCL_CORE_EXPORT SingleLinkList  {
 
-  public:
-    
-    virtual SingleLinkNode *NewNode();
-    virtual void AppendNode (SingleLinkNode *);
-    virtual void DeleteNode (SingleLinkNode *);
+        // node which represents the value is contained in the subclass
+        //  since it may have different types for different lists
 
-    virtual void Empty ();
-    virtual void DeleteFollowingNodes (SingleLinkNode *);
-    virtual SingleLinkNode * GetHead () const;
-    
-    int EntryCount() const;
+    protected:
 
-    SingleLinkList ();
-    virtual ~SingleLinkList ();
+        class  SingleLinkNode  * head;
+        SingleLinkNode  * tail;
+
+    public:
+
+        virtual SingleLinkNode * NewNode();
+        virtual void AppendNode( SingleLinkNode * );
+        virtual void DeleteNode( SingleLinkNode * );
+
+        virtual void Empty();
+        virtual void DeleteFollowingNodes( SingleLinkNode * );
+        virtual SingleLinkNode * GetHead() const;
+
+        int EntryCount() const;
+
+        SingleLinkList();
+        virtual ~SingleLinkList();
 
 }
 ;
 
 
-class SingleLinkNode {
-    friend class SingleLinkList;
-  protected:
+class SCL_CORE_EXPORT SingleLinkNode {
+        friend class SingleLinkList;
+    protected:
 
-  public:
-    SingleLinkList *owner;
-    SingleLinkNode *next;
+    public:
+        SingleLinkList * owner;
+        SingleLinkNode * next;
 
-    virtual SingleLinkNode *NextNode () const;
-    SingleLinkNode() : owner(0), next(0)  { }
-    virtual ~SingleLinkNode() { }
+        virtual SingleLinkNode * NextNode() const;
+        SingleLinkNode() : owner( 0 ), next( 0 )  { }
+        virtual ~SingleLinkNode() { }
 
 };
 

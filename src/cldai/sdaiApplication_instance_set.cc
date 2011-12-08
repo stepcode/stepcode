@@ -51,7 +51,7 @@ SDAI_Application_instance__set::~SDAI_Application_instance__set() {
 }
 
 void SDAI_Application_instance__set::Check( int index ) {
-    SDAI_Application_instance_ptr* newbuf;
+    SDAI_Application_instance_ptr * newbuf;
 
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
@@ -63,7 +63,7 @@ void SDAI_Application_instance__set::Check( int index ) {
 }
 
 void SDAI_Application_instance__set::Insert( SDAI_Application_instance_ptr v, int index ) {
-    SDAI_Application_instance_ptr* spot;
+    SDAI_Application_instance_ptr * spot;
     index = ( index < 0 ) ? _count : index;
 
     if( index < _count ) {
@@ -81,7 +81,7 @@ void SDAI_Application_instance__set::Insert( SDAI_Application_instance_ptr v, in
 
 void SDAI_Application_instance__set::Append( SDAI_Application_instance_ptr v ) {
     int index = _count;
-    SDAI_Application_instance_ptr* spot;
+    SDAI_Application_instance_ptr * spot;
 
     if( index < _count ) {
         Check( _count + 1 );
@@ -99,7 +99,7 @@ void SDAI_Application_instance__set::Append( SDAI_Application_instance_ptr v ) {
 void SDAI_Application_instance__set::Remove( int index ) {
     if( 0 <= index && index < _count ) {
         --_count;
-        SDAI_Application_instance_ptr* spot = &_buf[index];
+        SDAI_Application_instance_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_Application_instance_ptr ) );
     }
 }

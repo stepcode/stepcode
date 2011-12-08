@@ -30,8 +30,7 @@ ComplexList::~ComplexList() {
  * the supertypes' ComplexLists, this temp one can be deleted.  Its sub-
  * structure, however, cannot be deleted since it's still being used.
  */
-void ComplexList::remove()
-{
+void ComplexList::remove() {
     head = NULL;
     // Only the overall AND will be deleted.
     delete this;

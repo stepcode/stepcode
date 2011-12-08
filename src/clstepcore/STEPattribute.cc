@@ -193,7 +193,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFi
 **         value <= SEVERITY_INPUT_ERROR  is fatal read error
 ******************************************************************/
 Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFileId,
-                         const char * currSch, bool strict ) {
+                                  const char * currSch, bool strict ) {
 
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
@@ -237,7 +237,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
             }
             if( Nullable() )  {
                 _error.severity( SEVERITY_NULL );
-            } else if ( !strict ) {
+            } else if( !strict ) {
                 std::string fillerValue;
                 // we aren't in strict mode, so find out the type of the missing attribute and insert a suitable value.
                 ErrorDescriptor err; //this will be discarded
@@ -259,7 +259,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
                     }
                     case STRING_TYPE: {
                         fillerValue = "'',";
-                        *(ptr.S) = "''";
+                        *( ptr.S ) = "''";
                         break;
                     }
                     default: { //do not know what a good value would be for other types
@@ -276,7 +276,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
                 //create a warning. SEVERITY_WARNING makes more sense to me, but is considered more severe than SEVERITY_INCOMPLETE
                 _error.severity( SEVERITY_USERMSG );
                 _error.AppendToDetailMsg( " missing and required. For compatibility, replacing with " );
-                _error.AppendToDetailMsg( fillerValue.substr( 0, fillerValue.length()-1 ) );
+                _error.AppendToDetailMsg( fillerValue.substr( 0, fillerValue.length() - 1 ) );
                 _error.AppendToDetailMsg( ".\n" );
             } else {
                 _error.severity( SEVERITY_INCOMPLETE );
@@ -779,7 +779,7 @@ int STEPattribute::is_null()  const {
             return ( *( ptr.c ) == S_ENTITY_NULL );
 
         case STRING_TYPE:
-            return ( *( ptr.S ) == S_STRING_NULL);
+            return ( *( ptr.S ) == S_STRING_NULL );
 
         case BINARY_TYPE:
             ptr.b->clear();
@@ -819,7 +819,7 @@ int STEPattribute::is_null()  const {
 ** \return bool -- if false => not equal
 ******************************************************************/
 bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
-    if ( a1.aDesc == a2.aDesc ) {
+    if( a1.aDesc == a2.aDesc ) {
         return true;
     }
     return false;
@@ -834,7 +834,7 @@ bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
  *       attrValue exists it is valid.
 ******************************************************************/
 Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error,
-                           InstMgr * im, int clearError ) {
+                                    InstMgr * im, int clearError ) {
     if( clearError ) {
         ClearErrorMsg();
     }

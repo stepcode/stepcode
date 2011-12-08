@@ -259,7 +259,7 @@ void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
 
 // READ
 Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
-                       istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
+                                istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
     char c;
     std::string typeNm;
     STEPcomplex * stepc = 0;
@@ -324,7 +324,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
 #ifdef buildwhileread
 // READ
 Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
-                       istream & in, const char * currSch ) {
+                                istream & in, const char * currSch ) {
     ClearError( 1 );
     STEPfile_id = id;
 
@@ -364,7 +364,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
         cout << s << endl;
         BuildAttrs( s.c_str() );
         SDAI_Application_instance::STEPread( id, addFileId, instance_set,
-                in, currSch );
+                                             in, currSch );
 
         in >> ws;
         in.get( c );
@@ -498,14 +498,14 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 void STEPcomplex::STEPread_error( char c, int index, istream & in ) {
     cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << endl;
     streampos p = in.tellg();
-    std::string q,r;
-    getline(in,q);
-    getline(in,r);
+    std::string q, r;
+    getline( in, q );
+    getline( in, r );
     cout << "Remainder of this line:" << endl << c << q << endl << "Next line:" << endl << r << endl;
-    in.seekg(p);
+    in.seekg( p );
 }
 
-/** 
+/**
 ** These functions take into account the current schema, so that if an entity
 ** or attribute type is renamed in this schema (using the USE/REF clause) the
 ** new name is written out.  They do not, however, comply with the requirement
@@ -527,11 +527,11 @@ const char * STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
 
     stringstream ss;
     ss << "#" << STEPfile_id << "=(";
-    WriteExtMapEntities(ss, currSch);
+    WriteExtMapEntities( ss, currSch );
     ss << ");";
     ss << ends;
 
-    buf.append(ss.str());
+    buf.append( ss.str() );
 
     return const_cast<char *>( buf.c_str() );
 }
@@ -581,7 +581,7 @@ const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * c
     return const_cast<char *>( buf.c_str() );
 }
 
-void STEPcomplex::CopyAs( SDAI_Application_instance *se ) {
+void STEPcomplex::CopyAs( SDAI_Application_instance * se ) {
     if( !se->IsComplex() ) {
         char errStr[BUFSIZ];
         cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "

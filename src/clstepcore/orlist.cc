@@ -61,8 +61,7 @@ void OrList::unmarkAll( EntNode * ents ) {
  * LISTEND.  If choice was set to LISTEND before calling aC(), we reset
  * choice to choice1, and search again.
  */
-bool OrList::acceptChoice( EntNode * ents )
-{
+bool OrList::acceptChoice( EntNode * ents ) {
     EntList * child;
 
     if( choice == LISTEND ) {

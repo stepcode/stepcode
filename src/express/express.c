@@ -67,6 +67,7 @@
  *
  */
 
+#include <scl_cf.h>
 #define EXPRESS_C
 #include "conf.h"
 #include "express/basic.h"
@@ -74,7 +75,9 @@
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "express/express.h"
 #include "express/resolve.h"
@@ -97,15 +100,15 @@ char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );
 }
 
-int skip_exp_pause = false;
+SCL_EXPRESS_EXPORT int skip_exp_pause = false;
 void exp_pause() {
     if( !skip_exp_pause ) {
-        #ifdef __WIN32__
+#ifdef __WIN32__
         getchar();
         abort();
-        #else
+#else
         pause();
-        #endif
+#endif
     }
 }
 

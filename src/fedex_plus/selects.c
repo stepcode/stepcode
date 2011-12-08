@@ -156,16 +156,16 @@ utype_member( const Linked_List list, const Type check, int rename ) {
     static char r [BUFSIZ];
 
     LISTdo( list, t, Type )
-        if( TYPEis_entity( t ) && TYPEis_entity( check ) ) {
-            return "SDAI_Application_instance_ptr";
-        }
-        strncpy( r, TYPEget_utype( t ), BUFSIZ );
-        if( strcmp( r, TYPEget_utype( check ) ) == 0 ) {
-            return r;
-        }
-        if( rename && compareOrigTypes( check, t ) ) {
-            return r;
-        }
+    if( TYPEis_entity( t ) && TYPEis_entity( check ) ) {
+        return "SDAI_Application_instance_ptr";
+    }
+    strncpy( r, TYPEget_utype( t ), BUFSIZ );
+    if( strcmp( r, TYPEget_utype( check ) ) == 0 ) {
+        return r;
+    }
+    if( rename && compareOrigTypes( check, t ) ) {
+        return r;
+    }
     LISTod;
     return 0;
 }
@@ -754,7 +754,7 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
         /**  if there are duplicate underlying types  **/
         fprintf( f, "\n\t//  part 7\n" );
         fprintf( f, "\tconst TypeDescriptor *"
-                 "SetUnderlyingType ( const TypeDescriptor * td );\n");
+                 "SetUnderlyingType ( const TypeDescriptor * td );\n" );
     } else {
         fprintf( f, "\n\t//  part 7 ... NONE\tonly for complex selects...\n" );
     }
@@ -1057,7 +1057,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
         {
             /*  for the select items which have the current attribute  */
-            if ( !multiple_inheritance ) {
+            if( !multiple_inheritance ) {
                 if( !memberOfEntPrimary( ent, uattr ) ) {
                     /* If multiple inheritance is not supported, we must addi-
                     tionally check that uattr is a member of the entity's
@@ -1081,7 +1081,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                     /*  if the underlying type is that item\'s type
                     call the underlying_item\'s member function  */
                     // if it is the same attribute
-                    if ( VARis_overrider( ENT_TYPEget_entity( t ), uattr )) {
+                    if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
                         // update attribute_func_name because is has been overrid
                         generate_attribute_func_name( uattr, funcnm );
                     } else {
@@ -1160,12 +1160,12 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
         {
             /*  for the select items which have the current attribute  */
 
-             if ( !multiple_inheritance ) {
-            if( !memberOfEntPrimary( ent, uattr ) ) {
-                /* See note for similar code segment in 1st part of fn. */
-                continue;
+            if( !multiple_inheritance ) {
+                if( !memberOfEntPrimary( ent, uattr ) ) {
+                    /* See note for similar code segment in 1st part of fn. */
+                    continue;
+                }
             }
-             }
 
             if( ! VARis_derived( uattr ) )  {
 
@@ -1177,7 +1177,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                     /*  if the underlying type is that item\'s type
                         call the underlying_item\'s member function  */
                     // if it is the same attribute
-                    if ( VARis_overrider( ENT_TYPEget_entity( t ), uattr )) {
+                    if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
                         // update attribute_func_name because is has been overrid
                         generate_attribute_func_name( uattr, funcnm );
                     } else {
@@ -1186,10 +1186,10 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
                     strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
                     fprintf( f,
-                            "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
-                            TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
+                             "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
+                             TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
                     fprintf( f, "\t{  ((%s) _%s) ->%s( x );\n\t  return;\n\t}\n",
-                            uent, SEL_ITEMget_dmname( t ),  funcnm );
+                             uent, SEL_ITEMget_dmname( t ),  funcnm );
                 } else   /*  warning printed above  */
                     fprintf( f, "  //  for %s  attribute access function"
                              " has a different argument type\n",
@@ -1915,7 +1915,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     LISTdo( SEL_TYPEget_items( type ), t, Type )
     z = FirstToUpper( TYPEget_name( t ) );
     fprintf( f, "Logical %s::Is%s() const\n{\n", n, z );
-    fprintf( f, "   if( !exists() )\n");
+    fprintf( f, "   if( !exists() )\n" );
     fprintf( f, "      return LUnknown;\n" );
     fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
     fprintf( f, "      return LTrue;\n" );

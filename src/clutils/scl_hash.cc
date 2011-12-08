@@ -193,7 +193,7 @@ HASHlist( HashEntry * he ) {
                             again = false;
                         }
                     }
-                } while (again);
+                } while( again );
                 /* avoid incrementing he->j by returning here */
                 if( he->p ) {
                     return( he->e );
@@ -335,7 +335,7 @@ HASHhash( char * Key, Hash_TableP table ) {
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );
-    if( (int)address < table->p ) {
+    if( ( int )address < table->p ) {
         address = MOD( h, ( table->maxp << 1 ) );    /* h % (2*table->maxp) */
     }
     return( address );

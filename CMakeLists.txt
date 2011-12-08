@@ -204,12 +204,16 @@ INCLUDE(${SCL_CMAKE_DIR}/FindYACC.cmake)
 CHECK_INCLUDE_FILE(ndir.h HAVE_NDIR_H)
 CHECK_INCLUDE_FILE(stdarg.h HAVE_STDARG_H)
 CHECK_INCLUDE_FILE(sys/stat.h HAVE_SYS_STAT_H)
+CHECK_INCLUDE_FILE(sys/param.h HAVE_SYS_PARAM_H)
 CHECK_INCLUDE_FILE(sysent.h HAVE_SYSENT_H)
 CHECK_INCLUDE_FILE(unistd.h HAVE_UNISTD_H)
+CHECK_INCLUDE_FILE(dirent.h HAVE_DIRENT_H)
+CHECK_INCLUDE_FILE(stdbool.h HAVE_STDBOOL_H)
 
 CHECK_FUNCTION_EXISTS(abs HAVE_ABS)
 CHECK_FUNCTION_EXISTS(memcpy HAVE_MEMCPY)
 CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
+CHECK_FUNCTION_EXISTS(getopt HAVE_GETOPT)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
 
@@ -233,7 +237,14 @@ set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/include/scl_version_stri
     HEADER_FILE_ONLY TRUE )
 ################
 
+if(MSVC)
+# add_definitions( -Wall )
+add_definitions( -D__MSVC__ -D__WIN32__ )
+# Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
+add_definitions( -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS )
+else()
 add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
+endif()
 
 include_directories(
     ${SCL_SOURCE_DIR}/include
