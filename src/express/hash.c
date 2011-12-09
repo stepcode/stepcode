@@ -141,7 +141,7 @@ HASHinitialize() {
 
 Hash_Table
 HASHcreate( unsigned count ) {
-    int     i;
+    unsigned    i;
     Hash_Table  table;
 
     /*
