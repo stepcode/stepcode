@@ -79,6 +79,10 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#ifdef HAVE_PROCESS_H
+/* process.h defines getpid() function on WIN32 systems */
+# include <process.h>
+#endif
 #ifndef HAVE_GETOPT
 # include "xgetopt.h"
 #endif
