@@ -1352,7 +1352,7 @@ literal                : TOK_INTEGER_LITERAL
                     $$ = LITERAL_ZERO;
                     else {
                     $$ = EXPcreate_simple(Type_Real);
-                    $$->u.real = $1;
+                    $$->u.real = ( float ) $1;
                     resolved_all($$);
                     } }
                 | TOK_STRING_LITERAL
