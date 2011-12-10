@@ -316,14 +316,14 @@ void TypeDescriptor::addAltName( const char * schnm, const char * newnm ) {
  * See if nm = one of our choices (either ours or that of a SchRename
  * later in the list.
  */
-int SchRename::choice( const char * nm ) const {
+bool SchRename::choice( const char * nm ) const {
     if( !StrCmpIns( nm, newName ) ) {
-        return 1;
+        return true;
     }
     if( next ) {
         return ( next->choice( nm ) );
     }
-    return 0;
+    return false;
 }
 
 /**
