@@ -1690,7 +1690,7 @@ schema_decl        : schema_header schema_body TOK_END_SCHEMA
                 ;
 
 schema_header        : TOK_SCHEMA TOK_IDENTIFIER semicolon
-                  { Schema schema = DICTlookup(CURRENT_SCOPE->symbol_table,$2->name);
+                  { Schema schema = ( Schema ) DICTlookup(CURRENT_SCOPE->symbol_table,$2->name);
 
                     if (print_objects_while_running & OBJ_SCHEMA_BITS){
                     fprintf(stdout,"parse: %s (schema)\n",$2->name);
