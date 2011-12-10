@@ -44,9 +44,10 @@ if(MSVC)
 add_definitions( -DSCL_EDITOR_DLL_EXPORTS )
 add_definitions( -DSCL_CORE_DLL_IMPORTS )
 add_definitions( -DSCL_DAI_DLL_IMPORTS )
+add_definitions( -DSCL_UTILS_DLL_IMPORTS )
 endif(MSVC)
 
-SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" stepcore stepdai)
+SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" stepcore stepdai steputils)
 
 if(APPLE)
     set_target_properties(stepeditor PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
