@@ -998,7 +998,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
  */
 void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
-    Linked_List list;
+    //Linked_List list;
     int attr_count_tmp = attr_count;
     Entity super = 0;
 
