@@ -12,6 +12,9 @@
 #else
 # include <scl_stdbool.h>
 #endif
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
 
 #ifdef __STDC__
 #include <stdarg.h>
