@@ -130,10 +130,10 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
         list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
         if( !list ) {
             list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, list,
+            DICTdefine( dict, r->schema->symbol.name, (Generic) list,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd( list, r );
+        LISTadd( list, (Generic) r );
     }
 
     /* step 2: for each list, print out the renames */
@@ -1162,7 +1162,7 @@ void collectAttributes( Linked_List curList, Entity curEntity, int flagParent ) 
 
     // parse the attributes of the parent and add to the current list
     LISTdo( ENTITYget_attributes( curEntity ), a, Variable )
-    LISTadd_first( curList, a );
+    LISTadd_first( curList, (Generic) a );
     LISTod;
 }
 
@@ -2254,7 +2254,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
                         LISTod;
                     }
                     if( !found ) {
-                        LISTadd_first( nonInheritedAttrList, a );
+                        LISTadd_first( nonInheritedAttrList, (Generic) a );
                     }
                 }
                 LISTod;
