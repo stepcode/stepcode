@@ -10,12 +10,21 @@ extern const char * ReadStdKeyword( istream & in, std::string & buf, int skipIni
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
-    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ) {
+    sc = 0;
+    head = this;
+    _registry = registry;
+    visited = 0;
 }
 
 STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
                           int fileid, const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ) {
+    sc = 0;
+    head = this;
+    _registry = registry;
+    visited = 0;
+
     char * nms[BUFSIZ];
     int j, k;
 
@@ -33,7 +42,12 @@ STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
 
 STEPcomplex::STEPcomplex( Registry * registry, const char ** names, int fileid,
                           const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), head( this ), _registry( registry ), visited( 0 ) {
+    : SDAI_Application_instance( fileid, 1 ) {
+    sc = 0;
+    head = this;
+    _registry = registry;
+    visited = 0;
+
     Initialize( names, schnm );
 }
 
