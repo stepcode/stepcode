@@ -116,8 +116,8 @@ struct Hash_Table {
 };
 
 typedef struct {
-    int i;                  // segment index (i think)
-    int j;                  // key index in segment (ditto)
+    unsigned int i;         // segment index (i think)
+    unsigned int j;         // key index in segment (ditto)
     struct Element * p;     // usually the next element to be returned
     struct Hash_Table * table;
     char type;
