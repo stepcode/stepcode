@@ -114,7 +114,7 @@ GLOBAL SCL_EXPRESS_EXPORT int ( *EXPRESSfail ) PROTO( ( Express ) )     INITIALL
 GLOBAL SCL_EXPRESS_EXPORT int ( *EXPRESSsucceed ) PROTO( ( Express ) )      INITIALLY( 0 );
 GLOBAL SCL_EXPRESS_EXPORT void ( *EXPRESSbackend ) PROTO( ( Express ) )      INITIALLY( 0 );
 GLOBAL SCL_EXPRESS_EXPORT char * EXPRESSprogram_name;
-extern SCL_EXPRESS_EXPORT char   EXPRESSgetopt_options[];  /* initialized elsewhere */
+extern char   EXPRESSgetopt_options[256];  /* initialized elsewhere */
 GLOBAL SCL_EXPRESS_EXPORT int ( *EXPRESSgetopt ) PROTO( ( int, char * ) )    INITIALLY( 0 );
 GLOBAL SCL_EXPRESS_EXPORT bool    EXPRESSignore_duplicate_schemas       INITIALLY( false );
 
