@@ -115,6 +115,7 @@ ComplexList::ComplexList( Entity ent, ComplexCollect * col )
     ent->search_id = TRUE;
     list = NULL;
     next = NULL;
+    maxlevel = 0;
 
     addSuper( ent );
     if( ( exp = ent->u.entity->subtype_expression ) != NULL ) {
@@ -134,7 +135,7 @@ ComplexList::ComplexList( Entity ent, ComplexCollect * col )
         // Rebuild list in case implicit subs were added (we had to build the
         // first time also so addImplicitSubs() would work).
         buildList();
-        head->setLevel( 0 );
+        maxlevel = head->setLevel( 0 );
     } else {
         // If this List has supertypes, we don't really need it as a List -
         // it will ultimately be a part of its super(s)' List(s).  We need it

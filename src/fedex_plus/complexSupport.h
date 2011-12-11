@@ -135,8 +135,9 @@ class EntList {
         MatchType viableVal() {
             return viable;
         }
-        virtual void setLevel( int l ) {
+        virtual int setLevel( int l ) {
             level = l;
+            return level;
         }
         virtual int contains( const char * ) = 0;
         virtual int hit( const char * ) = 0;
@@ -236,7 +237,7 @@ class MultList : public EntList {
     public:
         MultList( JoinType j ) : EntList( j ), numchildren( 0 ), childList( 0 ) {}
         ~MultList();
-        void setLevel( int );
+        int setLevel( int );
         int contains( const char * );
         int hit( const char * );
         int isDependent( const char * );
@@ -342,7 +343,7 @@ class ComplexList {
     public:
         ComplexList( AndList * alist = NULL ) : list( 0 ), head( alist ), next( 0 ),
             abstract( 0 ), dependent( 0 ),
-            multSupers( 0 ) {}
+            multSupers( 0 ), maxlevel( 0 ) {}
         ComplexList( Entity, ComplexCollect * );
         ~ComplexList();
         void buildList();
@@ -358,6 +359,9 @@ class ComplexList {
         }
         const char * supertype() {
             return ( ( SimpleList * )head->childList )->name;
+        }
+        int getMaxlevel( void ) {
+            return maxlevel;
         }
         // Based on knowledge that ComplexList always created by ANDing supertype
         // with subtypes.
@@ -385,7 +389,9 @@ class ComplexList {
         int abstract;   // is our supertype abstract?
         int dependent;  // is our supertype also a subtype of other supertype(s)?
         int multSupers; // am I a combo-CList created to test a subtype which has
-};                  // >1 supertypes?
+                        // >1 supertypes?
+        int maxlevel;
+};
 
 class ComplexCollect {
         // The collection of all the ComplexLists defined by the current schema.

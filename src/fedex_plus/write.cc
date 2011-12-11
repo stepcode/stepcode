@@ -43,7 +43,8 @@ void ComplexCollect::write( const char * fname )
  */
 {
     ofstream complex;
-    ComplexList * clist = clists;
+    ComplexList * clist;
+    int maxlevel;
 
     // Open the stream:
     complex.open( fname );
@@ -73,18 +74,40 @@ void ComplexCollect::write( const char * fname )
      * records which variable is being used. Perhaps we can track max(level) and only
      * write that many variables here.
      */
-    complex << "    EntList *node, *child, *next1, *next2, *next3, *next4,\n"
+/*    complex << "    EntList *node, *child, *next1, *next2, *next3, *next4,\n"
             << "            *next5, *next6, *next7, *next8, *next9, *next10,\n"
             << "            *next11, *next12, *next13, *next14, *next15,\n"
             << "            *next16, *next17, *next18, *next19, *next20,\n"
             << "            *next21, *next22, *next23, *next24, *next25,\n"
             << "            *next26, *next27, *next28, *next29, *next30;"
-            << endl << endl;
+            << endl << endl;*/
     // Frankly, I'd hate to see a schema which needs so many variables.  But
     // AP210 gets to `next23'.
+    complex << "    EntList *node, *child;\n";
+    /* Determine maximum level to know how many variables to create */
+    maxlevel = 0;
+    for ( clist = clists; clist != NULL; clist = clist->next )
+    {
+        if ( clist->getMaxlevel() > maxlevel)
+            maxlevel = clist->getMaxlevel();
+    }
+    /* Create maxlevel variables, maximum 4 variables for each line */
+    for ( int level = 1; level < maxlevel ; level ++ ) {
+        if ( ( ( level - 1 ) & 3 ) == 0 ) {
+            if ( level > 1 ) {
+                complex << ";\n";
+            }
+            complex << "    EntList *next" << level;
+        }
+        else {
+            complex << ", *next" << level;
+        }
+    }
+    complex << ";\n\n";
 
     // Next create the CCollect and CLists:
     complex << "    cc = new ComplexCollect;\n";
+    clist = clists;
     while( clist ) {
         complex << endl;
         complex << "    // ComplexList with supertype \"" << clist->supertype()
