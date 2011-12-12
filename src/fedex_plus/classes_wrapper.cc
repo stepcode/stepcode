@@ -31,7 +31,7 @@ void use_ref( Schema, Express, FILES * );
 
 void create_builtin_type_decl( FILES * files, char * name ) {
     fprintf( files->incall, "extern SCL_%s_EXPORT TypeDescriptor *%s%s_TYPE;\n",
-             "SCHEMA" TD_PREFIX, name );
+             "SCHEMA", TD_PREFIX, name );
 }
 
 void create_builtin_type_defn( FILES * files, char * name ) {
