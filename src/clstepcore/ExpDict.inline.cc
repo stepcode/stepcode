@@ -17,9 +17,9 @@ Dictionary_instance::~Dictionary_instance() {
 
 
 Schema::Schema( const char * schemaName )
-            : _use_interface_list( new Interface_spec__set ),
-              _ref_interface_list( new Interface_spec__set ),
-              _function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
+    : _use_interface_list( new Interface_spec__set ),
+      _ref_interface_list( new Interface_spec__set ),
+      _function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
     _name = schemaName;
 }
 
@@ -351,8 +351,8 @@ char * SchRename::rename( const char * schnm, char * newnm ) const {
 AttrDescriptor::AttrDescriptor( const char * name, const TypeDescriptor * domainType,
                                 Logical optional, Logical unique, AttrType_Enum at,
                                 const EntityDescriptor & owner )
-                : _name( name ), _domainType( domainType ), _optional( optional ),
-                  _unique( unique ), _attrType( at ), _owner( ( EntityDescriptor & )owner ) {
+    : _name( name ), _domainType( domainType ), _optional( optional ),
+      _unique( unique ), _attrType( at ), _owner( ( EntityDescriptor & )owner ) {
 }
 
 AttrDescriptor::~AttrDescriptor() {
@@ -391,7 +391,7 @@ Logical AttrDescriptor::Deriving() const {
 ///////////////////////////////////////////////////////////////////////////////
 
 Derived_attribute::Derived_attribute( const char * name, const TypeDescriptor * domainType,
-    Logical optional, Logical unique, AttrType_Enum at, const EntityDescriptor & owner )
+                                      Logical optional, Logical unique, AttrType_Enum at, const EntityDescriptor & owner )
     : AttrDescriptor( name, domainType, optional, unique, at, owner ) {
     _initializer = ( const char * )0;
 }

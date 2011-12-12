@@ -26,7 +26,7 @@ SDAI_LOGICAL::SDAI_LOGICAL( Logical state ) {
     set_value( state );
 }
 
-SDAI_LOGICAL::SDAI_LOGICAL( const SDAI_LOGICAL& source ) {
+SDAI_LOGICAL::SDAI_LOGICAL( const SDAI_LOGICAL & source ) {
     set_value( source.asInt() );
 }
 
@@ -86,12 +86,12 @@ SDAI_LOGICAL::operator  Logical() const  {
 
 
 
-SDAI_LOGICAL & SDAI_LOGICAL::operator= ( const SDAI_LOGICAL& t ) {
+SDAI_LOGICAL & SDAI_LOGICAL::operator= ( const SDAI_LOGICAL & t ) {
     set_value( t.asInt() );
     return *this;
 }
 
-SDAI_LOGICAL SDAI_LOGICAL::operator ==( const SDAI_LOGICAL& t ) const {
+SDAI_LOGICAL SDAI_LOGICAL::operator ==( const SDAI_LOGICAL & t ) const {
     if( v == t.asInt() ) {
         return  LTrue ;
     }
@@ -137,7 +137,7 @@ int SDAI_LOGICAL::set_value( const char * n )  {
 
 
 Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
-                             int needDelims ) {
+                                 int needDelims ) {
     if( AssignVal ) {
         set_null();
     }
@@ -271,7 +271,7 @@ SDAI_BOOLEAN::SDAI_BOOLEAN( Boolean state ) {
     set_value( state );
 }
 
-SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_BOOLEAN& source ) {
+SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_BOOLEAN & source ) {
     set_value( source.asInt() );
 }
 
@@ -290,7 +290,7 @@ SDAI_BOOLEAN::SDAI_BOOLEAN( int i ) {
     }
 }
 
-SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_LOGICAL& val )  {
+SDAI_BOOLEAN::SDAI_BOOLEAN( const SDAI_LOGICAL & val )  {
     if( val.asInt() == LUnknown ) {
         // this should set error code sdaiVT_NVLD i.e. Invalid value type.
         v = BUnset;
@@ -311,7 +311,7 @@ SDAI_BOOLEAN::operator  Boolean() const  {
     }
 }
 
-SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_LOGICAL& t ) {
+SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_LOGICAL & t ) {
     set_value( t.asInt() );
     return *this;
 }
@@ -332,7 +332,7 @@ const char * SDAI_BOOLEAN::element_at( int n )  const {
     }
 }
 
-SDAI_LOGICAL SDAI_BOOLEAN::operator ==( const SDAI_LOGICAL& t ) const {
+SDAI_LOGICAL SDAI_BOOLEAN::operator ==( const SDAI_LOGICAL & t ) const {
     if( v == t.asInt() ) {
         return  LTrue ;
     }
@@ -413,7 +413,7 @@ void SDAI_Enum::DebugDisplay( ostream & out ) const {
 **  true or false => non-matching delimiters are flagged as an error
 */
 Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
-                          int needDelims ) {
+                              int needDelims ) {
     if( AssignVal ) {
         set_null();
     }
@@ -588,8 +588,8 @@ const char * SDAI_Enum::STEPwrite( std::string & s ) const {
 }
 
 Severity SDAI_Enum::EnumValidLevel( istream & in, ErrorDescriptor * err,
-                                int optional, char * tokenList,
-                                int needDelims, int clearError ) {
+                                    int optional, char * tokenList,
+                                    int needDelims, int clearError ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
@@ -625,8 +625,8 @@ Severity SDAI_Enum::EnumValidLevel( istream & in, ErrorDescriptor * err,
 }
 
 Severity SDAI_Enum::EnumValidLevel( const char * value, ErrorDescriptor * err,
-                                int optional, char * tokenList,
-                                int needDelims, int clearError ) {
+                                    int optional, char * tokenList,
+                                    int needDelims, int clearError ) {
     istringstream in( ( char * )value );
     return EnumValidLevel( in, err, optional, tokenList, needDelims,
                            clearError );
@@ -638,7 +638,7 @@ Severity SDAI_Enum::EnumValidLevel( const char * value, ErrorDescriptor * err,
 ** warning is printed and processing continues
 **
 **  set_value is the same function as put
-** 
+**
 ** Parameter: value to be set
 ** Status:  ok 2.91
 ** \returns:  value set
@@ -690,12 +690,12 @@ SDAI_Enum & SDAI_Enum::operator= ( const int i ) {
     return *this;
 }
 
-SDAI_Enum & SDAI_Enum::operator= ( const SDAI_Enum& Senum ) {
+SDAI_Enum & SDAI_Enum::operator= ( const SDAI_Enum & Senum ) {
     put( Senum.asInt() );
     return *this;
 }
 
-ostream & operator<< ( ostream & out, const SDAI_Enum& a ) {
+ostream & operator<< ( ostream & out, const SDAI_Enum & a ) {
     std::string tmp;
     out << a.asStr( tmp );
     return out;

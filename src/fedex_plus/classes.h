@@ -50,78 +50,78 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define TYPEtd_name(t)       TypeDescriptorName (t)
 
 typedef  struct file_holder  {
-    FILE*  inc;                ///<  include file
-    FILE*  lib;                ///<  library file
-    FILE*  incall;             ///<  include file for collecting all include files
-    FILE*  initall;            ///<  for registering all entities from all schemas
-    FILE*  init;               ///<  contains function to initialize program to use schema's entities
-    FILE*  create;             /**<  DAR - added - to create all schema & ent descriptors.  In multiple
+    FILE * inc;                ///<  include file
+    FILE * lib;                ///<  library file
+    FILE * incall;             ///<  include file for collecting all include files
+    FILE * initall;            ///<  for registering all entities from all schemas
+    FILE * init;               ///<  contains function to initialize program to use schema's entities
+    FILE * create;             /**<  DAR - added - to create all schema & ent descriptors.  In multiple
                                 *    interrelated schemas, must be done before attribute descriptors and
                                 *    sub-super links created.
                                 */
-    FILE*  classes;            /**<  DAR - added - a new .h file to contain declarations of all the
+    FILE * classes;            /**<  DAR - added - a new .h file to contain declarations of all the
                                 *    classes, so that all the .h files can refer any of the entity classes.
                                 *    Nec. if ent1 of schemaA has attribute ent2 from schemaB.
                                 */
-    FILE*  names;               ///< MAP Nov 2011 - header with namespace for entity and attr descriptors
+    FILE * names;               ///< MAP Nov 2011 - header with namespace for entity and attr descriptors
 }  File_holder, FILES;
 
 
 /**  these fields are used so that ENTITY types are processed in order
  *   when appearing in differnt schemas
  */
-typedef struct EntityTag_ *EntityTag;
+typedef struct EntityTag_ * EntityTag;
 struct EntityTag_ {
-  unsigned int  started :1;    ///<  marks the beginning of processing
-  unsigned int  complete :1;   ///<  marks the end of processing
-  Entity        superclass;    ///< the entity being used as the supertype - with multiple inheritance only chose one
+    unsigned int  started : 1;   ///<  marks the beginning of processing
+    unsigned int  complete : 1;  ///<  marks the end of processing
+    Entity        superclass;    ///< the entity being used as the supertype - with multiple inheritance only chose one
 };
 
-Entity          ENTITYget_superclass (Entity entity);
-Entity          ENTITYput_superclass (Entity entity);
-int             ENTITYhas_explicit_attributes (Entity e);
-void            ENTITYget_first_attribs(Entity entity, Linked_List result);
+Entity          ENTITYget_superclass( Entity entity );
+Entity          ENTITYput_superclass( Entity entity );
+int             ENTITYhas_explicit_attributes( Entity e );
+void            ENTITYget_first_attribs( Entity entity, Linked_List result );
 
 ///these fields are used so that SELECT types are processed in order
-typedef struct SelectTag_ *SelectTag;
+typedef struct SelectTag_ * SelectTag;
 struct  SelectTag_ {
-  unsigned int started :1;    ///<  marks the beginning of processing
-  unsigned int complete :1;   ///<  marks the end of processing
+    unsigned int started : 1;   ///<  marks the beginning of processing
+    unsigned int complete : 1;  ///<  marks the end of processing
 };
 
-const char *    GetTypeDescriptorName( Type t );
-char *          format_for_stringout(char *orig_buf, char* return_buf);
-const char *    CheckWord( const char *);
-const char *    StrToLower(const char *);
-const char *    StrToUpper (const char *);
-const char *    FirstToUpper (const char *);
-const char *    SelectName (const char *);
-FILE  *         FILEcreate(const char *);
-void            FILEclose(FILE *);
-const char *    ClassName(const char *);
-const char *    ENTITYget_classname(Entity);
-void            ENTITYPrint(Entity,FILES *,Schema);
-const char *    StrToConstant(const char *);
-void            TYPEselect_print(Type, FILES *, Schema);
-void            ENTITYprint_new(Entity, FILES *, Schema, int);
-void            TYPEprint_definition(Type, FILES *, Schema);
-void            TYPEprint_new(const Type, FILE *, Schema);
-void            TYPEprint_typedefs(Type, FILE *);
-void            TYPEprint_descriptions (const Type, FILES *, Schema);
-void            TYPEprint_init (const Type, FILE *, Schema);
-void            TYPEselect_init_print (const Type, FILE *, Schema);
-void            MODELPrint(Entity, FILES*,Schema, int);
-void            MODELprint_new(Entity,FILES*, Schema);
-void            MODELPrintConstructorBody(Entity, FILES *,Schema/*, int*/);
-const char *    PrettyTmpName (const char * oldname);
-const char *    EnumName (const char * oldname);
-const char *    TypeDescriptorName (Type);
-char *          TypeDescription (const Type t);
-const char *    TypeName (Type t);
-const char *    AccessType (Type t);
-const char *    TYPEget_ctype (const Type t);
-void            print_file(Express);
-void            resolution_success(void);
+const char   *  GetTypeDescriptorName( Type t );
+char      *     format_for_stringout( char * orig_buf, char * return_buf );
+const char   *  CheckWord( const char * );
+const char   *  StrToLower( const char * );
+const char   *  StrToUpper( const char * );
+const char   *  FirstToUpper( const char * );
+const char   *  SelectName( const char * );
+FILE      *     FILEcreate( const char * );
+void            FILEclose( FILE * );
+const char   *  ClassName( const char * );
+const char   *  ENTITYget_classname( Entity );
+void            ENTITYPrint( Entity, FILES *, Schema );
+const char   *  StrToConstant( const char * );
+void            TYPEselect_print( Type, FILES *, Schema );
+void            ENTITYprint_new( Entity, FILES *, Schema, int );
+void            TYPEprint_definition( Type, FILES *, Schema );
+void            TYPEprint_new( const Type, FILE *, Schema );
+void            TYPEprint_typedefs( Type, FILE * );
+void            TYPEprint_descriptions( const Type, FILES *, Schema );
+void            TYPEprint_init( const Type, FILE *, Schema );
+void            TYPEselect_init_print( const Type, FILE *, Schema );
+void            MODELPrint( Entity, FILES *, Schema, int );
+void            MODELprint_new( Entity, FILES *, Schema );
+void            MODELPrintConstructorBody( Entity, FILES *, Schema/*, int*/ );
+const char   *  PrettyTmpName( const char * oldname );
+const char   *  EnumName( const char * oldname );
+const char   *  TypeDescriptorName( Type );
+char      *     TypeDescription( const Type t );
+const char   *  TypeName( Type t );
+const char   *  AccessType( Type t );
+const char   *  TYPEget_ctype( const Type t );
+void            print_file( Express );
+void            resolution_success( void );
 void            SCHEMAprint( Schema, FILES *, Express, void *, int );
 Type            TYPEget_ancestor( Type );
 
@@ -138,5 +138,5 @@ void            print_schemas_separate( Express, void *, FILES * );
 void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
 
-void            USEREFout(Schema schema, Dictionary refdict,Linked_List reflist,char *type,FILE* file);
+void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file );
 

@@ -45,23 +45,23 @@ Severity SDAI_String::STEPread( istream & in, ErrorDescriptor * err ) {
     in.unsetf( ios::skipws );
 
     // extract the string from the inputstream
-    string s = ToExpressStr(in, err);
-    operator+= (s);
+    string s = ToExpressStr( in, err );
+    operator+= ( s );
 
     // retrieve current severity
     Severity sev = err -> severity();
 
     // Not missing closing quote on string value
-    if (sev != SEVERITY_INPUT_ERROR && s.compare("") != 0) {
+    if( sev != SEVERITY_INPUT_ERROR && s.compare( "" ) != 0 ) {
         sev = SEVERITY_NULL;
     }
 
     // There was no quote
-    if ( !(sev == SEVERITY_INPUT_ERROR || sev == SEVERITY_NULL) ) {
-            in.flags( flags ); // set the format state back to previous settings
-            clear();
-            err -> GreaterSeverity( SEVERITY_INCOMPLETE );
-            sev = SEVERITY_INCOMPLETE;
+    if( !( sev == SEVERITY_INPUT_ERROR || sev == SEVERITY_NULL ) ) {
+        in.flags( flags ); // set the format state back to previous settings
+        clear();
+        err -> GreaterSeverity( SEVERITY_INCOMPLETE );
+        sev = SEVERITY_INCOMPLETE;
     }
     return sev;
 }

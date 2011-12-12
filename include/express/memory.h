@@ -30,6 +30,7 @@
 /* packages used */
 /*****************/
 
+#include <scl_export.h>
 /* mem.h - defs for fixed size block memory allocator */
 
 typedef long Align;
@@ -83,10 +84,10 @@ extern int yylineno;
         fprintf(stderr,"fedex: out of space");\
     } else {}
 
-void    _MEMinitialize PROTO( ( void ) );
-void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
-void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
-Generic MEM_new PROTO( ( struct freelist_head * ) );
+SCL_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
+SCL_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
+SCL_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
+SCL_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
 
 #include "de_end.h"
 

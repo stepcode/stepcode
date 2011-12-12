@@ -79,12 +79,12 @@ SDAI_Model_contents::CreateEntityInstance( const char * Type ) {
 }
 
 void
-SDAI_Model_contents::AddInstance( const SDAI_DAObject_SDAI_ptr& appInst ) {
+SDAI_Model_contents::AddInstance( const SDAI_DAObject_SDAI_ptr & appInst ) {
     _instances.contents_()->Append( appInst );
 }
 
 void
-SDAI_Model_contents::RemoveInstance( SDAI_DAObject_SDAI_ptr& appInst ) {
+SDAI_Model_contents::RemoveInstance( SDAI_DAObject_SDAI_ptr & appInst ) {
     _instances.contents_()->Remove( _instances.contents_()->Index( appInst ) );
 }
 

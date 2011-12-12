@@ -18,7 +18,7 @@ for the STEP Standard Data Access Interface as defined in document
 N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
 
-extern char* scl_version();
+extern char * scl_version();
 
 extern int multiple_inheritance;
 /*extern int corba_binding; */
@@ -466,7 +466,7 @@ EnumName( const char * oldname ) {
     strcpy( newname, ENUM_PREFIX )    ;
     j = strlen( ENUM_PREFIX )    ;
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j );
+    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
@@ -484,7 +484,7 @@ SelectName( const char * oldname ) {
     newname [0] = ToUpper( newname [0] );
     j = strlen( TYPE_PREFIX );
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j );
+    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );

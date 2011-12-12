@@ -45,13 +45,13 @@ SDAI_Entity_extent::definition_( const Entity_ptr & ep ) {
 }
 
 void
-SDAI_Entity_extent::definition_name_( const SDAI_Entity_name& en ) {
+SDAI_Entity_extent::definition_name_( const SDAI_Entity_name & en ) {
     _definition_name = new char[strlen( en ) + 1];
     strncpy( _definition_name, en, strlen( en ) + 1 );
 }
 
 void
-SDAI_Entity_extent::owned_by_( SDAI_Model_contents__list_var& mclv ) {
+SDAI_Entity_extent::owned_by_( SDAI_Model_contents__list_var & mclv ) {
 //    _owned_by = mcp;
 }
 
@@ -92,7 +92,7 @@ SDAI_DAObject__set_var instances_() const
 */
 
 void
-SDAI_Entity_extent::AddInstance( const SDAI_DAObject_ptr& appInst ) {
+SDAI_Entity_extent::AddInstance( const SDAI_DAObject_ptr & appInst ) {
     _instances.Append( appInst );
 }
 
@@ -114,7 +114,7 @@ SDAI_Entity_extent::AddInstance( const SDAI_DAObject_ptr& appInst ) {
 
 
 void
-SDAI_Entity_extent::RemoveInstance( const SDAI_DAObject_ptr& appInst ) {
+SDAI_Entity_extent::RemoveInstance( const SDAI_DAObject_ptr & appInst ) {
     _instances.Remove( _instances.Index( appInst ) );
 }
 

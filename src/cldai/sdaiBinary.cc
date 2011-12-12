@@ -13,9 +13,9 @@
 #include <sdai.h>
 
 extern Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
-                     const char * typeName, // used in error message
-                     const char * tokenList ); // e.g. ",)"
-                     
+                                     const char * typeName, // used in error message
+                                     const char * tokenList ); // e.g. ",)"
+
 SDAI_Binary & SDAI_Binary::operator= ( const char * s ) {
     std::string::operator= ( s );
     return *this;
@@ -53,7 +53,7 @@ const char * SDAI_Binary::STEPwrite( std::string & s ) const {
 }
 
 Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int AssignVal,
-                              int needDelims ) {
+                                  int needDelims ) {
     if( AssignVal ) {
         clear();
     }
@@ -160,8 +160,8 @@ Severity SDAI_Binary::STEPread( const char * s, ErrorDescriptor * err ) {
 **   following.
 ******************************************************************************/
 Severity SDAI_Binary::BinaryValidLevel( istream & in, ErrorDescriptor * err,
-                                    int optional, char * tokenList,
-                                    int needDelims, int clearError ) {
+                                        int optional, char * tokenList,
+                                        int needDelims, int clearError ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
@@ -195,8 +195,8 @@ Severity SDAI_Binary::BinaryValidLevel( istream & in, ErrorDescriptor * err,
 }
 
 Severity SDAI_Binary::BinaryValidLevel( const char * value, ErrorDescriptor * err,
-                                    int optional, char * tokenList,
-                                    int needDelims, int clearError ) {
+                                        int optional, char * tokenList,
+                                        int needDelims, int clearError ) {
     istringstream in( ( char * )value );
     return BinaryValidLevel( in, err, optional, tokenList,
                              needDelims, clearError );

@@ -13,10 +13,11 @@
 * and is not subject to copyright.
 */
 
+#include <scl_export.h>
 #include <ctype.h>
 
 #include <stdio.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <string.h>
 #include <errordesc.h>
 
@@ -24,27 +25,27 @@
 //StrCmpIns - case-insensitive string compare. Original fct (replaced Sep 2011)
 //called PrettyTmpName(). Not doing so may affect sort order but that shouldn't hurt
 #ifdef _MSC_VER
-    #define StrCmpIns(a,b) _stricmp(a,b)
+#define StrCmpIns(a,b) _stricmp(a,b)
 #else
-    #define StrCmpIns(a,b) strcasecmp(a,b)
+#define StrCmpIns(a,b) strcasecmp(a,b)
 #endif
 
-char         ToLower (const char c);
-char         ToUpper  (const char c);
-char *       StrToLower (const char *, char *);
-const char * StrToLower (const char * word, std::string &s);
-const char * StrToUpper (const char * word, std::string &s);
-const char * StrToConstant (const char * word, std::string &s);
-const char * PrettyTmpName (const char * oldname);
-char *       PrettyNewName (const char * oldname);
-char *       EntityClassName ( char * oldname);
+SCL_UTILS_EXPORT char         ToLower( const char c );
+SCL_UTILS_EXPORT char         ToUpper( const char c );
+SCL_UTILS_EXPORT char    *    StrToLower( const char *, char * );
+SCL_UTILS_EXPORT const char * StrToLower( const char * word, std::string & s );
+SCL_UTILS_EXPORT const char * StrToUpper( const char * word, std::string & s );
+SCL_UTILS_EXPORT const char * StrToConstant( const char * word, std::string & s );
+SCL_UTILS_EXPORT const char * PrettyTmpName( const char * oldname );
+SCL_UTILS_EXPORT char    *    PrettyNewName( const char * oldname );
+SCL_UTILS_EXPORT char    *    EntityClassName( char * oldname );
 
-std::string  ToExpressStr (istream &in, ErrorDescriptor *err);
+SCL_UTILS_EXPORT std::string  ToExpressStr( istream & in, ErrorDescriptor * err );
 
-extern Severity CheckRemainingInput
-   (istream &in, ErrorDescriptor *err, 
-    const char *typeName, // used in error message
-    const char *tokenList); // e.g. ",)"
+extern SCL_UTILS_EXPORT Severity CheckRemainingInput
+( istream & in, ErrorDescriptor * err,
+  const char * typeName, // used in error message
+  const char * tokenList ); // e.g. ",)"
 
 
-#endif 
+#endif

@@ -13,6 +13,7 @@
 * and is not subject to copyright.
 */
 
+#include <scl_export.h>
 #include <instmgr.h>
 #include <Registry.h>
 #include <fstream>
@@ -33,181 +34,202 @@ enum  FileTypeCode {
     VERSION_CURRENT        =  1,
     WORKING_SESSION        =  2,
     OLD_WORKING_SESSION =  3
-  };
+};
 
-class STEPfile
-{
-  protected:
-    //data members
+class SCL_EDITOR_EXPORT STEPfile {
+    protected:
+        //data members
 
-    InstMgr&  _instances;
-    Registry& _reg;
+        InstMgr & _instances;
+        Registry & _reg;
 
-    InstMgr & instances ()  { return _instances; }
-    Registry & reg () { return _reg; }
-    int _fileIdIncr;   //Increment value to be added to FileId Numbers on input
+        InstMgr & instances()  {
+            return _instances;
+        }
+        Registry & reg() {
+            return _reg;
+        }
+        int _fileIdIncr;   //Increment value to be added to FileId Numbers on input
 
 //header information
-    InstMgr*  _headerInstances;
-    Registry *_headerRegistry;
-    
-    int _headerId;     //STEPfile_id given to SDAI_Application_instance from header section
+        InstMgr * _headerInstances;
+        Registry * _headerRegistry;
+
+        int _headerId;     //STEPfile_id given to SDAI_Application_instance from header section
 
 //file information
-    DirObj* _currentDir;
-    std::string _fileName;
+        DirObj * _currentDir;
+        std::string _fileName;
 
 //error information
-    ErrorDescriptor _error;
+        ErrorDescriptor _error;
 
-    // new errors
-    int _entsNotCreated; // num entities not created in first pass
-    int _entsInvalid;    // num entities that had invalid attr values
-    int _entsIncomplete; // num entities that had missing attr values
-                         // (includes entities that had invalid values
-                         // for required attrs)
-    int _entsWarning;    // num entities that may have had problems
-                         // with attrs - reported as an attr user msg
+        // new errors
+        int _entsNotCreated; // num entities not created in first pass
+        int _entsInvalid;    // num entities that had invalid attr values
+        int _entsIncomplete; // num entities that had missing attr values
+        // (includes entities that had invalid values
+        // for required attrs)
+        int _entsWarning;    // num entities that may have had problems
+        // with attrs - reported as an attr user msg
 
-    // old errors
-    int _errorCount;
-    int _warningCount;
+        // old errors
+        int _errorCount;
+        int _warningCount;
 
-    int _maxErrorCount;
+        int _maxErrorCount;
 
-    bool _strict;       ///< If false, "missing and required" attributes are replaced with a generic value when file is read
+        bool _strict;       ///< If false, "missing and required" attributes are replaced with a generic value when file is read
 
-  protected:
-    
+    protected:
+
 //file type information
-    FileTypeCode _fileType;
-    char ENTITY_NAME_DELIM;
-    char* FILE_DELIM;    
-    char* END_FILE_DELIM;
-    
+        FileTypeCode _fileType;
+        char ENTITY_NAME_DELIM;
+        char * FILE_DELIM;
+        char * END_FILE_DELIM;
+
 //public member functions
-  public:
+    public:
 
 //public access to member variables
 //header information
-    InstMgr* HeaderInstances() { return _headerInstances; }
-    const Registry *HeaderRegistry() { return _headerRegistry; }
+        InstMgr * HeaderInstances() {
+            return _headerInstances;
+        }
+        const Registry * HeaderRegistry() {
+            return _headerRegistry;
+        }
 // to create header instances
-    SDAI_Application_instance* HeaderDefaultFileName();
-    SDAI_Application_instance* HeaderDefaultFileDescription();
-    SDAI_Application_instance* HeaderDefaultFileSchema();
+        SDAI_Application_instance * HeaderDefaultFileName();
+        SDAI_Application_instance * HeaderDefaultFileDescription();
+        SDAI_Application_instance * HeaderDefaultFileSchema();
 
 //file information
-    const std::string FileName() const { return _fileName; }
-    const std::string SetFileName (const std::string name = "");
-    const std::string TruncFileName (const std::string name) const;
+        const std::string FileName() const {
+            return _fileName;
+        }
+        const std::string SetFileName( const std::string name = "" );
+        const std::string TruncFileName( const std::string name ) const;
 
 //error information
-    ErrorDescriptor& Error() /* const */  { return _error; }
-    int ErrorCount() const  { return _errorCount;   }
-    int WarningCount() const { return _warningCount; }
-    Severity AppendEntityErrorMsg (ErrorDescriptor *e);
-    
+        ErrorDescriptor & Error() { /* const */
+            return _error;
+        }
+        int ErrorCount() const  {
+            return _errorCount;
+        }
+        int WarningCount() const {
+            return _warningCount;
+        }
+        Severity AppendEntityErrorMsg( ErrorDescriptor * e );
+
 //version information
-    FileTypeCode FileType() const   { return _fileType; }
-    void FileType (FileTypeCode ft) { _fileType = ft; }
-    int SetFileType (FileTypeCode ft = VERSION_CURRENT);
-    
-//Reading and Writing 
-    Severity ReadExchangeFile (const std::string filename = "", bool useTechCor = true );
-    Severity AppendExchangeFile (const std::string filename = "", bool useTechCor = true );
+        FileTypeCode FileType() const   {
+            return _fileType;
+        }
+        void FileType( FileTypeCode ft ) {
+            _fileType = ft;
+        }
+        int SetFileType( FileTypeCode ft = VERSION_CURRENT );
 
-    Severity ReadWorkingFile (const std::string filename = "", bool useTechCor = true );
-    Severity AppendWorkingFile (const std::string filename = "", bool useTechCor = true );
+//Reading and Writing
+        Severity ReadExchangeFile( const std::string filename = "", bool useTechCor = true );
+        Severity AppendExchangeFile( const std::string filename = "", bool useTechCor = true );
 
-    Severity AppendFile (istream* in, bool useTechCor = true ) ;
+        Severity ReadWorkingFile( const std::string filename = "", bool useTechCor = true );
+        Severity AppendWorkingFile( const std::string filename = "", bool useTechCor = true );
 
-    Severity WriteExchangeFile (ostream& out, int validate =1,
-                                int clearError = 1, int writeComments = 1);
-    Severity WriteExchangeFile (const std::string filename = "", int validate =1,
-                                int clearError = 1, int writeComments = 1);
-    Severity WriteValuePairsFile(ostream& out, int validate =1, 
-                                 int clearError =1,
-                                 int writeComments = 1, int mixedCase = 1);
+        Severity AppendFile( istream * in, bool useTechCor = true ) ;
 
-    Severity WriteWorkingFile (ostream& out, int clearError = 1, 
-                               int writeComments = 1);
-    Severity WriteWorkingFile (const std::string filename = "", int clearError = 1,
-                               int writeComments = 1);
+        Severity WriteExchangeFile( ostream & out, int validate = 1,
+                                    int clearError = 1, int writeComments = 1 );
+        Severity WriteExchangeFile( const std::string filename = "", int validate = 1,
+                                    int clearError = 1, int writeComments = 1 );
+        Severity WriteValuePairsFile( ostream & out, int validate = 1,
+                                      int clearError = 1,
+                                      int writeComments = 1, int mixedCase = 1 );
 
-    stateEnum EntityWfState(char c);
-    
-    void Renumber ();
+        Severity WriteWorkingFile( ostream & out, int clearError = 1,
+                                   int writeComments = 1 );
+        Severity WriteWorkingFile( const std::string filename = "", int clearError = 1,
+                                   int writeComments = 1 );
+
+        stateEnum EntityWfState( char c );
+
+        void Renumber();
 
 //constructors
-    STEPfile (Registry& r, InstMgr& i, const std::string filename = "", bool strict = true );
-    virtual ~STEPfile();
+        STEPfile( Registry & r, InstMgr & i, const std::string filename = "", bool strict = true );
+        virtual ~STEPfile();
 
-  protected:    
+    protected:
 //member functions
-    const std::string schemaName(); // returns and copies out schema name from header instances
+        const std::string schemaName(); // returns and copies out schema name from header instances
 //called by ReadExchangeFile
-    istream* OpenInputFile (const std::string filename = "");
-    void CloseInputFile(istream* in);
-    
-    Severity ReadHeader(istream& in);
+        istream * OpenInputFile( const std::string filename = "" );
+        void CloseInputFile( istream * in );
 
-    Severity HeaderVerifyInstances(InstMgr* im);
-    void HeaderMergeInstances(InstMgr* im);
-   
-    int HeaderId (int increment =1);
-    int HeaderId (const std::string name);
+        Severity ReadHeader( istream & in );
 
-    int ReadData1 (istream& in); // first pass to create instances
+        Severity HeaderVerifyInstances( InstMgr * im );
+        void HeaderMergeInstances( InstMgr * im );
+
+        int HeaderId( int increment = 1 );
+        int HeaderId( const std::string name );
+
+        int ReadData1( istream & in ); // first pass to create instances
         // second pass to read instances
-    int ReadData2 (istream& in, bool useTechCor = true );
+        int ReadData2( istream & in, bool useTechCor = true );
 
 // obsolete
-    int ReadWorkingData1 (istream& in);
-    int ReadWorkingData2 (istream& in, bool useTechCor = true );
+        int ReadWorkingData1( istream & in );
+        int ReadWorkingData2( istream & in, bool useTechCor = true );
 
-    void ReadRestOfFile(istream& in);
+        void ReadRestOfFile( istream & in );
 
         // create instance - used by ReadData1()
-    SDAI_Application_instance *  CreateInstance(istream& in, ostream& out);
+        SDAI_Application_instance  * CreateInstance( istream & in, ostream & out );
         // create complex instance - used by CreateInstance()
-    SDAI_Application_instance * CreateSubSuperInstance(istream& in, int fileid,
-                                        ErrorDescriptor &);
+        SDAI_Application_instance * CreateSubSuperInstance( istream & in, int fileid,
+                ErrorDescriptor & );
 
         // read the instance - used by ReadData2()
-    SDAI_Application_instance * ReadInstance(istream& in, ostream& out, 
-                                        std::string &cmtStr, bool useTechCor = true );
+        SDAI_Application_instance * ReadInstance( istream & in, ostream & out,
+                std::string & cmtStr, bool useTechCor = true );
 
-  //  reading scopes are still incomplete
-  //  these functions are stubs
-    Severity CreateScopeInstances(istream& in, SDAI_Application_instance_ptr ** scopelist);
-    Severity ReadScopeInstances(istream& in);
+        //  reading scopes are still incomplete
+        //  these functions are stubs
+        Severity CreateScopeInstances( istream & in, SDAI_Application_instance_ptr ** scopelist );
+        Severity ReadScopeInstances( istream & in );
 //    Severity ReadSubSuperInstance(istream& in);
 
-    int FindDataSection (istream& in);
-    int FindHeaderSection (istream& in);
+        int FindDataSection( istream & in );
+        int FindHeaderSection( istream & in );
 
 // writing working session files
-    void WriteWorkingData(ostream& out, int writeComments = 1);
+        void WriteWorkingData( ostream & out, int writeComments = 1 );
 
 //called by WriteExchangeFile
-    ofstream* OpenOutputFile(const std::string filename = "");
-    void CloseOutputFile(ostream* out);
+        ofstream * OpenOutputFile( const std::string filename = "" );
+        void CloseOutputFile( ostream * out );
 
-    void WriteHeader (ostream& out);
-    void WriteHeaderInstance (SDAI_Application_instance *obj, ostream& out);
-    void WriteHeaderInstanceFileName (ostream& out);
-    void WriteHeaderInstanceFileDescription (ostream& out);
-    void WriteHeaderInstanceFileSchema (ostream& out);
+        void WriteHeader( ostream & out );
+        void WriteHeaderInstance( SDAI_Application_instance * obj, ostream & out );
+        void WriteHeaderInstanceFileName( ostream & out );
+        void WriteHeaderInstanceFileDescription( ostream & out );
+        void WriteHeaderInstanceFileSchema( ostream & out );
 
-    void WriteData (ostream& out, int writeComments = 1);
-    void WriteValuePairsData(ostream& out, int writeComments = 1, 
-                             int mixedCase = 1);
-    
-    int IncrementFileId (int fileid);
-    int FileIdIncr() { return _fileIdIncr; }
-    void SetFileIdIncrement ();
-    void MakeBackupFile();
+        void WriteData( ostream & out, int writeComments = 1 );
+        void WriteValuePairsData( ostream & out, int writeComments = 1,
+                                  int mixedCase = 1 );
+
+        int IncrementFileId( int fileid );
+        int FileIdIncr() {
+            return _fileIdIncr;
+        }
+        void SetFileIdIncrement();
+        void MakeBackupFile();
 
 //    void ReadWhiteSpace(istream& in);
 };

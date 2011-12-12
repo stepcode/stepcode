@@ -314,8 +314,8 @@ HASHdestroy( Hash_Table table ) {
 void *
 HASHfind( Hash_Table t, char * s ) {
 //    Element * ep;
-    struct Element_ *ep = malloc(sizeof *ep);
-    struct Element_ *e = malloc(sizeof *e);
+    struct Element_ *ep = malloc( sizeof * ep );
+    struct Element_ *e = malloc( sizeof * e );
     e -> key = s;
     e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
     ep = HASHsearch( t, e, HASH_FIND );
@@ -328,7 +328,7 @@ void
 HASHinsert( Hash_Table t, char * s, void * data ) {
     Element e2;
 //    memset(e, 0, sizeof(s) + sizeof(data));
-    struct Element_ *e = malloc(sizeof *e);
+    struct Element_ *e = malloc( sizeof * e );
     e -> key = s;
     e -> data = data;
     e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */

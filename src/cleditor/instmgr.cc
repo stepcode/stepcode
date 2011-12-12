@@ -92,7 +92,7 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
 
     int n = InstanceCount();
     MgrNode * mn;
-    SDAI_Application_instance* se;
+    SDAI_Application_instance * se;
     enum Severity rval = SEVERITY_NULL;
 
     //for each instance on the list,
@@ -177,7 +177,7 @@ int InstMgr::GetIndex( MgrNode * mn ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int InstMgr::GetIndex( SDAI_Application_instance *se ) {
+int InstMgr::GetIndex( SDAI_Application_instance * se ) {
     int fileId = se->StepFileId();
     return sortedMaster->MgrNodeIndex( fileId );
 }
@@ -201,7 +201,7 @@ int InstMgr::VerifyEntity( int fileId, const char * expectedType ) {
 //   Append instance to the list of instances.  Checks the file id and
 //   sets it if 1) it is not set already or 2) it already exists in the list.
 
-MgrNode * InstMgr::Append( SDAI_Application_instance *se, stateEnum listState ) {
+MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState ) {
     if( debug_level > 3 ) {
         cout << "#" << se->StepFileId() << " append node to InstMgr" << endl;
     }
@@ -261,7 +261,7 @@ void InstMgr::Delete( MgrNode * node ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void InstMgr::Delete( SDAI_Application_instance *se ) {
+void InstMgr::Delete( SDAI_Application_instance * se ) {
     Delete( FindFileId( se->StepFileId() ) );
 }
 
@@ -313,7 +313,7 @@ int
 InstMgr::EntityKeywordCount( const char * name ) {
     int count = 0;
     MgrNode * node;
-    SDAI_Application_instance* se;
+    SDAI_Application_instance * se;
     int n = InstanceCount();
     for( int j = 0; j < n; ++j ) {
         node = GetMgrNode( j );
@@ -363,7 +363,7 @@ InstMgr::GetSTEPentity( int index ) {
 SDAI_Application_instance *
 InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index ) {
     MgrNode * node;
-    SDAI_Application_instance *se;
+    SDAI_Application_instance * se;
 
     int count = InstanceCount();
     for( int j = starting_index; j < count; ++j ) {
@@ -380,7 +380,7 @@ InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index
 SDAI_Application_instance *
 InstMgr::GetSTEPentity( const char * entityKeyword, int starting_index ) {
     MgrNode * node;
-    SDAI_Application_instance *se;
+    SDAI_Application_instance * se;
 
     int count = InstanceCount();
     for( int j = starting_index; j < count; ++j ) {

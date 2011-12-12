@@ -28,8 +28,7 @@ STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool 
     _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
     _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
     _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
-    _maxErrorCount( 5000 ), _strict(strict)
-{
+    _maxErrorCount( 5000 ), _strict( strict ) {
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
@@ -92,11 +91,11 @@ const std::string STEPfile::TruncFileName( const std::string filename ) const {
 #else
     char slash = '/';
 #endif
-    size_t l = filename.find_last_of(slash);
+    size_t l = filename.find_last_of( slash );
     if( l == std::string::npos ) {
         return filename;
     } else {
-        return filename.substr(l);
+        return filename.substr( l );
     }
 }
 
@@ -258,7 +257,7 @@ void STEPfile::SetFileIdIncrement() {
     if( instances().MaxFileId() < 0 ) {
         _fileIdIncr = 0;
     } else _fileIdIncr =
-        ( int )( ( ceil( ( ( instances().MaxFileId() + 99.0 ) / 1000.0 ) ) + 1.0 ) * 1000.0 );
+            ( int )( ( ceil( ( ( instances().MaxFileId() + 99.0 ) / 1000.0 ) ) + 1.0 ) * 1000.0 );
 }
 
 
@@ -272,7 +271,7 @@ const std::string STEPfile::schemaName() {
     SdaiFile_schema * fs;
     std::string schName;
     STEPnode * n;
-    
+
     if( _headerInstances == NULL ) {
         return schName;
     }
@@ -297,13 +296,13 @@ const std::string STEPfile::schemaName() {
         schName.clear();
         return schName;
     }
-    if( schName[ schName.length()-1 ] == '\'' ) {
-        schName = schName.substr(1,schName.length()-2);
+    if( schName[ schName.length() - 1 ] == '\'' ) {
+        schName = schName.substr( 1, schName.length() - 2 );
     } else {
         _error.AppendToUserMsg( "In STEPfile::schemaName: schName was truncated." );
         _error.GreaterSeverity( SEVERITY_WARNING );
-        
-        schName = schName.substr(1,schName.length()-1);
+
+        schName = schName.substr( 1, schName.length() - 1 );
     }
     return schName;
 }

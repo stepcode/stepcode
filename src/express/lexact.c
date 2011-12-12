@@ -106,7 +106,7 @@ static struct keyword_entry {
     { "CASE",       TOK_CASE },
     { "CONST_E",        TOK_E },
     { "CONSTANT",       TOK_CONSTANT },
-/*    { "CONTEXT",        TOK_CONTEXT },*/
+    /*    { "CONTEXT",        TOK_CONTEXT },*/
     { "COS",        TOK_BUILTIN_FUNCTION },
     { "DERIVE",     TOK_DERIVE },
     { "DIV",        TOK_DIV },
@@ -115,12 +115,12 @@ static struct keyword_entry {
     { "END_ALIAS",      TOK_END_ALIAS },
     { "END_CASE",       TOK_END_CASE },
     { "END_CONSTANT",   TOK_END_CONSTANT },
-/*    { "END_CONTEXT",    TOK_END_CONTEXT },*/
+    /*    { "END_CONTEXT",    TOK_END_CONTEXT },*/
     { "END_ENTITY",     TOK_END_ENTITY },
     { "END_FUNCTION",   TOK_END_FUNCTION },
     { "END_IF",     TOK_END_IF },
     { "END_LOCAL",      TOK_END_LOCAL },
-/*    { "END_MODEL",      TOK_END_MODEL },*/
+    /*    { "END_MODEL",      TOK_END_MODEL },*/
     { "END_PROCEDURE",  TOK_END_PROCEDURE },
     { "END_REPEAT",     TOK_END_REPEAT },
     { "END_RULE",       TOK_END_RULE },
@@ -157,7 +157,7 @@ static struct keyword_entry {
     { "LOGICAL",        TOK_LOGICAL },
     { "LOINDEX",        TOK_BUILTIN_FUNCTION },
     { "MOD",        TOK_MOD },
-/*    { "MODEL",      TOK_MODEL },*/
+    /*    { "MODEL",      TOK_MODEL },*/
     { "NOT",        TOK_NOT },
     { "NUMBER",     TOK_NUMBER },
     { "NVL",        TOK_BUILTIN_FUNCTION },

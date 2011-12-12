@@ -13,8 +13,9 @@
 */
 
 // this is a default seeinfo that does nothing... thus it is not
-//	dependent on a user interface toolkit
+//  dependent on a user interface toolkit
 
+#include <scl_export.h>
 #ifdef __O3DB__
 #include <OpenOODB.h>
 #endif
@@ -27,23 +28,23 @@ class DisplayNodelist;
 
 #include <editordefines.h>
 
-class seeInfo : public DisplayNode
-{
-public:
-    seeInfo(MgrNode *node, 
-	    SDAI_Application_instance *se,
-	    DisplayNodeList *dnl, displayStateEnum displaySt = mappedWrite);
+class SCL_EDITOR_EXPORT seeInfo : public DisplayNode {
+    public:
+        seeInfo( MgrNode * node,
+                 SDAI_Application_instance * se,
+                 DisplayNodeList * dnl, displayStateEnum displaySt = mappedWrite );
 
-    void *GetSEE()		{ return see; }
+        void * GetSEE()      {
+            return see;
+        }
 };
 
-inline seeInfo::seeInfo(MgrNode *node, SDAI_Application_instance *se,
-		 DisplayNodeList *dnl, displayStateEnum displaySt)
-{
-    mn = node; 
+inline seeInfo::seeInfo( MgrNode * node, SDAI_Application_instance * se,
+                         DisplayNodeList * dnl, displayStateEnum displaySt ) {
+    mn = node;
     see = 0;
-    displayState = displaySt; 
-    dnl->Append(this);
+    displayState = displaySt;
+    dnl->Append( this );
 }
 
 #endif

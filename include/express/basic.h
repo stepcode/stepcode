@@ -72,14 +72,19 @@
  *
  */
 
+#include <scl_cf.h>
+#include <scl_export.h>
 #include <stdio.h>
 
 /******************************/
 /* type Boolean and constants */
 /******************************/
 
-#include <stdbool.h>
-
+#ifdef HAVE_STDBOOL_H
+# include <stdbool.h>
+#else
+# include <scl_stdbool.h>
+#endif
 
 /************************/
 /* Generic pointer type */
@@ -107,7 +112,7 @@ typedef int ( *intFuncptr )();
 /******************************/
 
 #if !defined(static_inline)
-#if !defined(__GNUC__) || defined(__STRICT_ANSI)
+#if (!defined(__GNUC__) && !defined(__MSVC__)) || defined(__STRICT_ANSI)
 #define static_inline
 #undef supports_inline_functions
 #else
@@ -132,7 +137,7 @@ typedef int ( *intFuncptr )();
 #  define PROTO(x)  x
 # else
 
-# ifdef __CLCC__
+# if defined(__CLCC__) || defined(__MSVC__)
 # define PROTO(x)   x
 #else
 # define PROTO(x)   ()

@@ -43,7 +43,7 @@ STEPattribute & STEPattributeList::operator []( int n ) {
     cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
          << __LINE__ << "\n" << _POC_ << "\n\n";
     abort();
-    return *(STEPattribute*) 0;  //will never get here, but gcc produces warning
+    return *( STEPattribute * ) 0; //will never get here, but gcc produces warning
 }
 
 int STEPattributeList::list_length() {
@@ -57,13 +57,13 @@ void STEPattributeList::push( STEPattribute * a ) {
     // TODO: does it break anything?
     AttrListNode * a2 = ( AttrListNode * )head;
     while( a2 && push ) {
-        if (*a == *(a2 -> attr)) {
+        if( *a == *( a2 -> attr ) ) {
             push = false;
         }
         a2 = ( AttrListNode * )( a2->next );
     }
 
-    if (push) {
+    if( push ) {
         AttrListNode * saln = new AttrListNode( a );
         AppendNode( saln );
     }

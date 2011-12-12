@@ -55,9 +55,12 @@
  *
  */
 
+#include <scl_cf.h>
 #define RESOLVE_C
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 #include "express/resolve.h"
 #include "stack.h"
 #include "express/schema.h"
@@ -66,9 +69,9 @@
 extern void exp_pause(); //in fedex.c
 
 #ifdef YYDEBUG
-  extern int yydebug;
+extern int yydebug;
 #else
-  const int yydebug = 0;
+const int yydebug = 0;
 #endif
 
 static void ENTITYresolve_subtypes PROTO( ( Schema ) );
@@ -250,17 +253,17 @@ RESOLVEinitialize( void ) {
  *             t_agg - the current aggregate type
  * Returns: the aggregate type
  */
-Type TYPE_retrieve_aggregate(Type t_select, Type t_agg ) {
-    if ( TYPEis_select(t_select) ) {
+Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
+    if( TYPEis_select( t_select ) ) {
         // parse the underlying types
         LISTdo_links( t_select->u.type->body->list, link )
         // the current underlying type
-        Type t = (Type) link->data;
-        if ( TYPEis_select(t) ) {
+        Type t = ( Type ) link->data;
+        if( TYPEis_select( t ) ) {
             t_agg = TYPE_retrieve_aggregate( t, t_agg );
-        } else if ( TYPEis_aggregate( t ) ) {
-            if ( t_agg ) {
-                if ( t_agg != t->u.type->body->base ) {
+        } else if( TYPEis_aggregate( t ) ) {
+            if( t_agg ) {
+                if( t_agg != t->u.type->body->base ) {
                     // 2 underlying types do not have to the same base
                     return 0;
                 }
@@ -515,10 +518,10 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             }
             if( TYPEis_aggregate( expr->return_type ) ) {
                 t = expr->u.query->aggregate->return_type->u.type->body->base;
-            } else if ( TYPEis_select(expr->return_type)) {
+            } else if( TYPEis_select( expr->return_type ) ) {
                 // retrieve the common aggregate type
-                t = TYPE_retrieve_aggregate(expr->return_type, 0);
-                if (!t) {
+                t = TYPE_retrieve_aggregate( expr->return_type, 0 );
+                if( !t ) {
                     ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
                     resolve_failed( expr );
                     break;
@@ -527,10 +530,10 @@ EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 t = Type_Runtime;
             } else {
                 if( yydebug ) {
-                    fprintf(stderr,"\nquery requires aggregate. expr->return_type->symbol.name: %s at line %d. expr->return_type->u.type->body->type %d,  scope->symbol.name %s at line %d, expr->u.query->aggregate->symbol.name %s at line %d\n",
-                            expr->return_type->symbol.name, expr->return_type->symbol.line,
-                            expr->return_type->u.type->body->type, scope->symbol.name, scope->symbol.line,
-                            expr->u.query->aggregate->symbol.name,expr->u.query->aggregate->symbol.line);
+                    fprintf( stderr, "\nquery requires aggregate. expr->return_type->symbol.name: %s at line %d. expr->return_type->u.type->body->type %d,  scope->symbol.name %s at line %d, expr->u.query->aggregate->symbol.name %s at line %d\n",
+                             expr->return_type->symbol.name, expr->return_type->symbol.line,
+                             expr->return_type->u.type->body->type, scope->symbol.name, scope->symbol.line,
+                             expr->u.query->aggregate->symbol.name, expr->u.query->aggregate->symbol.line );
                 }
                 ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
