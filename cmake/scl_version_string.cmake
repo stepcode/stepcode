@@ -27,20 +27,6 @@ endif()
 
 string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COMMIT_ID} )
 
-set( res_var 1 )
-IF (WIN32)
-    EXECUTE_PROCESS(COMMAND "date" "/T" RESULT_VARIABLE res_var OUTPUT_VARIABLE TIMESTAMP )
-ELSEIF(UNIX)
-    EXECUTE_PROCESS(COMMAND "date" RESULT_VARIABLE res_var OUTPUT_VARIABLE TIMESTAMP )
-ELSE()
-    MESSAGE(WARNING "Unknown platform: date not included in version string")
-ENDIF()
-if( NOT ${res_var} EQUAL 0 )
-    SET( TIMESTAMP "000000" )
-else()
-    string( REPLACE "\n" "" TIMESTAMP ${TIMESTAMP} )
-endif()
-
 set( vstring "//scl_version_string.h - written by cmake. Changes will be lost!\n"
              "#ifndef SCL_VERSION_STRING\n"
              "#define SCL_VERSION_STRING\n\n"
@@ -49,7 +35,7 @@ set( vstring "//scl_version_string.h - written by cmake. Changes will be lost!\n
              "** 'g' is unknown, 5e1fb47 is the first 7 chars of the git sha1 commit id, and\n"
              "** <timestamp> is the output of your system's 'date' command.\n*/\n\n"
              "const char* scl_version() {\n"
-             "    return \"git commit id ${GIT_COMMIT_ID}, built on ${TIMESTAMP}\"\;\n"
+             "    return \"git commit id ${GIT_COMMIT_ID}, built at \"__TIME__\" on \"__DATE__\;\n"
              "}\n\n"
              "#endif\n"
    )
