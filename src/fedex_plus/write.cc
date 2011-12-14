@@ -92,7 +92,7 @@ void ComplexCollect::write( const char * fname )
             maxlevel = clist->getMaxlevel();
     }
     /* Create maxlevel variables, maximum 4 variables for each line */
-    for ( int level = 1; level < maxlevel ; level ++ ) {
+    for ( int level = 1; level <= maxlevel ; level ++ ) {
         if ( ( ( level - 1 ) & 3 ) == 0 ) {
             if ( level > 1 ) {
                 complex << ";\n";
