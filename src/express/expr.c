@@ -72,11 +72,14 @@
 
 #include <scl_cf.h>
 #define EXPRESSION_C
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 #include "express/expr.h"
 #include "express/resolve.h"
+
+#include <assert.h>
 
 #ifdef YYDEBUG
 extern int yydebug;
@@ -92,6 +95,7 @@ static Error ERROR_internal_unrecognized_op_in_EXPresolve;
 static Error ERROR_attribute_reference_on_aggregate;
 static Error ERROR_attribute_ref_from_nonentity;
 static Error ERROR_indexing_illegal;
+static Error ERROR_warn_indexing_mixed;
 static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
@@ -197,6 +201,9 @@ EXPinitialize( void ) {
     ERROR_indexing_illegal = ERRORcreate(
                                  "Indexing is only permitted on aggregates", SEVERITY_ERROR );
 
+    ERROR_warn_indexing_mixed = ERRORcreate( "Indexing upon a select (%s), with mixed base types (aggregates and "
+                                        "non-aggregates) and/or different aggregation types.", SEVERITY_WARNING );
+
     ERROR_enum_no_such_item = ERRORcreate(
                                   "Enumeration type %s does not contain item %s", SEVERITY_ERROR );
 
@@ -214,6 +221,7 @@ EXPinitialize( void ) {
 
     ERRORcreate_warning( "downcast", ERROR_implicit_downcast );
     ERRORcreate_warning( "downcast", ERROR_ambig_implicit_downcast );
+    ERRORcreate_warning( "indexing", ERROR_warn_indexing_mixed );
 
     EXPop_init();
 }
@@ -652,7 +660,7 @@ EXPresolve_op_logical( Expression e, Scope s ) {
 
 Type
 EXPresolve_op_array_like( Expression e, Scope s ) {
-    Type op1type;
+    Type op1type, lasttype = 0;
 
     EXPresolve_op_default( e, s );
     op1type = e->e.op1->return_type;
@@ -663,10 +671,59 @@ EXPresolve_op_array_like( Expression e, Scope s ) {
         return( op1type );
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
-    } else {
-        ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
-        return( Type_Unknown );
+    } else if( TYPEis_select( op1type ) ) {
+
+        /* FIXME Is it possible that the base type hasn't yet been resolved?
+         * If it is possible, we should signal that we need to come back later... but how? */
+        assert( op1type->symbol.resolved == 1 );
+
+        /* FIXME We should check for a not...or excluding non-aggregate types in the select, such as
+         * WR1: NOT('INDEX_ATTRIBUTE.COMMON_DATUM_LIST' IN TYPEOF(base)) OR (SELF\shape_aspect.of_shape = base[1]\shape_aspect.of_shape);
+         * (how?)
+         */
+
+        //count aggregates and non-aggregates, check aggregate types
+        int numAggr = 0, numNonAggr = 0;
+        bool sameAggrType = true;
+        Type lasttype = 0;
+        LISTdo( op1type->u.type->body->list, item, Type ) {
+            if( TYPEis_aggregate( item ) ) {
+                if(yydebug) {
+                    fprintf( stdout, "aggregate %s\n", item->symbol.name );
+                }
+                numAggr++;
+                if( lasttype == TYPE_NULL ) {
+                    lasttype = item;
+                } else {
+                    if( lasttype->u.type->body->type != item->u.type->body->type ) {
+                        sameAggrType = false;
+                    }
+                }
+            } else {
+                if(yydebug) {
+                    fprintf( stdout, "non-aggregate %s\n", item->symbol.name );
+                }
+                numNonAggr++;
+            }
+        } LISTod;
+
+        /* NOTE the following code returns the same data for every case that isn't an error.
+         * It needs to be simplified or extended, depending on whether it works or not. */
+        if( sameAggrType && ( numAggr != 0 ) && ( numNonAggr == 0 ) ) {
+            // All are the same aggregation type
+            return( lasttype->u.type->body->base );
+        } else if( numNonAggr == 0 ) {
+            // All aggregates, but different types
+            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+        } else if( numAggr != 0 ) {
+            // One or more aggregates, one or more nonaggregates
+            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+        }   // Else, all are nonaggregates. This is an error.
     }
+    ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
+    return( Type_Unknown );
 }
 
 Type
