@@ -1,0 +1,5183 @@
+%!PS-Adobe-3.0
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%PageOrder: (atend)
+%%DocumentFonts: (atend)
+%%Creator: Frame 4.0
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+%
+% Frame ps_prolog 4.0, for use with Frame 4.0 products
+% This ps_prolog file is Copyright (c) 1986-1993 Frame Technology
+% Corporation.  All rights reserved.  This ps_prolog file may be
+% freely copied and distributed in conjunction with documents created
+% using FrameMaker, FrameBuilder and FrameViewer as long as this 
+% copyright notice is preserved.
+%
+% Frame products normally print colors as their true color on a color printer
+% or as shades of gray, based on luminance, on a black-and white printer. The
+% following flag, if set to True, forces all non-white colors to print as pure
+% black. This has no effect on bitmap images.
+/FMPrintAllColorsAsBlack             false def
+%
+% Frame products can either set their own line screens or use a printer's 
+% default settings. Three flags below control this separately for no 
+% separations, spot separations and process separations. If a flag
+% is true, then the default printer settings will not be changed. If it is
+% false, Frame products will use their own settings from a table based on
+% the printer's resolution.
+/FMUseDefaultNoSeparationScreen      true  def
+/FMUseDefaultSpotSeparationScreen    true  def
+/FMUseDefaultProcessSeparationScreen false def
+%
+% For any given PostScript printer resolution, Frame products have two sets of 
+% screen angles and frequencies for printing process separations, which are 
+% recomended by Adobe. The following variable chooses the higher frequencies
+% when set to true or the lower frequencies when set to false. This is only
+% effective if the appropriate FMUseDefault...SeparationScreen flag is false.
+/FMUseHighFrequencyScreens true def
+%
+% PostScript Level 2 printers contain an "Accurate Screens" feature which can
+% improve process separation rendering at the expense of compute time. This 
+% flag is ignored by PostScript Level 1 printers.
+/FMUseAcccurateScreens true def
+%
+% The following PostScript procedure defines the spot function that Frame
+% products will use for process separations. You may un-comment-out one of
+% the alternative functions below, or use your own.
+%
+% Dot function
+/FMSpotFunction {abs exch abs 2 copy add 1 gt 
+		{1 sub dup mul exch 1 sub dup mul add 1 sub }
+		{dup mul exch dup mul add 1 exch sub }ifelse } def
+%
+% Line function
+% /FMSpotFunction { pop } def
+%
+% Elipse function
+% /FMSpotFunction { dup 5 mul 8 div mul exch dup mul exch add 
+%		sqrt 1 exch sub } def
+%
+%
+/FMversion (4.0) def 
+/FMLevel1 /languagelevel where {pop languagelevel} {1} ifelse 2 lt def
+/FMPColor
+	FMLevel1 {
+		false
+		/colorimage where {pop pop true} if
+	} {
+		true
+	} ifelse
+def
+/FrameDict 400 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in PS 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} bind def
+	} if
+/FMshowpage /showpage load def
+/FMquit /quit load def
+/FMFAILURE { 
+	dup = flush 
+	FMshowpage 
+	/Helvetica findfont 12 scalefont setfont
+	72 200 moveto
+	show FMshowpage 
+	FMquit 
+	} def 
+/FMVERSION {
+	FMversion ne {
+		(Frame product version does not match ps_prolog!) FMFAILURE
+		} if
+	} def 
+/FMBADEPSF { 
+	(PostScript Lang. Ref. Man., 2nd Ed., H.2.4 says EPS must not call X              )
+	dup dup (X) search pop exch pop exch pop length 
+	4 -1 roll 
+	putinterval 
+	FMFAILURE
+	} def
+/FMLOCAL {
+	FrameDict begin
+	0 def 
+	end 
+	} def 
+/concatprocs
+	{
+	/proc2 exch cvlit def/proc1 exch cvlit def/newproc proc1 length proc2 length add array def
+	newproc 0 proc1 putinterval newproc proc1 length proc2 putinterval newproc cvx
+}def
+FrameDict begin 
+/FMnone 0 def
+/FMcyan 1 def
+/FMmagenta 2 def
+/FMyellow 3 def
+/FMblack 4 def
+/FMcustom 5 def
+/FrameNegative false def 
+/FrameSepIs FMnone def 
+/FrameSepBlack 0 def
+/FrameSepYellow 0 def
+/FrameSepMagenta 0 def
+/FrameSepCyan 0 def
+/FrameSepRed 1 def
+/FrameSepGreen 1 def
+/FrameSepBlue 1 def
+/FrameCurGray 1 def
+/FrameCurPat null def
+/FrameCurColors [ 0 0 0 1 0 0 0 ] def 
+/FrameColorEpsilon .001 def	
+/eqepsilon {		
+	sub dup 0 lt {neg} if
+	FrameColorEpsilon le
+} bind def
+/FrameCmpColorsCMYK { 
+	2 copy 0 get exch 0 get eqepsilon {
+		2 copy 1 get exch 1 get eqepsilon {
+			2 copy 2 get exch 2 get eqepsilon {
+				3 get exch 3 get eqepsilon
+			} {pop pop false} ifelse
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/FrameCmpColorsRGB { 
+	2 copy 4 get exch 0 get eqepsilon {
+		2 copy 5 get exch 1 get eqepsilon {
+			6 get exch 2 get eqepsilon
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/RGBtoCMYK { 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	3 copy 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	dup dup dup 
+	6 1 roll 
+	4 1 roll 
+	7 1 roll 
+	sub 
+	6 1 roll 
+	sub 
+	5 1 roll 
+	sub 
+	4 1 roll 
+} bind def
+/CMYKtoRGB { 
+	dup dup 4 -1 roll add 						  
+	5 1 roll 3 -1 roll add 						  
+	4 1 roll add 								  
+	1 exch sub dup 0 lt {pop 0} if 3 1 roll 	  
+	1 exch sub dup 0 lt {pop 0} if exch 	      
+	1 exch sub dup 0 lt {pop 0} if exch	  		  
+} bind def
+/FrameSepInit {
+	1.0 RealSetgray
+} bind def
+/FrameSetSepColor { 
+	/FrameSepBlue exch def
+	/FrameSepGreen exch def
+	/FrameSepRed exch def
+	/FrameSepBlack exch def
+	/FrameSepYellow exch def
+	/FrameSepMagenta exch def
+	/FrameSepCyan exch def
+	/FrameSepIs FMcustom def
+	setCurrentScreen	
+} bind def
+/FrameSetCyan {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 1.0 def
+	/FrameSepIs FMcyan def
+	setCurrentScreen	
+} bind def
+ 
+/FrameSetMagenta {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 1.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMmagenta def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetYellow {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 1.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMyellow def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetBlack {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 1.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMblack def
+	setCurrentScreen
+} bind def
+ 
+/FrameNoSep { 
+	/FrameSepIs FMnone def
+	setCurrentScreen
+} bind def
+/FrameSetSepColors { 
+	FrameDict begin
+	[ exch 1 add 1 roll ]
+	/FrameSepColors  
+	exch def end
+	} bind def
+/FrameColorInSepListCMYK { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsCMYK 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/FrameColorInSepListRGB { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsRGB 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/RealSetgray /setgray load def
+/RealSetrgbcolor /setrgbcolor load def
+/RealSethsbcolor /sethsbcolor load def
+end 
+/setgray { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+		{ RealSetgray } 
+		{ 
+		FrameSepIs FMblack eq 
+			{ RealSetgray } 
+			{ FrameSepIs FMcustom eq 
+			  FrameSepRed 0 eq and
+			  FrameSepGreen 0 eq and
+			  FrameSepBlue 0 eq and {
+			  	RealSetgray
+			  } {
+				1 RealSetgray pop 
+			  } ifelse
+			} ifelse
+		} ifelse
+	end
+} bind def
+/setrgbcolor { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+	{  RealSetrgbcolor }
+	{
+		3 copy [ 4 1 roll ] 
+		FrameColorInSepListRGB
+		{
+				FrameSepBlue eq exch 
+			 	FrameSepGreen eq and exch 
+			 	FrameSepRed eq and
+			 	{ 0 } { 1 } ifelse
+		}
+		{
+			FMPColor {
+				RealSetrgbcolor
+				currentcmykcolor
+			} {
+				RGBtoCMYK
+			} ifelse
+			FrameSepIs FMblack eq
+			{1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		RealSetgray
+	} 
+	ifelse
+	end
+} bind def
+/sethsbcolor {
+	FrameDict begin
+	FrameSepIs FMnone eq 
+	{ RealSethsbcolor } 
+	{
+		RealSethsbcolor 
+		currentrgbcolor  
+		setrgbcolor 
+	} 
+	ifelse
+	end
+} bind def
+FrameDict begin
+/setcmykcolor where {
+	pop /RealSetcmykcolor /setcmykcolor load def
+} {
+	/RealSetcmykcolor {
+		4 1 roll
+		3 { 3 index add 0 max 1 min 1 exch sub 3 1 roll} repeat 
+		setrgbcolor pop
+	} bind def
+} ifelse
+userdict /setcmykcolor { 
+		FrameDict begin
+		FrameSepIs FMnone eq
+		{ RealSetcmykcolor } 
+		{
+			4 copy [ 5 1 roll ]
+			FrameColorInSepListCMYK
+			{
+				FrameSepBlack eq exch 
+				FrameSepYellow eq and exch 
+				FrameSepMagenta eq and exch 
+				FrameSepCyan eq and 
+				{ 0 } { 1 } ifelse
+			}
+			{
+				FrameSepIs FMblack eq
+				{1.0 exch sub 4 1 roll pop pop pop} {
+				FrameSepIs FMyellow eq
+				{pop 1.0 exch sub 3 1 roll pop pop} {
+				FrameSepIs FMmagenta eq
+				{pop pop 1.0 exch sub exch pop } {
+				FrameSepIs FMcyan eq
+				{pop pop pop 1.0 exch sub } 
+				{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+			} ifelse
+			RealSetgray
+		}
+		ifelse
+		end
+	} bind put
+FMLevel1 not { 
+	
+	/patProcDict 5 dict dup begin
+		<0f1e3c78f0e1c387> { 3 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<0f87c3e1f0783c1e> { 3 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+		<8142241818244281> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke
+											-1 -1 moveto 9 9 lineto stroke } bind def
+		<03060c183060c081> { 1 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<8040201008040201> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+	end def
+	/patDict 15 dict dup begin
+		/PatternType 1 def		
+		/PaintType 2 def		
+		/TilingType 3 def		
+		/BBox [ 0 0 8 8 ] def 	
+		/XStep 8 def			
+		/YStep 8 def			
+		/PaintProc {
+			begin
+			patProcDict bstring known {
+				patProcDict bstring get exec
+			} {
+				8 8 true [1 0 0 -1 0 8] bstring imagemask
+			} ifelse
+			end
+		} bind def
+	end def
+} if
+/combineColor {
+    FrameSepIs FMnone eq
+	{
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceCMYK]] setcolorspace
+			FrameCurColors 0 4 getinterval aload pop FrameCurPat setcolor
+		} {
+			FrameCurColors 3 get 1.0 ge {
+				FrameCurGray RealSetgray
+			} {
+				FMPColor graymode and {
+					0 1 3 { 
+						FrameCurColors exch get
+						1 FrameCurGray sub mul
+					} for
+					RealSetcmykcolor
+				} {
+					4 1 6 {
+						FrameCurColors exch get
+						graymode {
+							1 exch sub 1 FrameCurGray sub mul 1 exch sub
+						} {
+							1.0 lt {FrameCurGray} {1} ifelse
+						} ifelse
+					} for
+					RealSetrgbcolor
+				} ifelse
+			} ifelse
+		} ifelse
+	} { 
+		FrameCurColors 0 4 getinterval aload
+		FrameColorInSepListCMYK {
+			FrameSepBlack eq exch 
+			FrameSepYellow eq and exch 
+			FrameSepMagenta eq and exch 
+			FrameSepCyan eq and
+			FrameSepIs FMcustom eq and
+			{ FrameCurGray } { 1 } ifelse
+		} {
+			FrameSepIs FMblack eq
+			{FrameCurGray 1.0 exch sub mul 1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop FrameCurGray 1.0 exch sub mul 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		graymode FMLevel1 or not {
+			
+			[/Pattern [/DeviceGray]] setcolorspace
+			FrameCurPat setcolor
+		} { 
+			graymode not FMLevel1 and {
+				
+				dup 1 lt {pop FrameCurGray} if
+			} if
+			RealSetgray
+		} ifelse
+	} ifelse
+} bind def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/dmatrix matrix def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+	
+/freq dpi dup 72 div round dup 0 eq {pop 1} if 8 mul div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/dpiranges   [  2540    2400    1693     1270    1200     635      600      0      ] def
+/CMLowFreqs  [ 100.402  94.8683 89.2289 100.402  94.8683  66.9349  63.2456 47.4342 ] def
+/YLowFreqs   [  95.25   90.0    84.65    95.25   90.0     70.5556  66.6667 50.0    ] def
+/KLowFreqs   [  89.8026 84.8528 79.8088  89.8026 84.8528  74.8355  70.7107 53.033  ] def
+/CLowAngles  [  71.5651 71.5651 71.5651 71.5651  71.5651  71.5651  71.5651 71.5651 ] def
+/MLowAngles  [  18.4349 18.4349 18.4349 18.4349  18.4349  18.4349  18.4349 18.4349 ] def
+/YLowTDot    [  true    true    false    true    true     false    false   false   ] def
+/CMHighFreqs [ 133.87  126.491 133.843  108.503 102.523  100.402   94.8683 63.2456 ] def
+/YHighFreqs  [ 127.0   120.0   126.975  115.455 109.091   95.25    90.0    60.0    ] def
+/KHighFreqs  [ 119.737 113.137 119.713  128.289 121.218   89.8026  84.8528 63.6395 ] def
+/CHighAngles [  71.5651 71.5651 71.5651  70.0169 70.0169  71.5651  71.5651 71.5651 ] def
+/MHighAngles [  18.4349 18.4349 18.4349  19.9831 19.9831  18.4349  18.4349 18.4349 ] def
+/YHighTDot   [  false   false   true     false   false    true     true    false   ] def
+/PatFreq     [	10.5833 10.0     9.4055  10.5833 10.0	  10.5833  10.0	   9.375   ] def
+/screenIndex {
+	0 1 dpiranges length 1 sub { dup dpiranges exch get 1 sub dpi le {exit} {pop} ifelse } for
+} bind def
+/getCyanScreen {
+	FMUseHighFrequencyScreens { CHighAngles CMHighFreqs} {CLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getMagentaScreen {
+	FMUseHighFrequencyScreens { MHighAngles CMHighFreqs } {MLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getYellowScreen {
+	FMUseHighFrequencyScreens { YHighTDot YHighFreqs} { YLowTDot YLowFreqs } ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get { 3 div
+			{2 { 1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch} repeat
+			FMSpotFunction } } {/FMSpotFunction load } ifelse
+			0.0 exch
+} bind def
+/getBlackScreen  {
+	FMUseHighFrequencyScreens { KHighFreqs } { KLowFreqs } ifelse
+		screenIndex get 45.0 /FMSpotFunction load 
+} bind def
+/getSpotScreen {
+	getBlackScreen
+} bind def
+/getCompositeScreen {
+	getBlackScreen
+} bind def
+/FMSetScreen 
+	FMLevel1 { /setscreen load 
+	}{ {
+		8 dict begin
+		/HalftoneType 1 def
+		/SpotFunction exch def
+		/Angle exch def
+		/Frequency exch def
+		/AccurateScreens FMUseAcccurateScreens def
+		currentdict end sethalftone
+	} bind } ifelse
+def
+/setDefaultScreen {
+	FMPColor {
+		orgrxfer cvx orggxfer cvx orgbxfer cvx orgxfer cvx setcolortransfer
+	}
+	{
+		orgxfer cvx settransfer
+	} ifelse
+	orgfreq organgle orgproc cvx setscreen
+} bind def
+/setCurrentScreen {
+	FrameSepIs FMnone eq {
+		FMUseDefaultNoSeparationScreen {
+			setDefaultScreen
+		} {
+			getCompositeScreen FMSetScreen
+		} ifelse
+	} {
+		FrameSepIs FMcustom eq {
+			FMUseDefaultSpotSeparationScreen {
+				setDefaultScreen
+			} {
+				getSpotScreen FMSetScreen
+			} ifelse
+		} {
+			FMUseDefaultProcessSeparationScreen {
+				setDefaultScreen
+			} {
+				FrameSepIs FMcyan eq {
+					getCyanScreen FMSetScreen
+				} {
+					FrameSepIs FMmagenta eq {
+						getMagentaScreen FMSetScreen
+					} {
+						FrameSepIs FMyellow eq {
+							getYellowScreen FMSetScreen
+						} {
+							getBlackScreen FMSetScreen
+						} ifelse
+					} ifelse
+				} ifelse
+			} ifelse
+		} ifelse
+	} ifelse 
+} bind def
+end
+	/gstring FMLOCAL
+	/gfile FMLOCAL
+	/gindex FMLOCAL
+	/orgrxfer FMLOCAL
+	/orggxfer FMLOCAL
+	/orgbxfer FMLOCAL
+	/orgxfer FMLOCAL
+	/orgproc FMLOCAL
+	/orgrproc FMLOCAL
+	/orggproc FMLOCAL
+	/orgbproc FMLOCAL
+	/organgle FMLOCAL
+	/orgrangle FMLOCAL
+	/orggangle FMLOCAL
+	/orgbangle FMLOCAL
+	/orgfreq FMLOCAL
+	/orgrfreq FMLOCAL
+	/orggfreq FMLOCAL
+	/orgbfreq FMLOCAL
+	/yscale FMLOCAL
+	/xscale FMLOCAL
+	/edown FMLOCAL
+	/manualfeed FMLOCAL
+	/paperheight FMLOCAL
+	/paperwidth FMLOCAL
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne /manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	0 ne /FrameNegative exch def 
+	0 ne /edown exch def 
+	/yscale exch def
+	/xscale exch def
+	FMLevel1 {
+		manualfeed {setmanualfeed} if
+		/FMdicttop countdictstack 1 add def 
+		/FMoptop count def 
+		setpapername 
+		manualfeed {true} {papersize} ifelse 
+		{manualpapersize} {false} ifelse 
+		{desperatepapersize} {false} ifelse 
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		count -1 FMoptop {pop pop} for
+		countdictstack -1 FMdicttop {pop end} for 
+		}
+		{{1 dict dup /PageSize [paperwidth paperheight]put setpagedevice}stopped
+		{ (Can't select requested paper size for Frame print job!) FMFAILURE } if
+		 {1 dict dup /ManualFeed manualfeed put setpagedevice } stopped pop }
+	ifelse 
+	
+	FMPColor {
+		currentcolorscreen
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+			cvlit /orgbproc exch def
+				  /orgbangle exch def 
+				  /orgbfreq exch def
+			cvlit /orggproc exch def
+				  /orggangle exch def 
+				  /orggfreq exch def
+			cvlit /orgrproc exch def
+				  /orgrangle exch def 
+				  /orgrfreq exch def
+			currentcolortransfer 
+			FrameNegative {
+				1 1 4 { 
+					pop { 1 exch sub } concatprocs 4 1 roll
+				} for
+				4 copy
+				setcolortransfer
+			} if
+			cvlit /orgxfer exch def
+			cvlit /orgbxfer exch def
+			cvlit /orggxfer exch def
+			cvlit /orgrxfer exch def
+	} {
+		currentscreen 
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+				  
+		currenttransfer 
+		FrameNegative {
+			{ 1 exch sub } concatprocs
+			dup settransfer
+		} if 
+		cvlit /orgxfer exch def
+	} ifelse
+	end 
+} def 
+/pagesave FMLOCAL
+/orgmatrix FMLOCAL
+/landscape FMLOCAL
+/pwid FMLOCAL
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch dup /pwid exch def neg translate pop 
+	}{
+		pop /pwid exch def
+	} ifelse
+	edown { [-1 0 0 1 pwid 0] concat } if
+	0 0 moveto paperwidth 0 lineto paperwidth paperheight lineto 
+	0 paperheight lineto 0 0 lineto 1 setgray fill
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin dup
+	array /fillvals exch def
+	dict /patCache exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	0.0 0.0 moveto
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+	/fx FMLOCAL
+	/fy FMLOCAL
+	/fh FMLOCAL
+	/fw FMLOCAL
+	/llx FMLOCAL
+	/lly FMLOCAL
+	/urx FMLOCAL
+	/ury FMLOCAL
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+% See Adobe's "PostScript Language Reference Manual, 2nd Edition", page 714.
+% "...the following operators MUST NOT be used in an EPS file:" (emphasis ours)
+	/banddevice {(banddevice) FMBADEPSF} def
+	/clear {(clear) FMBADEPSF} def
+	/cleardictstack {(cleardictstack) FMBADEPSF} def 
+	/copypage {(copypage) FMBADEPSF} def
+	/erasepage {(erasepage) FMBADEPSF} def
+	/exitserver {(exitserver) FMBADEPSF} def
+	/framedevice {(framedevice) FMBADEPSF} def
+	/grestoreall {(grestoreall) FMBADEPSF} def
+	/initclip {(initclip) FMBADEPSF} def
+	/initgraphics {(initgraphics) FMBADEPSF} def
+	/initmatrix {(initmatrix) FMBADEPSF} def
+	/quit {(quit) FMBADEPSF} def
+	/renderbands {(renderbands) FMBADEPSF} def
+	/setglobal {(setglobal) FMBADEPSF} def
+	/setpagedevice {(setpagedevice) FMBADEPSF} def
+	/setshared {(setshared) FMBADEPSF} def
+	/startjob {(startjob) FMBADEPSF} def
+	/lettertray {(lettertray) FMBADEPSF} def
+	/letter {(letter) FMBADEPSF} def
+	/lettersmall {(lettersmall) FMBADEPSF} def
+	/11x17tray {(11x17tray) FMBADEPSF} def
+	/11x17 {(11x17) FMBADEPSF} def
+	/ledgertray {(ledgertray) FMBADEPSF} def
+	/ledger {(ledger) FMBADEPSF} def
+	/legaltray {(legaltray) FMBADEPSF} def
+	/legal {(legal) FMBADEPSF} def
+	/statementtray {(statementtray) FMBADEPSF} def
+	/statement {(statement) FMBADEPSF} def
+	/executivetray {(executivetray) FMBADEPSF} def
+	/executive {(executive) FMBADEPSF} def
+	/a3tray {(a3tray) FMBADEPSF} def
+	/a3 {(a3) FMBADEPSF} def
+	/a4tray {(a4tray) FMBADEPSF} def
+	/a4 {(a4) FMBADEPSF} def
+	/a4small {(a4small) FMBADEPSF} def
+	/b4tray {(b4tray) FMBADEPSF} def
+	/b4 {(b4) FMBADEPSF} def
+	/b5tray {(b5tray) FMBADEPSF} def
+	/b5 {(b5) FMBADEPSF} def
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fw 2 div add fy fh 2 div add  translate
+	rotate
+	fw 2 div neg fh 2 div neg translate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count def 
+	} bind def
+/FMENDEPSF {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} bind def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} bind def
+	/papersizedict FMLOCAL
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} bind def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	statusdict begin stopped end 
+	} bind def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} bind def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped 
+		end
+		} {true} ifelse 
+	} bind def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+FMPColor 
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	}
+ifelse
+/K { 
+	FMPrintAllColorsAsBlack {
+		dup 1 eq 2 index 1 eq and 3 index 1 eq and not
+			{7 {pop} repeat 0 0 0 1 0 0 0} if
+	} if 
+	FrameCurColors astore 
+	pop combineColor
+} bind def
+/graymode true def
+	/bwidth FMLOCAL
+	/bpside FMLOCAL
+	/bstring FMLOCAL
+	/onbits FMLOCAL
+	/offbits FMLOCAL
+	/xindex FMLOCAL
+	/yindex FMLOCAL
+	/x FMLOCAL
+	/y FMLOCAL
+/setPatternMode {
+	FMLevel1 {
+		/bwidth  exch def
+		/bpside  exch def
+		/bstring exch def
+		/onbits 0 def  /offbits 0 def
+		freq sangle landscape {90 add} if 
+			{/y exch def
+			 /x exch def
+			 /xindex x 1 add 2 div bpside mul cvi def
+			 /yindex y 1 add 2 div bpside mul cvi def
+			 bstring yindex bwidth mul xindex 8 idiv add get
+			 1 7 xindex 8 mod sub bitshift and 0 ne FrameNegative {not} if
+			 {/onbits  onbits  1 add def 1}
+			 {/offbits offbits 1 add def 0}
+			 ifelse
+			}
+			setscreen
+		offbits offbits onbits add div FrameNegative {1.0 exch sub} if
+		/FrameCurGray exch def
+	} { 
+		pop pop
+		dup patCache exch known {
+			patCache exch get
+		} { 
+			dup
+			patDict /bstring 3 -1 roll put
+			patDict 
+			9 PatFreq screenIndex get div dup matrix scale
+			makepattern
+			dup 
+			patCache 4 -1 roll 3 -1 roll put
+		} ifelse
+		/FrameCurGray 0 def
+		/FrameCurPat exch def
+	} ifelse
+	/graymode false def
+	combineColor
+} bind def
+/setGrayScaleMode {
+	graymode not {
+		/graymode true def
+		FMLevel1 {
+			setCurrentScreen
+		} if
+	} if
+	/FrameCurGray exch def
+	combineColor
+} bind def
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	
+/PFill {
+	graymode FMLevel1 or not {
+		gsave 1 setgray eofill grestore
+	} if
+} bind def
+/PStroke {
+	graymode FMLevel1 or not {
+		gsave 1 setgray stroke grestore
+	} if
+	stroke
+} bind def
+	/fillvals FMLOCAL
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setPatternMode} 
+	{setGrayScaleMode}
+	ifelse
+	} bind def
+/V { 
+	PFill gsave eofill grestore
+	} bind def
+/Vclip {
+	clip
+	} bind def
+/Vstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/N { 
+	PStroke
+	} bind def
+/Nclip {
+	strokepath clip newpath
+	} bind def
+/Nstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+	/n FMLOCAL
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+	/x1 FMLOCAL
+	/x2 FMLOCAL
+	/y1 FMLOCAL
+	/y2 FMLOCAL
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+	/rad FMLOCAL
+/rarc 
+	{rad 
+	 arcto
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	mark
+	newpath
+	{
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rarc
+	x2 y2 x2 y1 rarc
+	x2 y1 x1 y1 rarc
+	x1 y1 x1 y2 rarc
+	closepath
+	} stopped {x1 y1 x2 y2 R} if 
+	cleartomark
+	} bind def
+/RRR { 
+	/rad exch def
+	normalize /y4 exch def /x4 exch def
+	normalize /y3 exch def /x3 exch def
+	normalize /y2 exch def /x2 exch def
+	normalize /y1 exch def /x1 exch def
+	newpath
+	normalize moveto 
+	mark
+	{
+	x2 y2 x3 y3 rarc
+	x3 y3 x4 y4 rarc
+	x4 y4 x1 y1 rarc
+	x1 y1 x2 y2 rarc
+	closepath
+	} stopped
+	 {x1 y1 x2 y2 x3 y3 x4 y4 newpath moveto lineto lineto lineto closepath} if
+	cleartomark
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	setCurrentScreen
+} bind def
+/CP { 
+	grestore
+	gsave
+	Y 
+	clip
+	setCurrentScreen
+} bind def
+	/FMpointsize FMLOCAL
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	PFill fill
+	grestore
+	} bind def
+/Gstrk {
+	savematrix
+    newpath
+    2 index 2 div add exch 3 index 2 div sub exch 
+    normalize 2 index 2 div sub exch 3 index 2 div add exch 
+    translate
+    scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+    } bind def
+/Gclip { 
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	clip newpath
+	restorematrix
+	} bind def
+/GG { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	rotate 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath
+	PFill
+	fill
+	grestore
+	} bind def
+/GGclip { 
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	clip newpath
+	restorematrix
+	} bind def
+/GGstrk { 
+	savematrix
+    newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath 
+	restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/Aclip {
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	strokepath clip newpath
+	restorematrix
+} bind def
+/Astrk {
+	Gstrk
+} bind def
+/AA { 
+	gsave
+	savematrix
+	newpath
+	
+	3 index 2 div add exch 4 index 2 div sub exch 
+	
+	normalize 3 index 2 div sub exch 4 index 2 div add exch
+	translate 
+	rotate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/AAclip {
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	strokepath clip newpath
+	restorematrix
+} bind def
+/AAstrk {
+	GGstrk
+} bind def
+	/x FMLOCAL
+	/y FMLOCAL
+	/w FMLOCAL
+	/h FMLOCAL
+	/xx FMLOCAL
+	/yy FMLOCAL
+	/ww FMLOCAL
+	/hh FMLOCAL
+	/FMsaveobject FMLOCAL
+	/FMoptop FMLOCAL
+	/FMdicttop FMLOCAL
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 7 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+	/str FMLOCAL
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+	/sl FMLOCAL
+	/val FMLOCAL
+	/ws FMLOCAL
+	/im FMLOCAL
+	/bs FMLOCAL
+	/cs FMLOCAL
+	/len FMLOCAL
+	/pos FMLOCAL
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/rip { 
+	   
+	  
+	  bis ris copy pop 
+      is
+      0
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop 
+	  ris gis copy pop 
+	  dup is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  gis bis copy pop 
+	  dup add is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+      pop 
+      
+      } bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+	/h FMLOCAL
+	/w FMLOCAL
+	/d FMLOCAL
+	/lb FMLOCAL
+	/bitmapsave FMLOCAL
+	/is FMLOCAL
+	/cf FMLOCAL
+/wbytes { 
+      dup dup
+      24 eq { pop pop 3 mul }
+      { 8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse } ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+		 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	r                    
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/r exch def
+	/d exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def 
+	r                    
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+	/gryt FMLOCAL
+	/blut FMLOCAL
+	/grnt FMLOCAL
+	/redt FMLOCAL
+	/indx FMLOCAL
+	/cynu FMLOCAL
+	/magu FMLOCAL
+	/yelu FMLOCAL
+	/k FMLOCAL
+	/u FMLOCAL
+FMLevel1 {
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/k cynu magu min yelu min def
+		/u k currentundercolorremoval exec def
+%		/u 0 def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 k currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+}
+{
+/colorSetup2 {
+	[ /Indexed /DeviceRGB 255 
+		{dup red exch get 255 div 
+		 exch dup green exch get 255 div 
+		 exch blue exch get 255 div}
+	] setcolorspace
+} bind def
+} ifelse
+	/tran FMLOCAL
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch concatprocs settransfer
+} bind def
+/BITMAPCOLOR { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/bitmapsave save def
+	FMLevel1 {	
+		colorsetup
+		/is w d wbytes string def
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	} {
+		colorSetup2
+		/is w d wbytes string def
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {cf is readhexstring pop} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/d 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	FMLevel1 {	
+		colorsetup
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		w h d [w 0 0 h neg 0 h] 
+		{ip} {is} {is} true 3 colorimage
+	} {
+		colorSetup2
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width w def
+			/Height h def
+			/ImageMatrix [w 0 0 h neg 0 h] def
+			/DataSource {ip} bind def
+			/BitsPerComponent d def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+	/d 24 def
+        gsave
+ 	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris} {gis} {bis} true 3 colorimage
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUECOLOR { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+	/d 24 def
+        gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 w getinterval def	
+	/gis im w w getinterval def	
+	/bis im w 2 mul w getinterval def 
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {w rip pop ris gis bis w gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/ww FMLOCAL
+/r FMLOCAL
+/g FMLOCAL
+/b FMLOCAL
+/i FMLOCAL
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop w gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDsave FMLOCAL
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+/I { setdash } bind def
+/J { [] 0 setdash } bind def
+%%EndProlog
+%%BeginSetup
+(4.0) FMVERSION
+1 1 0 0 612 792 0 1 9 FMDOCUMENT
+0 0 /Times-Bold FMFONTDEFINE
+1 0 /Times-Roman FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 0.1 FMFILL
+2 0.3 FMFILL
+3 0.5 FMFILL
+4 0.7 FMFILL
+5 0.9 FMFILL
+6 0.97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 0.9 FMFILL
+18 0.7 FMFILL
+19 0.5 FMFILL
+20 0.3 FMFILL
+21 0.1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "1" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+J
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 18 Q
+0 X
+0 0 0 1 0 0 0 K
+(Table of Contents) 237.5 708 T
+0 14 Q
+(1 Introduction) 108 680.67 T
+(......................................................................................) 196 680.67 T
+(1) 497 680.67 T
+(2 AP Development Process) 108 657.67 T
+(.................................................................) 269.5 657.67 T
+(2) 497 657.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(2.1 AP Project Definition) 126 641 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(...................................................................................) 249 641 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(2) 498 641 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(2.2 AP Information Requirements) 126 627 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(.....................................................................) 291 627 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(4) 498 627 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(2.3 AP Interpretation) 126 613 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..........................................................................................) 228 613 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(4) 498 613 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(2.4 Complete AP) 126 599 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(................................................................................................) 210 599 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(5) 498 599 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3 Functional Specifications) 108 576.67 T
+(.................................................................) 269.5 576.67 T
+(6) 497 576.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(3.1 AP Project Definition) 126 560 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(...................................................................................) 249 560 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(6) 498 560 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.1.1 Scope and Requirements Development) 144 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..............................................) 360 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(6) 498 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.1.2 Application Activity Model Development) 144 532 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..........................................) 372 532 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(7) 498 532 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.2 AP Information Requirements) 126 518 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(.....................................................................) 291 518 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(7) 498 518 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.2.1 Application Reference Model Development) 144 504 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(......................................) 384 504 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(7) 498 504 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.3 AP Interpretation/AIM Development) 126 490 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..........................................................) 324 490 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(8) 498 490 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.3.1 AP Interpretation) 144 476 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(.................................................................................) 255 476 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(8) 498 476 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.3.2 AIM Development) 144 462 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..............................................................................) 264 462 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(9) 498 462 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.4 Complete AP) 126 448 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(................................................................................................) 210 448 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(9) 498 448 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.4.1 Document Production) 144 434 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(.........................................................................) 279 434 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(9) 498 434 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.5 Support Functions) 126 420 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(......................................................................................) 234 420 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(10) 492 420 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.5.1 Methodological Support) 144 406 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(....................................................................) 288 406 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(10) 492 406 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.5.2 Workflow and Version Control) 144 392 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(........................................................) 324 392 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(11) 492 392 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(3.5.3 Issue Management) 144 378 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(............................................................................) 264 378 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(11) 492 378 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(4 Conclusion) 108 355.67 T
+(.......................................................................................) 185.5 355.67 T
+(12) 490 355.67 T
+(Appendix A: References) 108 332.67 T
+(...................................................................) 255.5 332.67 T
+(13) 490 332.67 T
+(Appendix B: Functional Requirements) 108 309.67 T
+(...........................................) 339.5 309.67 T
+(15) 490 309.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(B.1 APDE Customers) 126 293 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(......................................................................................) 234 293 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(15) 492 293 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(B.2 Customer Requirements) 126 279 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(............................................................................) 264 279 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(15) 492 279 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(B.3 Predictive Metrics) 126 265 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(.....................................................................................) 237 265 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(16) 492 265 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(B.4 QFD Results) 126 251 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(..............................................................................................) 210 251 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(17) 492 251 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "1" 1
+%%Page: "2" 2
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 18 Q
+0 X
+0 0 0 1 0 0 0 K
+(Disclaimer) 72 708 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(No approval or endorsement of any commercial product by the National Institute of) 126 680 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Standards and Technology is intended or implied.) 126 666 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.48 (This publication was prepared by United States Government employees as part of their) 126 646 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(official duties and is, therefore, a work of the U.S. Government and not subject to) 126 632 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(copyright.) 126 618 T
+0 0 0 1 0 0 0 K
+0 18 Q
+(Acknowledgement) 72 582 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.16 (The National PDES Testbed project is funded by the Computer-aided Acquisition and) 126 554 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Logistic Support \050CALS\051 Office of the U.S. Department of Defense.) 126 540 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "2" 2
+%%Page: "3" 3
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 24 Q
+0 X
+0 0 0 1 0 0 0 K
+(Specifications for an Application) 138.32 704 T
+(Protocol Development Environment) 121.36 678 T
+0 14 Q
+(Stephen Nowland Clark) 234.05 642.67 T
+(Allison Barnard Feeney) 234.83 618.67 T
+(James E. Fowler) 256.43 594.67 T
+0 18 Q
+(1) 72 536 T
+(Introduction) 126 536 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.62 (The emerging international Standard for the Exchange of Product Model Data \050STEP) 126 504.8 P
+0 0 0 1 0 0 0 K
+1 9.6 Q
+-0.49 (1) 528.82 509.6 P
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.62 (\051) 533.62 504.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(comprises five distinct types of specifications) 126 487.6 T
+0 0 0 1 0 0 0 K
+1 9.6 Q
+(2) 344.98 492.4 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(. \322Implementation Specifications\323) 349.78 487.6 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.4 (provide descriptions of mechanisms for the actual exchange of STEP data \050e.g., a clear) 126 473.6 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(text exchange file format [4]\051. \322Description Methods\323 provide techniques for) 126 459.42 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.18 (specifying STEP \050e.g., the EXPRESS information modeling language [3]\051.\322Integrated) 126 445.23 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.59 (Resources\323 provide information models describing generic constructs which are useful) 126 431.23 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.1 (in a wide variety of product descriptions \050e.g., geometry [5]\051. \322Application Protocols\323) 126 417.05 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(are the Parts of STEP which combine components of Integrated Resources, select) 126 403.05 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.6 (implementation mechanisms, and use the Description Methods to specify what product) 126 389.05 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(data is to be exchanged and the meaning of that data in a particular industrial context) 126 375.05 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.3 (\050e.g., associative drafting [6]\051. In essence, Application Protocols \050APs\051 are the Parts of) 126 360.86 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(STEP which are implementable. Thus it can be expected that CAx) 126 343.67 T
+0 0 0 1 0 0 0 K
+1 9.6 Q
+(3) 444.29 348.46 T
+0 0 0 1 0 0 0 K
+1 12 Q
+( vendors will) 449.09 343.67 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.22 (provide mechanisms in their products which will facilitate data exchange according to) 126 329.67 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.25 (particular APs. A thorough introduction to STEP and its constituent specifications can) 126 315.67 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(be found in \322Overview and Fundamental Principles\323 [2].) 126 301.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The National PDES Testbed program at the National Institute of Standards and) 126 281.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Technology is focused on the development and implementation of STEP. Principal) 126 267.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(funding for the National PDES Testbed program comes from the Department of) 126 253.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Defense Computer-aided Acquisition and Logistic Support \050CALS\051 office. There are) 126 239.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(several projects within the National PDES Testbed; among these is the effort to) 126 225.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(establish an Application Protocol Development Environment \050APDE\051, a software) 126 211.48 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(environment supporting the development of APs.) 126 197.48 T
+0 0 0 1 0 0 0 K
+72 156 540 171 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+81 169 225 169 2 L
+0.5 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 -208 1000 792 C
+0 0 0 1 0 0 0 K
+1 10 Q
+0 X
+0 0 0 1 0 0 0 K
+-0.05 (1.) 90 149.33 P
+-0.05 (STEP is being standardized under the auspices of the International Organization for Standardization \050ISO\051) 97.5 149.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.33 (Technical Committee 184 \050TC184\051 Subcommittee 4 \050SC4\051. The term PDES \050Product Data Exchange using) 90 137.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(STEP\051 refers to the United States\325 effort contributing to this standardization process.) 90 125.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.22 (2.) 90 113.33 P
+0.22 (STEP will be released as a collection of specifications; each individual specification is known as a \322Part\323) 97.5 113.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(of STEP.) 90 101.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.13 (3.) 90 89.33 P
+0.13 (The term \322CAx\323 refers to any type of engineering, manufacturing, or operations software application sys-) 97.5 89.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(tem, e.g., Computer-Aided Design \050CAD\051, Computer-Aided Process Planning \050CAPP\051, etc.) 90 77.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "3" 3
+%%Page: "4" 4
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(This report documents the specifications for the APDE. These specifications describe) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.43 (the planned functional capabilities of the software environment. Requirements derived) 126 698 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(from the experiences of current AP developers [1] form the basis of the specified) 126 683.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.26 (functionality. Those requirements have been collated into a form which can be used to) 126 669.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(compare candidate implementation approaches and thereby assist with design of the) 126 655.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(APDE \050see Appendix B\051.) 126 641.63 T
+0 0 0 1 0 0 0 K
+0 18 Q
+(2) 72 605.63 T
+(AP Development Process) 126 605.63 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.23 (The purpose of this section is to give an overview of the AP development process. For) 126 577.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(complete details of the process the reader is urged to consult the AP Guidelines) 126 563.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(document [11]. It is important to note that no commercial software tools are currently) 126 549.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.3 (available which are specifically intended to facilitate the AP development process. AP) 126 535.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(developers currently use an ad hoc collection of document processing software,) 126 521.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.3 (information modeling software, and virtually anything else available which may make) 126 507.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(their task easier.) 126 493.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.48 (The relationships among the components of an AP are many and complex. A large part) 126 473.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.14 (of the work of an AP developer is making sure that the pieces of the AP are consistent) 126 459.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(with one another. Changes to one portion of an AP will often impact several other) 126 445.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(sections. AP components are also related to the Integrated Resources \050IRs\051. AP) 126 431.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(developers rely on information and documentation in the IRs to produce the AP) 126 417.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documentation. Figure 1 shows the relationships between AP components and the) 126 403.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Integrated Resources that must be maintained in the APDE.) 126 389.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The bold boxes in Figure 1 represent the conceptual components of an AP. The small) 126 369.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(boxes in the shaded areas represent documentation sub-components of the conceptual) 126 355.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(components. Boxes with dashed edges represent documentation that is informative) 126 341.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\050supplemental explanatory information\051 to the AP, while boxes with solid edges) 126 327.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(represent normative documentation \050constituting directives of the standard\051. The) 126 313.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(arrows show dependencies. Arrows are drawn to components that depend on the) 126 299.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(originating component. The bold arrows indicate the flow of information between the) 126 285.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(high level components.) 126 271.45 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(2.1) 72 244.11 T
+(AP Project Definition) 126 244.11 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.08 (An AP development project is initiated by documenting, in English prose, an industry) 126 223.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.24 (need for the AP, thereby establishing the requirement for the proposed AP in STEP. A) 126 209.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(high-level statement of scope is agreed upon \050and updated as the AP becomes better) 126 195.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.42 (defined\051. In order to further document and clarify the industry need, the AP developers) 126 181.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.35 (produce an Application Activity Model \050AAM\051, which specifies the processes that use) 126 167.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and produce product data in the application context to be addressed by the AP. The) 126 153.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AAM is documented using IDEF0 [7] methodology. Once a comprehensive AAM is) 126 139.26 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.68 (developed, each element of the AAM is examined and a determination is made whether) 126 125.26 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the element is in or out of scope, based on the intended use of the AP. The scope) 126 111.26 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.28 (statement, the completed AAM, and a Candidate AP Summary sheet are submitted for) 126 97.26 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(approval as an ISO AP project.) 126 83.26 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "4" 4
+%%Page: "5" 5
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+459.43 678.29 464.63 675.29 459.43 672.29 3 L
+0.5 H
+0 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+384.98 675.29 464.38 675.29 2 L
+2 Z
+N
+73.63 358.62 348.56 456.01 R
+5 X
+V
+2 H
+0 Z
+N
+315.36 379.06 339.26 435.87 R
+7 X
+V
+0.5 H
+0 X
+N
+1 10 Q
+(Units of) 0 -270 326.64 381.97 TF
+(Functionality) 0 -270 335.49 380.95 TF
+71.07 492.68 409.43 590.07 R
+5 X
+V
+2 H
+N
+72 225.61 219.79 319.09 R
+V
+N
+79.82 103.12 111.68 176.16 R
+7 X
+V
+0 X
+N
+1 14 Q
+(Scope &) 0 -270 91.96 108.85 TF
+79.82 237.03 111.68 310.07 R
+7 X
+V
+0 X
+N
+(AAM) 0 -270 98.11 243.54 TF
+79.82 370.94 111.68 443.98 R
+7 X
+V
+0 X
+N
+(ARM) 0 -270 98.11 377.49 TF
+79.82 504.85 111.68 577.9 R
+7 X
+V
+0 X
+N
+(AIM) 0 -270 98.11 511.63 TF
+79.82 638.77 111.68 711.81 R
+7 X
+V
+0 X
+N
+(Conformance) 0 -270 91.96 637.28 TF
+(Testing) 0 -270 106.12 638.96 TF
+(Introduction) 0 -270 106.12 107.84 TF
+123.15 245.15 147.04 301.96 R
+7 X
+V
+0.5 H
+8 X
+N
+1 10 Q
+0 X
+(AAM) 0 -270 133.69 248.51 TF
+378.93 512.97 402.83 569.78 R
+7 X
+V
+0 X
+N
+(AICs) 0 -270 393.9 516.44 TF
+314.99 512.97 338.88 569.78 R
+7 X
+V
+8 X
+N
+0 X
+(AIM) 0 -270 325.53 516.52 TF
+251.04 512.97 274.94 569.78 R
+7 X
+V
+0 X
+N
+(Annotated) 0 -270 261.58 515.43 TF
+187.1 512.97 210.99 569.78 R
+7 X
+V
+0 X
+N
+(Short Form) 0 -270 202.06 515.23 TF
+123.15 512.97 147.04 569.78 R
+7 X
+V
+0 X
+N
+(Mapping) 0 -270 133.69 515.71 TF
+187.22 379.06 211.12 435.87 R
+7 X
+V
+8 X
+N
+0 X
+(ARM) 0 -270 197.76 382.45 TF
+187.1 245.15 210.99 301.96 R
+7 X
+V
+8 X
+N
+0 X
+(AAM) 0 -270 197.63 248.51 TF
+(Table) 0 -270 142.54 516.36 TF
+(Listing) 0 -270 270.43 516.09 TF
+465.66 638.77 497.52 711.81 R
+7 X
+V
+2 H
+0 X
+N
+1 14 Q
+(Definitions) 0 -270 483.95 643.79 TF
+123.15 379.06 147.04 435.87 R
+7 X
+V
+0.5 H
+0 X
+N
+1 10 Q
+(Application) 0 -270 133.69 381.25 TF
+(Objects) 0 -270 142.54 382.07 TF
+251.29 379.06 275.19 435.87 R
+7 X
+V
+0 X
+N
+(Application) 0 -270 261.83 381.25 TF
+(Assertions) 0 -270 270.68 381.49 TF
+(Definitions) 0 -270 206.48 247.45 TF
+465.66 370.94 497.52 443.98 R
+7 X
+V
+2 H
+0 X
+N
+1 14 Q
+(Foreword) 0 -270 483.95 376.39 TF
+465.66 504.85 497.52 577.9 R
+7 X
+V
+0 X
+N
+(Normative) 0 -270 478.79 510.03 TF
+(References) 0 -270 491.18 509.92 TF
+1 10 Q
+(Diagrams) 0 -270 142.54 247.75 TF
+(Diagrams) 0 -270 206.61 381.66 TF
+(Diagrams) 0 -270 334.38 515.57 TF
+91.25 229.24 95.75 237.03 100.25 229.24 3 L
+N
+95.75 176.16 95.75 236.03 2 L
+7 X
+V
+2 Z
+0 X
+N
+91.25 363.15 95.75 370.94 100.25 363.15 3 L
+0 Z
+N
+95.75 310.07 95.75 369.94 2 L
+7 X
+V
+2 Z
+0 X
+N
+91.25 497.06 95.75 504.85 100.25 497.06 3 L
+0 Z
+N
+95.75 443.98 95.75 503.85 2 L
+7 X
+V
+2 Z
+0 X
+N
+91.25 630.97 95.75 638.77 100.25 630.97 3 L
+0 Z
+N
+95.75 577.9 95.75 637.77 2 L
+7 X
+V
+2 Z
+0 X
+N
+132.1 507.77 135.1 512.97 138.1 507.77 3 L
+0.5 H
+0 Z
+N
+135.1 435.87 135.1 512.72 2 L
+7 X
+V
+2 Z
+0 X
+N
+149.71 507.6 147.04 512.97 153.03 512.6 3 L
+0 Z
+N
+263.24 435.87 147.25 512.83 2 L
+7 X
+V
+2 Z
+0 X
+N
+181.9 544.38 187.1 541.38 181.9 538.38 3 L
+0 Z
+N
+147.04 541.38 186.85 541.38 2 L
+7 X
+V
+2 Z
+0 X
+N
+245.85 544.38 251.04 541.38 245.85 538.38 3 L
+0 Z
+N
+210.99 541.38 250.79 541.38 2 L
+7 X
+V
+2 Z
+0 X
+N
+309.79 544.38 314.99 541.38 309.79 538.38 3 L
+0 Z
+N
+274.94 541.38 314.74 541.38 2 L
+7 X
+V
+2 Z
+0 X
+N
+246.1 410.46 251.29 407.46 246.1 404.46 3 L
+0 Z
+N
+211.12 407.46 251.04 407.46 2 L
+7 X
+V
+2 Z
+0 X
+N
+152.24 404.46 147.04 407.46 152.24 410.46 3 L
+0 Z
+N
+187.22 407.46 147.29 407.46 2 L
+7 X
+V
+2 Z
+0 X
+N
+385.26 510.87 390.88 512.97 389.89 507.05 3 L
+0 Z
+N
+327.31 435.87 390.72 512.78 2 L
+7 X
+V
+2 Z
+0 X
+N
+270 360 91.35 20.29 289.65 513.72 A
+198.04 507.73 198.31 513.72 203.37 510.5 3 L
+0 Z
+N
+2 Z
+180 270 91.35 20.29 289.65 513.72 A
+270 360 60.69 10.37 320.31 514.02 A
+261.34 508.28 259.61 514.03 265.45 512.65 3 L
+0 Z
+N
+2 Z
+180 270 60.69 10.37 320.31 514.02 A
+268.85 571.08 262.99 569.79 264.8 575.5 3 L
+0 Z
+N
+348.85 648.23 263.17 569.95 2 L
+2 Z
+N
+205.04 569.79 199.04 569.79 202.04 574.98 3 L
+0 Z
+N
+348.85 656.35 199.26 569.91 2 L
+2 Z
+N
+392.3 575.61 390.88 569.78 386.54 573.93 3 L
+0 Z
+N
+372.74 632 390.81 570.02 2 L
+2 Z
+N
+7 X
+90 450 26.92 44.71 366.32 675.29 G
+2 H
+0 Z
+1 X
+90 450 26.92 44.71 366.32 675.29 A
+1 14 Q
+0 X
+(Integrated) 0 -270 361.52 647.48 TF
+(Resources) 0 -270 376.83 647.44 TF
+119.46 135.13 111.68 139.65 119.48 144.13 3 L
+N
+208.95 139.36 112.68 139.64 2 L
+7 X
+V
+2 Z
+0 X
+N
+7 X
+90 450 11.29 11.82 211.32 124.55 G
+0.5 H
+0 Z
+1 X
+90 450 11.29 11.82 211.32 124.55 A
+7 X
+90 450 11.29 11.82 216.26 139.87 G
+1 X
+90 450 11.29 11.82 216.26 139.87 A
+7 X
+90 450 11.29 11.82 228.74 121.4 G
+1 X
+90 450 11.29 11.82 228.74 121.4 A
+7 X
+90 450 11.29 11.82 217.55 111.94 G
+1 X
+90 450 11.29 11.82 217.55 111.94 A
+7 X
+90 450 10.06 11.82 212.66 156.53 G
+1 X
+90 450 10.06 11.82 212.66 156.53 A
+7 X
+90 450 11.29 11.82 224.22 167.34 G
+1 X
+90 450 11.29 11.82 224.22 167.34 A
+7 X
+90 450 11.29 11.82 232.4 150 G
+1 X
+90 450 11.29 11.82 232.4 150 A
+7 X
+90 450 11.29 11.82 235.19 137.16 G
+1 X
+90 450 11.29 11.82 235.19 137.16 A
+7 X
+90 450 14.36 31.93 223.31 139.36 G
+1 12 Q
+0 X
+(Industry) 0 -270 219.7 119.65 TF
+(Need) 0 -270 231.74 120.37 TF
+234.72 139.36 240.74 150 R
+7 X
+V
+443.1 86.19 474.95 159.23 R
+V
+2 H
+0 X
+N
+1 14 Q
+(AP) 0 -270 456.96 93.43 TF
+(Component) 0 -270 469.35 91.1 TF
+443.1 184.73 466.99 241.54 R
+7 X
+V
+0.5 H
+0 X
+N
+1 10 Q
+(Normative) 0 -270 454.37 187.14 TF
+(Element) 0 -270 463.22 187.6 TF
+503.12 184.73 527.02 241.54 R
+7 X
+V
+8 X
+N
+0 X
+(Informative) 0 -270 513.66 186.92 TF
+(Element) 0 -270 522.51 187.6 TF
+503.81 125.63 506.81 130.83 509.81 125.63 3 L
+N
+506.81 114.6 506.81 130.58 2 L
+7 X
+V
+2 Z
+0 X
+N
+498.85 98.36 514.78 114.6 R
+0 Z
+N
+(A) 0 -270 509.83 102.87 TF
+498.85 130.83 514.78 147.06 R
+N
+(B) 0 -270 509.83 135.61 TF
+(B depends on A) 0 -270 525.1 90.65 TF
+0 16 Q
+(Key) 0 -270 413.74 150.1 TF
+388.67 72 388.67 258.67 2 L
+2 Z
+N
+388.67 258.67 540 258.67 2 L
+N
+193.63 376.47 199.28 378.47 198.19 372.57 3 L
+0 Z
+N
+134.39 302.56 199.13 378.27 2 L
+2 Z
+N
+181.76 275.65 186.96 272.65 181.76 269.65 3 L
+0 Z
+N
+146.78 272.65 186.71 272.65 2 L
+2 Z
+N
+0 14 Q
+(Figure 1: AP Component Relationships) 0 -270 527 278 TF
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "5" 5
+%%Page: "6" 6
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(Once the AP project is approved, the scope, requirements and AAM are evaluated by) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(experts in the application area who were not involved in the initial modeling effort.) 126 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.25 (These experts should reflect the breadth and depth of the application scope. The AAM) 126 684 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(is modified to ensure that it accurately represent industry processes and practices,) 126 670 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(accurately reflects the desired scope, and is correct and complete. The results of the) 126 656 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(industry review are documented in a separate document, the AP Validation Report.) 126 642 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(2.2) 72 614.67 T
+(AP Information Requirements) 126 614.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(When the scope has been defined and evaluated, the information requirements of the) 126 594 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AP are defined through the development of an Application Reference Model \050ARM\051.) 126 580 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The ARM is documented in one of three graphical data modeling languages) 126 566 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\050EXPRESS-G) 126 548.8 T
+0 0 0 1 0 0 0 K
+1 9.6 Q
+(1) 194 553.6 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(, IDEF1X [8], or NIAM [10]\051. The model diagrams are a required) 198.8 548.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(informative annex of the AP, and the information requirements are normatively) 126 534.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(described in text. Each element in the ARM diagrams is defined as an Application) 126 520.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Object in the AP. Each relationship between elements in the ARM diagram is) 126 506.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.25 (documented as an Application Assertion. The concepts in the ARM are organized into) 126 492.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Units of Functionality \050UoF\051. A UoF is a grouping of constructs which reflect one or) 126 478.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(more distinct concepts within the ARM, possibly corresponding to an application) 126 464.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.24 (process. The UoFs are potentially useful for evaluating areas of commonality between) 126 450.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(APs.) 126 436.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.68 (The ARM must be evaluated by industry experts as was the AAM. The objective of this) 126 416.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ARM validation is to provide a high degree of confidence that the model supports) 126 402.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.08 (industry practices correctly and robustly. It is impractical to conduct a comprehensive) 126 388.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(review of the ARM due to its complexity. ARM validation is done with the use of) 126 374.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.15 (representative test pieces and usage scenarios. The model may be validated by several) 126 360.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.71 (methods. One method is to build a prototype database that replicates the structure of the) 126 346.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ARM, while another method is to perform \322paper populations\323 of the structure and) 126 332.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements. The method used to perform ARM validation is documented in the AP) 126 318.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Validation Report, along with the results of the validation.) 126 304.8 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(2.3) 72 277.47 T
+(AP Interpretation) 126 277.47 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.38 (The Application Interpreted Model \050AIM\051 is developed by mapping elements from the) 126 256.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.33 (STEP Integrated Resource Parts to meet the information requirements described in the) 126 242.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ARM. This process, known as Interpretation, may result in further constraints on IR) 126 228.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(constructs and the creation of new constructs in the AIM when an appropriate) 126 214.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Integrated Resource construct is not available for a particular ARM requirement.) 126 200.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The Interpretation process requires the cooperation of those who developed the ARM) 126 180.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.41 (and those who have extensive knowledge of the Integrated Resources. Interpretation is) 126 166.8 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(typically carried out in a workshop-style meeting. Detailed notes from this workshop) 126 152.8 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(are compiled into an Interpretation Report that becomes part of the AP Validation) 126 138.8 T
+0 0 0 1 0 0 0 K
+72 84 540 99 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+81 97 225 97 2 L
+0.5 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+1 10 Q
+0 X
+0 0 0 1 0 0 0 K
+(1.) 90 77.33 T
+(EXPRESS-G is a graphical subset of EXPRESS. See Annex D of [3] for a description.) 97.5 77.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "6" 6
+%%Page: "7" 7
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(Report. Another output of the interpretation workshop is a Mapping Table that shows) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the correspondence between elements of the ARM and those Integrated Resource) 126 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(constructs which are interpreted to support these elements.) 126 684 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The AIM is documented by an EXPRESS information model known as the Short) 126 664 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Listing. The Short Listing consists of references to Integrated Resource elements and) 126 650 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(definitions of all new elements and constraints added during interpretation, e.g.) 126 636 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(specializations of Resource elements and rules that further constrain Integrated) 126 622 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Resource elements.) 126 608 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(An AP also contains an expanded form of the Short Listing, known as the Annotated) 126 588 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.33 (Listing. The Annotated Listing includes the complete documentation of the AIM. This) 126 574 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.17 (includes textual descriptions of all of the Resource elements used and other constructs) 126 560 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(added during interpretation, as well as the EXPRESS definitions of these elements.) 126 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.05 (During the development of the Short and Annotated Listings, the AP developers must) 126 532 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(also develop a high-level graphical model of the information using EXPRESS-G.) 126 518 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Finally, as with the ARM, validation of the AIM must be performed and documented) 126 498 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.5 (in the AP Validation Report. AP usage information formulated as part of the validation) 126 484 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(process may also be provided as an informative portion of the AP document itself.) 126 470 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(2.4) 72 442.67 T
+(Complete AP) 126 442.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.56 (Once the AP developers have completed the documentation and validation of the AIM,) 126 422 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the remainder of the AP development work involves defining conformance) 126 408 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements, other implementation-oriented requirements, and completing the AP) 126 394 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documentation. This ensures that there are metrics available against which vendor) 126 380 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(implementations of the AP can be tested for conformance. The information) 126 366 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements and assertions defined in the ARM and all characteristics defined in the) 126 352 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AIM are the starting points for the development of such conformance requirements.) 126 338 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.1 (Test Groups are defined from the structure of the ARM and Test Purposes are defined) 126 324 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(for all constructs of the AIM and documented in an Abstract Test Suite. Review and) 126 310 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(evaluation of the AP\325s Conformance Requirements and Abstract Test Suite is) 126 296 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(performed by application experts and AP methods experts. The results of this) 126 282 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(evaluation are included in the AP Validation Report.) 126 268 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.23 (AP developers are responsible for compiling all of the requisite components of the AP) 126 248 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.75 (specification into a document according to established style guidelines [12]. In addition) 126 233.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.11 (to the components discussed above, these include a Foreword, Normative References,) 126 219.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and English definitions of terms used within the AP. At several stages of AP) 126 205.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(development the document is submitted to various committees and representatives of) 126 191.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.83 (voting members \050countries\051 in ISO for review and comment. These reviews result in the) 126 177.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(submission of issues against the AP. Throughout the development and balloting) 126 163.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(process, AP developers must maintain logs of issues raised against the AP and the) 126 149.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(team\325s responses to these issues.) 126 135.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "7" 7
+%%Page: "8" 8
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 18 Q
+0 X
+0 0 0 1 0 0 0 K
+(3) 72 708 T
+(Functional Specifications) 126 708 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.4 (The APDE will provide a user with four primary functional units, corresponding to the) 126 680 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.2 (four major components of the AP development process identified in section 2, namely) 126 665.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AP project definition, AP information requirements definition, AP interpretation, and) 126 651.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(production of the complete AP document. Although a certain amount of functionality) 126 637.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(will be shared among all of these functional units, it is envisioned that the user will) 126 623.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(interact with the APDE primarily in one of these modes at any given time.) 126 609.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(In the following sections, to provide traceability back to the individual requirements,) 126 589.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the elaborations of the functional specifications include references back to the) 126 575.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements supported by these specifications. For example, the notation \322\0502.1.A\051\323) 126 561.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(indicates that the particular functionality is derived from requirement 2.1.A in [1]) 126 547.63 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3.1) 72 520.3 T
+(AP Project Definition) 126 520.3 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(This section describes the functional aspects of the APDE supporting the activities) 126 499.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(described in section 2.1 and the corresponding requirements documented in [1].) 126 485.45 T
+0 0 0 1 0 0 0 K
+0 F
+(3.1.1) 72 462.45 T
+(Scope and Requirements Development) 126 462.45 T
+0 0 0 1 0 0 0 K
+1 F
+-0.61 (At the outset of an AP project, AP developers need to be able to easily review the scope) 126 442.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.28 (and requirements of existing APs to accurately assess STEP coverage of their industry) 126 428.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(need. As the number of APs increase, this task will become more important and more) 126 414.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.62 (time consuming. For this reason, users of the APDE will be able to browse and perform) 126 400.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.4 (keyword searches over the scope and requirements portions of existing APs. If overlap) 126 386.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(with an existing AP is desired, portions of the text may be imported into the new AP.) 126 372.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Fundamentally, the APDE will support the collection of requirements \0502.1.A\051. These) 126 352.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.59 (requirements will come from application experts. The APDE will be able to import and) 126 338.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(export requirements in a variety of formats. It will provide for the dissemination of) 126 324.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(these requirements to team members and application expert reviewers across various) 126 310.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(locations.) 126 296.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.19 (The APDE will support requirements gathering \050and requirements validation\051 through) 126 276.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the use of electronic questionnaires. The APDE will support the development of the) 126 262.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(questionnaire, its distribution, and the collection and collation of results.) 126 248.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.22 (The APDE will foster interaction between team members as if they were in a meeting.) 126 228.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.64 (The free exchange of ideas will allow the development of consensus within the team on) 126 214.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the development of the initial scope statement of the AP.) 126 200.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.11 (The APDE will be able to produce a report of the requirements in a format that can be) 126 180.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(browsed. It must be possible to establish connections between the requirements and) 126 166.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(particular constructs in the AAM to facilitate the validation of the AAM \0502.1.H\051.) 126 152.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The APDE will also provide for version control of scope and requirements to keep) 126 132.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(corresponding versions of the different components \050i.e., scope, requirements and) 126 118.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AAM\051 synchronized \0502.1.I\051.) 126 104.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "8" 8
+%%Page: "9" 9
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(3.1.2) 72 712 T
+(Application Activity Model Development) 126 712 T
+0 0 0 1 0 0 0 K
+1 F
+-0.66 (The main focus of the Application Activity Model \050AAM\051 development functional unit) 126 692 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.05 (will be a graphical IDEF0 model editor \0502.1.D\051. Various IDEF0-specific functionality) 126 678 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and other general AAM manipulation capabilities will be built around this editor.) 126 664 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The AAM unit will be capable of evaluating the decomposition of the AAM and) 126 644 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(enforcing all IDEF0 modeling rules, although the degree of enforcement will be user) 126 630 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(selectable, to allow partial models to be saved \0502.1.C, 2.1.D, 2.1.E\051. In addition to its) 126 616 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(graphical component, this unit will allow textual definitions to be associated with the) 126 602 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.51 (various terms introduced in the AAM. These definitions will ultimately form the AAM) 126 588 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(glossary \0502.1.F, 2.1.G\051.) 126 574 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(It will be possible to browse the AP scope and requirements information described in) 126 554 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(section 3.1.1, in order to provide for traceability of requirements throughout the AP) 126 539.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(development process. In addition, it will be possible to establish connections between) 126 525.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(particular constructs in the AAM and these previously established requirements. The) 126 511.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.09 (AAM unit will be capable of ensuring that all AP requirements have been represented) 126 497.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(in the AAM, and that all AAM constructs are traceable to some AP requirement) 126 483.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\0502.1.H\051. The AAM model editor will be capable of documenting the results of this) 126 469.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(validation for use in the AP Validation Report.) 126 455.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.82 (While an AAM is being developed, it will also be possible to browse the AAMs of other) 126 435.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(APs, in order to facilitate the identification of areas of overlap and to promote) 126 421.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(consistent activity modeling style \0502.1.B\051.) 126 407.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(All of the information captured in the AAM development process will be available to) 126 387.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the other APDE functional units as well \0502.1.F\051. In particular, the AP document) 126 373.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.83 (production unit will be able to produce from this information a fully documented AAM,) 126 359.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(complete with its glossary, in a standard form which complies with the directives in) 126 345.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([11] and [12] \0502.1.B, 2.1.F, 2.1.G\051.) 126 331.63 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3.2) 72 304.3 T
+(AP Information Requirements) 126 304.3 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(This section describes the functional aspects of the APDE supporting the activities) 126 283.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(described in section 2.2 and the corresponding requirements documented in [1].) 126 269.45 T
+0 0 0 1 0 0 0 K
+0 F
+(3.2.1) 72 246.45 T
+(Application Reference Model Development) 126 246.45 T
+0 0 0 1 0 0 0 K
+1 F
+(The central facilities of the Application Reference Model \050ARM\051 development) 126 226.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(functional unit will be graphical information model editing tools. These editing tools) 126 212.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.74 (will provide for creation, maintenance, and browsing of ARMs in IDEF1X, NIAM, and) 126 198.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(EXPRESS-G. Each of the editors will be capable of enforcing the consistency and) 126 184.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(constraints particular to the information modeling methodology it supports, although) 126 170.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.04 (the degree of enforcement will be user selectable \0502.2.E\051. Each of the editors will also) 126 156.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.73 (be capable of creating printed representations of an ARM diagram in a variety of output) 126 142.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.66 (sizes \050e.g., US Letter, A4, B size drawing, etc.\051. These printing capabilities will support) 126 128.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.27 (intelligent diagram layout features such as off-page references \0502.2D\051. The APDE will) 126 114.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(provide the ability to translate application models between the above mentioned) 126 100.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(information modeling languages \0502.2.C\051.) 126 86.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "9" 9
+%%Page: "10" 10
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(Since the information contained in the AP scope, requirements, and AAM drives the) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.81 (development of the ARM, the facilities described in section 3.1 must be easily available) 126 698 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(to the user during ARM development. Since the AAM is a logical starting point for) 126 684 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ARM development there will be a capability for maintaining links from designated) 126 670 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.57 (AAM elements to the ARM. In addition to providing access to other components of the) 126 656 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.51 (current AP under development, this unit will also permit examination and extraction of) 126 642 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(components from other existing APs \0502.2.H\051.) 126 628 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The ARM development functional unit will also assist with identification of Units of) 126 608 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Functionality \050UoFs\051. Features will be available which allow the user to select ARM) 126 594 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(elements and tag them as those which comprise a particular UoF. Names from the) 126 580 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(tagged elements will then be available to the AP Documentation functional unit for) 126 566 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documentation of the UoFs \0502.2.B\051.) 126 552 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(An AP development team may choose from a variety of methods to perform ARM) 126 532 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(validation, depending on the type of information the AP is intended to support [12].) 126 517.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Validation of the ARM will be supported through features which allow the ARM) 126 503.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.05 (developers to link UoFs with documentation of Test Purposes, test methods, test data,) 126 489.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(test results and coverage analysis \0502.2.I\051.) 126 475.82 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3.3) 72 448.48 T
+(AP Interpretation/AIM Development) 126 448.48 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(This section describes the functional aspects of the APDE supporting the activities) 126 427.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(described in section 2.3 and the corresponding requirements documented in [1].) 126 413.63 T
+0 0 0 1 0 0 0 K
+0 F
+(3.3.1) 72 390.63 T
+(AP Interpretation) 126 390.63 T
+0 0 0 1 0 0 0 K
+1 F
+(The primary facility of the AP interpretation functional unit is a software component) 126 370.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(allowing for the search, examination, and retrieval of candidate EXPRESS entities) 126 356.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.47 (from the Integrated Resource specifications. Candidate entities will be presented to the) 126 342.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.8 (user based on the user\325s specification of search criteria, e.g., finding entities which have) 126 328.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(keywords in common with ARM element names, finding entities which are related in) 126 314.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.46 (some specific way to other entities, etc. \0502.3.A, 2.3.C\051. The user will use these retrieval) 126 300.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(facilities to find EXPRESS entities \050if they exist\051 which correspond to the ARM) 126 286.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(element being interpreted. When an appropriate EXPRESS entity is selected, this) 126 272.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(functional unit of the APDE will allow the user to link the EXPRESS entity with the) 126 258.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ARM element, and thereby form the basis for documenting the mapping between the) 126 244.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.37 (two \0502.3.G\051. Finally, this functional unit will also allow the user to verify that all ARM) 126 230.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(elements have been mapped to EXPRESS entities \0502.3.K\051.) 126 216.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The mapping between the ARM and the Integrated Resources is documented in the) 126 196.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Mapping Table. The generation of the Mapping Table lends itself very nicely to) 126 182.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(software support. To support this, the APDE will manage formatting details of the) 126 168.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.24 (Mapping Table \0502.3.I\051. In addition, this functional unit will assist in the creation of the) 126 154.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Mapping Table by maintaining links between the Integrated Resource constructs and) 126 140.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(their interpretations in the AIM \0502.3.J\051.) 126 126.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.16 (The Mapping Table will be automatically generated from the Application Objects and) 126 106.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Application Assertions in the AP.) 126 92.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "10" 10
+%%Page: "11" 11
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(3.3.2) 72 712 T
+(AIM Development) 126 712 T
+0 0 0 1 0 0 0 K
+1 F
+-0.8 (The result of the AP interpretation process is the AIM Short Listing. The functional unit) 126 692 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(supporting this process will be a textual information model editor specialized for) 126 678 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(EXPRESS \0502.3.H\051. This editor will provide features which can ensure that correct) 126 664 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(language syntax is used and will also help with the incremental development of the) 126 650 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AIM. For example, when a selected EXPRESS entity must be further constrained to) 126 636 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.05 (satisfy the intent of its corresponding ARM element, the editor will provide templates) 126 622 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(for the definition of various common classes of constraints in EXPRESS \0502.3.D\051.) 126 608 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.22 (In addition to the Short Listing, the AIM must be documented in an Annotated Listing) 126 588 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and an EXPRESS-G diagram. The APDE will be able to automatically generate the) 126 574 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Annotated Listing, including all associated text, from the Short Listing and the) 126 560 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Integrated Resources \0502.3.L, 2.3.M\051. In addition, this functional unit will provide a) 126 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(graphical EXPRESS-G editing facility which is able to maintain links between) 126 532 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(EXPRESS-G constructs and corresponding constructs in the Short and Annotated) 126 518 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.45 (Listings, using these links to verify the isomorphism of the textual and graphical forms) 126 504 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(of the AIM \0502.3.O, 2.3.P\051.) 126 490 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(An AP development team may choose from a variety of methods to perform AIM) 126 470 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(validation, depending on the type of information the AP intends to support [13].) 126 455.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Validation of the AIM will be supported through features which allow the AIM) 126 441.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(developers to link EXPRESS entities with documentation of Test Purposes, test) 126 427.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(methods, test data, test results and coverage analysis \0502.3.O\051.) 126 413.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.35 (After the AIM is completed, an AP developer generates a list of abbreviated names for) 126 393.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the entities and types in the AIM. These short names are used in STEP exchange files) 126 379.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.49 (and must be unique across all AIMs. The AIM Development unit will include a facility) 126 365.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(which generates these abbreviated names based on a given algorithm and checks an) 126 351.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(information base of existing AIMs to verify that the names are unique.) 126 337.82 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3.4) 72 310.48 T
+(AP documentation) 126 310.48 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(This section describes the functional aspects of an APDE supporting the activities) 126 289.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(described in section 2.4 and the corresponding requirements documented in [1].) 126 275.63 T
+0 0 0 1 0 0 0 K
+0 F
+(3.4.1) 72 252.63 T
+(Document Production) 126 252.63 T
+0 0 0 1 0 0 0 K
+1 F
+-0.45 (As much as possible, the APDE will insulate users from ISO and STEP documentation) 126 232.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.73 (guidelines, allowing them to focus instead on the information content of the AP. To this) 126 218.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(end, the APDE will provide functionality to compile AP documentation from the) 126 204.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.64 (various components built using other functional units. While other functional units will) 126 190.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(provide some of the text processing functionality described herein, this functionality) 126 176.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.08 (will be incidental to the units\325 focus on the information content of the AP. In contrast,) 126 162.63 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the document production unit will focus on the AP as a document, providing such) 126 148.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(functionality as clause templates, document previewing, and overall layout.) 126 134.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Each functional unit described above requires some text processing capabilities. For) 126 114.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(example, entering and modifying AAM definitions requires some form of text editor.) 126 100.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The same text processing interface will be used in all such instances throughout the) 126 86.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "11" 11
+%%Page: "12" 12
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(APDE. In addition, some document components are largely textual in nature \050e.g.,) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Normative References, Conformance\051, and are not addressed by any functional unit.) 126 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(These components will be edited using the text editing facilities of the document) 126 684 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(production unit.) 126 670 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.35 (The APDE will provide templates for the various sections in AP documents \0502.4.A\051. A) 126 650 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.29 (significant part of these templates will be the boilerplate text which is provided in [12]) 126 635.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(for various clauses in AP documents \0502.4.D\051. In most cases, boilerplate text and user-) 126 621.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.66 (provided text must be mixed within clauses, so there must be a mechanism for inserting) 126 607.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.62 (and then maintaining this boilerplate within an active text segment. In other cases, such) 126 593.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(as the document Foreword, an entire clause may be dictated by STEP directives, in) 126 579.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(which case this boilerplate text will simply be inserted at the time of document) 126 565.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(production. In both cases, the APDE will allow these templates to be modified as) 126 551.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documentation guidelines evolve, and will migrate these template changes into APs) 126 537.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(under development \0502.4.A, 2.4.D\051.) 126 523.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.82 (Because the rest of the APDE focuses on the information content of the AP independent) 126 503.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.92 (of its final presentation, the document production unit will provide functionality to view) 126 489.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(portions of the document itself in its final form, both on-screen and on paper. In) 126 475.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.69 (addition, it will be possible to manipulate the layout of the document as a whole \0502.5.B\051.) 126 461.82 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(To aid in tracking the status of APs under development, the APDE will also provide) 126 441.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(bookkeeping functions allowing individual clauses or information components to be) 126 427.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(marked as being complete or not, or to be marked for special attention. This) 126 413.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(bookkeeping will be available at varying levels of detail \0502.4.C\051.) 126 399.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(In order to ease the labor-intensive task of document editing, facilities such as spell) 126 379.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(checking and English grammar and style analysis will be provided \0502.4.B\051.) 126 365.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Two document processing systems are currently recommended for use by AP) 126 345.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.65 (developers. These are LaTeX) 126 328.62 P
+0 0 0 1 0 0 0 K
+1 9.6 Q
+-0.52 (1) 265.31 333.42 P
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.65 ( and WordPerfect) 270.11 328.62 P
+0 0 0 1 0 0 0 K
+1 9.6 Q
+-0.52 (2) 353.44 333.42 P
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.65 (. The APDE will provide the ability to) 358.24 328.62 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(easily translate text between the two formats \0502.5.A\051.) 126 314.62 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(3.5) 72 287.28 T
+(Support Functions) 126 287.28 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(This section describes the functional aspects of the APDE supporting the AP) 126 266.62 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(development cycle as a whole and the corresponding requirements documented in [1].) 126 252.43 T
+0 0 0 1 0 0 0 K
+0 F
+(3.5.1) 72 229.43 T
+(Methodological Support) 126 229.43 T
+0 0 0 1 0 0 0 K
+1 F
+-0.74 (The AP developer is provided guidance from a variety of currently evolving documents) 126 209.43 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\050e.g., [11], [12]\051. It is difficult for an AP developer to find guidance on development) 126 195.43 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.64 (methods for all components of an AP and to be sure that the documentation found is the) 126 181.43 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.36 (most current. Although it is anticipated that the AP development methods will become) 126 167.43 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(more stable as the first APs and other related documentation \050AP Validation Report,) 126 153.43 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.83 (Abstract Test Suites, etc.\051 are completed, the problem of not having the current versions) 126 139.43 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(of the pertinent documents in one place will persist \0502.3.E, 2.5.I\051. For this reason, the) 126 125.43 T
+0 0 0 1 0 0 0 K
+72 96 540 111 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+81 109 225 109 2 L
+0.5 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+1 10 Q
+0 X
+0 0 0 1 0 0 0 K
+(1.) 90 89.33 T
+(LaTeX is a freely available document processing system [9].) 97.5 89.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(2.) 90 77.33 T
+(WordPerfect is a registered trademark of WordPerfect Corporation.) 97.5 77.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "12" 12
+%%Page: "13" 13
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+(APDE will provide an information base of the methodology documents that will) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(support queries for information and provide browsing capabilities for the resulting) 126 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documentation.) 126 684 T
+0 0 0 1 0 0 0 K
+0 F
+(3.5.2) 72 661 T
+(Workflow and Version Control) 126 661 T
+0 0 0 1 0 0 0 K
+1 F
+(Since development of an AP is accomplished over a period of time by a group of) 126 641 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(people, workflow and version management supporting AP development will be) 126 627 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(available from any functional unit \0502.2.A, 2.2.F, 2.2.G, 2.2.J, 2.5.H\051. Workflow and) 126 613 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(version control features will include:) 126 599 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\245) 126 579 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Ability to designate individuals who are permitted to edit and modify particular) 144 579 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(components of an AP and designation of individuals who are only permitted to) 144 565 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(browse the AP components;) 144 551 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\245) 126 531 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.04 (Ability to designate individuals who are to be informed when updates are made to) 144 531 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(an AP component, who made them, and what the changes are;) 144 517 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\245) 126 497 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.73 (Ability to designate release status of the AP component, i.e., whether it is still under) 144 497 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(development by its owners, whether it is ready for review and comment by) 144 483 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(designated groups of people, whether it is finished, etc.;) 144 469 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\245) 126 449 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.61 (Ability to establish linkages at various levels of detail between the AP components,) 144 449 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(e.g., between individual ARM elements and elements of other AP components so) 144 435 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(that changes to the ARM automatically flag potential changes to other AP) 144 421 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.53 (components and between a particular version of an ARM and particular versions of) 144 407 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(other AP components so that one version of an ARM can used to retrieve the) 144 393 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(corresponding versions of other components in the AP.) 144 379 T
+0 0 0 1 0 0 0 K
+0 F
+(3.5.3) 72 356 T
+(Issue Management) 126 356 T
+0 0 0 1 0 0 0 K
+1 F
+(Issues documentation and resolution is an ongoing process with AP developers. The) 126 336 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.14 (APDE will provide the following features in support of this process: a uniform format) 126 322 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(for issues documentation which includes all pertinent information \0502.5.D\051; the ability) 126 308 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(to perform keyword searches of the issues \0502.5.C\051; and the ability to distribute issues) 126 294 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and resolutions to all interested parties \0502.5.G\051.) 126 280 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.62 (To facilitate the tracking of issues, the APDE will be able to establish linkages between) 126 260 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(issues and specified targets, e.g., document text, entity definitions, rules, etc. \0502.5.E\051.) 126 246 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Version control mechanisms will also be provided between particular issues and) 126 232 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(particular versions of STEP specifications \0502.5.F\051.) 126 218 T
+0 0 0 1 0 0 0 K
+0 18 Q
+(4) 72 182 T
+(Conclusion) 126 182 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(The functional specifications presented in this paper constitute the second step in the) 126 154 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(specification of an Application Protocol Development Environment. This report only) 126 140 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(seeks to identify the functionality of the APDE. Architectural decisions and) 126 126 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(formulation of technical solutions will be the topic of the next report in this series.) 126 112 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "13" 13
+%%Page: "14" 14
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+-0.2 (These functional specifications are based primarily on the requirements received from) 126 712 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.39 (AP developers as presented in [1]. Not all aspects of the AP development process have) 126 698 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(yielded requirements. For example, delivery of conformance requirements and test) 126 684 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.16 (criteria are necessary tasks, yet we received no requirements for tools or techniques to) 126 670 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(assist with these tasks. Unfortunately, the lack of requirements is probably not due to) 126 656 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.31 (the simplicity of the activity or the availability of existing tools. Instead the absence of) 126 642 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.17 (requirements is attributed to a lack of experience with these tasks. When all aspects of) 126 628 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AP development are exercised, it can be expected that there will be additional) 126 614 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements for the APDE, which will cause modifications to the functional) 126 600 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(specification. Until that time, the authors have included in this paper functional) 126 586 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(specifications in these areas to the degree that the process is understood and/or) 126 572 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(documented.) 126 558 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "14" 14
+%%Page: "15" 15
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 18 Q
+0 X
+0 0 0 1 0 0 0 K
+(A) 72 708 T
+(References) 126 708 T
+0 0 0 1 0 0 0 K
+1 12 Q
+([1]) 126 680 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Barnard Feeney, A., Clark, S. N., and Fowler, J. E.,) 216 680 T
+0 0 0 1 0 0 0 K
+535.96 678.69 466.3 678.69 2 L
+V
+0.59 H
+0 Z
+N
+(Requirements) 466.3 680 T
+480.97 664.69 216 664.69 2 L
+V
+N
+(for an Application Protocol Development Environment) 216 666 T
+0 0 0 1 0 0 0 K
+(, NISTIR) 480.97 666 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(5197, May 27, 1993.) 216 652 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([2]) 126 632 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ISO/DIS 10303-1,) 216 632 T
+0 0 0 1 0 0 0 K
+538.32 630.69 307 630.69 2 L
+V
+N
+(Industrial automation systems and integration \320) 307 632 T
+533.26 616.69 216 616.69 2 L
+V
+N
+(Product data representation and exchange \320 Part 1: Overview and) 216 618 T
+326.32 602.69 216 602.69 2 L
+V
+N
+(fundamental principles) 216 604 T
+0 0 0 1 0 0 0 K
+(, International Organization for) 326.32 604 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Standardization, March 26, 1993.) 216 590 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([3]) 126 570 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.54 (ISO/DIS 10303-11,) 216 570 P
+0 0 0 1 0 0 0 K
+540 568.69 311.92 568.69 2 L
+V
+N
+-0.54 (Industrial automation systems and integration \320) 311.92 570 P
+527.6 554.69 216 554.69 2 L
+V
+N
+(Product data representation and exchange \320 Part 11: Description) 216 556 T
+471.29 540.69 216 540.69 2 L
+V
+N
+(methods: The EXPRESS language reference manual,) 216 542 T
+0 0 0 1 0 0 0 K
+( International) 471.29 542 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Organization for Standardization, August 31, 1992.) 216 528 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([4]) 126 508 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.54 (ISO/DIS 10303-21,) 216 508 P
+0 0 0 1 0 0 0 K
+540 506.69 311.92 506.69 2 L
+V
+N
+-0.54 (Industrial automation systems and integration \320) 311.92 508 P
+540 492.69 216 492.69 2 L
+V
+N
+-0.85 (Product data representation and exchange \320 Part 21: Implementation) 216 494 P
+483.95 478.69 216 478.69 2 L
+V
+N
+(methods: Clear text encoding of the exchange structure,) 216 480 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(International Organization for Standardization, May 21, 1993.) 216 466 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([5]) 126 446 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.54 (ISO/DIS 10303-42,) 216 446 P
+0 0 0 1 0 0 0 K
+540 444.69 311.92 444.69 2 L
+V
+N
+-0.54 (Industrial automation systems and integration \320) 311.92 446 P
+520.26 430.69 216 430.69 2 L
+V
+N
+(Product data representation and exchange \320 Part 42: Integrated) 216 432 T
+507.92 416.69 216 416.69 2 L
+V
+N
+(generic resources: Geometric and topological representation,) 216 418 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(International Organization for Standardization, April 29, 1993.) 216 404 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([6]) 126 384 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.95 (ISO/CDC 10303-202,) 216 384 P
+0 0 0 1 0 0 0 K
+540 382.69 322.43 382.69 2 L
+V
+N
+-0.95 (Industrial automation systems and integration) 322.43 384 P
+540 368.69 216 368.69 2 L
+V
+N
+-0.33 (\320 Product data representation and exchange \320 Part 202: Application) 216 370 P
+376.32 354.69 216 354.69 2 L
+V
+N
+(protocol: Associative draughting,) 216 356 T
+0 0 0 1 0 0 0 K
+( International Organization for) 376.32 356 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Standardization, February 2, 1993.) 216 342 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([7]) 126 322 T
+0 0 0 1 0 0 0 K
+524.3 320.69 216 320.69 2 L
+V
+N
+(Specifications for Integration Definition for Function Modeling) 216 322 T
+256.66 306.69 216 306.69 2 L
+V
+N
+(\050IDEF0\051) 216 308 T
+0 0 0 1 0 0 0 K
+(, Proposed Federal Information Processing Standard,) 256.66 308 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(September 9, 1992.) 216 294 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([8]) 126 274 T
+0 0 0 1 0 0 0 K
+538.96 272.69 216 272.69 2 L
+V
+N
+(Specifications for Integration Definition for Information Modeling) 216 274 T
+262.66 258.69 216 258.69 2 L
+V
+N
+(\050IDEF1x\051) 216 260 T
+0 0 0 1 0 0 0 K
+(, Proposed Federal Information Processing Standard,) 262.66 260 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(September 9, 1992.) 216 246 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([9]) 126 226 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Lamport, L.,) 216 226 T
+0 0 0 1 0 0 0 K
+478.3 224.69 279.66 224.69 2 L
+V
+N
+(LaTeX: A Document Preparation System) 279.66 226 T
+0 0 0 1 0 0 0 K
+(, Addison-) 478.3 226 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Wesley, 1986.) 216 212 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([10]) 126 192 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.85 (Nijssen, G.M., and Halpin, T.A.,) 216 192 P
+0 0 0 1 0 0 0 K
+540 190.69 372.08 190.69 2 L
+V
+N
+-0.85 (Conceptual Schema and Relational) 372.08 192 P
+430.94 176.69 216 176.69 2 L
+V
+N
+(Database Design: A Fact Oriented Approach) 216 178 T
+0 0 0 1 0 0 0 K
+(, Prentice Hall, 1989.) 430.94 178 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([11]) 126 158 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Palmer, M., and Gilbert, M.,) 216 158 T
+0 0 0 1 0 0 0 K
+530.63 156.69 355.66 156.69 2 L
+V
+N
+(Guidelines for the development and) 355.66 158 T
+470.98 142.69 216 142.69 2 L
+V
+N
+(approval of STEP application protocols, Version 1.1,) 216 144 T
+0 0 0 1 0 0 0 K
+( ISO TC184/) 470.98 144 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(SC4/PMAG Technical Report, August, 1993.) 216 130 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([12]) 126 110 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Shaw, N., ed.,) 216 110 T
+0 0 0 1 0 0 0 K
+507.95 108.69 286.66 108.69 2 L
+V
+N
+(Supplementary directives for the drafting and) 286.66 110 T
+342.98 94.69 216 94.69 2 L
+V
+N
+(presentation of ISO 10303) 216 96 T
+0 0 0 1 0 0 0 K
+(, ISO TC184/SC4, Editing Committee) 342.98 96 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Draft N20, February 11, 1993.) 216 82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "15" 15
+%%Page: "16" 16
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+([13]) 126 712 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Mitchell, M.,) 216 712 T
+0 0 0 1 0 0 0 K
+496.33 710.69 282.34 710.69 2 L
+V
+0.59 H
+0 Z
+N
+(A Proposed Testing Methodology for STEP) 282.34 712 T
+370 696.69 216 696.69 2 L
+V
+N
+(Application Protocol Validation) 216 698 T
+0 0 0 1 0 0 0 K
+(, NISTIR 4684, September 26,) 370 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(1991.) 216 684 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([14]) 126 664 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Hauser, J.R. and Clausing, D.,) 216 664 T
+0 0 0 1 0 0 0 K
+468.64 662.69 364.32 662.69 2 L
+V
+N
+(The House of Quality) 364.32 664 T
+0 0 0 1 0 0 0 K
+(, Harvard) 468.64 664 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Business Review, May-June, 1988) 216 650 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+([15]) 126 630 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Phelps, T., ed.,) 216 630 T
+0 0 0 1 0 0 0 K
+513.32 628.69 290.66 628.69 2 L
+V
+N
+(ISO 10303 Industrial automation systems and) 290.66 630 T
+495.92 614.69 216 614.69 2 L
+V
+N
+(integration -- Product data representation and exchange --) 216 616 T
+537.57 600.69 216 600.69 2 L
+V
+N
+-0.57 (Guidelines for the development of abstract test suites, Version 0.4+,) 216 602 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.06 (ISO TC184/SC4/WG6, Committee Draft N55+, February 11, 1993.) 216 588 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "16" 16
+%%Page: "17" 17
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 18 Q
+0 X
+0 0 0 1 0 0 0 K
+(B) 72 708 T
+(Functional Requirements) 126 708 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(Several representatives of current STEP Application Protocol development projects) 126 680 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.25 (provided the authors with descriptions of capabilities desirable in an APDE. The input) 126 666 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.15 (obtained from these potential users of an APDE has provided the authors with a better) 126 652 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(understanding of the AP development process and the difficulties facing developers.) 126 638 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The information obtained from the AP developers is documented in the initial) 126 624 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements document for the APDE [1].) 126 609.82 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(The requirements described in [1] have been further abstracted and analyzed using a) 126 589.63 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(process known as \322Quality Function Deployment\323 or QFD [14]. The QFD process) 126 575.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.27 (facilitates the analysis of customer requirements, prioritization of customer needs, and) 126 561.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(determination of how well proposed solutions satisfy customer needs.) 126 547.45 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(B.1) 72 520.11 T
+(APDE Customers) 126 520.11 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(There are numerous people or organizational units which could be considered as) 126 499.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(customers of the APDE. The most obvious group, and the one which is considered to) 126 485.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(be the primary customer, are AP development teams. These teams are typically) 126 471.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(composed of representatives from industry, government, special consortia, etc.,) 126 457.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(working together through the organizational structure of the U.S. IGES/PDES) 126 443.45 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.69 (Organization \050IPO\051 and/or ISO TC184/SC4. The QFD results described here reflect the) 126 429.45 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(emphasis that was placed on this customer group.) 126 412.25 T
+0 0 0 1 0 0 0 K
+1 9.6 Q
+(1) 363.97 417.05 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 14 Q
+(B.2) 72 384.92 T
+(Customer Requirements) 126 384.92 T
+0 0 0 1 0 0 0 K
+1 12 Q
+-0.17 (The initial requirements described in [1] have been categorized into three broad areas:) 126 364.06 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.11 (those which deal with how users interact with an APDE, those which describe desired) 126 350.06 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(AP validation features, and those which describe desired communication features.) 126 336.06 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.21 (High-level requirements have been identified within each of these categories based on) 126 322.06 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(a collation of the requirements in [1]. The collated requirements were then given a) 126 307.88 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(weighting factor which indicated their relative importance to the customer. The) 126 293.88 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.81 (weighting factors were assigned based on the original information provided to us by AP) 126 279.88 P
+0 0 0 1 0 0 0 K
+72 168 540 183 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+81 181 225 181 2 L
+0.5 H
+2 Z
+0 X
+0 0 0 1 0 0 0 K
+N
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+1 10 Q
+0 X
+0 0 0 1 0 0 0 K
+-0.03 (1.) 90 161.33 P
+-0.03 (The other customer groups considered as potential users of an APDE are comprised of much fewer people) 97.5 161.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.1 (than the AP developers. One such group is referred to as AP interpreters. AP interpreters are a small number) 90 149.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.57 (of individuals participating in ISO TC184/SC4 who are experts in the philosophy of STEP, the methodologies) 90 137.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.09 (used for STEP development, and the contents of the STEP Integrated Resources. The job of AP interpreters) 90 125.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.17 (is to transform AP information models described using application-specific terms \050specifically the Applica-) 90 113.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.51 (tion Reference Model\051 into information models based on the STEP Integrated Resources. Another such group) 90 101.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0.06 (is referred to as Abstract Test Suite developers. They are a small number of individuals participating in ISO) 90 89.33 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(TC184/SC4 whose role is to specify the conformance criteria for APs.) 90 77.33 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "17" 17
+%%Page: "18" 18
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+1 12 Q
+0 X
+0 0 0 1 0 0 0 K
+-0.26 (developers. The collation of the high-level requirements is shown in Table 1; note that) 126 712 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(within each category the requirements are listed in descending order of importance to) 126 698 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(the customer.) 126 684 T
+0 0 0 1 0 0 0 K
+0 14 Q
+(B.3) 72 330.67 T
+(Predictive Metrics) 126 330.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(The QFD methodology specifies that for each requirement identified, one or more) 126 310 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(predictive and quantifiable measures must be established. The metrics must be) 126 296 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(quantifiable in the sense that one must be able to assess how well any particular) 126 282 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.21 (implementation would satisfy the metric based on the implementation\325s design \050rather) 126 268 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(than on the implementation itself\051. The metrics can also be used against competing) 126 254 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(implementations to measure how well a competitive product satisfies the customer) 126 240 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.49 (requirements. In the case of the APDE, there are no competitive products, though there) 126 226 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(are commercial products which satisfy small subsets of the requirements.) 126 212 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.14 (Table 2 shows the APDE metrics which, like the high-level requirements, are listed in) 126 192 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(order of importance within each category. A \050+\051 after a given metric indicates that its) 126 178 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(value is to be maximized, while a \050-\051 indicates that the metric\325s value is to be) 126 164 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(minimized.) 126 150 T
+0 0 0 1 0 0 0 K
+0 F
+(T) 156.17 658 T
+(able 1: High-Level Customer Requir) 163.07 658 T
+(ements for an APDE) 350.18 658 T
+0 0 0 1 0 0 0 K
+1 F
+(INTERACTION) 132 641 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Produce correct models without thinking about syntax, modeling,) 150 626 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(and layout) 150 612 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Produce correct documents without thinking about ISO & STEP) 150 597 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(guidelines) 150 583 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Easy to interact with) 150 568 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Avoid redundant entry of redundant information) 150 553 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Control degree of rule enforcement) 150 538 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Present information content in various forms) 150 523 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(VALIDATION) 132 508 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.23 (Track relationships among document components with varying gran-) 150 493 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(ularity) 150 479 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Verify coverage of upstream information requirements) 150 464 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Validate AP requirements) 150 449 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Verify existence of requirements for information elements) 150 434 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Validate models against requirements) 150 419 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(COMMUNICATION) 132 404 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Exchange and use others\325 information) 150 389 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Facilitate intra-team communication) 150 374 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Enforce consistency among corresponding components across APs) 150 359 T
+0 0 0 1 0 0 0 K
+124.75 652 124.75 353 2 L
+V
+0.5 H
+0 Z
+N
+127.25 649.5 127.25 355.5 2 L
+V
+N
+484.75 649.5 484.75 355.5 2 L
+V
+N
+487.25 652 487.25 353 2 L
+V
+N
+124.5 652.25 487.5 652.25 2 L
+V
+N
+127 649.75 485 649.75 2 L
+V
+N
+127.5 636 484.5 636 2 L
+V
+0.25 H
+N
+127.5 607 484.5 607 2 L
+V
+N
+127.5 578 484.5 578 2 L
+V
+N
+127.5 563 484.5 563 2 L
+V
+N
+127.5 548 484.5 548 2 L
+V
+N
+127.5 533 484.5 533 2 L
+V
+N
+127.5 518 484.5 518 2 L
+V
+N
+127.5 503 484.5 503 2 L
+V
+N
+127.5 474 484.5 474 2 L
+V
+N
+127.5 459 484.5 459 2 L
+V
+N
+127.5 444 484.5 444 2 L
+V
+N
+127.5 429 484.5 429 2 L
+V
+N
+127.5 414 484.5 414 2 L
+V
+N
+127.5 399 484.5 399 2 L
+V
+N
+127.5 384 484.5 384 2 L
+V
+N
+127.5 369 484.5 369 2 L
+V
+N
+127 355.25 485 355.25 2 L
+V
+0.5 H
+N
+124.5 352.75 487.5 352.75 2 L
+V
+N
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "18" 18
+%%Page: "19" 19
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+0 14 Q
+0 X
+0 0 0 1 0 0 0 K
+(B.4) 72 335.67 T
+(QFD Results) 126 335.67 T
+0 0 0 1 0 0 0 K
+1 12 Q
+(The metrics which have been selected for the high-level APDE requirements will be) 126 315 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+-0.15 (used to help with the selection of commercial products for the APDE implementation.) 126 301 P
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(In addition, the metrics will help determine how well the overall implementation) 126 287 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(satisfies the customer requirements.) 126 273 T
+0 0 0 1 0 0 0 K
+0 F
+(T) 142.3 712 T
+(able 2: Pr) 149.2 712 T
+(edictive Metrics for High-Level APDE Requir) 198.97 712 T
+(ements) 433.72 712 T
+0 0 0 1 0 0 0 K
+1 F
+(INTERACTION) 132 695 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Number of ISO & STEP guidelines checked \050+\051) 150 680 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Average number of presentation forms per information type \050+\051) 150 665 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Number of modeling conventions checked \050+\051) 150 650 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Average number of times particular information input \050-\051) 150 635 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Average number of modeling conventions whose enforcement con-) 150 620 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(figurable \050+\051) 150 606 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Percentage of user features supported in graphical user interface \050+\051) 150 591 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(VALIDATION) 132 576 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time to find information element\050s\051 fulfilling requirement \050-\051) 150 561 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time to find requirement\050s\051 for information element \050-\051) 150 546 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time to identify impact of proposed change to AP scope or AP) 150 531 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(requirements \050-\051) 150 517 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time per model construct for validation \050-\051) 150 502 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time per requirement for requirement validation \050-\051) 150 487 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Time to identify impact of proposed change to Integrated Resource) 150 472 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\050-\051) 150 458 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(COMMUNICATION) 132 443 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Number of steps to send/receive others\325 information in usable form) 150 428 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(\050-\051) 150 414 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Percentage of expected communication modes supported \050black) 150 399 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(board, e-mail\051 \050+\051) 150 385 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+(Percentage of deviations between corresponding AP components \050-\051) 150 370 T
+0 0 0 1 0 0 0 K
+124.75 706 124.75 364 2 L
+V
+0.5 H
+0 Z
+N
+127.25 703.5 127.25 366.5 2 L
+V
+N
+484.75 703.5 484.75 366.5 2 L
+V
+N
+487.25 706 487.25 364 2 L
+V
+N
+124.5 706.25 487.5 706.25 2 L
+V
+N
+127 703.75 485 703.75 2 L
+V
+N
+127.5 690 484.5 690 2 L
+V
+0.25 H
+N
+127.5 675 484.5 675 2 L
+V
+N
+127.5 660 484.5 660 2 L
+V
+N
+127.5 645 484.5 645 2 L
+V
+N
+127.5 630 484.5 630 2 L
+V
+N
+127.5 601 484.5 601 2 L
+V
+N
+127.5 586 484.5 586 2 L
+V
+N
+127.5 571 484.5 571 2 L
+V
+N
+127.5 556 484.5 556 2 L
+V
+N
+127.5 541 484.5 541 2 L
+V
+N
+127.5 512 484.5 512 2 L
+V
+N
+127.5 497 484.5 497 2 L
+V
+N
+127.5 482 484.5 482 2 L
+V
+N
+127.5 453 484.5 453 2 L
+V
+N
+127.5 438 484.5 438 2 L
+V
+N
+127.5 409 484.5 409 2 L
+V
+N
+127.5 380 484.5 380 2 L
+V
+N
+127 366.25 485 366.25 2 L
+V
+0.5 H
+N
+124.5 363.75 487.5 363.75 2 L
+V
+N
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "19" 19
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%PageOrder: Ascend
+%%Pages: 19
+%%DocumentFonts: Times-Bold
+%%+ Times-Roman
+%%EOF

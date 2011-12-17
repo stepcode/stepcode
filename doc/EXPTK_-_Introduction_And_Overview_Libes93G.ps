@@ -1,0 +1,2080 @@
+%!
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%DocumentFonts: (atend)
+%%EndComments
+%
+% FrameMaker PostScript Prolog 3.0, for use with FrameMaker 3.0
+% Copyright (c) 1986,87,89,90,91 by Frame Technology Corporation.
+% All rights reserved.
+%
+% Known Problems:
+%	Due to bugs in Transcript, the 'PS-Adobe-' is omitted from line 1
+/FMversion (3.0) def 
+% Set up Color vs. Black-and-White
+	/FMPrintInColor systemdict /colorimage known
+		systemdict /currentcolortransfer known or def
+% Uncomment this line to force b&w on color printer
+%   /FMPrintInColor false def
+/FrameDict 195 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} def
+	} if
+/FMVERSION {
+	FMversion ne {
+		/Times-Roman findfont 18 scalefont setfont
+		100 100 moveto
+		(FrameMaker version does not match postscript_prolog!)
+		dup =
+		show showpage
+		} if
+	} def 
+/FMLOCAL {
+	FrameDict begin
+	0 def 
+	end 
+	} def 
+	/gstring FMLOCAL
+	/gfile FMLOCAL
+	/gindex FMLOCAL
+	/orgxfer FMLOCAL
+	/orgproc FMLOCAL
+	/organgle FMLOCAL
+	/orgfreq FMLOCAL
+	/yscale FMLOCAL
+	/xscale FMLOCAL
+	/manualfeed FMLOCAL
+	/paperheight FMLOCAL
+	/paperwidth FMLOCAL
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne dup {setmanualfeed} if
+	/manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	/yscale exch def
+	/xscale exch def
+	currenttransfer cvlit /orgxfer exch def
+	currentscreen cvlit /orgproc exch def
+	/organgle exch def /orgfreq exch def
+	setpapername 
+	manualfeed {true} {papersize} ifelse 
+	{manualpapersize} {false} ifelse 
+	{desperatepapersize} if
+	end 
+	} def 
+	/pagesave FMLOCAL
+	/orgmatrix FMLOCAL
+	/landscape FMLOCAL
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch neg translate pop 
+		}
+		{pop pop}
+		ifelse
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+	} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin
+	array /fillvals exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	0.0 0.0 moveto
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+	/fx FMLOCAL
+	/fy FMLOCAL
+	/fh FMLOCAL
+	/fw FMLOCAL
+	/llx FMLOCAL
+	/lly FMLOCAL
+	/urx FMLOCAL
+	/ury FMLOCAL
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fy translate 
+	rotate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	} bind def
+/FMENDEPSF {
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} def
+	/papersizedict FMLOCAL
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	/FMdicttop countdictstack 1 add def 
+	statusdict begin stopped end 
+	countdictstack -1 FMdicttop {pop end} for 
+	} def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped pop 
+		end
+		} if
+	} def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/dmatrix matrix def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+/freq dpi 18.75 div 8 div round dup 0 eq {pop 1} if 8 mul dpi exch div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+/graymode true def
+	/bwidth FMLOCAL
+	/bpside FMLOCAL
+	/bstring FMLOCAL
+	/onbits FMLOCAL
+	/offbits FMLOCAL
+	/xindex FMLOCAL
+	/yindex FMLOCAL
+	/x FMLOCAL
+	/y FMLOCAL
+/setpattern {
+	 /bwidth  exch def
+	 /bpside  exch def
+	 /bstring exch def
+	 /onbits 0 def  /offbits 0 def
+	 freq sangle landscape {90 add} if 
+		{/y exch def
+		 /x exch def
+		 /xindex x 1 add 2 div bpside mul cvi def
+		 /yindex y 1 add 2 div bpside mul cvi def
+		 bstring yindex bwidth mul xindex 8 idiv add get
+		 1 7 xindex 8 mod sub bitshift and 0 ne
+		 {/onbits  onbits  1 add def 1}
+		 {/offbits offbits 1 add def 0}
+		 ifelse
+		}
+		setscreen
+	 {} settransfer
+	 offbits offbits onbits add div FMsetgray
+	/graymode false def
+	} bind def
+/grayness {
+	FMsetgray
+	graymode not {
+		/graymode true def
+		orgxfer cvx settransfer
+		orgfreq organgle orgproc cvx setscreen
+		} if
+	} bind def
+	/HUE FMLOCAL
+	/SAT FMLOCAL
+	/BRIGHT FMLOCAL
+	/Colors FMLOCAL
+FMPrintInColor 
+	
+	{
+	/HUE 0 def
+	/SAT 0 def
+	/BRIGHT 0 def
+	% array of arrays Hue and Sat values for the separations [HUE BRIGHT]
+	/Colors   
+	[[0    0  ]    % black
+	 [0    0  ]    % white
+	 [0.00 1.0]    % red
+	 [0.37 1.0]    % green
+	 [0.60 1.0]    % blue
+	 [0.50 1.0]    % cyan
+	 [0.83 1.0]    % magenta
+	 [0.16 1.0]    % comment / yellow
+	 ] def
+      
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	/K { 
+		Colors exch get dup
+		0 get /HUE exch store 
+		1 get /BRIGHT exch store
+		  HUE 0 eq BRIGHT 0 eq and
+			{1.0 SAT sub setgray}
+			{HUE SAT BRIGHT sethsbcolor} 
+		  ifelse
+		} def
+	/FMsetgray { 
+		/SAT exch 1.0 exch sub store 
+		  HUE 0 eq BRIGHT 0 eq and
+			{1.0 SAT sub setgray}
+			{HUE SAT BRIGHT sethsbcolor} 
+		  ifelse
+		} bind def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	/FMsetgray {setgray} bind def
+	/K { 
+		pop
+		} def
+	}
+ifelse
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	/fillvals FMLOCAL
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setpattern} 
+	{grayness}
+	ifelse
+	} bind def
+/V { 
+	gsave eofill grestore
+	} bind def
+/N { 
+	stroke
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+	/n FMLOCAL
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+	/x1 FMLOCAL
+	/x2 FMLOCAL
+	/y1 FMLOCAL
+	/y2 FMLOCAL
+	/rad FMLOCAL
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	newpath
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rad arcto
+	x2 y2 x2 y1 rad arcto
+	x2 y1 x1 y1 rad arcto
+	x1 y1 x1 y2 rad arcto
+	closepath
+	16 {pop} repeat
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	} bind def
+	/FMpointsize FMLOCAL
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath fill
+	grestore
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	stroke
+	grestore
+	} bind def
+	/x FMLOCAL
+	/y FMLOCAL
+	/w FMLOCAL
+	/h FMLOCAL
+	/xx FMLOCAL
+	/yy FMLOCAL
+	/ww FMLOCAL
+	/hh FMLOCAL
+	/FMsaveobject FMLOCAL
+	/FMoptop FMLOCAL
+	/FMdicttop FMLOCAL
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 4 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+	/str FMLOCAL
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+	/sl FMLOCAL
+	/val FMLOCAL
+	/ws FMLOCAL
+	/im FMLOCAL
+	/bs FMLOCAL
+	/cs FMLOCAL
+	/len FMLOCAL
+	/pos FMLOCAL
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+	/h FMLOCAL
+	/w FMLOCAL
+	/d FMLOCAL
+	/lb FMLOCAL
+	/bitmapsave FMLOCAL
+	/is FMLOCAL
+	/cf FMLOCAL
+/wbytes { 
+	dup 
+	8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+	/r exch def
+	/d exch def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	r                    
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/r exch def
+	/d exch def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/bitmapsave save def 
+	r                    
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+	/proc1 FMLOCAL
+	/proc2 FMLOCAL
+	/newproc FMLOCAL
+/Fmcc {
+    /proc2 exch cvlit def
+    /proc1 exch cvlit def
+    /newproc proc1 length proc2 length add array def
+    newproc 0 proc1 putinterval
+    newproc proc1 length proc2 putinterval
+    newproc cvx
+} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+	/gryt FMLOCAL
+	/blut FMLOCAL
+	/grnt FMLOCAL
+	/redt FMLOCAL
+	/indx FMLOCAL
+	/cynu FMLOCAL
+	/magu FMLOCAL
+	/yelu FMLOCAL
+	/k FMLOCAL
+	/u FMLOCAL
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/k cynu magu min yelu min def
+		/u k currentundercolorremoval exec def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 k currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+	/tran FMLOCAL
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch Fmcc settransfer
+} bind def
+/BITMAPCOLOR { 
+	/d 8 def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/bitmapsave save def 
+	colorsetup
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/d 8 def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	colorsetup
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} {is} {is} true 3 colorimage
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        
+        /is w string def
+        
+        ws 0 w getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {ip} {gip} {bip} true 3 colorimage
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUECOLOR { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        
+        /is w string def
+        
+        ws 0 w getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {ip gip bip w gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/ww FMLOCAL
+/r FMLOCAL
+/g FMLOCAL
+/b FMLOCAL
+/i FMLOCAL
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop w gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDsave FMLOCAL
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+%%EndProlog
+%%BeginSetup
+(3.0) FMVERSION
+1 1 612 792 0 1 9 FMDOCUMENT
+0 0 /Times-Roman FMFONTDEFINE
+1 0 /Times-Bold FMFONTDEFINE
+2 0 /Times-Italic FMFONTDEFINE
+3 0 /Courier-Bold FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 .1 FMFILL
+2 .3 FMFILL
+3 .5 FMFILL
+4 .7 FMFILL
+5 .9 FMFILL
+6 .97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 .9 FMFILL
+18 .7 FMFILL
+19 .5 FMFILL
+20 .3 FMFILL
+21 .1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "1" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(1) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+1 24 Q
+0 X
+(The NIST E) 170.31 704 T
+1 18 Q
+(XPRESS) 294.28 704 T
+1 24 Q
+( T) 363.25 704 T
+(oolkit) 383.04 704 T
+(\320) 300 674 T
+(Intr) 166.29 644 T
+(oduction and Overview) 207.16 644 T
+1 14 Q
+(Don Libes) 275.48 608.67 T
+1 18 Q
+(Abstract) 72 576 T
+0 12 Q
+1.01 (The NIST E) 72 555 P
+0 9 Q
+0.76 (XPRESS) 132.65 555 P
+0 12 Q
+1.01 ( T) 165.62 555 P
+1.01 (oolkit is a software library for building E) 176.11 555 P
+0 9 Q
+0.76 (XPRESS) 380.08 555 P
+0 12 Q
+1.01 (-related tools.  This paper) 413.04 555 P
+0.55 (gives an introduction, overview) 72 541 P
+0.55 (, and history of the toolkit.  This paper also describes how to get) 224.76 541 P
+0.61 (more information on the toolkit.  No knowledge of E) 72 527 P
+0 9 Q
+0.46 (XPRESS) 331.33 527 P
+0 12 Q
+0.61 ( or the E) 364.3 527 P
+0 9 Q
+0.46 (XPRESS) 407.1 527 P
+0 12 Q
+0.61 ( T) 440.06 527 P
+0.61 (oolkit is presumed) 450.16 527 P
+(other than a rudimentary grasp of basic computer science.) 72 513 T
+(Keywords: compiler) 72 494 T
+(, E) 169.78 494 T
+0 9 Q
+(XPRESS) 183.11 494 T
+0 12 Q
+(; history; implementation; National PDES T) 216.07 494 T
+(estbed; PDES; STEP) 426.8 494 T
+1 18 Q
+(Context) 72 462 T
+0 12 Q
+0.01 (The PDES \050Product Data Exchange using STEP\051 activity is the United States\325 ef) 72 441 P
+0.01 (fort in support of) 458.35 441 P
+-0.16 (the Standard for the Exchange of Product Model Data \050STEP\051, an emer) 72 427 P
+-0.16 (ging international standard) 411.74 427 P
+0 (for the interchange of product data between various vendors\325 CAD/CAM systems and other man-) 72 413 P
+0.45 (ufacturing-related software [10].  A National PDES T) 72 399 P
+0.45 (estbed has been established at the National) 332.11 399 P
+0.03 (Institute of Standards and T) 72 385 P
+0.03 (echnology to provide testing and validation facilities for the emer) 204.52 385 P
+0.03 (ging) 518.67 385 P
+3.03 (standard.  The T) 72 371 P
+3.03 (estbed is funded by the Computer) 158.85 371 P
+3.03 (-aided Acquisition and Logistic Support) 335.33 371 P
+(\050CALS\051 program of the Of) 72 357 T
+(\336ce of the Secretary of Defense.) 200.35 357 T
+1.5 (As part of the testing ef) 72 338 P
+1.5 (fort, NIST is char) 192.23 338 P
+1.5 (ged with providing software for manipulating STEP) 281.12 338 P
+-0.12 (data.  The NIST E) 72 324 P
+0 9 Q
+-0.09 (XPRESS) 159.12 324 P
+0 12 Q
+-0.12 ( T) 192.09 324 P
+-0.12 (oolkit is a part of this.  The toolkit is an evolving, research-oriented set) 201.45 324 P
+0.37 (of software tools.  This document is one of a set of reports \050[1] \320 [9]\051 which describe various as-) 72 310 P
+(pects of the T) 72 296 T
+(oolkit.) 136.78 296 T
+1 18 Q
+(Intr) 72 264 T
+(oduction) 102.65 264 T
+0 12 Q
+-0.27 (The NIST E) 72 243 P
+0 9 Q
+-0.2 (XPRESS) 130.08 243 P
+0 12 Q
+-0.27 ( T) 163.04 243 P
+-0.27 (oolkit is a software library for building software tools for manipulating infor-) 172.26 243 P
+2.32 (mation models) 72 229 P
+0 10 Q
+1.93 (1) 145.28 233.8 P
+0 12 Q
+2.32 ( written in the E) 150.28 229 P
+0 9 Q
+1.74 (XPRESS) 236.83 229 P
+0 12 Q
+2.32 ( language [1) 269.79 229 P
+2.32 (1].  An example application \050\322fedex\323\051 is) 333.26 229 P
+(included which reports syntactic and semantic errors in E) 72 215 T
+0 9 Q
+(XPRESS) 347.13 215 T
+0 12 Q
+( schemas.) 380.1 215 T
+-0.29 (Figure 1 shows the toolkit in context.  The toolkit acts as a database for schema information stored) 72 196 P
+0.64 (in the \336le system.  Using the toolkit, an application can query for information about the schema) 72 182 P
+4.83 (such as \322What entities are de\336ned?\323 \050Listing 1\051 or \322What are the attributes in entity) 72 168 P
+(CUR) 72 154 T
+(VE?\323\050Listing 2\051.  The application can also manipulate or augment information in the toolkit.) 96.66 154 T
+72 84 540 98.98 C
+72 84 540 98.98 R
+7 X
+0 K
+V
+81 96.96 225 96.96 2 L
+V
+0.5 H
+2 Z
+0 X
+N
+0 0 612 792 C
+0 10 Q
+0 X
+0 K
+-0.02 (1. The terms) 90 77.33 P
+2 F
+-0.02 (information model) 142.69 77.33 P
+0 F
+-0.02 ( and) 216.81 77.33 P
+2 F
+-0.02 (conceptual schema) 236.21 77.33 P
+0 F
+-0.02 ( are used interchangeably throughout this document.) 312.52 77.33 P
+FMENDPAGE
+%%EndPage: "1" 2
+%%Page: "2" 2
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(2) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+3 11 Q
+0 X
+(LISTdo\050SCOPEget_entities\050schema\051,e,Entity\051) 108 445.67 T
+(printf\050ENTITYget_name\050e\051\051;) 145 430.67 T
+(LISTod) 108 415.67 T
+0 12 Q
+(Listing 1: What entities are de\336ned in a schema?) 189.08 400 T
+3 11 Q
+(LISTdo\050ENTITYget_attributes\050entity\051,v,Variable\051) 108 352.67 T
+(printf\050VARget_name\050v\051\051;) 145 337.67 T
+(LISTod) 108 322.67 T
+0 12 Q
+(Listing 2: What attributes are de\336ned in an entity?) 185.41 307 T
+-0.09 (The actual in-memory data structures used by the toolkit are irrelevant to the application since the) 72 269 P
+0.03 (toolkit provides a well-de\336ned interface for access to all information.  This well-de\336ned interface) 72 255 P
+(is a set of function calls encapsulating the information contained in the schema.) 72 241 T
+-0.16 (The toolkit allows tools to be schema-independent.  Dif) 72 222 P
+-0.16 (ferent schemas can be read at run-time, al-) 337.32 222 P
+0.35 (lowing applications to be \337exible in the data that they manipulate.  For example, we have built a) 72 208 P
+0.04 (Part 21 exchange \336le parser [12] that works with any E) 72 194 P
+0 9 Q
+0.03 (XPRESS) 336.88 194 P
+0 12 Q
+0.04 ( schema.  Another class of such ap-) 369.85 194 P
+0.68 (plications is translators.  W) 72 180 P
+0.68 (e have built translators to convert from E) 204.69 180 P
+0 9 Q
+0.51 (XPRESS) 406.32 180 P
+0 12 Q
+0.68 ( to C++,  SmallT) 439.29 180 P
+0.68 (alk,) 522.34 180 P
+(and SQL.) 72 166 T
+-0.18 (The translators, in turn, may be used to build other applications which are schema-dependent.  W) 72 147 P
+-0.18 (e) 534.67 147 P
+0.72 (have built schema-dependent tools such as the Data Probe, prototype E) 72 133 P
+0 9 Q
+0.54 (XPRESS) 419.94 133 P
+0 12 Q
+0.72 ( and SQL schema) 452.91 133 P
+0.93 (browsers, and data editors [13][14].  It is important to recognize that similar applications while) 72 119 P
+1.09 (schema-dependent, did not actually require the developer to write any schema-dependent code.) 72 105 P
+1.05 (Such code was produced by the translators, and can be reproduced for other schemas since the) 72 91 P
+(translators themselves are schema-independent.) 72 77 T
+72 72 540 720 C
+72 453 540 720 C
+0 12 Q
+0 X
+0 K
+(well-de\336ned interface) 82.09 583.9 T
+(T) 285.32 656.9 T
+(oolkit) 291.81 656.9 T
+(Figure 1: Data \337ow in the toolkit) 227.32 474.9 T
+254.55 618.08 347.55 706.08 18 RR
+7 X
+V
+0.5 H
+0 Z
+0 X
+N
+396.55 618.08 489.55 706.08 18 RR
+7 X
+V
+3 X
+N
+0 X
+90 450 60 33.07 306.55 538.99 A
+302.57 539.82 304.53 527.98 296.59 536.98 299.58 538.4 4 Y
+V
+292.08 529.6 281.54 535.32 293.51 536.06 292.79 532.83 4 Y
+V
+292.81 532.86 M
+ 303.18 534.45 311.65 544.84 301.55 549.53 D
+ 290.87 554.48 295.16 546.51 299.62 538.42 D
+N
+333.17 543.16 335.53 554.92 339.76 543.69 336.47 543.43 4 Y
+V
+334.99 541.28 343.55 532.87 331.83 535.47 333.41 538.38 4 Y
+V
+333.39 538.34 M
+ 324.5 550.13 315.22 572.24 312.02 547.57 D
+ 310.23 533.87 323.06 519.25 333.55 528.15 D
+ 338.97 532.75 337.83 537.95 336.49 543.4 D
+N
+284.92 561.46 288.54 550.02 279.41 557.8 282.16 559.63 4 Y
+V
+298.59 516.97 309.54 512.06 297.65 510.42 298.12 513.7 4 Y
+V
+298.12 513.67 M
+ 281.75 517.46 260.1 527.97 268.88 546.34 D
+ 274.31 557.69 277.84 563.13 282.21 559.67 D
+N
+290.05 550.4 294.54 562.27 297.02 549.83 293.53 550.11 4 Y
+V
+280.71 519.19 268.54 518.18 278.33 525.48 279.52 522.33 4 Y
+V
+295 344 26 44.09 268.55 562.26 A
+345.17 530.23 356.53 534.1 348.95 524.8 347.06 527.52 4 Y
+V
+339.35 534.07 334.54 523.08 332.8 534.95 336.08 534.51 4 Y
+V
+336.08 534.51 M
+ 339.35 559.59 337.85 557.88 325.05 543.28 D
+ 310.55 526.75 310.55 526.75 318.55 520.01 D
+ 325.6 514.07 326.43 513.37 347.07 527.54 D
+N
+(EXPRESS) 108.89 652.08 T
+(Application) 416.55 657.08 T
+(In-memory) 381.77 541.08 T
+(Schema) 115.57 637.08 T
+243.01 665.38 254.55 662.08 243.01 658.77 243.01 662.08 4 Y
+V
+192.55 662.08 243.01 662.08 2 L
+2 Z
+N
+302.85 580.61 299.55 569.08 296.24 580.61 299.55 580.61 4 Y
+V
+299.55 617.08 299.55 580.61 2 L
+N
+385 667.36 396.54 664.08 385.01 660.75 385 664.06 4 Y
+3 X
+V
+347.55 663.99 385.01 664.06 2 L
+7 X
+V
+3 X
+N
+0 X
+(data structures) 373.95 528.08 T
+304.24 605.54 307.55 617.08 310.85 605.54 307.55 605.54 4 Y
+V
+307.55 569.08 307.55 605.54 2 L
+N
+7 X
+90 450 53.5 15 134.55 693.08 G
+0 X
+90 450 53.5 15 134.55 693.08 A
+81.05 691.08 81.05 628.08 2 L
+N
+180 270 54 17 135.05 627.08 A
+270 360 54 17 134.05 627.08 A
+188.05 691.08 188.05 628.08 2 L
+N
+359.07 652.75 347.54 656.08 359.08 659.36 359.07 656.06 4 Y
+3 X
+V
+396.55 655.99 359.08 656.06 2 L
+7 X
+V
+3 X
+N
+373.05 691.08 373.05 626.08 2 L
+1 H
+N
+223.05 691.08 223.05 626.08 2 L
+N
+0 X
+(well-de\336ned interface) 411.05 582.08 T
+371.66 604.68 373.04 617.08 378.44 605.83 375.05 605.26 4 Y
+3 X
+V
+201 270 30 33 403.05 617.08 A
+218.64 605.83 224.04 617.08 225.42 604.68 222.03 605.26 4 Y
+V
+270 339 30 33 194.05 617.08 A
+0 X
+(T) 282.55 658.08 T
+(oolkit) 289.04 658.08 T
+72 72 540 720 C
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "2" 3
+%%Page: "3" 3
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(3) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+0 12 Q
+0 X
+2.78 (The choice between schema-dependent and schema-independent depends on several factors.) 72 712 P
+0.31 (Schema-independent applications usually are physically smaller since they do not have entire in-) 72 698 P
+0.55 (formation models embedded within them.  These applications are also insulated against changes) 72 684 P
+(in the conceptual schema and, to a certain extent, in E) 72 670 T
+0 9 Q
+(XPRESS) 330.47 670 T
+0 12 Q
+( itself.) 363.44 670 T
+0.15 (On the other hand, schema-dependent applications invariably have less overhead during run-time) 72 651 P
+0.18 (devoted to initialization of the in-memory representation of the information model, and can often) 72 637 P
+(have reduced time for data access as well.) 72 623 T
+1.25 (W) 72 604 P
+1.25 (e have also constructed other toolkits that work with the E) 82.36 604 P
+0 9 Q
+0.94 (XPRESS) 374.03 604 P
+0 12 Q
+1.25 ( T) 406.99 604 P
+1.25 (oolkit.  For example, we) 417.73 604 P
+-0.19 (have built Exppp, a toolkit for pretty-printing \050i.e., formatting\051 E) 72 590 P
+0 9 Q
+-0.14 (XPRESS) 380.44 590 P
+0 12 Q
+-0.19 ( [15].  This exists as a sep-) 413.41 590 P
+0.44 (arate toolkit since it represents just one style of formatting and there could conceivably be many) 72 576 P
+0.79 (others.  The Exppp T) 72 562 P
+0.79 (oolkit along with the E) 175.92 562 P
+0 9 Q
+0.59 (XPRESS) 289.02 562 P
+0 12 Q
+0.79 ( T) 321.99 562 P
+0.79 (oolkit has been used to build several more) 332.27 562 P
+-0.17 (tools such a program to convert STEP Short Listings to Annotated Listings [16], and a program to) 72 548 P
+(manipulate E) 72 534 T
+0 9 Q
+(XPRESS) 135.62 534 T
+0 12 Q
+( within a T) 168.59 534 T
+(cl/Tk environment [17].) 220.05 534 T
+-0.08 (Like tools, toolkits can similarly be either schema-dependent or schema-independent.  The Exppp) 72 515 P
+1.12 (toolkit is schema-independent.  Another schema-independent toolkit is the STEP Class Library) 72 501 P
+0.36 (\050SCL\051 T) 72 487 P
+0.36 (oolkit [18] which provides support for manipulating E) 111.83 487 P
+0 9 Q
+0.27 (XPRESS) 374.49 487 P
+0 12 Q
+0.36 ( inside a C++ environment.) 407.45 487 P
+(In contrast, the Part 21 Exchange File T) 72 473 T
+(oolkit [12] is schema-independent.) 262.36 473 T
+1 18 Q
+(Envir) 72 441 T
+(onment) 115.66 441 T
+0 12 Q
+1.12 (The E) 72 420 P
+0 9 Q
+0.84 (XPRESS) 102.1 420 P
+0 12 Q
+1.12 ( T) 135.06 420 P
+1.12 (oolkit was developed on Sun Microsystems SP) 145.67 420 P
+1.12 (ARCstation workstations running) 376.51 420 P
+0.51 (SunOS, an operating system derived from BSD UNIX.) 72 406 P
+0 10 Q
+0.42 (2) 339.05 410.8 P
+0 12 Q
+0.51 (  Occasionally) 344.05 406 P
+0.51 (, we or others have ported) 412.9 406 P
+1.14 (the software to other platforms such as Digital\325) 72 392 P
+1.14 (s DECstation and Hewlet-Packard\325) 305.47 392 P
+1.14 (s HP700 and) 476.43 392 P
+1.3 (800-series workstations.  While some small non-portabilities invariably creep in, the system is) 72 378 P
+0.81 (highly portable within a UNIX environment.  While we have not tried doing so, we believe the) 72 364 P
+0.01 (software will port easily to any pure-POSIX [19] environment.  W) 72 350 P
+0.01 (ith minor limitations due to \336le) 390.36 350 P
+(system de\336ciencies, the software should be portable to a PC-based platform.) 72 336 T
+0 10 Q
+(3) 438.41 340.8 T
+0 12 Q
+0.79 (The T) 72 317 P
+0.79 (oolkit is written in ANSI Standard C [20].  The use of prototypes prevents its use in pure) 100.92 317 P
+1.52 (K&R [21] environments although this could be remedied by code rewriting tools.  While any) 72 303 P
+0.43 (ANSI C compiler can be used to compile the toolkit, we use GCC, available from the Free Soft-) 72 289 P
+0.06 (ware Foundation \050FSF\051 [22].  FSF tools are free but with certain distribution restrictions.  If GCC) 72 275 P
+1.38 (is used to compile the toolkit, certain optimizations are enabled which can increase its perfor-) 72 261 P
+(mance.) 72 247 T
+-0.21 (The toolkit\325) 72 228 P
+-0.21 (s scanner  is written in Lex [23], a scanner generator commonly provided in UNIX en-) 128.1 228 P
+0.7 (vironments.  However) 72 214 P
+0.7 (, it can also be processed by Flex, another scanner generator that is in the) 179.84 214 P
+0.46 (public-domain and quite popular) 72 200 P
+0.46 (.  The toolkit\325) 229.61 200 P
+0.46 (s parser is written in Y) 296.29 200 P
+0.46 (acc [24] \050a parser generator) 406.31 200 P
+0.36 (commonly provided in UNIX environments\051 with special modi\336cations [25] to enhance error re-) 72 186 P
+0.99 (porting.  However) 72 172 P
+0.99 (, it can also be processed by Bison, another parser generator that is available) 161.1 172 P
+0.77 (from FSF) 72 158 P
+0.77 (.  While not built in to UNIX systems, Flex and Bison are more \337exible than Lex and) 118.13 158 P
+72 132 540 146.98 C
+72 132 540 146.98 R
+7 X
+0 K
+V
+81 144.96 225 144.96 2 L
+V
+0.5 H
+2 Z
+0 X
+N
+0 0 612 792 C
+0 10 Q
+0 X
+0 K
+-0.08 (2. Trade names and company products are mentioned in the text in order to adequately specify experimental pro-) 90 125.33 P
+0.28 (cedures and equipment used.  In no case does such identification imply recommendation or endorsement by the) 90 113.33 P
+-0.11 (National Institute of Standards and Technology, nor does it imply that the products are necessarily the best avail-) 90 101.33 P
+(able for the purpose.) 90 89.33 T
+(3. Previous releases were dependent upon a POSIX.2 environment.   We have removed these dependencies.) 90 77.33 T
+FMENDPAGE
+%%EndPage: "3" 4
+%%Page: "4" 4
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(4) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+0 12 Q
+0 X
+1.26 (Y) 72 712 P
+1.26 (acc, and they have a reputation of being faster as well.  Although we have not benchmarked) 79.46 712 P
+0.42 (them, we use Flex and Bison in our own development workbench and encourage their use in the) 72 698 P
+(toolkit.) 72 684 T
+1 18 Q
+(Conformance) 72 652 T
+0 12 Q
+0.46 (On September 8, 1993, the CAD/CAM Data Exchange T) 72 631 P
+0.46 (echnical Centre \050CADDETC\051, a British) 348.64 631 P
+-0.28 (Standards Institution \050BSI\051 accredited testing body of the United Kingdom, certi\336ed that the NIST) 72 617 P
+0.54 (E) 72 603 P
+0 9 Q
+0.4 (XPRESS) 79.33 603 P
+0 12 Q
+0.54 ( T) 112.29 603 P
+0.54 (oolkit had passed CADDETC\325) 122.32 603 P
+0.54 (s Level 1 \050reference and syntax checking\051 conformance) 270.17 603 P
+(testing.  As of this writing, the toolkit is the only software to have achieved this.) 72 589 T
+1 18 Q
+(Performance) 72 557 T
+0 12 Q
+0.74 (Performance has not been objectively studied, however we can say something about it nonethe-) 72 536 P
+0.62 (less.  The performance of the toolkit has been signi\336cantly improved from earlier releases.  The) 72 522 P
+0.46 (current release runs in less than 1% of the time than the previous release [26] and uses 60% less) 72 508 P
+1.64 (space, while at the same time semantically analyzing more of the information in the E) 72 494 P
+0 9 Q
+1.23 (XPRESS) 507.03 494 P
+0 12 Q
+(speci\336cation than before.  The area of performance is further described in [3].) 72 480 T
+-0.23 (While there is no standard schema or platform with which we can characterize performance, some) 72 461 P
+0.04 (simple statistics are possible.  On a Sun SP) 72 447 P
+0.04 (ARCstation 2, a 100Kb schema takes on the order of 1) 277.45 447 P
+0.96 (to 2 seconds to process including reporting any syntactic or semantic errors.  The toolkit is ap-) 72 433 P
+(proximately 14000 lines of C \050including comments\051 which compiles in 2 minutes using GCC.) 72 419 T
+1 18 Q
+(How to Obtain the T) 72 387 T
+(oolkit) 229.27 387 T
+0 12 Q
+1.27 (The toolkit and its documentation may be obtained in a variety of ways.  The simplest way is) 72 366 P
+0.82 (through anonymous ftp via the Internet.  In this case, the source is pub/step/npttools/exptk.tar) 72 352 P
+0.82 (.Z) 529.67 352 P
+-0.1 (on ftp.cme.nist.gov) 72 338 P
+-0.1 (.  Complete documentation on obtaining the toolkit and its documentation is in) 163.73 338 P
+(/pub/step/ntpdocs/exptk-obtaining-installing.ps.Z [5].) 72 324 T
+0.75 (Alternately) 72 305 P
+0.75 (, it is possible to receive the toolkit by email.  T) 125.18 305 P
+0.75 (o do this, send the following mail to) 361.49 305 P
+(ntpserver@cme.nist.gov:) 72 291 T
+3 11 Q
+(send step/npttools/exptk.tar.Z) 108 272.67 T
+(send step/nptdocs/exptk-obtaining-installing.ps.Z) 108 257.67 T
+0 12 Q
+0.4 (If you do not understand these instructions or for any other reason cannot successfully use ftp or) 72 242 P
+(email, contact:) 72 228 T
+(F) 72 209 T
+(ASD \320 National PDES T) 77.78 209 T
+(estbed) 196.88 209 T
+(National Institute of T) 72 195 T
+(echnology and Standards) 178.09 195 T
+(Bldg 220, Rm A-127) 72 181 T
+(Gaithersbur) 72 167 T
+(g, MD  20899) 128.4 167 T
+(npt-info@cme.nist.gov) 72 148 T
+(1-301-975-3179) 72 134 T
+FMENDPAGE
+%%EndPage: "4" 5
+%%Page: "5" 5
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(5) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+1 18 Q
+0 X
+(Questions, Pr) 72 708 T
+(oblems, and Support) 175.62 708 T
+0 12 Q
+0.47 (The system is distributed in source form and you are encouraged to experiment with the system,) 72 687 P
+-0.23 (especially if you have problems with it.  While it is often quicker for you to have us diagnose your) 72 673 P
+0.17 (problems, it is quicker for us to have you diagnose your own problems.  This software is a proto-) 72 659 P
+(type, intended to spur development of commercial products.) 72 645 T
+0.04 (Nonetheless, if you do have questions and/or problems, you may send e-mail to the following ad-) 72 626 P
+4.24 (dresses.  Please include schemas, version numbers, platform descriptions, and any other) 72 612 P
+(information that could be relevant.) 72 598 T
+(Annotated Listing Generator) 115.98 579 T
+3 11 Q
+(shtolo@cme.nist.gov) 270 579 T
+0 12 Q
+(Data Probe) 115.98 563 T
+3 11 Q
+(dprobe@cme.nist.gov) 270 563 T
+0 12 Q
+(E) 115.98 547 T
+0 9 Q
+(XPRESS) 123.31 547 T
+0 12 Q
+( Analysis) 156.28 547 T
+3 11 Q
+(exptk@cme.nist.gov) 270 547 T
+0 12 Q
+(E) 115.98 531 T
+0 9 Q
+(XPRESS) 123.31 531 T
+0 12 Q
+( Server) 156.28 531 T
+3 11 Q
+(express-server-admin@cme.nist.gov) 270 531 T
+0 12 Q
+(Part 21 Analysis) 115.98 515 T
+3 11 Q
+(p21tk@cme.nist.gov) 270 515 T
+0 12 Q
+(STEP Class Library) 115.98 499 T
+3 11 Q
+(stepcl@cme.nist.gov) 270 499 T
+1 18 Q
+(History and Cr) 72 467 T
+(edits) 188.61 467 T
+0 12 Q
+0.07 (The idea of a schema-independent toolkit was \336rst proposed by Steve Clark \050NIST\051.  Clark wrote) 72 446 P
+-0.28 (the initial release of the toolkit.  W) 72 432 P
+-0.28 (ritten in C, it was a non-object-oriented implementation charac-) 236.79 432 P
+(terized by a single, single-pass-resolution phase.  It was based on the \322T) 72 418 T
+(okyo\323 draft of E) 416.91 418 T
+0 9 Q
+(XPRESS) 495.17 418 T
+0 12 Q
+(.) 528.14 418 T
+0.32 (After attempting a short-lived version in C++, Clark rewrote it in C but with a hand-built object-) 72 399 P
+(oriented engine for N496 [27].  This was publicly released in 1988 and saw wide distribution.) 72 385 T
+-0.25 (Around the same time, Bruce Thomas \050NIST\051 created a similar toolkit for what was to become the) 72 366 P
+1 (STEP Part 21 Exchange File Format.  Several other NIST employees worked on this including) 72 352 P
+-0.01 (Sandy Ressler) 72 338 P
+-0.01 (, T) 139.8 338 P
+-0.01 (ina Lee, and Cathy Diaz.  Clark eventually took over control of this software, in-) 152.7 338 P
+0.29 (tegrating it into a framework similar to the E) 72 324 P
+0 9 Q
+0.22 (XPRESS) 288.83 324 P
+0 12 Q
+0.29 ( toolkit.  Using both toolkits, Clark wrote the) 321.8 324 P
+0.44 (\336rst application, an E) 72 310 P
+0 9 Q
+0.33 (XPRESS) 175.92 310 P
+0 12 Q
+0.44 ( to Smalltalk translator [28].  In the following year) 208.88 310 P
+0.44 (, numerous appli-) 454.85 310 P
+0.19 (cations appeared, including an E) 72 296 P
+0 9 Q
+0.14 (XPRESS) 228.96 296 P
+0 12 Q
+0.19 ( to SQL translator and an E) 261.93 296 P
+0 9 Q
+0.14 (XPRESS) 394.29 296 P
+0 12 Q
+0.19 ( to C++ translator) 427.26 296 P
+0.19 (, both) 512.49 296 P
+(written by KC Morris \050NIST\051.) 72 282 T
+0.67 (In 1989, Clark began participating in the E) 72 263 P
+0 9 Q
+0.5 (XPRESS) 281.85 263 P
+0 12 Q
+0.67 ( standards committee, while relinquishing fur-) 314.82 263 P
+5.3 (ther software development to Don Libes \050NIST\051.  Libes worked on speeding up the) 72 249 P
+1.69 (implementation primarily by reimplementing symbol tables with hash tables instead of linked) 72 235 P
+0.16 (lists.  In September 1990, based on N496, this release was distributed to NIST\325) 72 221 P
+0.16 (s PDES, Inc. part-) 452.57 221 P
+(ners but was not made publicly available.) 72 207 T
+-0.17 (Libes then enhanced the software so that it supported N14.  Dave Briggs \050Boeing and PDES, Inc.\051) 72 188 P
+0.05 (contributed the implementation of Use and Reference.  This implementation was publicly distrib-) 72 174 P
+(uted in November 1991.) 72 160 T
+0.08 (Up to this point, this and other software was collectively known as the \322NIST PDES toolkit\323.  As) 72 141 P
+0.77 (dif) 72 127 P
+0.77 (ferent rates of revision in various standards caused pieces of the software to be revised sepa-) 85.11 127 P
+(rately) 72 113 T
+(, the PDES toolkit was broken up into a number of toolkits, such as the E) 98.53 113 T
+0 9 Q
+(XPRESS) 449.33 113 T
+0 12 Q
+( T) 482.29 113 T
+(oolkit.) 491.78 113 T
+-0.06 (During 1992, Libes rewrote the E) 72 94 P
+0 9 Q
+-0.05 (XPRESS) 232.91 94 P
+0 12 Q
+-0.06 ( T) 265.88 94 P
+-0.06 (oolkit while ostensibly converting it from N14 to N151) 275.3 94 P
+1.05 (\050Draft International Standard\051.  In the interests of ef) 72 80 P
+1.05 (\336ciency) 328.35 80 P
+1.05 (, the object-oriented engine was re-) 365.54 80 P
+FMENDPAGE
+%%EndPage: "5" 6
+%%Page: "6" 6
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(6) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+0 12 Q
+0 X
+0.64 (moved, and the single-pass resolution was converted to multiple passes.  This software ran over) 72 712 P
+0.89 (100 times faster than the earlier object-oriented releases.  In addition, many of the missing fea-) 72 698 P
+(tures of E) 72 684 T
+0 9 Q
+(XPRESS) 118.63 684 T
+0 12 Q
+( were \336nally implemented.  This is described further in [3].) 151.6 684 T
+0.93 (The authors thank the numerous testers and application writers who put up with continual \322im-) 72 665 P
+2.05 (provements\323 to the toolkit, and who gave high-quality feedback.  Thanks particularly to Jim) 72 651 P
+0.74 (Fowler) 72 637 P
+0.74 (, KC Morris, Kent Shepherd, Gerard Silvernale, T) 105.5 637 P
+0.74 (om Kramer) 349.96 637 P
+0.74 (, Kent Reed, Gerard Silver-) 405.17 637 P
+0.59 (nail, Connie Augustin, Newton Breese, Cita Furlani, Lisa Phillips, Dave Sauder) 72 623 P
+0.59 (, Mary Mitchell,) 460.2 623 P
+0.15 (Peter Carr) 72 609 P
+0.15 (, David Helfrick, Sandy Ressler) 120.63 609 P
+0.15 (, Jeane Ford and numerous other people who contribut-) 273.31 609 P
+(ed requirements, suggestions, and bug \336xes.) 72 595 T
+1.31 (The NIST E) 72 576 P
+0 9 Q
+0.98 (XPRESS) 133.24 576 P
+0 12 Q
+1.31 ( T) 166.21 576 P
+1.31 (oolkit is funded by the Computer) 177 576 P
+1.31 (-aided Acquisition and Logistic Support) 342.21 576 P
+(\050CALS\051 program of the Of) 72 562 T
+(\336ce of the Secretary of Defense \050see Context on page 1\051.) 200.35 562 T
+1 18 Q
+(Documentation) 72 530 T
+0 12 Q
+-0.16 (The following papers describe various aspects of the toolkit.  Note that the implementation is sub-) 72 509 P
+0.61 (ject to change.  Because of this, no guarantee is made that the descriptions in this paper are still) 72 495 P
+(accurate with regard to the current implementation.) 72 481 T
+([1]) 72 462 T
+0.22 (Libes, Don, and Fowler) 102.02 462 P
+0.22 (, Jim, \322The NIST E) 215.78 462 P
+0 9 Q
+0.16 (XPRESS) 309.91 462 P
+0 12 Q
+0.22 ( T) 342.88 462 P
+0.22 (oolkit \320 Requirements\323, NISTIR 5212,) 352.58 462 P
+(National Institute of Standards and T) 124.99 448 T
+(echnology) 301.7 448 T
+(, Gaithersbur) 350.89 448 T
+(g, MD, June 9, 1992.) 413.29 448 T
+-0.18 (This describes the original requirements that provided the impetus for the design of the) 124.99 429 P
+(current release of the toolkit.) 124.99 415 T
+([2]) 72 396 T
+-0.15 (Libes, Don, \322The NIST E) 102.02 396 P
+0 9 Q
+-0.11 (XPRESS) 224.68 396 P
+0 12 Q
+-0.15 ( T) 257.64 396 P
+-0.15 (oolkit \320 Design and Implementation\323,) 266.98 396 P
+2 F
+-0.15 (Pr) 450.8 396 P
+-0.15 (oceedings of the) 462.35 396 P
+0.49 (Seventh Annual ASME Engineering Database Symposium) 124.99 382 P
+0 F
+0.49 (, San Diego, CA, August 9-) 404.94 382 P
+(1) 124.99 368 T
+(1, 1993.) 130.54 368 T
+(This describes the design and implementation of the toolkit.) 124.99 349 T
+([3]) 72 330 T
+0.91 (Libes, Don, and Clark, Steve, \322The NIST E) 102.02 330 P
+0 9 Q
+0.68 (XPRESS) 317.25 330 P
+0 12 Q
+0.91 ( T) 350.21 330 P
+0.91 (oolkit \320 Lessons Learned\323,) 360.61 330 P
+2 F
+0.91 (Pr) 496.49 330 P
+0.91 (oceed-) 508.04 330 P
+0.11 (ings of the 1992 EXPRESS Users\325 Gr) 124.99 316 P
+0.11 (oup \050EUG \32492\051 Confer) 305.12 316 P
+0.11 (ence) 413.94 316 P
+0 F
+0.11 (, Dallas, T) 435.92 316 P
+0.11 (exas, Octo-) 485.27 316 P
+(ber 17-18, 1992.) 124.99 302 T
+1.96 (This describes implementation experiences while building the toolkit.  It describes) 124.99 283 P
+1.02 (much of the rational for the architectures used in the various releases, and why they) 124.99 269 P
+(changed.) 124.99 255 T
+([4]) 72 236 T
+-0.16 (Libes, Don, \322The NIST E) 102.02 236 P
+0 9 Q
+-0.12 (XPRESS) 224.64 236 P
+0 12 Q
+-0.16 ( T) 257.6 236 P
+-0.16 (oolkit \320 Using Applications\323, NISTIR 5206, National In-) 266.93 236 P
+(stitute of Standards and T) 124.99 222 T
+(echnology) 247.41 222 T
+(, Gaithersbur) 296.59 222 T
+(g, MD, June 9, 1993.) 358.99 222 T
+0.22 (This describes fedex, the included toolkit application to check E) 124.99 203 P
+0 9 Q
+0.17 (XPRESS) 434.76 203 P
+0 12 Q
+0.22 ( syntax and se-) 467.73 203 P
+1.43 (mantic errors.  Its options and diagnostics are described.  The E) 124.99 189 P
+0 9 Q
+1.07 (XPRESS) 445.52 189 P
+0 12 Q
+1.43 ( toolkit mail) 478.49 189 P
+(server is also described.) 124.99 175 T
+([5]) 72 156 T
+1.23 (Libes, Don, \322The NIST E) 102.02 156 P
+0 9 Q
+0.92 (XPRESS) 230.19 156 P
+0 12 Q
+1.23 ( T) 263.16 156 P
+1.23 (oolkit \320 Obtaining and Installing\323, NISTIR 5204, Na-) 273.87 156 P
+(tional Institute of Standards and T) 124.99 142 T
+(echnology) 287.72 142 T
+(, Gaithersbur) 336.9 142 T
+(g, MD, June 9, 1993.) 399.3 142 T
+(This describes how to obtain and install the E) 124.99 123 T
+0 9 Q
+(XPRESS) 343.52 123 T
+0 12 Q
+( toolkit.) 376.49 123 T
+([6]) 72 104 T
+0.4 (Libes, Don, \322The NIST E) 102.02 104 P
+0 9 Q
+0.3 (XPRESS) 226.85 104 P
+0 12 Q
+0.4 ( T) 259.82 104 P
+0.4 (oolkit \320 Programmer) 269.7 104 P
+0.4 (\325) 370.88 104 P
+0.4 (s Reference\323, National Institute of) 374.21 104 P
+(Standards and T) 124.99 90 T
+(echnology) 202.1 90 T
+(, Gaithersbur) 251.28 90 T
+(g, MD, to appear) 313.68 90 T
+(.) 394.63 90 T
+FMENDPAGE
+%%EndPage: "6" 7
+%%Page: "7" 7
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(7) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+0 12 Q
+0 X
+(This describes the toolkit\325) 124.99 712 T
+(s application interface.) 249.26 712 T
+([7]) 72 693 T
+1.71 (Libes, Don, \322The NIST E) 102.02 693 P
+0 9 Q
+1.28 (XPRESS) 232.09 693 P
+0 12 Q
+1.71 ( T) 265.06 693 P
+1.71 (oolkit \320 Creating Applications\323, National Institute of) 276.25 693 P
+(Standards and T) 124.99 679 T
+(echnology) 202.1 679 T
+(, Gaithersbur) 251.28 679 T
+(g, MD, to appear) 313.68 679 T
+(.) 394.63 679 T
+0.52 (This describes how to design and implement toolkit applications.  fedex_plus and the) 124.99 660 P
+(Part 21 parser are used as examples.) 124.99 646 T
+([8]) 72 627 T
+0.04 (Libes, Don, \322The NIST E) 102.02 627 P
+0 9 Q
+0.03 (XPRESS) 225.42 627 P
+0 12 Q
+0.04 ( T) 258.39 627 P
+0.04 (oolkit \320 Updating Existing Applications\323, NISTIR 5205,) 267.91 627 P
+(National Institute of Standards and T) 124.99 613 T
+(echnology) 301.7 613 T
+(, Gaithersbur) 350.89 613 T
+(g, MD, June 9, 1993.) 413.29 613 T
+(This describes how to update applications that used the previous toolkit.) 124.99 594 T
+([9]) 72 575 T
+-0.14 (Libes, Don, \322The NIST E) 102.02 575 P
+0 9 Q
+-0.11 (XPRESS) 224.7 575 P
+0 12 Q
+-0.14 ( Server \320 Usage and Implementation\323, National Institute of) 257.67 575 P
+(Standards and T) 124.99 561 T
+(echnology) 202.1 561 T
+(, Gaithersbur) 251.28 561 T
+(g, MD, to appear) 313.68 561 T
+(.) 394.63 561 T
+-0.18 (This describes a server which runs the applications based on the NIST E) 124.99 542 P
+0 9 Q
+-0.14 (XPRESS) 469.89 542 P
+0 12 Q
+-0.18 ( toolkit.) 502.86 542 P
+0.88 (It is possible to use the server via internet mail or telnet/rlogin, thereby avoiding the) 124.99 528 P
+(overhead of installing and maintaining the tools locally) 124.99 514 T
+(.) 389.05 514 T
+1 18 Q
+(Other Refer) 72 482 T
+(ences) 165.08 482 T
+0 12 Q
+([10]) 72 461 T
+1.48 (Mason, H., ed.,) 102.02 461 P
+1.48 (\322Industrial Automation Systems \320 Product Data Representation and Ex-) 183.07 461 P
+0.39 (change \320 Part 1: Overview and Fundamental Principles\323) 124.99 447 P
+0.39 (, V) 397.85 447 P
+0.39 (ersion 9, ISO TC184/SC4/) 411.56 447 P
+(WG PMAG Document N50, December 1991.) 124.99 433 T
+([1) 72 414 T
+(1]) 81.55 414 T
+0.94 (Spiby) 102.02 414 P
+0.94 (, P) 129.24 414 P
+0.94 (., ed., \322ISO 10303 Industrial Automation Systems \320 Product Data Representation) 141.51 414 P
+1.92 (and Exchange \320  Part 1) 124.99 400 P
+1.92 (1: Description Methods: The E) 245.05 400 P
+0 9 Q
+1.44 (XPRESS) 401.3 400 P
+0 12 Q
+1.92 ( Language Reference) 434.27 400 P
+(Manual\323, ISO DIS 10303-1) 124.99 386 T
+(1:1992\050E\051, July 15, 1992.) 257.12 386 T
+([12]) 72 367 T
+0.22 (Libes, Don, \322The NIST STEP Part 21 Exchange File T) 102.02 367 P
+0.22 (oolkit \320 An Update\323, NISTIR 5187,) 366.67 367 P
+2.9 (National Institute of Standards and T) 124.99 353 P
+2.9 (echnology) 316.21 353 P
+2.9 (, Gaithersbur) 365.39 353 P
+2.9 (g, MD, September 8,) 430.7 353 P
+(1993.) 124.99 339 T
+([13]) 72 320 T
+0.75 (Morris, K.C.,) 102.02 320 P
+0.75 ( \322Data Probe:  A Tool for E) 167.07 320 P
+0 9 Q
+0.56 (XPRESS) 305.22 320 P
+0 12 Q
+0.75 (-based Data\323,) 338.19 320 P
+2 F
+0.75 (Pr) 407.96 320 P
+0.75 (oceedings of the Seventh) 419.51 320 P
+-0 (Annual ASME Database Symposium - Engineering Data Management: Key to Success) 124.99 306 P
+1.08 (in a Global Market) 124.99 292 P
+0 F
+1.08 (, American Society of Mechanical Engineers, New Y) 220.5 292 P
+1.08 (ork, August) 482.29 292 P
+(1993.) 124.99 278 T
+([14]) 72 259 T
+0.6 (Morris, K.C., \322T) 102.02 259 P
+0.6 (ranslating E) 182.76 259 P
+0 9 Q
+0.45 (XPRESS) 240.99 259 P
+0 12 Q
+0.6 ( to SQL: A User) 273.96 259 P
+0.6 (\325) 355.43 259 P
+0.6 (s Guide\323, NISTIR 4341, National In-) 358.77 259 P
+(stitute of Standards and T) 124.99 245 T
+(echnology) 247.41 245 T
+(, Gaithersbur) 296.59 245 T
+(g, MD, May 1990.) 358.99 245 T
+([15]) 72 226 T
+(Libes, Don, \322Exppp \320 An E) 102.02 226 T
+0 9 Q
+(XPRESS) 234.93 226 T
+0 12 Q
+( Pretty Printer) 267.9 226 T
+(, to appear) 334.72 226 T
+(.) 384.35 226 T
+([16]) 72 207 T
+(Libes, Don, \322Shtolo \320 Converting STEP Short Listings to Annotated Listings, to appear) 102.02 207 T
+(.) 522.14 207 T
+([17]) 72 188 T
+1.46 (Ousterhout, John K.,) 102.02 188 P
+2 F
+1.46 (T) 209.02 188 P
+1.46 (cl and the Tk T) 214.59 188 P
+1.46 (oolkit) 291.3 188 P
+0 F
+1.46 (, Addison-W) 318.62 188 P
+1.46 (esley) 381.08 188 P
+1.46 (, 0-201-63337-X, February) 404.95 188 P
+1.46 (,) 537 188 P
+(1994.) 124.99 174 T
+([18]) 72 155 T
+0.92 (McLay) 102.02 155 P
+0.92 (, M.J., Morris, K.C) 135.88 155 P
+0.92 (., \322The NIST STEP Class Library\323,) 230.25 155 P
+2 F
+0.92 (C++ at W) 408.65 155 P
+0.92 (ork-\32590  Confer-) 458.89 155 P
+(ence Pr) 124.99 141 T
+(oceedings) 161.51 141 T
+0 F
+(, reprinted as  NISTIR 441) 209.47 141 T
+(1,  September 1990.) 336.94 141 T
+([19]) 72 122 T
+1.44 (Federal Information Processing Standard 151,) 102.02 122 P
+2 F
+1.44 (POSIX: Portable Operating System Inter-) 333.06 122 P
+(face for Computer Environments) 124.99 108 T
+0 F
+(, IEEE 1003.1/Draft 12, September 1988.) 282.56 108 T
+FMENDPAGE
+%%EndPage: "7" 8
+%%Page: "8" 8
+612 792 0 FMBEGINPAGE
+72 746 540 756 R
+7 X
+0 K
+V
+72 32.67 540 42.67 R
+V
+0 10 Q
+0 X
+(8) 303.5 36 T
+72 72 540 720 R
+7 X
+V
+0 12 Q
+0 X
+([20]) 72 712 T
+3.95 (American National Standards Institute,) 102.02 712 P
+2 F
+3.95 (Programming Language C) 308.01 712 P
+0 F
+3.95 (, Document ANSI) 445.17 712 P
+(X3.159-1989.) 124.99 698 T
+([21]) 72 679 T
+-0.01 (Kernighan, Brian, and Ritchie, Dennis,) 102.02 679 P
+2 F
+-0.01 (The C Programming Language) 292.2 679 P
+0 F
+-0.01 (, Prentice Hall, New) 442.43 679 P
+(Y) 124.99 665 T
+(ork, NY) 132.45 665 T
+(, 1978.) 170.21 665 T
+([22]) 72 646 T
+1.01 (Stallman, Richard M., et al,) 102.02 646 P
+2 F
+1.01 (GNU\325) 242.67 646 P
+1.01 (s Bulletin) 270.43 646 P
+0 F
+1.01 (, Free Software Foundation, Inc., Cambridge,) 317.09 646 P
+(MA, June 1992.) 124.99 632 T
+([23]) 72 613 T
+1.66 (Lesk, M.E. and Schmidt, E., Lex: A Lexical Analyzer Generator) 102.02 613 P
+1.66 (,) 425.96 613 P
+2 F
+1.66 (UNIX Pr) 438.29 613 P
+1.66 (ogrammer) 482.48 613 P
+1.66 (\325) 532.89 613 P
+1.66 (s) 535.33 613 P
+(Manual) 124.99 599 T
+0 F
+(, Seventh Edition, Bell Laboratories, Murray Hill, NJ, 1978.) 162.3 599 T
+([24]) 72 580 T
+-0.11 (Johnson, S.C., \322Y) 102.02 580 P
+-0.11 (acc: Y) 186.56 580 P
+-0.11 (et Another Compiler compiler\323,) 216.21 580 P
+2 F
+-0.11 (UNIX Pr) 371.99 580 P
+-0.11 (ogrammer) 414.41 580 P
+-0.11 (\325) 464.82 580 P
+-0.11 (s Manual) 467.27 580 P
+0 F
+-0.11 (, Sev-) 512.13 580 P
+(enth Edition, Bell Laboratories, Murray Hill, NJ, 1978.) 124.99 566 T
+([25]) 72 547 T
+1.54 (Schreiner) 102.02 547 P
+1.54 (, Axel T) 147.5 547 P
+1.54 (. and Friedman, Jr) 189.33 547 P
+1.54 (., H. Geor) 280.23 547 P
+1.54 (ge,) 330.72 547 P
+2 F
+1.54 (Intr) 349.58 547 P
+1.54 (oduction to Compiler Construction) 367.13 547 P
+(with UNIX) 124.99 533 T
+0 F
+(, New Y) 176.64 533 T
+(ork, NY) 215.73 533 T
+(, Prentice Hall, 1985.) 253.49 533 T
+([26]) 72 514 T
+0.08 (Clark, Steve N., \322An Introduction to The NIST PDES T) 102.02 514 P
+0.08 (oolkit\323, NISTIR 4336, National In-) 370.44 514 P
+(stitute of Standards and T) 124.99 500 T
+(echnology) 247.41 500 T
+(, Gaithersbur) 296.59 500 T
+(g, MD, May 1990.) 358.99 500 T
+([27]) 72 481 T
+-0.2 (Schenck, D., ed., \322Exchange of Product Model Data - Part1) 102.02 481 P
+-0.2 (1: The E) 385.58 481 P
+0 9 Q
+-0.15 (XPRESS) 426.5 481 P
+0 12 Q
+-0.2 ( Language\323, ISO) 459.46 481 P
+(TC184/SC4 Document N496, July 1990.) 124.99 467 T
+([28]) 72 448 T
+0.4 (Clark, Steve N., \322QDES User) 102.02 448 P
+0.4 (\325) 246.3 448 P
+0.4 (s Guide\323, NISTIR 4361, National Institute of Standards and) 249.64 448 P
+(T) 124.99 434 T
+(echnology) 131.48 434 T
+(, Gaithersbur) 180.66 434 T
+(g, MD, June 1990.) 243.07 434 T
+FMENDPAGE
+%%EndPage: "8" 9
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%Pages: 8 1
+%%DocumentFonts: Times-Roman
+%%+ Times-Bold
+%%+ Times-Italic
+%%+ Courier-Bold
