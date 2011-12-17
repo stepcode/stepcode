@@ -141,7 +141,7 @@ HASHinitialize() {
 
 Hash_Table
 HASHcreate( unsigned count ) {
-    int     i;
+    unsigned    i;
     Hash_Table  table;
 
     /*
@@ -276,7 +276,7 @@ HASH_in_use( Hash_Table table, char * action ) {
 
 void
 HASHdestroy( Hash_Table table ) {
-    int     i, j;
+    unsigned int i, j;
     Segment s;
     Element p, q;
 
@@ -533,7 +533,7 @@ HASHcopy( Hash_Table oldtable ) {
     Segment s, s2;
     Element * pp;   /* old element */
     Element * qq;   /* new element */
-    int i, j;
+    unsigned int i, j;
 
     newtable = HASH_Table_new();
     for( i = 0; i < oldtable->SegmentCount; i++ ) {

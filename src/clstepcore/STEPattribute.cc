@@ -394,6 +394,8 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
  ** Status:  complete 3/91
  *********************************************************************/
 const char * STEPattribute::asStr( std::string & str, const char * currSch ) const {
+    ostringstream ss;
+
     str.clear();
 
     // The attribute has been derived by a subtype's attribute
@@ -415,13 +417,19 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
 
     switch( NonRefType() ) {
         case INTEGER_TYPE:
-            str += ( *( ptr.i ) );
+            ss.clear();
+            ss << *( ptr.i );
+            str += ss.str();
+            // str += ( *( ptr.i ) );
             break;
 
         case NUMBER_TYPE:
         case REAL_TYPE:
-
-            str.append( *( ptr.r ), ( int ) Real_Num_Precision );
+            ss.clear();
+            ss.precision( ( int ) Real_Num_Precision );
+            ss << *( ptr.r );
+            str += ss.str();
+            // str.append( *( ptr.r ), ( int ) Real_Num_Precision );
             break;
 
         case ENTITY_TYPE:

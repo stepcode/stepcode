@@ -10,6 +10,8 @@
 #cmakedefine HAVE_UNISTD_H 1
 #cmakedefine HAVE_DIRENT_H 1
 #cmakedefine HAVE_STDBOOL_H 1
+#cmakedefine HAVE_PROCESS_H 1
+#cmakedefine HAVE_IO_H 1
 
 #cmakedefine HAVE_ABS 1
 #cmakedefine HAVE_MEMCPY 1

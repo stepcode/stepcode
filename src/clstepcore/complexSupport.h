@@ -222,10 +222,14 @@ class SCL_CORE_EXPORT SimpleList : public EntList {
             return name;
         }
         bool contains( char * nm ) {
-            return *this == nm;
+            if ( *this == nm )
+                return true;
+            return false;
         }
         bool hit( char * nm ) {
-            return *this == nm;
+            if ( *this == nm )
+                return true;
+            return false;
         }
         MatchType matchNonORs( EntNode * );
         bool acceptChoice( EntNode * );

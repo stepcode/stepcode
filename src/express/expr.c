@@ -160,14 +160,14 @@ EXPinitialize( void ) {
 #ifndef M_E
 #define M_E     2.7182818284590452354
 #endif
-    LITERAL_E->u.real = M_E;
+    LITERAL_E->u.real = ( float ) M_E;
     resolved_all( LITERAL_E );
 
     LITERAL_PI = EXPcreate_simple( Type_Real );
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
 #endif
-    LITERAL_PI->u.real = M_PI;
+    LITERAL_PI->u.real = ( float ) M_PI;
     resolved_all( LITERAL_PI );
 
     LITERAL_INFINITY = EXPcreate_simple( Type_Integer );

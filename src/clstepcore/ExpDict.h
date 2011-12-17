@@ -1127,7 +1127,7 @@ class SCL_CORE_EXPORT SchRename {
         int operator< ( SchRename & schrnm ) {
             return ( strcmp( schName, schrnm.schName ) < 0 );
         }
-        int choice( const char * nm ) const;
+        bool choice( const char * nm ) const;
         // is nm one of our possible choices?
         char * rename( const char * schm, char * newnm ) const;
         // given a schema name, returns new object name if exists

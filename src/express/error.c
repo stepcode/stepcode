@@ -82,7 +82,7 @@
 extern void exp_pause(); //in fedex.c
 
 static struct heap_element {
-    int line;
+    unsigned int line;
     char * msg;
 } heap[ERROR_MAX_ERRORS + 1]; /* NOTE!  element 0 is purposely ignored, and */
 /* an additional element is at the end.  This allows the */
