@@ -1,0 +1,3800 @@
+%!
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%DocumentFonts: (atend)
+%%EndComments
+%
+% FrameMaker PostScript Prolog 3.0, for use with FrameMaker 3.0
+% Copyright (c) 1986,87,89,90,91 by Frame Technology Corporation.
+% All rights reserved.
+%
+% Known Problems:
+%	Due to bugs in Transcript, the 'PS-Adobe-' is omitted from line 1
+/FMversion (3.0) def 
+% Set up Color vs. Black-and-White
+	/FMPrintInColor systemdict /colorimage known
+		systemdict /currentcolortransfer known or def
+% Uncomment this line to force b&w on color printer
+%   /FMPrintInColor false def
+/FrameDict 195 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} def
+	} if
+/FMVERSION {
+	FMversion ne {
+		/Times-Roman findfont 18 scalefont setfont
+		100 100 moveto
+		(FrameMaker version does not match postscript_prolog!)
+		dup =
+		show showpage
+		} if
+	} def 
+/FMLOCAL {
+	FrameDict begin
+	0 def 
+	end 
+	} def 
+	/gstring FMLOCAL
+	/gfile FMLOCAL
+	/gindex FMLOCAL
+	/orgxfer FMLOCAL
+	/orgproc FMLOCAL
+	/organgle FMLOCAL
+	/orgfreq FMLOCAL
+	/yscale FMLOCAL
+	/xscale FMLOCAL
+	/manualfeed FMLOCAL
+	/paperheight FMLOCAL
+	/paperwidth FMLOCAL
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne dup {setmanualfeed} if
+	/manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	/yscale exch def
+	/xscale exch def
+	currenttransfer cvlit /orgxfer exch def
+	currentscreen cvlit /orgproc exch def
+	/organgle exch def /orgfreq exch def
+	setpapername 
+	manualfeed {true} {papersize} ifelse 
+	{manualpapersize} {false} ifelse 
+	{desperatepapersize} if
+	end 
+	} def 
+	/pagesave FMLOCAL
+	/orgmatrix FMLOCAL
+	/landscape FMLOCAL
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch neg translate pop 
+		}
+		{pop pop}
+		ifelse
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+	} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin
+	array /fillvals exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	0.0 0.0 moveto
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+	/fx FMLOCAL
+	/fy FMLOCAL
+	/fh FMLOCAL
+	/fw FMLOCAL
+	/llx FMLOCAL
+	/lly FMLOCAL
+	/urx FMLOCAL
+	/ury FMLOCAL
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fy translate 
+	rotate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	} bind def
+/FMENDEPSF {
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} def
+	/papersizedict FMLOCAL
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	/FMdicttop countdictstack 1 add def 
+	statusdict begin stopped end 
+	countdictstack -1 FMdicttop {pop end} for 
+	} def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped pop 
+		end
+		} if
+	} def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/dmatrix matrix def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+/freq dpi 18.75 div 8 div round dup 0 eq {pop 1} if 8 mul dpi exch div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+/graymode true def
+	/bwidth FMLOCAL
+	/bpside FMLOCAL
+	/bstring FMLOCAL
+	/onbits FMLOCAL
+	/offbits FMLOCAL
+	/xindex FMLOCAL
+	/yindex FMLOCAL
+	/x FMLOCAL
+	/y FMLOCAL
+/setpattern {
+	 /bwidth  exch def
+	 /bpside  exch def
+	 /bstring exch def
+	 /onbits 0 def  /offbits 0 def
+	 freq sangle landscape {90 add} if 
+		{/y exch def
+		 /x exch def
+		 /xindex x 1 add 2 div bpside mul cvi def
+		 /yindex y 1 add 2 div bpside mul cvi def
+		 bstring yindex bwidth mul xindex 8 idiv add get
+		 1 7 xindex 8 mod sub bitshift and 0 ne
+		 {/onbits  onbits  1 add def 1}
+		 {/offbits offbits 1 add def 0}
+		 ifelse
+		}
+		setscreen
+	 {} settransfer
+	 offbits offbits onbits add div FMsetgray
+	/graymode false def
+	} bind def
+/grayness {
+	FMsetgray
+	graymode not {
+		/graymode true def
+		orgxfer cvx settransfer
+		orgfreq organgle orgproc cvx setscreen
+		} if
+	} bind def
+	/HUE FMLOCAL
+	/SAT FMLOCAL
+	/BRIGHT FMLOCAL
+	/Colors FMLOCAL
+FMPrintInColor 
+	
+	{
+	/HUE 0 def
+	/SAT 0 def
+	/BRIGHT 0 def
+	% array of arrays Hue and Sat values for the separations [HUE BRIGHT]
+	/Colors   
+	[[0    0  ]    % black
+	 [0    0  ]    % white
+	 [0.00 1.0]    % red
+	 [0.37 1.0]    % green
+	 [0.60 1.0]    % blue
+	 [0.50 1.0]    % cyan
+	 [0.83 1.0]    % magenta
+	 [0.16 1.0]    % comment / yellow
+	 ] def
+      
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	/K { 
+		Colors exch get dup
+		0 get /HUE exch store 
+		1 get /BRIGHT exch store
+		  HUE 0 eq BRIGHT 0 eq and
+			{1.0 SAT sub setgray}
+			{HUE SAT BRIGHT sethsbcolor} 
+		  ifelse
+		} def
+	/FMsetgray { 
+		/SAT exch 1.0 exch sub store 
+		  HUE 0 eq BRIGHT 0 eq and
+			{1.0 SAT sub setgray}
+			{HUE SAT BRIGHT sethsbcolor} 
+		  ifelse
+		} bind def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	/FMsetgray {setgray} bind def
+	/K { 
+		pop
+		} def
+	}
+ifelse
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	/fillvals FMLOCAL
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setpattern} 
+	{grayness}
+	ifelse
+	} bind def
+/V { 
+	gsave eofill grestore
+	} bind def
+/N { 
+	stroke
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+	/n FMLOCAL
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+	/x1 FMLOCAL
+	/x2 FMLOCAL
+	/y1 FMLOCAL
+	/y2 FMLOCAL
+	/rad FMLOCAL
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	newpath
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rad arcto
+	x2 y2 x2 y1 rad arcto
+	x2 y1 x1 y1 rad arcto
+	x1 y1 x1 y2 rad arcto
+	closepath
+	16 {pop} repeat
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	} bind def
+	/FMpointsize FMLOCAL
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath fill
+	grestore
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	stroke
+	grestore
+	} bind def
+	/x FMLOCAL
+	/y FMLOCAL
+	/w FMLOCAL
+	/h FMLOCAL
+	/xx FMLOCAL
+	/yy FMLOCAL
+	/ww FMLOCAL
+	/hh FMLOCAL
+	/FMsaveobject FMLOCAL
+	/FMoptop FMLOCAL
+	/FMdicttop FMLOCAL
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 4 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+	/str FMLOCAL
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+	/sl FMLOCAL
+	/val FMLOCAL
+	/ws FMLOCAL
+	/im FMLOCAL
+	/bs FMLOCAL
+	/cs FMLOCAL
+	/len FMLOCAL
+	/pos FMLOCAL
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+	/h FMLOCAL
+	/w FMLOCAL
+	/d FMLOCAL
+	/lb FMLOCAL
+	/bitmapsave FMLOCAL
+	/is FMLOCAL
+	/cf FMLOCAL
+/wbytes { 
+	dup 
+	8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+	/r exch def
+	/d exch def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	r                    
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/r exch def
+	/d exch def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/bitmapsave save def 
+	r                    
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+	/proc1 FMLOCAL
+	/proc2 FMLOCAL
+	/newproc FMLOCAL
+/Fmcc {
+    /proc2 exch cvlit def
+    /proc1 exch cvlit def
+    /newproc proc1 length proc2 length add array def
+    newproc 0 proc1 putinterval
+    newproc proc1 length proc2 putinterval
+    newproc cvx
+} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+	/gryt FMLOCAL
+	/blut FMLOCAL
+	/grnt FMLOCAL
+	/redt FMLOCAL
+	/indx FMLOCAL
+	/cynu FMLOCAL
+	/magu FMLOCAL
+	/yelu FMLOCAL
+	/k FMLOCAL
+	/u FMLOCAL
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/k cynu magu min yelu min def
+		/u k currentundercolorremoval exec def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 k currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+	/tran FMLOCAL
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch Fmcc settransfer
+} bind def
+/BITMAPCOLOR { 
+	/d 8 def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/bitmapsave save def 
+	colorsetup
+	/is w d wbytes string def
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/d 8 def
+	gsave
+	translate rotate scale /h exch def /w exch def
+	/lb w d wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	colorsetup
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	w h d [w 0 0 h neg 0 h] 
+	{ip} {is} {is} true 3 colorimage
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        
+        /is w string def
+        
+        ws 0 w getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {ip} {gip} {bip} true 3 colorimage
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUECOLOR { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        
+        /is w string def
+        
+        ws 0 w getinterval is copy pop 
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        {ip gip bip w gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/ww FMLOCAL
+/r FMLOCAL
+/g FMLOCAL
+/b FMLOCAL
+/i FMLOCAL
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+        translate rotate scale /h exch def /w exch def
+        /bitmapsave save def 
+        /is w string def
+        /gis w string def
+        /bis w string def
+        /cf currentfile def 
+        w h 8 [w 0 0 h neg 0 h] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop w gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDsave FMLOCAL
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+%%EndProlog
+%%BeginSetup
+(3.0) FMVERSION
+1 1 612 792 0 1 13 FMDOCUMENT
+0 0 /Helvetica-Bold FMFONTDEFINE
+1 0 /Times-Roman FMFONTDEFINE
+2 0 /Helvetica FMFONTDEFINE
+3 0 /Courier-Bold FMFONTDEFINE
+4 0 /Times-Italic FMFONTDEFINE
+5 0 /Times-Bold FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 .1 FMFILL
+2 .3 FMFILL
+3 .5 FMFILL
+4 .7 FMFILL
+5 .9 FMFILL
+6 .97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 .9 FMFILL
+18 .7 FMFILL
+19 .5 FMFILL
+20 .3 FMFILL
+21 .1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "1" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(1) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+(ABSTRACT) 54 458 T
+1 F
+1.03 (The NIST EXPRESS toolkit is a software library for building) 61.78 442 P
+1.2 (EXPRESS-related tools.  EXPRESS is an ISO language for de-) 54 431 P
+0.76 (scribing information models.  EXPRESS descriptions are neutral) 54 420 P
+0.22 (to dif) 54 409 P
+0.22 (ferent data storage paradigms and systems on dif) 73.28 409 P
+0.22 (ferent hard-) 250.11 409 P
+(ware platforms and networks.) 54 398 T
+0.2 (This paper describes the design and implementation of the tool-) 61.78 382 P
+1.61 (kit including its important interfaces, data structures, and algo-) 54 371 P
+0.01 (rithms.  This paper is recommended for anyone wishing to modify) 54 360 P
+0.03 (the toolkit or anyone wishing to build their own EXPRESS imple-) 54 349 P
+1.49 (mentation.  The reader is assumed to be familiar with the EX-) 54 338 P
+9 (PRESS language, the basics of traditional language) 54 327 P
+0.86 (implementations, and C \320 the language with which the toolkit is) 54 316 P
+(implemented.) 54 305 T
+2.14 (As a testbed against which to benchmark the evolving EX-) 61.78 289 P
+-0.11 (PRESS language, conformance to the standard \050currently Draft In-) 54 278 P
+4.19 (ternational Standard\051 is the highest priority in the toolkit.) 54 267 P
+0.69 (Nonetheless, time/space ef) 54 256 P
+0.69 (\336ciency) 151.31 256 P
+0.69 (, accurate and helpful diagnos-) 179.18 256 P
+0.51 (tics, and ease-of-use are also critical to the success of the toolkit.) 54 245 P
+2.98 (The paper describes how these concerns are addressed even) 54 234 P
+(though EXPRESS is a complex and sophisticated language.) 54 223 T
+0.31 (The toolkit is available from the National Institute of Standards) 61.78 207 P
+0.66 (and T) 54 196 P
+0.66 (echnology) 74.75 196 P
+0.66 (.  The toolkit is just one of a number of tools for) 111.6 196 P
+0.31 (data management in STEP) 54 185 P
+0.31 (, a family of ISO standards currently in) 149.54 185 P
+1.78 (development.  All of the NIST tools, including the NIST EX-) 54 174 P
+(PRESS toolkit, are in the public domain.) 54 163 T
+4.41 (Keywords: compiler) 61.78 147 P
+4.41 (, EXPRESS; implementation; National) 139.46 147 P
+(PDES T) 54 136 T
+(estbed; PDES; STEP) 83.08 136 T
+0 F
+(CONTEXT) 319.5 459 T
+1 F
+3.61 (The PDES \050Product Data Exchange using STEP\051 activity) 327.28 443 P
+0.19 (\050Furlani, 1990\051 is the United States\325 ef) 319.5 432 P
+0.19 (fort in support of  the Stan-) 459.01 432 P
+2.54 (dard for the Exchange of Product Model Data \050STEP\051 \050ISO,) 319.5 421 P
+0.54 (1992a\051, an emer) 319.5 410 P
+0.54 (ging international standard for the interchange of) 378.56 410 P
+1.3 (product data between various vendors\325 CAD/CAM systems and) 319.5 399 P
+0.57 (other manufacturing-related software.  A National PDES T) 319.5 388 P
+0.57 (estbed) 535.04 388 P
+1.73 (has been established at the National Institute of Standards and) 319.5 377 P
+2.31 (T) 319.5 366 P
+2.31 (echnology to provide testing and validation facilities for the) 324.36 366 P
+0.09 (emer) 319.5 355 P
+0.09 (ging standard.  The T) 337.3 355 P
+0.09 (estbed is funded by the Computer) 414.18 355 P
+0.09 (-aided) 535.54 355 P
+0.94 (Acquisition and Logistic Support \050CALS\051 program of the Of) 319.5 344 P
+0.94 (\336ce) 545.02 344 P
+(of the Secretary of Defense.) 319.5 333 T
+0.76 (As part of the testing ef) 327.28 317 P
+0.76 (fort, NIST is char) 415.55 317 P
+0.76 (ged with providing a) 481.07 317 P
+2.09 (software toolkit for manipulating STEP data.  The NIST EX-) 319.5 306 P
+2.24 (PRESS T) 319.5 295 P
+2.24 (oolkit is a part of this.  The toolkit is an evolving,) 355.33 295 P
+0.13 (research-oriented set of software tools.  This document is one of a) 319.5 284 P
+0.02 (set of reports \050documented by Libes \0501993a\051\051 which describe vari-) 319.5 273 P
+(ous aspects of the T) 319.5 262 T
+(oolkit.) 390.26 262 T
+0 F
+(INTRODUCTION) 319.5 226 T
+1 F
+1.03 (The NIST EXPRESS toolkit is a software library for building) 327.28 210 P
+0.2 (EXPRESS-related tools.  This paper describes the philosophy and) 319.5 199 P
+0.23 (design of the toolkit implementation including its important inter-) 319.5 188 P
+2.54 (faces, data structures, and algorithms.  Also, the conventions) 319.5 177 P
+0.8 (found within the toolkit will be described.  This paper is recom-) 319.5 166 P
+0.19 (mended for anyone wishing to modify the NIST toolkit or anyone) 319.5 155 P
+0.06 (wishing to  build their own EXPRESS implementation.  The read-) 319.5 144 P
+1.06 (er is assumed to be familiar with the EXPRESS language \050ISO,) 319.5 133 P
+0.23 (1990b\051, the basics of traditional language implementations, and C) 319.5 122 P
+(\320 the language with which the toolkit is implemented.) 319.5 111 T
+53 489 558 714 R
+7 X
+V
+0 11 Q
+0 X
+(THE NIST EXPRESS T) 136.71 661.67 T
+(OOLKIT \320 DESIGN AND IMPLEMENT) 251.29 661.67 T
+(A) 440.92 661.67 T
+(TION) 448.04 661.67 T
+0 10 Q
+(Don Libes) 281.34 617.33 T
+2 F
+(Factory Automation Systems Division) 222.74 600.33 T
+(National Institute of Standards and T) 202.17 588.33 T
+(echnology) 363.28 588.33 T
+(Gaithersburg, Maryland) 253.29 576.33 T
+432 729 558 729 2 L
+0.5 H
+2 Z
+N
+432 738 558 738 2 L
+N
+FMENDPAGE
+%%EndPage: "1" 2
+%%Page: "2" 2
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(2) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+1.01 (The implementation is subject to change.  Because of this, no) 61.78 696 P
+0.15 (guarantee is made that the descriptions in this paper are still accu-) 54 685 P
+(rate with regard to the current implementation.) 54 674 T
+0 F
+(OVER) 54 638 T
+(VIEW) 79.31 638 T
+1 F
+0.55 (The toolkit is not a traditional translator in the sense of a com-) 61.78 622 P
+1.02 (piler or interpreter which translates source into executable code.) 54 611 P
+0.14 (Rather) 54 600 P
+0.14 (, the toolkit is a library with which to build translators.  For) 77.6 600 P
+0.81 (instance, a subroutine is provided to tokenize a stream of ASCII) 54 589 P
+0.9 (characters into a stream of EXPRESS tokens while another sub-) 54 578 P
+(routine is provided to parse a stream of EXPRESS tokens.) 54 567 T
+-0.08 (The library stops short of providing subroutines to perform code) 61.78 551 P
+0.4 (generation since EXPRESS schemas are not intended to be trans-) 54 540 P
+1.74 (lated directly into executable code.  In lieu of this, the toolkit) 54 529 P
+0.18 (provides functions with which to query the EXPRESS schemas in) 54 518 P
+-0.18 (a high-level way) 54 507 P
+-0.18 (.  These functions collectively can be considered a) 112.96 507 P
+(specialized database that describes the EXPRESS schemas.) 54 496 T
+0.71 (The goal of the EXPRESS toolkit then is to populate the data-) 61.78 480 P
+0.76 (base and provide access to the database to application programs.) 54 469 P
+3.22 (Application-speci\336c modules typically use these functions to) 54 458 P
+1.3 (translate the original EXPRESS to another language \050producing) 54 447 P
+2.22 (application-dependent programs\051 or to immediately manipulate) 54 436 P
+(some other data \050application-independent\051.) 54 425 T
+2.66 (The toolkit Programmer) 61.78 409 P
+2.66 (\325) 154.31 409 P
+2.66 (s Reference \050Libes, 1993b\051 de\336nes) 156.81 409 P
+0.01 (bindings between function names and information in the database.) 54 398 P
+1.89 (In contrast, this document concentrates on the underlying data) 54 387 P
+0.61 (structures and algorithms used in the database.  A comparison of) 54 376 P
+2.01 (this implementation to earlier implementations is presented by) 54 365 P
+(Libes and Clark \0501992\051.) 54 354 T
+0.41 (Lest the reader be concerned by the apparent complexity of the) 61.78 338 P
+0.4 (toolkit description herein, please note that it is not exposed to the) 54 327 P
+1.64 (application programmer) 54 316 P
+1.64 (.  The internals are covered by suitable) 141.76 316 P
+0.59 (macros and functions; all the programmer sees is a very straight-) 54 305 P
+(forward EXPRESS database.) 54 294 T
+0 F
+(BACKGROUND) 54 258 T
+1 F
+-0.2 (It would be misleading to think that the work described here was) 61.78 242 P
+-0.02 (created out of whole cloth.  In this paper) 54 231 P
+-0.02 (, references made to earli-) 199 231 P
+0.43 (er work is sparse, yet much of what is described here depends on) 54 220 P
+-0.19 (experience gained during that earlier work.  The toolkit as it stands) 54 209 P
+0.79 (now has been redesigned and rewritten from top to bottom three) 54 198 P
+1.02 (times and in two dif) 54 187 P
+1.02 (ferent languages over a period of \336ve years) 129.84 187 P
+(while the EXPRESS speci\336cation changed at least a dozen times.) 54 176 T
+0.26 (As the EXPRESS speci\336cation matures \050it is now a Draft Inter-) 61.78 160 P
+3.69 (national Standard\051, and with our implementation and usage) 54 149 P
+0.04 (experience, we have gradually settled upon the data structures and) 54 138 P
+0.11 (algorithms de\336ned here.   Libes and Clark \0501992\051 describe experi-) 54 127 P
+(ences and rationale for these choices.) 54 116 T
+0.51 (There is no such thing as a perfect implementation.  An imple-) 61.78 100 P
+1.88 (mentation is full of choices, such as speed vs. space.  In that) 54 89 P
+0.68 (particular respect, the toolkit is strongly speed conscious.  While) 319.5 696 P
+0.16 (space is well-managed, it is sacri\336ced immediately for speed.  W) 319.5 685 P
+0.16 (e) 554.01 685 P
+0.28 (believe this is a correct choice in the context of information mod-) 319.5 674 P
+0.18 (eling tasks today and in the future, with respect to the direction of) 319.5 663 P
+(computing resources.) 319.5 652 T
+1.5 (Another trade of) 327.28 636 P
+1.5 (f is data structures vs. algorithms.  W) 389.5 636 P
+1.5 (e have) 533.3 636 P
+0.78 (clearly tried to push as much of the complexity of the system as) 319.5 625 P
+1.09 (possible into the data structures to reduce the complexity of the) 319.5 614 P
+1.32 (code.  This will be evident.  While some of the data structures) 319.5 603 P
+-0.16 (strongly parallel their EXPRESS counterparts, some are complete-) 319.5 592 P
+(ly alien, existing only for supporting the algorithms.) 319.5 581 T
+0 F
+(OBJECTS) 319.5 545 T
+1 F
+1.06 (This section describes the types of objects used by the imple-) 327.28 529 P
+1.32 (mentation, and how they map to EXPRESS objects.  In theory) 319.5 518 P
+1.32 (,) 555.75 518 P
+-0.21 (each EXPRESS object is represented as a C structure with pointers) 319.5 507 P
+1.15 (to other C structures representing other EXPRESS objects.  For) 319.5 496 P
+0.4 (example, the EXPRESS notion of an Entity is represented by a C) 319.5 485 P
+0.21 (structure called \322) 319.5 474 P
+3 F
+0.5 (Entity) 381.31 474 P
+1 F
+0.21 (\323.) 413.67 474 P
+1 7 Q
+0.16 (1) 419.9 477.6 P
+1 9 Q
+0.21 (  EXPRESS entities include informa-) 423.4 474 P
+0.93 (tion about subtypes, supertypes, attributes, types, etc.  Similarly) 319.5 463 P
+0.93 (,) 555.75 463 P
+(so does the C structure representing entities.) 319.5 452 T
+1 7 Q
+(2) 478.51 455.6 T
+3 9 Q
+(struct Entity {) 349.52 436 T
+(... subtypes) 376.5 423 T
+(... supertypes;) 376.5 410 T
+(... attributes;) 376.5 397 T
+(};) 349.52 384 T
+1 F
+-0.12 (In EXPRESS, virtually all objects are referenced multiple times.) 327.28 371 P
+0.04 (For example, Entity de\336nitions are referenced by other Entity def-) 319.5 360 P
+0.84 (initions.  In order to ef) 319.5 349 P
+0.84 (\336ciently make use of such references, the) 404.44 349 P
+0.8 (toolkit creates a C pointer to the object being referenced.  In es-) 319.5 338 P
+(sence, a pointer provides the de\336nition behind a reference.) 319.5 327 T
+(For instance, examine the EXPRESS attribute declaration:) 327.28 311 T
+(A: B;) 349.52 295 T
+1.58 (This declares A as an attribute reference and B is the corre-) 327.28 282 P
+0.34 (sponding type.  In order to ef) 319.5 271 P
+0.34 (fectively use A, the actual de\336nition) 425.98 271 P
+0.66 (of B must be known.  But B is de\336ned elsewhere in the schema.) 319.5 260 P
+0.5 (In the toolkit, B is represented by another C structure.  T) 319.5 249 P
+0.5 (o record) 527.81 249 P
+(that A is of type B, we record a pointer to B within A.) 319.5 238 T
+-0.07 (The act of locating a referent involves searching through masses) 327.28 222 P
+0.45 (of de\336nitions.  This operation is called) 319.5 211 P
+4 F
+0.45 (der) 463.42 211 P
+0.45 (efer) 475.07 211 P
+0.45 (encing) 488.71 211 P
+1 F
+0.45 ( or colloqui-) 512.67 211 P
+-0.03 (ally) 319.5 200 P
+-0.03 (,) 332.4 200 P
+4 F
+-0.03 (mapping back) 336.86 200 P
+1 F
+-0.03 (.  In order to ef) 387.49 200 P
+-0.03 (\336ciently respond to user queries,) 441.07 200 P
+0.32 (it is useful to search for each object no more than once.  It is also) 319.5 189 P
+-0.15 (useful to search for each object at least once \320 to verify that all ref-) 319.5 178 P
+319.5 158 558 173 C
+319.5 170.98 355.5 170.98 2 L
+0.5 H
+2 Z
+0 X
+0 K
+N
+0 0 612 792 C
+1 9 Q
+0 X
+0 K
+0.82 (1. For each structure exposed to the user, a C typedef is defined) 319.5 152 P
+2.91 (which can point to it, i.e.,) 319.5 141 P
+3 F
+6.98 (typedef struct Entity) 430.8 141 P
+-0.11 (*Entity;) 319.5 130 P
+1 F
+-0.05 (  Structures used only internally to the implementation) 362.64 130 P
+3.4 (use the raw declaration form to avoid cluttering the user\325s) 319.5 119 P
+(namespace.) 319.5 108 T
+0.29 (2. C source is set in) 319.5 97 P
+3 F
+0.69 (Courier bold) 393.88 97 P
+1 F
+0.29 (.  E) 459.29 97 P
+1 8 Q
+0.26 (XPRESS) 472.1 97 P
+1 9 Q
+0.29 ( source is set in) 501.42 97 P
+(Times Roman \050as is the text of this paper\051.) 319.5 86 T
+FMENDPAGE
+%%EndPage: "2" 3
+%%Page: "3" 3
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(3) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+0.96 (erences are meaningful.  The toolkit is designed to address both) 54 696 P
+0.33 (concerns.  It dereferences all references in a set of schemas, leav-) 54 685 P
+2.26 (ing a network of C structures connected by pointers.  If any) 54 674 P
+(references could not be located,  diagnostics are issued.) 54 663 T
+0.24 (As the references in each object are being dereferenced, the ob-) 61.78 647 P
+0.85 (ject is said to be in) 54 636 P
+4 F
+0.85 (r) 128.48 636 P
+0.85 (esolution) 131.65 636 P
+1 F
+0.85 (.  After resolution is complete, the) 164.6 636 P
+0.09 (object is) 54 625 P
+4 F
+0.09 (r) 86.62 625 P
+0.09 (esolved) 89.79 625 P
+1 F
+0.09 (.  During resolution, it is convenient to check se-) 116.74 625 P
+0.3 (mantic consistency) 54 614 P
+0.3 (.  For example, if an attribute reference is used) 122.36 614 P
+1.29 (where a type reference is expected, a diagnostic will be issued.) 54 603 P
+0.24 (Such checks are not a necessary part of resolution and can be dis-) 54 592 P
+(abled, but if desired, they are ef) 54 581 T
+(\336ciently handled at this time.) 167.65 581 T
+86.46 555.05 54 555.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Symbol) 54 556 T
+1 F
+0.61 (Every object in the original EXPRESS \336le is associated with a) 61.78 540 P
+3 F
+1.85 (Symbol) 54 529 P
+1 F
+0.77 ( structure.  This structure provides a place to record the) 86.36 529 P
+1.4 (object name.  The structure also records the \336le name and line) 54 518 P
+0.71 (number corresponding to where the object was de\336ned.  The \336le) 54 507 P
+0.4 (name and line number are necessary only for generating diagnos-) 54 496 P
+(tics and are not otherwise used by the toolkit.) 54 485 T
+3 F
+(struct Symbol {) 84.02 469 T
+(char *name;) 111 456 T
+(char *f) 111 443 T
+(ilename;) 148.75 443 T
+(short line;) 111 430 T
+(char resolved;) 111 417 T
+(};) 84.02 404 T
+1 F
+1.11 (A bit\336eld,) 61.78 391 P
+3 F
+2.66 (resolved) 102.69 391 P
+1 F
+1.11 (, describes whether the object has been) 145.83 391 P
+(resolved.  The values of the bit\336eld are:) 54 380 T
+3 F
+(#def) 84.02 364 T
+(ine UNRESOLVED) 105.59 364 T
+3 7 Q
+(1) 181.09 367.6 T
+3 9 Q
+(#def) 84.02 351 T
+(ine RESOLVED) 105.59 351 T
+(#def) 84.02 338 T
+(ine RESOLVE_FAILED) 105.59 338 T
+(#def) 84.02 325 T
+(ine RESOLVE_IN_PROGRESS) 105.59 325 T
+97.95 299.05 54 299.05 2 L
+V
+N
+0 F
+(Dictionary) 54 300 T
+130.25 299.05 97.28 299.05 2 L
+V
+N
+(, Object) 97.28 300 T
+1 F
+0.26 (A dictionary is used to store object pointers) 61.78 284 P
+1 7 Q
+0.2 (2) 220.09 287.6 P
+1 9 Q
+0.26 ( which can later be) 223.59 284 P
+0.16 (retrieved by name.  The dictionary is implemented as a traditional) 54 273 P
+0.62 (open hash table that expands when it is a certain percentage full.) 54 262 P
+-0.07 (It is augmented with extra functionality speci\336cally for the toolkit.) 54 251 P
+-0.02 (Unlike the typical hash table, it is possible to step through a dic-) 61.78 235 P
+1.69 (tionary sequentially) 54 224 P
+1.69 (, for example, to resolve each object in the) 126.25 224 P
+0.59 (dictionary) 54 213 P
+0.59 (.  In addition, each entry is augmented with an object\325) 89.86 213 P
+0.59 (s) 289 213 P
+(symbol and type.) 54 202 T
+0.01 (Since the dictionary knows the type of each object, it is possible) 61.78 186 P
+1.13 (to search only for speci\336c types.  This solves several problems.) 54 175 P
+0.22 (For instance, attribute types can be declared in the entity scope it-) 54 164 P
+54 136 292.5 151 C
+54 148.98 90 148.98 2 L
+0.5 H
+2 Z
+0 X
+0 K
+N
+0 0 612 792 C
+1 9 Q
+0 X
+0 K
+(1. When irrelevant to the discussion, macro values are omitted.) 54 130 T
+0.92 (2. Object pointers are simply \322) 54 119 P
+3 F
+2.2 (void *) 168.91 119 P
+1 F
+0.92 (\323 meaning that they can) 203.47 119 P
+0.18 (point to anything.  While object-oriented techniques are used, this) 54 108 P
+0.51 (is more due to the requirements of the task being performed than) 54 97 P
+(what the environment supports.) 54 86 T
+0.17 (self.  However) 319.5 696 P
+0.17 (, EXPRESS allows attributes to be named the same) 372.14 696 P
+(name as the type:) 319.5 685 T
+(A: A;) 349.52 669 T
+0.42 (Since the dictionary knows the types of each object, it can skip) 327.28 656 P
+0.99 (attribute objects in this case where it is only interested in types.) 319.5 645 P
+0.2 (T) 319.5 634 P
+0.2 (o select sets of dif) 324.36 634 P
+0.2 (ferent object types, the selectors are bit strings) 389.89 634 P
+(which can be ORed together) 319.5 623 T
+(.  Some of the type selectors are:) 421.34 623 T
+3 F
+(#def) 349.52 607 T
+(ine OBJ_TYPE_BITS) 371.09 607 T
+(#def) 349.52 594 T
+(ine OBJ_ENTITY_BITS) 371.09 594 T
+(#def) 349.52 581 T
+(ine OBJ_FUNCTION_BITS) 371.09 581 T
+(#def) 349.52 568 T
+(ine OBJ_EXPRESS_BITS) 371.09 568 T
+1 F
+0.17 (The dictionary\325) 327.28 555 P
+0.17 (s knowledge of types also allows an ef) 382.61 555 P
+0.17 (\336cient so-) 522.14 555 P
+2.01 (lution to the problem of multiple enumerations with the same) 319.5 544 P
+1.51 (name in the same scope \050in which the enumeration type is de-) 319.5 533 P
+4.48 (clared\051.  EXPRESS allows this name clash but only for) 319.5 522 P
+-0.05 (enumerations.  Such ambiguous enumerations must be quali\336ed in) 319.5 511 P
+-0.01 (use while non-ambiguous enumerations need not be.  Name clash-) 319.5 500 P
+2.48 (es of other types are errors.  Since the dictionary knows all) 319.5 489 P
+1.26 (objects\325 symbols, it can detect an existing declaration when the) 319.5 478 P
+0.14 (object is stored and report the problem accurately rather than hav-) 319.5 467 P
+(ing each caller handle it.) 319.5 456 T
+0.36 (If two objects with the same name are indeed enumerations but) 327.28 440 P
+0.98 (in dif) 319.5 429 P
+0.98 (ferent enumeration types, the type in the common scope is) 339.54 429 P
+0.06 (changed from) 319.5 418 P
+3 F
+0.15 (OBJ_ENUM) 371.54 418 P
+1 F
+0.06 ( to) 414.68 418 P
+3 F
+0.15 (OBJ_AMBIG_ENUM) 426.29 418 P
+1 F
+0.06 (.  \050If they are in) 501.78 418 P
+0.86 (the same enumeration type scope, than a diagnostic is issued re-) 319.5 407 P
+1.37 (porting this.\051  This technique sacri\336ces extra storage space \050for) 319.5 396 P
+1.45 (duplicate entries in two scopes\051, but greatly reduces processing) 319.5 385 P
+0.55 (time since scoping exceptions are only handled during dictionary) 319.5 374 P
+(collisions, rather than having a complex scope lookup algorithm.) 319.5 363 T
+0.21 (Primarily for the bene\336t of diagnostics, a table \050) 327.28 347 P
+3 F
+0.51 (OBJ) 501.46 347 P
+1 F
+0.21 (\051 is provid-) 517.64 347 P
+3.68 (ed that maps object types to type selectors or an English) 319.5 336 P
+0.88 (description of the type.  In addition, the table contains functions) 319.5 325 P
+(which can be applied to any type object that will yield its Symbol.) 319.5 314 T
+3 F
+(struct Object {) 349.52 298 T
+(struct Symbol *\050*get_symbol\051\050\051;) 376.5 285 T
+(char* type;) 376.5 272 T
+(int bits;) 376.5 259 T
+(} OBJ[...];) 349.52 246 T
+1 F
+1.15 (This is particularly useful in generating error messages of the) 327.28 233 P
+1.13 (form: \322) 319.5 222 P
+4 F
+1.13 (Expected entity but encounter) 346.84 222 P
+1.13 (ed <some object name> of) 456.98 222 P
+0.81 (type <some other type name> on line <#> in \336le <\336le name>.) 319.5 211 P
+1 F
+0.81 (\323) 554.01 211 P
+1.64 (Additional types can be added to this table.  For example, the) 319.5 200 P
+1.11 (NIST Part 21 Exchange File T) 319.5 189 P
+1.11 (oolkit \050Libes, 1993c\051 de\336nes \322in-) 434 189 P
+(stances\323 as) 319.5 178 T
+3 F
+(OBJ_INSTANCE) 361.43 178 T
+1 F
+(.) 426.14 178 T
+366.95 152.05 319.5 152.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Linked List) 319.5 153 T
+1 F
+0.74 (A) 327.28 137 P
+3 F
+1.77 (Linked_List) 336.75 137 P
+1 F
+0.74 ( is the omnipresent linked list, used to store) 396.07 137 P
+0.01 (various lists of information.  It is implemented \050Libes, 1993d\051 as a) 319.5 126 P
+1.59 (doubly-linked list.  The implementation will not be further de-) 319.5 115 P
+(scribed here.) 319.5 104 T
+FMENDPAGE
+%%EndPage: "3" 4
+%%Page: "4" 4
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(4) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+80.97 443.29 54 443.29 2 L
+V
+0.66 H
+0 Z
+N
+(Scope) 54 444.24 T
+1 F
+2.57 (Many objects in EXPRESS de\336ne scopes, such as entities,) 61.78 428.24 P
+0.89 (types, and schemas.  Some objects do not de\336ne scopes, but are) 54 417.24 P
+0.04 (more easily implemented by imagining that they do de\336ne scopes.) 54 406.24 P
+0.79 (The) 54 395.24 P
+3 F
+1.89 (Scope) 71.01 395.24 P
+1 F
+0.79 ( structure, shown in Figure 2, de\336nes elements com-) 97.97 395.24 P
+(mon to all scopes, real or imaginary) 54 384.24 T
+(.) 182.47 384.24 T
+3 F
+0.44 (search_id) 61.78 368.24 P
+1 F
+0.19 ( prevents looping in the network of scopes created) 110.31 368.24 P
+-0.04 (by partially-recursive USE statements.  Each time a search is initi-) 54 357.24 P
+0.07 (ated, a new value for) 54 346.24 P
+3 F
+0.16 (search_id) 131.69 346.24 P
+1 F
+0.07 ( is generated.  As each scope is) 180.23 346.24 P
+0.41 (searched, its) 54 335.24 P
+3 F
+0.99 (search_id) 101.5 335.24 P
+1 F
+0.41 ( is compared with the new) 150.03 335.24 P
+3 F
+0.99 (search_-) 249.36 335.24 P
+1.06 (id) 54 324.24 P
+1 F
+0.44 (.  If unequal, the) 64.79 324.24 P
+3 F
+1.06 (search_id) 128.14 324.24 P
+1 F
+0.44 ( is set to the new) 176.67 324.24 P
+3 F
+1.06 (search_id) 241.72 324.24 P
+1 F
+0.44 (,) 290.25 324.24 P
+1.07 (and the scope is searched.  If equal, the scope has already been) 54 313.24 P
+(searched.) 54 302.24 T
+3 F
+-0.18 (symbol_table) 61.78 286.24 P
+1 F
+-0.07 ( is a collection of pointers to all the objects di-) 126.49 286.24 P
+1.53 (rectly de\336ned by the scope.) 54 275.24 P
+3 F
+3.67 (superscope) 166.27 275.24 P
+1 F
+1.53 ( is a pointer to the) 220.19 275.24 P
+-0.12 (scope that lexically encloses the scope.  For instance, if the current) 54 264.24 P
+0.43 (scope is an entity) 54 253.24 P
+0.43 (, the superscope might be the scope of the sche-) 116.87 253.24 P
+(ma.) 54 242.24 T
+-0.07 (The lines in the listing are not present in the actual source.  Here) 61.78 226.24 P
+0.92 (they simply emphasize that scopes contain type-dependent and -) 54 215.24 P
+-0.05 (independent information.  \050Other object de\336nitions are similar and) 54 204.24 P
+0.09 (will omit the lines from hereon.\051  The type of any particular scope) 54 193.24 P
+0.19 (is selected by the element) 54 182.24 P
+3 F
+0.47 (type) 149.57 182.24 P
+1 F
+0.19 ( which ef) 171.14 182.24 P
+0.19 (fectively selects a mem-) 204.81 182.24 P
+3.33 (ber of the union) 54 171.24 P
+3 F
+8 (u) 126.74 171.24 P
+1 F
+3.33 (.  For instance, an entity scope de\336nes) 132.13 171.24 P
+3 F
+-0.31 (u.entity) 54 160.24 P
+1 F
+-0.13 ( with the value of) 97.14 160.24 P
+3 F
+-0.31 (type == OBJ_ENTITY) 161.65 160.24 P
+1 F
+-0.13 (.) 256.93 160.24 P
+3 F
+-0.31 (Enti-) 265.54 160.24 P
+3.07 (ty) 54 149.24 P
+1 F
+1.28 ( and other de\336nitions are described later) 64.79 149.24 P
+1.28 (.  Other scope types) 216.24 149.24 P
+(are:) 54 138.24 T
+3 F
+(#def) 84.02 122.24 T
+(ine OBJ_EXPRESS) 105.59 122.24 T
+(#def) 84.02 109.24 T
+(ine OBJ_PROCEDURE) 105.59 109.24 T
+(#def) 84.02 96.24 T
+(ine OBJ_RULE) 105.59 96.24 T
+(#def) 349.52 444.49 T
+(ine OBJ_FUNCTION) 371.09 444.49 T
+(#def) 349.52 431.49 T
+(ine OBJ_SCHEMA) 371.09 431.49 T
+(#def) 349.52 418.49 T
+(ine OBJ_INCREMENT) 371.09 418.49 T
+1 F
+1.58 (Several scope types do not have type-dependent information.) 327.28 405.49 P
+(They are as follows:) 319.5 394.49 T
+3 F
+(#def) 349.52 378.49 T
+(ine OBJ_RULE) 371.09 378.49 T
+(#def) 349.52 365.49 T
+(ine OBJ_ALIAS) 371.09 365.49 T
+(#def) 349.52 352.49 T
+(ine OBJ_QUERY) 371.09 352.49 T
+408.38 326.54 319.5 326.54 2 L
+V
+N
+0 F
+(A Note about Unions) 319.5 327.49 T
+1 F
+-0.13 (As in the previous section on scope, many other structures in the) 327.28 311.49 P
+0.53 (system use unions, a C construct that permits storage of dif) 319.5 300.49 P
+0.53 (ferent) 537.04 300.49 P
+0.41 (types in a single place at dif) 319.5 289.49 P
+0.41 (ferent times.  This is not so much for) 422.15 289.49 P
+1.05 (storage reasons \050although this is helpful\051 but for type \337exibility) 319.5 278.49 P
+1.05 (.) 555.75 278.49 P
+0.33 (Since unions are not particularly pleasant to use and they are per-) 319.5 267.49 P
+(vasive in the toolkit, a brief note is appropriate.) 319.5 256.49 T
+1.09 (EXPRESS objects can naturally be viewed as creating a class) 327.28 240.49 P
+0.39 (hierarchy) 319.5 229.49 P
+0.39 (.  For example, scope would be inherited by procedures,) 352.85 229.49 P
+0.4 (functions and other objects.  Indeed, an earlier implementation of) 319.5 218.49 P
+0.84 (the toolkit was written on top of an object-oriented \050OO\051 engine) 319.5 207.49 P
+(and appropriate EXPRESS classes.) 319.5 196.49 T
+0.53 (Pleasant as it was to write, the OO implementation sacri\336ced a) 327.28 180.49 P
+0.76 (great deal of speed.  While the current toolkit code lays more of) 319.5 169.49 P
+0.7 (the typing burden on the implementor) 319.5 158.49 P
+0.7 (, there is actually 30% less) 458.67 158.49 P
+0.49 (code and the toolkit runs in less than 1% of the time than did the) 319.5 147.49 P
+0.08 (object-oriented implementation.  Libes and Clark \0501992\051 present a) 319.5 136.49 P
+0.59 (complete and fascinating discussion of the problems encountered) 319.5 125.49 P
+(and rationales in developing both systems.) 319.5 114.49 T
+18 462 571 705 C
+18 462 571 705 R
+7 X
+0 K
+V
+144.7 490.24 467.29 695.57 R
+V
+3 9 Q
+0 X
+(struct Scope {) 174.73 689.57 T
+(Symbol symbol;) 201.7 676.57 T
+(int search_id;) 201.7 663.57 T
+(Dictionary symbol_table;) 201.7 650.57 T
+(struct Scope *superscope;) 201.7 637.57 T
+(char type;) 201.7 624.57 T
+(union {) 201.7 611.57 T
+(struct Procedure *proc;) 228.7 598.57 T
+(struct Function *func;) 228.7 585.57 T
+(struct Rule *rule;) 228.7 572.57 T
+(struct Entity *entity;) 228.7 559.57 T
+(struct Schema *schema;) 228.7 546.57 T
+(struct Express *express;) 228.7 533.57 T
+(struct Increment *incr;) 228.7 520.57 T
+(} u;) 201.7 507.57 T
+(};) 174.73 494.57 T
+7 X
+270 450 19.41 32.44 378.14 652.42 G
+0.5 H
+2 Z
+0 X
+270 450 19.41 32.44 378.14 652.42 A
+7 X
+270 450 19.43 59 378.13 560.56 G
+0 X
+270 450 19.43 59 378.13 560.56 A
+377.69 619.76 200.79 619.76 2 L
+N
+1 11 Q
+(type-) 402.51 653.96 T
+(independent) 402.51 644.34 T
+(type-) 402.51 562.64 T
+(dependent) 402.51 553.03 T
+377.69 684.86 200.79 684.86 2 L
+N
+377.69 501.35 200.79 501.35 2 L
+N
+237.79 471.57 374.64 484.86 R
+7 X
+V
+1 9 Q
+0 X
+(Figure 2: C representation of Scope) 237.79 478.86 T
+125.71 465.57 485.72 704.14 R
+N
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "4" 5
+%%Page: "5" 5
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(5) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+59.49 695.05 54 695.05 2 L
+V
+0.66 H
+0 Z
+N
+(T) 54 696 T
+74.31 695.05 58.83 695.05 2 L
+V
+N
+(ype) 58.83 696 T
+1 F
+0.89 (The EXPRESS type system is complex.  This naturally shows) 61.78 680 P
+(up in the implementation.  Consider the statements:) 54 669 T
+(TYPE A = SET OF INTEGER;) 84.02 653 T
+(TYPE B = A;) 84.02 640 T
+0.86 (In this statement, A is the name of a type being de\336ned while) 61.78 627 P
+0.11 (SET OF INTEGER is the type body) 54 616 P
+0.11 (.  T) 183.91 616 P
+0.11 (wo dif) 195.74 616 P
+0.11 (ferent structures ful-) 218.9 616 P
+0.92 (ly represent a type.  T) 54 605 P
+0.92 (ype names \050e.g., A\051 are associated to type) 136.33 605 P
+1.64 (bodies \050e.g., SET OF INTEGER\051 by the structure) 54 594 P
+3 F
+3.94 (TypeHead) 247.11 594 P
+1 F
+1.64 (,) 290.25 594 P
+(while the type bodies themselves are de\336ned by) 54 583 T
+3 F
+(TypeBody) 228.23 583 T
+1 F
+(.) 270.79 583 T
+3 F
+(struct TypeHead {) 84.02 567 T
+(Symbol symbol;) 111 554 T
+(struct TypeHead *head;) 111 541 T
+(struct TypeBody *body;) 111 528 T
+(Linked_List where;) 111 515 T
+(};) 84.02 502 T
+1 F
+0.49 (If type references are de\336ned in terms of other type references,) 61.78 489 P
+3 F
+0.18 (head) 54 478 P
+1 F
+0.08 ( points to the other type reference.) 75.57 478 P
+3 F
+0.18 (body) 203.72 478 P
+1 F
+0.08 ( points to the body) 225.29 478 P
+1.16 (de\336nition.  As a shorthand,) 54 467 P
+3 F
+2.8 (body) 159.43 467 P
+1 F
+1.16 ( is always de\336ned.  Even if a) 181 467 P
+0.06 (type reference is de\336ned in terms of another type reference,) 54 456 P
+3 F
+0.13 (body) 270.93 456 P
+1 F
+0.46 (points to the true type de\336nition.  Declarations of type references) 54 445 P
+(can have an associated where clause.) 54 434 T
+0.64 (T) 61.78 418 P
+0.64 (ype bodies encode notions such as set and bounds.  Primitive) 66.64 418 P
+0.68 (types \050e.g., INTEGER\051 are de\336ned by the) 54 407 P
+3 F
+1.63 (type) 210.5 407 P
+1 F
+0.68 ( element.  There) 232.07 407 P
+-0.18 (are over thirty type values, nine of which are primitive types.  Sev-) 54 396 P
+3.31 (eral others denote types of expressions.  A few others are) 54 385 P
+1.15 (noteworthy) 54 374 P
+1.15 (.  Aggregate types \050e.g., ARRA) 94.35 374 P
+1.15 (Y\051 require that) 212.33 374 P
+3 F
+2.75 (base) 270.93 374 P
+1 F
+1.03 (point to the type of the aggregate value.  Enumeration types re-) 54 363 P
+0.6 (quire a dictionary in which enumeration identi\336ers can be found.) 54 352 P
+0.21 (Entity types include a pointer to the entity scope.  The type) 54 341 P
+3 F
+0.5 (self) 270.93 341 P
+1 F
+0.44 (implies a reference to the entity or type de\336ning the current type.) 54 330 P
+0.64 (Operations such as indexing from an array of SELECT types are) 54 319 P
+0.6 (not well-de\336ned by the resolution process described here, but re-) 54 308 P
+0.21 (quire run-time evaluation.  In cases like these, the type) 54 297 P
+3 F
+0.5 (runtime) 254.75 297 P
+1 F
+(is used.) 54 286 T
+2.47 (Several boolean \337ags record additional information such as) 61.78 270 P
+1.04 (whether a type is unique or optional.) 54 259 P
+3 F
+2.5 (shared) 198.36 259 P
+1 F
+1.04 ( denotes that the) 230.72 259 P
+-0.09 (type body is shared by multiple) 54 248 P
+3 F
+-0.22 (TypeHead) 168.78 248 P
+1 F
+-0.09 (s.  This is used by var-) 211.92 248 P
+2.12 (ious prede\336ned types.  For example, if multiple attributes are) 54 237 P
+1.06 (declared as INTEGER, they can all share the same) 54 226 P
+3 F
+2.54 (TypeBody) 247.7 226 P
+1 F
+1.06 (.) 290.25 226 P
+3 F
+(repeat) 54 215 T
+1 F
+( indicates that the object is a repeat count.) 86.36 215 T
+3 F
+(struct TypeBody {) 84.02 199 T
+(enum type_enum type;) 111 186 T
+(struct {) 111 173 T
+(unsigned unique :1;) 138 160 T
+(unsigned optional :1;) 138 147 T
+(unsigned f) 138 134 T
+(ixed :1;) 191.93 134 T
+(unsigned shared :1;) 138 121 T
+(unsigned repeat :1;) 138 108 T
+(} f) 111 95 T
+(lags;) 127.18 95 T
+(struct TypeHead *base;) 376.5 696 T
+(Type tag;) 376.5 683 T
+(Expression precision;) 376.5 670 T
+(Linked_List list;) 376.5 657 T
+(Dictionary enumeration;) 376.5 644 T
+(Expression upper;) 376.5 631 T
+(Expression lower;) 376.5 618 T
+(struct Scope *entity;) 376.5 605 T
+(};) 349.52 592 T
+1 F
+1.07 (The remaining elements are generally optional and depend on) 327.28 579 P
+0.31 (the speci\336c value of type.  Several of these should be) 319.5 568 P
+3 F
+0.74 (union) 516.06 568 P
+1 F
+0.31 (ized) 543.03 568 P
+(for space ef) 319.5 557 T
+(\336ciency) 361.26 557 T
+(, but this has not been a problem in our work.) 389.13 557 T
+1.58 (An optional type tag may be recorded in) 327.28 541 P
+3 F
+3.8 (tag) 487.21 541 P
+1 F
+1.58 (,) 503.39 541 P
+3 F
+3.8 (precision) 509.47 541 P
+1 F
+0.36 (points to an optional precision expression, and) 319.5 530 P
+3 F
+0.87 (upper) 491.27 530 P
+1 F
+0.36 ( and) 518.24 530 P
+3 F
+0.87 (low-) 536.43 530 P
+0.75 (er) 319.5 519 P
+1 F
+0.31 ( are optional expressions for aggregate bounds.  Finally) 330.29 519 P
+0.31 (,) 531.63 519 P
+3 F
+0.75 (list) 536.43 519 P
+1 F
+0.28 (is a catch-all for types that need to keep object lists such as select) 319.5 508 P
+(types and composed types.) 319.5 497 T
+325.49 471.05 319.5 471.05 2 L
+V
+N
+0 F
+(V) 319.5 472 T
+353.98 471.05 325 471.05 2 L
+V
+N
+(ariable) 325 472 T
+1 F
+0.15 (EXPRESS attributes and constants are almost identical as far as) 327.28 456 P
+0.21 (processing required.  For this reason, the de\336nition) 319.5 445 P
+3 F
+0.51 (Variable) 506.41 445 P
+1 F
+0.21 ( is) 549.55 445 P
+1.09 (used for both.  The choice of name is meant to be synonymous) 319.5 434 P
+(with \322variables\323 in typical programming languages.) 319.5 423 T
+3 F
+(struct Variable {) 349.52 407 T
+(Expression name;) 376.5 394 T
+(Type type;) 376.5 381 T
+(Expression initializer;) 376.5 368 T
+(int offset;) 376.5 355 T
+(struct {) 376.5 342 T
+(int optional:1;) 403.5 329 T
+(int var:1;) 403.5 316 T
+(int constant:1;) 403.5 303 T
+(} f) 376.5 290 T
+(lags;) 392.68 290 T
+(Symbol *inverse_symbol;) 376.5 277 T
+(Variable inverse_attribute;) 376.5 264 T
+(};) 349.52 251 T
+1 F
+1.18 (Because attribute names can be compound, they are stored as) 327.28 238 P
+3 F
+2.15 (Expression) 319.5 227 P
+1 F
+0.9 (s.) 373.42 227 P
+3 F
+2.15 (type) 385.46 227 P
+1 F
+0.9 ( is the variable type.) 407.03 227 P
+3 F
+2.15 (initializer) 489.54 227 P
+1 F
+0.9 ( is) 548.86 227 P
+0.8 (set if the attribute is derived or the constant is initialized.  If the) 319.5 216 P
+0.74 (variable is indeed an EXPRESS constant, the) 319.5 205 P
+3 F
+1.77 (constant) 489.42 205 P
+1 F
+0.74 ( \337ag is) 532.56 205 P
+-0.05 (set.) 319.5 194 P
+3 F
+-0.12 (var) 336.13 194 P
+1 F
+-0.05 ( and) 352.31 194 P
+3 F
+-0.12 (optional) 369.68 194 P
+1 F
+-0.05 ( correspond to the keywords of the same) 412.82 194 P
+(name.) 319.5 183 T
+3 F
+4.1 (inverse_attribute) 327.28 167 P
+1 F
+1.71 ( contains the attribute related by the) 418.95 167 P
+0.29 (optional inverse relationship.  During parsing, the name of the in-) 319.5 156 P
+-0.07 (verse is known but not the attribute itself.  Rather than allocating a) 319.5 145 P
+-0.22 (dummy attribute, the code saves the name in) 319.5 134 P
+3 F
+-0.52 (inverse_symbol) 480.26 134 P
+1 F
+-0.22 (.) 555.75 134 P
+1.76 (After parsing, the symbol is mapped back to the true attribute) 319.5 123 P
+(which is then stored in) 319.5 112 T
+3 F
+(inverse_attribute) 403.13 112 T
+1 F
+(.) 494.8 112 T
+3 F
+1.24 (offset) 327.28 96 P
+1 F
+0.52 ( is one of several hooks for run-time support.  In each) 359.63 96 P
+0.5 (entity) 319.5 85 P
+0.5 (, the size required to store each attribute value is computed.) 339.39 85 P
+FMENDPAGE
+%%EndPage: "5" 6
+%%Page: "6" 6
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(6) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+-0.12 (Of) 54 696 P
+-0.12 (fsets are computed by adding up all the sizes prior to the current) 63.32 696 P
+(attribute.) 54 685 T
+102.45 659.05 54 659.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Expression) 54 660 T
+1 F
+-0.18 (EXPRESS expressions are complicated because of the many op-) 61.78 644 P
+(erators and forms these expressions take.) 54 633 T
+3 F
+(struct Expression {) 84.02 617 T
+(        Symbol symbol;) 84.02 604 T
+(        Type type;) 84.02 591 T
+(        Type return_type;) 84.02 578 T
+(        struct Op_Subexpression e;) 84.02 565 T
+(        union expr_union u;) 84.02 552 T
+(};) 84.02 539 T
+1 F
+0.49 (Each expression has a) 61.78 526 P
+3 F
+1.18 (Symbol) 145.11 526 P
+1 F
+0.49 (.  Sometimes there is no reason) 177.46 526 P
+0.34 (to have a name \050e.g., A+B\051 but sometimes there is.  For example,) 54 515 P
+(enumeration identi\336ers, strings, and function calls all have names.) 54 504 T
+1.45 (Syntactic and semantic types are recorded in) 61.78 488 P
+3 F
+3.47 (type) 234.39 488 P
+1 F
+1.45 ( and) 255.96 488 P
+3 F
+3.47 (re-) 276.32 488 P
+0.12 (turn_type) 54 477 P
+1 F
+0.05 (.  For example, the expression A+B has the syntactic) 102.53 477 P
+0.16 (type of) 54 466 P
+3 F
+0.38 (op) 81.78 466 P
+1 F
+0.16 ( \050meaning \322has opcode and operands\323\051 while the return) 92.56 466 P
+(type is) 54 455 T
+3 F
+(integer) 79.96 455 T
+1 F
+(,) 117.35 455 T
+3 F
+(real) 121.85 455 T
+1 F
+(, etc.) 143.42 455 T
+3 F
+5.47 (Op_Subexpression) 61.78 439 P
+1 F
+2.28 ( is a straightforward structure for re-) 148.05 439 P
+0.59 (cording an) 54 428 P
+3 F
+1.41 (op_code) 95.61 428 P
+1 F
+0.59 ( and up to three operands \050since EXPRESS) 133.36 428 P
+-0.15 (supports operators with up to three operands\051.  The next element is) 54 417 P
+0.31 (a) 54 406 P
+3 F
+0.74 (union) 60.54 406 P
+1 F
+0.31 ( of other possible expression values.  \050The) 87.51 406 P
+3 F
+0.74 (Op_Subex-) 243.97 406 P
+5.43 (pression) 54 395 P
+1 F
+2.26 ( has not been folded into this union for historical) 97.14 395 P
+(reasons.\051) 54 384 T
+3 F
+(union expr_union {) 84.02 368 T
+(        int integer;) 84.02 355 T
+(        f) 84.02 342 T
+(loat real;) 132.56 342 T
+(        char *attribute;) 84.02 329 T
+(        char *binary;) 84.02 316 T
+(        int logical;) 84.02 303 T
+(        Boolean boolean;) 84.02 290 T
+(        struct Query *query;) 84.02 277 T
+(        Linked_List list;) 84.02 264 T
+(        Expression expression;) 84.02 251 T
+(        struct Scope *entity;) 84.02 238 T
+(        Variable variable;) 84.02 225 T
+(};) 84.02 212 T
+1 F
+-0.12 (Most of these \336elds can be intuited from their names.) 61.78 199 P
+3 F
+-0.28 (list) 256.69 199 P
+1 F
+-0.12 ( is a) 278.26 199 P
+0.65 (catch-all for any expression that contains a list such as an aggre-) 54 188 P
+0.33 (gate de\336nition or the parameters in a function.) 54 177 P
+3 F
+0.8 (variable) 227.73 177 P
+1 F
+0.33 ( is for) 270.87 177 P
+0.91 (attribute references.  A special structure is de\336ned for query ex-) 54 166 P
+(pressions.) 54 155 T
+3 F
+(struct Query {) 84.02 139 T
+(        Variable local;) 84.02 126 T
+(        Expression aggregate;) 84.02 113 T
+(        Expression expression;) 84.02 100 T
+(        struct Scope *scope;) 349.52 696 T
+(};) 349.52 683 T
+0.75 (local) 327.28 670 P
+1 F
+0.31 ( is the variable generated by the query expression.) 354.24 670 P
+3 F
+0.75 (ag-) 541.82 670 P
+1.81 (gregate) 319.5 659 P
+1 F
+0.75 ( and) 357.25 659 P
+3 F
+1.81 (expression) 376.23 659 P
+1 F
+0.75 ( are the set from which to test and) 430.15 659 P
+1.39 (the logical expression, respectively) 319.5 648 P
+1.39 (.  Finally) 449.39 648 P
+1.39 (,) 483.79 648 P
+3 F
+3.34 (scope) 489.68 648 P
+1 F
+1.39 ( is a scope) 516.64 648 P
+(created speci\336cally created for the query expression.) 319.5 637 T
+344.47 611.05 319.5 611.05 2 L
+V
+N
+0 F
+(Entity) 319.5 612 T
+1 F
+1.38 (EXPRESS entities are represented by a) 327.28 596 P
+3 F
+3.32 (Scope) 478.85 596 P
+1 F
+1.38 ( structure that) 505.81 596 P
+(points to an) 319.5 585 T
+3 F
+(Entity) 363.69 585 T
+1 F
+( structure.  The entity structure is de\336ned as:) 396.05 585 T
+3 F
+(struct Entity {) 349.52 569 T
+(        Linked_List supertype_symbols;) 349.52 556 T
+(        Linked_List supertypes;) 349.52 543 T
+(        Linked_List subtypes;) 349.52 530 T
+(        Expression subtype_expression;) 349.52 517 T
+(        Linked_List attributes;) 349.52 504 T
+(        int inheritance;) 349.52 491 T
+(        int attribute_count;) 349.52 478 T
+(        Linked_List unique;) 349.52 465 T
+(        Linked_List instances;) 349.52 452 T
+(        int mark;) 349.52 439 T
+(        Boolean abstract;) 349.52 426 T
+(        Linked_List where;) 349.52 413 T
+(        Type type;) 349.52 400 T
+(};) 349.52 387 T
+0.18 (subtypes) 327.28 374 P
+1 F
+0.08 ( and) 370.42 374 P
+3 F
+0.18 (supertypes) 388.04 374 P
+1 F
+0.08 ( are linked lists of other entities.) 441.96 374 P
+3 F
+3.86 (subtype_expression) 319.5 363 P
+1 F
+1.61 ( is an expression representing the di-) 416.56 363 P
+6.55 (rected-acyclic-graph form as originally speci\336ed by the) 319.5 352 P
+1.97 (SUPER) 319.5 341 P
+1.97 (TYPE clause.) 346.93 341 P
+3 F
+4.73 (supertype_symbols) 406.76 341 P
+1 F
+1.97 ( is a temporary) 498.43 341 P
+1.03 (convenience.  The parser stores the supertype names in a list of) 319.5 330 P
+3 F
+7.52 (Symbol) 319.5 319 P
+1 F
+3.13 (s as they are encountered.  After parsing, they are) 351.86 319 P
+0.46 (mapped back to the true entities and stored in) 319.5 308 P
+3 F
+1.09 (supertype) 489.09 308 P
+1 F
+0.46 (s as a) 537.62 308 P
+-0.07 (list of) 319.5 297 P
+3 F
+-0.18 (Entity) 342.33 297 P
+1 F
+-0.07 (s.  This procedure is not necessary for) 374.68 297 P
+3 F
+-0.18 (subtypes) 512.61 297 P
+1 F
+-0.07 (,) 555.75 297 P
+-0.04 (since expressions are self-describing while lists are not.  The same) 319.5 286 P
+-0.01 (expression can be re-used whether it points to a symbol or an enti-) 319.5 275 P
+(ty) 319.5 264 T
+(.) 325.91 264 T
+3 F
+1.77 (attributes) 327.28 248 P
+1 F
+0.74 ( is a list of the entity\325) 381.2 248 P
+0.74 (s attributes.) 461.54 248 P
+3 F
+1.77 (unique) 509.69 248 P
+1 F
+0.74 ( is a) 542.04 248 P
+0.01 (list of the unique attributes.) 319.5 237 P
+3 F
+0.02 (where) 422.65 237 P
+1 F
+0.01 ( is a list of Expressions denot-) 449.61 237 P
+(ing WHERE clauses.) 319.5 226 T
+3 F
+3.36 (attribute_count) 327.28 210 P
+1 F
+1.4 ( is the number of attributes directly de-) 408.16 210 P
+3.18 (\336ned by the entity while) 319.5 199 P
+3 F
+7.64 (inheritance) 425.04 199 P
+1 F
+3.18 ( is the number of) 484.36 199 P
+0.08 (attributes inherited by the entity) 319.5 188 P
+0.08 (.) 434.05 188 P
+3 F
+0.18 (instances) 440.94 188 P
+1 F
+0.08 ( is a pointer not set) 489.47 188 P
+0.22 (by the implementation.  Rather) 319.5 177 P
+0.22 (, it is provided to run-time packag-) 431.61 177 P
+0.14 (es so that they can point to entity instances.  All of these elements) 319.5 166 P
+(are not required by the toolkit but are provided as a convenience.) 319.5 155 T
+0.17 (T) 327.28 139 P
+0.17 (wo other elements are not required but exist as internal conve-) 332.14 139 P
+2.9 (niences.) 319.5 128 P
+3 F
+6.96 (mark) 358.99 128 P
+1 F
+2.9 ( is used to prevent repeated traversal of the) 380.56 128 P
+0.83 (subtype/supertype network while searching for entities.  The use) 319.5 117 P
+1.41 (of) 319.5 106 P
+3 F
+3.38 (mark) 330.64 106 P
+1 F
+1.41 ( is analogous to) 352.21 106 P
+3 F
+3.38 (search_id) 416.27 106 P
+1 F
+1.41 ( in) 464.8 106 P
+3 F
+3.38 (Scope) 479.11 106 P
+1 F
+1.41 (s.) 506.07 106 P
+3 F
+3.38 (type) 519.13 106 P
+1 F
+1.41 ( is a) 540.7 106 P
+0.74 (pointer to an entity type with the value of) 319.5 95 P
+3 F
+1.79 (entity) 477.23 95 P
+1 F
+0.74 ( equal to this) 509.58 95 P
+FMENDPAGE
+%%EndPage: "6" 7
+%%Page: "7" 7
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(7) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+1.17 (entity) 54 696 P
+1.17 (.  This is particularly useful to have easily available when) 73.89 696 P
+(evaluating expressions involving entities.) 54 685 T
+62.48 659.05 54 659.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(W) 54 660 T
+116.59 659.05 62.15 659.05 2 L
+V
+N
+(arning, Error) 62.15 660 T
+1 F
+0.58 (For consistent diagnostic generation and handling, a diagnostic) 61.78 644 P
+0.91 (package is provided.  Each error/warning can be enabled or dis-) 54 633 P
+-0.08 (abled.  This is extremely useful for EXPRESS, a language that has) 54 622 P
+0.26 (not been standardized and is continually changing.  Constructions) 54 611 P
+0.51 (acceptable in this release may not be accepted in the next release) 54 600 P
+0.04 (and vice versa.  Errors are formatted appropriately so that they are) 54 589 P
+0.49 (acceptable to \322GNU emacs compile-mode\323.  Using this ability of) 54 578 P
+1.24 (the GNU emacs editor \050Stallman, 1992\051, the user can move the) 54 567 P
+0.56 (cursor from one diagnostic to the next in one window) 54 556 P
+0.56 (, while in a) 250.89 556 P
+1.21 (second window) 54 545 P
+1.21 (, the schema is automatically repositioned to the) 110.79 545 P
+(line that the diagnostic describes.) 54 534 T
+0.37 (The diagnostic package supports a number of features that may) 61.78 518 P
+-0.04 (no longer be particularly useful with the current toolkit implemen-) 54 507 P
+0.09 (tation.  For example, diagnostics can be buf) 54 496 P
+0.09 (fered and sorted.  This) 211.51 496 P
+0.3 (was particularly useful with previous toolkits that generated diag-) 54 485 P
+1.26 (nostics in a non-intuitive order) 54 474 P
+1.26 (.  Although the toolkit no longer) 168.87 474 P
+0.16 (needs these features, it is possible that applications may \336nd them) 54 463 P
+(of use.) 54 452 T
+0.35 (Currently) 61.78 436 P
+0.35 (, diagnostics are generated in the order of greatest im-) 95.64 436 P
+2.86 (portance to least importance.  This is a consequence of the) 54 425 P
+1.34 (multiple-pass nature of the resolution process and will be men-) 54 414 P
+0.93 (tioned further later) 54 403 P
+0.93 (.  The diagnostic package is further described) 122.75 403 P
+(by Clark \0501990a\051.) 54 392 T
+97.44 366.05 54 366.05 2 L
+V
+N
+0 F
+(Statement) 54 367 T
+1 F
+0.07 (EXPRESS statements have almost nothing in common with one) 61.78 351 P
+1.92 (another except that they usually contain expressions and other) 54 340 P
+0.06 (statements.  Thus, a common structure is de\336ned.  But it is more a) 54 329 P
+0.54 (grouping arti\336ce so that all statements are easily processed at the) 54 318 P
+(same time in the toolkit.) 54 307 T
+3 F
+(struct Statement {) 84.02 291 T
+(Symbol symbol;) 111 278 T
+(int type;) 111 265 T
+(union u_statement {) 111 252 T
+(struct Alias *alias;) 138 239 T
+(struct Assignment *assign;) 138 226 T
+(struct Case_Statement *Case;) 138 213 T
+(struct Compound_Statement) 138 200 T
+(*compound;) 84.02 189 T
+(struct Conditional *cond;) 138 176 T
+(struct Loop *loop;) 138 163 T
+(struct Procedure_Call *proc;) 138 150 T
+(struct Return_Statement) 138 137 T
+(*ret;) 84.02 126 T
+(} u;) 111 113 T
+(};) 84.02 100 T
+1 F
+0.86 (Inside the) 327.28 696 P
+3 F
+2.06 (Statement) 366.43 696 P
+1 F
+0.86 ( structure is a) 414.96 696 P
+3 F
+2.06 (union) 468.82 696 P
+1 F
+0.86 ( of structures for) 495.78 696 P
+(each dif) 319.5 685 T
+(ferent kind of EXPRESS statements.  They are as follows:) 348.04 685 T
+3 F
+(struct Alias {) 349.52 669 T
+(struct Scope *scope;) 376.5 656 T
+(struct Variable *variable;) 376.5 643 T
+(Statement statement;) 376.5 630 T
+(};) 349.52 617 T
+(struct Assignment {) 349.52 591 T
+(Expression lhs;) 376.5 578 T
+(Expression rhs;) 376.5 565 T
+(};) 349.52 552 T
+(struct Case_Statement {) 349.52 526 T
+(Expression selector;) 376.5 513 T
+(Linked_List cases;) 376.5 500 T
+(};) 349.52 487 T
+(struct Compound_Statement {) 349.52 461 T
+(Linked_List statements;) 376.5 448 T
+(};) 349.52 435 T
+(struct Conditional {) 349.52 409 T
+(Expression test;) 376.5 396 T
+(Statement code;) 376.5 383 T
+(Statement otherwise;) 376.5 370 T
+(};) 349.52 357 T
+(struct Loop {) 349.52 331 T
+(struct Scope *scope;) 376.5 318 T
+(Expression while_expr;) 376.5 305 T
+(Expression until_expr;) 376.5 292 T
+(Statement statement;) 376.5 279 T
+(};) 349.52 266 T
+(struct Increment {) 349.52 240 T
+(Expression init;) 376.5 227 T
+(Expression end;) 376.5 214 T
+(Expression increment;) 376.5 201 T
+(};) 349.52 188 T
+(struct Procedure_Call {) 349.52 162 T
+(struct Scope *procedure;) 376.5 149 T
+(Linked_List parameters;) 376.5 136 T
+(};) 349.52 123 T
+FMENDPAGE
+%%EndPage: "7" 8
+%%Page: "8" 8
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(8) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+3 F
+(struct Return_Statement {) 84.02 335.75 T
+(Expression value;) 111 322.75 T
+(};) 84.02 309.75 T
+1 F
+0.1 (Some of these statements have interesting behaviors. In particu-) 61.78 296.75 P
+2.29 (lar) 54 285.75 P
+2.29 (,) 63.12 285.75 P
+3 F
+5.51 (Procedure_Call) 69.91 285.75 P
+1 F
+2.29 ( requires a scope to deal with tagged) 145.4 285.75 P
+0.84 (parameters.  Similarly) 54 274.75 P
+0.84 (,) 134.73 274.75 P
+3 F
+2.03 (Alias) 140.07 274.75 P
+1 F
+0.84 ( introduces a very tiny scope \320 of) 167.03 274.75 P
+0.37 (only one variable!  It is convenient to use the) 54 263.75 P
+3 F
+0.9 (Scope) 221.98 263.75 P
+1 F
+0.37 ( mechanism) 248.94 263.75 P
+0.12 (even though EXPRESS proper does not de\336ne these statements in) 54 252.75 P
+(terms of having scopes.) 54 241.75 T
+0.93 (REPEA) 61.78 225.75 P
+0.93 (T statements require a scope if an increment control is) 89.24 225.75 P
+0.91 (speci\336ed, in which case it is provided by a) 54 214.75 P
+3 F
+2.18 (Scope) 216.93 214.75 P
+1 F
+0.91 ( of type) 243.9 214.75 P
+3 F
+2.18 (In-) 276.32 214.75 P
+5.74 (crement) 54 203.75 P
+1 F
+2.39 (.  Figure 2 shows a symbolic representation of the) 91.75 203.75 P
+(following REPEA) 54 192.75 T
+(T statement in memory:) 118.67 192.75 T
+(REPEA) 84.02 176.75 T
+(T V) 111.49 176.75 T
+(:=1 T) 125.05 176.75 T
+(O 100 BY 2;) 144.69 176.75 T
+(   <statement>) 84.02 163.75 T
+(END_REPEA) 84.02 150.75 T
+(T) 134.45 150.75 T
+(;.) 139.45 150.75 T
+0.92 (The SKIP and ESCAPE statements do not have de\336ned struc-) 61.78 137.75 P
+0.45 (tures.  Since every SKIP statement is identical, the) 54 126.75 P
+3 F
+1.09 (type) 242.06 126.75 P
+1 F
+0.45 ( \336eld of) 263.63 126.75 P
+3 F
+4.12 (Statement) 54 115.75 P
+1 F
+1.72 ( suf) 102.53 115.75 P
+1.72 (\336ces to describe it completely) 117.32 115.75 P
+1.72 (.  The ESCAPE) 230.93 115.75 P
+(statement is analogous.) 54 104.75 T
+0.6 (While statements are not named by the user) 327.28 335.5 P
+0.6 (, it is still useful to) 488.1 335.5 P
+-0.15 (tag each one with a) 319.5 324.5 P
+3 F
+-0.36 (Symbol) 390.39 324.5 P
+1 F
+-0.15 (, since this information can be used to) 422.74 324.5 P
+1.28 (identify the source \050line number and \336le name\051 should the user) 319.5 313.5 P
+1.03 (need to be informed about a con\337ict arising involving the state-) 319.5 302.5 P
+-0.05 (ment.  Several other structures in the toolkit have no name, but are) 319.5 291.5 P
+(usefully tagged in this same way) 319.5 280.5 T
+(.) 436.49 280.5 T
+361.96 254.55 319.5 254.55 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Case Item) 319.5 255.5 T
+1 F
+0.07 (The CASE statement is de\336ned by a list of actions.  Each action) 327.28 239.5 P
+-0.01 (may be labelled by a number of expressions.  The following struc-) 319.5 228.5 P
+0.57 (ture is used to hold the association between a single action and a) 319.5 217.5 P
+(list of expressions \050labels\051:) 319.5 206.5 T
+3 F
+(struct Case_Item {) 349.52 190.5 T
+(Symbol symbol;) 376.5 177.5 T
+(Linked_List labels;) 376.5 164.5 T
+(struct Statement *action;) 376.5 151.5 T
+(};) 349.52 138.5 T
+354.47 112.55 319.5 112.55 2 L
+V
+N
+0 F
+(Express) 319.5 113.5 T
+1 F
+-0.22 (An arti\336cial construct,) 327.28 97.5 P
+3 F
+-0.54 (Express) 409.48 97.5 P
+1 F
+-0.22 (, is used to refer to all the sche-) 447.22 97.5 P
+2.89 (mas and their contents as a single model.  This allows the) 319.5 86.5 P
+55.5 353.5 558 702.5 C
+55.5 353.5 558 702.5 R
+7 X
+0 K
+V
+198.81 362.08 413.19 375.42 R
+V
+1 9 Q
+0 X
+(Figure 2: Representation of EXPRESS REPEA) 198.81 369.42 T
+(T statement) 367.83 369.42 T
+(\050Loop\051) 284.39 688.49 T
+(scope) 205.82 642.49 T
+(u.incr) 241.34 565.49 T
+(\050V) 159.4 462.49 T
+(ariable\051) 167.89 462.49 T
+(init) 253.04 499.49 T
+(end) 299.55 498.49 T
+(increment) 353.07 498.49 T
+(while) 265.84 642.49 T
+(until) 314.69 642.49 T
+(statement) 374.15 642.49 T
+(\050Scope\051) 160.07 610.49 T
+(\050Expression\051) 244.87 610.49 T
+(\050Expression\051) 320.97 610.49 T
+(\050Statement\051) 414.4 610.49 T
+(\050Increment\051) 245.49 533.49 T
+(\050Expression\051) 241.07 462.49 T
+(\050Expression\051) 312.07 462.49 T
+(\050Expression\051) 397.07 462.49 T
+276.56 630.11 269.39 620.49 270.38 632.45 273.47 631.28 4 Y
+V
+293 683.25 273.48 631.28 2 L
+1 H
+2 Z
+N
+338.37 632.09 341.5 620.5 332.7 628.67 335.54 630.38 4 Y
+V
+304 683.25 335.54 630.38 2 L
+N
+422.02 628.5 430.49 620 418.8 622.72 420.41 625.61 4 Y
+V
+315.75 683.25 420.42 625.61 2 L
+N
+190.93 622.79 179.39 619.5 187.43 628.4 189.18 625.6 4 Y
+V
+282.75 683.25 189.18 625.59 2 L
+N
+(symbol_table) 155.83 565.49 T
+(null) 260.83 598.49 T
+(null) 336.94 598.49 T
+(<statement>) 413.08 598.49 T
+180.89 553.97 177.39 542.49 174.28 554.08 177.59 554.03 4 Y
+V
+178.39 602.49 177.59 554.03 2 L
+N
+256.96 550.73 263.99 541.01 252.88 545.53 254.92 548.13 4 Y
+V
+186.39 601.49 254.93 548.12 2 L
+N
+(1) 261.79 450.49 T
+(100) 328.3 450.49 T
+(2) 417.79 450.49 T
+(V) 174.12 450.49 T
+179.7 486.54 176.39 475 173.09 486.54 176.39 486.54 4 Y
+V
+176.39 528.49 176.39 486.54 2 L
+N
+262.48 485.09 259.39 473.5 255.87 484.97 259.17 485.03 4 Y
+V
+258.39 527.49 259.18 485.02 2 L
+N
+324.23 485.24 330.5 475 319.76 480.36 321.99 482.8 4 Y
+V
+274.39 526.49 322 482.8 2 L
+N
+397.31 481.36 406.38 473.5 394.52 475.36 395.92 478.36 4 Y
+V
+291.39 526.49 395.93 478.35 2 L
+N
+(Legend:) 179.95 422.77 T
+(C structure element name) 314.39 412.05 T
+387.71 407.24 397.16 399.84 385.22 401.11 386.47 404.17 4 Y
+V
+325.51 428.71 386.48 404.16 2 L
+N
+(value) 247.67 403.88 T
+222.17 395.38 430.23 434.82 R
+N
+296.93 434.49 296.93 395.93 2 L
+N
+222.17 415.93 296.06 415.93 2 L
+N
+(\050C typedef\051) 235.7 423.27 T
+125 355 487 700 R
+0.5 H
+N
+0 0 612 792 C
+FMENDPAGE
+%%EndPage: "8" 9
+%%Page: "9" 9
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(9) 302.5 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+1.37 (possibility of reading two EXPRESS de\336nitions and comparing) 54 696 P
+1.78 (them, generating one from another) 54 685 P
+1.78 (, or other applications using) 185.29 685 P
+(multiple models.) 54 674 T
+0.34 (The actual de\336nition of an) 61.78 658 P
+3 F
+0.81 (Express) 160.55 658 P
+1 F
+0.34 ( structure contains the \336le) 198.3 658 P
+-0.12 (descriptors and other miscellaneous detail that is not relevant here.) 54 647 P
+0.05 (The important aspect of) 54 636 P
+3 F
+0.11 (Express) 142.04 636 P
+1 F
+0.05 ( is that it is owned by a) 179.79 636 P
+3 F
+0.11 (Scope) 265.54 636 P
+1 F
+0.92 (structure which supplies a dictionary containing all the top-level) 54 625 P
+0.01 (information that would normally be found in a schema \336le such as) 54 614 P
+(SCHEMA and CONST) 54 603 T
+(ANT information.) 137.66 603 T
+128.43 577.05 54 577.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Schema, Rename) 54 578 T
+1 F
+0.48 (Each schema is maintained by a) 61.78 562 P
+3 F
+1.15 (Scope) 181.97 562 P
+1 F
+0.48 ( structure which points) 208.93 562 P
+(to a) 54 551 T
+3 F
+(Schema) 69.48 551 T
+1 F
+( structure.) 101.83 551 T
+3 F
+(struct Schema {) 84.02 535 T
+(Linked_List rules;) 111 522 T
+(Dictionary refdict;) 111 509 T
+(Dictionary usedict;) 111 496 T
+(Linked_List uselist;) 111 483 T
+(Linked_List ref) 111 470 T
+(list;) 191.89 470 T
+(};) 84.02 457 T
+2.8 (rules) 61.78 444 P
+1 F
+1.17 ( is a list of WHERE clauses represented as) 88.74 444 P
+3 F
+2.8 (Expres-) 254.75 444 P
+3.9 (sion) 54 433 P
+1 F
+1.62 (s.  Everything else in the structure supports intra-schema) 75.57 433 P
+0.01 (references.  References to entire schemas are placed on) 54 422 P
+3 F
+0.03 (uselist) 254.75 422 P
+1 F
+0.26 (\050for USE\051 or) 54 411 P
+3 F
+0.62 (reflist) 102.44 411 P
+1 F
+0.26 ( \050for REFERENCE\051.  During parsing, ref-) 140.19 411 P
+4.38 (erences to speci\336c objects are inserted into) 54 400 P
+3 F
+10.51 (refdict) 240.64 400 P
+1 F
+4.38 ( or) 278.39 400 P
+3 F
+1.22 (usedict) 54 389 P
+1 F
+0.51 (.  Objects are entered under their new name if they are) 91.75 389 P
+(renamed, such as in:) 54 378 T
+(REFERENCE FROM SCHEMA1 \050OBJ1 AS OBJ2\051) 84.02 362 T
+1.45 (All dictionary references are made using the following struc-) 61.78 349 P
+(ture:) 54 338 T
+3 F
+(typedef struct Rename {) 84.02 322 T
+(struct Symbol *schema_sym;) 111 309 T
+(Schema schema;) 111 296 T
+(struct Symbol *old;) 111 283 T
+(struct Symbol *new;) 111 270 T
+(Generic object;) 111 257 T
+(char type;) 111 244 T
+(enum rename_type rename_type;) 111 231 T
+(};) 84.02 218 T
+1 F
+1.83 (During parsing, schemas names are saved in) 61.78 205 P
+3 F
+4.39 (schema_sym) 236.33 205 P
+1 F
+1.83 (.) 290.25 205 P
+3 F
+0.81 (old) 54 194 P
+1 F
+0.34 ( and) 70.18 194 P
+3 F
+0.81 (new) 88.32 194 P
+1 F
+0.34 ( are the original and new name of the object.  If the) 104.5 194 P
+(object is not being renamed,) 54 183 T
+3 F
+(new == old) 157.84 183 T
+1 F
+(.) 211.76 183 T
+0.51 (After parsing, each reference is tracked through any number of) 61.78 167 P
+0.34 (referencing schemas to the schema in which the object is actually) 54 156 P
+0.83 (de\336ned.  A pointer to the de\336ning schema is stored in) 54 145 P
+3 F
+2 (schema) 257.9 145 P
+1 F
+0.83 (.) 290.25 145 P
+0.06 (An object pointer to the object de\336nition is stored in) 54 134 P
+3 F
+0.15 (object) 244.86 134 P
+1 F
+0.06 ( and) 277.21 134 P
+0.01 (its type in) 54 123 P
+3 F
+0.04 (type) 91.75 123 P
+1 F
+0.01 (.) 113.32 123 P
+3 F
+0.04 (rename_type) 120.08 123 P
+1 F
+0.01 ( is set to either) 179.4 123 P
+3 F
+0.04 (use) 234.15 123 P
+1 F
+0.01 ( or) 250.32 123 P
+3 F
+0.04 (ref) 262.33 123 P
+1 F
+0.01 (, al-) 278.51 123 P
+(lowing later searching to behave dif) 54 112 T
+(ferently for the two.) 182.88 112 T
+0.14 ([2] contrasts the current implementation with a prior implemen-) 327.28 696 P
+0.51 (tation that literally copied referenced objects from one schema to) 319.5 685 P
+(another) 319.5 674 T
+(.) 345.96 674 T
+431.37 648.05 319.5 648.05 2 L
+V
+N
+0 F
+(Procedure, Function, Rule) 319.5 649 T
+1 F
+2.17 (The following de\336nitions support procedures, functions, and) 327.28 633 P
+(rules.) 319.5 622 T
+3 F
+(struct Procedure {) 349.52 606 T
+(int pcount;) 376.5 593 T
+(int tag_count;) 376.5 580 T
+(Linked_List parameters;) 376.5 567 T
+(Linked_List body;) 376.5 554 T
+(};) 349.52 541 T
+(struct Function {) 349.52 515 T
+(int pcount;) 376.5 502 T
+(int tag_count;) 376.5 489 T
+(Linked_List parameters;) 376.5 476 T
+(Linked_List body;) 376.5 463 T
+(Type return_type;) 376.5 450 T
+(};) 349.52 437 T
+(struct Rule {) 349.52 411 T
+(Linked_List parameters;) 376.5 398 T
+(Linked_List body;) 376.5 385 T
+(Linked_List where;) 376.5 372 T
+(};) 349.52 359 T
+1.1 (parameters) 327.28 346 P
+1 F
+0.46 ( is a list of lists of type expressions.  For conve-) 381.2 346 P
+2.52 (nience to the toolkit,) 319.5 335 P
+3 F
+6.04 (pcount) 405.7 335 P
+1 F
+2.52 ( is a count of parameters.  In) 438.06 335 P
+0.2 (contrast,) 319.5 324 P
+3 F
+0.47 (tag_count) 352.64 324 P
+1 F
+0.2 ( is just the number of parameters which are) 401.18 324 P
+-0.09 (tagged \050with type labels\051.  The tagged parameters may \336rst require) 319.5 313 P
+2.82 (resolution of other tagged parameters, for example if one is) 319.5 302 P
+1.48 (marked INTEGER while another is GENERIC.  A more likely) 319.5 291 P
+0.28 (scenario is that the algorithm gives no type information which in-) 319.5 280 P
+2.26 (stead must be garnered from the algorithm callers.  This can) 319.5 269 P
+1.1 (change at each call and even mid-call.  For example, imagine a) 319.5 258 P
+(function with the following header:) 319.5 247 T
+(FUNC FOO\050) 349.52 231 T
+(A:) 403.5 220 T
+(GENERIC;T) 430.74 220 T
+(AG1;) 476.95 220 T
+(B:) 403.5 209 T
+(GENERIC:T) 430.74 209 T
+(AG2;) 476.95 209 T
+(\051:) 376.5 198 T
+(GENERIC:T) 430.74 198 T
+(AG2;) 476.95 198 T
+(which is called as:) 327.28 185 T
+(FOO\050FOO\050T1,T2\051,FOO\050T2,T3\051\051) 349.52 169 T
+-0.03 (In order to determine the types of this function\325) 327.28 156 P
+-0.03 (s ar) 497.32 156 P
+-0.03 (guments, it is) 509.86 156 P
+0.51 (necessary to determine the type of the function in two other calls) 319.5 145 P
+0.07 (at the same time!  Hence the type labels cannot be associated with) 319.5 134 P
+-0.04 (the functions \050which is why they don\325) 319.5 123 P
+-0.04 (t show up in the) 455.39 123 P
+3 F
+-0.1 (Function) 514.86 123 P
+1 F
+0.55 (structure de\336nition\051 but are associated with each individual func-) 319.5 112 P
+(tion call.) 319.5 101 T
+FMENDPAGE
+%%EndPage: "9" 10
+%%Page: "10" 10
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(10) 300 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+0.22 (For each type label and call, a) 61.78 696 P
+3 F
+0.52 (tag) 173.11 696 P
+1 F
+0.22 ( structure holds the mapping) 189.29 696 P
+(between name and type.  This is discarded after resolution.) 54 685 T
+3 F
+(struct tag {) 84.02 669 T
+(char *name;) 111 656 T
+(Type type;) 111 643 T
+(};) 84.02 630 T
+88.46 604.05 54 604.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Memory) 54 605 T
+1 F
+0.72 (A special-purpose memory allocation system \050Libes, 1993d\051 is) 61.78 589 P
+0.11 (provided that understands the predominant number of requests for) 54 578 P
+-0.13 (memory that come in a small number of sizes corresponding to the) 54 567 P
+0.65 (dif) 54 556 P
+0.65 (ferent objects in the system.  It speeds up the entire toolkit by) 63.82 556 P
+-0.05 (approximately 10-15% over the more general-purpose memory al-) 54 545 P
+(locators \050i.e., malloc and friends\051 provided with C compilers.) 54 534 T
+1.94 (The memory allocation system will not be further described) 61.78 518 P
+(here.) 54 507 T
+0 F
+(MUL) 54 471 T
+(TIPLE P) 72.8 471 T
+(ASSES \320 OVER) 106.1 471 T
+(VIEW) 171.87 471 T
+1 F
+0.36 (The toolkit provides a number of functions that combine to im-) 61.78 455 P
+1.3 (plement a multiple-pass translation.  Normally) 54 444 P
+1.3 (, these passes are) 227.19 444 P
+0.45 (called consecutively however) 54 433 P
+0.45 (, this is not necessary) 160.85 433 P
+0.45 (.  Nonetheless,) 238.69 433 P
+(we will describe this as the \324usual\325 use of the toolkit.) 54 422 T
+0.19 (An earlier release of this software used a three pass total, single) 61.78 406 P
+1.01 (pass resolution system.  An attribute of single pass resolution is) 54 395 P
+0.81 (that objects have to be resolved when they are \336rst encountered.) 54 384 P
+0.24 (There are a number of drawbacks to this including: heavily recur-) 54 373 P
+0.67 (sive processing can be complex especially when handling errors;) 54 362 P
+-0.06 (detection of recursive references takes a lot of overhead; and diag-) 54 351 P
+1.46 (nostics are generated in a very non-intuitive way as processing) 54 340 P
+(follows depth-\336rst paths of references.) 54 329 T
+0.73 (In contrast to that system, the multiple pass architecture of the) 61.78 313 P
+0.63 (current system guarantees that all objects are resolved before be-) 54 302 P
+0.35 (ing used.  This makes error handling simpler \320 errors are handled) 54 291 P
+0.47 (at very shallow levels of processing.  Lastly) 54 280 P
+0.47 (, since objects are re-) 214.49 280 P
+3.26 (solved only after all their dependencies are, diagnostics are) 54 269 P
+1.33 (naturally generated in a most-meaningful-\336rst order) 54 258 P
+1.33 (.  Libes and) 246.59 258 P
+0.48 (Clark \0501992\051 present a complete discussion of the dif) 54 247 P
+0.48 (ferences be-) 248.36 247 P
+(tween single and multiple passes in EXPRESS translation.) 54 236 T
+1.04 (The speci\336c passes are brie\337y described below) 61.78 220 P
+1.04 (.  They will be) 236.16 220 P
+(described further later in the paper) 54 209 T
+(.) 177.54 209 T
+5 F
+(Pass 1:) 54 184 T
+(Parse) 103.03 184 T
+1 F
+1.13 (T) 103.03 168 P
+1.13 (okens are scanned and a parse tree is built repre-) 107.89 168 P
+2.12 (senting a collection of schemas.  A dictionary is) 103.03 157 P
+1.07 (created for each scope, and names are entered into) 103.03 146 P
+(the dictionaries during parsing.) 103.03 135 T
+1.63 (If any referenced schema is unknown, a search is) 103.03 119 P
+-0.17 (made to \336nd an appropriate \336le in the \336le system and) 103.03 108 P
+(the Parse pass is repeated.) 103.03 97 T
+5 F
+(Pass 2:) 319.5 696 T
+(Resolve Use and Refer) 368.53 696 T
+(ences) 454.48 696 T
+1 F
+0.01 (Use and reference lists and dictionaries are traversed) 368.53 680 P
+-0.15 (and connections are created to objects in the de\336ning) 368.53 669 P
+(schemas.) 368.53 658 T
+5 F
+(Pass 3:) 319.5 633 T
+(Resolve Subtypes and Supertypes) 368.53 633 T
+1 F
+(Entity subtypes and supertypes are resolved.) 368.53 617 T
+5 F
+(Pass 4:) 319.5 592 T
+(Resolve Other Static T) 368.53 592 T
+(ypes) 454.98 592 T
+1 F
+2.87 (All static type de\336nitions, attribute types, return) 368.53 576 P
+(types, etc., are resolved.) 368.53 565 T
+5 F
+(Pass 5:) 319.5 540 T
+(Resolve Expr) 368.53 540 T
+(essions, Statements, and Dynamic) 419.55 540 T
+(T) 368.5 529 T
+(ypes) 373.83 529 T
+1 F
+0.56 (Expressions and statements are resolved.  T) 368.53 513 P
+0.56 (ypes for) 528.24 513 P
+1.9 (ALIAS and other dynamically-typed variables are) 368.53 502 P
+0.22 (resolved here since they depend upon expression re-) 368.53 491 P
+-0.02 (turn types, and the types are not necessary for earlier) 368.53 480 P
+(results.) 368.53 469 T
+5 F
+(Pass 6:) 319.5 444 T
+(Application-Speci\336c Backend) 368.53 444 T
+1 F
+-0.12 (While not restricted to following all the other passes,) 368.53 428 P
+-0.04 (application-speci\336c code is usually performed at this) 368.53 417 P
+(point.) 368.53 406 T
+0 F
+(MUL) 319.5 370 T
+(TIPLE P) 338.3 370 T
+(ASSES \320 DET) 371.6 370 T
+(AIL) 429.37 370 T
+1 F
+0.57 (The multiple passes of the toolkit will now be described in de-) 327.28 354 P
+(tail.) 319.5 343 T
+354.96 317.05 319.5 317.05 2 L
+V
+N
+0 F
+(Scanner) 319.5 318 T
+1 F
+1.2 (Individual characters are read and grouped into tokens by the) 327.28 302 P
+4 F
+0.66 (scanner) 319.5 291 P
+1 F
+0.66 (.  The current implementation of the scanner can be built) 347.46 291 P
+(either with Lex or Flex \050Lesk and Schmidt, 1978\051.) 319.5 280 T
+1.02 (The only salient dif) 327.28 264 P
+1.02 (ference between Lex and Flex is that Flex) 400.33 264 P
+-0.13 (does not count lines \050required for tagging diagnostics and objects\051.) 319.5 253 P
+0.09 (Some other dif) 319.5 242 P
+0.09 (ference exist but they are minor syntactic-level ele-) 372.94 242 P
+0.55 (ments handled by) 319.5 231 P
+3 F
+1.32 (#ifdef) 386.8 231 P
+1 F
+0.55 (s.  Flex provides support for scanning) 419.16 231 P
+1.81 (by state.  Using this would simplify the scanner) 319.5 220 P
+1.81 (, but we have) 504.64 220 P
+(avoided it for portability) 319.5 209 T
+(.) 407.04 209 T
+0.09 (As the scanner runs, comments are discarded.  While comments) 327.28 193 P
+0.04 (have semantic value, they could conceivably be maintained by the) 319.5 182 P
+-0.09 (implementation.  Unfortunately) 319.5 171 P
+-0.09 (, there is no obvious way to associ-) 432.32 171 P
+0.95 (ate comments with objects, since comments can appear between) 319.5 160 P
+(arbitrary tokens.) 319.5 149 T
+-0.22 (EXPRESS allows comments to be nested, so the scanner keeps a) 327.28 133 P
+0.71 (stack for this purpose.  A termination routine reports all non-ter-) 319.5 122 P
+-0.06 (minated comments.  EXPRESS also allows non-nested comments,) 319.5 111 P
+-0.06 (which the scanner carefully handles even in the presence of nested) 319.5 100 P
+FMENDPAGE
+%%EndPage: "10" 11
+%%Page: "11" 11
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(11) 300 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+0.15 (comments.  \050In other words, they are both handled as described in) 54 696 P
+(the EXPRESS speci\336cation.\051) 54 685 T
+0.31 (A token is returned for each EXPRESS reserved word, symbol,) 61.78 669 P
+-0.14 (and identi\336er) 54 658 P
+-0.14 (.  Numbers, literals, etc. are returned as single tokens.) 101.05 658 P
+0.96 (In the case of tokens such as) 54 647 P
+3 F
+2.29 (TOK_INTEGER) 165.27 647 P
+1 F
+0.96 ( and) 224.59 647 P
+3 F
+2.29 (TOK_IDEN-) 243.97 647 P
+3.35 (TIFIER) 54 636 P
+1 F
+1.4 (, the) 86.36 636 P
+3 F
+3.35 (union) 106.87 636 P
+3.35 (exp_yylval) 137.48 636 P
+1 F
+1.4 ( is used to store additional) 191.4 636 P
+-0.16 (data.  For example, when an integer is scanned, the value of the in-) 54 625 P
+1.85 (teger is stored in ex) 54 614 P
+3 F
+4.45 (p_yylval.iVal) 131.81 614 P
+1 F
+1.85 ( and) 201.91 614 P
+3 F
+4.45 (TOK_INTEGER) 223.09 614 P
+1 F
+1.85 ( is) 282.4 614 P
+(passed to the parser) 54 603 T
+(.) 124.14 603 T
+0.76 (EXPRESS identi\336ers are case-insensitive.  Thus, all identi\336ers) 61.78 587 P
+0.22 (are translated to uppercase.  If they are keywords or built-in func-) 54 576 P
+0.83 (tions or procedures\051, the matching token is returned.  If they are) 54 565 P
+0.21 (not keywords, they are presumed to be user) 54 554 P
+0.21 (-de\336ned identi\336ers.  If) 211.51 554 P
+0 (identi\336ers, the name, line number) 54 543 P
+0 (, and \336le name are stored in) 174.47 543 P
+3 F
+0.01 (ex-) 276.32 543 P
+0.7 (p_yylval.symbol) 54 532 P
+1 F
+0.29 ( and) 134.89 532 P
+3 F
+0.7 (TOK_IDENTIFIER) 152.94 532 P
+1 F
+0.29 ( is returned to the) 228.43 532 P
+(parser) 54 521 T
+(.) 75.46 521 T
+81.98 495.05 54 495.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Parser) 54 496 T
+1 F
+0.53 (The parser is a traditional LR parser) 61.78 480 P
+0.53 (.  The current implementa-) 194.27 480 P
+1.5 (tion runs either with Y) 54 469 P
+1.5 (acc \050Johnson, 1978\051 or Bison \050Stallman,) 140.47 469 P
+-0.11 (1992\051.  The following discussion assumes a rudimentary familiari-) 54 458 P
+(ty with Y) 54 447 T
+(acc parsers.) 87.06 447 T
+1.44 (The grammar is fairly close to that found in the current EX-) 61.78 431 P
+1.7 (PRESS speci\336cation, however there are several reasons why it) 54 420 P
+(diver) 54 409 T
+(ges signi\336cantly in many places:) 72.31 409 T
+(\245) 78.98 393 T
+0.21 (The grammar evolved over time and multiple) 97.98 393 P
+2.37 (EXPRESS speci\336cations, rather than being) 97.99 382 P
+1.79 (rewritten from scratch with each release of) 97.99 371 P
+0.03 (the speci\336cation.  For the most part, the mini-) 97.99 360 P
+1.29 (mum changes necessary were made to keep) 97.99 349 P
+1.7 (the language accepted in conformance with) 97.99 338 P
+(the speci\336cation.) 97.99 327 T
+(\245) 78.98 311 T
+1.6 (Little semantic analysis occurs during pars-) 97.98 311 P
+0.53 (ing.  For this reason, the parser itself accepts) 97.99 300 P
+0.96 (some constructs that are illegal, the idea be-) 97.99 289 P
+0.92 (ing that they will be caught during semantic) 97.99 278 P
+2 (processing later) 97.99 267 P
+2 (.  While this requires some) 156.15 267 P
+4.01 (additional complexity later) 97.99 256 P
+4.01 (, the parser is) 202.52 256 P
+0.21 (greatly simpli\336ed.  For example, a number of) 97.99 245 P
+0.28 (speci\336cation rules can be handled by a single) 97.99 234 P
+(Y) 97.99 223 T
+(acc rule.) 103.58 223 T
+(\245) 78.98 207 T
+0.09 (The BNF used by the speci\336cation is a super-) 97.98 207 P
+0.19 (set of what is accepted by Y) 97.99 196 P
+0.19 (acc.  Some of the) 199.57 196 P
+(rules had to be simpli\336ed.) 97.99 185 T
+(\245) 78.98 169 T
+2.07 (Parts of the grammar were rewritten to be) 97.98 169 P
+3.44 (more ef) 97.99 158 P
+3.44 (\336cient to the LR parser built by) 128.97 158 P
+1.06 (Y) 97.99 147 P
+1.06 (acc.  The EXPRESS grammar provides no) 103.58 147 P
+1.97 (assistance in building ef) 97.99 136 P
+1.97 (\336cient implementa-) 190.36 136 P
+(tions.) 97.99 125 T
+0.06 (As the parser runs, it builds a tree representing its input.   \050After) 61.78 109 P
+0.26 (parsing is completed, the tree will then be manipulated into a net-) 54 98 P
+0.88 (work.\051  At the root of the tree is a dictionary of schemas.  Each) 319.5 696 P
+(schema in turn is a tree to entities, functions, etc.) 319.5 685 T
+0.04 (The only semantic processing that occurs during parsing are ob-) 327.28 669 P
+0.24 (ject de\336nitions.  For example, when the string \322ENTITY FOO\323 is) 319.5 658 P
+0.96 (encountered, an entity is created.  This entity is entered into the) 319.5 647 P
+0.55 (previous scope.  Similarly) 319.5 636 P
+0.55 (, a scope is created for future attributes) 414.42 636 P
+0.1 (that will be encountered while parsing the rest of the entity de\336ni-) 319.5 625 P
+(tion.  Other objects are created similarly) 319.5 614 T
+(.) 463.43 614 T
+0.87 (A stack called) 327.28 598 P
+3 F
+2.08 (scopes) 383.04 598 P
+1 F
+0.87 ( is used to retain lexical knowledge of) 415.39 598 P
+0.08 (scopes as they are encountered.  This is primarily used to simplify) 319.5 587 P
+0.62 (access to the current scope while adding objects to it, however it) 319.5 576 P
+0.07 (also simpli\336es other actions such as scope creation and generation) 319.5 565 P
+(of more descriptive contexts in diagnostics.) 319.5 554 T
+1.01 (As each schema reference is encountered, it is added to a \336fo) 327.28 538 P
+0.64 (called) 319.5 527 P
+3 F
+1.53 (PARSEnew_schemas) 343.84 527 P
+1 F
+0.64 (.  This is explored immediately af-) 430.12 527 P
+3.29 (ter parsing.  If any unknown schema references are found,) 319.5 516 P
+(matching \336les are searched for and the parser is restarted.) 319.5 505 T
+0.33 (The) 327.28 489 P
+3 F
+0.79 (exp_yylval) 343.83 489 P
+1 F
+0.33 ( union is used extensively during bottom-up) 397.75 489 P
+2.38 (parsing to pass low-level information back up to higher) 319.5 478 P
+2.38 (-level) 537.53 478 P
+1.42 (rules.  A few rules require information to be passed down, but) 319.5 467 P
+0.19 (these are rare.  Implemented as static variables, they can be found) 319.5 456 P
+(at the beginning of the parser source.) 319.5 445 T
+0.35 (One of the shortcomings in Y) 327.28 429 P
+0.35 (acc/Bison has been its crude error) 434.71 429 P
+0.34 (messages.  W) 319.5 418 P
+0.34 (e have improved that by incorporating a mechanism) 368.64 418 P
+1.32 (\050Schreiner and Friedman, 1985\051 to report what tokens were en-) 319.5 407 P
+0.81 (countered and what tokens were expected.  Due to the design of) 319.5 396 P
+1.46 (Y) 319.5 385 P
+1.46 (acc/Bison, this modi\336cation requires one-time hand editing of) 325.09 385 P
+0.84 (the Y) 319.5 374 P
+0.84 (acc/Bison template.  This must be done when the toolkit is) 339.16 374 P
+(ported to a new computer \050or the parser is \322upgraded\323\051.) 319.5 363 T
+1.11 (The Y) 327.28 347 P
+1.11 (acc parser is composed of machine-generated C, and as) 350.2 347 P
+1.14 (such is not particularly ef) 319.5 336 P
+1.14 (\336cient \050although we use GNU\325) 415.25 336 P
+1.14 (s Bison) 530.14 336 P
+0.09 (\050Stallman, 1992\051 , a more ef) 319.5 325 P
+0.09 (\336cient version of Y) 420.9 325 P
+0.09 (acc\051.  Nonetheless,) 489.93 325 P
+0.34 (we have not tried to rewrite an EXPRESS parser by hand.  While) 319.5 314 P
+-0.16 (such an ef) 319.5 303 P
+-0.16 (fort would produce more ef) 355.45 303 P
+-0.16 (\336cient code, we expect that it) 453.48 303 P
+0.41 (would be a lengthy task, and further changes would be extremely) 319.5 292 P
+(painful.) 319.5 281 T
+1.18 (The scanner is similarly constructed by Lex \050or Flex, a faster) 327.28 265 P
+0.52 (Lex\051.  Currently) 319.5 254 P
+0.52 (, the parser and scanner together take 75% of the) 378.11 254 P
+0.14 (time used by parsing and resolution of an EXPRESS schema.  W) 319.5 243 P
+0.14 (e) 554.01 243 P
+0.34 (speculate that a hand-built pair could reduce the total run-time by) 319.5 232 P
+(as much as 50%.) 319.5 221 T
+473.3 195.05 319.5 195.05 2 L
+V
+N
+0 F
+(After Parsing But Before Resolution) 319.5 196 T
+1 F
+1 (As mentioned earlier) 327.28 180 P
+1 (, the parser creates a tree representing all) 404.29 180 P
+0.86 (the information \050except comments\051 found in the original schema) 319.5 169 P
+0.41 (\336le.  At this point, most of it has little semantic information.  For) 319.5 158 P
+0.72 (example, in the attribute declaration A) 319.5 147 P
+0.72 (TTRX = TYPEX, TYPEX) 460.39 147 P
+0.3 (becomes represented as a T) 319.5 136 P
+0.3 (ype but with no information except its) 418.9 136 P
+-0.04 (name.  Later resolution will determine whether it is a T) 319.5 125 P
+-0.04 (ype, Entity) 516.93 125 P
+-0.04 (,) 555.75 125 P
+(or erroneous in some way) 319.5 114 T
+(.) 411.77 114 T
+0.85 (In some parts of the grammar) 327.28 98 P
+0.85 (, it is impossible to tell anything) 437.27 98 P
+0.29 (about a token other than it is a name for some object.  While EX-) 319.5 87 P
+FMENDPAGE
+%%EndPage: "11" 12
+%%Page: "12" 12
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(12) 300 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+0.2 (PRESS has a well-de\336ned \050BNF\051 syntax, without semantic help it) 54 696 P
+0.21 (is possible to parse valid schemas in multiple ways.  Unfortunate-) 54 685 P
+3.52 (ly) 54 674 P
+3.52 (, EXPRESS allows objects to be referenced before being) 60.41 674 P
+0.51 (declared, so semantic assistance is impossible in all cases.  Thus,) 54 663 P
+-0.16 (may tokens are forced to be represented simply as) 54 652 P
+3 F
+-0.39 (Symbol) 234.5 652 P
+1 F
+-0.16 (s \320 that) 266.86 652 P
+0.67 (is, just a name and a record of where it was found.  During later) 54 641 P
+(resolution, it will be replaced or augmented.) 54 630 T
+0.15 (Expressions are represented in the form suggested by the prece-) 61.78 614 P
+0.52 (dence of their operators.  For example, the expression \322X + \050Y +) 54 603 P
+0.16 (Z\051\323 is represented by two) 54 592 P
+3 F
+0.39 (Expression) 148.41 592 P
+1 F
+0.16 (s.  Both have + as opera-) 202.34 592 P
+0.4 (tors.  The \336rst has Y and Z as its operands.  The second has X as) 54 581 P
+0.11 (its \336rst operand and a pointer to the \336rst) 54 570 P
+3 F
+0.27 (Expression) 201.05 570 P
+1 F
+0.11 ( as its sec-) 254.97 570 P
+(ond operand.) 54 559 T
+3 F
+1.35 (Expression) 61.78 543 P
+1 F
+0.56 (s are used to represent several other things.  For) 115.7 543 P
+-0.01 (instance, each entity has an expression representing its subtype re-) 54 532 P
+0.91 (lationships.  Entity-attribute dereferencing is another example of) 54 521 P
+-0.1 (an expression.  For example, the EXPRESS expression \322A.B.C\323 is) 54 510 P
+(represented in memory as:) 54 499 T
+140.41 383.05 54 383.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Recalling the Parser) 54 384 T
+1 F
+-0.22 (If schemas have been referenced but not de\336ned, a schema \336le is) 61.78 368 P
+0.04 (searched for so that references can be resolved.  This is performed) 54 357 P
+1.16 (by) 54 346 P
+3 F
+2.79 (EXPRESSfind_schema) 66.4 346 P
+1 F
+1.16 (.  This function examines each di-) 163.46 346 P
+0.19 (rectory de\336ned by the environment variable) 54 335 P
+3 F
+0.45 (EXPRESS_PATH) 214.88 335 P
+1 F
+0.19 ( \050or) 279.58 335 P
+0.41 (the current directory if) 54 324 P
+3 F
+0.98 (EXPRESS_PATH) 138.98 324 P
+1 F
+0.41 ( is not de\336ned\051 for a \336le) 203.69 324 P
+-0.04 (by a name similar to that of the schema itself.  The only dif) 54 313 P
+-0.04 (ference) 266.06 313 P
+0.37 (is that the schema name is converted to lowercase and \322) 54 302 P
+3 F
+0.88 (.exp) 258.33 302 P
+1 F
+0.37 (\323 is) 279.9 302 P
+(appended.) 54 291 T
+-0.13 (If such a \336le is found, it is read and parsed \050as described earlier\051.) 61.78 275 P
+0.52 (This procedure of resolved schema references is repeated as long) 54 264 P
+(as such references exist.) 54 253 T
+1.56 (As schemas are located, USE and REFERENCE lists are re-) 61.78 237 P
+-0.06 (solved as described earlier) 54 226 P
+-0.06 (.  After parsing, they are initially simply) 148.4 226 P
+0.53 (lists of schema names and local \050and possibly remote\051 names.  A) 54 215 P
+0.21 (separate pass is made to establish connections to remote schemas.) 54 204 P
+1.98 (A second pass connects the actual objects \050) 54 193 P
+3 F
+4.75 (Entity) 222.86 193 P
+1 F
+1.98 (s,) 255.22 193 P
+3 F
+4.75 (Type) 265.19 193 P
+1 F
+1.98 (s,) 286.76 193 P
+0.74 (etc.\051 together) 54 182 P
+0.74 (.  This separation of passes avoids problems related) 101.66 182 P
+0.85 (to partial or total recursion between schemas that reference each) 54 171 P
+(other) 54 160 T
+(.) 71.97 160 T
+222.81 134.05 54 134.05 2 L
+V
+N
+0 F
+(Resolving Subtypes, Supertypes, and T) 54 135 T
+286.57 134.05 222.15 134.05 2 L
+V
+N
+(ype De\336nitions) 222.15 135 T
+1 F
+0.53 (Once all the schemas have been resolved, object types must be) 61.78 119 P
+0.26 (resolved.  Unlike schemas which occur only at the top-level of an) 54 108 P
+-0.02 (EXPRESS model, types can be nested within other objects includ-) 54 97 P
+54 81 292.5 702 C
+54 406 292.5 496 C
+1 12 Q
+0 X
+0 K
+(A) 115.75 413.32 T
+(B) 161.41 413.32 T
+(C) 206.91 440.32 T
+(\245) 176.21 475.32 T
+(\245) 142.21 442.1 T
+157.2 456.53 151.4 455 152.98 460.79 3 L
+1 H
+0 Z
+N
+169.41 473 151.76 455.35 2 L
+2 Z
+N
+201.82 460.79 203.4 455 197.6 456.53 3 L
+0 Z
+N
+185.41 473 203.05 455.35 2 L
+2 Z
+N
+132.21 429.53 126.4 428 127.98 433.79 3 L
+0 Z
+N
+135.41 437 126.76 428.35 2 L
+2 Z
+N
+158.82 433.79 160.4 428 154.6 429.53 3 L
+0 Z
+N
+151.41 437 160.05 428.35 2 L
+2 Z
+N
+54 81 292.5 702 C
+0 0 612 792 C
+1 9 Q
+0 X
+0 K
+2.58 (ing other types.  Because of this, type resolution recurses if) 319.5 696 P
+(necessary to resolve all types.) 319.5 685 T
+-0.14 (T) 327.28 669 P
+-0.14 (ype resolution is broken into several steps, partly for simplicity) 332.14 669 P
+(and partly of necessity) 319.5 658 T
+(.) 400.04 658 T
+0.73 (During the \336rst type resolution pass, subtypes, supertypes, and) 327.28 642 P
+1.65 (type de\336nitions are resolved.) 319.5 631 P
+3 F
+3.96 (Symbol) 436.09 631 P
+1 F
+1.65 (s representing types are) 468.44 631 P
+0.47 (sought out and replaced by pointers to the true type.  A recursive) 319.5 620 P
+0.38 (search to do this is fairly simple, because the only object that can) 319.5 609 P
+1.21 (contain other objects are scopes.  Pseudocode for this is as fol-) 319.5 598 P
+(lows:) 319.5 587 T
+3 F
+(SCOPEresolve_subsupers\050Scope s\051) 349.52 555 T
+(for each object x in scope) 376.5 542 T
+(dictionary s) 349.52 531 T
+(if object type is) 403.5 518 T
+(OBJ_ENTITY:) 403.5 505 T
+(ENTITYresolve_supertypes\050x\051;) 349.52 481 T
+(ENTITYresolve_subtypes\050x\051;) 349.52 457 T
+(OBJ_FUNCTION:) 403.5 444 T
+(OBJ_PROCEDURE:) 403.5 431 T
+(OBJ_RULE:) 403.5 418 T
+(SCOPEresolve_subsupers\050x\051;) 349.52 394 T
+(case OBJ_TYPE:) 403.5 381 T
+(TYPEresolve\050x,scope\051;) 430.74 368 T
+(default:) 403.5 355 T
+(/* ignored everything) 430.74 342 T
+(else */) 349.52 331 T
+(}) 349.52 318 T
+1 F
+2.04 (Notice that resolution of algorithms \050) 327.28 292 P
+3 F
+4.9 (OBJ_FUNCTION) 471.04 292 P
+1 F
+2.04 (, etc.\051) 535.75 292 P
+0.12 (does nothing but recurse looking for entities and types.  When en-) 319.5 281 P
+-0.01 (tities are found, the sub and supertypes are traversed and resolved.) 319.5 270 P
+0.03 (When types are found in a scope, the scope must also be passed to) 319.5 259 P
+0.65 (the resolver since our representation of a type does not include a) 319.5 248 P
+(scope.) 319.5 237 T
+0.49 (In each of these routines, scopes are used to search for objects.) 327.28 221 P
+0.45 (For instance, if an entity has declared that it is a supertype of an-) 319.5 210 P
+1.22 (other entity) 319.5 199 P
+1.22 (, the name of that other entity is known but nothing) 361.32 199 P
+(else.  The search strategy to locate the entity is as follows:) 319.5 188 T
+(Step 1:) 319.5 172 T
+(If the object is in the local Scope, return it.) 371.74 172 T
+(Step 2:) 319.5 161 T
+(Else if the current Scope is not a Schema, repeat) 371.77 161 T
+(step 1 with the superscope.) 371.56 150 T
+(Step 3:) 319.5 139 T
+(When the schema is reached:) 371.77 139 T
+(Step 3.1:) 319.5 128 T
+(Search the scope of every full USEed schema.) 385.74 128 T
+(Step 3.2:) 319.5 117 T
+(Search the rename dictionary of all partially) 385.74 117 T
+(USEed schemas.) 385.52 106 T
+(Step 3.3:) 319.5 95 T
+(Search the scope of every fully REFERENCEd) 385.74 95 T
+(schema.) 385.52 84 T
+FMENDPAGE
+%%EndPage: "12" 13
+%%Page: "13" 13
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(13) 300 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+(Step 3.4:) 54 696 T
+(Search the rename dictionary of all partially) 120.24 696 T
+(REFERENCEd schemas.) 120.02 685 T
+0.31 (Since the subtypes and supertypes form a network rather than a) 61.78 674 P
+0.13 (simple tree, each type is tagged as it is seen.  Much like a garbage) 54 663 P
+0.63 (collection algorithm, this prevents the possibility of looping over) 54 652 P
+(types already seen.) 54 641 T
+131.91 615.05 54 615.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Resolving Static T) 54 616 T
+151.73 615.05 131.25 615.05 2 L
+V
+N
+(ypes) 131.25 616 T
+1 F
+0.55 (After all type de\336nitions are known, they can be referred to by) 61.78 600 P
+0.01 (other objects.  For example, attributes can rede\336ne other attributes) 54 589 P
+0.08 (in inherited supertypes.  Naturally) 54 578 P
+0.08 (, the supertype must be resolved) 176.29 578 P
+0.09 (in order to extract its attributes.  Hence, supertype resolution must) 54 567 P
+0.08 (precede attribute resolution.  Other miscellaneous static type reso-) 54 556 P
+0.03 (lutions can also be performed at this time such as the resolution of) 54 545 P
+(function return types.) 54 534 T
+1.62 (Searching for inherited entities is a common operation.  The) 61.78 518 P
+(search strategy to locate such an entity is as follows:) 54 507 T
+(Step 1:) 54 491 T
+(For each supertype of the entity:) 106.24 491 T
+(Step 1.1:) 54 480 T
+-0.21 (If the supertype name matches, return the super-) 120.24 480 P
+(type.) 120.24 469 T
+(Step 2:) 54 458 T
+(For each supertype of the entity:) 106.27 458 T
+(Step 2.1:) 54 447 T
+(Recursively apply this search.) 120.24 447 T
+(Step 2.1:) 54 436 T
+(If the supertype is found, return it.) 120.24 436 T
+0.45 (As with the earlier search strategy) 61.78 425 P
+0.45 (, each entity is tagged as it is) 185.99 425 P
+(encountered to prevent  looping.) 54 414 T
+269.77 388.05 54 388.05 2 L
+V
+N
+0 F
+(Resolving Expressions, Statements, and Dynamic) 54 389 T
+59.49 377.05 54 377.05 2 L
+V
+N
+(T) 54 378 T
+79.31 377.05 58.83 377.05 2 L
+V
+N
+(ypes) 58.83 378 T
+1 F
+-0.12 (All expressions have a semantic type, such as INTEGER or AR-) 61.78 362 P
+0.83 (RA) 54 351 P
+0.83 (Y OF REAL.  These types must be resolved by visiting each) 65.66 351 P
+1.43 (expression and examining its operands and operations.  For in-) 54 340 P
+0.25 (stance, in the expression \322A+B\323, if A and B are both integers, the) 54 329 P
+0.66 (resulting expression is an integer) 54 318 P
+0.66 (.  The expression is tagged with) 174.46 318 P
+(the type which can then be propagated upwards.) 54 307 T
+2.04 (Expression types are examples of dynamic types.  Dynamic) 61.78 291 P
+0.58 (types are those that depend upon context.  Not all dynamic types) 54 280 P
+0.17 (are expressions although they almost always depend upon expres-) 54 269 P
+0.45 (sions at some level.  For example, the control variable of a query) 54 258 P
+0.03 (expression is not explicitly typed.  Rather the type is intuited from) 54 247 P
+0.74 (the query expression.  Fortunately) 54 236 P
+0.74 (, it is always possible to deter-) 178.95 236 P
+-0.22 (mine the type of a query expression before having to determine the) 54 225 P
+(type of the control variable.) 54 214 T
+0.12 (EXPRESS statements must also be resolved.  Statements do not) 61.78 198 P
+0.66 (have return types, but the types of expressions used within state-) 54 187 P
+0.79 (ments must be resolved.  For example, the assignment statement) 54 176 P
+0.81 (has a left-hand-side and a right-hand-side, both of which are ex-) 54 165 P
+(pressions.  These must be type-compatible.) 54 154 T
+1.43 (Expression-type resolution is quite complicated because there) 61.78 138 P
+-0.21 (are many EXPRESS expressions and types and they can interact in) 54 127 P
+-0.11 (a variety of ways and have a lar) 54 116 P
+-0.11 (ge number of exceptions.  Here are) 167.12 116 P
+(some examples:) 54 105 T
+4 F
+0.82 (Functions need not have parameters.) 327.28 696 P
+1 F
+0.82 (  There is no way for the) 464.12 696 P
+0.61 (parser to distinguish parameter) 319.5 685 P
+0.61 (-less functions from other identi\336-) 432.23 685 P
+1.22 (ers such as entity or variable names.  This can occur only later) 319.5 674 P
+0.44 (when all the identi\336ers have been de\336ned.  Similarly) 319.5 663 P
+0.44 (, entities can) 511.93 663 P
+-0.01 (also behave like functions or types depending on context.  The ex-) 319.5 652 P
+3.23 (pression resolver must therefore have the \337exibility to treat) 319.5 641 P
+(identi\336ers in expressions in vastly dif) 319.5 630 T
+(ferent ways.) 453.9 630 T
+4 F
+0.05 (SELF matches the near) 327.28 614 P
+0.05 (est enclosing type or entity) 411.23 614 P
+0.05 (.) 507.3 614 P
+1 F
+0.05 (  It is not suf-) 509.55 614 P
+0.83 (\336cient simply to use the nearest enclosing) 319.5 603 P
+3 F
+2 (Scope) 477.86 603 P
+1 F
+0.83 ( since this can) 504.83 603 P
+0.58 (also be a) 319.5 592 P
+3 F
+1.4 (Query) 354.95 592 P
+1 F
+0.58 (,) 381.33 592 P
+3 F
+1.4 (Alias) 386.4 592 P
+1 F
+0.58 (, etc.  If an entity is used as an implicit) 413.36 592 P
+0.29 (constructor function \050such as in a derived initialization of an enti-) 319.5 581 P
+2.54 (ty\051, SELF can potentially refer to the function \050originally an) 319.5 570 P
+(entity\051.) 319.5 559 T
+4 F
+0.72 (A lar) 327.28 543 P
+0.72 (ge number of functions and operators exist) 345.89 543 P
+1 F
+0.72 (.  They can be) 504.47 543 P
+0.92 (grouped into dif) 319.5 532 P
+0.92 (ferent classes depending upon what type of pro-) 379.09 532 P
+0.28 (cessing is required to derive the return type from their ar) 319.5 521 P
+0.28 (guments.) 525.29 521 P
+0.9 (T) 319.5 510 P
+0.9 (o simplify processing, the toolkit resolves functions and opera-) 324.36 510 P
+2.1 (tors by table-lookup.  An operator) 319.5 499 P
+2.1 (-resolution table produces a) 452.12 499 P
+0.75 (function based on the opcode which can be called with the user) 319.5 488 P
+0.75 (-) 555.01 488 P
+1.17 (supplied ar) 319.5 477 P
+1.17 (guments to resolve the operator expression.  A func-) 360.2 477 P
+3.52 (tion-resolution dictionary produces similar information based) 319.5 466 P
+0.8 (upon the name of the function.  A similar dictionary is provided) 319.5 455 P
+(for procedure-resolution.) 319.5 444 T
+4 F
+0.43 (Both function and pr) 327.28 428 P
+0.43 (ocedur) 402.87 428 P
+0.43 (e r) 427.5 428 P
+0.43 (esolution r) 437.32 428 P
+0.43 (equir) 476.12 428 P
+0.43 (e typechecking of) 494.76 428 P
+0.09 (the supplied parameters against the formals.) 319.5 417 P
+1 F
+0.09 (  Formals can declare) 480.75 417 P
+1.18 (dependencies against other formals or even parts of formals via) 319.5 406 P
+-0.05 (the tag mechanism.  GENERIC formal declarations with matching) 319.5 395 P
+-0.19 (tags require that parameters be typechecked against each other) 319.5 384 P
+-0.19 (, but) 542.21 384 P
+(through the function or procedure \320 a circuitous path.) 319.5 373 T
+4 F
+-0.12 (A very few types cannot be r) 327.28 357 P
+-0.12 (esolved.) 428.06 357 P
+1 F
+-0.12 (  For example, evaluation of) 457.26 357 P
+1.21 (a group operation requires a speci\336c entity) 319.5 346 P
+1.21 (, however EXPRESS) 479.44 346 P
+0.9 (allows constructs such as entity aggregates or selects.  It is con-) 319.5 335 P
+-0.1 (ceivable that two entities are provided, one of which has a referred) 319.5 324 P
+1.05 (to attribute and one which does not.  Should the former be pre-) 319.5 313 P
+0.38 (sumed?  Should a diagnostic be issued.  What if three entities are) 319.5 302 P
+1.07 (supplied, two of which match?  What if a set of entities is sup-) 319.5 291 P
+-0.09 (plied, indexed by a run-time value.  There is no general solution to) 319.5 280 P
+0.16 (this other than run-time evaluation.  Expressions such as these are) 319.5 269 P
+(marked with a type of) 319.5 258 T
+3 F
+(runtime) 400.62 258 T
+1 F
+(.) 438.37 258 T
+475.8 232.05 319.5 232.05 2 L
+V
+N
+0 F
+(Reporting Suspicious Constructions) 319.5 233 T
+1 F
+0.67 (In each pass, the toolkit issues diagnostics when an EXPRESS) 327.28 217 P
+-0.09 (error prevents complete resolution.  A small number of other com-) 319.5 206 P
+0.88 (mon user) 319.5 195 P
+0.88 (-mistakes are checked which are not actually necessary) 353.4 195 P
+(to performance of the resolver) 319.5 184 T
+(.) 427.82 184 T
+2.97 (There are an in\336nite number of \322suspicious constructions\323) 327.28 168 P
+0.1 (which could be checked.  For example, shadowed types are not il-) 319.5 157 P
+0.49 (legal but are probably a mistake nonetheless.  \050Or they might not) 319.5 146 P
+1.45 (be.\051  Classical compiler optimization such as code-hoisting can) 319.5 135 P
+0.56 (discover likely errors in semantics, yet this does not seem appro-) 319.5 124 P
+1.08 (priate to the realm of the translator) 319.5 113 P
+1.08 (.  Since semantic checks can) 450.28 113 P
+0.54 (potentially take an unbounded length of time, we encourage peo-) 319.5 102 P
+(ple to tell us what kinds of things are feasibly worth checking.) 319.5 91 T
+FMENDPAGE
+%%EndPage: "13" 14
+%%Page: "14" 14
+612 792 0 FMBEGINPAGE
+0 9 Q
+0 X
+0 K
+(14) 300 34.17 T
+(Don Libes) 513.55 34.17 T
+1 F
+0.87 (Additional checking could be added to each pass and/or could) 61.78 696 P
+(be a separate pass.) 54 685 T
+231.3 659.05 54 659.05 2 L
+V
+0.66 H
+0 Z
+N
+0 F
+(Application-Speci\336c Backend Processing) 54 660 T
+1 F
+1.01 (While not restricted to following all the other passes, applica-) 61.78 644 P
+0.17 (tion-speci\336c code is usually performed at this point.  There are no) 54 633 P
+(restrictions whatsoever on what can be done.) 54 622 T
+0.12 (Not only can the model be read, but it can be modi\336ed and aug-) 61.78 606 P
+2.19 (mented.  Additional schema \336les can be read.  Because each) 54 595 P
+0.26 (structure includes a resolution status, the resolution functions will) 54 584 P
+1.04 (not attempt to resolve objects that are already resolved \050or have) 54 573 P
+(failed to resolve\051.) 54 562 T
+0.66 (A variety of tools have been built using the toolkit including a) 61.78 546 P
+2.31 (graphical schema editor \050Clark, 1990b\051, an EXPRESS-to-SQL) 54 535 P
+0.82 (translator \050Morris, 1990\051, a Part 21 Exchange File parser \050Libes,) 54 524 P
+(1993e\051, and an EXPRESS-to-C++ translator \050Morris et al, 1993\051.) 54 513 T
+0 F
+(SUMMAR) 54 477 T
+(Y) 94.1 477 T
+1 F
+-0.09 (This paper has sketched out the important data structures and al-) 61.78 461 P
+4.92 (gorithms for an EXPRESS toolkit.  The toolkit and its) 54 450 P
+0.49 (predecessors serve as a testbed for the continued evolution of the) 54 439 P
+1.67 (EXPRESS language, a baseline for commercial systems, and a) 54 428 P
+0.34 (source of experience from which to draw on when designing new) 54 417 P
+(implementations or modifying existing ones.) 54 406 T
+0 F
+(T) 54 370 T
+(O OBT) 59.33 370 T
+(AIN THIS SOFTW) 87.13 370 T
+(ARE) 160.03 370 T
+1 F
+1.33 (The software described in this paper is in the public domain.) 61.78 354 P
+0.23 (Contact the Factory Automation Systems Division \050301 975-3508) 54 343 P
+-0.05 (or npt-info@cme.nist.gov\051 to obtain the software, or for any infor-) 54 332 P
+(mation related to NIST work on the National PDES T) 54 321 T
+(estbed.) 246.83 321 T
+0 F
+(REFERENCES) 54 285 T
+1 F
+1.08 (Clark, S. N., \322Fed-X: The NIST Express T) 61.78 269 P
+1.08 (ranslator\323, NISTIR) 222.53 269 P
+1.26 (4371, National Institute of Standards and T) 54 258 P
+1.26 (echnology) 216.45 258 P
+1.26 (, Gaithers-) 253.3 258 P
+(bur) 54 247 T
+(g, MD, July 1990a.) 65.82 247 T
+0.05 (Clark, S. N., \322QDES User) 61.78 231 P
+0.05 (\325) 156.18 231 P
+0.05 (s Guide\323, NISTIR 4361, National In-) 158.68 231 P
+2.67 (stitute of Standards and T) 54 220 P
+2.67 (echnology) 156.43 220 P
+2.67 (, Gaithersbur) 193.29 220 P
+2.67 (g, MD, June) 242.72 220 P
+(1990b.) 54 209 T
+1.25 (Furlani, C. \322) 61.78 193 P
+1.25 (Status of PDES-Related Activities \050Standards &) 112.72 193 P
+-0.19 (Testing\051\323) 54 182 P
+-0.19 (, NISTIR 4432, National Institute of Standards and T) 87.95 182 P
+-0.19 (ech-) 277.03 182 P
+(nology) 54 171 T
+(, Gaithersbur) 78.38 171 T
+(g, MD, October 1990.) 125.14 171 T
+0.67 (International Or) 61.78 155 P
+0.67 (ganization for Standardization, \322ISO 10303 In-) 119.93 155 P
+2.37 (dustrial Automation Systems and Integration \321 Product Data) 54 144 P
+3.06 (Representation and Exchange \321 Overview and Fundamental) 54 133 P
+-0.02 (Principles\323, Draft International Standard, ISO TC184/SC4, 1992a.) 54 122 P
+0.67 (International Or) 61.78 106 P
+0.67 (ganization for Standardization, \322ISO 10303 In-) 119.93 106 P
+2.37 (dustrial Automation Systems and Integration \321 Product Data) 54 95 P
+0.94 (Representation and Exchange \321 Description Methods: The EX-) 54 84 P
+2.19 (PRESS Language Reference Manual, Draft International Stan-) 319.5 696 P
+(dard\323, ISO TC184/SC4, 1992b.) 319.5 685 T
+0.98 (Johnson, S.C., \322Y) 327.28 669 P
+0.98 (acc: Y) 392.75 669 P
+0.98 (et Another Compiler compiler\323,) 416.04 669 P
+4 F
+0.98 (UNIX) 537.03 669 P
+0.71 (Pr) 319.5 658 P
+0.71 (ogrammer) 328.15 658 P
+0.71 (\325) 365.93 658 P
+0.71 (s Manual) 367.76 658 P
+1 F
+0.71 (, Seventh Edition, Bell Laboratories, Mur-) 402.17 658 P
+(ray Hill, NJ, 1978.) 319.5 647 T
+0.21 (Lesk, M.E. and Schmidt, E., \322Lex: A Lexical Analyzer Genera-) 327.28 631 P
+0.16 (tor\323,) 319.5 620 P
+4 F
+0.16 (UNIX Pr) 340.54 620 P
+0.16 (ogrammer) 372.56 620 P
+0.16 (\325) 410.34 620 P
+0.16 (s Manual, Seventh Edition) 412.17 620 P
+1 F
+0.16 (, Bell Labora-) 507.51 620 P
+(tories, Murray Hill, NJ, 1978.) 319.5 609 T
+1.93 (Libes, D., \322The NIST EXPRESS T) 327.28 593 P
+1.93 (oolkit \320 Introduction and) 462.6 593 P
+3.84 (Overview\323, National Institute of Standards and T) 319.5 582 P
+3.84 (echnology) 518.9 582 P
+3.84 (,) 555.75 582 P
+(Gaithersbur) 319.5 571 T
+(g, MD, 1993a.) 361.77 571 T
+0.01 (Libes, D., \322The NIST EXPRESS T) 327.28 555 P
+0.01 (oolkit - Programmer) 453.04 555 P
+0.01 (\325) 526.79 555 P
+0.01 (s Refer-) 529.29 555 P
+0.9 (ence\323, National Institute of Standards and T) 319.5 544 P
+0.9 (echnology) 482.3 544 P
+0.9 (, Gaithers-) 519.16 544 P
+(bur) 319.5 533 T
+(g, MD, 1993b.) 331.32 533 T
+0.77 (Libes, D., and Clark, S., \322The NIST EXPRESS T) 327.28 517 P
+0.77 (oolkit \320 Les-) 510.53 517 P
+0.6 (sons Learned\323,) 319.5 506 P
+4 F
+0.6 (Pr) 376.85 506 P
+0.6 (oceedings of the 1992 EXPRESS Users\325 Gr) 385.5 506 P
+0.6 (oup) 544.52 506 P
+(\050EUG \32492\051 Confer) 319.5 495 T
+(ence) 385.06 495 T
+1 F
+(, Dallas, TX, October 17-18, 1992.) 401.53 495 T
+0.39 (Libes, D., \322The NIST STEP Part 21 Exchange File T) 327.28 479 P
+0.39 (oolkit: An) 520.9 479 P
+1.05 (Update\323, National Institute of Standards and T) 319.5 468 P
+1.05 (echnology) 492.64 468 P
+1.05 (, Gaith-) 529.5 468 P
+(ersbur) 319.5 457 T
+(g, MD, 1993c.) 341.8 457 T
+0.8 (Libes, D.,) 327.28 441 P
+4 F
+0.8 (Obfuscated C and Other Mysteries) 366.56 441 P
+1 F
+0.8 (, John W) 495.06 441 P
+0.8 (iley and) 528.5 441 P
+(Sons, pp. 71-77, New Y) 319.5 430 T
+(ork, NY) 405.22 430 T
+(, January 1993d.) 433.51 430 T
+0.39 (Libes, D., \322The NIST STEP Part 21 Exchange File T) 327.28 414 P
+0.39 (oolkit: An) 520.9 414 P
+1.05 (Update\323, National Institute of Standards and T) 319.5 403 P
+1.05 (echnology) 492.64 403 P
+1.05 (, Gaith-) 529.5 403 P
+(ersbur) 319.5 392 T
+(g, MD, 1993e.) 341.8 392 T
+-0.09 (Morris, K.C., \322T) 327.28 376 P
+-0.09 (ranslating EXPRESS to SQL: A User) 386.69 376 P
+-0.09 (\325) 521.65 376 P
+-0.09 (s Guide\323,) 524.14 376 P
+1.9 (NISTIR 4341, National Institute of Standards and T) 319.5 365 P
+1.9 (echnology) 518.9 365 P
+1.9 (,) 555.75 365 P
+(Gaithersbur) 319.5 354 T
+(g, MD, May 1990.) 361.77 354 T
+1.66 (Morris, K.C., Sauder) 327.28 338 P
+1.66 (, David, and Ressler) 405.62 338 P
+1.66 (, Sandy) 482.87 338 P
+1.66 (, \322V) 510.91 338 P
+1.66 (alidation) 526.54 338 P
+-0.05 (T) 319.5 327 P
+-0.05 (esting System: Reusable Software Component Design\323, National) 324.36 327 P
+(Institute of Standards and T) 319.5 316 T
+(echnology) 418.72 316 T
+(, Gaithersbur) 455.58 316 T
+(g, MD, 1993.) 502.34 316 T
+0.24 (Schreiner) 327.28 300 P
+0.24 (, A. T) 361.36 300 P
+0.24 (. and Friedman., Jr) 382.14 300 P
+0.24 (., H. G.,) 449.77 300 P
+4 F
+0.24 (Intr) 481.45 300 P
+0.24 (oduction to Com-) 494.6 300 P
+2.48 (piler Construction with UNIX) 319.5 289 P
+1 F
+2.48 (, Prentice Hall, New Y) 434.07 289 P
+2.48 (ork, NY) 524.98 289 P
+2.48 (,) 555.75 289 P
+(1985.) 319.5 278 T
+0.77 (Stallman, R. M., et al,) 327.28 262 P
+4 F
+0.77 (GNU\325) 412.54 262 P
+0.77 (s Bulletin) 433.34 262 P
+1 F
+0.77 (, Free Software Founda-) 468.32 262 P
+(tion, Inc., Cambridge, MA, June 1992.) 319.5 251 T
+FMENDPAGE
+%%EndPage: "14" 15
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%Pages: 14 1
+%%DocumentFonts: Helvetica-Bold
+%%+ Times-Roman
+%%+ Helvetica
+%%+ Courier-Bold
+%%+ Times-Italic
+%%+ Times-Bold
