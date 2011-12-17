@@ -79,7 +79,7 @@
 
 extern void print_fedex_version( void );
 
-static void fedex_plus_usage() {
+static void fedex_plus_usage( void ) {
     fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-L] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );

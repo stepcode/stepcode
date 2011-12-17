@@ -12,6 +12,9 @@
 #else
 # include <scl_stdbool.h>
 #endif
+#ifdef HAVE_IO_H
+# include <io.h>
+#endif
 
 #ifdef __STDC__
 #include <stdarg.h>
@@ -426,10 +429,10 @@ REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
         list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
         if( !list ) {
             list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, list,
+            DICTdefine( dict, r->schema->symbol.name, (Generic) list,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd( list, r );
+        LISTadd( list, (Generic) r );
     }
 
     /* step 2: for each list, print out the renames */
@@ -748,7 +751,7 @@ void
 SCOPEconsts_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
-    int max_indent = 0;
+    unsigned int max_indent = 0;
     Dictionary d = s->symbol_table;
 
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
@@ -802,7 +805,7 @@ void
 SCOPElocals_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
-    int max_indent = 0;
+    unsigned int max_indent = 0;
     Dictionary d = s->symbol_table;
 
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
@@ -1298,7 +1301,7 @@ ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
 
 void
 WHERE_out( Linked_List wheres, int level ) {
-    int max_indent;
+    unsigned int max_indent;
     if( !wheres ) {
         return;
     }

@@ -79,6 +79,10 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
+#ifdef HAVE_PROCESS_H
+/* process.h defines getpid() function on WIN32 systems */
+# include <process.h>
+#endif
 #ifndef HAVE_GETOPT
 # include "xgetopt.h"
 #endif
@@ -102,7 +106,7 @@ void print_fedex_version( void ) {
     no_need_to_work = 1;
 }
 
-static void usage() {
+static void usage( void ) {
     fprintf( stderr, "usage: %s [-v] [-d # | -d 9 [-l nnn | -u nnn]] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-v produces the following version description:\n" );
     print_fedex_version();

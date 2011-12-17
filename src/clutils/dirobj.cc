@@ -180,7 +180,9 @@ bool DirObj::Reset( const std::string & path ) {
 
 bool DirObj::IsADirectory( const char * path ) {
 #if defined(__WIN32__)
-    return PathIsDirectory( path );
+    if ( PathIsDirectory( path ) )
+        return true;
+    return false;
 #else
     struct stat st;
     return stat( path, &st ) == 0 && ( st.st_mode & S_IFMT ) == S_IFDIR;

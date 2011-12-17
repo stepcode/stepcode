@@ -208,7 +208,7 @@ HASHlist( HashEntry * he ) {
 
 void
 HASHdestroy( Hash_TableP table ) {
-    int     i, j;
+    unsigned int i, j;
     struct Element ** s;
     struct Element * p, *q;
 

@@ -104,20 +104,20 @@ struct Element {
 };
 
 struct Hash_Table {
-    short    p;                 // Next bucket to be split
-    short    maxp;              // upper bound on p during expansion
-    long     KeyCount;          // current # keys
-    short    SegmentCount;      // current # segments
-    short    MinLoadFactor;
-    short    MaxLoadFactor;
+    unsigned int    p;                 // Next bucket to be split
+    unsigned int    maxp;              // upper bound on p during expansion
+    long            KeyCount;          // current # keys
+    unsigned int    SegmentCount;      // current # segments
+    unsigned int    MinLoadFactor;
+    unsigned int    MaxLoadFactor;
 #define DIRECTORY_SIZE        256
 #define DIRECTORY_SIZE_SHIFT    8    // log2(DIRECTORY_SIZE)
     struct Element ** Directory[DIRECTORY_SIZE];
 };
 
 typedef struct {
-    int i;                  // segment index (i think)
-    int j;                  // key index in segment (ditto)
+    unsigned int i;         // segment index (i think)
+    unsigned int j;         // key index in segment (ditto)
     struct Element * p;     // usually the next element to be returned
     struct Hash_Table * table;
     char type;
