@@ -126,7 +126,7 @@ GLOBAL SCL_EXPRESS_EXPORT void ( *ERRORusage_function ) PROTO( ( void ) );
 /* function prototypes */
 /***********************/
 
-#ifdef __MSVC__
+#if defined(__MSVC__) || defined(__BORLAND__)
 extern SCL_EXPRESS_EXPORT void ERROR_start_message_buffer PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void ERROR_flush_message_buffer PROTO( ( void ) );
 #endif
@@ -162,7 +162,7 @@ ERRORis_enabled( Error error ) {
 static_inline
 void
 ERRORbuffer_messages( bool flag ) {
-#ifndef __MSVC__
+#if !defined(__MSVC__) && !defined(__BORLAND__)
     extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
 #endif
@@ -177,7 +177,7 @@ ERRORbuffer_messages( bool flag ) {
 static_inline
 void
 ERRORflush_messages( void ) {
-#ifndef __MSVC__
+#if !defined(__MSVC__) && !defined(__BORLAND__)
     extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
 #endif
@@ -210,7 +210,7 @@ extern SCL_EXPRESS_EXPORT void ERRORbuffer_messages PROTO( ( bool ) );
 extern SCL_EXPRESS_EXPORT void ERRORflush_messages PROTO( ( void ) );
 #endif
 
-#ifndef __MSVC__
+#if !defined(__MSVC__) && !defined(__BORLAND__)
 extern SCL_EXPRESS_EXPORT void ERROR_start_message_buffer PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void ERROR_flush_message_buffer PROTO( ( void ) );
 #endif

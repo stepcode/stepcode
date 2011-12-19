@@ -12,10 +12,10 @@ include_directories(
     ${SCL_SOURCE_DIR}/include/exppp
 )
 
-if(MSVC)
+if(MSVC OR BORLAND)
 add_definitions( -DSCL_EXPPP_DLL_EXPORTS )
 add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
-endif(MSVC)
+endif()
 
 SCL_ADDLIB(libexppp "${LIBEXPPP_SOURCES}" express)
 set_target_properties(libexppp PROPERTIES PREFIX "")

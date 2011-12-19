@@ -50,12 +50,12 @@ SET(CHECK_EXPRESS_SOURCES
     fedex.c
 )
 
-IF(MSVC)
-set(CHECK_EXPRESS_MSVC_SOURCES
+IF(MSVC OR BORLAND)
+set(CHECK_EXPRESS_EXTRA_SOURCES
     xgetopt.cc
 	inithook.c
 )
-ENDIF(MSVC) 
+ENDIF() 
 
 SET(EXPRESS_PRIVATE_HDRS
     conf.h
@@ -70,9 +70,9 @@ include_directories(
 
 add_definitions( -DFLEX )
 
-if(MSVC)
+if(MSVC OR BORLAND)
 add_definitions( -DYY_NO_UNISTD_H )
-endif(MSVC)
+endif()
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
 
@@ -80,9 +80,9 @@ if(APPLE)
     set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
 endif(APPLE)
 
-SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_MSVC_SOURCES}" express)
+SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_EXTRA_SOURCES}" express)
 
-if(MSVC)
+if(MSVC OR BORLAND)
 set_target_properties(express PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_EXPORTS)
 set_target_properties("check-express" PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_IMPORTS)
-endif(MSVC)
+endif()

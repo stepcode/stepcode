@@ -37,7 +37,7 @@ if(MINGW)
 	)
 endif(MINGW)
 
-if(MSVC)
+if(MSVC OR BORLAND)
 	set(LIBDEPEND_SRCS
 		${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
 		${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
@@ -45,14 +45,14 @@ if(MSVC)
 		${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
 		${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
 	)
-endif(MSVC)
+endif()
 
-if(MSVC)
+if(MSVC OR BORLAND)
 	add_definitions( -DSCL_CORE_DLL_EXPORTS )
 	add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
 	add_definitions( -DSCL_UTILS_DLL_IMPORTS )
 	add_definitions( -DSCL_DAI_DLL_IMPORTS )
-endif(MSVC)
+endif()
 
 SET(LIBSTEPCORE_PRIVATE_HDRS
     baseType.h 

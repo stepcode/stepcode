@@ -76,7 +76,7 @@ STEPfile::ReadHeader( istream & in ) {
 
     InstMgr * im = new InstMgr;
     SDAI_Application_instance * obj;
-#ifdef __MSVC__
+#if defined(__MSVC__) || defined(__BORLAND__)
     Severity objsev = SEVERITY_NULL;
 #else
     __attribute__( ( unused ) ) Severity objsev = SEVERITY_NULL;
@@ -2228,7 +2228,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     SetFileIdIncrement();
     int total_insts = 0,  valid_insts = 0;
-#ifdef __MSVC__
+#if defined(__MSVC__) || defined(__BORLAND__)
     int exchange_file = -1;
 #else
     __attribute__( ( unused ) ) int exchange_file = -1;

@@ -112,7 +112,7 @@ typedef int ( *intFuncptr )();
 /******************************/
 
 #if !defined(static_inline)
-#if (!defined(__GNUC__) && !defined(__MSVC__)) || defined(__STRICT_ANSI)
+#if (!defined(__GNUC__) && !defined(__MSVC__) && !defined(BORLAND)) || defined(__STRICT_ANSI)
 #define static_inline
 #undef supports_inline_functions
 #else
@@ -137,7 +137,7 @@ typedef int ( *intFuncptr )();
 #  define PROTO(x)  x
 # else
 
-# if defined(__CLCC__) || defined(__MSVC__)
+# if defined(__CLCC__) || defined(__MSVC__) || defined(__BORLAND__)
 # define PROTO(x)   x
 #else
 # define PROTO(x)   ()

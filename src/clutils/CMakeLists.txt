@@ -29,9 +29,9 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if (MSVC)
+if (MSVC OR BORLAND)
 add_definitions( -DSCL_UTILS_DLL_EXPORTS )
-endif(MSVC)
+endif()
 
 SCL_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "")
 
@@ -39,9 +39,9 @@ IF(MINGW)
     TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
 ENDIF(MINGW)
 
-IF(MSVC)
+IF(MSVC OR BORLAND)
 	TARGET_LINK_LIBRARIES(steputils shlwapi.lib)
-ENDIF(MSVC)
+ENDIF()
 
 if(APPLE)
     set_target_properties(steputils PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")

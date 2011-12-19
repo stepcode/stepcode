@@ -300,7 +300,7 @@ void DirObj::InsertFile( const char * f, int index ) {
         CheckIndex( index );
         spot = &fileList[index];
     }
-#ifdef __WIN32__
+#ifdef __MSVC__
     char * string = _strdup( f );
 #else
     char * string = strdup( f );
