@@ -666,6 +666,8 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
         return( op1type );
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
+    } else if( op1type->u.type->body->type == generic_ ) {
+        return( Type_Generic );
     } else if( TYPEis_select( op1type ) ) {
 
         /* FIXME Is it possible that the base type hasn't yet been resolved?
