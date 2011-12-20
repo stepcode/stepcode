@@ -72,11 +72,14 @@
 
 #include <scl_cf.h>
 #define EXPRESSION_C
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
 #include "express/expr.h"
 #include "express/resolve.h"
+
+#include <assert.h>
 
 #ifdef YYDEBUG
 extern int yydebug;
@@ -92,6 +95,7 @@ static Error ERROR_internal_unrecognized_op_in_EXPresolve;
 static Error ERROR_attribute_reference_on_aggregate;
 static Error ERROR_attribute_ref_from_nonentity;
 static Error ERROR_indexing_illegal;
+static Error ERROR_warn_indexing_mixed;
 static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
@@ -197,6 +201,9 @@ EXPinitialize( void ) {
     ERROR_indexing_illegal = ERRORcreate(
                                  "Indexing is only permitted on aggregates", SEVERITY_ERROR );
 
+    ERROR_warn_indexing_mixed = ERRORcreate( "Indexing upon a select (%s), with mixed base types (aggregates and "
+                                        "non-aggregates) and/or different aggregation types.", SEVERITY_WARNING );
+
     ERROR_enum_no_such_item = ERRORcreate(
                                   "Enumeration type %s does not contain item %s", SEVERITY_ERROR );
 
@@ -214,6 +221,7 @@ EXPinitialize( void ) {
 
     ERRORcreate_warning( "downcast", ERROR_implicit_downcast );
     ERRORcreate_warning( "downcast", ERROR_ambig_implicit_downcast );
+    ERRORcreate_warning( "indexing", ERROR_warn_indexing_mixed );
 
     EXPop_init();
 }
@@ -635,27 +643,22 @@ EXPresolve_op_default( Expression e, Scope s ) {
     }
 }
 
-/*ARGSUSED*/
-Type
-EXPresolve_op_unknown( Expression e, Scope s ) {
+Type EXPresolve_op_unknown( Expression e, Scope s ) {
     ERRORreport( ERROR_internal_unrecognized_op_in_EXPresolve );
     return Type_Bad;
 }
 
 typedef Type Resolve_expr_func PROTO( ( Expression , Scope ) );
 
-Type
-EXPresolve_op_logical( Expression e, Scope s ) {
+Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     return( Type_Logical );
 }
 
-Type
-EXPresolve_op_array_like( Expression e, Scope s ) {
-    Type op1type;
+Type EXPresolve_op_array_like( Expression e, Scope s ) {
 
     EXPresolve_op_default( e, s );
-    op1type = e->e.op1->return_type;
+    Type op1type = e->e.op1->return_type;
 
     if( TYPEis_aggregate( op1type ) ) {
         return( op1type->u.type->body->base );
@@ -663,27 +666,75 @@ EXPresolve_op_array_like( Expression e, Scope s ) {
         return( op1type );
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
-    } else {
-        ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
-        return( Type_Unknown );
+    } else if( op1type->u.type->body->type == generic_ ) {
+        return( Type_Generic );
+    } else if( TYPEis_select( op1type ) ) {
+
+        /* FIXME Is it possible that the base type hasn't yet been resolved?
+         * If it is possible, we should signal that we need to come back later... but how? */
+        assert( op1type->symbol.resolved == 1 );
+
+        /* FIXME We should check for a not...or excluding non-aggregate types in the select, such as
+         * WR1: NOT('INDEX_ATTRIBUTE.COMMON_DATUM_LIST' IN TYPEOF(base)) OR (SELF\shape_aspect.of_shape = base[1]\shape_aspect.of_shape);
+         * (how?)
+         */
+
+        //count aggregates and non-aggregates, check aggregate types
+        int numAggr = 0, numNonAggr = 0;
+        bool sameAggrType = true;
+        Type lasttype = 0;
+        LISTdo( op1type->u.type->body->list, item, Type ) {
+            if( TYPEis_aggregate( item ) ) {
+                if(yydebug) {
+                    fprintf( stdout, "aggregate %s\n", item->symbol.name );
+                }
+                numAggr++;
+                if( lasttype == TYPE_NULL ) {
+                    lasttype = item;
+                } else {
+                    if( lasttype->u.type->body->type != item->u.type->body->type ) {
+                        sameAggrType = false;
+                    }
+                }
+            } else {
+                if(yydebug) {
+                    fprintf( stdout, "non-aggregate %s\n", item->symbol.name );
+                }
+                numNonAggr++;
+            }
+        } LISTod;
+
+        /* NOTE the following code returns the same data for every case that isn't an error.
+         * It needs to be simplified or extended, depending on whether it works or not. */
+        if( sameAggrType && ( numAggr != 0 ) && ( numNonAggr == 0 ) ) {
+            // All are the same aggregation type
+            return( lasttype->u.type->body->base );
+        } else if( numNonAggr == 0 ) {
+            // All aggregates, but different types
+            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+        } else if( numAggr != 0 ) {
+            // One or more aggregates, one or more nonaggregates
+            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+        }   // Else, all are nonaggregates. This is an error.
     }
+    ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
+    return( Type_Unknown );
 }
 
-Type
-EXPresolve_op_entity_constructor( Expression e, Scope s ) {
+Type EXPresolve_op_entity_constructor( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     /* perhaps should return Type_Runtime? */
     return Type_Entity;
 }
 
-Type
-EXPresolve_op_int_div_like( Expression e, Scope s ) {
+Type EXPresolve_op_int_div_like( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     return Type_Integer;
 }
 
-Type
-EXPresolve_op_plus_like( Expression e, Scope s ) {
+Type EXPresolve_op_plus_like( Expression e, Scope s ) {
     /* i.e., Integer or Real */
     EXPresolve_op_default( e, s );
     if( is_resolve_failed( e ) ) {
@@ -712,8 +763,7 @@ EXPresolve_op_plus_like( Expression e, Scope s ) {
     return Type_Integer;
 }
 
-Type
-EXPresolve_op_unary_minus( Expression e, Scope s ) {
+Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     return e->e.op1->return_type;
 }
@@ -723,8 +773,8 @@ resolve_func:   resolves an expression of this type
 type_func:  returns final type of expression of this type
         avoids resolution if possible
 */
-void
-EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {
+
+void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {
     EXPop_table[token_number].token = string;
     EXPop_table[token_number].resolve = resolve_func;
 }
@@ -843,19 +893,15 @@ EXPresolve_qualification( Expression expression, Scope scope, Error * experrc ) 
 
 #endif
 
-/*
-** Procedure:   TERN_EXPcreate
-** Parameters:  Op_Code    op       - operation
-**      Expression operand1 - first operand
-**      Expression operand2 - second operand
-**      Expression operand3 - third operand
-**      Error*     experrc      - buffer for error code
-** Returns: Ternary_Expression  - the expression created
-** Description: Create a ternary operation Expression.
+/** \fn  TERN_EXPcreate
+** \param op operation
+** \param operand1 - first operand
+** \param operand2 - second operand
+** \param operand3 - third operand
+** \returns Ternary_Expression  - the expression created
+** Create a ternary operation Expression.
 */
-
-Expression
-TERN_EXPcreate( Op_Code op, Expression operand1, Expression operand2, Expression operand3 ) {
+Expression TERN_EXPcreate( Op_Code op, Expression operand1, Expression operand2, Expression operand3 ) {
     Expression e = EXPcreate( Type_Expression );
 
     e->e.op_code = op;
@@ -893,18 +939,15 @@ TERN_EXPget_third_operand( Ternary_Expression expression ) {
 
 #endif /*0*/
 
-/*
-** Procedure:   BIN_EXPcreate
-** Parameters:  Op_Code    op       - operation
-**      Expression operand1 - first operand
-**      Expression operand2 - second operand
-**      Error*     experrc      - buffer for error code
-** Returns: Binary_Expression   - the expression created
-** Description: Create a binary operation Expression.
+/**
+** \fn BIN_EXPcreate
+** \param op       operation
+** \param operand1 - first operand
+** \param operand2 - second operand
+** \returns Binary_Expression   - the expression created
+** Create a binary operation Expression.
 */
-
-Expression
-BIN_EXPcreate( Op_Code op, Expression operand1, Expression operand2 ) {
+Expression BIN_EXPcreate( Op_Code op, Expression operand1, Expression operand2 ) {
     Expression e = EXPcreate( Type_Expression );
 
     e->e.op_code = op;
@@ -932,17 +975,13 @@ BIN_EXPget_second_operand( Binary_Expression expression ) {
 }
 
 #endif /*0*/
-/*
-** Procedure:   UN_EXPcreate
-** Parameters:  Op_Code    op       - operation
-**      Expression operand  - operand
-**      Error*     experrc      - buffer for error code
-** Returns: Unary_Expression    - the expression created
-** Description: Create a unary operation Expression.
+/** \fn UN_EXPcreate
+** \param op operation
+** \param operand  operand
+** \returns the expression created
+** Create a unary operation Expression.
 */
-
-Expression
-UN_EXPcreate( Op_Code op, Expression operand ) {
+Expression UN_EXPcreate( Op_Code op, Expression operand ) {
     Expression e = EXPcreate( Type_Expression );
 
     e->e.op_code = op;
@@ -1367,18 +1406,14 @@ BIN_LITget_value( Binary_Literal literal, Error * experrc ) {
 
 #endif
 
-/*
-** Procedure:   QUERYcreate
-** Parameters:  String     ident    - local identifier for source elements
-**      Expression source   - source aggregate to query
-**      Expression discriminant - discriminating expression for query
-**      Error*     experrc      - buffer for error code
-** Returns: Query           - the query expression created
-** Description: Create a query Expression.
+/** \fn QUERYcreate
+** \param local local identifier for source elements
+** \param aggregate source aggregate to query
+** \returns the query expression created
+** Create a query Expression.
+** NOTE Dec 2011 - MP - function description did not match actual params. Had to guess.
 */
-
-Expression
-QUERYcreate( Symbol * local, Expression aggregate ) {
+Expression QUERYcreate( Symbol * local, Expression aggregate ) {
     Expression e = EXPcreate_from_symbol( Type_Query, local );
     Scope s = SCOPEcreate_tiny( OBJ_QUERY );
     Expression e2 = EXPcreate_from_symbol( Type_Attribute, local );
@@ -1455,16 +1490,13 @@ QUERYget_discriminant( Query expression ) {
 
 #endif
 
-/*
-** Procedure:   EXPget_integer_value
-** Parameters:  Expression  expression  - expression to evaluate
-**      Error*      experrc - buffer for error code
-** Returns: int         - value of expression
-** Description: Compute the value of an integer expression.
+/** \fn   EXPget_integer_value
+** \param expression  expression to evaluate
+** \param experrc buffer for error code
+** \returns value of expression
+** Compute the value of an integer expression.
 */
-
-int
-EXPget_integer_value( Expression expression ) {
+int EXPget_integer_value( Expression expression ) {
     experrc = ERROR_none;
     if( expression == EXPRESSION_NULL ) {
         return 0;
@@ -1477,8 +1509,7 @@ EXPget_integer_value( Expression expression ) {
     }
 }
 
-char *
-opcode_print( Op_Code o ) {
+char * opcode_print( Op_Code o ) {
     switch( o ) {
         case OP_AND:
             return( "OP_AND" );
