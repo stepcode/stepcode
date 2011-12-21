@@ -15,16 +15,14 @@
 #ifndef XGETOPT_H
 #define XGETOPT_H
 
-#include <tchar.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
     extern int optind, opterr;
-    extern TCHAR * optarg;
+    extern char * optarg;
 
-    int getopt( int argc, TCHAR * argv[], TCHAR * optstring );
+    int getopt( int argc, char * argv[], char * optstring );
 
 #ifdef __cplusplus
 }
