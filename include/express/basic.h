@@ -112,7 +112,7 @@ typedef int ( *intFuncptr )();
 /******************************/
 
 #if !defined(static_inline)
-#if (!defined(__GNUC__) && !defined(__MSVC__) && !defined(BORLAND)) || defined(__STRICT_ANSI)
+#if (!defined(__GNUC__) && !defined(__MSVC__)) || defined(__STRICT_ANSI)
 #define static_inline
 #undef supports_inline_functions
 #else

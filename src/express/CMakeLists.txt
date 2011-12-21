@@ -15,7 +15,11 @@ ELSE()
   set( YACC_FLAGS " " ) #FindYACC.cmake insists on 3, 5, or 7 args
 ENDIF()
 
+IF(BORLAND)
+add_definitions( -DYYDEBUG=1 )#always define this. equivalent to 'bison -t'
+ELSE()
 add_definitions( -DYYDEBUG )  #always define this. equivalent to 'bison -t'
+ENDIF()
 
 YACC_TARGET(ExpParser expparse.y ${CMAKE_CURRENT_BINARY_DIR}/expparse.c COMPILE_FLAGS ${YACC_FLAGS})
 LEX_TARGET(ExpScanner expscan.l ${CMAKE_CURRENT_BINARY_DIR}/expscan.c COMPILE_FLAGS ${LEX_FLAGS})
@@ -72,6 +76,10 @@ add_definitions( -DFLEX )
 
 if(MSVC OR BORLAND)
 add_definitions( -DYY_NO_UNISTD_H )
+endif()
+
+if(BORLAND)
+add_definitions( -D__STDC__ )
 endif()
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")

@@ -159,6 +159,8 @@ extern SCL_EXPRESS_EXPORT int  LISTget_length PROTO( ( Linked_List ) );
 /* inline function definitions */
 /*******************************/
 
+#if !defined(__BORLAND__)
+
 #if supports_inline_functions || defined(LINKED_LIST_C)
 
 static_inline
@@ -174,5 +176,11 @@ LISTempty( Linked_List list ) {
 }
 
 #endif /* supports_inline_functions || defined(LINKED_LIST_C) */
+
+#else
+
+extern SCL_EXPRESS_EXPORT bool LISTempty( Linked_List list );
+
+#endif
 
 #endif /*LINKED_LIST_H*/

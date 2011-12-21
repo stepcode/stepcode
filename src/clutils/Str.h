@@ -24,8 +24,10 @@
 
 //StrCmpIns - case-insensitive string compare. Original fct (replaced Sep 2011)
 //called PrettyTmpName(). Not doing so may affect sort order but that shouldn't hurt
-#ifdef _MSC_VER
+#if defined(__MSVC__)
 #define StrCmpIns(a,b) _stricmp(a,b)
+#elif defined(__BORLAND__)
+#define StrCmpIns(a,b) stricmp(a,b)
 #else
 #define StrCmpIns(a,b) strcasecmp(a,b)
 #endif

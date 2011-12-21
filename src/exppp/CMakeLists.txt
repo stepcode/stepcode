@@ -17,6 +17,10 @@ add_definitions( -DSCL_EXPPP_DLL_EXPORTS )
 add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
 endif()
 
+if(BORLAND)
+add_definitions( -D__STDC__ )
+endif()
+
 SCL_ADDLIB(libexppp "${LIBEXPPP_SOURCES}" express)
 set_target_properties(libexppp PROPERTIES PREFIX "")
 
