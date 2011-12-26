@@ -13,6 +13,15 @@
 
 #include <scl_export.h>
 
+/* 
+* In MSVC2010 std::string::npos is no longer exported from it's libraries.
+* This might be a bug but following code make sure the member is known
+* and fixes the linker issue for this symbol.
+*/
+#if defined(__MSVC__) && _MSC_VER == 1600 /* MSVC2010 version */
+const std::string::size_type std::string::npos = size_t(-1); 
+#endif
+
 class SCL_DAI_EXPORT SDAI_String : public std::string {
     public:
 
