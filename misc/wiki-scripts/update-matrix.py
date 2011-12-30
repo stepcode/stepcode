@@ -1,10 +1,16 @@
 #!/usr/bin/env python
 
+#you probably want to run the ctest script that calls this instead:
+# ctest -S ctest_matrix.cmake
+
+#must be ran from scl/build_matrix
+
 from xml.etree import ElementTree as ET
 import os
 from datetime import date
 import subprocess
 import codecs
+import io
 
 
 #ctest xml file layout
@@ -21,24 +27,65 @@ import codecs
 #</Site>
 
 
-#summary (aka 's') is a table at the top of the document
+#summary (aka 's') is a table near the top of the document
 #body (aka 'b') contains the details for all schemas
 
 def main():
-    #xml_file = os.path.abspath(__file__)
-    #xml_file = os.path.dirname(xml_file)
-    #xml_file = os.path.join(xml_file, "Test.xml")
-    xml_file = "Test.xml"
-    #output_path = "/opt/step/wiki-scl"
-    out_main = "Schema-build-matrix.md"
-    out = codecs.open(out_main,encoding='utf-8',mode='w')
+    xml_file = find_xml()
+    wikipath, matrix = find_wiki()
     
-    #cleanup_wiki(output_path) #delete old files
+    #codecs.open is deprecated but io.open doesn't seem to work, and open() complains of unicode
+    out = codecs.open(matrix,encoding='utf-8',mode='w')
     out.write( header() )
-    summary,body = read_tests(xml_file)
-    out.write( summary )
-    out.write( body )
-    
+    out.write( read_tests(xml_file) )
+    out.close()
+    git_push(wikipath, matrix)
+
+
+def find_xml():
+    #find xml file
+    i = 0
+    for dirname in os.listdir("Testing"):
+        if str(date.today().year) in dirname:
+            i += 1
+            if i > 1:
+                print "Too many directories, exiting"
+                exit(1)
+            xml = os.path.join("Testing", dirname, "Test.xml")
+    return xml
+
+def find_wiki():
+    #find wiki and matrix file, issue 'git pull'
+    wikipath = os.path.abspath("../../wiki-scl")
+    if not os.path.isdir(os.path.join(wikipath,".git")):
+        print "Can't find wiki or not a git repo"
+        exit(1)
+    p = subprocess.call(["git", "pull", "origin"], cwd=wikipath)
+    if not p == 0:
+        print "'git pull' exited with error"
+        exit(1)
+    matrix = os.path.join(wikipath, "Schema-build-matrix.md")
+    if not os.path.isfile(matrix):
+        print "Matrix file doesn't exist or isn't a file"
+        exit(1)
+    return wikipath,matrix
+
+def git_push(path,f):
+    p = subprocess.call(["git", "add", f], cwd=path)
+    if not p == 0:
+        print "'git add' exited with error"
+        exit(1)
+    msg = date.today().__str__() + " - schema matrix updated by update-matrix.py"
+    p = subprocess.call(["git", "commit", "-m", msg ], cwd=path)
+    if not p == 0:
+        print "'git commit' exited with error"
+        exit(1)
+    p = subprocess.call(["git", "push", "origin"], cwd=path)
+    if not p == 0:
+        print "'git push' exited with error"
+        exit(1)
+
+
 def header():
     h = "## Created " + date.today().__str__() + "\n" + "### Current as of commit "
     l = subprocess.check_output(["git", "log", """--pretty=format:%H Commit Summary: %s<br>Author: %aN<br>Date: %aD""", "-n1"])
@@ -48,7 +95,7 @@ def header():
     return h
 
 def read_tests(xml):
-    # read all <Test>s in xml, create summary and body html/markdown
+    # read all <Test>s in xml, create mixed html/markdown
     try:
         tree = ET.parse(xml)
     except Exception, inst:
@@ -58,7 +105,7 @@ def read_tests(xml):
     root = tree.getroot()
     testing = root.find("Testing")
 
-    
+
     tests = testing.findall("Test")
     summary = ""
     body = ""
@@ -67,7 +114,7 @@ def read_tests(xml):
         summary += s
         body += b
     summary += "</table>\n\n"
-    return summary,body
+    return summary + body
 
 
 
@@ -96,7 +143,7 @@ def schema_info(test,tests):
             s += "----</td></tr>\n"
         b += "</table>\n"
     return s,b
-    
+
 def test_table(ttype, test):
     # populate the table for one test
     # returns: html & markdown formatted text to be added to 'body'
@@ -112,7 +159,6 @@ def test_table(ttype, test):
         trunc1 = ""
         trunc2 = ""
     if test.get("Status") == "passed":
-
         #print summary in b
         b += " succeeded with " + trunc1 + w.__str__() + " warnings " + trunc2
         if w == 0:  #nothing to print in the table, so skip it
@@ -169,17 +215,21 @@ def test_table(ttype, test):
             break
     b += "</table></td></tr>\n"
     return b
-        
+
 def test_status(test):
+    t = ""
+    for m in test.find("Results").findall("NamedMeasurement"):
+        if m.get("name") == "Execution Time":
+            t = " in " + m.find("Value").text + "s"
+            break
     if test.get("Status") == "passed":
         s = "<font color=green>PASS</font>"
     elif test.get("Status") == "failed":
         s = "<font color=red>FAIL</font>"
     else:
         s = "<font color=cyan>" + test.get("Status") + "</font>"
-    return s
-        
+    return s + t
+
 if __name__ == "__main__":
     # Someone is launching this directly
     main()
-            

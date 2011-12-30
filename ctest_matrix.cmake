@@ -51,3 +51,7 @@ ctest_build( BUILD "${CTEST_BINARY_DIRECTORY}" )
 message("running tests")
 ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL ${PROCESSOR_COUNT}
                         INCLUDE_LABEL "cpp_schema_....*" )
+
+message("running python script")
+execute_process( COMMAND python ../misc/wiki-scripts/update-matrix.py
+                 WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} )
