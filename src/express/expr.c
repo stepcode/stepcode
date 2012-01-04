@@ -657,8 +657,9 @@ Type EXPresolve_op_logical( Expression e, Scope s ) {
 
 Type EXPresolve_op_array_like( Expression e, Scope s ) {
 
+    Type op1type;
     EXPresolve_op_default( e, s );
-    Type op1type = e->e.op1->return_type;
+	op1type = e->e.op1->return_type;
 
     if( TYPEis_aggregate( op1type ) ) {
         return( op1type->u.type->body->base );
@@ -669,6 +670,9 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
     } else if( op1type->u.type->body->type == generic_ ) {
         return( Type_Generic );
     } else if( TYPEis_select( op1type ) ) {
+        int numAggr = 0, numNonAggr = 0;
+        bool sameAggrType = true;
+		Type lasttype = 0;
 
         /* FIXME Is it possible that the base type hasn't yet been resolved?
          * If it is possible, we should signal that we need to come back later... but how? */
@@ -680,9 +684,6 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
          */
 
         //count aggregates and non-aggregates, check aggregate types
-        int numAggr = 0, numNonAggr = 0;
-        bool sameAggrType = true;
-        Type lasttype = 0;
         LISTdo( op1type->u.type->body->list, item, Type ) {
             if( TYPEis_aggregate( item ) ) {
                 if(yydebug) {
