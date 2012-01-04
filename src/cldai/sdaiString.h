@@ -13,27 +13,24 @@
 
 #include <scl_export.h>
 
-/* 
-* In MSVC2010 std::string::npos is no longer exported from it's libraries.
-* This might be a bug but following code make sure the member is known
-* and fixes the linker issue for this symbol.
-*/
-#if defined(__MSVC__) && _MSC_VER == 1600 /* MSVC2010 version */
-const std::string::size_type std::string::npos = size_t(-1); 
-#endif
-
-class SCL_DAI_EXPORT SDAI_String : public std::string {
+class SCL_DAI_EXPORT SDAI_String {
+	private:
+		std::string content;
     public:
 
         //constructor(s) & destructor
-        SDAI_String( const char * str = 0, int max = 0 ) : std::string( str, max ) { }
-        SDAI_String( const std::string & s )   : std::string( s ) { }
-        SDAI_String( const SDAI_String & s )  : std::string( s ) { }
-        ~SDAI_String() { }
+        SDAI_String( const char * str = 0, int max = 0 );
+        SDAI_String( const std::string & s );
+        SDAI_String( const SDAI_String & s );
+        ~SDAI_String( void );
 
 //  operators
         SDAI_String & operator= ( const char * s );
-
+		bool operator== ( const char * s ) const;
+		
+		void clear( void );
+		bool empty( void ) const;
+		const char * c_str( void ) const;
         // format for STEP
         const char * asStr( std::string & s ) const {
             return s.c_str();
