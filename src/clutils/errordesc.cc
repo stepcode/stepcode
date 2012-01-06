@@ -130,8 +130,9 @@ ErrorDescriptor::ErrorDescriptor( Severity s,  DebugLevel d ) : _severity( s ) {
     if( d  != DEBUG_OFF ) {
         _debug_level = d;
     }
-    _userMsg.clear();
-    _detailMsg.clear();
+}
+
+ErrorDescriptor::~ErrorDescriptor( void ) {
 }
 
 void ErrorDescriptor::UserMsg( const char * msg ) {

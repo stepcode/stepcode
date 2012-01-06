@@ -42,8 +42,9 @@ int MultList::setLevel( int l )
     maxlevel = l;
     for( ; child != NULL; child = child->next ) {
         childlevel = child->setLevel( l + 1 );
-        if (childlevel > maxlevel)
+        if( childlevel > maxlevel ) {
             maxlevel = childlevel;
+        }
     }
     return maxlevel;
 }

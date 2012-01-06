@@ -90,7 +90,7 @@ void SDAI_Application_instance::AddP21Comment( const std::string & s, bool repla
 }
 
 void SDAI_Application_instance::PrependP21Comment( const std::string & s ) {
-    p21Comment.insert(0,s);
+    p21Comment.insert( 0, s );
 }
 
 void SDAI_Application_instance::STEPwrite_reference( ostream & out ) {
@@ -449,7 +449,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             "  Missing initial open paren... Trying to recover.\n" );
         in.putback( c ); // assume you can recover by reading 1st attr value
     }
-    ReadTokenSeparator(in, &p21Comment);
+    ReadTokenSeparator( in, &p21Comment );
 
     int n = attributes.list_length();
     if( n == 0 ) { // no attributes
@@ -460,7 +460,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     }
 
     for( i = 0 ; i < n; i++ ) {
-        ReadTokenSeparator(in, &p21Comment);
+        ReadTokenSeparator( in, &p21Comment );
         if( attributes[i].aDesc->AttrType() == AttrType_Redefining ) {
             in >> ws;
             c = in.peek();
