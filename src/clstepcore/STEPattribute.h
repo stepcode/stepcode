@@ -66,7 +66,7 @@ extern SCL_CORE_EXPORT SDAI_Application_instance * STEPread_reference( const cha
 
 extern SCL_CORE_EXPORT int QuoteInString( istream & in );
 
-extern SCL_CORE_EXPORT void AppendChar( char c, int & index, char *&s, int & sSize );
+extern SCL_CORE_EXPORT void AppendChar( char c, int & index, char *& s, int & sSize );
 
 extern SCL_CORE_EXPORT void PushPastString( istream & in, std::string & s, ErrorDescriptor * err );
 

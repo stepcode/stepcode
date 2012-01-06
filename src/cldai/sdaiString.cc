@@ -13,39 +13,39 @@
 #include <sstream>
 
 SDAI_String::SDAI_String( const char * str, int max ) {
-	content = std::string( str, max );
+    content = std::string( str, max );
 }
 
 SDAI_String::SDAI_String( const std::string & s ) {
-	content = std::string( s );
+    content = std::string( s );
 }
 
 SDAI_String::SDAI_String( const SDAI_String & s ) {
-	content = std::string( s.c_str() );
+    content = std::string( s.c_str() );
 }
 
 SDAI_String::~SDAI_String( void ) {
 }
 
 SDAI_String & SDAI_String::operator= ( const char * s ) {
-	content = std::string( s );
+    content = std::string( s );
     return *this;
 }
 
 bool SDAI_String::operator== ( const char * s ) const {
-	return ( content == s );
+    return ( content == s );
 }
 
 void SDAI_String::clear( void ) {
-	content.clear();
+    content.clear();
 }
 
 bool SDAI_String::empty( void ) const {
-	return content.empty();
+    return content.empty();
 }
 
 const char * SDAI_String::c_str( void ) const {
-	return content.c_str();
+    return content.c_str();
 }
 
 

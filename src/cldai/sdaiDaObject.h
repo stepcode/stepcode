@@ -373,7 +373,7 @@ class SCL_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject {
            5.3.10.1.6  Is instance of
          */
 
-		  ::Boolean IsInstanceOf( const char * typeName ) const;
+        ::Boolean IsInstanceOf( const char * typeName ) const;
 #ifdef SDAI_CPP_LATE_BINDING
         ::Boolean IsInstanceOf( const Entity_ptr & otherEntity ) const;
 #endif
@@ -395,7 +395,7 @@ class SCL_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject {
            5.3.10.1.7  Is kind of
          */
 
-		  ::Boolean IsKindOf( const char * typeName ) const;
+        ::Boolean IsKindOf( const char * typeName ) const;
 #ifdef SDAI_CPP_LATE_BINDING
         ::Boolean IsKindOf( const Entity_ptr & theType ) const;
 #endif
@@ -415,7 +415,7 @@ class SCL_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject {
            5.3.10.1.8  Is SDAI kind of
            */
 
-		  ::Boolean IsSDAIKindOf( const char * typeName ) const;
+        ::Boolean IsSDAIKindOf( const char * typeName ) const;
 
 #ifdef SDAI_CPP_LATE_BINDING
         ::Boolean IsSDAIKindOf( const Entity_ptr & theType ) const;

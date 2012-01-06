@@ -57,9 +57,9 @@ enum  DebugLevel  {
  ******************************************************************/
 
 class SCL_UTILS_EXPORT ErrorDescriptor {
-	private:
-		std::string _userMsg, _detailMsg;
-	protected:
+    private:
+        std::string _userMsg, _detailMsg;
+    protected:
         Severity    _severity;
 
         static DebugLevel    _debug_level;
@@ -67,7 +67,7 @@ class SCL_UTILS_EXPORT ErrorDescriptor {
     public:
         ErrorDescriptor( Severity s    = SEVERITY_NULL,
                          DebugLevel d  = DEBUG_OFF );
-		~ErrorDescriptor( void );
+        ~ErrorDescriptor( void );
 
         void PrintContents( ostream & out = cout ) const;
 
