@@ -389,7 +389,7 @@ class ComplexList {
         int abstract;   // is our supertype abstract?
         int dependent;  // is our supertype also a subtype of other supertype(s)?
         int multSupers; // am I a combo-CList created to test a subtype which has
-                        // >1 supertypes?
+        // >1 supertypes?
         int maxlevel;
 };
 

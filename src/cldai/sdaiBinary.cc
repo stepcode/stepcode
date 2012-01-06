@@ -13,11 +13,11 @@
 #include <sdai.h>
 
 SDAI_Binary::SDAI_Binary( const char * str, int max ) {
-	content = std::string( str, max );
+    content = std::string( str, max );
 }
 
 SDAI_Binary::SDAI_Binary( const std::string & s ) {
-	content = std::string( s );
+    content = std::string( s );
 }
 
 SDAI_Binary::~SDAI_Binary( void ) {
@@ -29,15 +29,15 @@ SDAI_Binary & SDAI_Binary::operator= ( const char * s ) {
 }
 
 void SDAI_Binary::clear( void ) {
-	content.clear();
+    content.clear();
 }
 
 bool SDAI_Binary::empty( void ) const {
-	return content.empty();
+    return content.empty();
 }
 
 const char * SDAI_Binary::c_str( void ) const {
-	return content.c_str();
+    return content.c_str();
 }
 
 void SDAI_Binary::STEPwrite( ostream & out ) const {

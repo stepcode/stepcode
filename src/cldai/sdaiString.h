@@ -14,8 +14,8 @@
 #include <scl_export.h>
 
 class SCL_DAI_EXPORT SDAI_String {
-	private:
-		std::string content;
+    private:
+        std::string content;
     public:
 
         //constructor(s) & destructor
@@ -26,11 +26,11 @@ class SCL_DAI_EXPORT SDAI_String {
 
 //  operators
         SDAI_String & operator= ( const char * s );
-		bool operator== ( const char * s ) const;
-		
-		void clear( void );
-		bool empty( void ) const;
-		const char * c_str( void ) const;
+        bool operator== ( const char * s ) const;
+
+        void clear( void );
+        bool empty( void ) const;
+        const char * c_str( void ) const;
         // format for STEP
         const char * asStr( std::string & s ) const {
             return s.c_str();

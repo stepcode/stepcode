@@ -15,9 +15,9 @@
 */
 
 class SCL_DAI_EXPORT SDAI_Binary {
-	private:
-		std::string content;
-	public:
+    private:
+        std::string content;
+    public:
 
         //constructor(s) & destructor
         SDAI_Binary( const char * str = 0, int max = 0 );
@@ -27,9 +27,9 @@ class SCL_DAI_EXPORT SDAI_Binary {
         //  operators
         SDAI_Binary & operator= ( const char * s );
 
-		void clear( void );
-		bool empty( void ) const;
-		const char * c_str( void ) const;
+        void clear( void );
+        bool empty( void ) const;
+        const char * c_str( void ) const;
         // format for STEP
         const char * asStr() const  {
             return c_str();

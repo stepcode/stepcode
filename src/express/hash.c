@@ -446,7 +446,7 @@ HASHhash( char * Key, Hash_Table table ) {
     /*SUPPRESS 112*/
     while( *k )
         /*SUPPRESS 8*/ { /*SUPPRESS 112*/
-        h = h * PRIME1 ^( *k++ - ' ' );
+        h = h * PRIME1 ^ ( *k++ - ' ' );
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );
