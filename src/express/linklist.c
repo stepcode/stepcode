@@ -220,3 +220,15 @@ LISTget_length( Linked_List list ) {
     }
     return count;
 }
+
+#if defined(__BORLAND__)
+bool LISTempty( Linked_List list ) {
+    if( !list ) {
+        return true;
+    }
+    if( list->mark->next == list->mark ) {
+        return true;
+    }
+    return false;
+}
+#endif

@@ -27,18 +27,18 @@ include_directories(
     ${SCL_SOURCE_DIR}/include/express
 )
 
-IF(MSVC)
-set(fedex_plus_MSVC_SOURCES
+IF(MSVC OR BORLAND)
+set(fedex_plus_EXTRA_SOURCES
     xgetopt.cc
 )
 add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
 add_definitions( -DSCL_EXPPP_DLL_IMPORTS )
-ENDIF(MSVC)
+ENDIF()
 
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging )
 ENDIF()
 
-SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES} ${fedex_plus_MSVC_SOURCES}" "libexppp express")
+SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES} ${fedex_plus_EXTRA_SOURCES}" "libexppp express")
 
 add_dependencies( fedex_plus version_string )
