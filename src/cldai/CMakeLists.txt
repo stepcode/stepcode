@@ -28,10 +28,10 @@ SET(LIBSTEPDAI_PRIVATE_HDRS
 	sdaiBinary.h
 )
 
-IF(MSVC)
+IF(MSVC OR BORLAND)
 add_definitions( -DSCL_DAI_DLL_EXPORTS )
 add_definitions( -DSCL_UTILS_DLL_IMPORTS )
-ENDIF(MSVC)
+ENDIF()
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}

@@ -124,7 +124,7 @@ class SCL_DAI_EXPORT SDAI_BOOLEAN  :
         const char * Name() const;
 
         SDAI_BOOLEAN( char * val = 0 );
-        SDAI_BOOLEAN( Boolean state );
+        SDAI_BOOLEAN( ::Boolean state );
         SDAI_BOOLEAN( const SDAI_BOOLEAN & source );
         SDAI_BOOLEAN( int i );
         SDAI_BOOLEAN( const SDAI_LOGICAL & val );
@@ -133,10 +133,10 @@ class SCL_DAI_EXPORT SDAI_BOOLEAN  :
         virtual int no_elements() const;
         virtual const char * element_at( int n ) const;
 
-        operator Boolean() const;
+        operator ::Boolean() const;
         SDAI_BOOLEAN & operator=( const SDAI_LOGICAL & t );
 
-        SDAI_BOOLEAN & operator=( const Boolean t );
+        SDAI_BOOLEAN & operator=( const ::Boolean t );
         SDAI_LOGICAL operator==( const SDAI_LOGICAL & t ) const;
 
 };
