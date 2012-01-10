@@ -29,11 +29,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import unittest
+
 from SCL.SimpleDataTypes import *
 from SCL.TypeChecker import *
 from SCL.ConstructedDataTypes import *
-
-import unittest
+from SCL.AggregationDataType import *
 
 #
 # Simple data types
@@ -133,7 +134,70 @@ class TestBOOLEAN(unittest.TestCase):
         self.assertTrue(a)
         b = BOOLEAN(False)
         self.assertFalse(b)
-
+        
+#
+# AggregationDataTypeSimple
+#
+class TestARRAY(unittest.TestCase):
+    '''
+    ARRAY test
+    '''
+    def test_create_array(self):
+        ARRAY(1,7,REAL)
+        #upper and lower bounds can be negative
+        ARRAY(-1,5,INTEGER)
+        ARRAY(-4,-3,INTEGER)
+        # they even can be both 0
+        ARRAY(0,0,REAL)
+        ARRAY(1,1,BOOLEAN)
+        # lower bound should be less or equal than upper bound
+        try:
+            ARRAY(3,2,REAL)
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+    
+    def test_array_unique(self):
+        # if UNIQUE is not set to True (False by default),
+        # the array may contain the same instance at different
+        # positions
+        a = ARRAY(1,4,REAL)
+        a[3] = REAL(4)
+        a[4] = REAL(4)
+        # however, if UNIQUE, then every instances in the 
+        # array must be different
+        a = ARRAY(1,4,REAL,UNIQUE=True)
+        a[3] = REAL(4)
+        try:
+            a[3] = REAL(4)
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+    
+    def test_array_optional(self):
+        # if OPTIONAL is not set explicitely to True
+        # then each value must be set
+        a = ARRAY(1,3,REAL)
+        try:
+            a[1]
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        # if OPTIONAL is set to True, then values
+        # can be indeterminated
+        b = ARRAY(1,3,REAL,OPTIONAL=True)
+        b[2] = REAL(5)
+        b[3] = REAL(5)
+        
 #
 # TypeChecker
 #
@@ -153,14 +217,13 @@ class TestTypeChecker(unittest.TestCase):
             check_type(3,P)
         except TypeError:
             pass
-        except a:
+        except e:
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
 
     def test_check_enum_type(self):
         enum = ENUMERATION(["my","string"])
-        print check_type("my",enum)
-
+        
 unittest.main()
 

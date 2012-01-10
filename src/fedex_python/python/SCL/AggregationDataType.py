@@ -30,13 +30,12 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from SimpleDataTypes import *
+from TypeChecker import *
 
 class BaseAggregate(object):
     """ A class that define common properties to ARRAY, LIST, SET and BAG.
     """
     def __init__( self ,  bound1 , bound2 , base_type ):
-        # init base list with an empty list
-        list.__init__(self,[])
         # check that bound1<bound2
         if (bound1!=None and bound2!=None):
             if bound1>bound2:
@@ -44,8 +43,7 @@ class BaseAggregate(object):
         self._bound1 = bound1
         self._bound2 = bound2
         self._base_type = base_type
-        print base_type
-    
+
     def __getitem__(self, index):
         if index<self._bound1:
             raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound1,index))
@@ -63,10 +61,10 @@ class BaseAggregate(object):
             raise TypeError("%s type expected, passed %s."%(self._base_type, type(value)))
         else:
             # first find the length of the list, and extend it if ever
-            # the index is 
+            # the index is
             list.__setitem__(self,index,value)
 
-class ARRAY(list, BaseAggregate):
+class ARRAY(object):
     """An array data type has as its domain indexed, fixed-size collections of like elements. The lower
     and upper bounds, which are integer-valued expressions, define the range of index values, and
     thus the size of each array collection.
@@ -74,10 +72,54 @@ class ARRAY(list, BaseAggregate):
     that an array value cannot contain duplicate elements.
     It may also specify that an array value
     need not contain an element at every index position.
+    
+    Given that m is the lower bound and n is the upper bound, there are exactly n-m+1 elements
+    in the array. These elements are indexed by subscripts from m to n, inclusive (see 12.6.1).
+    NOTE 1 { The bounds may be positive, negative or zero, but may not be indeterminate (?) (see
+    14.2).
     """
-    def __init__( self ,  bound1 , bound2 , base_type ):
-        BaseAggregate.__init__( self ,  bound1 , bound2 , base_type )
+    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, OPTIONAL=False):
+        if not type(bound_1)==int:
+            raise TypeError("ARRAY lower bound must be an integer")
+        if not type(bound_2)==int:
+            raise TypeError("ARRAY upper bound must be an integer")
+        if not (bound_1 <= bound_2):
+            raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
+        # set up class attributes
+        self._bound_1 = bound_1
+        self._bound_2 = bound_2
+        self._base_type = base_type
+        self._unique = UNIQUE
+        self._optional = OPTIONAL
+        # preallocate list elements
+        list_size = bound_2 - bound_1 + 1
+        self._container = list_size*[None]
+    
+    def __getitem__(self, index):
+        if index<self._bound_1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
+        elif(index>self._bound_2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
+        else:
+            value = self._container[index-self._bound_1]
+            if not self._optional and value==None:
+                raise AssertionError("Not OPTIONAL prevent the value with index %i from being None (default). Please set the value first."%index)
+            return value
  
+    def __setitem__(self, index, value):
+        if index<self._bound_1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
+        elif(index>self._bound_2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
+        else:
+            # first check the type of the value
+            check_type(value,self._base_type)
+            # then check if the value is already in the array
+            if self._unique:
+                if value in self._container:
+                    raise AssertionError("UNIQUE keyword prevent inserting this instance.")
+            self._container[index-self._bound_1] = value
+
 class LIST(list, BaseAggregate):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
     bounds, which are integer-valued expressions, dfine the minimum and maximum number of
