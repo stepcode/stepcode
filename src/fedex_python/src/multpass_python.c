@@ -642,16 +642,17 @@ static void addAggrTypedefs( Schema schema, FILE * classes )
             // the only types which had to wait for their underlying type.
             // 2D aggr's and higher only need type GenericAggr defined
             // which is built-in. */
-            if( firsttime ) {
-                fprintf( classes, "\n// Aggregate types (from all sche" );
-                fprintf( classes, "mas) which depend on other types:\n" );
-                firsttime = FALSE;
-            }
-            strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
-            fprintf( classes, "typedef %s\t%s;\n",
-                     TYPEget_ctype( t ), nm );
-            fprintf( classes, "typedef %s *\t%sH;\n", nm, nm );
-            fprintf( classes, "typedef %s *\t%s_ptr;\n", nm, nm );
+            printf("in addAggrTypedefs. %s is enum or select.\n",TYPEget_name(t));
+            //if( firsttime ) {
+            //    fprintf( classes, "\n// Aggregate types (from all sche" );
+            //    fprintf( classes, "mas) which depend on other types:\n" );
+            //    firsttime = FALSE;
+            //}
+            //strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
+            //fprintf( classes, "typedef %s\t%s;\n",
+            //         TYPEget_ctype( t ), nm );
+            //fprintf( classes, "typedef %s *\t%sH;\n", nm, nm );
+            //fprintf( classes, "typedef %s *\t%s_ptr;\n", nm, nm );
         }
     }
     SCOPEod
