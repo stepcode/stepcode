@@ -59,7 +59,7 @@ def EvalDerivedAttribute(class_instance, str_expr):
     for item in props:
         str_expr = str_expr.replace(item,"class_instance.%s"%item)
     # after that step, the expression should be:
-    # PI*class_instance.radiüs*class_instance.radius
+    # PI*class_instance.radius*class_instance.radius
     # this can be evaluated with the eval function
     # CAREFUL: eval is known to be unsafe. This should be changed in the future
     # (using a parser, or simpy for instance)

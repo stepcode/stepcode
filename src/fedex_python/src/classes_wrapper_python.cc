@@ -350,7 +350,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     fprintf(libfile,"from SCL.SCLBase import *\n");
     fprintf(libfile,"from SCL.SimpleDataTypes import *\n");
     fprintf(libfile,"from SCL.ConstructedDataTypes import *\n");
-    fprintf(libfile,"from SCL.AggregationDataType import *\n");
+    fprintf(libfile,"from SCL.AggregationDataTypes import *\n");
     fprintf(libfile,"from SCL.TypeChecker import check_type\n");
     fprintf(libfile,"from SCL.Expr import *\n");
     

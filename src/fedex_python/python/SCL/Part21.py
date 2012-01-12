@@ -67,8 +67,27 @@ class Model:
             "=========="
             print "Instance #%i"%(idx+1)
             print self._instances[idx]
-        
-class Part21Loader:
+
+class Part21EntityInstance:
+    """
+    A class to represent a Part21 instance as defined in one Part21 file
+    A Part21EntityInstance is defined by the following arguments:
+    entity_name: a string
+    entity_attributes: a list of strings to represent an attribute.
+    For instance, the following expression:
+    #4 = PRODUCT_DEFINITION_SHAPE('$','$',#5);
+    will result in :
+    entity : <class 'config_control_design.product_definition_shape'>
+    entity_instance_attributes: ['$','$','#5']
+    """
+    def __init__(self,entity_name,attributes):
+        self._entity
+        self._attributes_definition = attributes
+        print self._entity_name
+        print self._attributes_definition
+    
+
+class Part21Parser:
     """
     Loads all instances definition of a Part21 file into memory.
     Two dicts are created:
@@ -79,7 +98,7 @@ class Part21Loader:
     def __init__(self, filename):
         self._filename = filename
         # the schema
-        self._schema = ""
+        self._schema_name = ""
         # the dict self._instances contain instance definition
         self._instances_definition = {}
         # this dict contains lists of 0 ancestors, 1 ancestor, etc.
@@ -87,23 +106,57 @@ class Part21Loader:
         self._number_of_ancestors = {}
         for i in range(2000):
             self._number_of_ancestors[i]=[]
-        print "Parsing file %s..."%filename,
         self.parse_file()
-        print "done."
         # reduce number_of_ancestors dict
         for item in self._number_of_ancestors.keys():
             if len(self._number_of_ancestors[item])==0:
                 del self._number_of_ancestors[item]
     
-    def get_schema(self):
-        return self._schema
+    def get_schema_name(self):
+        return self._schema_name
+        print schema_name
         
     def get_number_of_instances(self):
         return len(self._instances_definition.keys())
-        
+
+    def parse_attributes(self, attr_str):
+        """
+        This method takes a string an returns a list of attributes (but without any mapping).
+        For instance:
+        input = "'',(#11,#15,#19,#23,#27),#31"
+        output = ['',(#11,#15,#19,#23,#27),'#31']
+        """
+        aggr_scope_level = 0
+        attrs = []
+        current_attr = ''
+        previous_ch = ''
+        for ch in attr_str:
+            if ch == ',' and aggr_scope_level == 0:
+                attrs.append(current_attr)
+                current_attr = ''
+            else:
+                if ch == '(':
+                    aggr_scope_level +=1
+                elif ch == ')':
+                    aggr_scope_level -= 1
+                current_attr += ch
+            previous_ch = ch
+        # finally add the last attr when exiting loop
+        attrs.append(current_attr)
+        return attrs
+
     def parse_file(self):
+        init_time = time.time()
+        print "Parsing file %s..."%self._filename,
         fp = open(self._filename)
-        for line in fp:
+        while True:
+            line = fp.readline()
+            if not line:
+                break
+            # there may be a multline definition. In this case, we read lines untill we found
+            # a ;
+            while (not line.endswith(";\r\n")): #its a multiline
+                line = line.replace("\r\n","") + fp.readline()
             # parse line
             match_instance_definition = INSTANCE_DEFINITION_RE.search(line)  # id,name,attrs
             if match_instance_definition:
@@ -113,13 +166,33 @@ class Part21Loader:
                 number_of_ancestors = entity_attrs.count('#')
                 # fill number of ancestors dict
                 self._number_of_ancestors[number_of_ancestors].append(instance_int_id)
-                self._instances_definition[instance_int_id] = [entity_name,entity_attrs]
+                # parse attributes string
+                entity_attrs_list = self.parse_attributes(entity_attrs)
+                # then finally append this instance to the disct instance
+                self._instances_definition[instance_int_id] = (entity_name,entity_attrs_list)
             else: #does not match with entity instance definition, parse the header
                 if line.startswith('FILE_SCHEMA'):
                     #identify the schema name
-                    self._schema = line.split("'")[1].split("'")[0].split(" ")[0].lower()
+                    self._schema_name = line.split("'")[1].split("'")[0].split(" ")[0].lower()
         fp.close()
-    
+        print 'done in %fs.'%(time.time()-init_time)
+        print 'schema: - %s entities %i'%(self._schema_name,len(self._instances_definition.keys()))
+
+class EntityInstancesFactory(object):
+    '''
+    This class creates entity instances from the str definition
+    For instance, the definition:
+    20: ('CARTESIAN_POINT', ["''", '(5.,125.,20.)'])
+    will result in:
+    p = ARRAY(1,3,REAL)
+    p.[1]=REAL(5)
+    p.[2] = REAL(125)
+    p.[3] = REAL(20)
+    new_instance = cartesian_point(STRING(''),p)
+    '''
+    def __init__(self, schema_name, instance_definition):
+        # First try to import the schema module
+        pass
 class Part21Population(object):
     def __init__(self, part21_loader):
         """ Take a part21_loader a tries to create entities
@@ -185,19 +258,15 @@ class Part21Population(object):
 if __name__ == "__main__":
     import time
     import sys
-    sys.path.append("..")
-    from config_control_design import *
-    t1 = time.time()
-    print "Loading file into memory"
-    #file = Part21Loader("as1-oc-214.stp")
+    #sys.path.append("..")
+    #from config_control_design import *
+    #p21loader = Part21Loader("as1-oc-214.stp")
     #file = Part21Loader("as1-tu-203.stp")
     #file = Part21Loader("HAYON.stp")
-    p21loader = Part21Loader("as1.stp")
-    t2 = time.time()
-    print "Loading schema took: %s s \n" % ((t2-t1))
-    t1 = time.time()
-    print "Creating instances"
-    p21population = Part21Population(p21loader)
-    p21population.create_entity_instances()
-    t2 = time.time()
-    print "Creating instances took: %s s \n" % ((t2-t1))
+    p21loader = Part21Parser("as1.stp")
+    print p21loader._instances_definition
+    #print "Creating instances"
+    #p21population = Part21Population(p21loader)
+    #p21population.create_entity_instances()
+    #t2 = time.time()
+    #print "Creating instances took: %s s \n" % ((t2-t1))

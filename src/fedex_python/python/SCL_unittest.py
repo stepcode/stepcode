@@ -160,6 +160,9 @@ class TestARRAY(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
     
+    def test_array_bounds(self):
+        a = ARRAY()
+    
     def test_array_unique(self):
         # if UNIQUE is not set to True (False by default),
         # the array may contain the same instance at different
