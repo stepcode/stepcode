@@ -776,22 +776,24 @@ enumeration_type    : TOK_ENUMERATION TOK_OF nested_id_list
                     CURRENT_SCOPE->u.type->body = tb;
                     tb->list = $3;
                     if (!CURRENT_SCOPE->symbol_table) {
-                    CURRENT_SCOPE->symbol_table = DICTcreate(25);
+                        CURRENT_SCOPE->symbol_table = DICTcreate(25);
                     }
-                    LISTdo_links($3, id)
-                    tmp = (Symbol *)id->data;
-                    id->data = (Generic)(x = EXPcreate(CURRENT_SCOPE));
-                    x->symbol = *(tmp);
-                    x->u.integer = ++value;
-                    /* define both in enum scope and scope of */
-                    /* 1st visibility */
-                    DICT_define(CURRENT_SCOPE->symbol_table,
-                        x->symbol.name,
-                        (Generic)x,&x->symbol,OBJ_EXPRESSION);
-                    DICTdefine(PREVIOUS_SCOPE->symbol_table,x->symbol.name,
-                        (Generic)x,&x->symbol,OBJ_EXPRESSION);
+                    if (!PREVIOUS_SCOPE->enum_table) {
+                        PREVIOUS_SCOPE->enum_table = DICTcreate(25);
+                    }
+                    LISTdo_links($3, id) {
+                        tmp = (Symbol *)id->data;
+                        id->data = (Generic)(x = EXPcreate(CURRENT_SCOPE));
+                        x->symbol = *(tmp);
+                        x->u.integer = ++value;
+                        /* define both in enum scope and scope of */
+                        /* 1st visibility */
+                        DICT_define(CURRENT_SCOPE->symbol_table, x->symbol.name,
+                                    (Generic)x,&x->symbol,OBJ_EXPRESSION);
+                        DICTdefine(PREVIOUS_SCOPE->enum_table,x->symbol.name,
+                                   (Generic)x,&x->symbol,OBJ_EXPRESSION);
                         SYMBOL_destroy(tmp);
-                    LISTod;
+                    } LISTod;
                   }
                 ;
 
