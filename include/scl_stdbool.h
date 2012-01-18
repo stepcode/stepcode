@@ -25,7 +25,7 @@
 /**
  * Borland C++ 5.5.1 does not define _Bool.
  */
-#ifdef __BORLANDC__
+#if defined(__BORLANDC__) && __BORLANDC__ < 0x630
 typedef int _Bool;
 #endif
 
