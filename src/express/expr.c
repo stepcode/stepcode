@@ -1,7 +1,7 @@
 
 
-/************************************************************************
-** Module:  Expression
+/** **********************************************************************
+** Module:  Expression \file expr.c
 ** Description: This module implements the Expression abstraction.  Several
 **  types of expressions are supported: identifiers, literals,
 **  operations (arithmetic, logical, array indexing, etc.), and
@@ -667,6 +667,9 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
         return( op1type );
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
+    } else if( op1type->u.type->body->type == binary_ ) {
+        ERRORreport_with_symbol( ERROR_warn_unsupported_lang_feat, &e->symbol, "indexing on a BINARY",__FILE__, __LINE__ );
+        return( Type_Binary );
     } else if( op1type->u.type->body->type == generic_ ) {
         return( Type_Generic );
     } else if( TYPEis_select( op1type ) ) {
