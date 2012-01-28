@@ -1,0 +1,10 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('SCL test file'),'2;1');
+FILE_NAME('test_binary_index.stp','2012-01-19T',('mp'),(''),'0','1','2');
+FILE_SCHEMA(('test_binary_index'));
+ENDSEC;
+DATA;
+#1=BUYNARY("15A");
+ENDSEC;
+END-ISO-10303-21;

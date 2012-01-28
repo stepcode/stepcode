@@ -39,7 +39,7 @@ void PopulateEntity( STEPentity * ent ) {
         const AttrDescriptor * attrDesc = attr->aDesc;
         cout << "  attribute " << attrDesc->Name();
         cout << " [" << attrDesc->TypeName() << "] = ";
-        int needOutput = 1;  // true if we need to output the value
+        bool needOutput = true;  // true if we need to output the value
         // that is, if it's anything but 'none'
 
         // Here's how we do this... set up a string stream to put the value
@@ -66,18 +66,23 @@ void PopulateEntity( STEPentity * ent ) {
                 valstr << se->element_at( rand() % se->no_elements() );
             }
             break;
+            case BINARY_TYPE: //FIXME we really need to query the number of bits (does scl/fedex_plus even support this?!)
+                cout << "(binary) ";
+                valstr << "\"1";
+                valstr.setf(ios::hex,ios::basefield);
+                valstr << rand() % 100 << '\"';
+                SDAI_Binary b;
+                break;
             default:   // for other stuff like aggregates and selects, just leave
                 cout << "none (" << attrDesc->NonRefType();  // 'em blank...
                 cout << ")" << endl;
-                needOutput = 0;
+                needOutput = false;
         }
         valstr << ends;  // flush and null-terminate the stream
-        /*** char *val = valstr.str(); ***/  // fix stream into char* string
-        char * val = &( valstr.str()[0] );
         if( needOutput ) {
-            cout << val << endl;
+            cout << valstr.str() << endl;
         }
-        attr->StrToVal( val ); // and assign
+        attr->StrToVal( valstr.str().c_str() ); // and assign
 
         attr = ent->NextAttribute();
     }

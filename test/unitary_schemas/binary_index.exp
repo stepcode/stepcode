@@ -1,0 +1,9 @@
+SCHEMA test_binary_index;
+
+  ENTITY buynary;
+    bin : BINARY (8) FIXED;
+    DERIVE
+      lasthalf: BINARY (4) := bin[5:8];
+  END_ENTITY;
+
+END_SCHEMA;

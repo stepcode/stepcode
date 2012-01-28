@@ -13,8 +13,7 @@
 #include <SingleLinkList.h>
 #include <iostream>
 
-SingleLinkNode *
-SingleLinkNode::NextNode()  const {
+SingleLinkNode * SingleLinkNode::NextNode()  const {
     return next;
 }
 

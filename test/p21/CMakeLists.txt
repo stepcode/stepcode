@@ -52,3 +52,7 @@ set_tests_properties( test_good_schema_name test_good_schema_name_asn test_misma
                       PROPERTIES DEPENDS build_cpp_sdai_AP214E3_2010 LABELS exchange_file )
 
 set_tests_properties( test_mismatch_schema_name test_missing_and_required_strict PROPERTIES WILL_FAIL TRUE )
+
+#currently, this test is forced to fail - the file is written with a '$', but p21read reports no errors or warnings. The WILL_FAIL property can be removed when p21read reports an error or when it stores the correct data
+add_test( test_binary_index "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_binary_index" ${CMAKE_CURRENT_SOURCE_DIR}/test_binary_index.p21 )
+set_tests_properties( test_binary_index PROPERTIES DEPENDS build_cpp_sdai_binary_index WILL_FAIL TRUE LABELS exchange_file )
