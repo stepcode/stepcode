@@ -790,7 +790,6 @@ int STEPattribute::is_null()  const {
             return ( *( ptr.S ) == S_STRING_NULL );
 
         case BINARY_TYPE:
-            ptr.b->clear();
             return ptr.b->empty();
 
         case AGGREGATE_TYPE:
