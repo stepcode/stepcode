@@ -472,62 +472,6 @@ TYPEget_size( Type type ) {
     }
 }
 
-#if 0
-
-/*
-** Procedure:   TYPEcompatible
-** Parameters:  Type lhs_type   - type for left-hand-side of assignment
-**      Type rhs_type   - type for right-hand-side of assignment
-** Returns: Boolean     - are the types assignment compatible?
-** Description: Determine whether two types are assignment-compatible.
-*/
-
-Boolean
-TYPEcompatible( Type lhs_type, Type rhs_type ) {
-    Class   lhs_class;
-    Class   rhs_class;
-    Entity  entity;
-    Linked_List list;
-    Error   experrc;
-
-    lhs_class = OBJget_class( lhs_type );
-    rhs_class = OBJget_class( rhs_type );
-    if( lhs_class == Class_Aggregate_Type ) {
-        return ( CLASSinherits_from( rhs_class, Class_Aggregate_Type ) &&
-                 TYPEcompatible( AGGR_TYPEget_base_type( lhs_type ),
-                                 AGGR_TYPEget_base_type( rhs_type ) ) );
-    } else if( CLASSinherits_from( lhs_class, Class_Aggregate_Type ) ) {
-        return ( ( rhs_class == lhs_class ) &&
-                 TYPEcompatible( AGGR_TYPEget_base_type( lhs_type ),
-                                 AGGR_TYPEget_base_type( rhs_type ) ) );
-    } else if( lhs_class == Class_Entity_Type ) {
-        if( rhs_class == Class_Entity_Type ) {
-            entity = ENT_TYPEget_entity( lhs_type );
-            list = COMP_TYPEget_items( rhs_type );
-            LISTdo( list, e, Entity )
-            if( !ENTITYhas_supertype( e, entity ) ) {
-                return false;
-            }
-            LISTod;
-            return true;
-        } else {
-            return false;
-        }
-    } else if( CLASSinherits_from( lhs_class, Class_Composed_Type ) ) {
-        return OBJequal( rhs_type, lhs_type, &experrc );
-    } else if( lhs_class == Class_Number_Type ) {
-        return ( ( rhs_class == Class_Number_Type ) ||
-                 ( rhs_class == Class_Real_Type ) ||
-                 ( rhs_class == Class_Integer_Type ) );
-    } else if( lhs_class == Class_Real_Type ) {
-        return ( ( rhs_class == Class_Real_Type ) ||
-                 ( rhs_class == Class_Integer_Type ) );
-    } else {
-        return rhs_class == lhs_class;
-    }
-}
-#endif
-
 /*
 ** Procedure:   AGGR_TYPEget_base_type
 ** Parameters:  Aggregate_Type type - type to examine
