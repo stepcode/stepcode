@@ -53,7 +53,6 @@
 
 #include <scl_cf.h>
 #include <stdlib.h>
-#include "conf.h"
 #include <setjmp.h>
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>

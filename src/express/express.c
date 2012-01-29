@@ -69,7 +69,6 @@
 
 #include <scl_cf.h>
 #define EXPRESS_C
-#include "conf.h"
 #include "express/basic.h"
 #include <ctype.h>
 #include <stdlib.h>
