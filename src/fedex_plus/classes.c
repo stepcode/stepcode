@@ -489,7 +489,7 @@ char * generate_dict_attr_name( Variable a, char * out ) {
  ** Side Effects:
  ** Status:  new 1/24/91
  ******************************************************************/
-String TYPEget_express_type( const Type t ) {
+char * TYPEget_express_type( const Type t ) {
     Class_Of_Type class;
     Type bt;
     char retval [BUFSIZ];

@@ -152,11 +152,6 @@ typedef int ( *intFuncptr )();
 #define _POSIX_SOURCE
 #endif
 
-/* backward compatibility */
-typedef char * String;
-#define STRINGequal(x,y)    (0 == strcmp((x),(y)))
-
-
 #endif    /*    */
 
 
