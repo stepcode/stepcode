@@ -1,8 +1,8 @@
 
 
-/************************************************************************
-** Module:  Error
-** Description: This module implements the ERROR abstraction
+/** **********************************************************************
+** Module:  Error \file error.c
+** This module implements the ERROR abstraction
 ************************************************************************/
 
 /*
@@ -71,42 +71,35 @@
 
 #include "express/express.h"
 
-#define ERROR_MAX_ERRORS    100 /* max line-numbered errors */
-#define ERROR_MAX_SPACE     4000    /* max space for line-numbered errors */
-#define ERROR_MAX_STRLEN    200 /* assuming all error messages are */
-/* less than this, if we have less than this much space */
-/* remaining in the error string buffer, call it a day and */
-/* dump the buffer */
+#define ERROR_MAX_ERRORS    100 /**< max line-numbered errors */
+#define ERROR_MAX_SPACE     4000 /**< max space for line-numbered errors */
+#define ERROR_MAX_STRLEN    200 /**< assuming all error messages are less than this,
+                                  * if we have less than this much space remaining
+                                  * in the error string buffer, call it a day and
+                                  * dump the buffer */
 
 extern void exp_pause(); //in fedex.c
 
 static struct heap_element {
     unsigned int line;
     char * msg;
-} heap[ERROR_MAX_ERRORS + 1]; /* NOTE!  element 0 is purposely ignored, and */
-/* an additional element is at the end.  This allows the */
-/* later heap calculations to be much simpler */
+} heap[ERROR_MAX_ERRORS + 1]; /**< NOTE!  element 0 is purposely ignored, and
+                                * an additional element is at the end.  This
+                                * allows the later heap calculations to be
+                                * much simpler */
 
-static int ERROR_with_lines = 0;    /* number of warnings & errors */
-/* that have occurred with a line number */
+static int ERROR_with_lines = 0;    /**< number of warnings & errors that have occurred with a line number */
 static char * ERROR_string;
 static char * ERROR_string_base;
 
 static bool ERROR_unsafe = false;
 static jmp_buf ERROR_safe_env;
 
-/* message buffer file */
-#define error_file stderr
 
-/*
-** Procedure:   ERRORinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Error module
-*/
+#define error_file stderr /**< message buffer file */
 
-void
-ERRORinitialize( void ) {
+/** Initialize the Error module */
+void ERRORinitialize( void ) {
     ERROR_subordinate_failed =
         ERRORcreate( "A subordinate failed.", SEVERITY_ERROR );
     ERROR_syntax_expecting =
@@ -130,17 +123,14 @@ ERRORinitialize( void ) {
 #endif
 }
 
-/* Need the LIST routines to complete ERROR initialization */
-void
-ERRORinitialize_after_LIST( void ) {
+/** Need the LIST routines to complete ERROR initialization */
+void ERRORinitialize_after_LIST( void ) {
     ERRORwarnings = LISTcreate();
 
     MEMinitialize( &ERROR_OPT_fl, sizeof( struct Error_Warning_ ), 5, 5 );
 }
 
-/*VARARGS*/
-void
-ERRORcreate_warning( char * name, Error error ) {
+void ERRORcreate_warning( char * name, Error error ) {
     struct Error_Warning_ *o;
 
     /* first check if we know about this type of error */
@@ -159,8 +149,7 @@ ERRORcreate_warning( char * name, Error error ) {
     LISTadd( ERRORwarnings, ( Generic )o );
 }
 
-void
-ERRORset_warning( char * name, int set ) {
+void ERRORset_warning( char * name, int set ) {
     bool found = false;
 
     if( streq( name, "all" ) ) {
@@ -187,8 +176,7 @@ ERRORset_warning( char * name, int set ) {
     }
 }
 
-void
-ERRORset_all_warnings( int set ) {
+void ERRORset_all_warnings( int set ) {
     LISTdo( ERRORwarnings, opts, Error_Warning )
     LISTdo( opts->errors, err, Error )
     err->enabled = set;
@@ -196,45 +184,33 @@ ERRORset_all_warnings( int set ) {
     LISTod
 }
 
-/*
-** Procedure:   ERRORdisable
-** Parameters:  Error error - error to disable
-** Returns: void
-** Description: Disable an error (ERRORreport*() will ignore it)
+/** \fn ERRORdisable
+** \param error error to disable
+** Disable an error (ERRORreport*() will ignore it)
+** \note this function is inlined in error.h
 */
 
-/* this function is inlined in error.h */
-
-/*
-** Procedure:   ERRORenable
-** Parameters:  Error error - error to enable
-** Returns: void
-** Description: Enable an error (ERRORreport*() will report it)
+/** \fn ERRORenable
+** \param error error to enable
+** Enable an error (ERRORreport*() will report it)
+** \note this function is inlined in error.h
 */
 
-/* this function is inlined in error.h */
-
-/*
-** Procedure:   ERRORis_enabled
-** Parameters:  Error error - error to test
-** Returns: Boolean     - is reporting of the error enabled?
-** Description: Check whether an error is enabled
+/** \fn ERRORis_enabled
+** \param error error to test
+** \return is reporting of the error enabled?
+** Check whether an error is enabled
+** \note this function is inlined in error.h
 */
 
-/* this function is inlined in error.h */
-
-/*
-** Procedure:   ERRORreport
-** Parameters:  Error what  - error to report
-**      ...     - arguments for error string
-** Returns: void
-** Description: Print a report of an error
+/** \fn ERRORreport
+** \param what error to report
+** \param ... arguments for error string
+** Print a report of an error
 **
 ** Notes:   The second and subsequent arguments should match the
 **      format fields of the message generated by 'what.'
 */
-
-/*VARARGS*/
 void
 #ifdef __STDC__
 ERRORreport( Error what, ... ) {
@@ -279,19 +255,15 @@ va_dcl {
     va_end( args );
 }
 
-/*
-** Procedure:   ERRORreport_with_line
-** Parameters:  Error what  - error to report
-**      int   line  - line number of error
-**      ...     - arguments for error string
-** Returns: void
-** Description: Print a report of an error, including a line number
+/**
+** \param what error to report
+** \param line line number of error
+** \param ... arguments for error string
+** Print a report of an error, including a line number
 **
-** Notes:   The third and subsequent arguments should match the
+** \note The third and subsequent arguments should match the
 **      format fields of the message generated by 'what.'
 */
-
-/*VARARGS*/
 void
 #ifdef __STDC__
 ERRORreport_with_line( Error what, int line, ... ) {
@@ -328,7 +300,6 @@ va_dcl {
     what->message = savemsg;
 }
 
-/*VARARGS*/
 void
 #ifdef __STDC__
 ERRORreport_with_symbol( Error what, Symbol * sym, ... ) {
@@ -425,22 +396,18 @@ va_dcl {
     va_end( args );
 }
 
-void
-ERRORnospace() {
+void ERRORnospace() {
     fprintf( stderr, "%s: out of space\n", EXPRESSprogram_name );
     ERRORabort( 0 );
 }
 
-/*
-** Procedure:   ERRORcreate
-** Parameters:  String   message    - error message
-**      Severity severity   - severity of error
-** Returns: Error           - newly created error
-** Description: Create a new error
+/**
+** \param message error message
+** \param severity severity of error
+** \return newly created error
+** Create a new error
 */
-
-Error
-ERRORcreate( char * message, Severity severity ) {
+Error ERRORcreate( char * message, Severity severity ) {
     Error n;
 
     n = ( struct Error_ * )malloc( sizeof( struct Error_ ) );
@@ -450,49 +417,25 @@ ERRORcreate( char * message, Severity severity ) {
     return n;
 }
 
-/*
-** Procedure:   ERRORbuffer_messages
-** Parameters:  Boolean flag    - to buffer or not to buffer
-** Returns: void
-** Description: Selects buffering of error messages
+/** \fn ERRORbuffer_messages
+** \param flag    - to buffer or not to buffer
+** Selects buffering of error messages
+** \note this function is inlined in error.h
 */
 
-/* this function is inlined in error.h */
-
-/*
-** Procedure:   ERRORflush_messages
-** Parameters:  void
-** Returns: void
-** Description: Flushes the error message buffer to standard output.
+/** \fn ERRORflush_messages
+** Flushes the error message buffer to standard output.
+** \note this function is inlined in error.h
 **
-** Notes:   The error messages are sorted by line number (which appears
-**      in the third column).
+** \note The error messages are sorted by line number (which appears in the third column).
 */
 
-/* this function is inlined in error.h */
-
-/*
-** Procedure:   ERROR_start_message_buffer
-** Parameters:  -- none --
-** Returns: void
-** Description:
-*/
-
-void
-ERROR_start_message_buffer( void ) {
+void ERROR_start_message_buffer( void ) {
     ERROR_string = ERROR_string_base;
     ERROR_with_lines = 0;
 }
 
-/*
-** Procedure:   ERROR_flush_message_buffer
-** Parameters:  -- none --
-** Returns: void
-** Description:
-*/
-
-void
-ERROR_flush_message_buffer( void ) {
+void ERROR_flush_message_buffer( void ) {
     if( __ERROR_buffer_errors == false ) {
         return;
     }
@@ -522,19 +465,12 @@ ERROR_flush_message_buffer( void ) {
                 break;
             }
             heap[parent] = heap[child];
-#if 0
-            if( replace->line > heap[child].line ) {
-                heap[parent] = heap[child];
-            }
-#endif
         }
         heap[parent] = *replace;
     }
 }
 
-/*ARGSUSED*/
-void
-ERRORabort( int sig ) {
+void ERRORabort( int sig ) {
     ERRORflush_messages();
     if( !ERRORdebugging ) {
         if( ERROR_unsafe ) {
@@ -550,12 +486,10 @@ ERRORabort( int sig ) {
     exp_pause();
 }
 
-void
-ERRORsafe( jmp_buf env ) {
+void ERRORsafe( jmp_buf env ) {
     memcpy( ERROR_safe_env, env, sizeof( jmp_buf ) );
 }
 
-void
-ERRORunsafe() {
+void ERRORunsafe() {
     ERROR_unsafe = true;
 }

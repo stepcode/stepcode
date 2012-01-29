@@ -1,10 +1,8 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
-/* $Id: symbol.h,v 1.8 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Symbol
+/** **********************************************************************
+** Module:  Symbol \file symbol.h
 ** Description: This module implements the Symbol abstraction.
 ** Constants:
 **  SYMBOL_NULL - the null Symbol
@@ -44,9 +42,6 @@
 /*****************/
 /* packages used */
 /*****************/
-
-#ifdef SYMBOL_C
-#endif    /*  SYMBOL_C  */
 
 #include <scl_export.h>
 #include "basic.h"  /* get basic definitions */
@@ -96,15 +91,13 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 
 #define SYMBOLset(obj)      obj->symbol.line = yylineno; \
                 obj->symbol.filename = current_filename
-/* for backwards compatibility only, no one should ever need this */
-#define SYMBOLget_name(sym) ((sym)->name)
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void SYMBOLinitialize PROTO( ( void ) );
-SCL_EXPRESS_EXPORT Symbol * SYMBOLcreate PROTO( ( char *, int, char * ) );
+extern SCL_EXPRESS_EXPORT void SYMBOLinitialize( void );
+SCL_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int line, char * filename );
 
 /********************/
 /* inline functions */

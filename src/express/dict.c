@@ -41,8 +41,7 @@
 static Error    ERROR_duplicate_decl;
 static Error    ERROR_duplicate_decl_diff_file;
 
-void
-DICTprint( Dictionary dict ) {
+void DICTprint( Dictionary dict ) {
     Element e;
     DictionaryEntry de;
 
@@ -63,19 +62,15 @@ void DICTinitialize( void ) {
                                          "Redeclaration of %s.  Previous declaration was on line %d in file %s.", SEVERITY_ERROR );
 }
 
-/*
-** Procedure:   DICTcreate
-** Parameters:  int  size   - estimated (initial) max # of entries
-** Returns: Dictionary  - a new dictionary of the specified size
+/** \def DICTcreate
+** \param size   - estimated (initial) max # of entries
+** \return  a new dictionary of the specified size
+** \note now a macro
 */
-/* now a macro */
 
 /**
  * Define anything in a dictionary.  Generates an
  * error directly if there is a duplicate value.
- * \param dictionary dictionary to modify
- * \param entry entry to be added
- * \param experrc buffer for error code
  * \return 0 on success, 1 on failure
  */
 int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
@@ -124,6 +119,7 @@ int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char ty
  * ENUMERATION OF ( A, A ) which has happened!
  * This is the way DICTdefine used to look before enumerations gained
  * their unusual behavior with respect to scoping and visibility rules
+ * \sa DICTdefine
  */
 int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
@@ -146,32 +142,26 @@ int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char t
     return( 1 );
 }
 
-/*
-** Procedure:   DICTundefine
-** Parameters:  Dictionary dictionary   - dictionary to modify
-**      char *     name     - name to remove
-** Returns: Generic         - the entry removed, NULL if not found
+/**
+** \param dict dictionary to modify
+** \param name name to remove
+** \return  the entry removed, NULL if not found
     Changed to return void, since the hash code frees the element, there
     is no way to return (without godawful casting) the generic itself.
 */
-
-void
-DICTundefine( Dictionary dict, char * name ) {
+void DICTundefine( Dictionary dict, char * name ) {
     struct Element_ e;
 
     e.key = name;
     HASHsearch( dict, &e, HASH_DELETE );
 }
 
-/*
-** Procedure:   DICTlookup
-** Parameters:  Dictionary dictionary   - dictionary to look in
-**      char *     name     - name to look up
-** Returns: Generic         - the value found, NULL if not found
+/**
+** \param dictionary dictionary to look in
+** \param name name to look up
+** \return the value found, NULL if not found
 */
-
-Generic
-DICTlookup( Dictionary dictionary, char * name ) {
+Generic DICTlookup( Dictionary dictionary, char * name ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -187,9 +177,10 @@ DICTlookup( Dictionary dictionary, char * name ) {
     return( NULL );
 }
 
-/* like DICTlookup but returns symbol, too */
-Generic
-DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
+/** like DICTlookup but returns symbol, too
+ * \sa DICTlookup
+ */
+Generic DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -206,8 +197,7 @@ DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     return( NULL );
 }
 
-Generic
-DICTdo( DictionaryEntry * dict_entry ) {
+Generic DICTdo( DictionaryEntry * dict_entry ) {
     if( 0 == HASHlist( dict_entry ) ) {
         return 0;
     }

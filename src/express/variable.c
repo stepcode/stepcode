@@ -1,8 +1,8 @@
 
 
-/************************************************************************
-** Module:  Variable
-** Description: This module implements the Variable abstraction.  A
+/** **********************************************************************
+** Module:  Variable \file variable.c
+** This module implements the Variable abstraction.  A
 **  Variable consists of a name, a type, a reference class, and
 **  some flags, e.g. 'optional', 'variable'.  It is used to represent
 **  variable attributes, variables, and formal parameters.
@@ -89,29 +89,21 @@
 #include "express/object.h"
 char * opcode_print( Op_Code o );
 
-Symbol *
-VAR_get_symbol( Generic v ) {
+Symbol * VAR_get_symbol( Generic v ) {
     return( &( ( Variable )v )->name->symbol );
 }
 
-/*
-** Procedure:   VARinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Variable module.
-*/
-
-void
-VARinitialize() {
+/** Initialize the Variable module. */
+void VARinitialize() {
     MEMinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
-    /*  OBJcreate(OBJ_VARIABLE,VAR_get_symbol,"variable",OBJ_UNUSED_BITS);*/
     OBJcreate( OBJ_VARIABLE, VAR_get_symbol, "variable", OBJ_VARIABLE_BITS );
 }
 
-/* returns simple name of variable */
-/* for example, if var is named SELF\xxx.yyy, return yyy */
-extern char *
-VARget_simple_name( Variable v ) {
+/** VARget_simple_name
+ * returns simple name of variable
+ * for example, if var is named SELF\xxx.yyy, return yyy
+ */
+extern char * VARget_simple_name( Variable v ) {
 
     Expression e = VARget_name( v );
 
@@ -129,21 +121,17 @@ VARget_simple_name( Variable v ) {
     return EXPget_name( e );
 }
 
-/*
-** Procedure:   VARcreate
-** Parameters:  String name - name of variable to create
-**      Type   type - type of new variable
-**      Error* experrc  - buffer for error code
-** Returns: Variable    - the Variable created
-** Description: Create and return a new variable.
+/**  VARcreate
+** \param name name of variable to create
+** \param type type of new variable
+** \return the Variable created
+** Create and return a new variable.
 **
-** Notes:   The reference class of the variable is, by default,
+** \note The reference class of the variable is, by default,
 **      dynamic.  Special flags associated with the variable
 **      (e.g., optional) are initially false.
 */
-
-Variable
-VARcreate( Expression name, Type type ) {
+Variable VARcreate( Expression name, Type type ) {
     Variable v = VAR_new();
     v->name = name;
     v->type = type;

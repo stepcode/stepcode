@@ -2,7 +2,7 @@
 
 /** **********************************************************************
 ** Module:  Expression \file expr.c
-** Description: This module implements the Expression abstraction.  Several
+** This module implements the Expression abstraction.  Several
 **  types of expressions are supported: identifiers, literals,
 **  operations (arithmetic, logical, array indexing, etc.), and
 **  function calls.  Every expression is marked with a type.
@@ -100,8 +100,7 @@ static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
 
-Expression
-EXPcreate( Type type ) {
+Expression EXPcreate( Type type ) {
     Expression e;
     e = EXP_new();
     SYMBOLset( e );
@@ -110,10 +109,11 @@ EXPcreate( Type type ) {
     return( e );
 }
 
-/* use this when the return_type is the same as the type */
-/* For example, for constant integers */
-Expression
-EXPcreate_simple( Type type ) {
+/**
+ * use this when the return_type is the same as the type
+ * For example, for constant integers
+ */
+Expression EXPcreate_simple( Type type ) {
     Expression e;
     e = EXP_new();
     SYMBOLset( e );
@@ -121,8 +121,7 @@ EXPcreate_simple( Type type ) {
     return( e );
 }
 
-Expression
-EXPcreate_from_symbol( Type type, Symbol * symbol ) {
+Expression EXPcreate_from_symbol( Type type, Symbol * symbol ) {
     Expression e;
     e = EXP_new();
     e->type = type;
@@ -131,20 +130,12 @@ EXPcreate_from_symbol( Type type, Symbol * symbol ) {
     return e;
 }
 
-Symbol *
-EXP_get_symbol( Generic e ) {
+Symbol * EXP_get_symbol( Generic e ) {
     return( &( ( Expression )e )->symbol );
 }
 
-/*
-** Procedure:   EXPinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Expression module.
-*/
-
-void
-EXPinitialize( void ) {
+/** Description: Initialize the Expression module. */
+void EXPinitialize( void ) {
     MEMinitialize( &EXP_fl, sizeof( struct Expression_ ), 500, 200 );
     MEMinitialize( &OP_fl, sizeof( struct Op_Subexpression ), 500, 100 );
     MEMinitialize( &QUERY_fl, sizeof( struct Query_ ), 50, 10 );
@@ -226,11 +217,12 @@ EXPinitialize( void ) {
     EXPop_init();
 }
 
-/* search id is a parameter to avoid colliding with ENTITYfind... */
-/* there will be no ambiguities, since we're looking at (and marking) */
-/* only types, and it's marking only entities */
-static int
-EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, char * dt,
+/**
+ * \param s_id the search id, a parameter to avoid colliding with ENTITYfind...
+ * there will be no ambiguities, since we're looking at (and marking)
+ * only types, and it's marking only entities
+ */
+static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, char * dt,
                           struct Symbol_ ** where, int s_id ) {
     Variable tmp;
     int options = 0;
@@ -279,8 +271,7 @@ EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, char * dt,
     }
 }
 
-Type
-EXPresolve_op_dot( Expression expr, Scope scope ) {
+Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Expression op1 = expr->e.op1;
     Expression op2 = expr->e.op2;
     Variable v;
@@ -423,12 +414,12 @@ EXPresolve_op_dot( Expression expr, Scope scope ) {
     }
 }
 
-/* search id is a parameter to avoid colliding with ENTITYfind... */
-/* there will be no ambiguities, since we're looking at (and marking) */
-/* only types, and it's marking only entities */
-static int
-EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
-                            int s_id ) {
+/**
+ * \param s_id the search id, a parameter to avoid colliding with ENTITYfind...
+ * there will be no ambiguities, since we're looking at (and marking)
+ * only types, and it's marking only entities
+ */
+static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e, int s_id ) {
     Entity tmp;
     int options = 0;
 
@@ -473,8 +464,7 @@ EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
     }
 }
 
-Type
-EXPresolve_op_group( Expression expr, Scope scope ) {
+Type EXPresolve_op_group( Expression expr, Scope scope ) {
     Expression op1 = expr->e.op1;
     Expression op2 = expr->e.op2;
     Entity ent_ref = ENTITY_NULL;
@@ -579,8 +569,7 @@ EXPresolve_op_group( Expression expr, Scope scope ) {
     }
 }
 
-Type
-EXPresolve_op_relational( Expression e, Scope s ) {
+Type EXPresolve_op_relational( Expression e, Scope s ) {
     Type t = 0;
     int failed = 0;
     Type op1type;
@@ -623,8 +612,7 @@ EXPresolve_op_relational( Expression e, Scope s ) {
     return( Type_Logical );
 }
 
-void
-EXPresolve_op_default( Expression e, Scope s ) {
+void EXPresolve_op_default( Expression e, Scope s ) {
     int failed = 0;
 
     switch( OPget_number_of_operands( e->e.op_code ) ) {
@@ -773,12 +761,11 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
     return e->e.op1->return_type;
 }
 
-/*
-resolve_func:   resolves an expression of this type
-type_func:  returns final type of expression of this type
-        avoids resolution if possible
-*/
-
+/**
+ * \param resolve_func   resolves an expression of this type
+ * \param type_func  returns final type of expression of this type
+ * avoids resolution if possible
+ */
 void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {
     EXPop_table[token_number].token = string;
     EXPop_table[token_number].resolve = resolve_func;
@@ -817,7 +804,7 @@ void EXPop_init() {
 }
 
 
-/** \fn  TERN_EXPcreate
+/**
 ** \param op operation
 ** \param operand1 - first operand
 ** \param operand2 - second operand
@@ -852,7 +839,7 @@ Expression BIN_EXPcreate( Op_Code op, Expression operand1, Expression operand2 )
     return e;
 }
 
-/** \fn UN_EXPcreate
+/**
 ** \param op operation
 ** \param operand  operand
 ** \returns the expression created
@@ -866,7 +853,7 @@ Expression UN_EXPcreate( Op_Code op, Expression operand ) {
     return e;
 }
 
-/** \fn QUERYcreate
+/**
 ** \param local local identifier for source elements
 ** \param aggregate source aggregate to query
 ** \returns the query expression created
@@ -888,7 +875,7 @@ Expression QUERYcreate( Symbol * local, Expression aggregate ) {
     return e;
 }
 
-/** \fn   EXPget_integer_value
+/**
 ** \param expression  expression to evaluate
 ** \param experrc buffer for error code
 ** \returns value of expression

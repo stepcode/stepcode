@@ -1,10 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-/* $Id: object.h,v 1.9 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Object
+/** **********************************************************************
+** Module:  Object \file object.h
 ** Description: This module implements the Object abstraction.
 ** Constants:
 **  OBJECT_NULL - the null class
@@ -113,15 +111,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 extern SCL_EXPRESS_EXPORT void OBJinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
 extern SCL_EXPRESS_EXPORT Symbol * UNK_get_symbol PROTO( ( Generic x ) );
-#if 0
-extern void OBJcreate( char, struct Symbol * ( * )( Generic ), char *, int );
-#endif
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(OBJECT_C)
-#endif /* supports_inline_functions || defined(OBJECT_C) */
 
 #endif /*OBJECT_H*/

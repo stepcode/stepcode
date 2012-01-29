@@ -1,8 +1,8 @@
 
 
-/************************************************************************
-** Module:  Scope
-** Description: This module implements a hierarchical (i.e., scoped)
+/** **********************************************************************
+** Module:  Scope \file scope.c
+** This module implements a hierarchical (i.e., scoped)
 **  symbol table.  The symbol table can store definitions of entities,
 **  types, algorithms, and variables, as well as containing a list
 **  of subscopes.
@@ -42,30 +42,19 @@
 #include "express/scope.h"
 #include "express/resolve.h"
 
-Symbol *
-SCOPE_get_symbol( Generic s ) {
+Symbol * SCOPE_get_symbol( Generic s ) {
     return( &( ( Scope )s )->symbol );
 }
 
-void
-SCOPEinitialize( void ) {
+void SCOPEinitialize( void ) {
     OBJcreate( OBJ_SCHEMA, SCOPE_get_symbol, "schema", OBJ_SCHEMA_BITS );
     MEMinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
 }
 
-/*
-** Procedure:   SCOPEget_entities
-** Parameters:  Scope       scope   - scope to examine
-** Returns: Linked_List of Entity   - entities defined locally
-** Description: Retrieve a list of the entities defined locally in a scope.
-**
-** Notes:   This function is considerably faster than
-**  SCOPEget_entities_superclass_order(), and should be used whenever
-**  the order of the entities on the list is not important.
-*/
-
-void
-SCOPE_get_entities( Scope scope, Linked_List result ) {
+/**  SCOPE_get_entities
+ * \sa SCOPEget_entities
+ */
+void SCOPE_get_entities( Scope scope, Linked_List result ) {
     DictionaryEntry de;
     Generic x;
 
@@ -75,25 +64,26 @@ SCOPE_get_entities( Scope scope, Linked_List result ) {
     }
 }
 
-Linked_List
-SCOPEget_entities( Scope scope ) {
+/**
+ ** \param scope scope to examine
+ ** \return entities defined locally
+ **
+ ** Retrieve a list of the entities defined locally in a scope.
+ **
+ ** \note This function is considerably faster than
+ **  SCOPEget_entities_superclass_order(), and should be used whenever
+ **  the order of the entities on the list is not important.
+ */
+Linked_List SCOPEget_entities( Scope scope ) {
     Linked_List result = LISTcreate();
     SCOPE_get_entities( scope, result );
     return( result );
 }
 
-/*
-** Procedure:   SCOPEget_entities_superclass_order
-** Parameters:  Scope       scope   - scope to examine
-** Returns: Linked_List of Entity   - entities defined locally
-** Description: Retrieve a list of the entities defined locally in a scope.
-**
-** Notes:   The list returned is ordered such that an entity appears
-**  before all of its subtypes.
-*/
-
-void
-SCOPE_dfs( Dictionary symbols, Entity root, Linked_List result ) {
+/**
+ * \sa SCOPEget_entities_superclass_order
+ */
+void SCOPE_dfs( Dictionary symbols, Entity root, Linked_List result ) {
     Entity ent;
 
     if( ( ENTITYget_mark( root ) != ENTITY_MARK ) ) {
@@ -109,8 +99,16 @@ SCOPE_dfs( Dictionary symbols, Entity root, Linked_List result ) {
     }
 }
 
-Linked_List
-SCOPEget_entities_superclass_order( Scope scope ) {
+/**
+ ** \param scope scope to examine
+ ** \return entities defined locally
+ **
+ ** Retrieve a list of the entities defined locally in a scope.
+ **
+ ** \note The list returned is ordered such that an entity appears before all of its subtypes.
+ ** \sa SCOPEget_entities
+ */
+Linked_List SCOPEget_entities_superclass_order( Scope scope ) {
     Linked_List result;
     DictionaryEntry de;
 
@@ -122,11 +120,12 @@ SCOPEget_entities_superclass_order( Scope scope ) {
     return result;
 }
 
-/* find an entity type, return without resolving it */
-/* note that object found is not actually checked, only because */
-/* caller is in a better position to describe the error with context */
-Generic
-SCOPEfind( Scope scope, char * name, int type ) {
+/**
+ * find an entity type, return without resolving it
+ * note that object found is not actually checked, only because
+ * caller is in a better position to describe the error with context
+ */
+Generic SCOPEfind( Scope scope, char * name, int type ) {
     extern Generic SCOPE_find( Scope , char *, int );
     extern Dictionary EXPRESSbuiltins;  /* procedures/functions */
     Generic x;
@@ -145,11 +144,12 @@ SCOPEfind( Scope scope, char * name, int type ) {
 }
 
 
-/* look up types, functions, etc.  anything not inherited through */
-/* the supertype/subtype hierarchy */
-/* EH???  -> lookup an object when the current scope is not a schema */
-Generic
-SCOPE_find( Scope scope, char * name, int type ) {
+/**
+ * look up types, functions, etc.  anything not inherited through
+ * the supertype/subtype hierarchy
+ * EH???  -> lookup an object when the current scope is not a schema
+ */
+Generic SCOPE_find( Scope scope, char * name, int type ) {
     Generic result;
     Rename * rename;
 

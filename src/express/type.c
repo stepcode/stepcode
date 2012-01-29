@@ -1,22 +1,22 @@
 
 
-/************************************************************************
-** Module:  Type
-** Description: This module implements the type abstraction.  It is
+/** **********************************************************************
+** Module:  Type \file type.c
+This module implements the type abstraction.  It is
 **  rather unpleasant, since this abstraction is quite well suited
 **  to an object-oriented environment with inheritance.
 ** Constants:
 **  TYPE_AGGREGATE      - generic general aggregate
-**  TYPE_BINARY     - binary type
+**  TYPE_BINARY         - binary type
 **  TYPE_BOOLEAN        - boolean type
 **  TYPE_GENERIC        - generic type
 **  TYPE_INTEGER        - integer type with default precision
 **  TYPE_LOGICAL        - logical type
-**  TYPE_NULL       - the null type
-**  TYPE_NUMBER     - number type
-**  TYPE_REAL       - real type with default precision
+**  TYPE_NULL           - the null type
+**  TYPE_NUMBER         - number type
+**  TYPE_REAL           - real type with default precision
 **  TYPE_SET_OF_GENERIC - type for unconstrained set of generic items
-**  TYPE_STRING     - string type with default precision
+**  TYPE_STRING         - string type with default precision
 **
 ************************************************************************/
 
@@ -126,9 +126,10 @@
 #include "express/type.h"
 
 static Error ERROR_undefined_tag;
-
-Type
-TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
+/**
+ * create a type with no symbol table
+ */
+Type TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
     Type t = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead th = TYPEHEAD_new();
 
@@ -139,11 +140,12 @@ TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
     return t;
 }
 
-/* create a type but this is just a shell, either to be completed later */
-/* such as enumerations (which have a symbol table added later) */
-/* or to be used as a type reference */
-Type
-TYPEcreate_name( Symbol * symbol ) {
+/**
+ * create a type but this is just a shell, either to be completed later
+ * such as enumerations (which have a symbol table added later)
+ * or to be used as a type reference
+ */
+Type TYPEcreate_name( Symbol * symbol ) {
     Scope s = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead t = TYPEHEAD_new();
 
@@ -152,8 +154,7 @@ TYPEcreate_name( Symbol * symbol ) {
     return s;
 }
 
-Type
-TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
+Type TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
     Type t;
     extern int tag_count;
 
@@ -162,24 +163,27 @@ TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
         if( DICT_type == OBJ_TAG ) {
             return( t );
         } else {
-            /* easiest to just generate the error this way! */
-            /* following call WILL fail intentionally */
+            /* easiest to just generate the error this way!
+             * following call WILL fail intentionally
+             */
             DICTdefine( scope->symbol_table, symbol->name, 0, symbol, OBJ_TAG );
             return( 0 );
         }
     }
 
-    /* tag is undefined */
-    /* if we are outside a formal parameter list (hack, hack) */
-    /* then we can only refer to existing tags, so produce an error */
+    /* tag is undefined
+     * if we are outside a formal parameter list (hack, hack)
+     * then we can only refer to existing tags, so produce an error
+     */
     if( tag_count < 0 ) {
         ERRORreport_with_symbol( ERROR_undefined_tag, symbol,
                                  symbol->name );
         return( 0 );
     }
 
-    /* otherwise, we're in a formal parameter list, */
-    /* so it's ok to define it */
+    /* otherwise, we're in a formal parameter list,
+     * so it's ok to define it
+     */
     t = TYPEcreate_nostab( symbol, scope, OBJ_TAG );
     t->u.type->head = base;
 
@@ -189,15 +193,13 @@ TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
     return( t );
 }
 
-Type
-TYPEcreate( enum type_enum type ) {
+Type TYPEcreate( enum type_enum type ) {
     TypeBody tb = TYPEBODYcreate( type );
     Type t = TYPEcreate_from_body_anonymously( tb );
     return( t );
 }
 
-Type
-TYPEcreate_from_body_anonymously( TypeBody tb ) {
+Type TYPEcreate_from_body_anonymously( TypeBody tb ) {
     Type t = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead th = TYPEHEAD_new();
 
@@ -208,19 +210,19 @@ TYPEcreate_from_body_anonymously( TypeBody tb ) {
     return t;
 }
 
-TypeBody
-TYPEBODYcreate( enum type_enum type ) {
+TypeBody TYPEBODYcreate( enum type_enum type ) {
     TypeBody tb = TYPEBODY_new();
     tb->type = type;
     return tb;
 }
 
-/* return true if "type t" inherits from "enum type_enum" */
-/* may need to be implemented for more types */
+/**
+ * return true if "type t" inherits from "enum type_enum"
+ * may need to be implemented for more types
+ */
 #define TYPE_inherits_from(t,e) ((t) && TYPEinherits_from((t),(e)))
 
-bool
-TYPEinherits_from( Type t, enum type_enum e ) {
+bool TYPEinherits_from( Type t, enum type_enum e ) {
     TypeBody tb = t->u.type->body;
 
     switch( e ) {
@@ -268,21 +270,13 @@ return( false );
 }
 #endif
 
-Symbol *
-TYPE_get_symbol( Generic t ) {
+Symbol * TYPE_get_symbol( Generic t ) {
     return( &( ( Type )t )->symbol );
 }
 
 
-/*
-** Procedure:   TYPEinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Type module.
-*/
-
-void
-TYPEinitialize() {
+/** Initialize the Type module */
+void TYPEinitialize() {
     MEMinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
     MEMinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
     OBJcreate( OBJ_TYPE, TYPE_get_symbol, "type", OBJ_TYPE_BITS );
@@ -389,7 +383,6 @@ TYPEinitialize() {
     ERROR_undefined_tag =
         ERRORcreate( "Undefined type tag %s", SEVERITY_ERROR );
 }
-
 
 /**
  * \param t type to examine
