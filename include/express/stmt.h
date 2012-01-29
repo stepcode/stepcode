@@ -1,10 +1,8 @@
 #ifndef STATEMENT_H
 #define STATEMENT_H
 
-/* $Id: stmt.h,v 1.3 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Statement
+/** **********************************************************************
+** Module:  Statement \file stmt.h
 ** Description: This module implements the Statement abstraction.  A
 **  statement is, in effect, a typeless Expression.  Due to the
 **  existence of complex language constructs, however, it often is
@@ -95,9 +93,8 @@ typedef struct Scope_ * Increment;
 /* these should probably all be expression types */
 
 struct Statement_ {
-    Symbol symbol;  /* can hold pcall or alias name */
-    /* but otherwise is not used for anything */
-    int type;   /* one of STMT_XXX above */
+    Symbol symbol;  /**< can hold pcall or alias name but otherwise is not used for anything */
+    int type;   /**< one of STMT_XXX above */
     /* hey, is there nothing in common beside symbol and private data?? */
     union u_statement {
         struct Alias_     *     alias;
@@ -115,7 +112,7 @@ struct Statement_ {
 struct Alias_ {
     struct Scope_ * scope;
     struct Variable_ * variable;
-    Linked_List statements;     /* list of statements */
+    Linked_List statements;     /**< list of statements */
 };
 
 struct Assignment_ {
@@ -134,18 +131,18 @@ struct Compound_Statement_ {
 
 struct Conditional_ {
     Expression test;
-    Linked_List code;       /* list of statements */
-    Linked_List otherwise;      /* list of statements */
+    Linked_List code;       /**< list of statements */
+    Linked_List otherwise;      /**< list of statements */
 };
 
 struct Loop_ {
-    struct Scope_ * scope;      /* scope for increment control */
+    struct Scope_ * scope;      /**< scope for increment control */
     Expression while_expr;
     Expression until_expr;
-    Linked_List statements;     /* list of statements */
+    Linked_List statements;     /**< list of statements */
 };
 
-/* this is an element in the optional Loop scope */
+/** this is an element in the optional Loop scope */
 struct Increment_ {
     Expression init;
     Expression end;
@@ -154,7 +151,7 @@ struct Increment_ {
 
 struct Procedure_Call_ {
     struct Scope_ * procedure;
-    Linked_List parameters; /* list of expressions */
+    Linked_List parameters; /**< list of expressions */
 };
 
 struct Return_Statement_ {
@@ -248,12 +245,5 @@ extern SCL_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
 extern SCL_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
         Expression end, Expression increment ) );
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(STATEMENT_C)
-#endif /* supports_inline_functions || defined(STATEMENT_C) */
 
 #endif /*STATEMENT_H*/

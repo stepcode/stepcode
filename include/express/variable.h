@@ -1,10 +1,8 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
-/* $Id: variable.h,v 1.10 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Variable
+/** **********************************************************************
+** Module:  Variable \file variable.h
 ** Description: This module implements the Variable abstraction.  A
 **  Variable consists of a name, a type, a reference class, and
 **  some flags, e.g. 'optional', 'variable'.  It is used to represent
@@ -78,26 +76,23 @@ typedef struct Variable_ * Variable;
 /***************************/
 
 struct Variable_ {
-    /* Symbol is inside of 'name' below */
-    Expression name;
-    Type type;
-    Expression initializer; /* or 'derived' */
-    int     offset;
+    Expression  name;    /**< Symbol is inside of 'name' below */
+    Type        type;
+    Expression  initializer; /**< or 'derived' */
+    int         offset;
 
     struct {
-        int optional    : 1; /* OPTIONAL keyword */
-        int var     : 1; /* VAR keyword */
-        int constant    : 1; /* from CONSTANT...END_CONSTANT */
-        int unique  : 1; /* appears in UNIQUE list */
-        int parameter   : 1; /* is a formal parameter */
-        int attribute   : 1; /* is an attribute (rule parameters */
-        /* are marked this way, too) */
+        int optional    : 1; /**< OPTIONAL keyword */
+        int var         : 1; /**< VAR keyword */
+        int constant    : 1; /**< from CONSTANT...END_CONSTANT */
+        int unique      : 1; /**< appears in UNIQUE list */
+        int parameter   : 1; /**< is a formal parameter */
+        int attribute   : 1; /**< is an attribute (rule parameters are marked this way, too) */
     } flags;
 
 #define query_symbol inverse_symbol
-    Symbol   *  inverse_symbol; /* entity symbol */
-    Variable    inverse_attribute;  /* attribute related by */
-    /* inverse relationship */
+    Symbol   *  inverse_symbol;     /**< entity symbol */
+    Variable    inverse_attribute;  /**< attribute related by inverse relationship */
 };
 
 /********************/
@@ -133,8 +128,6 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
 
 #define VARis_derived(v)        ((v)->initializer != 0)
 #define VARget_inverse(v)       ((v)->inverse_attribute)
-/* for backwards compatibility */
-#define VARget_derived      VARis_derived
 
 /***********************/
 /* function prototypes */
@@ -143,30 +136,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
 extern SCL_EXPRESS_EXPORT Variable VARcreate PROTO( ( Expression, Type ) );
 extern SCL_EXPRESS_EXPORT void VARinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT char * VARget_simple_name PROTO( ( Variable ) );
-
-#if 0
-extern void     VARput_type PROTO( ( Variable *, Type ) );
-extern void     VARput_initializer PROTO( ( Variable *, Expression ) );
-extern void     VARput_derived PROTO( ( Variable *, Boolean ) );
-extern void     VARput_optional PROTO( ( Variable *, Boolean ) );
-extern void     VARput_variable PROTO( ( Variable *, Boolean ) );
-extern void     VARput_reference PROTO( ( Variable *, Expression ) );
-/*Mextern void      VARput_offset PROTO((Variable *, int));*/
-extern void     VARput_inverse PROTO( ( Variable *, Symbol * ) );
-/*M extern Type     VARget_type PROTO((Variable *));*/
-/*Mextern Boolean       VARget_derived PROTO((Variable *));*/
-extern Boolean      VARget_optional PROTO( ( Variable * ) );
-extern Boolean      VARget_variable PROTO( ( Variable * ) );
-extern Expression   VARget_reference PROTO( ( Variable * ) );
-/*Mextern int       VARget_offset PROTO((Variable *));*/
-#endif /*0*/
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(VARIABLE_C)
-
-#endif /* supports_inline_functions || defined(VARIABLE_C) */
 
 #endif    /*  VARIABLE_H  */

@@ -1,10 +1,8 @@
 #ifndef ALGORITHM_H
 #define ALGORITHM_H
 
-/* $Id: alg.h,v 1.4 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Algorithm
+/** **********************************************************************
+** Module:  Algorithm \file alg.h
 ** Description: This module implements the Algorithm abstraction.  An
 **  algorithm can be a procedure, a function, or a rule.  It consists
 **  of a name, a return type (for functions and rules), a list of
@@ -69,50 +67,47 @@ typedef struct Where_ * Where;
 /* hidden type definitions */
 /***************************/
 
-/* each formal tag has one of these structs allocated to it */
-/* As each (real) call is resolved, the tag->type is temporarily borrowed */
+/** each formal tag has one of these structs allocated to it
+ * As each (real) call is resolved, the tag->type is temporarily borrowed
+ */
 struct tag {
     char * name;
     Type type;
 };
 
-/* location of fulltext of algorithm in source file */
+/** location of fulltext of algorithm in source file */
 struct FullText {
     char * filename;
     unsigned int start, end;
 };
 
-/* 'parameters' are lists of lists of (type) expressions */
+/** 'parameters' are lists of lists of (type) expressions */
 struct Procedure_ {
-    int pcount; /* # of parameters */
-    int tag_count;  /* # of different parameter tags */
+    int pcount; /**< # of parameters */
+    int tag_count;  /**< # of different parameter tags */
     Linked_List parameters;
     Linked_List body;
     struct FullText text;
-    int builtin;    /* builtin if true */
+    int builtin;    /**< builtin if true */
 };
 
 struct Function_ {
-    int pcount; /* # of parameters */
-    int tag_count;  /* # of different parameter/return value tags */
+    int pcount; /**< # of parameters */
+    int tag_count;  /**< # of different parameter/return value tags */
     Linked_List parameters;
     Linked_List body;
     Type return_type;
     struct FullText text;
-    int builtin;    /* builtin if true */
+    int builtin;    /**< builtin if true */
 };
 
 struct Rule_ {
     Linked_List parameters;
     Linked_List body;
     struct FullText text;
-    /*
-        Linked_List where;
-        moved to Scope - DEL 22-Jul-1993
-    */
 };
 
-/* define a where clause */
+/** define a where clause */
 struct Where_ {
     Symbol   *   label;
     Expression  expr;
@@ -175,18 +170,8 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 #define FUNCget_return_type(f)  ((f)->u.func->return_type)
 #define RULEget_where(r)    ((r)->where)
 #define RULEput_where(r,w)  ((r)->where = (w))
-/*
-#define RULEget_where_clause(r) ((r)->u.rule->where)
-*/
 #define WHEREget_label(w)   ((w)->label)
 #define WHEREget_expression(w)  ((w)->expr)
-
-#if 0
-extern void     ALGput_parameters PROTO( ( Algorithm, Linked_List ) );
-extern void     ALGput_body PROTO( ( Algorithm, Linked_List ) );
-extern void     FUNCput_return_type PROTO( ( Algorithm, Type ) );
-extern void     RULEput_where_clause PROTO( ( Algorithm, Linked_List ) );
-#endif
 
 /***********************/
 /* function prototypes */
@@ -196,11 +181,5 @@ extern SCL_EXPRESS_EXPORT Scope    ALGcreate PROTO( ( char ) );
 extern SCL_EXPRESS_EXPORT void     ALGinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void     ALGput_full_text PROTO( ( Scope, int, int ) );
 
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(ALGORITHM_C)
-#endif /* supports_inline_functions || defined(ALGORITHM_C) */
 
 #endif /* ALGORITHM_H */

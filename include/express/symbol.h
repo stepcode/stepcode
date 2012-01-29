@@ -99,11 +99,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 extern SCL_EXPRESS_EXPORT void SYMBOLinitialize( void );
 SCL_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int line, char * filename );
 
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(SYMBOL_C)
-#endif /* supports_inline_functions || defined(SYMBOL_C) */
 
 #endif    /*  SYMBOL_H  */

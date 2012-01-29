@@ -1,10 +1,8 @@
 #ifndef DICTIONARY_H
 #define DICTIONARY_H
 
-/* $Id: dict.h,v 1.4 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Dictionary
+/** **********************************************************************
+** Module:  Dictionary \file dict.h
 ** Description: This module implements the dictionary abstraction.  A
 **  dictionary is a repository for a number of objects, all of which
 **  can be named using the same function.  A dictionary is limited to
@@ -80,8 +78,7 @@ typedef HashEntry       DictionaryEntry;
 #include "decstart.h"
 #endif /*DICTIONARY_C*/
 
-GLOBAL SCL_EXPRESS_EXPORT char DICT_type;  /* set as a side-effect of DICT lookup routines */
-/* to type of object found */
+GLOBAL SCL_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
 
 #include "de_end.h"
 
@@ -90,12 +87,12 @@ GLOBAL SCL_EXPRESS_EXPORT char DICT_type;  /* set as a side-effect of DICT looku
 /*******************************/
 
 #define DICTcreate(estimated_max_size)  HASHcreate(estimated_max_size)
-/* should really can DICTdo_init and rename do_type_init to do_init! */
+/** should really can DICTdo_init and rename do_type_init to do_init! */
 #define DICTdo_init(dict,de)        HASHlistinit((dict),(de))
 #define DICTdo_type_init(dict,de,t) HASHlistinit_by_type((dict),(de),(t))
 #define DICTdo_end(hash_entry)      HASHlistend(hash_entry)
 
-/* modify dictionary entry in-place */
+/** modify dictionary entry in-place */
 #define DICTchange(e,obj,sym,typ)   { \
                     (e)->data = (obj); \
                     (e)->symbol = (sym); \
@@ -116,12 +113,5 @@ extern SCL_EXPRESS_EXPORT Generic      DICTlookup PROTO( ( Dictionary, char * ) 
 extern SCL_EXPRESS_EXPORT Generic      DICTlookup_symbol PROTO( ( Dictionary, char *, Symbol ** ) );
 extern SCL_EXPRESS_EXPORT Generic      DICTdo PROTO( ( DictionaryEntry * ) );
 extern SCL_EXPRESS_EXPORT void     DICTprint PROTO( ( Dictionary ) );
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(DICTIONARY_C)
-#endif /*supports_inline_functions || defined(DICTIONARY_C)*/
 
 #endif /*DICTIONARY_H*/

@@ -1,7 +1,6 @@
 #ifndef BASIC_H
 #define BASIC_H
 
-/* $Id: basic.h,v 1.8 1997/10/22 16:06:28 sauderd Exp $ */
 
 /*
  * This work was supported by the United States Government, and is
@@ -144,12 +143,6 @@ typedef int ( *intFuncptr )();
 # endif
 
 # endif
-#endif
-
-
-/* pacify IBM's c89 */
-#if !defined(_POSIX_SOURCE)
-#define _POSIX_SOURCE
 #endif
 
 #endif    /*    */

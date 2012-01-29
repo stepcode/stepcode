@@ -46,9 +46,9 @@
 /* constants */
 /*************/
 
-/* each object has an index - current the index is a mnemonic character */
-/* hence the array is rather sparse, but the extra slop is only a hundred */
-/* or so bytes, so it's nothing to sweat about */
+/** each object has an index - current the index is a mnemonic character
+ * hence the array is rather sparse, but the extra slop is only a hundred
+ * or so bytes, so it's nothing to sweat about */
 #define MAX_OBJECT_TYPES    127 /* really could be a LOT less */
 
 /*****************/
@@ -69,9 +69,8 @@
 
 struct Object {
     struct Symbol_ * ( *get_symbol )();
-    char * type; /* should complete the phrase "X is ..." */
-    /* i.e., "an entity", "a type", "of unknown type" */
-    int bits;   /* a bitwise selector of a type, i.e. OBJ_XX_BITS */
+    char * type; /**< should complete the phrase "X is ..." - i.e., "an entity", "a type", "of unknown type" */
+    int bits;   /**< a bitwise selector of a type, i.e. OBJ_XX_BITS */
 };
 
 /****************/
