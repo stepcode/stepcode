@@ -225,46 +225,46 @@ const char * GetAggrElemType( const Type type ) {
         class = TYPEget_type( bt );
 
         /*      case TYPE_INTEGER:  */
-        if( class == Class_Integer_Type ) {
+        if( class == integer_ ) {
             strcpy( retval, "long" );
         }
 
         /*      case TYPE_REAL:
             case TYPE_NUMBER:   */
-        if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) ) {
+        if( ( class == number_ ) || ( class == real_ ) ) {
             strcpy( retval, "double" );
         }
 
         /*      case TYPE_ENTITY:   */
-        if( class == Class_Entity_Type ) {
+        if( class == entity_ ) {
             strcpy( retval, IdlEntityTypeName( bt ) );
         }
 
 
         /*      case TYPE_ENUM:     */
         /*  case TYPE_SELECT:   */
-        if( ( class == Class_Enumeration_Type )
-                || ( class == Class_Select_Type ) )  {
+        if( ( class == enumeration_ )
+                || ( class == select_ ) )  {
             strcpy( retval, TYPEget_ctype( bt ) );
         }
 
         /*  case TYPE_LOGICAL:  */
-        if( class == Class_Logical_Type ) {
+        if( class == logical_ ) {
             strcpy( retval, "Logical" );
         }
 
         /*  case TYPE_BOOLEAN:  */
-        if( class == Class_Boolean_Type ) {
+        if( class == boolean_ ) {
             strcpy( retval, "Bool" );
         }
 
         /*  case TYPE_STRING:   */
-        if( class == Class_String_Type ) {
+        if( class == string_ ) {
             strcpy( retval, "string" );
         }
 
         /*  case TYPE_BINARY:   */
-        if( class == Class_Binary_Type ) {
+        if( class == binary_ ) {
             strcpy( retval, "binary" );
         }
     }
@@ -287,19 +287,19 @@ const char * TYPEget_idl_type( const Type t ) {
 
         /* ///////////////////////// */
         /*  case TYPE_ARRAY:    */
-        if( TYPEget_type( t ) == Class_Array_Type ) {
+        if( TYPEget_type( t ) == array_ ) {
             strcat( retval, "__array" );
         }
         /*  case TYPE_LIST: */
-        if( TYPEget_type( t ) == Class_List_Type ) {
+        if( TYPEget_type( t ) == list_ ) {
             strcat( retval, "__list" );
         }
         /*  case TYPE_SET:  */
-        if( TYPEget_type( t ) == Class_Set_Type ) {
+        if( TYPEget_type( t ) == set_ ) {
             strcat( retval, "__set" );
         }
         /*  case TYPE_BAG:  */
-        if( TYPEget_type( t ) == Class_Bag_Type ) {
+        if( TYPEget_type( t ) == bag_ ) {
             strcat( retval, "__bag" );
         }
         return retval;
@@ -312,40 +312,40 @@ const char * TYPEget_idl_type( const Type t ) {
     class = TYPEget_type( t );
 
     /*    case TYPE_LOGICAL:    */
-    if( class == Class_Logical_Type ) {
+    if( class == logical_ ) {
         return ( "Logical" );
     }
 
     /*    case TYPE_BOOLEAN:    */
-    if( class == Class_Boolean_Type ) {
+    if( class == boolean_ ) {
         return ( "Boolean" );
     }
 
     /*      case TYPE_INTEGER:  */
-    if( class == Class_Integer_Type ) {
+    if( class == integer_ ) {
         return ( "SDAI_Integer" );
     }
     /*  return ("CORBA::Long");*/
 
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
-    if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) ) {
+    if( ( class == number_ ) || ( class == real_ ) ) {
         return ( "SDAI_Real" );
     }
     /*  return ("CORBA::Double"); */
 
     /*      case TYPE_STRING:   */
-    if( class == Class_String_Type ) {
+    if( class == string_ ) {
         return ( "char *" );
     }
 
     /*      case TYPE_BINARY:   */
-    if( class == Class_Binary_Type ) {
+    if( class == binary_ ) {
         return ( AccessType( t ) );
     }
 
     /*      case TYPE_ENTITY:   */
-    if( class == Class_Entity_Type ) {
+    if( class == entity_ ) {
         /* better do this because the return type might go away */
         strcpy( retval, IdlEntityTypeName( t ) );
         strcat( retval, "_ptr" );
@@ -354,7 +354,7 @@ const char * TYPEget_idl_type( const Type t ) {
     }
     /*    case TYPE_ENUM:   */
     /*    case TYPE_SELECT: */
-    if( class == Class_Enumeration_Type ) {
+    if( class == enumeration_ ) {
         strncpy( retval, EnumName( TYPEget_name( t ) ), BUFSIZ - 2 );
 
         strcat( retval, " /*" );
@@ -363,7 +363,7 @@ const char * TYPEget_idl_type( const Type t ) {
         /*      strcat (retval, "_var");*/
         return retval;
     }
-    if( class == Class_Select_Type )  {
+    if( class == select_ )  {
         return ( IdlEntityTypeName( t ) );
     }
 
@@ -509,28 +509,28 @@ char * TYPEget_express_type( const Type t ) {
     class = TYPEget_type( t );
 
     /*    case TYPE_LOGICAL:    */
-    if( ( class == Class_Boolean_Type ) || ( class == Class_Logical_Type ) ) {
+    if( ( class == boolean_ ) || ( class == logical_ ) ) {
         return ( "Logical" );
     }
 
     /*      case TYPE_INTEGER:  */
-    if( class == Class_Integer_Type ) {
+    if( class == integer_ ) {
         return ( "Integer " );
     }
 
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
-    if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) ) {
+    if( ( class == number_ ) || ( class == real_ ) ) {
         return ( "Real " );
     }
 
     /*      case TYPE_STRING:   */
-    if( class == Class_String_Type ) {
+    if( class == string_ ) {
         return ( "String " )      ;
     }
 
     /*      case TYPE_BINARY:   */
-    if( class == Class_Binary_Type ) {
+    if( class == binary_ ) {
         return ( "Binary " )      ;
     }
 
@@ -545,19 +545,19 @@ char * TYPEget_express_type( const Type t ) {
         class = TYPEget_type( bt );
 
         /*  case TYPE_ARRAY:    */
-        if( TYPEget_type( t ) == Class_Array_Type ) {
+        if( TYPEget_type( t ) == array_ ) {
             aggr_type = "Array";
         }
         /*  case TYPE_LIST: */
-        if( TYPEget_type( t ) == Class_List_Type ) {
+        if( TYPEget_type( t ) == list_ ) {
             aggr_type = "List";
         }
         /*  case TYPE_SET:  */
-        if( TYPEget_type( t ) == Class_Set_Type ) {
+        if( TYPEget_type( t ) == set_ ) {
             aggr_type = "Set";
         }
         /*  case TYPE_BAG:  */
-        if( TYPEget_type( t ) == Class_Bag_Type ) {
+        if( TYPEget_type( t ) == bag_ ) {
             aggr_type = "Bag";
         }
 
@@ -721,7 +721,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
 
     /*      case TYPE_ENTITY:   */
-    if( class == Class_Entity_Type )  {
+    if( class == entity_ )  {
 
         fprintf( file, "{\n" );
         if( print_logging ) {
@@ -777,7 +777,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*    case TYPE_LOGICAL:    */
-    if( ( class == Class_Boolean_Type ) || ( class == Class_Logical_Type ) )  {
+    if( ( class == boolean_ ) || ( class == logical_ ) )  {
 
         fprintf( file, "{\n" );
         if( print_logging ) {
@@ -818,7 +818,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*    case TYPE_ENUM:   */
-    if( class == Class_Enumeration_Type )  {
+    if( class == enumeration_ )  {
         fprintf( file, "{\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SCL_LOGGING\n" );
@@ -855,7 +855,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*    case TYPE_SELECT: */
-    if( class == Class_Select_Type )  {
+    if( class == select_ )  {
         fprintf( file, "        { return (const %s) &_%s; }\n",  ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "        { _%s = x; }\n", attrnm );
@@ -863,7 +863,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     }
     /*  case STRING:*/
     /*      case TYPE_BINARY:   */
-    if( ( class == Class_String_Type ) || ( class == Class_Binary_Type ) )  {
+    if( ( class == string_ ) || ( class == binary_ ) )  {
         fprintf( file, "{\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SCL_LOGGING\n" );
@@ -903,7 +903,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*      case TYPE_INTEGER:  */
-    if( class == Class_Integer_Type ) {
+    if( class == integer_ ) {
         fprintf( file, "{\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SCL_LOGGING\n" );
@@ -947,7 +947,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
 
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
-    if( ( class == Class_Number_Type ) || ( class == Class_Real_Type ) ) {
+    if( ( class == number_ ) || ( class == real_ ) ) {
         fprintf( file, "{\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SCL_LOGGING\n" );
@@ -1359,33 +1359,33 @@ void LIBcopy_constructor( Entity ent, FILE * file ) {
         sprintf( b, "        _%s = e.%s();\n", attrnm, attrnm );
 
         /*mjm7/11/91  case TYPE_STRING */
-        if( ( class == Class_String_Type ) || ( class == Class_Binary_Type ) ) {
+        if( ( class == string_ ) || ( class == binary_ ) ) {
             sprintf( b, "        _%s = strdup(e.%s());\n", attrnm, attrnm );
         }
 
 
         /*      case TYPE_ENTITY:   */
-        if( class == Class_Entity_Type ) {
+        if( class == entity_ ) {
             sprintf( b, "        _%s = e.%s();\n", attrnm, attrnm );
         }
         /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
 
         /*    case TYPE_ENUM:   */
-        if( class == Class_Enumeration_Type ) {
+        if( class == enumeration_ ) {
             sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
         }
         /*    case TYPE_SELECT: */
-        if( class == Class_Select_Type ) {
+        if( class == select_ ) {
             sprintf( b, "DDDDDDD        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
         }
         /*   case TYPE_BOOLEAN    */
-        if( class == Class_Boolean_Type ) {
+        if( class == boolean_ ) {
             sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
         }
         /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
 
         /*   case TYPE_LOGICAL    */
-        if( class == Class_Logical_Type ) {
+        if( class == logical_ ) {
             sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
         }
         /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
