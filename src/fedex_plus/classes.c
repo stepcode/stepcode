@@ -672,9 +672,9 @@ void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
-    fprintf( file, "    return (%s) &_%s; \n}\n", ctype, attrnm );
+    fprintf( file, "    return (%s) %s_%s;\n}\n", ctype,( ( a->type->u.type->body->base ) ? "" : "&"), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
-    fprintf( file, "        { _%s.ShallowCopy (*x); }\n", attrnm );
+    fprintf( file, "{\n    _%s%sShallowCopy (*x);\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : ".") );
     return;
 }
 
@@ -1081,6 +1081,8 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
             fprintf( file, "        SDAI_Application_instance_ptr _%s ;", attrnm );
+        } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
+            fprintf( file, "        %s_ptr _%s ;", ctype, attrnm );
         } else {
             fprintf( file, "        %s _%s ;", ctype, attrnm );
         }
@@ -1572,13 +1574,14 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             /*  1. create a new STEPattribute */
 
             fprintf( file, "    "
-                     "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
-                     ( first ? "STEPattribute *" : "" ), //  first time through, declare a
+                     "%sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
+                     ( first ? "STEPattribute *" : "" ), //  first time through, declare 'a'
                      SCHEMAget_name( schema ),
                      ATTR_PREFIX, count,
                      ( VARis_type_shifter( a ) ? "R" : "" ),
                      attrnm,
                      ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
+                     ( TYPEis_aggregate( t ) ? "" : "&" ),
                      attrnm );
             if( first ) {
                 first = 0 ;
@@ -1754,13 +1757,14 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                 /*  1. create a new STEPattribute */
 
                 fprintf( file, "    "
-                         "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
+                         "%sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                          ( first ? "STEPattribute *" : "" ), //  first time through, declare a
                          SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
                          ( VARis_type_shifter( a ) ? "R" : "" ),
                          attrnm,
                          ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
+                         ( TYPEis_aggregate( t ) ? "" : "&" ),
                          attrnm );
 
                 if( first ) {
