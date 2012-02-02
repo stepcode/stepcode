@@ -203,9 +203,10 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     fprintf( files -> lib, "\n/*    **************  TYPES      */\n" );
     /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
      * Modified Jan 2012 by MAP - moving enums to own dictionary */
-    HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);{
+    if( scope->enum_table ) {
+        HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);
         Type t;
-        while ( 0 != ( t = (Type) DICTdo( &de ) ) ) {
+        while( 0 != ( t = (Type) DICTdo( &de ) ) ) {
             // First check for one exception:  Say enumeration type B is defined
             // to be a rename of enum A.  If A is in this schema but has not been
             // processed yet, we must wait till it's processed first.  The reason
