@@ -350,13 +350,14 @@ EXPRESSinitialize( void ) {
             "Schema %s was not found in its own schema file (%s)", SEVERITY_ERROR );
     ERROR_unlabelled_param_type = ERRORcreate(
                                       "Return type or local variable requires type label in `%s'", SEVERITY_ERROR );
-    ERROR_file_unreadable = ERRORcreate(
-                                "Could not read file %s: %s", SEVERITY_ERROR );
-    ERROR_file_unwriteable = ERRORcreate(
-                                 "Could not write file %s: %s", SEVERITY_ERROR );
+    ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
+    ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
+    ERROR_warn_unsupported_lang_feat = ERRORcreate("Unsupported language feature (%s) at %s:%d",SEVERITY_WARNING);
+
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 
     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
+    ERRORcreate_warning( "unsupported", ERROR_warn_unsupported_lang_feat );
 
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
 }
