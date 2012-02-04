@@ -1,6 +1,7 @@
 
 
-/************************************************************************
+/** **********************************************************************
+** \file express.c
 ** Express package manager.
 ************************************************************************/
 
@@ -69,7 +70,6 @@
 
 #include <scl_cf.h>
 #define EXPRESS_C
-#include "conf.h"
 #include "express/basic.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -112,8 +112,7 @@ void exp_pause() {
     }
 }
 
-int
-EXPRESS_fail( Express model ) {
+int EXPRESS_fail( Express model ) {
     ERRORflush_messages();
 
     if( EXPRESSfail ) {
@@ -124,8 +123,7 @@ EXPRESS_fail( Express model ) {
     return 1;
 }
 
-int
-EXPRESS_succeed( Express model ) {
+int EXPRESS_succeed( Express model ) {
     if( EXPRESSsucceed ) {
         return( ( *EXPRESSsucceed )( model ) );
     }
@@ -134,13 +132,11 @@ EXPRESS_succeed( Express model ) {
     return 0;
 }
 
-Symbol *
-EXPRESS_get_symbol( Generic e ) {
+Symbol * EXPRESS_get_symbol( Generic e ) {
     return( &( ( Express )e )->symbol );
 }
 
-Express
-EXPRESScreate() {
+Express EXPRESScreate() {
     Express model = SCOPEcreate( OBJ_EXPRESS );
     model->u.express = ( struct Express_ * )calloc( 1, sizeof( struct Express_ ) );
     return model;
@@ -152,8 +148,7 @@ typedef struct Dir {
     char * leaf;
 } Dir;
 
-static void
-EXPRESS_PATHinit() {
+static void EXPRESS_PATHinit() {
     char * p;
     Dir * dir;
     int done = 0;
@@ -225,23 +220,13 @@ EXPRESS_PATHinit() {
     }
 }
 
-void
-PASSinitialize() {
-    /* inform object system about bit representation */
-    /* for handling pass diagnostics */
-
+/** inform object system about bit representation for handling pass diagnostics */
+void PASSinitialize() {
     OBJcreate( OBJ_PASS, UNK_get_symbol, "pass", OBJ_PASS_BITS );
 }
 
-/*
-** Procedure:   EXPRESSinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Express package.
-*/
-
-void
-EXPRESSinitialize( void ) {
+/** Initialize the Express package. */
+void EXPRESSinitialize( void ) {
     Function
     func_abs,   func_acos,  func_asin,  func_atan,
                 func_blength,
@@ -332,9 +317,9 @@ EXPRESSinitialize( void ) {
     funcdef( func_sqrt,   KW_SQRT,   1, Type_Real );
     funcdef( func_tan,    KW_TAN,    1, Type_Real );
     funcdef( func_typeof, KW_TYPEOF, 1, Type_Set_Of_String );
-    funcdef( FUNC_USEDIN,    KW_USEDIN,  2, Type_Bag_Of_Generic );
-    funcdef( func_value, KW_VALUE,   1, Type_Number );
-    funcdef( func_value_in,  KW_VALUE_IN,    2, Type_Logical );
+    funcdef( FUNC_USEDIN, KW_USEDIN,  2, Type_Bag_Of_Generic );
+    funcdef( func_value,  KW_VALUE,   1, Type_Number );
+    funcdef( func_value_in, KW_VALUE_IN,    2, Type_Logical );
     funcdef( func_value_unique, KW_VALUE_UNIQUE, 1, Type_Logical );
 
     ERROR_bail_out =
@@ -362,14 +347,12 @@ EXPRESSinitialize( void ) {
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
 }
 
-/*
-** Procedure:   EXPRESSparse
-** Parameters:  FILE* file  - Express source file to parse
-** Returns: Express     - resulting Working Form model
-** Description: Parse an Express source file into the Working Form.
+/**
+** \param file  - Express source file to parse
+** \return resulting Working Form model
+** Parse an Express source file into the Working Form.
 */
-void
-EXPRESSparse( Express model, FILE * fp, char * filename ) {
+void EXPRESSparse( Express model, FILE * fp, char * filename ) {
     yyexpresult = model;
 
     if( !fp ) {
@@ -419,10 +402,8 @@ EXPRESSparse( Express model, FILE * fp, char * filename ) {
     PARSERrun( filename, model->u.express->file = fp );
 }
 
-static
-/* start parsing a new schema file */
-Express
-PARSERrun( char * filename, FILE * fp ) {
+/** start parsing a new schema file */
+static Express PARSERrun( char * filename, FILE * fp ) {
     extern int yyparse();
     extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
 
@@ -447,12 +428,12 @@ PARSERrun( char * filename, FILE * fp ) {
 
 static void RENAMEresolve( Rename * r, Schema s );
 
-/* find the final object to which a rename points */
-/* i.e., follow chain of USEs or REFs */
-/* sets DICT_type */
-static
-Generic
-SCOPEfind_for_rename( Scope schema, char * name, enum rename_type type ) {
+/**
+ * find the final object to which a rename points
+ * i.e., follow chain of USEs or REFs
+ * sets DICT_type
+ */
+static Generic SCOPEfind_for_rename( Scope schema, char * name, enum rename_type type ) {
     Generic result;
     Rename * rename;
 
@@ -520,8 +501,7 @@ SCOPEfind_for_rename( Scope schema, char * name, enum rename_type type ) {
     return 0;
 }
 
-static void
-RENAMEresolve( Rename * r, Schema s ) {
+static void RENAMEresolve( Rename * r, Schema s ) {
     Generic remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
@@ -563,8 +543,7 @@ RENAMEresolve( Rename * r, Schema s ) {
 }
 
 #ifdef using_enum_items_is_a_pain
-static void
-RENAMEresolve_enum( Type t, Schema s ) {
+static void RENAMEresolve_enum( Type t, Schema s ) {
     Dictionary      d = TYPEget_enum_tags( t );
     DictionaryEntry de;
     Expression      x;
@@ -577,8 +556,7 @@ RENAMEresolve_enum( Type t, Schema s ) {
 }
 #endif
 
-Schema
-EXPRESSfind_schema( Dictionary modeldict, char * name ) {
+Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
     Schema s;
     FILE * fp;
     char * src, *dest;
@@ -641,12 +619,12 @@ EXPRESSfind_schema( Dictionary modeldict, char * name ) {
 }
 
 
-/* make the initial connections from one schema to another */
-/* dictated by USE/REF clauses that use dictionaries, i.e., */
-/* because of partial schema references */
-
-static void
-connect_lists( Dictionary modeldict, Schema schema, Linked_List list ) {
+/**
+ * make the initial connections from one schema to another
+ * dictated by USE/REF clauses that use dictionaries, i.e.,
+ * because of partial schema references
+ */
+static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list ) {
     Rename * r;
 
     /* translate symbols to schemas */
@@ -662,9 +640,12 @@ connect_lists( Dictionary modeldict, Schema schema, Linked_List list ) {
     }
     LISTod
 }
-/* same as above, except for full schemas */
-static void
-connect_schema_lists( Dictionary modeldict, Schema schema, Linked_List schema_list ) {
+
+/**
+ * same as `connect_lists` except for full schemas
+ * \sa connect_lists
+ */
+static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_List schema_list ) {
     Symbol * sym;
     Schema ref_schema;
 
@@ -682,16 +663,11 @@ connect_schema_lists( Dictionary modeldict, Schema schema, Linked_List schema_li
     LISTod
 }
 
-
-/*
-** Procedure:   EXPRESSresolve
-** Parameters:  Express model   - Working Form model to resolve
-** Returns: void
-** Description: Perform symbol resolution on a loosely-coupled WF.
+/**
+** \param model   - Working Form model to resolve
+** Perform symbol resolution on a loosely-coupled WF.
 */
-
-void
-EXPRESSresolve( Express model ) {
+void EXPRESSresolve( Express model ) {
     /* resolve multiple schemas.  Schemas will be resolved here or when */
     /* they are first encountered by a use/reference clause, whichever */
     /* comes first - DEL */
@@ -855,75 +831,3 @@ EXPRESSresolve( Express model ) {
         }
     }
 }
-
-#if 0
-void
-EXPRESSdump_schema( Schema schema ) {
-    Linked_List list, list2, ref;
-    Dictionary dict;
-    DictionaryEntry de;
-
-    printf( "SCHEMA %s\n", SCHEMAget_name( schema ) );
-    list = SCOPEget_types( schema );
-    printf( "  Types:\n" );
-    LISTdo( list, s, Symbol * )
-    printf( "    %s\n", SYMBOLget_name( s ) );
-    LISTod;
-    list = SCOPEget_entities( schema );
-    printf( "  Entities:\n" );
-    LISTdo( list, s, Symbol )
-    printf( "    %s\n", SYMBOLget_name( s ) );
-    LISTod;
-
-    /* N14 Dump USE and REFERENCE lists */
-    list = SCOPEget_uses( schema );
-    printf( "  Use:\n" );
-    LISTdo( list, use, Linked_List )
-    printf( "   Schema: %s\n", SYMBOLget_name( LISTget_first( use ) ) );
-    list2 = LISTget_second( use );
-    LISTdo( list2, use_exp, Expression );
-    printf( "   %s AS %s\n",
-            SYMBOLget_name( BIN_EXPget_first_operand( use_exp ) ),
-            SYMBOLget_name( BIN_EXPget_second_operand( use_exp ) ) );
-    LISTod;
-    LISTod;
-
-    dict = SCOPEget_references( schema );
-    printf( "  Reference:\n" );
-    DICTdo_init( dict, &de );
-    while( ref = ( Linked_List )DICTdo( &de ) ) {
-        printf( "    %s\n", SYMBOLget_name( LISTget_first( ref ) ) );
-        list2 = LISTget_second( ref );
-        LISTdo( list2, ref_exp, Expression );
-        printf( "   %s AS %s\n",
-                SYMBOLget_name( BIN_EXPget_first_operand( ref_exp ) ),
-                SYMBOLget_name( BIN_EXPget_second_operand( ref_exp ) ) );
-        LISTod;
-    }
-
-    printf( "END_SCHEMA\n" );
-
-    /* N14 Nested schemas obsolete
-        list = SCOPEget_schemata(schema);
-        LISTdo(list, s, Schema)
-        EXPRESSdump_schema(s);
-        LISTod; */
-
-}
-
-/*
-** Procedure:   EXPRESSdump_model
-** Parameters:  Express model   - Express model to dump
-** Returns: void
-** Description: Dumps an Express model to stderr.
-*/
-
-/*ARGUSED*/
-void
-EXPRESSdump_model( Express model ) {
-    /* should make dump_model and dump_modelS! - DEL */
-    /*    EXPRESSdump_schema(model->schema);*/
-}
-
-#endif /*0*/
-

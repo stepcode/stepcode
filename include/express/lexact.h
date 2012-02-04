@@ -1,8 +1,6 @@
 #ifndef LEX_ACTIONS_H
 #define LEX_ACTIONS_H
 
-/* $Id: lexact.h,v 1.5 1995/04/05 13:55:40 clark dec96 $ */
-
 /*
  * This software was developed by U.S. Government employees as part of
  * their official duties and is not subject to copyright.

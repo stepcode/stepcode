@@ -1,8 +1,6 @@
 #ifndef LINKED_LIST_H
 #define LINKED_LIST_H
 
-/* $Id: linklist.h,v 1.3 1997/01/21 19:15:23 dar Exp $ */
-
 /*
  * This work was supported by the United States Government, and is
  * not subject to copyright.
@@ -47,10 +45,6 @@
 /************/
 
 typedef struct Linked_List_ * Linked_List;
-
-#ifdef __STDC__
-#else /* old C */
-#endif /*__STDC__*/
 
 /****************/
 /* modules used */
@@ -98,22 +92,22 @@ GLOBAL SCL_EXPRESS_EXPORT Linked_List LINK__l;     /* for LISTcreate_with macro 
 #define LIST_new()  (struct Linked_List_ *)MEM_new(&LIST_fl)
 #define LIST_destroy(x) MEM_destroy(&LIST_fl,(Freelist *)(Generic)x)
 
-/* following could be optimized */
+/** following could be optimized */
 #define LISTcreate_with(x)  (LINK__l = LISTcreate()),\
                 LISTadd(LINK__l,x),\
                 LINK_l)
 
-/* accessing links */
+/** accessing links */
 #define LINKdata(link)  (link)->data
 #define LINKnext(link)  (link)->next
 #define LINKprev(link)  (link)->prev
 
-/* iteration */
-#define LISTdo(list, elt, type)                     \
-   {struct Linked_List_ * __l = (list);                 \
-    type        elt;                        \
-    Link        __p;                        \
-    if (__l) {                              \
+/** iteration */
+#define LISTdo(list, elt, type)                                 \
+   {struct Linked_List_ * __l = (list);                         \
+    type        elt;                                            \
+    Link        __p;                                            \
+    if (__l) {                                                  \
     for (__p = __l->mark; (__p = __p->next) != __l->mark; ) {   \
         (elt) = (type)((__p)->data);
 
@@ -122,13 +116,14 @@ GLOBAL SCL_EXPRESS_EXPORT Linked_List LINK__l;     /* for LISTcreate_with macro 
     Link        link;                               \
     if (__i != LIST_NULL) {                         \
     for ((link) = __i->mark; ((link) = (link)->next) != __i->mark; ) {
+
 #define LISTod  }}}
 
-/* accessing */
+/** accessing */
 #define LISTpeek_first(list)                        \
     (((struct Linked_List_*)list)->mark->next->data)
 
-/* function aliases */
+/** function aliases */
 #define LISTadd(list, item) LISTadd_last(list, item)
 #define LISTadd_all(list, items)                    \
     LISTdo(items, e, Generic)                       \
@@ -141,7 +136,6 @@ GLOBAL SCL_EXPRESS_EXPORT Linked_List LINK__l;     /* for LISTcreate_with macro 
 
 extern SCL_EXPRESS_EXPORT void LISTinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT Linked_List LISTcreate PROTO( ( void ) );
-/*extern Linked_List LISTcreate_with PROTO((Generic));*/
 extern SCL_EXPRESS_EXPORT Linked_List LISTcopy PROTO( ( Linked_List ) );
 extern SCL_EXPRESS_EXPORT Generic  LISTadd_first PROTO( ( Linked_List, Generic ) );
 extern SCL_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) );

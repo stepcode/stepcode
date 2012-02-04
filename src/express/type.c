@@ -1,22 +1,22 @@
 
 
-/************************************************************************
-** Module:  Type
-** Description: This module implements the type abstraction.  It is
+/** **********************************************************************
+** Module:  Type \file type.c
+This module implements the type abstraction.  It is
 **  rather unpleasant, since this abstraction is quite well suited
 **  to an object-oriented environment with inheritance.
 ** Constants:
 **  TYPE_AGGREGATE      - generic general aggregate
-**  TYPE_BINARY     - binary type
+**  TYPE_BINARY         - binary type
 **  TYPE_BOOLEAN        - boolean type
 **  TYPE_GENERIC        - generic type
 **  TYPE_INTEGER        - integer type with default precision
 **  TYPE_LOGICAL        - logical type
-**  TYPE_NULL       - the null type
-**  TYPE_NUMBER     - number type
-**  TYPE_REAL       - real type with default precision
+**  TYPE_NULL           - the null type
+**  TYPE_NUMBER         - number type
+**  TYPE_REAL           - real type with default precision
 **  TYPE_SET_OF_GENERIC - type for unconstrained set of generic items
-**  TYPE_STRING     - string type with default precision
+**  TYPE_STRING         - string type with default precision
 **
 ************************************************************************/
 
@@ -126,9 +126,10 @@
 #include "express/type.h"
 
 static Error ERROR_undefined_tag;
-
-Type
-TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
+/**
+ * create a type with no symbol table
+ */
+Type TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
     Type t = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead th = TYPEHEAD_new();
 
@@ -139,11 +140,12 @@ TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
     return t;
 }
 
-/* create a type but this is just a shell, either to be completed later */
-/* such as enumerations (which have a symbol table added later) */
-/* or to be used as a type reference */
-Type
-TYPEcreate_name( Symbol * symbol ) {
+/**
+ * create a type but this is just a shell, either to be completed later
+ * such as enumerations (which have a symbol table added later)
+ * or to be used as a type reference
+ */
+Type TYPEcreate_name( Symbol * symbol ) {
     Scope s = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead t = TYPEHEAD_new();
 
@@ -152,8 +154,7 @@ TYPEcreate_name( Symbol * symbol ) {
     return s;
 }
 
-Type
-TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
+Type TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
     Type t;
     extern int tag_count;
 
@@ -162,24 +163,27 @@ TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
         if( DICT_type == OBJ_TAG ) {
             return( t );
         } else {
-            /* easiest to just generate the error this way! */
-            /* following call WILL fail intentionally */
+            /* easiest to just generate the error this way!
+             * following call WILL fail intentionally
+             */
             DICTdefine( scope->symbol_table, symbol->name, 0, symbol, OBJ_TAG );
             return( 0 );
         }
     }
 
-    /* tag is undefined */
-    /* if we are outside a formal parameter list (hack, hack) */
-    /* then we can only refer to existing tags, so produce an error */
+    /* tag is undefined
+     * if we are outside a formal parameter list (hack, hack)
+     * then we can only refer to existing tags, so produce an error
+     */
     if( tag_count < 0 ) {
         ERRORreport_with_symbol( ERROR_undefined_tag, symbol,
                                  symbol->name );
         return( 0 );
     }
 
-    /* otherwise, we're in a formal parameter list, */
-    /* so it's ok to define it */
+    /* otherwise, we're in a formal parameter list,
+     * so it's ok to define it
+     */
     t = TYPEcreate_nostab( symbol, scope, OBJ_TAG );
     t->u.type->head = base;
 
@@ -189,15 +193,13 @@ TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
     return( t );
 }
 
-Type
-TYPEcreate( enum type_enum type ) {
+Type TYPEcreate( enum type_enum type ) {
     TypeBody tb = TYPEBODYcreate( type );
     Type t = TYPEcreate_from_body_anonymously( tb );
     return( t );
 }
 
-Type
-TYPEcreate_from_body_anonymously( TypeBody tb ) {
+Type TYPEcreate_from_body_anonymously( TypeBody tb ) {
     Type t = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead th = TYPEHEAD_new();
 
@@ -208,19 +210,19 @@ TYPEcreate_from_body_anonymously( TypeBody tb ) {
     return t;
 }
 
-TypeBody
-TYPEBODYcreate( enum type_enum type ) {
+TypeBody TYPEBODYcreate( enum type_enum type ) {
     TypeBody tb = TYPEBODY_new();
     tb->type = type;
     return tb;
 }
 
-/* return true if "type t" inherits from "enum type_enum" */
-/* may need to be implemented for more types */
+/**
+ * return true if "type t" inherits from "enum type_enum"
+ * may need to be implemented for more types
+ */
 #define TYPE_inherits_from(t,e) ((t) && TYPEinherits_from((t),(e)))
 
-bool
-TYPEinherits_from( Type t, enum type_enum e ) {
+bool TYPEinherits_from( Type t, enum type_enum e ) {
     TypeBody tb = t->u.type->body;
 
     switch( e ) {
@@ -268,21 +270,13 @@ return( false );
 }
 #endif
 
-Symbol *
-TYPE_get_symbol( Generic t ) {
+Symbol * TYPE_get_symbol( Generic t ) {
     return( &( ( Type )t )->symbol );
 }
 
 
-/*
-** Procedure:   TYPEinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Type module.
-*/
-
-void
-TYPEinitialize() {
+/** Initialize the Type module */
+void TYPEinitialize() {
     MEMinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
     MEMinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
     OBJcreate( OBJ_TYPE, TYPE_get_symbol, "type", OBJ_TYPE_BITS );
@@ -390,153 +384,12 @@ TYPEinitialize() {
         ERRORcreate( "Undefined type tag %s", SEVERITY_ERROR );
 }
 
-/*
-** Procedure:   TYPEget_size
-** Parameters:  Type type   - type to examine
-** Returns: Boolean     - logical size of a type instance
-** Description: Compute the size of an instance of some type.
-**
-** Notes:   Simple types all have size 1, as does a select type.
-**      The size of an aggregate type is the maximum number
-**      of elements an instance can contain; and the size of
-**      an entity type is its total attribute count.
-*/
-
-int
-TYPEget_size( Type type ) {
-    Class   class;
-    int     size;
-    Expression  upper;
-    Error   experrc;
-
-    class = OBJget_class( type );
-    if( class == Class_Select_Type ) {
-        fprintf( stderr, "NOTICE: TYPEget_size(Select_Type) called\n" );
-        return 1;
-    } else if( class == Class_String_Type ) {
-        return 1;
-    } else if( ( class == Class_Enumeration_Type ) ||
-               ( class == Class_Generic_Type ) ||
-               ( class == Class_Number_Type ) ||
-               TYPEinherits_from( type, Class_Logical_Type ) ||
-               /*         TYPEinherits_from(type, Class_Sized_Type)) {*/
-               TYPEinherits_from( type, Class_Binary_Type ) ||
-               TYPEinherits_from( type, Class_Integer_Type ) ||
-               TYPEinherits_from( type, Class_Real_Type ) ||
-               TYPEinherits_from( type, Class_String_Type ) ) {
-        return 1;
-    } else if( TYPEinherits_from( type, Class_Bag_Type ) ) {
-        upper = AGGR_TYPEget_upper_limit( type );
-        if( ( upper == LITERAL_INFINITY ) ||
-                ( upper == EXPRESSION_NULL ) ) {
-            return AGGR_CHUNK_SIZE;
-        }
-        experrc = 0;
-        size = EXPget_integer_value( upper );
-        if( experrc ) {
-            ERRORreport_with_symbol( experrc, &type->symbol );
-        }
-        return size;
-    } else if( TYPEinherits_from( type, Class_Aggregate_Type ) ) {
-        upper = AGGR_TYPEget_upper_limit( type );
-        if( ( upper == LITERAL_INFINITY ) ||
-                ( upper == EXPRESSION_NULL ) ||
-                TYPEis_identifier( upper->type ) ) {
-            return AGGR_CHUNK_SIZE;
-        }
-        experrc = 0;
-        size = EXPget_integer_value( upper );
-        if( experrc ) {
-            ERRORreport_with_symbol( experrc, &type->symbol );
-        }
-        experrc = 0;
-        size = size - EXPget_integer_value( AGGR_TYPEget_lower_limit( type ) ) + 1;
-        if( experrc ) {
-            ERRORreport_with_symbol( experrc, &type->symbol );
-        }
-        return size;
-    } else if( class == Class_Entity_Type ) {
-#if 0
-        list = COMP_TYPEget_items( type );
-        list = ENTITYget_attributes( ENT_TYPEget_entity( type ) );
-        size = 0;
-        LISTdo( list, entity, Entity )
-        size += ENTITYget_size( entity );
-        LISTod;
-        return size;
-#endif
-        return( ENTITYget_size( ENT_TYPEget_entity( type ) ) );
-    } else {
-        ERRORreport( ERROR_corrupted_type, "TYPEget_size" );
-        return 0;
-    }
-}
-
-#if 0
-
-/*
-** Procedure:   TYPEcompatible
-** Parameters:  Type lhs_type   - type for left-hand-side of assignment
-**      Type rhs_type   - type for right-hand-side of assignment
-** Returns: Boolean     - are the types assignment compatible?
-** Description: Determine whether two types are assignment-compatible.
-*/
-
-Boolean
-TYPEcompatible( Type lhs_type, Type rhs_type ) {
-    Class   lhs_class;
-    Class   rhs_class;
-    Entity  entity;
-    Linked_List list;
-    Error   experrc;
-
-    lhs_class = OBJget_class( lhs_type );
-    rhs_class = OBJget_class( rhs_type );
-    if( lhs_class == Class_Aggregate_Type ) {
-        return ( CLASSinherits_from( rhs_class, Class_Aggregate_Type ) &&
-                 TYPEcompatible( AGGR_TYPEget_base_type( lhs_type ),
-                                 AGGR_TYPEget_base_type( rhs_type ) ) );
-    } else if( CLASSinherits_from( lhs_class, Class_Aggregate_Type ) ) {
-        return ( ( rhs_class == lhs_class ) &&
-                 TYPEcompatible( AGGR_TYPEget_base_type( lhs_type ),
-                                 AGGR_TYPEget_base_type( rhs_type ) ) );
-    } else if( lhs_class == Class_Entity_Type ) {
-        if( rhs_class == Class_Entity_Type ) {
-            entity = ENT_TYPEget_entity( lhs_type );
-            list = COMP_TYPEget_items( rhs_type );
-            LISTdo( list, e, Entity )
-            if( !ENTITYhas_supertype( e, entity ) ) {
-                return false;
-            }
-            LISTod;
-            return true;
-        } else {
-            return false;
-        }
-    } else if( CLASSinherits_from( lhs_class, Class_Composed_Type ) ) {
-        return OBJequal( rhs_type, lhs_type, &experrc );
-    } else if( lhs_class == Class_Number_Type ) {
-        return ( ( rhs_class == Class_Number_Type ) ||
-                 ( rhs_class == Class_Real_Type ) ||
-                 ( rhs_class == Class_Integer_Type ) );
-    } else if( lhs_class == Class_Real_Type ) {
-        return ( ( rhs_class == Class_Real_Type ) ||
-                 ( rhs_class == Class_Integer_Type ) );
-    } else {
-        return rhs_class == lhs_class;
-    }
-}
-#endif
-
-/*
-** Procedure:   AGGR_TYPEget_base_type
-** Parameters:  Aggregate_Type type - type to examine
-** Returns: Type            - the base type of the aggregate type
-** Description: Retrieve the base type of an aggregate.
-*/
-
-Type
-TYPEget_nonaggregate_base_type( Type t ) {
+/**
+ * \param t type to examine
+ * \return the base type of the aggregate type
+ * Retrieve the base type of an aggregate.
+ */
+Type TYPEget_nonaggregate_base_type( Type t ) {
     while( TYPEis_aggregate( t ) ) {
         t = t->u.type->body->base;
     }

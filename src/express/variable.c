@@ -1,8 +1,8 @@
 
 
-/************************************************************************
-** Module:  Variable
-** Description: This module implements the Variable abstraction.  A
+/** **********************************************************************
+** Module:  Variable \file variable.c
+** This module implements the Variable abstraction.  A
 **  Variable consists of a name, a type, a reference class, and
 **  some flags, e.g. 'optional', 'variable'.  It is used to represent
 **  variable attributes, variables, and formal parameters.
@@ -88,116 +88,22 @@
 #include "express/variable.h"
 #include "express/object.h"
 char * opcode_print( Op_Code o );
-/*
-** Procedure:   VAR_create/free/copy/equal
-** Description: These are the low-level defining functions for Class_Variable
-*/
 
-#if 0
-void
-VAR_create( Generic dummy ) {
-    struct Variable  *  var = ( struct Variable * )dummy;
-
-    var->type = TYPE_NULL;
-    var->initializer = EXPRESSION_NULL;
-    var->reference = EXPRESSION_NULL;
-    /*OLD    var->ref_class = REF_DYNAMIC;*/
-    var->flags = 0;
-    var->inverse = EXPRESSION_NULL;
-}
-
-void
-VAR_free( Generic dummy ) {
-    struct Variable  *  var = ( struct Variable * )dummy;
-    Error       experrc;
-
-    OBJfree( var->type, &experrc );
-    OBJfree( var->initializer, &experrc );
-}
-
-void
-VAR_copy( Generic dummy1, Generic dummy2 ) {
-    struct Variable  *  dest = ( struct Variable * )dummy1;
-    struct Variable  *  source = ( struct Variable * )dummy2;
-
-    dest->type = OBJreference( source->type );
-    dest->initializer = OBJreference( source->initializer );
-    dest->reference = source->reference;
-    /*    dest->ref_class = source->ref_class;*/
-    dest->offset = source->offset;
-    dest->flags = source->flags;
-}
-
-Boolean
-VAR_equal( Generic dummy1, Generic dummy2 ) {
-    struct Variable  *  var1 = ( struct Variable * )dummy1;
-    struct Variable  *  var2 = ( struct Variable * )dummy2;
-    Error       experrc;
-
-    return ( OBJequal( var1->type, var2->type, &experrc ) /* &&
-Deep compare or not even necessary? - DEL
-        (var1->ref_class == var2->ref_class)*/ );
-}
-
-void
-VAR_print( Generic dummy ) {
-    struct Variable  *  var = ( struct Variable * )dummy;
-
-    if( print_none( var_print ) ) {
-        return;
-    }
-
-    if( print_some( var_print, type ) ) {
-        iprint( "type:\n" );
-        OBJprint( var->type );
-    }
-    if( print_some( var_print, initializer ) ) {
-        iprint( "initializer:\n" );
-        OBJprint( var->initializer );
-    }
-    if( print_some( var_print, reference ) ) {
-        iprint( "reference:\n" );
-        OBJprint( var->reference );
-    }
-    if( print_some( var_print, offset ) ) {
-        iprint( "offset: %d\n", var->offset );
-    }
-    if( print_some( var_print, flags ) ) {
-        iprint( "optional: %s  pass-by-reference %s\n",
-                BOOLprint( ( var->flags & VAR_OPT_MASK ) != 0 ),
-                BOOLprint( ( var->flags & VAR_VAR_MASK ) != 0 ) );
-    }
-    if( print_some( var_print, inverse ) ) {
-        iprint( "inverse:\n" );
-        OBJprint( var->inverse );
-    }
-}
-
-#endif /*0*/
-
-Symbol *
-VAR_get_symbol( Generic v ) {
+Symbol * VAR_get_symbol( Generic v ) {
     return( &( ( Variable )v )->name->symbol );
 }
 
-/*
-** Procedure:   VARinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Variable module.
-*/
-
-void
-VARinitialize() {
+/** Initialize the Variable module. */
+void VARinitialize() {
     MEMinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
-    /*  OBJcreate(OBJ_VARIABLE,VAR_get_symbol,"variable",OBJ_UNUSED_BITS);*/
     OBJcreate( OBJ_VARIABLE, VAR_get_symbol, "variable", OBJ_VARIABLE_BITS );
 }
 
-/* returns simple name of variable */
-/* for example, if var is named SELF\xxx.yyy, return yyy */
-extern char *
-VARget_simple_name( Variable v ) {
+/** VARget_simple_name
+ * returns simple name of variable
+ * for example, if var is named SELF\xxx.yyy, return yyy
+ */
+extern char * VARget_simple_name( Variable v ) {
 
     Expression e = VARget_name( v );
 
@@ -215,324 +121,19 @@ VARget_simple_name( Variable v ) {
     return EXPget_name( e );
 }
 
-/*
-** Procedure:   VARcreate
-** Parameters:  String name - name of variable to create
-**      Type   type - type of new variable
-**      Error* experrc  - buffer for error code
-** Returns: Variable    - the Variable created
-** Description: Create and return a new variable.
+/**  VARcreate
+** \param name name of variable to create
+** \param type type of new variable
+** \return the Variable created
+** Create and return a new variable.
 **
-** Notes:   The reference class of the variable is, by default,
+** \note The reference class of the variable is, by default,
 **      dynamic.  Special flags associated with the variable
 **      (e.g., optional) are initially false.
 */
-
-Variable
-VARcreate( Expression name, Type type ) {
+Variable VARcreate( Expression name, Type type ) {
     Variable v = VAR_new();
     v->name = name;
     v->type = type;
     return v;
 }
-
-#if 0
-
-/*
-** Procedure:   VARput_type
-** Parameters:  Variable var    - variable to examine
-**      Type     type   - type for variable
-** Returns: void
-** Description: Set the type of a variable.
-*/
-
-void
-VARput_type( Variable var, Type type ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    OBJfree( data->type, &experrc );
-    data->type = OBJreference( type );
-}
-
-/*
-** Procedure:   VARput_initializer
-** Parameters:  Variable   var  - variable to modify
-**      Expression init - initializer
-** Returns: void
-** Description: Set the initializing expression for a variable.
-**
-** Notes:   When a variable used to represent an attribute has an
-**  initializer, the represented attribute is a derived attribute.
-*/
-
-void
-VARput_initializer( Variable var, Expression init ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    OBJfree( data->initializer, &experrc );
-    data->initializer = OBJreference( init );
-}
-
-/*
-** Procedure:   VARput_derived
-** Parameters:  Variable var    - variable to modify
-**      Boolean  val    - new value for derived flag
-** Returns: void
-** Description: Set the value of the 'derived' flag for a variable.
-**
-** Notes:   This is currently redundant information, as a derived
-**  attribute can be identified by the fact that it has an
-**  initializing expression.  This may not always be true, however.
-*/
-
-void
-VARput_derived( Variable var, Boolean val ) {
-    return;
-}
-
-/*
-** Procedure:   VARput_optional
-** Parameters:  Variable var    - variable to modify
-**      Boolean  val    - new value for optional flag
-** Returns: void
-** Description: Set the value of the 'optional' flag for a variable.
-*/
-
-void
-VARput_optional( Variable var, Boolean val ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    if( val ) {
-        data->flags |= VAR_OPT_MASK;
-    } else {
-        data->flags &= ~VAR_OPT_MASK;
-    }
-}
-
-/*
-** Procedure:   VARput_variable
-** Parameters:  Variable var    - variable to modify
-**      Boolean  val    - new value for variable flag
-** Returns: void
-** Description: Set the value of the 'variable' flag for a variable.
-**
-** Notes:   This flag is intended for use in the cases when a variable
-**  is used to represent a formal parameter, which may be passed by
-**  reference (a variable parameter, in Pascal terminology).
-*/
-
-void
-VARput_variable( Variable var, Boolean val ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    if( val ) {
-        data->flags |= VAR_VAR_MASK;
-    } else {
-        data->flags &= ~VAR_VAR_MASK;
-    }
-}
-
-/*
-** Procedure:   VARput_reference
-** Parameters:  Variable        var - variable to modify
-**      Expression ref  - the variable's reference
-** Returns: void
-** Description: Set the reference class of a variable.
-*/
-
-void
-VARput_reference( Variable var, Expression ref ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    data->reference = ref;
-}
-
-/*
-** Procedure:   VARput_inverse
-** Parameters:  Variable        var - variable to modify
-**      Expression ref  - attr of entity related to be inverse attr
-** Returns: void
-** Description: Marks this as an inverse attribute and also says to which
-        attribute in the remove entity this relates to.
-*/
-
-void
-VARput_inverse( Variable var, Symbol attr ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    data->inverse = attr;
-}
-
-/*
-** Procedure:   VARget_inverse
-** Parameters:  Variable        var - variable to modify
-** Returns: Symbol      attr    - returns what was put
-** Description: See VARput_inverse
-*/
-
-Symbol
-VARget_inverse( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return data->inverse;
-}
-
-/*
-** Procedure:   VARput_reference_class
-** Parameters:  Variable        var - variable to modify
-**      Reference_Class ref - the variable's reference class
-** Returns: void
-** Description: Set the reference class of a variable.
-*/
-
-void
-VARput_reference_class( Variable var, Reference_Class ref ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    data->ref_class = ref;
-}
-
-/*
-** Procedure:   VARput_offset
-** Parameters:  Variable var    - variable to modify
-**      int      offset - offset to variable in local frame
-** Returns: void
-** Description: Set a variable's offset in its local frame.
-*/
-
-void
-VARput_offset( Variable var, int offset ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    data->offset = offset;
-}
-
-/*
-** Procedure:   VARget_type
-** Parameters:  Variable var    - variable to examine
-** Returns: Type        - the type of the variable
-** Description: Retrieve the type of a variable.
-*/
-
-Type
-VARget_type( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return OBJreference( data->type );
-}
-
-/*
-** Procedure:   VARget_derived
-** Parameters:  Variable var    - variable to examine
-** Returns: Boolean     - value of variable's derived flag
-** Description: Retrieve the value of a variable's 'derived' flag.
-*/
-
-/* this function is inlined in variable.h */
-
-/*
-** Procedure:   VARget_optional
-** Parameters:  Variable var    - variable to examine
-** Returns: Boolean     - value of variable's optional flag
-** Description: Retrieve the value of a variable's 'optional' flag.
-*/
-
-Boolean
-VARget_optional( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return ( data->flags & VAR_OPT_MASK ) != 0;
-}
-
-/*
-** Procedure:   VARget_variable
-** Parameters:  Variable var    - variable to examine
-** Returns: Boolean     - value of variable's variable flag
-** Description: Retrieve the value of a variable's 'variable' flag.
-*/
-
-Boolean
-VARget_variable( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return ( data->flags & VAR_VAR_MASK ) != 0;
-}
-
-/*
-** Procedure:   VARget_reference
-** Parameters:  Variable var    - variable to examine
-** Returns: Expression  - the variable's reference
-** Description: Retrieve a variable's reference
-*/
-
-Expression
-VARget_reference_class( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return data->reference;
-}
-
-/*
-** Procedure:   VARget_reference_class
-** Parameters:  Variable var    - variable to examine
-** Returns: Reference_Class - the variable's reference class
-** Description: Retrieve a variable's reference class.
-*/
-
-Reference_Class
-VARget_reference_class( Variable var ) {
-    struct Variable  *  data;
-    Error       experrc;
-
-    data = ( struct Variable * )OBJget_data( var, Class_Variable, &experrc );
-    return data->ref_class;
-}
-
-/*
-** Procedure:   VARget_offset
-** Parameters:  Variable var    - variable to examine
-** Returns: int     - offset to variable in local frame
-** Description: Retrieve the offset to a variable in it's local frame.
-*/
-
-/* now a macro in variable.h */
-
-void
-VARprint( Variable var ) {
-    Error experrc;
-    struct Var * data;
-
-    print_force( var_print );
-
-    data = OBJget_data( var, Class_Variable, &experrc );
-    VAR_print( data );
-
-    print_unforce( var_print );
-}
-#endif
