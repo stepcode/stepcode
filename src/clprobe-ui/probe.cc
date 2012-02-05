@@ -13,10 +13,6 @@
 
 
 
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 //#define EXCHANGE_FILE_DIR "\0"
 #define EXCHANGE_FILE_DIR "~pdevel/src/probe/data"
 #define WORKING_FILE_DIR "~pdevel/src/probe/data"
