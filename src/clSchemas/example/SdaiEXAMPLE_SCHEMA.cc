@@ -16,11 +16,6 @@ extern ofstream * logStream;
 
 static int debug_access_hooks = 0;
 
-#ifdef PART26
-
-const char * sclHostName = CORBA::Orbix.myHost(); // Default is local host
-#endif
-
 Schema * s_example_schema = 0;
 
 /*  **************  TYPES   */

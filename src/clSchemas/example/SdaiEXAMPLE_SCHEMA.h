@@ -9,13 +9,6 @@
 #include <schema.h>
 #endif
 
-#ifdef PART26
-#include <corbaIncludes.h>
-// Create a corbaSchema.h file in this directory with a #include in
-// it for your IDL generated schema-specific .hh file.
-#include <corbaSchema.h>
-#endif
-
 /*  **************  TYPES   */
 
 //////////  ENUMERATION TYPE color
