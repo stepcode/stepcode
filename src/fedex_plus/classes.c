@@ -633,7 +633,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
     /* ///////////////////////////////////////////////// */
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    fprintf( file, "\nconst %s \n%s::%s() const\n", ctype, classnm, funcnm );
+    fprintf( file, "\nconst %s %s::%s( ) const ", ctype, classnm, funcnm );
     return;
 }
 
@@ -664,7 +664,7 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
     /* ///////////////////////////////////////////////// */
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    fprintf( file, "\nvoid \n%s::%s (const %s x)\n\n", entnm, funcnm, ctype );
+    fprintf( file, "\nvoid \n%s::%s (const %s x) ", entnm, funcnm, ctype );
     return;
 }
 

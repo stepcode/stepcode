@@ -88,7 +88,7 @@ void print_file_header( Express express, FILES * files ) {
 
     files -> initall = FILEcreate( "schema.cc" );
     fprintf( files->initall, "\n// in the fedex_plus source code, this file is generally referred to as files->initall or schemainit\n" );
-    fprintf( files->initall, "#include <schema.h>\n" );
+    fprintf( files->initall, "#include \"schema.h\"\n" );
     fprintf( files->initall, "class Registry;\n" );
 
     fprintf( files->initall, "\nvoid SchemaInit (Registry & reg) {\n" );
@@ -101,7 +101,7 @@ void print_file_header( Express express, FILES * files ) {
     // called first by SchemaInit() so that all entities will exist
     files -> create = FILEcreate( "SdaiAll.cc" );
     fprintf( files->create, "\n// in the fedex_plus source code, this file is generally referred to as files->create or createall\n" );
-    fprintf( files->create, "#include <schema.h>\n" );
+    fprintf( files->create, "#include \"schema.h\"\n" );
     fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
 
     // This file declares all entity classes as incomplete types.  This will
@@ -109,7 +109,7 @@ void print_file_header( Express express, FILES * files ) {
     // entX from schemaA have attribute attr1 = entY from schemaB.
     files -> classes = FILEcreate( "Sdaiclasses.h" );
     fprintf( files->classes, "\n// in the fedex_plus source code, this file is generally referred to as files->classes\n" );
-    fprintf( files->classes, "#include <schema.h>\n" );
+    fprintf( files->classes, "#include \"schema.h\"\n" );
 }
 
 /** ****************************************************************
@@ -379,7 +379,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     }
     fprintf( files->inc, "\n// in the fedex_plus source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include <schema.h>\n" );
+    fprintf( incfile, "#include \"schema.h\"\n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -396,7 +396,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     sprintf( np, "h" );
     fprintf( libfile, "#include <%s.h> \n", sufnm );
 #else
-    fprintf( libfile, "#include <schema.h>\n" );
+    fprintf( libfile, "#include \"schema.h\"\n" );
 #endif
     fprintf( libfile,
              "\n#ifdef  SCL_LOGGING \n"
@@ -441,7 +441,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
 #else
         fprintf( initfile,
                  "#ifndef  SCHEMA_H\n"
-                 "#include <schema.h>\n"
+                 "#include \"schema.h\"\n"
                  "#endif\n" );
 #endif
         fprintf( initfile, "#include <Registry.h>\n" );
@@ -528,7 +528,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
 
     /*  add to schema's include and initialization file */
     fprintf( schemafile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( schemafile, "#include <%s.h> \n", sufnm );
+    fprintf( schemafile, "#include \"%s.h\" \n", sufnm );
     if( schema->search_id == PROCESSED ) {
         fprintf( schemafile, "extern void %sInit (Registry & r);\n", schnm );
         fprintf( schemainit, "     extern void %sInit (Registry & r);\n", schnm );
@@ -645,7 +645,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->lib, "\n// in the fedex_plus source code, this file is generally referred to as files->lib or libfile\n" );
 
-    fprintf( libfile, "#include <%s.h> n", schnm );
+    fprintf( libfile, "#include \"%s.h\" n", schnm );
 
     // 3. header for namespace to contain all formerly-global variables
     sprintf( fnm, "%sNames.h", schnm );
@@ -666,14 +666,14 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->init, "\n// in the fedex_plus source code, this file is generally referred to as files->init or initfile\n" );
 
-    fprintf( initfile, "#include <%s.h>\n\n", schnm );
+    fprintf( initfile, "#include \"%s.h\"\n\n", schnm );
     fprintf( initfile, "void \n%sInit (Registry& reg)\n{\n", schnm );
 
     /**********  record in files relating to entire input   ***********/
 
     /*  add to schema's include and initialization file */
     fprintf( schemafile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( schemafile, "#include <%s.h>\n\n", schnm );
+    fprintf( schemafile, "#include \"%s.h\"\n\n", schnm );
     fprintf( schemafile, "extern void %sInit (Registry & r);\n", schnm );
     fprintf( schemainit, "         extern void %sInit (Registry & r);\n", schnm );
     fprintf( schemainit, "         %sInit (reg);\n", schnm );
