@@ -1,10 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
-/* $Id: object.h,v 1.9 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Object
+/** **********************************************************************
+** Module:  Object \file object.h
 ** Description: This module implements the Object abstraction.
 ** Constants:
 **  OBJECT_NULL - the null class
@@ -48,9 +46,9 @@
 /* constants */
 /*************/
 
-/* each object has an index - current the index is a mnemonic character */
-/* hence the array is rather sparse, but the extra slop is only a hundred */
-/* or so bytes, so it's nothing to sweat about */
+/** each object has an index - current the index is a mnemonic character
+ * hence the array is rather sparse, but the extra slop is only a hundred
+ * or so bytes, so it's nothing to sweat about */
 #define MAX_OBJECT_TYPES    127 /* really could be a LOT less */
 
 /*****************/
@@ -71,9 +69,8 @@
 
 struct Object {
     struct Symbol_ * ( *get_symbol )();
-    char * type; /* should complete the phrase "X is ..." */
-    /* i.e., "an entity", "a type", "of unknown type" */
-    int bits;   /* a bitwise selector of a type, i.e. OBJ_XX_BITS */
+    char * type; /**< should complete the phrase "X is ..." - i.e., "an entity", "a type", "of unknown type" */
+    int bits;   /**< a bitwise selector of a type, i.e. OBJ_XX_BITS */
 };
 
 /****************/
@@ -104,11 +101,7 @@ GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 #define OBJtype_is_oneof(_type_,class)  (OBJ[(int)_type_].bits & (class))
 #define OBJget_name(obj,type)       (OBJget_symbol(obj,type)->name)
 
-/* for backwards compatibility */
-#define OBJequal(x,y)           ((x) == (y))
-#define OBJfree(x)
-#define OBJreference(x)         (x)
-#define OBJget_data(obj,type,err)   (obj)
+/* removed #define statements for obsolete fn macros OBJequal OBJfree OBJreference OBJget_data */
 
 /***********************/
 /* function prototypes */
@@ -117,15 +110,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 extern SCL_EXPRESS_EXPORT void OBJinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
 extern SCL_EXPRESS_EXPORT Symbol * UNK_get_symbol PROTO( ( Generic x ) );
-#if 0
-extern void OBJcreate( char, struct Symbol * ( * )( Generic ), char *, int );
-#endif
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(OBJECT_C)
-#endif /* supports_inline_functions || defined(OBJECT_C) */
 
 #endif /*OBJECT_H*/

@@ -843,21 +843,6 @@ explicit_attribute    : attribute_decl_list TOK_COLON optional
                     LISTod;
                   }
                 ;
-/*
-                    if (OBJis_kind_of(attr,Class_Binary_Expression)) {
-                        x = BIN_EXPget_second_operand(attr);
-                    } else  x = attr;
-                    if (!OBJis_kind_of(x,Class_Identifier)) {
-                        yyerror("illegal attribute name");
-                    }
-                    v = EXPcreate(...);
-                    v->symbol = SYMBOLget_name(
-                        IDENTget_identifier(x)),$4,&experrc);
-                    VARput_optional(v, true);
-                    VARput_reference(v,attr);
-                    LISTadd_last(vlist,(Generic)v);
-*/
-
 
 express_file        : { scope = scopes;
                     /* no need to define scope->this */

@@ -25,23 +25,14 @@
 #include <stdlib.h>
 #include "express/object.h"
 
-/*ARGSUSED*/
-Symbol *
-UNK_get_symbol( Generic x ) {
+Symbol * UNK_get_symbol( Generic x ) {
     fprintf( stderr, "OBJget_symbol called on object of unknown type\n" );
     ERRORabort( 0 );
     return 0;
 }
 
-/*
-** Procedure:   OBJinitialize
-** Parameters:  -- none --
-** Returns: void
-** Description: Initialize the Object module
-*/
-
-void
-OBJinitialize() {
+/** Initialize the Object module */
+void OBJinitialize() {
     int i;
 
     OBJ = ( struct Object * )malloc( MAX_OBJECT_TYPES * sizeof( struct Object ) );
@@ -52,8 +43,7 @@ OBJinitialize() {
     }
 }
 
-void
-OBJcreate( char type, struct Symbol_ * ( *get_symbol )( Generic ), char * printable_type, int bits ) {
+void OBJcreate( char type, struct Symbol_ * ( *get_symbol )( Generic ), char * printable_type, int bits ) {
     unsigned index = ( unsigned )type;
     OBJ[index].get_symbol = get_symbol;
     OBJ[index].type = printable_type;

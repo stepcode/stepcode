@@ -1,10 +1,8 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
-/* $Id: expr.h,v 1.4 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Expression
+/** **********************************************************************
+** Module:  Expression \file expr.h
 ** Description: This module implements the Expression abstraction.
 **  Several types of expressions are supported: identifiers,
 **  literals, operations (arithmetic, logical, array indexing,
@@ -86,7 +84,7 @@ typedef enum {
     OP_NOT,         OP_NOT_EQUAL,       OP_OR,
     OP_PLUS,        OP_REAL_DIV,        OP_SUBCOMPONENT,
     OP_TIMES,       OP_XOR,         OP_UNKNOWN,
-    OP_LAST /* must be last - used only to size tables */
+    OP_LAST /**< must be last - used only to size tables */
 } Op_Code;
 
 typedef struct Qualified_Attr   Qualified_Attr;
@@ -118,7 +116,7 @@ typedef Literal         Aggregate_Literal, Integer_Literal,
 /* expression types */
 
 struct Qualified_Attr {
-    struct Expression_ * complex;   /* complex entity instance */
+    struct Expression_ * complex;   /**< complex entity instance */
     Symbol * entity;
     Symbol * attribute;
 };
@@ -132,22 +130,20 @@ struct Op_Subexpression {
 
 struct Query_ {
     Variable local;
-    Expression aggregate;   /* set from which to test */
-    Expression expression;  /* logical expression */
+    Expression aggregate;   /**< set from which to test */
+    Expression expression;  /**< logical expression */
     struct Scope_ * scope;
 };
 
 struct Funcall {
-    struct Scope_ * function; /* can also be an entity because entities */
-    /* can be called as functions */
+    struct Scope_ * function; /**< can also be an entity because entities can be called as functions */
     Linked_List list;
 };
 
 union expr_union {
     int integer;
     float real;
-    /*  char *string;       find string name in symbol in Expression */
-    char * attribute;   /* inverse .... for 'attr' */
+    char * attribute;   /**< inverse .... for 'attr' */
     char * binary;
     int logical;
     bool boolean;
@@ -157,35 +153,31 @@ union expr_union {
     /* if etype == aggregate, list of expressions */
     /* if etype == funcall, 1st element of list is funcall or entity */
     /*  remaining elements are parameters */
-    Linked_List list;   /* aggregates (bags, lists, sets, arrays) */
-    /* or lists for oneof expressions */
-    Expression expression;  /* derived value in derive attrs, or*/
-    /* initializer in local vars, or */
-    /* enumeration tags */
-    /* or oneof value */
-    struct Scope_ * entity; /* used by subtype exp, group expr */
-    /* and self expr, some funcall's and any */
-    /* expr that results in an entity */
-    Variable variable;  /* attribute reference */
+    Linked_List list;   /**< aggregates (bags, lists, sets, arrays) or lists for oneof expressions */
+    Expression expression;  /**< derived value in derive attrs, or
+                             * initializer in local vars, or
+                             * enumeration tags
+                             * or oneof value */
+    struct Scope_ * entity; /**< used by subtype exp, group expr
+                              * and self expr, some funcall's and any
+                              * expr that results in an entity */
+    Variable variable;  /**< attribute reference */
 };
 
+/** The difference between 'type' and 'return_type' is illustrated
+ * by "func(a)".  Here, 'type' is Type_Function while 'return_type'
+ * might be Type_Integer (assuming func returns an integer). */
 struct Expression_ {
-    Symbol symbol;      /* contains things like funcall names */
-    /* string names, binary values, */
-    /* enumeration names */
+    Symbol symbol;      /**< contains things like funcall names, string names, binary values, enumeration names */
     Type type;
-    Type return_type;   /* type of value returned by expression */
-    /* The difference between 'type' and 'return_type' is */
-    /* illustrated by "func(a)".  Here, 'type' is Type_Function */
-    /* while 'return_type'  might be Type_Integer (assuming func */
-    /* returns an integer). */
+    Type return_type;   /**< type of value returned by expression */
     struct Op_Subexpression e;
     union expr_union u;
 };
 
-/* indexed by the op enumeration values */
+/** indexed by the op enumeration values */
 struct EXPop_entry {
-    char * token;       /* literal token, e.g., "<>" */
+    char * token;       /**< literal token, e.g., "<>" */
     Type( *resolve ) PROTO( ( Expression, struct Scope_ * ) );
 };
 
@@ -245,7 +237,7 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 #define FCALLget_parameters(e)      ((e)->u.funcall.list)
 #define FCALLput_function(expr,func)    ((e)->u.funcall.function = (func))
 #define FCALLget_function(e)        ((e)->u.funcall.function)
-/* assumes the function is not an entity-function! */
+/** assumes the function is not an entity-function! */
 #define FCALLget_algorithm(e)       ((e)->u.funcall.function->u.function->body)
 
 #define INT_LITget_value(e)     ((e)->u.integer)

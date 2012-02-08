@@ -1,10 +1,8 @@
 #ifndef SCHEMA_H
 #define SCHEMA_H
 
-/* $Id: schema.h,v 1.11 1997/02/25 19:49:01 dar Exp $ */
-
-/************************************************************************
-** Module:  Schema
+/** **********************************************************************
+** Module:  Schema \file schema.h
 ** Description: This module implements the Schema abstraction, which
 **  basically amounts to a named symbol table.
 ** Constants:
@@ -48,10 +46,6 @@
  * prettied up interface to print_objects_when_running
  */
 
-/*************/
-/* constants */
-/*************/
-
 /*****************/
 /* packages used */
 /*****************/
@@ -61,11 +55,6 @@
 #include "symbol.h"
 #include "scope.h"
 
-/************/
-/* typedefs */
-/************/
-
-/*typedef struct Scope *Schema;*/
 
 /****************/
 /* modules used */
@@ -87,30 +76,28 @@ typedef struct Rename {
     Schema schema;
     struct Symbol_ * old;
     struct Symbol_ * nnew;
-    Generic object;     /* once object has been looked up */
-    char type;      /* drat, need to remember this */
-    /* once renames have been resolved to avoid */
-    /* looking them up in the dictionary again */
+    Generic object;     /**< once object has been looked up */
+    char type;      /**< drat, need to remember this once renames have been
+                     * resolved to avoid looking them up in the dictionary again */
     enum rename_type rename_type;
-    int userdata;   /* generic for user */
+    int userdata;   /**< generic for user */
 } Rename;
 
 struct Schema_ {
     Linked_List rules;
-#if 0
-    struct Express_ * express;
-#endif
     Linked_List reflist;
     Linked_List uselist;
-    /* dictionarys into which are entered renames for each specific */
-    /* object specified in a rename clause (even if it uses the same */
-    /* name */
+    /** \var refdict, usedict
+     * dictionarys into which are entered renames for each specific 
+     * object specified in a rename clause (even if it uses the same
+     * name */
     Dictionary refdict;
     Dictionary usedict;
-    /* lists of schemas that are fully ref/use'd */
-    /* entries can be 0 if schemas weren't found during RENAMEresolve */
-    Linked_List use_schemas;
-    Linked_List ref_schemas;
+
+    Linked_List use_schemas; /**< lists of schemas that are fully use'd
+                              * entries can be 0 if schemas weren't found during RENAMEresolve */
+     Linked_List ref_schemas; /**< lists of schemas that are fully ref'd
+                               * entries can be 0 if schemas weren't found during RENAMEresolve */
 };
 
 /********************/
@@ -159,24 +146,17 @@ GLOBAL SCL_EXPRESS_EXPORT int  __SCOPE_search_id       INITIALLY( 0 );
 
 extern SCL_EXPRESS_EXPORT Variable VARfind PROTO( ( Scope, char *, int ) );
 extern SCL_EXPRESS_EXPORT Schema   SCHEMAcreate PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAadd_use PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAadd_reference PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAdefine_use PROTO( ( Schema, Rename * ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAdefine_reference PROTO( ( Schema, Rename * ) );
+extern SCL_EXPRESS_EXPORT void     SCHEMAinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void     SCHEMAadd_use PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
+extern SCL_EXPRESS_EXPORT void     SCHEMAadd_reference PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
+extern SCL_EXPRESS_EXPORT void     SCHEMAdefine_use PROTO( ( Schema, Rename * ) );
+extern SCL_EXPRESS_EXPORT void     SCHEMAdefine_reference PROTO( ( Schema, Rename * ) );
 extern SCL_EXPRESS_EXPORT Generic  SCHEMAfind PROTO( ( Schema, char * name, int search_refs ) );
 extern SCL_EXPRESS_EXPORT Scope    SCOPEcreate PROTO( ( char ) );
 extern SCL_EXPRESS_EXPORT Scope    SCOPEcreate_tiny PROTO( ( char ) );
 extern SCL_EXPRESS_EXPORT Scope    SCOPEcreate_nostab PROTO( ( char ) );
 extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use PROTO( ( Scope ) );
 extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref PROTO( ( Scope ) );
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(SCHEMA_C)
-#endif /* supports_inline_functions || defined(SCHEMA_C) */
 
 #endif /*  SCHEMA_H */
 

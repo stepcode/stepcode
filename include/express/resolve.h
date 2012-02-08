@@ -1,8 +1,6 @@
 #ifndef RESOLVE_H
 #define RESOLVE_H
 
-/* $Id: resolve.h,v 1.6 1994/11/10 19:20:03 clark dec96 $ */
-
 /*
  * This software was developed by U.S. Government employees as part of
  * their official duties and is not subject to copyright.
@@ -74,7 +72,6 @@ GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_group       INITIALLY( ERROR_
 
 /* cheaper doing the check here, then inside the function call.  Return */
 /* immediately for RESOLVED, FAILED_TO_RESOLVE, and RESOLVE_IN_PROGRESS */
-/*#define TYPEresolve(t,s)      if (is_resolvable((*(t)))) TYPE_resolve((t),(s))*/
 #define TYPEresolve(t,s)        if (is_resolvable((*(t)))) TYPE_resolve((t))
 #define VARresolve_types(v,s)       if (is_resolvable((v)->name)) VAR_resolve_types((v),(s))
 #define VARresolve_expressions(v,s) if (is_resolvable((v)->name)) VAR_resolve_expressions((v),(s))
@@ -88,7 +85,6 @@ extern SCL_EXPRESS_EXPORT void RESOLVEinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void SCOPEresolve_expressions_statements PROTO( ( Scope ) );
 extern SCL_EXPRESS_EXPORT void SCOPEresolve_subsupers PROTO( ( Scope ) );
 extern SCL_EXPRESS_EXPORT void SCOPEresolve_types PROTO( ( Scope ) );
-/*extern void   TYPE_resolve PROTO((Type *,Scope));*/
 extern SCL_EXPRESS_EXPORT void TYPE_resolve PROTO( ( Type * ) );
 extern SCL_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
 extern SCL_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );

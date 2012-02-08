@@ -1,9 +1,8 @@
 #ifndef HASH_H
 #define HASH_H
 
-/* $Id: hash.h,v 1.6 1997/10/22 16:36:49 sauderd Exp $ */
-
-/************************************************************************
+/** **********************************************************************
+ * \file hash.h
 ** Hash_Table:  Hash_Table
 ** Description:
 **
@@ -90,9 +89,9 @@
 #define HASH_NULL   (Hash_Table)NULL
 
 #define SEGMENT_SIZE        256
-#define SEGMENT_SIZE_SHIFT  8   /* log2(SEGMENT_SIZE)   */
+#define SEGMENT_SIZE_SHIFT  8   /**< log2(SEGMENT_SIZE)   */
 #define DIRECTORY_SIZE      256
-#define DIRECTORY_SIZE_SHIFT    8   /* log2(DIRECTORY_SIZE) */
+#define DIRECTORY_SIZE_SHIFT    8   /**< log2(DIRECTORY_SIZE) */
 #define PRIME1          37
 #define PRIME2          1048583
 #define MAX_LOAD_FACTOR 5
@@ -124,41 +123,38 @@ typedef struct Element_ {
     char    *    key;
     char    *    data;
     struct Element_ * next;
-    Symbol   *   symbol;/* for debugging hash conflicts */
-    char        type;   /* user-supplied type */
+    Symbol  *  symbol; /**< for debugging hash conflicts */
+    char       type;   /**< user-supplied type */
 } * Element;
 
 typedef Element * Segment;
 
 typedef struct Hash_Table_ {
 #if 0
-    int     in_use;     /* If someone is traversing the hash table */
+    int     in_use;     /**< If someone is traversing the hash table */
 #endif
-    unsigned int    p;      /* Next bucket to be split  */
-    unsigned int    maxp;       /* upper bound on p during expansion    */
-    long    KeyCount;   /* current # keys   */
-    unsigned int    SegmentCount;   /* current # segments   */
+    unsigned int    p;      /**< Next bucket to be split  */
+    unsigned int    maxp;   /**< upper bound on p during expansion    */
+    long    KeyCount;       /**< current # keys   */
+    unsigned int    SegmentCount;   /**< current # segments   */
     unsigned int    MinLoadFactor;
     unsigned int    MaxLoadFactor;
     Segment Directory[DIRECTORY_SIZE];
 } * Hash_Table;
 
 typedef struct {
-    unsigned int i;  /* segment index (i think) */
-    unsigned int j;  /* key index in segment (ditto) */
-    Element p;  /* usually the next element to be returned */
+    unsigned int i;  /**< segment index (i think) */
+    unsigned int j;  /**< key index in segment (ditto) */
+    Element p;       /**< usually the next element to be returned */
     Hash_Table table;
     char type;
-    Element e;  /* originally thought of as a place for */
-    /* the caller of HASHlist to temporarily stash the return value */
-    /* to allow the caller (i.e., DICTdo) to be macroized, but now */
-    /* conveniently used by HASHlist, which both stores the ultimate */
-    /* value here as well as returns it via the return value of HASHlist */
+    Element e;  /**< originally thought of as a place for
+                 * the caller of HASHlist to temporarily stash the return value
+                 * to allow the caller (i.e., DICTdo) to be macroized, but now
+                 * conveniently used by HASHlist, which both stores the ultimate
+                 * value here as well as returns it via the return value of HASHlist
+                 */
 } HashEntry;
-
-/****************/
-/* modules used */
-/****************/
 
 /********************/
 /* global variables */
@@ -186,7 +182,7 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
 ** Fast arithmetic, relying on powers of 2
 */
 
-/*
+/**
 The centerline compiler was having problems with MUL and DIV. Where DIV
 was called like this DIV(NewAddress, SEGMENT_SIZE) it is now being called like
 DIV(NewAddress, SEGMENT_SIZE_SHIFT). The compiler was mentioning some kind of
@@ -220,8 +216,5 @@ extern SCL_EXPRESS_EXPORT Element  HASHsearch PROTO( ( Hash_Table, Element, Acti
 extern SCL_EXPRESS_EXPORT void HASHlistinit PROTO( ( Hash_Table, HashEntry * ) );
 extern SCL_EXPRESS_EXPORT void HASHlistinit_by_type PROTO( ( Hash_Table, HashEntry *, char ) );
 extern SCL_EXPRESS_EXPORT Element  HASHlist PROTO( ( HashEntry * ) );
-#if 0
-extern void HASHlistend PROTO( ( HashEntry * ) );
-#endif
 
 #endif /*HASH_H*/

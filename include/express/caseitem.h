@@ -1,10 +1,8 @@
 #ifndef CASE_ITEM_H
 #define CASE_ITEM_H
 
-/* $Id: caseitem.h,v 1.3 1997/01/21 19:17:11 dar Exp $ */
-
-/************************************************************************
-** Module:  Case_Item
+/** **********************************************************************
+** Module:  Case_Item \file caseitem.h
 ** Description: This module implements the Case_Item abstraction.  A
 **  case item represents a single branch in a case statement; it
 **  thus consists of a list of labels and a statement to execute
@@ -98,12 +96,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head CASE_IT_fl;
 
 extern SCL_EXPRESS_EXPORT Case_Item    CASE_ITcreate PROTO( ( Linked_List, struct Statement_ * ) );
 extern SCL_EXPRESS_EXPORT void     CASE_ITinitialize PROTO( ( void ) );
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(CASE_ITEM_C)
-#endif /* supports_inline_functions || defined(CASE_ITEM_C) */
 
 #endif /*CASE_ITEM_H*/
