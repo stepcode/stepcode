@@ -20,11 +20,6 @@ class SCL_DAI_EXPORT SDAI_sdaiObject {
 //    static Object_ptr _duplicate(Object_ptr);
 //    static Object_ptr _nil();
 
-#ifdef PART26
-//    virtual SCLP26(Application_instance_ptr) create_TIE();
-        virtual IDL_Application_instance_ptr create_TIE();
-#endif
-
 };
 
 typedef SDAI_sdaiObject * SDAI_sdaiObject_ptr;

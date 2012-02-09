@@ -22,10 +22,6 @@
  */
 
 #include <scl_export.h>
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h> // to get bcopy for CenterLine
