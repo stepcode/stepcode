@@ -16,11 +16,8 @@
 /* $Id: gennode.h,v 3.0.1.3 1997/11/05 22:33:47 sauderd DP3.1 $  */
 
 #include <scl_export.h>
-#ifdef __O3DB__
-#include <OpenOODB.h>
-#endif
-
 #include <iostream>
+
 class GenNodeList;
 class MgrNodeList;
 class DisplayNodeList;
