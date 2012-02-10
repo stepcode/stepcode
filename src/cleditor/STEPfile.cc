@@ -2228,11 +2228,6 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     SetFileIdIncrement();
     int total_insts = 0,  valid_insts = 0;
-#if defined(__MSVC__) || defined(__BORLAND__)
-    int exchange_file = -1;
-#else
-    __attribute__( ( unused ) ) int exchange_file = -1;
-#endif
 
     ReadTokenSeparator( *in );
     std::string keywd = GetKeyword( *in, "; #", _error );
@@ -2242,11 +2237,9 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     if( !strncmp( const_cast<char *>( keywd.c_str() ), "ISO-10303-21",
                   strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
-        exchange_file = 1;
         SetFileType( VERSION_CURRENT );
     } else if( !strncmp( const_cast<char *>( keywd.c_str() ), "STEP_WORKING_SESSION",
                          strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
-        exchange_file = 0;
         if( _fileType != WORKING_SESSION ) {
             _error.AppendToUserMsg(
                 "Warning: Reading in file as Working Session file.\n" );
