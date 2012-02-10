@@ -96,6 +96,15 @@ const char * StrToConstant( const char * word, std::string & s ) {
     return const_cast<char *>( s.c_str() );
 }
 
+int StrCmpIns( const char * str1, const char * str2 ) {
+    char c1, c2;
+    while ((c1 = tolower(*str1)) == (c2 = tolower(*str2)) && c1 != '\0') {
+        str1++;
+        str2++;
+    }
+    return c1 - c2;
+}
+
 /**************************************************************//**
  ** \fn  PrettyTmpName (char * oldname)
  ** \returns  a new capitalized name in a static buffer
