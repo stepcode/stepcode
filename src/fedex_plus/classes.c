@@ -1573,8 +1573,11 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             /*  1. create a new STEPattribute */
 
-            fprintf( file, "    "
-                     "%sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
+            // if type is aggregate, the variable is a pointer and needs initialized
+            if( TYPEis_aggregate( t ) ) {
+                fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+            }
+            fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                      ( first ? "STEPattribute *" : "" ), //  first time through, declare 'a'
                      SCHEMAget_name( schema ),
                      ATTR_PREFIX, count,
@@ -1756,8 +1759,11 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
                 /*  1. create a new STEPattribute */
 
-                fprintf( file, "    "
-                         "%sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
+                // if type is aggregate, the variable is a pointer and needs initialized
+                if( TYPEis_aggregate( t ) ) {
+                    fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+                }
+                fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                          ( first ? "STEPattribute *" : "" ), //  first time through, declare a
                          SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
