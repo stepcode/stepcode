@@ -96,6 +96,14 @@ const char * StrToConstant( const char * word, std::string & s ) {
     return const_cast<char *>( s.c_str() );
 }
 
+/**************************************************************//**
+ ** \fn  StrCmpIns (const char * str1, const char * str2)
+ ** \returns  Comparison result
+ ** Compares two strings case insensitive (lowercase).
+ ** Returns < 0  when str1 less then str2
+ **         == 0 when str1 equals str2
+ **         > 0  when str1 greater then str2
+ ******************************************************************/
 int StrCmpIns( const char * str1, const char * str2 ) {
     char c1, c2;
     while ((c1 = tolower(*str1)) == (c2 = tolower(*str2)) && c1 != '\0') {
