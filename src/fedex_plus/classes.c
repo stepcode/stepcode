@@ -2254,6 +2254,16 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
                         LISTod;
                     }
                     if( !found ) {
+                        // if it isn't in inheritedAttrList, check that it isn't already in
+                        // nonInheritedAttrList - this prevents duplicates
+                        LISTdo( nonInheritedAttrList, a3, Variable ) {
+                            if( streq( VARget_simple_name( a ), VARget_simple_name( a3 ) ) ) {
+                                found = 1;
+                            }
+                        }
+                        LISTod;
+                    }
+                    if( !found ) {
                         LISTadd_first( nonInheritedAttrList, ( Generic ) a );
                     }
                 }
