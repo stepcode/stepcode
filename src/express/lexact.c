@@ -429,7 +429,7 @@ SCANprocess_semicolon( int commentp ) {
 
 void
 SCANsave_comment( void ) {
-    strncpy( last_comment_ , yytext, 255 );
+    strlcpy( last_comment_ , yytext, 255 );
     last_comment = last_comment_;
 }
 

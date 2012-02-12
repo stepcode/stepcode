@@ -293,7 +293,7 @@ TYPEget_ctype( const Type t ) {
 
     /*      case TYPE_ENTITY:   */
     if( class == entity_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
+        strlcpy( retval, TypeName( t ), BUFSIZ - 2 );
         strcat( retval, "_ptr" );
         return retval;
         /*  return ("STEPentityH");    */
@@ -301,7 +301,7 @@ TYPEget_ctype( const Type t ) {
     /*    case TYPE_ENUM:   */
     /*    case TYPE_SELECT: */
     if( class == enumeration_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
+        strlcpy( retval, TypeName( t ), BUFSIZ - 2 );
         strcat( retval, "_var" );
         return retval;
     }
@@ -345,12 +345,12 @@ const char *
 AccessType( Type t ) {
     Class_Of_Type class;
     static char nm [BUFSIZ];
-    strncpy( nm, TypeName( t ), BUFSIZ - 4 );
+    strlcpy( nm, TypeName( t ), BUFSIZ - 4 );
     if( TYPEis_entity( t ) ) {
         /*  if(corba_binding)
             {
                 if (TYPEget_name (t))
-                  strncpy (nm, FirstToUpper (TYPEget_name (t)), BUFSIZ-1);
+                  strlcpy (nm, FirstToUpper (TYPEget_name (t)), BUFSIZ-1);
             }
         */
         strcat( nm, "_ptr" );
@@ -361,17 +361,17 @@ AccessType( Type t ) {
     }
     class = TYPEget_type( t );
     if( class == enumeration_ ) {
-        strncpy( nm, TypeName( t ), BUFSIZ - 2 );
+        strlcpy( nm, TypeName( t ), BUFSIZ - 2 );
         strcat( nm, "_var" );
         return nm;
     }
     if( class == logical_ ) {
-        strncpy( nm, "Logical", BUFSIZ - 2 );
+        strlcpy( nm, "Logical", BUFSIZ - 2 );
     }
 
     /*    case TYPE_BOOLEAN:    */
     if( class == boolean_ ) {
-        strncpy( nm, "Boolean", BUFSIZ - 2 );
+        strlcpy( nm, "Boolean", BUFSIZ - 2 );
     }
     return nm;
 }
@@ -466,7 +466,7 @@ EnumName( const char * oldname ) {
     strcpy( newname, ENUM_PREFIX )    ;
     j = strlen( ENUM_PREFIX )    ;
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
+    strlcpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
@@ -484,7 +484,7 @@ SelectName( const char * oldname ) {
     newname [0] = ToUpper( newname [0] );
     j = strlen( TYPE_PREFIX );
     newname [j] = ToUpper( oldname [0] );
-    strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
+    strlcpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
@@ -494,7 +494,7 @@ const char *
 FirstToUpper( const char * word ) {
     static char newword [MAX_LEN];
 
-    strncpy( newword, word, MAX_LEN );
+    strlcpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );
     return ( newword );
 }
