@@ -314,11 +314,12 @@ HASHdestroy( Hash_Table table ) {
 void *
 HASHfind( Hash_Table t, char * s ) {
 //    Element * ep;
-    struct Element_ *ep = malloc( sizeof * ep );
+    struct Element_ *ep = NULL;
     struct Element_ *e = malloc( sizeof * e );
     e -> key = s;
     e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
     ep = HASHsearch( t, e, HASH_FIND );
+    free(e);
     return( ep ? ep->data : 0 );
 }
 
