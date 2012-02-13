@@ -21,23 +21,13 @@
 #include <string.h>
 #include <errordesc.h>
 
-
-//StrCmpIns - case-insensitive string compare. Original fct (replaced Sep 2011)
-//called PrettyTmpName(). Not doing so may affect sort order but that shouldn't hurt
-#if defined(__MSVC__)
-#define StrCmpIns(a,b) _stricmp(a,b)
-#elif defined(__BORLAND__)
-#define StrCmpIns(a,b) stricmp(a,b)
-#else
-#define StrCmpIns(a,b) strcasecmp(a,b)
-#endif
-
 SCL_UTILS_EXPORT char         ToLower( const char c );
 SCL_UTILS_EXPORT char         ToUpper( const char c );
 SCL_UTILS_EXPORT char    *    StrToLower( const char *, char * );
 SCL_UTILS_EXPORT const char * StrToLower( const char * word, std::string & s );
 SCL_UTILS_EXPORT const char * StrToUpper( const char * word, std::string & s );
 SCL_UTILS_EXPORT const char * StrToConstant( const char * word, std::string & s );
+SCL_UTILS_EXPORT int          StrCmpIns( const char *str1, const char *str2 );
 SCL_UTILS_EXPORT const char * PrettyTmpName( const char * oldname );
 SCL_UTILS_EXPORT char    *    PrettyNewName( const char * oldname );
 SCL_UTILS_EXPORT char    *    EntityClassName( char * oldname );

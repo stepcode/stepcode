@@ -97,6 +97,23 @@ const char * StrToConstant( const char * word, std::string & s ) {
 }
 
 /**************************************************************//**
+ ** \fn  StrCmpIns (const char * str1, const char * str2)
+ ** \returns  Comparison result
+ ** Compares two strings case insensitive (lowercase).
+ ** Returns < 0  when str1 less then str2
+ **         == 0 when str1 equals str2
+ **         > 0  when str1 greater then str2
+ ******************************************************************/
+int StrCmpIns( const char * str1, const char * str2 ) {
+    char c1, c2;
+    while ((c1 = tolower(*str1)) == (c2 = tolower(*str2)) && c1 != '\0') {
+        str1++;
+        str2++;
+    }
+    return c1 - c2;
+}
+
+/**************************************************************//**
  ** \fn  PrettyTmpName (char * oldname)
  ** \returns  a new capitalized name in a static buffer
  ** Capitalizes first char of word, rest is lowercase. Removes '_'.

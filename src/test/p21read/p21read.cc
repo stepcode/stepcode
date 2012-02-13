@@ -152,6 +152,9 @@ int main( int argc, char * argv[] ) {
     sfile.ReadExchangeFile( flnm );
     sfile.Error().PrintContents( cout );
 
+    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE )
+        exit(1);
+
     checkSchemaName( registry, sfile, ignoreErr );
 
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
