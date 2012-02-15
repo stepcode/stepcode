@@ -90,7 +90,8 @@ struct  SelectTag_ {
 };
 
 const char   *  GetTypeDescriptorName( Type t );
-char      *     format_for_stringout( char * orig_buf, char * return_buf );
+char         *  format_for_stringout( char * orig_buf, char * return_buf );
+char         *  format_for_std_stringout( char * orig_buf, char * return_buf );
 const char   *  CheckWord( const char * );
 const char   *  StrToLower( const char * );
 const char   *  StrToUpper( const char * );
