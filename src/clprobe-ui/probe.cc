@@ -1873,16 +1873,14 @@ void Probe::DescribeEntityCmd() {
         // abstract entities are marked with an asterisk at end of entity name
         if( entPtr[strlen( entPtr ) - 1] == '*' ) {
             char ent[512];
-            strncpy( ent, entPtr, 512 );
-            ent[strlen( entPtr ) - 1] = '\0'; // get rid of trailing * indicating
+            strlcpy( ent, entPtr, 512 );
             // it is an abstract entity type
             entPtr = ent;
         }
         // entities requiring external mapping have an '%' at the end
         else if( entPtr[strlen( entPtr ) - 1] == '%' ) {
             char ent[512];
-            strncpy( ent, entPtr, 512 );
-            ent[strlen( entPtr ) - 1] = '\0';
+            strlcpy( ent, entPtr, 512 );
             entPtr = ent;
         }
         StepEntityDescriptor * sed =

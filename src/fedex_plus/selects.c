@@ -159,7 +159,7 @@ utype_member( const Linked_List list, const Type check, int rename ) {
     if( TYPEis_entity( t ) && TYPEis_entity( check ) ) {
         return "SDAI_Application_instance_ptr";
     }
-    strncpy( r, TYPEget_utype( t ), BUFSIZ );
+    strlcpy( r, TYPEget_utype( t ), BUFSIZ );
     if( strcmp( r, TYPEget_utype( check ) ) == 0 ) {
         return r;
     }
@@ -308,7 +308,7 @@ duplicate_utype_member( const Linked_List list, const Type check ) {
     }
     /*  don\'t compare check to itself  */
     else {   /*  continue looking  */
-        strncpy( b, TYPEget_utype( t ), BUFSIZ );
+        strlcpy( b, TYPEget_utype( t ), BUFSIZ );
         if( ( !strcmp( b, TYPEget_utype( check ) ) )
                 || ( compareOrigTypes( t, check ) ) )
             /*  if the underlying types are the same  */
@@ -582,8 +582,8 @@ TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
          classnm [BUFSIZ],
          tdnm [BUFSIZ];
 
-    strncpy( classnm, SelectName( TYPEget_name( type ) ), BUFSIZ );
-    strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
+    strlcpy( classnm, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     size = strlen( classnm ) + 2; /* for formatting output */
 
     fprintf( f, "\n//////////  SELECT TYPE %s\n",
@@ -602,7 +602,7 @@ TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     LISTod;
 
     LISTdo( data_members, t, Type )
-    strncpy( dmname, SEL_ITEMget_dmname( t ), BUFSIZ );
+    strlcpy( dmname, SEL_ITEMget_dmname( t ), BUFSIZ );
     fprintf( f, "\t   %s _%s;\n", TYPEget_utype( t ), dmname );
     LISTod;
 
@@ -681,8 +681,8 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
     Linked_List attrs;
 
     dup_result = find_duplicate_list( type, &dups );
-    strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
-    strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
+    strlcpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     TYPEselect_inc_print_vars( type, f, dups );
 
     fprintf( f, "\n\t//  part 2\n" );
@@ -807,8 +807,8 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
          nm[BUFSIZ];
     int size = strlen( n ) * 2 + 4, j; /* size - for formatting output */
 
-    strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    strncpy( nm, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( tdnm, TYPEtd_name( type ), BUFSIZ );
+    strlcpy( nm, SelectName( TYPEget_name( type ) ), BUFSIZ );
 
     /*  constructor(s)  */
     /*  null constructor  */
@@ -1039,11 +1039,11 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
         generate_attribute_func_name( a, funcnm );
         generate_attribute_name( a, attrnm );
         /*
-            strncpy (funcnm, attrnm, BUFSIZ);
+            strlcpy (funcnm, attrnm, BUFSIZ);
             funcnm [0] = toupper (funcnm[0]);
         */
         /*  use the ctype since utype will be the same for all entities  */
-        strncpy( utype, TYPEget_ctype( VARget_type( a ) ), BUFSIZ );
+        strlcpy( utype, TYPEget_ctype( VARget_type( a ) ), BUFSIZ );
 
         /*   get method  */
         ATTRprint_access_methods_get_head( classnm, a, f );
@@ -1076,7 +1076,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                         the same as the current attribute.
                         */
 
-                    strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
+                    strlcpy( uent, TYPEget_ctype( t ), BUFSIZ );
 
                     /*  if the underlying type is that item\'s type
                     call the underlying_item\'s member function  */
@@ -1184,7 +1184,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                         generate_attribute_func_name( a, funcnm );
                     }
 
-                    strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
+                    strlcpy( uent, TYPEget_ctype( t ), BUFSIZ );
                     fprintf( f,
                              "  if( CurrentUnderlyingType () == %s ) \n\t//  %s\n",
                              TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
@@ -1259,7 +1259,7 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
     fprintf( f, "%s& %s::operator =( const %s_ptr& o )\n{\n", n, n, n );
 
     LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
+    strlcpy( x, TYPEget_name( t ), BUFSIZ );
     if( firsttime ) {
         fprintf( f, "   " );
         firsttime = 0;
@@ -1300,7 +1300,7 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
 
     firsttime = 1;
     LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
+    strlcpy( x, TYPEget_name( t ), BUFSIZ );
     if( firsttime ) {
         fprintf( f, "   " );
         firsttime = 0;
@@ -1350,7 +1350,7 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
     fprintf( f, "SDAI_Select& %s::ShallowCopy ( const SDAI_Select& o )\n{\n", n );
 
     LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
+    strlcpy( x, TYPEget_name( t ), BUFSIZ );
     fprintf( f, "   if( o.CurrentUnderlyingType () == %s )\n",
              TYPEtd_name( t ) );
     if( utype_member( dups, t, 1 ) )
@@ -1392,7 +1392,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
     const char * dm;  /*  data member name */
     Linked_List data_members = SELgetnew_dmlist( type );
 
-    strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
 
     fprintf( f, "\n\n// STEP Part 21\n" );
     /*  write part 21   */
@@ -1666,7 +1666,7 @@ TYPEselect_lib_StrToVal( const Type type, FILE * f, Schema schema ) {
     Linked_List data_members = SELgetnew_dmlist( type );
     int enum_cnt = 0;
 
-    strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
 
     /*  read StrToVal_content   */
     fprintf( f, "\nSeverity\n%s::StrToVal_content "
@@ -1834,7 +1834,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     int dup_result;
 
     dup_result = find_duplicate_list( type, &dups );
-    strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    strlcpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
     fprintf( f, "\n//////////  SELECT TYPE %s\n", TYPEget_name( type ) );
 
     SELlib_print_protected( type,  f,  schema )  ;
@@ -1879,7 +1879,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
         fprintf( f, "%s::operator %s()\n{\n", n,
                  ( TYPEis_aggregate( t ) || TYPEis_select( t ) ) ?
                  AccessType( t ) : TYPEget_utype( t ) );
-        strncpy( m, TYPEget_utype( t ), BUFSIZ );
+        strlcpy( m, TYPEget_utype( t ), BUFSIZ );
 
         /**** MUST CHANGE FOR multiple big types ****/
         LISTdo( SEL_TYPEget_items( type ), x, Type )
@@ -2001,8 +2001,8 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
         if( !TYPEget_clientData( i ) ) {
             TYPEselect_print( i, files, schema );
         }
-        strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
-        strncpy( tdnm, TYPEtd_name( t ), BUFSIZ );
+        strlcpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
+        strlcpy( tdnm, TYPEtd_name( t ), BUFSIZ );
         fprintf( inc, "typedef %s *    \t%sH;\n", nm, nm );
         fprintf( inc, "typedef %s_ptr *\t%s_var;\n", nm, nm );
         /* Below are specialized create functions for the renamed sel type (both
