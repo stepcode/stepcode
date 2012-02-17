@@ -34,7 +34,7 @@ import unittest
 from SCL.SimpleDataTypes import *
 from SCL.TypeChecker import *
 from SCL.ConstructedDataTypes import *
-from SCL.AggregationDataType import *
+from SCL.AggregationDataTypes import *
 
 #
 # Simple data types
@@ -161,8 +161,24 @@ class TestARRAY(unittest.TestCase):
             self.fail('ExpectedException not thrown')
     
     def test_array_bounds(self):
-        a = ARRAY()
-    
+        a = ARRAY(3,8,REAL)
+        try:
+            a[2]
+        except IndexError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        try:
+            a[9]
+        except IndexError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
     def test_array_unique(self):
         # if UNIQUE is not set to True (False by default),
         # the array may contain the same instance at different

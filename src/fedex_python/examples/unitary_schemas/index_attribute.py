@@ -4,7 +4,7 @@
 from SCL.SCLBase import *
 from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
-from SCL.AggregationDataType import *
+from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
 common_datum_list = 'LIST TYPE Not implemented'

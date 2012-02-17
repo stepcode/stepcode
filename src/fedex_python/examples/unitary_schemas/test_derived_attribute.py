@@ -4,7 +4,7 @@
 from SCL.SCLBase import *
 from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
-from SCL.AggregationDataType import *
+from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
 
@@ -13,40 +13,9 @@ from SCL.Expr import *
 ####################
 class vector(BaseEntityClass):
 	'''Entity vector definition.
-
-	:param x
-	:type x:REAL
-
-	:param y
-	:type y:REAL
 	'''
-	def __init__( self , x,y, ):
-		self.x = x
-		self.y = y
-
-	@apply
-	def x():
-		def fget( self ):
-			return self._x
-		def fset( self, value ):
-		# Mandatory argument
-			if value==None:
-				raise AssertionError('Argument x is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._x = value
-		return property(**locals())
-
-	@apply
-	def y():
-		def fget( self ):
-			return self._y
-		def fset( self, value ):
-		# Mandatory argument
-			if value==None:
-				raise AssertionError('Argument y is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._y = value
-		return property(**locals())
+	# This class does not define any attribute.
+	pass
 
 ####################
  # ENTITY circle #
@@ -133,53 +102,6 @@ class circle(BaseEntityClass):
 ####################
 class point(BaseEntityClass):
 	'''Entity point definition.
-
-	:param x
-	:type x:REAL
-
-	:param y
-	:type y:REAL
-
-	:param z
-	:type z:REAL
 	'''
-	def __init__( self , x,y,z, ):
-		self.x = x
-		self.y = y
-		self.z = z
-
-	@apply
-	def x():
-		def fget( self ):
-			return self._x
-		def fset( self, value ):
-		# Mandatory argument
-			if value==None:
-				raise AssertionError('Argument x is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._x = value
-		return property(**locals())
-
-	@apply
-	def y():
-		def fget( self ):
-			return self._y
-		def fset( self, value ):
-		# Mandatory argument
-			if value==None:
-				raise AssertionError('Argument y is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._y = value
-		return property(**locals())
-
-	@apply
-	def z():
-		def fget( self ):
-			return self._z
-		def fset( self, value ):
-		# Mandatory argument
-			if value==None:
-				raise AssertionError('Argument z is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._z = value
-		return property(**locals())
+	# This class does not define any attribute.
+	pass
