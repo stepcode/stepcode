@@ -589,35 +589,6 @@ static void addRenameTypedefs( Schema schema, FILE * classes )
  * Sdaiclasses.h (needs to have forward declarations here).)
  */
 {
-    DictionaryEntry de;
-    Type i;
-    char nm[BUFSIZ], basenm[BUFSIZ];
-    static int firsttime = TRUE;
-
-    SCOPEdo_types( schema, t, de )
-    if( ( TYPEis_enumeration( t ) || TYPEis_select( t ) )
-            && ( ( i = TYPEget_ancestor( t ) ) != NULL ) ) {
-        /* I.e., t is a renamed enum/sel type.  i is set to the orig enum/
-        // sel t is based on (in case it's a rename of a rename etc). */
-        if( firsttime ) {
-            printf( "\n// Renamed enum and select\n" );
-            //printf( " types (from all schemas):\n" );
-            firsttime = FALSE;
-        }
-        if( TYPEis_enumeration( t ) ) {
-            strncpy( nm, TYPEget_ctype( t ), BUFSIZ - 1 );
-            strncpy( basenm, TYPEget_ctype( i ), BUFSIZ - 1 );
-            //fprintf( classes, "typedef %ss\t%ss;\n", basenm, nm );
-        } else {
-            strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ - 1 );
-            strncpy( basenm, SelectName( TYPEget_name( i ) ), BUFSIZ - 1 );
-            printf(  "typedef %s %s;\n", basenm, nm );
-            //fprintf( "typedef %s * %s_ptr;\n", nm, nm );
-            //fprintf( classes, "typedef %ss %ss;\n", basenm, nm );
-            //fprintf( classes, "typedef %ss * %ss_ptr;\n", nm, nm );
-        }
-    }
-    SCOPEod
 }
 
 static void addAggrTypedefs( Schema schema, FILE * classes )
