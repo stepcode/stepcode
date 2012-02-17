@@ -243,6 +243,14 @@ class TestTypeChecker(unittest.TestCase):
 
     def test_check_enum_type(self):
         enum = ENUMERATION(["my","string"])
-        
+
+#
+# Cast from list to aggregates
+#
+class CastTypeChecker(unittest.TestCase):
+    def test_cast_list_to_array(self):
+        a = [1.,2.,3.]
+        b = cast_python_list_to_aggregate(a,ARRAY(1,3,REAL))
+
 unittest.main()
 

@@ -95,6 +95,12 @@ class ARRAY(object):
         list_size = bound_2 - bound_1 + 1
         self._container = list_size*[None]
     
+    def bound_1(self):
+        return self._bound_1
+
+    def bound_2(self):
+        return self._bound_2
+
     def __getitem__(self, index):
         if index<self._bound_1:
             raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
@@ -122,7 +128,7 @@ class ARRAY(object):
 
 class LIST(list, BaseAggregate):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
-    bounds, which are integer-valued expressions, dfine the minimum and maximum number of
+    bounds, which are integer-valued expressions, define the minimum and maximum number of
     elements that can be held in the collection defined by a list data type.
     A list data type
     definition may optionally specify that a list value cannot contain duplicate elements.

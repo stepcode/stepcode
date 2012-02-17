@@ -31,6 +31,17 @@
 
 from ConstructedDataTypes import ENUMERATION, SELECT
 
+RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = False
+
+def cast_python_list_to_aggregate(lst, aggregate):
+    """ This function casts a python list to an aggregate type. For instance:
+    [1.,2.,3.]-> ARRAY(1,3,REAL)"""
+    aggregate_lower_bound = aggregate.bound_1()
+    aggregate_upper_bound = aggregate.bound_2()
+    for idx in range(aggregate_lower_bound,aggregate_upper_bound+1):
+        aggregate[idx] = lst[idx-aggregate_lower_bound]
+    return aggregate
+    
 def check_type(instance, expected_type):
     """ This function checks wether an object is an instance of a given class
     returns False or True
@@ -46,8 +57,10 @@ def check_type(instance, expected_type):
     else:
         type_match = isinstance(instance,expected_type)
     if not type_match:
-        raise TypeError('Type of argument number_of_sides must be %s (you passed %s)'%(expected_type,type(instance)))
+        if RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH:
+            raise TypeError('Type of argument number_of_sides must be %s (you passed %s)'%(expected_type,type(instance)))
+        else:
+            print "WARNING: expected '%s' but passed a '%s', casting from python value to EXPRESS type"%(expected_type, type(instance))
+            return False
     else:
         return True
-
-    

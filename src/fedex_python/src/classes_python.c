@@ -531,6 +531,32 @@ GetAttrTypeName(Type t) {
 
 /*
 *
+* A function that prints BAG, ARRAY, SET or LIST to the file
+*
+*/
+
+void
+print_aggregate_type(FILE *file, Type t) {
+    switch(TYPEget_body( t )->type) {
+          case array_:
+            fprintf(file,"ARRAY");
+            break;
+          case bag_:
+            fprintf(file,"BAG");
+            break;
+          case set_:
+            fprintf(file,"SET");
+            break;
+          case list_:
+            fprintf(file,"LIST");
+            break;
+          default:
+            break;
+          }
+}
+
+/*
+*
 * A recursive function to export aggregate to python
 *
 */
@@ -721,6 +747,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     // fset
     fprintf(file,"\t\tdef fset( self, value ):\n");
     t = VARget_type( v );
+    
     attr_type = GetAttrTypeName(t);
    
     if (!VARis_derived(v) && !VARget_inverse(v)) {
@@ -729,21 +756,42 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
             fprintf(file, "\t\t# Mandatory argument\n");
             fprintf(file,"\t\t\tif value==None:\n");
             fprintf(file,"\t\t\t\traise AssertionError('Argument %s is mantatory and can not be set to None')\n",attrnm);
+            fprintf(file,"\t\t\tif not check_type(value,");
+            if( TYPEis_aggregate( t ) ) {
+                process_aggregate(file,t);
+                fprintf(file,"):\n");
+            }
+            else {
+                fprintf(file,"%s):\n",attr_type);
+            }
         }
         else {
             fprintf(file,"\t\t\tif value != None: # OPTIONAL attribute\n\t");
+            fprintf(file,"\t\t\tif not check_type(value,");
+            if( TYPEis_aggregate( t ) ) {
+                process_aggregate(file,t);
+                fprintf(file,"):\n\t");
+            }
+            else {
+                fprintf(file,"%s):\n\t",attr_type);
+            }
         }
         // check wether attr_type is aggr or explicit
         if( TYPEis_aggregate( t ) ) {
-            fprintf(file,"\t\t\tcheck_type(value,");
-             process_aggregate(file,t);
-             fprintf(file,")\n");
+            //fprintf(file,"\t\t\tcheck_type(value,");
+             //process_aggregate(file,t);
+             //fprintf(file,")\n");
+             fprintf(file, "\t\t\t\tself._%s = ",attrnm);
+             print_aggregate_type(file,t);
+             fprintf(file,"(value)\n");
+             fprintf(file, "\t\t\telse:\n\t");
          }
         else {
-            fprintf(file,"\t\t\tcheck_type(value,");
-            //printf(attr_type);
-            //is_python_keyword(attr_type);// printf("pou");
-            fprintf(file,"%s)\n",attr_type);
+            //fprintf(file,"\t\t\tif not check_type(value,");
+            //fprintf(file,"%s):\n",attr_type);
+            fprintf(file, "\t\t\t\tself._%s = %s(value)\n",attrnm,attr_type);
+            fprintf(file, "\t\t\telse:\n\t");
+            // try to cas
         }
         fprintf(file,"\t\t\tself._%s = value\n",attrnm);
     }
