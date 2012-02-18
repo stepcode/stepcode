@@ -33,13 +33,14 @@ from ConstructedDataTypes import ENUMERATION, SELECT
 
 RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = False
 
-def cast_python_list_to_aggregate(lst, aggregate):
-    """ This function casts a python list to an aggregate type. For instance:
+def cast_python_object_to_aggregate(obj, aggregate):
+    """ This function casts a python object to an aggregate type. For instance:
     [1.,2.,3.]-> ARRAY(1,3,REAL)"""
     aggregate_lower_bound = aggregate.bound_1()
     aggregate_upper_bound = aggregate.bound_2()
-    for idx in range(aggregate_lower_bound,aggregate_upper_bound+1):
-        aggregate[idx] = lst[idx-aggregate_lower_bound]
+    if type(obj)==list:
+        for idx in range(aggregate_lower_bound,aggregate_upper_bound+1):
+            aggregate[idx] = obj[idx-aggregate_lower_bound]
     return aggregate
     
 def check_type(instance, expected_type):

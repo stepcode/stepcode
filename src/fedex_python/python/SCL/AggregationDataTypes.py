@@ -126,16 +126,64 @@ class ARRAY(object):
                     raise AssertionError("UNIQUE keyword prevent inserting this instance.")
             self._container[index-self._bound_1] = value
 
-class LIST(list, BaseAggregate):
+class LIST(object):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
     bounds, which are integer-valued expressions, define the minimum and maximum number of
     elements that can be held in the collection defined by a list data type.
     A list data type
     definition may optionally specify that a list value cannot contain duplicate elements.
     """
-    def __init__( self ,  bound1 , bound2 , base_type ):
-         BaseAggregate.__init__( self ,  bound1 , bound2 , base_type )
+    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False):
+        if not type(bound_1)==int:
+            raise TypeError("LIST lower bound must be an integer")
+        # bound_2 can be set to None
+        if not type(bound_2)==int:
+            raise TypeError("LIST upper bound must be an integer")
+        if not bound_1>=0:
+            raise AssertionError("LIST lower bound must be greater of equal to 0")
+        if not (bound_1 <= bound_2):
+            raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
+        # set up class attributes
+        self._bound_1 = bound_1
+        self._bound_2 = bound_2
+        self._base_type = base_type
+        self._unique = UNIQUE
+        self._optional = OPTIONAL
+        # preallocate list elements
+        list_size = bound_2 - bound_1 + 1
+        self._container = list_size*[None]
     
+    def bound_1(self):
+        return self._bound_1
+
+    def bound_2(self):
+        return self._bound_2
+
+    def __getitem__(self, index):
+        if index<self._bound_1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
+        elif(index>self._bound_2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
+        else:
+            value = self._container[index-self._bound_1]
+            if not self._optional and value==None:
+                raise AssertionError("Not OPTIONAL prevent the value with index %i from being None (default). Please set the value first."%index)
+            return value
+ 
+    def __setitem__(self, index, value):
+        if index<self._bound_1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
+        elif(index>self._bound_2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
+        else:
+            # first check the type of the value
+            check_type(value,self._base_type)
+            # then check if the value is already in the array
+            if self._unique:
+                if value in self._container:
+                    raise AssertionError("UNIQUE keyword prevent inserting this instance.")
+            self._container[index-self._bound_1] = value
+
 class BAG(tuple, BaseAggregate):
     """A bag data type has as its domain unordered collections of like elements. The optional lower
     and upper bounds, which are integer-valued expressions, dene the minimum and maximum
