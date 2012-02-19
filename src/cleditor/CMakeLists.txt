@@ -50,5 +50,7 @@ endif()
 SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" stepcore stepdai steputils)
 
 if(APPLE)
-    set_target_properties(stepeditor PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    if(SCL_BUILD_SHARED_LIBS)
+        set_target_properties(stepeditor PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(SCL_BUILD_SHARED_LIBS)
 endif(APPLE)

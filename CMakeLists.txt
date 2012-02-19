@@ -38,34 +38,41 @@
 # This file contains the top level CMakeLists.txt logic for the 
 # SCL software package.
 
+PROJECT(SCL)
+SET(SCL_VERSION_MAJOR 0)
+SET(SCL_VERSION_MINOR 5-dev)
+SET(SCL_VERSION ${SCL_VERSION_MAJOR}.${SCL_VERSION_MINOR})
+
 # Minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 IF(COMMAND CMAKE_POLICY)
     CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND CMAKE_POLICY)
 
-# set CMake project name
-PROJECT(SCL)
+IF (NOT MSVC)
+	IF( NOT DEFINED SCL_BUILD_TYPE )
+		SET( SCL_BUILD_TYPE "Debug" CACHE STRING "Build type" ) # By default set debug build
+	ENDIF( NOT DEFINED SCL_BUILD_TYPE )
+	SET( CMAKE_BUILD_TYPE ${SCL_BUILD_TYPE} CACHE INTERNAL "Build type,
+		immutable" FORCE )
+ENDIF(NOT MSVC)
 
-if( CMAKE_BUILD_TYPE STREQUAL "" )
-  message( "-- Debug build - to override, rerun cmake with '-DCMAKE_BUILD_TYPE=Release'." )
-  set( CMAKE_BUILD_TYPE Debug )
-endif()
+# Define helper macro OPTION_WITH_DEFAULT
+MACRO( OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT )
+	IF( NOT DEFINED ${OPTION_NAME} )
+		SET( ${OPTION_NAME} ${OPTION_DEFAULT} )
+	ENDIF( NOT DEFINED ${OPTION_NAME} )
+	OPTION( ${OPTION_NAME} "${OPTION_STRING}" ${${OPTION_NAME}} )
+ENDMACRO( OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT )
 
 # build shared libs by default
-OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
+OPTION_WITH_DEFAULT(SCL_BUILD_SHARED_LIBS "Build shared libs" ON )
 
 # build static libs by default
-OPTION(BUILD_STATIC_LIBS "Build static libraries" OFF)
+OPTION_WITH_DEFAULT(SCL_BUILD_STATIC_LIBS "Build static libs" OFF)
 
-OPTION(PYTHON_GENERATOR "Compile fedex_plus_python" ON)
-OPTION(CPP_GENERATOR "Compile fedex_plus" ON)
-
-# Set version
-SET(SCL_VERSION_MAJOR "3")
-SET(SCL_VERSION_MINOR "2")
-SET(SCL_VERSION_PATCH "0")
-SET(SCL_VERSION "${SCL_VERSION_MAJOR}.${SCL_VERSION_MINOR}.${SCL_VERSION_PATCH}")
+OPTION_WITH_DEFAULT(SCL_PYTHON_GENERATOR "Compile fedex_plus_python" ON)
+OPTION_WITH_DEFAULT(SCL_CPP_GENERATOR "Compile fedex_plus" ON)
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
@@ -100,16 +107,28 @@ ENDIF(NOT WIN32)
 
 #---------------------------------------------------------------------
 # Testing option
-OPTION( ENABLE_TESTING "Enable unittesting framework" OFF )
-IF(ENABLE_TESTING)
-    set( CMAKE_EXE_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" ) #for code coverage
-    set( CMAKE_SHARED_LINKER_FLAGS "-fprofile-arcs -ftest-coverage" )
-    if( NOT DEFINED BUILD_SCHEMAS )
-        set( BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
+OPTION_WITH_DEFAULT( SCL_ENABLE_TESTING "Enable unittesting framework" ON )
+IF(SCL_ENABLE_TESTING)
+    if( NOT DEFINED SCL_BUILD_SCHEMAS )
+        set( SCL_BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
     endif()
     INCLUDE(CTest)
     ENABLE_TESTING()
-ENDIF(ENABLE_TESTING)
+ENDIF(SCL_ENABLE_TESTING)
+
+#---------------------------------------------------------------------
+# Coverage option
+OPTION_WITH_DEFAULT( SCL_ENABLE_COVERAGE "Enable code coverage test" OFF )
+IF(SCL_ENABLE_COVERAGE)
+    SET(SCL_ENABLE_TESTING ON CACHE BOOL "Testing enabled by coverage option" FORCE)
+    # build static libs, better coverage report
+    SET(SCL_BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE )
+    SET(SCL_BUILD_STATIC_LIBS ON CACHE BOOL "Build static libs" FORCE )
+    SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+    SET(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+    SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
+    SET(SCL_BUILD_TYPE "Debug" CACHE STRING "Build type required by testing framework" FORCE)
+ENDIF(SCL_ENABLE_COVERAGE)
 
 #---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in 
@@ -174,23 +193,21 @@ ENDFOREACH()
 # The location in which to install SCL. Need a good Debug location 
 # for Windows.  Only do this if CMAKE_INSTALL_PREFIX hasn't been set
 # already, to try and allow parent builds (if any) some control.
-IF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    IF(NOT WIN32)
-        IF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-            SET(CMAKE_INSTALL_PREFIX "/usr")
-        ELSEIF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-            SET(CMAKE_INSTALL_PREFIX "${SCL_SOURCE_DIR}/../scl-install")
-            MESSAGE("---  Setting debug install dir to ${CMAKE_INSTALL_PREFIX}")
-        ELSE("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-            SET(CMAKE_INSTALL_PREFIX "/usr/local")
-        ENDIF ("${CMAKE_BUILD_TYPE}" MATCHES "Release")
-    ENDIF(NOT WIN32)
-    SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} CACHE STRING "SCL install prefix" FORCE)
-    SET(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT 0)
-ENDIF(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+IF(NOT WIN32)
+    IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
+        SET(SCL_INSTALL_PREFIX "${SCL_SOURCE_DIR}/../scl-install")
+    ELSE()
+        SET(SCL_INSTALL_PREFIX "/usr/local")
+    ENDIF()
+ENDIF(NOT WIN32)
+SET( SCL_INSTALL_PREFIX ${SCL_INSTALL_PREFIX} CACHE
+    PATH "Install prefix prepended to target to create install location" )
+SET( CMAKE_INSTALL_PREFIX ${SCL_INSTALL_PREFIX} CACHE INTERNAL "Prefix
+    prepended to install directories if target destination is not absolute,
+    immutable" FORCE )
 
-OPTION(SCL-BUILD_EXPRESS_ONLY "Only build express parser." OFF)
-MARK_AS_ADVANCED(SCL-BUILD_EXPRESS_ONLY)
+OPTION(SCL_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
+MARK_AS_ADVANCED(SCL_BUILD_EXPRESS_ONLY)
 
 # Take the scl config file template and copy it to the build directory so CMake
 # scripts can append to it if need be
@@ -277,3 +294,31 @@ ADD_SUBDIRECTORY(doc)
 # this is for testing - 'make core' builds everything that isn't generated
 add_custom_target( core )
 add_dependencies( core stepdai check-express stepeditor fedex_plus )
+
+###############################################################################
+# SCL Packaging                                                               #
+# $make package                                                               #
+###############################################################################
+
+SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEP Class Library")
+SET(CPACK_SET_DESTDIR "ON")
+
+SET(CPACK_PACKAGE_VERSION_MAJOR ${SCL_VERSION_MAJOR})
+SET(CPACK_PACKAGE_VERSION_MINOR ${SCL_VERSION_MINOR})
+SET(CPACK_PACKAGE_NAME SCL )
+
+SET(CPACK_PACKAGE_CONTACT "SCL Developers <scl-dev@googlegroups.com>")
+INCLUDE(CPack)
+
+########################################################################################
+# Uninstall code                                                                       #
+# From http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F #
+# ######################################################################################
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+

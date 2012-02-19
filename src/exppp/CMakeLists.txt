@@ -24,10 +24,14 @@ add_definitions( -D__STDC__ )
 endif()
 
 SCL_ADDLIB(libexppp "${LIBEXPPP_SOURCES}" "express base")
-set_target_properties(libexppp PROPERTIES PREFIX "")
+if(SCL_BUILD_SHARED_LIBS)
+    set_target_properties(libexppp PROPERTIES PREFIX "")
+endif(SCL_BUILD_SHARED_LIBS)
 
 #SCL_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp express")
 
 if(APPLE)
-    set_target_properties(libexppp PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    if(SCL_BUILD_SHARED_LIBS)
+        set_target_properties(libexppp PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(SCL_BUILD_SHARED_LIBS)
 endif(APPLE)
