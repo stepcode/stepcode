@@ -649,7 +649,15 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     generate_attribute_name( v, attrnm );
     t = VARget_type( v );
     fprintf(file,"\n\t:param %s\n",attrnm);
-    fprintf(file,"\t:type %s:%s\n",attrnm, GetAttrTypeName(t));
+    //fprintf(file,"\t:type %s:%s\n",attrnm, GetAttrTypeName(t));
+    fprintf(file,"\t:type %s:",attrnm);
+    if( TYPEis_aggregate( t ) ) {
+        process_aggregate(file,t);
+        fprintf(file,"\n");
+    }
+    else {
+        fprintf(file,"%s\n",GetAttrTypeName(t));
+    }
     attr_count_tmp++;
     LISTod
     fprintf(file,"\t'''\n");
