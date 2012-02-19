@@ -508,7 +508,7 @@ GetAttrTypeName(Type t) {
         }
     else if (TYPEis_logical(t))
         {
-                attr_type = "LOGCIAL";
+                attr_type = "LOGICAL";
         }
     else if (TYPEis_boolean(t))
         {
