@@ -201,7 +201,6 @@ FILEcreate( const char * filename ) {
 
 void
 FILEclose( FILE * file ) {
-    //fprintf( file, "#endif\n" );
     fclose( file );
 }
 
@@ -269,16 +268,6 @@ ClassName( const char * oldname ) {
     }
     newname [j] = '\0';
     return ( newname );
-
-    /******  This procedure gets rid of '_' and is no longer being used
-        if (oldname [i] != '_') newname [j] = ToLower (oldname [i]);
-        else {  *//*  character is '_'  *//*
-newname [j] = ToUpper (oldname [++i]);
-if (oldname [i] == '\0') --i;
-}
-++i;
-++j;
-*******/
 }
 
 const char *

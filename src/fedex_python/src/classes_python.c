@@ -522,6 +522,48 @@ print_aggregate_type(FILE *file, Type t) {
           }
 }
 
+void
+process_aggregate_with_guillemets (FILE *file, Type t) {
+    Expression lower = AGGR_TYPEget_lower_limit(t);
+    char *lower_str = EXPRto_string(lower);
+    Expression upper = AGGR_TYPEget_upper_limit(t);
+    char *upper_str = NULL;
+    if (upper == LITERAL_INFINITY) {
+        upper_str = "None";
+    }
+    else {
+        upper_str = EXPRto_string(upper);
+    }
+    switch(TYPEget_body( t )->type) {
+          case array_:
+            fprintf(file,"ARRAY");
+            break;
+          case bag_:
+            fprintf(file,"BAG");
+            break;
+          case set_:
+            fprintf(file,"SET");
+            break;
+          case list_:
+            fprintf(file,"LIST");
+            break;
+          default:
+            break;
+          }
+          fprintf(file,"(%s,%s,",lower_str,upper_str);
+          //write base type
+          Type base_type = TYPEget_base_type(t);
+          if (TYPEis_aggregate(base_type)) {
+              process_aggregate(file,base_type);
+              fprintf(file,")"); //close parenthesis
+          }
+          else {
+              char * array_base_type = GetAttrTypeName(TYPEget_base_type(t));
+              fprintf(file,"'%s')",array_base_type);
+          }
+    
+}
+
 /*
 *
 * A recursive function to export aggregate to python
@@ -945,14 +987,30 @@ void
 TYPEenum_lib_print( const Type type, FILE * f ) {
     DictionaryEntry de;
     Expression expr;
-    //const char * n;   /*  pointer to class name  */
     char c_enum_ele [BUFSIZ];
+    // begin the new enum type
     if (is_python_keyword(TYPEget_name( type ))) {
-        fprintf( f, "# ENUMERATION TYPE %s_\n", TYPEget_name( type ) );
+        fprintf( f, "\n# ENUMERATION TYPE %s_\n", TYPEget_name( type ) );
+    }
+    else {
+        fprintf( f, "\n# ENUMERATION TYPE %s\n", TYPEget_name( type ) );
+    }
+    // first write all the values of the enum
+    DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
+    while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
+        strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
+        if (is_python_keyword(EXPget_name(expr))) {
+            fprintf(f,"%s_ = '%s_'\n",EXPget_name(expr),EXPget_name(expr));
+        }
+        else {
+            fprintf(f,"%s = '%s'\n",EXPget_name(expr),EXPget_name(expr));
+        }
+    }
+    // then outputs the enum
+    if (is_python_keyword(TYPEget_name( type ))) {
         fprintf(f,"%s_ = ENUMERATION([",TYPEget_name( type ));
     }
     else {
-        fprintf( f, "# ENUMERATION TYPE %s\n", TYPEget_name( type ) );
         fprintf(f,"%s = ENUMERATION([",TYPEget_name( type ));
     }
     /*  set up the dictionary info  */
@@ -963,10 +1021,10 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if (is_python_keyword(EXPget_name(expr))) {
-            fprintf(f,"\n\t'%s_',",EXPget_name(expr));
+            fprintf(f,"\n\'%s_,",EXPget_name(expr));
         }
         else {
-            fprintf(f,"\n\t'%s',",EXPget_name(expr));
+            fprintf(f,"\n\t%s,",EXPget_name(expr));
         }
     }
     fprintf(f,"\n\t])\n");
@@ -1225,14 +1283,14 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     {
         fprintf(files->lib, "%s = ",TYPEget_name(type));
         char * output = FundamentalType(type,0);
-        if (!strcmp(output,"ARRAY_TYPE")) {
+        if( TYPEis_aggregate( type ) ) {
             process_aggregate(files->lib,type);
             fprintf(files->lib,"\n");
-            }
+        }
         else {
             fprintf(files->lib,"%s\n",output);
         }
-        }
+    }
     else {
         switch( TYPEget_body( type )->type ) {
             case enumeration_:

@@ -328,21 +328,10 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     }
     sprintf( fnm, "%s.h", sufnm );
 
-    //if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
-    //    return;
-    //}
-    /*    Generate local to SCHEMA.init.cc file  */
-    /*    fprintf(incfile,"Schema *%s%s;\n",*/
-    /*      SCHEMA_PREFIX,SCHEMAget_name(schema));*/
-
-    /*    fprintf (incfile, "extern void %sInit (Registry & r);\n", schnm);*/
-    /*    fprintf (incfile, "extern void SchemaInit (Registry & r);\n");*/
-
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
     /*  2.  class source file            */
     sprintf( np, "py" );
-    //if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }

@@ -70,7 +70,6 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
 
     /* First set all marks we'll be using to UNPROCESSED/NOTKNOWN: */
     initializeMarks( express );
-
     //FIXME SdaiAll.cc:12:24: warning: unused variable ‘is’ [-Wunused-variable] (also for ui & ri)
     //fprintf( files->create, "    Interface_spec_ptr is;\n    Used_item_ptr ui;\n    Referenced_item_ptr ri;\n    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" );
     while( !complete ) {
@@ -147,7 +146,8 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     // of addAggrTypedefs.) */
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
-        addAggrTypedefs( schema, files->classes );
+        //addAggrTypedefs( schema, files->classes );
+        addAggrTypedefs( schema, files->lib );
     }
 
     /* On our way out, print the necessary statements to add support for
@@ -614,11 +614,13 @@ static void addAggrTypedefs( Schema schema, FILE * classes )
             // 2D aggr's and higher only need type GenericAggr defined
             // which is built-in. */
             printf("in addAggrTypedefs. %s is enum or select.\n",TYPEget_name(t));
+            //strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
+            //printf("%s;%s",nm,TYPEget_ctype( t ));
             //if( firsttime ) {
-            //    fprintf( classes, "\n// Aggregate types (from all sche" );
-            //    fprintf( classes, "mas) which depend on other types:\n" );
+            //    fprintf( classes, "The first TIME\n" );
             //    firsttime = FALSE;
             //}
+            //fprintf(classes,"in addAggrTypedefs. %s is enum or select.\n",TYPEget_name(t));
             //strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
             //fprintf( classes, "typedef %s\t%s;\n",
             //         TYPEget_ctype( t ), nm );
