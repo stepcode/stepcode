@@ -34,10 +34,10 @@
 from distutils.core import setup
 
 setup(name='SCL',
-      version='0.4',
+      version='0.5',
       description='Python STEP Class Library',
       author='Thomas Paviot',
       author_email='tpaviot@gmail.com',
-      url='http://www.python.org/sigs/distutils-sig/',
+      url='https://github.com/mpictor/StepClassLibrary',
       packages=['SCL'],
      )
