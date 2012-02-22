@@ -218,6 +218,86 @@ class TestARRAY(unittest.TestCase):
         b[3] = REAL(5)
         
 #
+# AggregationDataTypeSimple
+#
+class TestLIST(unittest.TestCase):
+    '''
+    LIST test
+    '''
+    def test_create_bounded_list(self):
+        LIST(1,7,REAL)
+        #upper and lower bounds can be negative
+        LIST(1,5,INTEGER)
+        # they even can be both 0
+        LIST(0,0,REAL)
+        LIST(1,1,BOOLEAN)
+        # lower bound should be less or equal than upper bound
+        try:
+            LIST(3,2,REAL)
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        # lower bound should be greater or equal than zero
+        try:
+            LIST(-1,2,REAL)
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_create_unbounded_list(self):
+        a = LIST(0,None,REAL)
+        a[6] = REAL(6)
+        self.assertEqual(a[6],6)
+        b = LIST(10,None,REAL)
+        a[10] = REAL(7)
+        self.assertEqual(a[10],7)
+
+    def test_list_bounds(self):
+        a = LIST(3,8,REAL)
+        try:
+            a[2]
+        except IndexError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        try:
+            a[9]
+        except IndexError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_list_unique(self):
+        # if UNIQUE is not set to True (False by default),
+        # the array may contain the same instance at different
+        # positions
+        a = LIST(1,4,REAL)
+        a[3] = REAL(4)
+        a[4] = REAL(4)
+        # however, if UNIQUE, then every instances in the 
+        # array must be different
+        a = LIST(1,4,REAL,UNIQUE=True)
+        a[3] = REAL(4)
+        try:
+            a[3] = REAL(4)
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        
+#
 # TypeChecker
 #
 class TestTypeChecker(unittest.TestCase):
