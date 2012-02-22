@@ -88,7 +88,7 @@ void print_file_header( Express express, FILES * files ) {
 
     files -> initall = FILEcreate( "schema.cc" );
     fprintf( files->initall, "\n// in the fedex_plus source code, this file is generally referred to as files->initall or schemainit\n" );
-    fprintf( files->initall, "#include <schema.h>\n" );
+    fprintf( files->initall, "#include \"schema.h\"\n" );
     fprintf( files->initall, "class Registry;\n" );
 
     fprintf( files->initall, "\nvoid SchemaInit (Registry & reg) {\n" );
@@ -101,7 +101,7 @@ void print_file_header( Express express, FILES * files ) {
     // called first by SchemaInit() so that all entities will exist
     files -> create = FILEcreate( "SdaiAll.cc" );
     fprintf( files->create, "\n// in the fedex_plus source code, this file is generally referred to as files->create or createall\n" );
-    fprintf( files->create, "#include <schema.h>\n" );
+    fprintf( files->create, "#include \"schema.h\"\n" );
     fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
 
     // This file declares all entity classes as incomplete types.  This will
@@ -109,7 +109,7 @@ void print_file_header( Express express, FILES * files ) {
     // entX from schemaA have attribute attr1 = entY from schemaB.
     files -> classes = FILEcreate( "Sdaiclasses.h" );
     fprintf( files->classes, "\n// in the fedex_plus source code, this file is generally referred to as files->classes\n" );
-    fprintf( files->classes, "#include <schema.h>\n" );
+    fprintf( files->classes, "#include \"schema.h\"\n" );
 }
 
 /** ****************************************************************
@@ -360,8 +360,6 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     Function f;
     Procedure p;
     DictionaryEntry de;
-    char * tmpstr = 0;
-    unsigned int tmpstr_size = 0;
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
@@ -379,7 +377,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     }
     fprintf( files->inc, "\n// in the fedex_plus source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include <schema.h>\n" );
+    fprintf( incfile, "#include \"schema.h\"\n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -396,7 +394,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     sprintf( np, "h" );
     fprintf( libfile, "#include <%s.h> \n", sufnm );
 #else
-    fprintf( libfile, "#include <schema.h>\n" );
+    fprintf( libfile, "#include \"schema.h\"\n" );
 #endif
     fprintf( libfile,
              "\n#ifdef  SCL_LOGGING \n"
@@ -441,12 +439,12 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
 #else
         fprintf( initfile,
                  "#ifndef  SCHEMA_H\n"
-                 "#include <schema.h>\n"
+                 "#include \"schema.h\"\n"
                  "#endif\n" );
 #endif
-        fprintf( initfile, "#include <Registry.h>\n" );
+        fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
 
-        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
+        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n    std::string str;\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
         fprintf( createall, "    %s::schema = new Schema(\"%s\");\n",
@@ -462,58 +460,28 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
         /* add global RULEs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
-            if( tmpstr_size < ( strlen( RULEto_string( r ) ) * 2 ) ) {
-                if( tmpstr != 0 ) {
-                    free( tmpstr );
-                }
-                tmpstr_size = strlen( RULEto_string( r ) ) * 2;
-                tmpstr = ( char * )malloc( sizeof( char ) * tmpstr_size );
-                tmpstr[0] = '\0';
-            }
-
-            fprintf( createall,
-                     "    gr = new Global_rule(\"%s\",%s::schema,\"%s\");\n",
-                     r->symbol.name,
-                     SCHEMAget_name( schema ),
-                     format_for_stringout( RULEto_string( r ), tmpstr ) );
-            fprintf( createall,
-                     "    %s::schema->AddGlobal_rule(gr);\n", SCHEMAget_name( schema ) );
+            fprintf( createall, "    str.clear();\n" );
+            format_for_std_stringout( createall, RULEto_string( r ) );
+            fprintf( createall, "    gr = new Global_rule(\"%s\",%s::schema, str );\n",
+                     r->symbol.name, SCHEMAget_name( schema ) );
+            fprintf( createall, "    %s::schema->AddGlobal_rule(gr);\n", SCHEMAget_name( schema ) );
             fprintf( createall, "/*\n%s\n*/\n", RULEto_string( r ) );
         }
         /**************/
         /* add FUNCTIONs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_FUNCTION );
         while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
-            if( tmpstr_size < ( strlen( FUNCto_string( f ) ) * 2 ) ) {
-                if( tmpstr != 0 ) {
-                    free( tmpstr );
-                }
-                tmpstr_size = strlen( FUNCto_string( f ) ) * 2;
-                tmpstr = ( char * )malloc( sizeof( char ) * tmpstr_size );
-            }
-            fprintf( createall,
-                     "#ifndef MSWIN\n    %s::schema->AddFunction(\"%s\");\n#endif\n",
-                     SCHEMAget_name( schema ), format_for_stringout( FUNCto_string( f ), tmpstr ) );
-            fprintf( createall, "/*\n%s\n*/\n", FUNCto_string( f ) );
+            fprintf( createall, "    str.clear();\n" );
+            format_for_std_stringout( createall, FUNCto_string( f ) );
+            fprintf( createall, "%s::schema->AddFunction( str );\n", SCHEMAget_name( schema ) );
         }
 
         /* add PROCEDUREs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_PROCEDURE );
         while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
-            if( tmpstr_size < ( strlen( PROCto_string( p ) ) * 2 ) ) {
-                if( tmpstr != 0 ) {
-                    free( tmpstr );
-                }
-                tmpstr_size = strlen( PROCto_string( p ) ) * 2;
-                tmpstr = ( char * )malloc( sizeof( char ) * tmpstr_size );
-            }
-            fprintf( createall,
-                     "#ifndef MSWIN\n    %s::schema->AddProcedure(\"%s\");\n#endif\n",
-                     SCHEMAget_name( schema ), format_for_stringout( PROCto_string( p ), tmpstr ) );
-            fprintf( createall, "/*\n%s\n*/\n", PROCto_string( p ) );
-        }
-        if( tmpstr_size > 0 ) {
-            free( tmpstr );
+            fprintf( createall, "    str.clear();\n" );
+            format_for_std_stringout( createall, PROCto_string( p ) );
+            fprintf( createall, "    %s::schema->AddProcedure( str );\n", SCHEMAget_name( schema ) );
         }
 
         fprintf( files->classes, "\n// Schema:  %s", schnm );
@@ -528,7 +496,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
 
     /*  add to schema's include and initialization file */
     fprintf( schemafile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( schemafile, "#include <%s.h> \n", sufnm );
+    fprintf( schemafile, "#include \"%s.h\" \n", sufnm );
     if( schema->search_id == PROCESSED ) {
         fprintf( schemafile, "extern void %sInit (Registry & r);\n", schnm );
         fprintf( schemainit, "     extern void %sInit (Registry & r);\n", schnm );
@@ -645,7 +613,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->lib, "\n// in the fedex_plus source code, this file is generally referred to as files->lib or libfile\n" );
 
-    fprintf( libfile, "#include <%s.h> n", schnm );
+    fprintf( libfile, "#include \"%s.h\" n", schnm );
 
     // 3. header for namespace to contain all formerly-global variables
     sprintf( fnm, "%sNames.h", schnm );
@@ -666,14 +634,14 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->init, "\n// in the fedex_plus source code, this file is generally referred to as files->init or initfile\n" );
 
-    fprintf( initfile, "#include <%s.h>\n\n", schnm );
+    fprintf( initfile, "#include \"%s.h\"\n\n", schnm );
     fprintf( initfile, "void \n%sInit (Registry& reg)\n{\n", schnm );
 
     /**********  record in files relating to entire input   ***********/
 
     /*  add to schema's include and initialization file */
     fprintf( schemafile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( schemafile, "#include <%s.h>\n\n", schnm );
+    fprintf( schemafile, "#include \"%s.h\"\n\n", schnm );
     fprintf( schemafile, "extern void %sInit (Registry & r);\n", schnm );
     fprintf( schemainit, "         extern void %sInit (Registry & r);\n", schnm );
     fprintf( schemainit, "         %sInit (reg);\n", schnm );
