@@ -32,18 +32,37 @@
 from SimpleDataTypes import *
 from TypeChecker import *
 
-def type_from_string(type_str):
-    """ Look for the type definition in the global scope from the type string.
-    @TODO: find a better implementation than testing all modules!
+class BaseAggregate(object):
+    """ A class that define common properties to ARRAY, LIST, SET and BAG.
     """
-    modules = sys.modules
-    for module in modules.values():
-        if (module is not None) and (not '__' in module.__name__):
-            module_variables = vars(module)
-            if module_variables.has_key(type_str):
-                typ = module_variables[type_str]
-                return True, vars(module)[type_str]
-    return False,None
+    def __init__( self ,  bound1 , bound2 , base_type ):
+        # check that bound1<bound2
+        if (bound1!=None and bound2!=None):
+            if bound1>bound2:
+                raise AssertionError("bound1 shall be less than or equal to bound2")
+        self._bound1 = bound1
+        self._bound2 = bound2
+        self._base_type = base_type
+
+    def __getitem__(self, index):
+        if index<self._bound1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound1,index))
+        elif(self._bound2!=None and index>self._bound2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound2,index))
+        else:
+            return list.__getitem__(self,index)
+    
+    def __setitem__(self,index,value):
+        if index<self._bound1:
+            raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound1,index))
+        elif (self._bound2!=None and index>self._bound2):
+            raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound2,index))
+        elif not isinstance(value,self._base_type):
+            raise TypeError("%s type expected, passed %s."%(self._base_type, type(value)))
+        else:
+            # first find the length of the list, and extend it if ever
+            # the index is
+            list.__setitem__(self,index,value)
 
 class ARRAY(object):
     """An array data type has as its domain indexed, fixed-size collections of like elements. The lower
