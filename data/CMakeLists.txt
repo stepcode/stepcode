@@ -76,6 +76,9 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    if(APPLE)
+        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(APPLE)
     TESTABLE_TARGET( ${PROJECT_NAME} )
 
     add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
