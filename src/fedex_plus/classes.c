@@ -70,6 +70,9 @@ void TypeBody_Description( TypeBody body, char * buf );
  * Turn the string into a new string that will be printed the same as the
  * original string. That is, turn backslash into a quoted backslash and
  * turn \n into "\n" (i.e. 2 chars).
+ *
+ * Mostly replaced by format_for_std_stringout, below. This function is
+ * still used in one place in ENTITYincode_print().
  */
 char * format_for_stringout( char * orig_buf, char * return_buf ) {
     char * optr  = orig_buf;
@@ -91,6 +94,32 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
     }
     *rptr = '\0';
     return return_buf;
+}
+
+/**
+ * Like format_for_stringout above, but splits the static string up
+ * into numerous small ones that are appended to a std::string named
+ * 'str'. It is assumed that this string already exists and is empty.
+ *
+ * This version takes a file pointer and eliminates use of the temp buffer.
+ */
+void format_for_std_stringout( FILE * f, const char * orig_buf ) {
+    const char * optr  = orig_buf;
+    char * s_end = "\\n\" );\n";
+    char * s_begin = "    str.append( \"";
+    fprintf(f, "%s", s_begin );
+    while( *optr ) {
+        if( *optr == '\n' ) {
+            fprintf( f, "%s", s_end );
+            fprintf( f, "%s", s_begin );
+        } else if( *optr == '\\' ) {
+            fprintf( f, "\\\\" );
+        } else {
+            fprintf( f, "%c", *optr );
+        }
+        optr++;
+    }
+    fprintf( f,  s_end );
 }
 
 void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {
@@ -633,7 +662,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
     /* ///////////////////////////////////////////////// */
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    fprintf( file, "\nconst %s \n%s::%s() const\n", ctype, classnm, funcnm );
+    fprintf( file, "\nconst %s %s::%s( ) const ", ctype, classnm, funcnm );
     return;
 }
 
@@ -664,7 +693,7 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
     /* ///////////////////////////////////////////////// */
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    fprintf( file, "\nvoid \n%s::%s (const %s x)\n\n", entnm, funcnm, ctype );
+    fprintf( file, "\nvoid \n%s::%s (const %s x) ", entnm, funcnm, ctype );
     return;
 }
 
@@ -672,9 +701,9 @@ void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
-    fprintf( file, "    return (%s) &_%s; \n}\n", ctype, attrnm );
+    fprintf( file, "    return (%s) %s_%s;\n}\n", ctype,( ( a->type->u.type->body->base ) ? "" : "&"), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
-    fprintf( file, "        { _%s.ShallowCopy (*x); }\n", attrnm );
+    fprintf( file, "{\n    _%s%sShallowCopy (*x);\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : ".") );
     return;
 }
 
@@ -1081,6 +1110,8 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
             fprintf( file, "        SDAI_Application_instance_ptr _%s ;", attrnm );
+        } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
+            fprintf( file, "        %s_ptr _%s ;", ctype, attrnm );
         } else {
             fprintf( file, "        %s _%s ;", ctype, attrnm );
         }
@@ -1571,14 +1602,18 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             /*  1. create a new STEPattribute */
 
-            fprintf( file, "    "
-                     "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
-                     ( first ? "STEPattribute *" : "" ), //  first time through, declare a
+            // if type is aggregate, the variable is a pointer and needs initialized
+            if( TYPEis_aggregate( t ) ) {
+                fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+            }
+            fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
+                     ( first ? "STEPattribute *" : "" ), //  first time through, declare 'a'
                      SCHEMAget_name( schema ),
                      ATTR_PREFIX, count,
                      ( VARis_type_shifter( a ) ? "R" : "" ),
                      attrnm,
                      ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
+                     ( TYPEis_aggregate( t ) ? "" : "&" ),
                      attrnm );
             if( first ) {
                 first = 0 ;
@@ -1753,14 +1788,18 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
                 /*  1. create a new STEPattribute */
 
-                fprintf( file, "    "
-                         "%sa = new STEPattribute(*%s::%s%d%s%s, %s &_%s);\n",
+                // if type is aggregate, the variable is a pointer and needs initialized
+                if( TYPEis_aggregate( t ) ) {
+                    fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+                }
+                fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                          ( first ? "STEPattribute *" : "" ), //  first time through, declare a
                          SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
                          ( VARis_type_shifter( a ) ? "R" : "" ),
                          attrnm,
                          ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
+                         ( TYPEis_aggregate( t ) ? "" : "&" ),
                          attrnm );
 
                 if( first ) {
@@ -1971,28 +2010,27 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 #endif
 
     if( ENTITYget_abstract( entity ) ) {
-        fprintf( file, "        %s::%s%s->AddSupertype_Stmt(\"",
-                 schema_name, ENT_PREFIX, entity_name );
         if( entity->u.entity->subtype_expression ) {
-            fprintf( file, "ABSTRACT SUPERTYPE OF (" );
+
+            fprintf( file, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
+
             tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
-            tmp2 = ( char * )malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
-            fprintf( file, "%s)\");\n", format_for_stringout( tmp, tmp2 ) );
+            format_for_std_stringout( file, tmp );
+            fprintf( file, "\n      str.append( \")\" );\n" );
+            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
             free( tmp );
-            free( tmp2 );
         } else {
-            fprintf( file, "ABSTRACT SUPERTYPE\");\n" );
+            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
+                                                                schema_name, ENT_PREFIX, entity_name );
         }
     } else {
         if( entity->u.entity->subtype_expression ) {
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt(\"",
-                     schema_name, ENT_PREFIX, entity_name );
-            fprintf( file, "SUPERTYPE OF (" );
+            fprintf( file, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
             tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
-            tmp2 = ( char * )malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
-            fprintf( file, "%s)\");\n", format_for_stringout( tmp, tmp2 ) );
+            format_for_std_stringout( file, tmp );
+            fprintf( file, "\n      str.append( \")\" );\n" );
             free( tmp );
-            free( tmp2 );
+            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         }
     }
     LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
