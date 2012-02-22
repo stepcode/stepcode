@@ -30,6 +30,8 @@ class line(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument line_length is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._line_length = value
+			if not check_type(value,REAL):
+				self._line_length = REAL(value)
+			else:
+				self._line_length = value
 		return property(**locals())

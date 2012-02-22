@@ -35,8 +35,10 @@ class shape(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument item_name is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._item_name = value
+			if not check_type(value,STRING):
+				self._item_name = STRING(value)
+			else:
+				self._item_name = value
 		return property(**locals())
 
 	@apply
@@ -47,8 +49,10 @@ class shape(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument number_of_sides is mantatory and can not be set to None')
-			check_type(value,INTEGER)
-			self._number_of_sides = value
+			if not check_type(value,INTEGER):
+				self._number_of_sides = INTEGER(value)
+			else:
+				self._number_of_sides = value
 		return property(**locals())
 
 ####################
@@ -85,8 +89,10 @@ class rectangle(subshape):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument height is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._height = value
+			if not check_type(value,REAL):
+				self._height = REAL(value)
+			else:
+				self._height = value
 		return property(**locals())
 
 	@apply
@@ -97,6 +103,8 @@ class rectangle(subshape):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument width is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._width = value
+			if not check_type(value,REAL):
+				self._width = REAL(value)
+			else:
+				self._width = value
 		return property(**locals())

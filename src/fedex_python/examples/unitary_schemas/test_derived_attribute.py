@@ -51,8 +51,10 @@ class circle(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument centre is mantatory and can not be set to None')
-			check_type(value,point)
-			self._centre = value
+			if not check_type(value,point):
+				self._centre = point(value)
+			else:
+				self._centre = value
 		return property(**locals())
 
 	@apply
@@ -63,8 +65,10 @@ class circle(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument radius is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._radius = value
+			if not check_type(value,REAL):
+				self._radius = REAL(value)
+			else:
+				self._radius = value
 		return property(**locals())
 
 	@apply
@@ -75,8 +79,10 @@ class circle(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument axis is mantatory and can not be set to None')
-			check_type(value,vector)
-			self._axis = value
+			if not check_type(value,vector):
+				self._axis = vector(value)
+			else:
+				self._axis = value
 		return property(**locals())
 
 	@apply

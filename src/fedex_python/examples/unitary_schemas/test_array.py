@@ -15,7 +15,7 @@ class point(BaseEntityClass):
 	'''Entity point definition.
 
 	:param coords
-	:type coords:(null)
+	:type coords:ARRAY(1,3,'REAL')
 	'''
 	def __init__( self , coords, ):
 		self.coords = coords
@@ -28,6 +28,8 @@ class point(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument coords is mantatory and can not be set to None')
-			check_type(value,ARRAY(1,3,REAL))
-			self._coords = value
+			if not check_type(value,ARRAY(1,3,'REAL')):
+				self._coords = ARRAY(value)
+			else:
+				self._coords = value
 		return property(**locals())

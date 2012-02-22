@@ -29,39 +29,107 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class ENUMERATION(list):
-    """ An ENUMERATION data type has as its domain an ordered set of names. The names represent
-    values of the enumeration data type.
-    """
-    def __getattr__(self,attr_name):
-        if attr_name in self:
-            return attr_name
-        else:
-            raise AttributeError("This ENUMERATION has no element '%s'"%attr_name)
+import sys
 
-class SELECT(list):
+def type_is_defined(type_str):
+    """ Look for the type definition in the global scope from the type string.
+    @TODO: find a better implementation than testing all modules!
+    """
+    modules = sys.modules
+    for module in modules.values():
+        if (module is not None) and (not '__' in module.__name__):
+            module_variables = vars(module)
+            if module_variables.has_key(type_str):
+                typ = module_variables[type_str]
+                return True, vars(module)[type_str]
+    return False,None
+    
+class ENUMERATION(object):
+    """ EXPRESS definition : An ENUMERATION data type has as its domain an ordered set of names. The names represent
+    values of the enumeration data type.
+    
+    Python implementation:
+    An enumeration is initialized from strings defining the types.
+    For instance, some EXPRESS definition:
+    TYPE ahead_or_behind = ENUMERATION OF
+      (ahead,
+       behind);
+    END_TYPE; -- ahead_or_behind
+    
+    is implemented in python with the line:
+    ahead_of_behind = ENUMERATION('ahead','behind')
+    
+    The ENUMERATION definition takes python strings because of the resolution ordre
+    that could be an issue.
+    
+    When getting the authorized types but the ENUMERATION, python looks for the object
+    definition from the globals() dictionary.
+    """
+    
+    def __init__(self,*kargs):
+        self._base_types = list(kargs)
+    
+    def get_allowed_types(self):
+        _auth_types = []
+        for typ in self._base_types:
+            if type(typ)==str:
+                res,value = type_is_defined(typ)
+                if not res:
+                    raise TypeError("'%s' does not name a type"%typ)
+                else:
+                    _auth_types.append(value)
+            else:
+                _auth_types.append(ty)
+        return _auth_types
+    
+    def get_allowed_basic_types(self):
+        ''' if a select contains some subselect, goes down through the different
+        sublayers untill there is no more '''
+        b = []
+        _auth_types = self.get_allowed_types()
+        for _auth_type in _auth_types:
+            if isinstance(_auth_type,SELECT) or isinstance(_auth_type,ENUMERATION):
+                h = _auth_type.get_allowed_types()
+                b.extend(h)
+        return b
+        
+class SELECT(object):
     """ A select data type has as its domain the union of the domains of the named data types in
     its select list. The select data type is a generalization of each of the named data types in its
     select list.
     """
-    def get_aggregated_allowed_types(self):
-        """ This method returns a list of all types that are handle by this SELECT.
-        A SELECT can actually be an aggregate of many SELECTs"""
-        agg = []
-        for allowed_type in self:
-            if isinstance(allowed_type,SELECT):
-                # in this case, we should recurse the select to get all subtypes
-                b = allowed_type.get_aggregated_allowed_types()
-                for elem in b:
-                    agg.append(elem)
+    def __init__(self,*kargs):
+         self._base_types = list(kargs)
+
+    def get_allowed_types(self):
+        _auth_types = []
+        for typ in self._base_types:
+            if type(typ)==str:
+                res,value = type_is_defined(typ)
+                if not res:
+                    raise TypeError("'%s' does not name a type"%typ)
+                else:
+                    _auth_types.append(value)
             else:
-                agg.append(allowed_type)
-        return agg
-                
+                _auth_types.append(ty)
+        return _auth_types
+    
+    def get_allowed_basic_types(self):
+        ''' if a select contains some subselect, goes down through the different
+        sublayers untill there is no more '''
+        b = []
+        _auth_types = self.get_allowed_types()
+        for _auth_type in _auth_types:
+            if isinstance(_auth_type,SELECT) or isinstance(_auth_type,ENUMERATION):
+                h = _auth_type.get_allowed_types()
+                b.extend(h)
+        return b
+        
 if __name__=='__main__':
-    a = SELECT([1,2])
-    b = SELECT([3,4])
-    c = SELECT([a,b])
-    print a.get_aggregated_allowed_types()
-    print c.get_aggregated_allowed_types()
+    class line:
+        pass
+    class point:
+        pass
+    a = ENUMERATION('line','point')
+    print a.get_allowed_types()
     

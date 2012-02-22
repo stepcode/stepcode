@@ -31,7 +31,7 @@
 
 from ConstructedDataTypes import ENUMERATION, SELECT
 
-RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = False
+RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = True
 
 def cast_python_object_to_aggregate(obj, aggregate):
     """ This function casts a python object to an aggregate type. For instance:
@@ -42,26 +42,32 @@ def cast_python_object_to_aggregate(obj, aggregate):
         for idx in range(aggregate_lower_bound,aggregate_upper_bound+1):
             aggregate[idx] = obj[idx-aggregate_lower_bound]
     return aggregate
-    
+
 def check_type(instance, expected_type):
     """ This function checks wether an object is an instance of a given class
     returns False or True
     """
     type_match = False #by default, will be set to True if any match
     # in the case of an enumeration, we have to check if the instance is in the list
-    if isinstance(expected_type,ENUMERATION): 
-        type_match = instance in expected_type
-    elif isinstance(expected_type,SELECT):
+    if (isinstance(expected_type,SELECT) or isinstance(expected_type,ENUMERATION)):        
         # we check if the instance is of the type of any of the types that are in the SELECT
-        if type(instance) in expected_type.get_aggregated_allowed_types():
-            type_match = True
+        allowed_types = expected_type.get_allowed_basic_types()
+        #if instance in allowed_types:
+        for allowed_type in allowed_types:
+            if isinstance(instance,allowed_type):
+                type_match = True
+        if not type_match:
+            if RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH:
+                raise TypeError('Argument type must be %s (you passed %s)'%(allowed_types,type(instance)))
+            else:
+                print "WARNING: expected '%s' but passed a '%s', casting from python value to EXPRESS type"%(allowed_types, type(instance))
+                return False
     else:
         type_match = isinstance(instance,expected_type)
-    if not type_match:
-        if RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH:
-            raise TypeError('Type of argument number_of_sides must be %s (you passed %s)'%(expected_type,type(instance)))
-        else:
-            print "WARNING: expected '%s' but passed a '%s', casting from python value to EXPRESS type"%(expected_type, type(instance))
-            return False
-    else:
-        return True
+        if not type_match:
+            if RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH:
+                raise TypeError('Argument type must be %s (you passed %s)'%(expected_type,type(instance)))
+            else:
+                print "WARNING: expected '%s' but passed a '%s', casting from python value to EXPRESS type"%(expected_type, type(instance))
+                return False
+    return True

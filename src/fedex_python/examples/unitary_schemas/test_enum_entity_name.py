@@ -7,11 +7,16 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
 # ENUMERATION TYPE simple_datum_reference_modifier
-simple_datum_reference_modifier = ENUMERATION([
+if (not 'line' in globals().keys()):
+	line = 'line'
+if (not 'translation' in globals().keys()):
+	translation = 'translation'
+simple_datum_reference_modifier = ENUMERATION(
 	'line',
 	'translation',
-	])
+	)
 
 ####################
  # ENTITY line #

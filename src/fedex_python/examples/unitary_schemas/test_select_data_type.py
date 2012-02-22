@@ -7,6 +7,30 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+# SELECT TYPE permanent_attachment_
+if (not 'glue' in globals().keys()):
+	glue = 'glue'
+if (not 'weld' in globals().keys()):
+	weld = 'weld'
+permanent_attachment = SELECT(
+	'glue',
+	'weld')
+# SELECT TYPE temporary_attachment_
+if (not 'nail' in globals().keys()):
+	nail = 'nail'
+if (not 'screw' in globals().keys()):
+	screw = 'screw'
+temporary_attachment = SELECT(
+	'nail',
+	'screw')
+# SELECT TYPE attachment_method_
+if (not 'permanent_attachment' in globals().keys()):
+	permanent_attachment = 'permanent_attachment'
+if (not 'temporary_attachment' in globals().keys()):
+	temporary_attachment = 'temporary_attachment'
+attachment_method = SELECT(
+	'permanent_attachment',
+	'temporary_attachment')
 
 ####################
  # ENTITY weld #
@@ -28,8 +52,10 @@ class weld(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument composition is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._composition = value
+			if not check_type(value,STRING):
+				self._composition = STRING(value)
+			else:
+				self._composition = value
 		return property(**locals())
 
 ####################
@@ -56,8 +82,10 @@ class glue(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument composition is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._composition = value
+			if not check_type(value,STRING):
+				self._composition = STRING(value)
+			else:
+				self._composition = value
 		return property(**locals())
 
 	@apply
@@ -68,8 +96,10 @@ class glue(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument solvent is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._solvent = value
+			if not check_type(value,STRING):
+				self._solvent = STRING(value)
+			else:
+				self._solvent = value
 		return property(**locals())
 
 ####################
@@ -100,8 +130,10 @@ class wall_mounting(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument mounting is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._mounting = value
+			if not check_type(value,STRING):
+				self._mounting = STRING(value)
+			else:
+				self._mounting = value
 		return property(**locals())
 
 	@apply
@@ -112,8 +144,10 @@ class wall_mounting(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument on is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._on = value
+			if not check_type(value,STRING):
+				self._on = STRING(value)
+			else:
+				self._on = value
 		return property(**locals())
 
 	@apply
@@ -124,8 +158,10 @@ class wall_mounting(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument using is mantatory and can not be set to None')
-			check_type(value,attachment_method)
-			self._using = value
+			if not check_type(value,attachment_method):
+				self._using = attachment_method(value)
+			else:
+				self._using = value
 		return property(**locals())
 
 ####################
@@ -152,8 +188,10 @@ class screw(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument body_length is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._body_length = value
+			if not check_type(value,REAL):
+				self._body_length = REAL(value)
+			else:
+				self._body_length = value
 		return property(**locals())
 
 	@apply
@@ -164,8 +202,10 @@ class screw(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument pitch is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._pitch = value
+			if not check_type(value,REAL):
+				self._pitch = REAL(value)
+			else:
+				self._pitch = value
 		return property(**locals())
 
 ####################
@@ -192,8 +232,10 @@ class nail(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument body_length is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._body_length = value
+			if not check_type(value,REAL):
+				self._body_length = REAL(value)
+			else:
+				self._body_length = value
 		return property(**locals())
 
 	@apply
@@ -204,12 +246,8 @@ class nail(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument head_area is mantatory and can not be set to None')
-			check_type(value,REAL)
-			self._head_area = value
+			if not check_type(value,REAL):
+				self._head_area = REAL(value)
+			else:
+				self._head_area = value
 		return property(**locals())
-# SELECT TYPE permanent_attachment
-permanent_attachment=SELECT([glue,weld])
-# SELECT TYPE temporary_attachment
-temporary_attachment=SELECT([nail,screw])
-# SELECT TYPE attachment_method
-attachment_method=SELECT([permanent_attachment,temporary_attachment])

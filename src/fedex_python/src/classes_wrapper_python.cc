@@ -177,8 +177,8 @@ SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     }
     SCOPEod;
 
+    // process redifined enumerations
     if( redefs ) {
-        // Here we process redefined enumerations.  See note, 2 loops ago.
         SCOPEdo_types( scope, t, de )
         if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {
             TYPEprint_descriptions( t, files, schema );
@@ -186,14 +186,7 @@ SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         }
         SCOPEod;
     }
-    // Write Schema Classes for each entity
-    // This must be done *before* typedefs are defined
-    LISTdo( list, e, Entity );
-      if( e->search_id == CANPROCESS ) {
-          ENTITYPrint( e, files, schema );
-          e->search_id = PROCESSED;
-      }
-    LISTod;   
+
     /*  do the select definitions next, since they depend on the others  */
     //fprintf( files->inc, "\n//\t***** Build the SELECT Types  \t\n" );
     // Note - say we have sel B, rename of sel A (as above by enum's).  Here
@@ -207,6 +200,15 @@ SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         t->search_id = PROCESSED;
     }
     SCOPEod;
+    
+    // process each entity. This must be done *before* typedefs are defined
+    LISTdo( list, e, Entity );
+      if( e->search_id == CANPROCESS ) {
+          ENTITYPrint( e, files, schema );
+          e->search_id = PROCESSED;
+      }
+    LISTod;   
+    
     LISTfree( list );
 }
 

@@ -85,10 +85,17 @@ class ARRAY(object):
             raise TypeError("ARRAY upper bound must be an integer")
         if not (bound_1 <= bound_2):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
+        # the base type can be either a type or a string that defines a type
+        if type(base_type)==str:
+            if globals().has_key(base_type):
+                self._base_type = globals()[base_type]
+            else:
+                raise TypeError("%s does not name a type"%base_type)
+        else:
+            self._base_type = base_type
         # set up class attributes
         self._bound_1 = bound_1
         self._bound_2 = bound_2
-        self._base_type = base_type
         self._unique = UNIQUE
         self._optional = OPTIONAL
         # preallocate list elements

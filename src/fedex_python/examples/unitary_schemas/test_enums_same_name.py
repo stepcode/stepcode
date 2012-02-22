@@ -7,13 +7,23 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
 # ENUMERATION TYPE hair_color
-hair_color = ENUMERATION([
+if (not 'bald' in globals().keys()):
+	bald = 'bald'
+if (not 'red' in globals().keys()):
+	red = 'red'
+hair_color = ENUMERATION(
 	'bald',
 	'red',
-	])
+	)
+
 # ENUMERATION TYPE favorite_color
-favorite_color = ENUMERATION([
+if (not 'clear' in globals().keys()):
+	clear = 'clear'
+if (not 'red' in globals().keys()):
+	red = 'red'
+favorite_color = ENUMERATION(
 	'clear',
 	'red',
-	])
+	)

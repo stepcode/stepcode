@@ -7,8 +7,16 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
-common_datum_list = 'LIST TYPE Not implemented'
+common_datum_list = LIST(1,None,'datum_reference_element')
 label = STRING
+# SELECT TYPE datum_or_common_datum_
+if (not 'common_datum_list' in globals().keys()):
+	common_datum_list = 'common_datum_list'
+if (not 'datum' in globals().keys()):
+	datum = 'datum'
+datum_or_common_datum = SELECT(
+	'common_datum_list',
+	'datum')
 
 ####################
  # ENTITY shape_aspect #
@@ -34,8 +42,10 @@ class shape_aspect(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			check_type(value,STRING)
-			self._name = value
+			if not check_type(value,STRING):
+				self._name = STRING(value)
+			else:
+				self._name = value
 		return property(**locals())
 
 	@apply
@@ -46,8 +56,10 @@ class shape_aspect(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument of_shape is mantatory and can not be set to None')
-			check_type(value,product_definition_shape)
-			self._of_shape = value
+			if not check_type(value,product_definition_shape):
+				self._of_shape = product_definition_shape(value)
+			else:
+				self._of_shape = value
 		return property(**locals())
 
 ####################
@@ -71,8 +83,10 @@ class general_datum_reference(shape_aspect):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument base is mantatory and can not be set to None')
-			check_type(value,datum_or_common_datum)
-			self._base = value
+			if not check_type(value,datum_or_common_datum):
+				self._base = datum_or_common_datum(value)
+			else:
+				self._base = value
 		return property(**locals())
 
 ####################
@@ -101,5 +115,3 @@ class datum(shape_aspect):
 	'''
 	def __init__( self , shape_aspect__name , shape_aspect__of_shape ,  ):
 		shape_aspect.__init__(self , shape_aspect__name , shape_aspect__of_shape , )
-# SELECT TYPE datum_or_common_datum
-datum_or_common_datum=SELECT([common_datum_list,datum])
