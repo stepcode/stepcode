@@ -2,11 +2,9 @@
 Step Class Library v0.5 -- http://github.com/mpictor/StepClassLibrary
 
 * What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
-  C++ source code that can read and write Part 21 files conforming 
-  to that schema. SCL once worked with ObjectStore, OODB, and
-  CORBA IDL - but that code has not been used in a very long time.
-  We are in the process of removing this code because ObjectStore,
-  CORBA, etc. are no longer part of the STEP standard.
+  C++ source code that can read and write Part 21 files conforming
+  to that schema. In addition to C++, v0.5 includes experimental
+  support for Python.
  
 * SCL is packaged along with some other tools. See 
   "THE NIST STEP TOOLSET", below. In particular, Data Probe
