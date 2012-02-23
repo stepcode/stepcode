@@ -1,12 +1,10 @@
 ***********************************************************************
-Step Class Library v0.4 -- http://github.com/mpictor/StepClassLibrary
+Step Class Library v0.5 -- http://github.com/mpictor/StepClassLibrary
 
 * What is SCL? SCL reads ISO10303-11 EXPRESS schemas and generates
-  C++ source code that can read and write Part 21 files conforming 
-  to that schema. SCL once worked with ObjectStore, OODB, and
-  CORBA IDL - but that code has not been used in a very long time.
-  We are in the process of removing this code because ObjectStore,
-  CORBA, etc. are no longer part of the STEP standard.
+  C++ source code that can read and write Part 21 files conforming
+  to that schema. In addition to C++, v0.5 includes experimental
+  support for Python.
  
 * SCL is packaged along with some other tools. See 
   "THE NIST STEP TOOLSET", below. In particular, Data Probe
@@ -21,36 +19,7 @@ Step Class Library v0.4 -- http://github.com/mpictor/StepClassLibrary
 * Build system uses only CMake now: configure, Makefile, and all
   autotools files have been removed, as has mkProbe.
   
-* To build:
-  cd scl
-  mkdir build
-  cd build
-  cmake ..
-  make
-  
-* Build options (append to the 'cmake ..' line):
-  -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp" 
-    - this generates c++ for the schema, and compiles it into a
-      library. Also works with directories, as long as each dir only
-      has one express file.
-    - multiple files/directories are separated by semicolons
-    - this also builds a 'p21read' program, which reads one step file
-      and writes another. It may change whitespace or remove comments;
-      otherwise, the input and output files should be identical. If
-      they are not identical, either the file does not match the
-      schema, or SCL generated incorrect source code.
-   -DBUILD_SCHEMAS=ALL
-    - Added to make use of ctest easier. If BUILD_SCHEMAS == ALL,
-      then CMake adds each *.exp file found in data/.
-  -DCMAKE_BUILD_TYPE=Release
-    - this causes binaries to be built without debugging information
-    - without this, cmake defaults to a Debug build
-
-* Using CTest to test SCL:
-  - Read the comments in run_ctest.cmake
-  - (OPTIONAL) Create scl/../.SCL_CTEST_PREFS.cmake, and set variables
-    in it (this file is required for CDash submission to be enabled)
-  - Run tests with `ctest -S run_ctest.cmake`
+* Building and testing SCL - see the INSTALL file
 
 ***********************************************************************
 
