@@ -58,6 +58,9 @@ OPTION(BUILD_SHARED_LIBS "Build shared libraries" ON)
 # build static libs by default
 OPTION(BUILD_STATIC_LIBS "Build static libraries" OFF)
 
+OPTION(PYTHON_GENERATOR "Compile fedex_plus_python" ON)
+OPTION(CPP_GENERATOR "Compile fedex_plus" ON)
+
 # Set version
 SET(SCL_VERSION_MAJOR "3")
 SET(SCL_VERSION_MINOR "2")
@@ -258,6 +261,7 @@ include_directories(
 ADD_SUBDIRECTORY(src/express)
 ADD_SUBDIRECTORY(src/exppp)
 ADD_SUBDIRECTORY(src/fedex_plus)
+ADD_SUBDIRECTORY(src/fedex_python)
 ADD_SUBDIRECTORY(src/clstepcore)
 ADD_SUBDIRECTORY(src/cleditor)
 ADD_SUBDIRECTORY(src/cldai)
