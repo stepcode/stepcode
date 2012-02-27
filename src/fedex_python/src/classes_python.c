@@ -533,6 +533,7 @@ process_aggregate (FILE *file, Type t) {
     char *lower_str = EXPRto_string(lower);
     Expression upper = AGGR_TYPEget_upper_limit(t);
     char *upper_str = NULL;
+    Type base_type;
     if (upper == LITERAL_INFINITY) {
         upper_str = "None";
     }
@@ -557,7 +558,7 @@ process_aggregate (FILE *file, Type t) {
           }
           fprintf(file,"(%s,%s,",lower_str,upper_str);
           //write base type
-          Type base_type = TYPEget_base_type(t);
+          base_type = TYPEget_base_type(t);
           if (TYPEis_aggregate(base_type)) {
               process_aggregate(file,base_type);
               fprintf(file,")"); //close parenthesis
@@ -567,7 +568,6 @@ process_aggregate (FILE *file, Type t) {
               //fprintf(file,"%s)",array_base_type);
               fprintf(file,"'%s')",array_base_type);
           }
-    
 }
 
 void
@@ -578,6 +578,11 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     bool generate_constructor = true; //by default, generates a python constructor
     bool inheritance = false;
     Type t;
+    Linked_List list;
+    int num_parent = 0;
+    int num_derived_inverse_attr = 0;
+    int index_attribute = 0;
+
     /* class name
      need to use new-style classes for properties to work correctly
     so class must inherit from object */
@@ -587,9 +592,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     /*
     * Look for inheritance and super classes
     */
-    Linked_List list;
     list = ENTITYget_supertypes( entity );
-    int num_parent = 0;
+    num_parent = 0;
     if( ! LISTempty( list ) ) {
         inheritance = true;
         LISTdo( list, e, Entity )
@@ -632,7 +636,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     * other wise just a 'pass' statement is enough
     */
     attr_count_tmp = 0;
-    int num_derived_inverse_attr = 0;
+    num_derived_inverse_attr = 0;
     LISTdo(ENTITYget_attributes( entity ), v, Variable)
     if (VARis_derived(v) || VARget_inverse(v)) {
         num_derived_inverse_attr++;
@@ -656,7 +660,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     }
     // if inheritance, first write the inherited parameters
     list = ENTITYget_supertypes( entity );
-    int num_parent = 0, index_attribute = 0;
+    num_parent = 0;
+    index_attribute = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
             /*  search attribute names for superclass */

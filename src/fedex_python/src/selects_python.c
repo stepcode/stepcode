@@ -690,6 +690,9 @@ class.
 *******************/
 void
 TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
+    int nbr_select = 0;
+    int num = 0;
+
     fprintf( f, "# SELECT TYPE %s_\n", TYPEget_name(type) );
     // writes the variable with strings
     LISTdo( SEL_TYPEget_items( type ), t, Type )
@@ -712,12 +715,12 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     }
     
     // first compute the number of types (necessary to insert commas)
-    int nbr_select = 0;
+    nbr_select = 0;
     LISTdo( SEL_TYPEget_items( type ), t, Type )
         nbr_select++;
     LISTod;
     // then write types
-    int num = 0;
+    num = 0;
     LISTdo( SEL_TYPEget_items( type ), t, Type )
         if (is_python_keyword(TYPEget_name(t))) {
             fprintf( f, "\n\t'%s_'",TYPEget_name(t));
