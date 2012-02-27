@@ -258,6 +258,7 @@ include_directories(
     ${SCL_BINARY_DIR}/include
     )
 
+ADD_SUBDIRECTORY(src/base)
 ADD_SUBDIRECTORY(src/express)
 ADD_SUBDIRECTORY(src/exppp)
 ADD_SUBDIRECTORY(src/fedex_plus)
