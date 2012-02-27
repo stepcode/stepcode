@@ -29,6 +29,7 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include <scl_memmgr.h>
 #define CASE_ITEM_C
 #include "express/caseitem.h"
 

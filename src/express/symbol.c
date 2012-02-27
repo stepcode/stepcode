@@ -32,6 +32,7 @@
  * Initial revision
  */
 
+#include <scl_memmgr.h>
 #define SYMBOL_C
 #include "express/symbol.h"
 
