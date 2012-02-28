@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'test_select_data_type'
+
 # SELECT TYPE permanent_attachment_
 if (not 'glue' in globals().keys()):
 	glue = 'glue'

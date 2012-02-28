@@ -8,6 +8,9 @@ from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
 
+schema_name = 'test_enums_same_name'
+
+
 # ENUMERATION TYPE hair_color
 if (not 'bald' in globals().keys()):
 	bald = 'bald'

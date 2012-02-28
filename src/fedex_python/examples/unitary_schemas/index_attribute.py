@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'index_attribute'
+
 common_datum_list = LIST(1,None,'datum_reference_element')
 label = STRING
 # SELECT TYPE datum_or_common_datum_

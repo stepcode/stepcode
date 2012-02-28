@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'gcc_incomplete_type'
+
 maths_number = NUMBER
 # SELECT TYPE atom_based_value_
 if (not 'maths_number' in globals().keys()):

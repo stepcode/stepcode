@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'test_named_type'
+
 measure = REAL
 type2 = INTEGER
 

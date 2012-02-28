@@ -8,6 +8,9 @@ from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
 
+schema_name = 'test_array_of_simple_types'
+
+
 ####################
  # ENTITY point #
 ####################

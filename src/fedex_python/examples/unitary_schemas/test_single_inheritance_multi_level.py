@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'test_single_inheritance_multi_level'
+
 length_measure = REAL
 label = STRING
 point = REAL

@@ -8,6 +8,9 @@ from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
 
+schema_name = 'test_enum_entity_name'
+
+
 # ENUMERATION TYPE simple_datum_reference_modifier
 if (not 'line' in globals().keys()):
 	line = 'line'

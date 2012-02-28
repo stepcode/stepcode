@@ -345,6 +345,9 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     fprintf(libfile,"from SCL.TypeChecker import check_type\n");
     fprintf(libfile,"from SCL.Expr import *\n");
     
+    /********* export schema name *******/
+    fprintf(libfile,"\nschema_name = '%s'\n\n",SCHEMAget_name(schema));
+    
     /**********  do the schemas ***********/
 
     /* really, create calls for entity constructors */

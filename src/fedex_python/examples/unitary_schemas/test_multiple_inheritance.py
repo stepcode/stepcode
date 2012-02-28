@@ -7,6 +7,9 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+
+schema_name = 'test_multiple_inheritance'
+
 # SELECT TYPE classification_item_
 if (not 'person_and_organization_address' in globals().keys()):
 	person_and_organization_address = 'person_and_organization_address'
