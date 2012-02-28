@@ -1,7 +1,11 @@
 
 #define SCL_MEMMGR_CC
 #include "scl_memmgr.h"
-#include <malloc.h>
+#if __APPLE__
+# include <malloc/malloc.h>
+#else
+# include <malloc.h>
+#endif
 #include <stdio.h>
 
 #include <string>
