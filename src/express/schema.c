@@ -46,6 +46,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #define SCHEMA_C
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>

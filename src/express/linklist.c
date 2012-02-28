@@ -21,6 +21,7 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include <scl_memmgr.h>
 #define LINKED_LIST_C
 #include "express/linklist.h"
 

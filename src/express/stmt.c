@@ -40,6 +40,7 @@
  *
  */
 
+#include <scl_memmgr.h>
 #define STATEMENT_C
 #include "express/stmt.h"
 

@@ -69,6 +69,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #define EXPRESS_C
 #include "express/basic.h"
 #include <ctype.h>
@@ -138,7 +139,7 @@ Symbol * EXPRESS_get_symbol( Generic e ) {
 
 Express EXPRESScreate() {
     Express model = SCOPEcreate( OBJ_EXPRESS );
-    model->u.express = ( struct Express_ * )calloc( 1, sizeof( struct Express_ ) );
+    model->u.express = ( struct Express_ * )scl_calloc( 1, sizeof( struct Express_ ) );
     return model;
 }
 
@@ -157,7 +158,7 @@ static void EXPRESS_PATHinit() {
     p = getenv( "EXPRESS_PATH" );
     if( !p ) {
         /* if no EXPRESS_PATH, search current directory anyway */
-        dir = ( Dir * )malloc( sizeof( Dir ) );
+        dir = ( Dir * )scl_malloc( sizeof( Dir ) );
         dir->leaf = dir->full;
         LISTadd( EXPRESS_path, ( Generic )dir );
     } else {
@@ -189,7 +190,7 @@ static void EXPRESS_PATHinit() {
             }
             p++;    /* leave p after terminating null */
 
-            dir = ( Dir * )malloc( sizeof( Dir ) );
+            dir = ( Dir * )scl_malloc( sizeof( Dir ) );
 
             /* if it's just ".", make it as if it was */
             /* just "" to make error messages cleaner */
@@ -388,7 +389,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
             length -= 4;
         }
 
-        model->u.express->basename = ( char * )malloc( length + 1 );
+        model->u.express->basename = ( char * )scl_malloc( length + 1 );
         memcpy( model->u.express->basename, filename, length );
         model->u.express->basename[length] = '\0';
 

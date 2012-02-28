@@ -38,6 +38,7 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include <scl_memmgr.h>
 #define ALGORITHM_C
 #include "express/alg.h"
 #include "express/object.h"
