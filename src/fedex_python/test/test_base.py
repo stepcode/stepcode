@@ -29,6 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from SCL.SimpleDataTypes import *
@@ -136,7 +137,7 @@ class TestBOOLEAN(unittest.TestCase):
         self.assertFalse(b)
         
 #
-# AggregationDataTypeSimple
+# AggregationDataType
 #
 class TestARRAY(unittest.TestCase):
     '''
@@ -160,6 +161,12 @@ class TestARRAY(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
     
+    def test_create_array_from_type_string(self):
+        # the scope is the current module
+        scp = sys.modules[__name__]
+        a = ARRAY(1,7,'REAL',scope = scp)
+        a[2] = REAL(2.3)
+
     def test_array_bounds(self):
         a = ARRAY(3,8,REAL)
         try:
@@ -217,9 +224,6 @@ class TestARRAY(unittest.TestCase):
         b[2] = REAL(5)
         b[3] = REAL(5)
         
-#
-# AggregationDataTypeSimple
-#
 class TestLIST(unittest.TestCase):
     '''
     LIST test
@@ -296,7 +300,48 @@ class TestLIST(unittest.TestCase):
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
-        
+
+# 
+# Constructed Data Types
+#
+class TestENUMERATION(unittest.TestCase):
+    def test_simple_enum(self):
+        ahead = EnumerationId()
+        behind = EnumerationId()
+        ahead_or_behind = ENUMERATION(ahead,behind)
+        check_type(ahead,ahead_or_behind)
+        check_type(behind,ahead_or_behind)
+        try:
+            check_type("some string",ahead_or_behind)
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+class ob1(object):
+    pass
+class ob2(object):
+    pass
+class TestSELECT(unittest.TestCase):
+    def test_select(self):
+        scp = sys.modules[__name__]
+        select_typedef = SELECT('ob1','ob2',scope = scp)
+        ob1_instance = ob1()
+        ob2_instance = ob2()
+        # test that line_instance is in enum type
+        check_type(ob1_instance, select_typedef)
+        check_type(ob2_instance,select_typedef)
+        # this one should raise an exception:
+        try:
+            check_type(REAL(3.4),select_typedef)
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
 #
 # TypeChecker
 #
@@ -320,9 +365,6 @@ class TestTypeChecker(unittest.TestCase):
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
-
-    def test_check_enum_type(self):
-        enum = ENUMERATION(["my","string"])
 
 def suite():
    suite = unittest.TestSuite()

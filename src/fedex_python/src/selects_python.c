@@ -693,19 +693,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     int nbr_select = 0;
     int num = 0;
 
-    fprintf( f, "# SELECT TYPE %s_\n", TYPEget_name(type) );
-    // writes the variable with strings
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-        if (is_python_keyword(TYPEget_name(t))) {
-            fprintf(f,"if (not '%s_' in globals().keys()):\n",TYPEget_name(t));
-            fprintf( f, "%s_ = '%s_'\n",TYPEget_name(t),TYPEget_name(t));
-        }
-        else {
-            fprintf(f,"if (not '%s' in globals().keys()):\n",TYPEget_name(t));
-            fprintf( f, "\t%s = '%s'\n",TYPEget_name(t),TYPEget_name(t));
-        }
-    LISTod;
-    
+    fprintf( f, "# SELECT TYPE %s\n", TYPEget_name(type) );
     // create the SELECT
     if (is_python_keyword(TYPEget_name(type))) {    
         fprintf( f, "%s_ = SELECT(",TYPEget_name(type));
@@ -731,7 +719,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
         if (num < nbr_select -1 ) fprintf(f,",");
         num++;
     LISTod;
-    fprintf(f,")\n");
+    fprintf(f,",\n\tscope = schema_scope)\n");
 }
 
 void

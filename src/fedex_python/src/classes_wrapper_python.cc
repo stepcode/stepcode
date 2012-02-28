@@ -338,6 +338,8 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
         return;
     }
     //fprintf( libfile, "/* %cId$  */ \n", '$' );
+    fprintf(libfile,"import sys\n");
+    fprintf(libfile,"\n");
     fprintf(libfile,"from SCL.SCLBase import *\n");
     fprintf(libfile,"from SCL.SimpleDataTypes import *\n");
     fprintf(libfile,"from SCL.ConstructedDataTypes import *\n");
@@ -347,6 +349,10 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     
     /********* export schema name *******/
     fprintf(libfile,"\nschema_name = '%s'\n\n",SCHEMAget_name(schema));
+    
+    /******** export schema scope *******/
+    fprintf(libfile,"schema_scope = sys.modules[__name__]\n\n");
+    
     
     /**********  do the schemas ***********/
 

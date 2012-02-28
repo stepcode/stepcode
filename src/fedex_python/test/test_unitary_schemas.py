@@ -86,11 +86,10 @@ class TestEnumEntityName(unittest.TestCase):
         import test_enum_entity_name
     
     def test_schema(self):
-        import test_enum_entity_name
-        print test_enum_entity_name.simple_datum_reference_modifier.get_allowed_types()
+        from test_enum_entity_name import *
+        check_type(line,simple_datum_reference_modifier)
+        checkt_type(translation,simple_datum_reference_modifier)
 
-        
-        
 def suite():
    suite = unittest.TestSuite()
    suite.addTest(unittest.makeSuite(TestSelectDataType))

@@ -31,6 +31,7 @@
 
 from SimpleDataTypes import *
 from TypeChecker import *
+import BaseType
 
 class BaseAggregate(object):
     """ A class that define common properties to ARRAY, LIST, SET and BAG.
@@ -64,7 +65,7 @@ class BaseAggregate(object):
             # the index is
             list.__setitem__(self,index,value)
 
-class ARRAY(object):
+class ARRAY(BaseType.Type):
     """An array data type has as its domain indexed, fixed-size collections of like elements. The lower
     and upper bounds, which are integer-valued expressions, define the range of index values, and
     thus the size of each array collection.
@@ -78,21 +79,14 @@ class ARRAY(object):
     NOTE 1 { The bounds may be positive, negative or zero, but may not be indeterminate (?) (see
     14.2).
     """
-    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, OPTIONAL=False):
+    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, OPTIONAL=False, scope = None):
+        BaseType.Type.__init__(self, base_type, scope)
         if not type(bound_1)==int:
             raise TypeError("ARRAY lower bound must be an integer")
         if not type(bound_2)==int:
             raise TypeError("ARRAY upper bound must be an integer")
         if not (bound_1 <= bound_2):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
-        # the base type can be either a type or a string that defines a type
-        if type(base_type)==str:
-            if globals().has_key(base_type):
-                self._base_type = globals()[base_type]
-            else:
-                raise TypeError("%s does not name a type"%base_type)
-        else:
-            self._base_type = base_type
         # set up class attributes
         self._bound_1 = bound_1
         self._bound_2 = bound_2
@@ -126,21 +120,22 @@ class ARRAY(object):
             raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
         else:
             # first check the type of the value
-            check_type(value,self._base_type)
+            check_type(value,self.get_type())
             # then check if the value is already in the array
             if self._unique:
                 if value in self._container:
                     raise AssertionError("UNIQUE keyword prevent inserting this instance.")
             self._container[index-self._bound_1] = value
 
-class LIST(object):
+class LIST(BaseType.Type):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
     bounds, which are integer-valued expressions, define the minimum and maximum number of
     elements that can be held in the collection defined by a list data type.
     A list data type
     definition may optionally specify that a list value cannot contain duplicate elements.
     """
-    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False):
+    def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, scope = None):
+        BaseType.Type.__init__(self, base_type, scope)
         if not type(bound_1)==int:
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
@@ -156,7 +151,6 @@ class LIST(object):
         # set up class attributes
         self._bound_1 = bound_1
         self._bound_2 = bound_2
-        self._base_type = base_type
         self._unique = UNIQUE
         # preallocate list elements if bounds are both integers
         if not self._unbounded:
@@ -203,7 +197,7 @@ class LIST(object):
                 raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
             else:
                 # first check the type of the value
-                check_type(value,self._base_type)
+                check_type(value,self.get_type())
                 # then check if the value is already in the array
                 if self._unique:
                     if value in self._container:
@@ -216,7 +210,7 @@ class LIST(object):
             # if the _container list is of good size, just do like the bounded case
             if (index-self._bound_1<len(self._container)):
                 # first check the type of the value
-                check_type(value,self._base_type)
+                check_type(value,self.get_type)
                 # then check if the value is already in the array
                 if self._unique:
                     if value in self._container:
@@ -229,7 +223,7 @@ class LIST(object):
                 list_extension = delta_size*[None]
                 self._container.extend(list_extension)
                 # first check the type of the value
-                check_type(value,self._base_type)
+                check_type(value,self.get_type())
                 # then check if the value is already in the array
                 if self._unique:
                     if value in self._container:

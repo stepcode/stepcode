@@ -30,6 +30,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import BaseType
 
 def type_is_defined(type_str):
     """ Look for the type definition in the global scope from the type string.
@@ -43,7 +44,19 @@ def type_is_defined(type_str):
                 typ = module_variables[type_str]
                 return True, vars(module)[type_str]
     return False,None
+
+class EnumerationId(object):
+    """ An enumeration data type has as its domain an ordered set of names. The names represent
+    values of the enumeration data type. These names are designated by enumeration_ids and are
+    referred to as enumeration items.
     
+    Python implementation: before being defined, enums Id of the related enumeration must be
+    defined
+    ahead = EnumerationId()
+    behind = EnumerationId()
+    """
+    pass
+
 class ENUMERATION(object):
     """ EXPRESS definition : An ENUMERATION data type has as its domain an ordered set of names. The names represent
     values of the enumeration data type.
@@ -64,56 +77,46 @@ class ENUMERATION(object):
     
     When getting the authorized types but the ENUMERATION, python looks for the object
     definition from the globals() dictionary.
+    
+    ahead = EnumerationId()
+    behind = EnumerationId()
+    ahead_of_behind = ENUMERATION(ahead,behind)
     """
-    
     def __init__(self,*kargs):
-        self._base_types = list(kargs)
-    
-    def get_allowed_types(self):
-        _auth_types = []
-        for typ in self._base_types:
-            if type(typ)==str:
-                res,value = type_is_defined(typ)
-                if not res:
-                    raise TypeError("'%s' does not name a type"%typ)
-                else:
-                    _auth_types.append(value)
-            else:
-                _auth_types.append(ty)
-        return _auth_types
-    
-    def get_allowed_basic_types(self):
-        ''' if a select contains some subselect, goes down through the different
-        sublayers untill there is no more '''
-        b = []
-        _auth_types = self.get_allowed_types()
-        for _auth_type in _auth_types:
-            if isinstance(_auth_type,SELECT) or isinstance(_auth_type,ENUMERATION):
-                h = _auth_type.get_allowed_types()
-                b.extend(h)
-        return b
+        # first defining the scope
+        passed_types = list(kargs)
+        # first check that all arguments are enums id
+        for passed_type in passed_types:
+            if not isinstance(passed_type, EnumerationId):
+                raise TypeError("%s is not an enumeration identifier."%passed_type)
+        self._enum_ids = list(kargs)
+
+    def get_allowed_enum_id(self):
+        return self._enum_ids
         
 class SELECT(object):
     """ A select data type has as its domain the union of the domains of the named data types in
     its select list. The select data type is a generalization of each of the named data types in its
     select list.
     """
-    def __init__(self,*kargs):
-         self._base_types = list(kargs)
-
+    def __init__(self,*kargs,**args):
+        # first defining the scope
+        if args.has_key('scope'):
+            self._scope = args['scope']
+        else:
+            self._scope = None
+        # create the types from the list of arguments
+        self._base_types = []
+        for types in list(kargs):
+            new_type = BaseType.Type(types,self._scope)
+            self._base_types.append(new_type)
+ 
     def get_allowed_types(self):
         _auth_types = []
-        for typ in self._base_types:
-            if type(typ)==str:
-                res,value = type_is_defined(typ)
-                if not res:
-                    raise TypeError("'%s' does not name a type"%typ)
-                else:
-                    _auth_types.append(value)
-            else:
-                _auth_types.append(ty)
+        for types in self._base_types:
+            _auth_types.append(types.get_type())
         return _auth_types
-    
+
     def get_allowed_basic_types(self):
         ''' if a select contains some subselect, goes down through the different
         sublayers untill there is no more '''
@@ -123,6 +126,8 @@ class SELECT(object):
             if isinstance(_auth_type,SELECT) or isinstance(_auth_type,ENUMERATION):
                 h = _auth_type.get_allowed_types()
                 b.extend(h)
+            else:
+                b = _auth_types
         return b
         
 if __name__=='__main__':
@@ -130,6 +135,8 @@ if __name__=='__main__':
         pass
     class point:
         pass
-    a = ENUMERATION('line','point')
+    import sys
+    scp = sys.modules[__name__]
+    a = ENUMERATION('line','point',scope = scp)
     print a.get_allowed_types()
     

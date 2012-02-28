@@ -49,10 +49,15 @@ def check_type(instance, expected_type):
     """
     type_match = False #by default, will be set to True if any match
     # in the case of an enumeration, we have to check if the instance is in the list
-    if (isinstance(expected_type,SELECT) or isinstance(expected_type,ENUMERATION)):        
+    if (isinstance(expected_type,ENUMERATION)):
+        allowed_ids = expected_type.get_allowed_enum_id()
+        if instance in allowed_ids:
+            type_match = True
+        else:
+            raise TypeError('Enumeration ids must be %s ( passed %s)'%(allowed_ids,type(instance)))
+    elif (isinstance(expected_type,SELECT)):        
         # we check if the instance is of the type of any of the types that are in the SELECT
         allowed_types = expected_type.get_allowed_basic_types()
-        #if instance in allowed_types:
         for allowed_type in allowed_types:
             if isinstance(instance,allowed_type):
                 type_match = True

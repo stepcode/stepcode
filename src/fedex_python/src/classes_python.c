@@ -963,13 +963,16 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
-        fprintf(f,"if (not '%s' in globals().keys()):\n",EXPget_name(expr));
+        // BE CAREFUL: something has surely to be done 
+        // here
+        //if fprintf(f,"if (not '%s' in globals().keys()):\n",EXPget_name(expr));
         if (is_python_keyword(EXPget_name(expr))) {
-            fprintf(f,"\t%s_ = '%s_'\n",EXPget_name(expr),EXPget_name(expr));
+            fprintf(f,"%s_ = EnumerationId()\n",EXPget_name(expr));
         }
         else {
-            fprintf(f,"\t%s = '%s'\n",EXPget_name(expr),EXPget_name(expr));
+            fprintf(f,"%s = EnumerationId()\n",EXPget_name(expr));
         }
+        //fprintf(f,"else:\n\tprint 'WARNING: redefined enum id:%s'\n",EXPget_name(expr));
     }
     // then outputs the enum
     if (is_python_keyword(TYPEget_name( type ))) {
@@ -986,10 +989,10 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if (is_python_keyword(EXPget_name(expr))) {
-            fprintf(f,"\n\'%s_',",EXPget_name(expr));
+            fprintf(f,"\n%s_,",EXPget_name(expr));
         }
         else {
-            fprintf(f,"\n\t'%s',",EXPget_name(expr));
+            fprintf(f,"\n\t%s,",EXPget_name(expr));
         }
     }
     fprintf(f,"\n\t)\n");
