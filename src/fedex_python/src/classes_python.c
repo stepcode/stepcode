@@ -607,7 +607,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         LISTod;
     }
     else {
-        //inherit from BaeEntityClass by default, in order to enable decorators
+        //inherit from BaseEntityClass by default, in order to enable decorators
         // as well as advanced __repr__ feature
         fprintf(file,"BaseEntityClass");
     }

@@ -324,5 +324,16 @@ class TestTypeChecker(unittest.TestCase):
     def test_check_enum_type(self):
         enum = ENUMERATION(["my","string"])
 
-unittest.main()
+def suite():
+   suite = unittest.TestSuite()
+   suite.addTest(unittest.makeSuite(TestINTEGER))
+   suite.addTest(unittest.makeSuite(TestREAL))
+   suite.addTest(unittest.makeSuite(TestARRAY))
+   suite.addTest(unittest.makeSuite(TestLIST))
+   suite.addTest(unittest.makeSuite(TestTypeChecker))
+   return suite
+
+if __name__ == '__main__':
+    unittest.main()
+
 
