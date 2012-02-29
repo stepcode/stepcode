@@ -318,7 +318,7 @@ class TestLIST(unittest.TestCase):
     
 class TestBAG(unittest.TestCase):
     '''
-    LIST test
+    BAG test
     '''
     def test_create_bounded_bag(self):
         BAG(1,7,REAL)
@@ -353,6 +353,41 @@ class TestBAG(unittest.TestCase):
         for i in range(1000):
             b.add(REAL(1.0))
 
+class TestSET(unittest.TestCase):
+    '''
+    SET test
+    '''
+    def test_create_bounded_set(self):
+        SET(1,7,REAL)
+        SET(1,5,INTEGER)
+        SET(0,0,REAL)
+
+    def test_create_unbounded_set(self):
+        a = SET(0,None,REAL)
+
+    def test_fill_bounded_set(self):
+        b = SET(1,3,REAL)
+        b.add(REAL(1.0))
+        b.add(REAL(2.0))
+        b.add(REAL(3.0))
+        # the bag is full, trying to add other item
+        # will raise an exception
+        try:
+            b.add(REAL(4.0))
+        except AssertionError:
+             pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_fill_bounded_set(self):
+        # create a set with one value allowed
+        c = SET(0,0,REAL)
+        # fill in with the same value n times
+        # the total size of the set should not increase
+        for i in range(1000):
+            c.add(REAL(1.0))
 # 
 # Constructed Data Types
 #

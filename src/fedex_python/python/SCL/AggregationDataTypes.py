@@ -383,22 +383,84 @@ class BAG(BaseType.Type, BaseType.Aggregate):
                 check_type(value,self.get_type())
                 self._container.append(value)
 
-class SET(set, BaseAggregate):
-    """A set data type has as its domain unordered collections of like elements. The set data type is
+class SET(BaseType.Type, BaseType.Aggregate):
+    """
+    EXPRESS definition:
+    ==================
+    A set data type has as its domain unordered collections of like elements. The set data type is
     a specialization of the bag data type. The optional lower and upper bounds, which are integer-
     valued expressions, dene the minimum and maximum number of elements that can be held in
     the collection dened by a set data type. The collection dened by set data type shall not
     contain two or more elements which are instance equal.
+    Syntax:
+    285 set_type = SET [ bound_spec ] OF base_type .
+    176 bound_spec = '[' bound_1 ':' bound_2 ']' .
+    174 bound_1 = numeric_expression .
+    175 bound_2 = numeric_expression .
+    171 base_type = aggregation_types | simple_types | named_types .
+    Rules and restrictions:
+    a) The bound_1 expression shall evaluate to an integer value greater than or equal to
+    zero. It gives the lower bound, which is the minimum number of elements that can be in a
+    set value of this data type. bound_1 shall not produce the indeterminate (?) value.
+    b) The bound_2 expression shall evaluate to an integer value greater than or equal to
+    bound_1, or an indeterminate (?) value. It gives the upper bound, which is the maximum
+    number of elements that can be in a set value of this data type.
+    If this value is indeterminate (?) the number of elements in a set value of this data type is
+    not be bounded from above.
+    c) If the bound_spec is omitted, the limits are [0:?].
+    d) Each element in an occurrence of a set data type shall be dierent from (i.e., not
+    instance equal to) every other element in the same set value.
+    EXAMPLE 30 { This example denes an attribute as a set of points (a named data type assumed
+    to have been declared elsewhere).
+    a_set_of_points : SET OF point;
+    The attribute named a_set_of_points can contain zero or more points. Each point instance (in
+    the set value) is required to be dierent from every other point in the set.
+    If the value is required to have no more than 15 points, the specication can provide an upper bound,
+    as in:
+    a_set_of_points : SET [0:15] OF point;
+    The value of the attribute named a_set_of_points now may contain no more than 15 points.
+    
+    Python definition:
+    ==================
+    The difference with the BAG class is that the base container for SET is a set object.
     """
-    def __init__( self ,  bound1 , bound2 , base_type ):
-         BaseAggregate.__init__( self ,  bound1 , bound2 , base_type )
+    def __init__( self ,  bound_1 , bound_2 , base_type , scope = None):
+        BaseType.Type.__init__(self, base_type, scope)
+        if not type(bound_1)==int:
+            raise TypeError("LIST lower bound must be an integer")
+        # bound_2 can be set to None
+        self._unbounded = False
+        if bound_2 == None:
+            self._unbounded = True
+        elif not type(bound_2)==int:
+            raise TypeError("LIST upper bound must be an integer")
+        if not bound_1>=0:
+            raise AssertionError("LIST lower bound must be greater of equal to 0")
+        if (type(bound_2)==int and not (bound_1 <= bound_2)):
+            raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
+        # set up class attributes
+        self._bound_1 = bound_1
+        self._bound_2 = bound_2
+        self._container = set()
 
-if __name__=='__main__':
-    # test ARRAY
-    a = ARRAY(1,3,REAL)
-    a[1] = REAL(3.)
-    a[2] = REAL(-1.5)
-    a[3] = REAL(4.)
-    print a
-    
-    
+    def bound_1(self):
+        return self._bound_1
+
+    def bound_2(self):
+        return self._bound_2
+
+    def add(self,value):
+        '''
+        Adds a value to the bag
+        '''
+        if self._unbounded:
+            check_type(value,self.get_type())
+            self._container.add(value)
+        else:
+            # first ensure that the bag is not full
+            if len(self._container) == self._bound_2 - self._bound_1 + 1:
+                if not value in self._container:
+                    raise AssertionError('SET is full. Impossible to add any more item')
+            else:
+                check_type(value,self.get_type())
+                self._container.add(value)
