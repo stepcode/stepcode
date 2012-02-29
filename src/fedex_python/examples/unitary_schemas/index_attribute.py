@@ -14,7 +14,7 @@ schema_name = 'index_attribute'
 
 schema_scope = sys.modules[__name__]
 
-common_datum_list = LIST(1,None,'datum_reference_element')
+common_datum_list = LIST(1,None,'datum_reference_element', scope = schema_scope)
 label = STRING
 # SELECT TYPE datum_or_common_datum
 datum_or_common_datum = SELECT(

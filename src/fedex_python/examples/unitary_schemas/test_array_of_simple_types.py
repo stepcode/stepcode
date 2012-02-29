@@ -22,13 +22,13 @@ class point(BaseEntityClass):
 	'''Entity point definition.
 
 	:param arr_real
-	:type arr_real:ARRAY(1,3,'REAL')
+	:type arr_real:ARRAY(1,3,'REAL', scope = schema_scope)
 
 	:param arr_string
-	:type arr_string:ARRAY(1,3,'STRING')
+	:type arr_string:ARRAY(1,3,'STRING', scope = schema_scope)
 
 	:param arr_integer
-	:type arr_integer:ARRAY(1,None,'INTEGER')
+	:type arr_integer:ARRAY(1,None,'INTEGER', scope = schema_scope)
 	'''
 	def __init__( self , arr_real,arr_string,arr_integer, ):
 		self.arr_real = arr_real
@@ -43,7 +43,7 @@ class point(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument arr_real is mantatory and can not be set to None')
-			if not check_type(value,ARRAY(1,3,'REAL')):
+			if not check_type(value,ARRAY(1,3,'REAL', scope = schema_scope)):
 				self._arr_real = ARRAY(value)
 			else:
 				self._arr_real = value
@@ -57,7 +57,7 @@ class point(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument arr_string is mantatory and can not be set to None')
-			if not check_type(value,ARRAY(1,3,'STRING')):
+			if not check_type(value,ARRAY(1,3,'STRING', scope = schema_scope)):
 				self._arr_string = ARRAY(value)
 			else:
 				self._arr_string = value
@@ -71,7 +71,7 @@ class point(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument arr_integer is mantatory and can not be set to None')
-			if not check_type(value,ARRAY(1,None,'INTEGER')):
+			if not check_type(value,ARRAY(1,None,'INTEGER', scope = schema_scope)):
 				self._arr_integer = ARRAY(value)
 			else:
 				self._arr_integer = value

@@ -16,28 +16,16 @@ schema_scope = sys.modules[__name__]
 
 
 # ENUMERATION TYPE hair_color
-if (not 'bald' in globals().keys()):
-	bald = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
-if (not 'red' in globals().keys()):
-	red = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
+bald = EnumerationId()
+red = EnumerationId()
 hair_color = ENUMERATION(
 	bald,
 	red,
 	)
 
 # ENUMERATION TYPE favorite_color
-if (not 'clear' in globals().keys()):
-	clear = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
-if (not 'red' in globals().keys()):
-	red = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
+clear = EnumerationId()
+red = EnumerationId()
 favorite_color = ENUMERATION(
 	clear,
 	red,

@@ -16,14 +16,8 @@ schema_scope = sys.modules[__name__]
 
 
 # ENUMERATION TYPE simple_datum_reference_modifier
-if (not 'line' in globals().keys()):
-	line = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
-if (not 'translation' in globals().keys()):
-	translation = EnumerationId()
-else:
-	print 'WARNING: redefined enum id'
+line = EnumerationId()
+translation = EnumerationId()
 simple_datum_reference_modifier = ENUMERATION(
 	line,
 	translation,

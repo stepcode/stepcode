@@ -230,7 +230,7 @@ class personal_address(address):
 	'''Entity personal_address definition.
 
 	:param people
-	:type people:SET(1,None,'person')
+	:type people:SET(1,None,'person', scope = schema_scope)
 
 	:param description
 	:type description:STRING
@@ -248,7 +248,7 @@ class personal_address(address):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument people is mantatory and can not be set to None')
-			if not check_type(value,SET(1,None,'person')):
+			if not check_type(value,SET(1,None,'person', scope = schema_scope)):
 				self._people = SET(value)
 			else:
 				self._people = value
@@ -273,7 +273,7 @@ class organizational_address(address):
 	'''Entity organizational_address definition.
 
 	:param organizations
-	:type organizations:SET(1,None,'organization')
+	:type organizations:SET(1,None,'organization', scope = schema_scope)
 
 	:param description
 	:type description:STRING
@@ -291,7 +291,7 @@ class organizational_address(address):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument organizations is mantatory and can not be set to None')
-			if not check_type(value,SET(1,None,'organization')):
+			if not check_type(value,SET(1,None,'organization', scope = schema_scope)):
 				self._organizations = SET(value)
 			else:
 				self._organizations = value
@@ -325,13 +325,13 @@ class person(BaseEntityClass):
 	:type first_name:STRING
 
 	:param middle_names
-	:type middle_names:LIST(1,None,'STRING')
+	:type middle_names:LIST(1,None,'STRING', scope = schema_scope)
 
 	:param prefix_titles
-	:type prefix_titles:LIST(1,None,'STRING')
+	:type prefix_titles:LIST(1,None,'STRING', scope = schema_scope)
 
 	:param suffix_titles
-	:type suffix_titles:LIST(1,None,'STRING')
+	:type suffix_titles:LIST(1,None,'STRING', scope = schema_scope)
 	'''
 	def __init__( self , id,last_name,first_name,middle_names,prefix_titles,suffix_titles, ):
 		self.id = id
@@ -385,7 +385,7 @@ class person(BaseEntityClass):
 			return self._middle_names
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,LIST(1,None,'STRING')):
+				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._middle_names = LIST(value)
 			else:
 				self._middle_names = value
@@ -397,7 +397,7 @@ class person(BaseEntityClass):
 			return self._prefix_titles
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,LIST(1,None,'STRING')):
+				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._prefix_titles = LIST(value)
 			else:
 				self._prefix_titles = value
@@ -409,7 +409,7 @@ class person(BaseEntityClass):
 			return self._suffix_titles
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,LIST(1,None,'STRING')):
+				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._suffix_titles = LIST(value)
 			else:
 				self._suffix_titles = value
@@ -480,10 +480,10 @@ class person_and_organization_address(organizational_address,personal_address):
 	'''Entity person_and_organization_address definition.
 
 	:param organizational_address_organizations
-	:type organizational_address_organizations:SET(1,1,'organization')
+	:type organizational_address_organizations:SET(1,1,'organization', scope = schema_scope)
 
 	:param personal_address_people
-	:type personal_address_people:SET(1,1,'person')
+	:type personal_address_people:SET(1,1,'person', scope = schema_scope)
 	'''
 	def __init__( self , organizational_address__organizations , organizational_address__description , personal_address__people , personal_address__description , organizational_address_organizations,personal_address_people, ):
 		organizational_address.__init__(self , organizational_address__organizations , organizational_address__description , )
@@ -499,7 +499,7 @@ class person_and_organization_address(organizational_address,personal_address):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument organizational_address_organizations is mantatory and can not be set to None')
-			if not check_type(value,SET(1,1,'organization')):
+			if not check_type(value,SET(1,1,'organization', scope = schema_scope)):
 				self._organizational_address_organizations = SET(value)
 			else:
 				self._organizational_address_organizations = value
@@ -513,7 +513,7 @@ class person_and_organization_address(organizational_address,personal_address):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument personal_address_people is mantatory and can not be set to None')
-			if not check_type(value,SET(1,1,'person')):
+			if not check_type(value,SET(1,1,'person', scope = schema_scope)):
 				self._personal_address_people = SET(value)
 			else:
 				self._personal_address_people = value

@@ -20,4 +20,4 @@ atom_based_value = SELECT(
 	'maths_number',
 	'atom_based_tuple',
 	scope = schema_scope)
-atom_based_tuple = LIST(0,None,'atom_based_value')
+atom_based_tuple = LIST(0,None,'atom_based_value', scope = schema_scope)

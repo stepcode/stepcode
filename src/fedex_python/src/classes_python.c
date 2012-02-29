@@ -566,7 +566,7 @@ process_aggregate (FILE *file, Type t) {
           else {
               char * array_base_type = GetAttrTypeName(TYPEget_base_type(t));
               //fprintf(file,"%s)",array_base_type);
-              fprintf(file,"'%s')",array_base_type);
+              fprintf(file,"'%s', scope = schema_scope)",array_base_type);
           }
 }
 

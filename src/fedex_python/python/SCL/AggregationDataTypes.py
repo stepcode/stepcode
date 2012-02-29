@@ -30,7 +30,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from SimpleDataTypes import *
-from TypeChecker import *
+from TypeChecker import check_type
 import BaseType
 
 class BaseAggregate(object):
@@ -65,7 +65,7 @@ class BaseAggregate(object):
             # the index is
             list.__setitem__(self,index,value)
 
-class ARRAY(BaseType.Type):
+class ARRAY(BaseType.Type, BaseType.Aggregate):
     """An array data type has as its domain indexed, fixed-size collections of like elements. The lower
     and upper bounds, which are integer-valued expressions, define the range of index values, and
     thus the size of each array collection.
@@ -124,10 +124,11 @@ class ARRAY(BaseType.Type):
             # then check if the value is already in the array
             if self._unique:
                 if value in self._container:
-                    raise AssertionError("UNIQUE keyword prevent inserting this instance.")
-            self._container[index-self._bound_1] = value
+                    raise AssertionError("UNIQUE keyword prevents inserting this instance.")
+            else:
+                self._container[index-self._bound_1] = value
 
-class LIST(BaseType.Type):
+class LIST(BaseType.Type, BaseType.Aggregate):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
     bounds, which are integer-valued expressions, define the minimum and maximum number of
     elements that can be held in the collection defined by a list data type.

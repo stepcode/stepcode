@@ -53,6 +53,12 @@ class Type(object):
         else:
             return self._typedef
 
+class Aggregate:
+    '''
+    This is an abstract class. ARRAY, LIST, SET and BAG inherit from this class
+    '''
+    pass
+
 if __name__ == "__main__":
     import sys
     scp = sys.modules[__name__]

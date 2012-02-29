@@ -89,6 +89,67 @@ class TestEnumEntityName(unittest.TestCase):
         from test_enum_entity_name import *
         check_type(line,simple_datum_reference_modifier)
         checkt_type(translation,simple_datum_reference_modifier)
+        
+class TestArray(unittest.TestCase):
+    '''
+    unitary_schemas/test_array.py, generated from schema:
+    SCHEMA test_array;
+
+    ENTITY point;
+        coords : ARRAY[1:3] OF REAL;
+    END_ENTITY;
+
+    END_SCHEMA;
+    '''
+    def test_import_schema_module(self):
+        import test_array
+    
+    def test_schema(self):
+        import test_array
+        scp = sys.modules[__name__]
+        my_coords = ARRAY(1,3,REAL)
+        my_point = test_array.point(my_coords)
+        # following cases should raise error
+        # 1. passed LIST whereas ARRAY expected
+        my_coords = LIST(1,3,REAL)
+        try:
+            my_point = test_array.point(my_coords)      
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        # 2. passed ARRAY OF INTEGER whereas ARRAY OF REAL expected
+        my_coords = ARRAY(1,3,INTEGER)
+        try:
+            my_point = test_array.point(my_coords)      
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        # 3. passed UNIQUE= True whereas False expected
+        my_coords = ARRAY(1,3,REAL, UNIQUE=True)
+        try:
+            my_point = test_array.point(my_coords)      
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        # 4. passed OPTIONAL= True whereas False expected
+        my_coords = ARRAY(1,3,REAL, OPTIONAL=True)
+        try:
+            my_point = test_array.point(my_coords)      
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')        
 
 def suite():
    suite = unittest.TestSuite()

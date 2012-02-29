@@ -111,7 +111,7 @@ class representation(BaseEntityClass):
 	:type name:STRING
 
 	:param items
-	:type items:SET(1,None,'STRING')
+	:type items:SET(1,None,'STRING', scope = schema_scope)
 
 	:param context_of_items
 	:type context_of_items:STRING
@@ -143,7 +143,7 @@ class representation(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument items is mantatory and can not be set to None')
-			if not check_type(value,SET(1,None,'STRING')):
+			if not check_type(value,SET(1,None,'STRING', scope = schema_scope)):
 				self._items = SET(value)
 			else:
 				self._items = value
