@@ -198,7 +198,7 @@ class TestARRAY(unittest.TestCase):
         a = ARRAY(1,4,REAL,UNIQUE=True)
         a[3] = REAL(4)
         try:
-            a[3] = REAL(4)
+            a[4] = REAL(4)
         except AssertionError:
             pass
         except e:
@@ -223,7 +223,22 @@ class TestARRAY(unittest.TestCase):
         b = ARRAY(1,3,REAL,OPTIONAL=True)
         b[2] = REAL(5)
         b[3] = REAL(5)
-        
+    
+    def test_array_of_array_of_real(self):
+        '''
+        create a 3*3 identify matrix
+        '''
+        my_matrix = ARRAY(1,3,ARRAY(1,3,REAL))
+        my_matrix[1] = ARRAY(1,3,REAL)
+        my_matrix[2] = ARRAY(1,3,REAL)
+        my_matrix[3] = ARRAY(1,3,REAL)
+        my_matrix[1][1] = REAL(1.0)
+        my_matrix[2][2] = REAL(1.0)
+        my_matrix[3][3] = REAL(1.0)
+        my_matrix[1][2] = my_matrix[1][2] = REAL(0.0)
+        my_matrix[1][3] = my_matrix[3][1] = REAL(0.0)
+        my_matrix[2][3] = my_matrix[3][2] = REAL(0.0)
+
 class TestLIST(unittest.TestCase):
     '''
     LIST test

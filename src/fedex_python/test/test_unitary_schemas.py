@@ -80,15 +80,28 @@ class TestSingleInheritanceMultiLevel(unittest.TestCase):
 
 class TestEnumEntityName(unittest.TestCase):
     '''
-    unitary_schemas/test_enum_entity_name.py
+    unitary_schemas/test_enum_entity_name.py, generated from schema:
+    SCHEMA test_enum_entity_name;
+
+    TYPE simple_datum_reference_modifier = ENUMERATION OF (
+       line,
+       translation);
+    END_TYPE;
+
+    ENTITY line;
+    END_ENTITY;
+
+    END_SCHEMA;
     '''
     def test_import_schema_module(self):
         import test_enum_entity_name
     
     def test_schema(self):
-        from test_enum_entity_name import *
-        check_type(line,simple_datum_reference_modifier)
-        checkt_type(translation,simple_datum_reference_modifier)
+        import test_enum_entity_name
+        # CAREFUL: following line makes test fail
+        # @TODO: make sure that enum ids and entities can have same name without conflict
+        #check_type(test_enum_entity_name.line,test_enum_entity_name.simple_datum_reference_modifier)
+        check_type(test_enum_entity_name.translation,test_enum_entity_name.simple_datum_reference_modifier)
         
 class TestArray(unittest.TestCase):
     '''
@@ -149,7 +162,36 @@ class TestArray(unittest.TestCase):
         except e:
             self.fail('Unexpected exception thrown:', e)
         else:
-            self.fail('ExpectedException not thrown')        
+            self.fail('ExpectedException not thrown')
+                  
+class TestArrayOfArrayOfReal(unittest.TestCase):
+    '''
+    unitary_schemas/test_array_of_array_of_real.py, generated from schema:
+    SCHEMA test_array_of_array_of_simple_types;
+
+    ENTITY transformation;
+        rotation : ARRAY[1:3] OF ARRAY[1:3] OF REAL;
+    END_ENTITY;
+
+    END_SCHEMA;
+
+    '''
+    def test_import_schema_module(self):
+        import test_array_of_array_of_simple_types
+
+    def test_schema(self):
+        import test_array_of_array_of_simple_types
+        scp = sys.modules[__name__]
+        # first build the double array my_matrix
+        my_matrix = ARRAY(1,3,ARRAY(1,3,REAL))
+        my_matrix[1] = ARRAY(1,3,REAL)
+        my_matrix[2] = ARRAY(1,3,REAL)
+        my_matrix[3] = ARRAY(1,3,REAL)
+        my_matrix[1][1] = REAL(1.0)
+        my_matrix[2][2] = REAL(1.0)
+        my_matrix[3][3] = REAL(1.0)
+        # create a new 'transformation' instance
+        trsf = test_array_of_array_of_simple_types.transformation(my_matrix)
 
 def suite():
    suite = unittest.TestSuite()

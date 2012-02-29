@@ -73,12 +73,14 @@ def check_type(instance, expected_type):
             else:
                 print "WARNING: expected '%s' but passed a '%s', casting from python value to EXPRESS type"%(allowed_types, type(instance))
                 return False
-    elif (isinstance(expected_type, BaseType.Aggregate)):#AggregationDataTypes.Aggregate)):
+    elif (isinstance(expected_type, BaseType.Aggregate)):
         # first check that they are instance of the same class
         if not (type(instance) == type(expected_type)):
             raise TypeError('Expected %s but passed %s'%(type(expected_type),type(instance)))
         # then check that the base type is the same
         elif not (instance.get_type() == expected_type.get_type()):
+            print instance.get_type()
+            print expected_type.get_type()
             raise TypeError('Expected %s:%s base type but passed %s:%s base type'%(type(expected_type),expected_type.get_type(),type(instance), instance.get_type()))
         # check optional and unique attributes
         elif not (instance._unique == expected_type._unique):

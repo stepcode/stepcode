@@ -125,8 +125,7 @@ class ARRAY(BaseType.Type, BaseType.Aggregate):
             if self._unique:
                 if value in self._container:
                     raise AssertionError("UNIQUE keyword prevents inserting this instance.")
-            else:
-                self._container[index-self._bound_1] = value
+            self._container[index-self._bound_1] = value
 
 class LIST(BaseType.Type, BaseType.Aggregate):
     """A list data type has as its domain sequences of like elements. The optional lower and upper
