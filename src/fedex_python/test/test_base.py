@@ -315,6 +315,43 @@ class TestLIST(unittest.TestCase):
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
+    
+class TestBAG(unittest.TestCase):
+    '''
+    LIST test
+    '''
+    def test_create_bounded_bag(self):
+        BAG(1,7,REAL)
+        BAG(1,5,INTEGER)
+        BAG(0,0,REAL)
+    
+    def test_create_unbounded_bag(self):
+        a = BAG(0,None,REAL)
+    
+    def test_fill_bounded_bag(self):
+        b = BAG(1,3,REAL)
+        b.add(REAL(1.0))
+        b.add(REAL(2.0))
+        b.add(REAL(3.0))
+        # the bag is full, trying to add other item
+        # will raise an exception
+        try:
+            b.add(REAL(4.0))
+        except AssertionError:
+             pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_fill_unbounded_bag(self):
+        '''
+        Fill an unbounded bag with one thousand reals
+        This should not raise any exception
+        '''
+        b = BAG(0,None,REAL)
+        for i in range(1000):
+            b.add(REAL(1.0))
 
 # 
 # Constructed Data Types
