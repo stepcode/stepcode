@@ -1,4 +1,4 @@
-if(PYTHON_GENERATOR)
+if(SCL_PYTHON_GENERATOR)
 
 include_directories(
     ${SCL_SOURCE_DIR}/include
@@ -43,4 +43,4 @@ set(fedex_python_SOURCES
 SCL_ADDEXEC(fedex_python "${fedex_python_SOURCES} ${fedex_plus_MSVC_SOURCES}" "libexppp express base")
 
 add_dependencies( fedex_python version_string )
-endif(PYTHON_GENERATOR)
+endif(SCL_PYTHON_GENERATOR)
