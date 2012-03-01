@@ -147,6 +147,31 @@ class ARRAY(BaseType.Type, BaseType.Aggregate):
     def bound_2(self):
         return self._bound_2
 
+    def get_hiindex(self):
+        return INTEGER(self._bound_2)
+    
+    def get_loindex(self):
+        return INTEGER(self._bound_1)
+        
+    def get_hibound(self):
+        return INTEGER(self._bound_2)
+
+    def get_lobound(self):
+        return INTEGER(self._bound_1)
+
+    def get_size(self):
+        return INTEGER(self._bound_2 - self._bound_1 +1)
+    
+    def get_value_unique(self):
+        ''' Return True if all items are different in the container, UNKNOWN if some items are
+        indeterminate, or False otherwise'''
+        if None in self._container:
+            return Unknown
+        if self.get_size()-len(set(self._container))>0: #some items are repeated
+            return False
+        else:
+            return True
+    
     def __getitem__(self, index):
         if index<self._bound_1:
             raise IndexError("ARRAY index out of bound (lower bound is %i, passed %i)"%(self._bound_1,index))
@@ -239,6 +264,45 @@ class LIST(BaseType.Type, BaseType.Aggregate):
 
     def bound_2(self):
         return self._bound_2
+    
+    def get_size(self):
+        number_of_indeterminates = self._container.count(None)
+        hiindex = len(self._container) - number_of_indeterminates
+        return INTEGER(hiindex)
+        
+    def get_hiindex(self):
+        ''' When V is a bag, list or set, the returned value is the actual number of elements in
+        the aggregate value.'''
+        number_of_indeterminates = self._container.count(None)
+        hiindex = len(self._container) - number_of_indeterminates
+        return INTEGER(hiindex)
+
+    def get_loindex(self):
+        return INTEGER(1)
+
+    def get_hibound(self):
+        hibound = self._bound_2
+        if type(hibound)==int:
+            return INTEGER(hibound)
+        else:
+            return hibound
+    
+    def get_lobound(self):
+        lobound = self._bound_1
+        if type(lobound)==int:
+            return INTEGER(lobound)
+        else:
+            return lobound
+
+    def get_value_unique(self):
+        ''' Return True if all items are different in the container, UNKNOWN if some items are
+        indeterminate, or False otherwise'''
+        if None in self._container:
+            return Unknown
+        if self.get_size()-len(set(self._container))>0: #some items are repeated
+            return False
+        else:
+            return True
 
     def __getitem__(self, index):
         # case bounded
@@ -383,6 +447,43 @@ class BAG(BaseType.Type, BaseType.Aggregate):
                 check_type(value,self.get_type())
                 self._container.append(value)
 
+    def get_size(self):
+        ''' When V is a bag, list or set, the returned value is the actual number of elements in
+        the aggregate value.'''
+        return INTEGER(len(self._container))
+        
+    def get_hiindex(self):
+        ''' When V is a bag, list or set, the returned value is the actual number of elements in
+        the aggregate value.'''
+        return INTEGER(len(self._container))
+
+    def get_loindex(self):
+        return INTEGER(1)
+
+    def get_hibound(self):
+        hibound = self._bound_2
+        if type(hibound)==int:
+            return INTEGER(hibound)
+        else:
+            return hibound
+
+    def get_lobound(self):
+        lobound = self._bound_1
+        if type(lobound)==int:
+            return INTEGER(lobound)
+        else:
+            return lobound
+    def get_value_unique(self):
+        ''' Return True if all items are different in the container, UNKNOWN if some items are
+        indeterminate, or False otherwise'''
+        if None in self._container:
+            return Unknown
+        if self.get_size()-len(set(self._container))>0: #some items are repeated
+            return False
+        else:
+            return True
+
+
 class SET(BaseType.Type, BaseType.Aggregate):
     """
     EXPRESS definition:
@@ -464,3 +565,38 @@ class SET(BaseType.Type, BaseType.Aggregate):
             else:
                 check_type(value,self.get_type())
                 self._container.add(value)
+    
+    def get_size(self):
+        ''' When V is a bag, list or set, the returned value is the actual number of elements in
+        the aggregate value.'''
+        return INTEGER(len(self._container))
+        
+    def get_hiindex(self):
+        ''' When V is a bag, list or set, the returned value is the actual number of elements in
+        the aggregate value.'''
+        return INTEGER(len(self._container))
+
+    def get_loindex(self):
+        return INTEGER(1)
+
+    def get_hibound(self):
+        hibound = self._bound_2
+        if type(hibound)==int:
+            return INTEGER(hibound)
+        else:
+            return hibound
+
+    def get_lobound(self):
+        lobound = self._bound_1
+        if type(lobound)==int:
+            return INTEGER(lobound)
+        else:
+            return lobound
+    
+    def get_value_unique(self):
+        ''' Return True if all items are different in the container, UNKNOWN if some items are
+        indeterminate, or False otherwise'''
+        if None in self._container:
+            return Unknown
+        else:
+            return True

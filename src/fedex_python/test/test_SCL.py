@@ -33,16 +33,19 @@ import unittest
 
 import test_base
 import test_unitary_schemas
+import test_builtin
 
 suite = unittest.TestSuite()
 
 # Get all test suites from modules
 base_suite = test_base.suite()
 unitary_schemas_suite = test_unitary_schemas.suite()
+builtin_suite = test_builtin.suite()
 
 tests = []
 tests.append(base_suite)
 tests.append(unitary_schemas_suite)
+tests.append(builtin_suite)
 suite.addTests(tests)
 
 # Run test suite
