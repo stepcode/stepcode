@@ -52,6 +52,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #ifdef HAVE_UNISTD_H
@@ -105,7 +106,7 @@ void ERRORinitialize( void ) {
     ERROR_syntax_expecting =
         ERRORcreate( "%s, expecting %s in %s %s", SEVERITY_EXIT );
 
-    ERROR_string_base = ( char * )malloc( ERROR_MAX_SPACE );
+    ERROR_string_base = ( char * )scl_malloc( ERROR_MAX_SPACE );
     ERROR_start_message_buffer();
 
 
@@ -410,7 +411,7 @@ void ERRORnospace() {
 Error ERRORcreate( char * message, Severity severity ) {
     Error n;
 
-    n = ( struct Error_ * )malloc( sizeof( struct Error_ ) );
+    n = ( struct Error_ * )scl_malloc( sizeof( struct Error_ ) );
     n->message = message;
     n->severity = severity;
     n->enabled = true;

@@ -71,6 +71,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #define EXPRESSION_C
 
 #ifdef HAVE_UNISTD_H

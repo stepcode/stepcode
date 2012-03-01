@@ -122,6 +122,7 @@ This module implements the type abstraction.  It is
  *
  */
 
+#include <scl_memmgr.h>
 #define TYPE_C
 #include "express/type.h"
 

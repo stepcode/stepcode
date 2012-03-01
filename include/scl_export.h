@@ -1,6 +1,19 @@
 #ifndef SCL_EXPORT_H
 #define SCL_EXPORT_H
 
+/* Import/Export flags for base. */
+#ifndef SCL_BASE_EXPORT
+# if defined(SCL_BASE_DLL_EXPORTS) && defined(SCL_BASE_DLL_IMPORTS)
+#  error "Only SCL_BASE_DLL_EXPORTS or SCL_BASE_DLL_IMPORTS can be defined, not both."
+# elif defined(SCL_BASE_DLL_EXPORTS)
+#  define SCL_BASE_EXPORT __declspec(dllexport)
+# elif defined(SCL_BASE_DLL_IMPORTS)
+#  define SCL_BASE_EXPORT __declspec(dllimport)
+# else
+#  define SCL_BASE_EXPORT
+# endif
+#endif
+
 /* Import/Export flags for express. */
 #ifndef SCL_EXPRESS_EXPORT
 #  if defined(SCL_EXPRESS_DLL_EXPORTS) && defined(SCL_EXPRESS_DLL_IMPORTS)

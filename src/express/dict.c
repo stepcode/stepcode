@@ -33,6 +33,7 @@
  * Initial revision
  */
 
+#include <scl_memmgr.h>
 #define DICTIONARY_C
 #include "express/dict.h"
 #include "express/object.h"

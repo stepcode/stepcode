@@ -105,6 +105,7 @@
  *
  */
 
+#include <scl_memmgr.h>
 #define HASH_C
 #include <string.h>
 #include <stdlib.h>
@@ -297,7 +298,7 @@ HASHdestroy( Hash_Table table ) {
                         p = q;
                     }
                 }
-                free( table->Directory[i] );
+                scl_free( table->Directory[i] );
             }
         }
         HASH_Table_destroy( table );
@@ -315,11 +316,11 @@ void *
 HASHfind( Hash_Table t, char * s ) {
 //    Element * ep;
     struct Element_ *ep = NULL;
-    struct Element_ *e = malloc( sizeof * e );
+    struct Element_ *e = scl_malloc( sizeof * e );
     e -> key = s;
     e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
     ep = HASHsearch( t, e, HASH_FIND );
-    free(e);
+    scl_free(e);
     return( ep ? ep->data : 0 );
 }
 
@@ -329,7 +330,7 @@ void
 HASHinsert( Hash_Table t, char * s, void * data ) {
     Element e2;
 //    memset(e, 0, sizeof(s) + sizeof(data));
-    struct Element_ *e = malloc( sizeof * e );
+    struct Element_ *e = scl_malloc( sizeof * e );
     e -> key = s;
     e -> data = data;
     e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */

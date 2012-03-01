@@ -70,6 +70,7 @@ SET(EXPRESS_PRIVATE_HDRS
 include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
+	${SCL_SOURCE_DIR}/src/base
 )
 
 add_definitions( -DFLEX )
@@ -80,9 +81,10 @@ endif()
 
 if(BORLAND)
 add_definitions( -D__STDC__ )
+add_definitions( -DSCL_BASE_DLL_IMPORTS )
 endif()
 
-SCL_ADDLIB(express "${EXPRESS_SOURCES}" "")
+SCL_ADDLIB(express "${EXPRESS_SOURCES}" "base")
 
 if(APPLE)
     set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")

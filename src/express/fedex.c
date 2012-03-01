@@ -72,6 +72,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #include <scl_export.h>
 #include "scl_version_string.h"
 #include <stdlib.h>

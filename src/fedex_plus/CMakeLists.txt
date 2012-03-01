@@ -25,6 +25,7 @@ include_directories(
     ${SCL_SOURCE_DIR}/include
     ${SCL_SOURCE_DIR}/include/exppp
     ${SCL_SOURCE_DIR}/include/express
+    ${SCL_SOURCE_DIR}/src/base
 )
 
 IF(MSVC OR BORLAND)
@@ -33,12 +34,13 @@ set(fedex_plus_EXTRA_SOURCES
 )
 add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
 add_definitions( -DSCL_EXPPP_DLL_IMPORTS )
+add_definitions( -DSCL_BASE_DLL_IMPORTS )
 ENDIF()
 
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging )
 ENDIF()
 
-SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES} ${fedex_plus_EXTRA_SOURCES}" "libexppp express")
+SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES} ${fedex_plus_EXTRA_SOURCES}" "libexppp express base")
 
 add_dependencies( fedex_plus version_string )

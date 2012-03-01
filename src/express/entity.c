@@ -111,6 +111,7 @@
  *
  */
 
+#include <scl_memmgr.h>
 #define ENTITY_C
 #include "express/entity.h"
 #include "express/express.h"

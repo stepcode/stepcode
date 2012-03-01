@@ -56,6 +56,7 @@
  */
 
 #include <scl_cf.h>
+#include <scl_memmgr.h>
 #define RESOLVE_C
 #include <stdlib.h>
 #ifdef HAVE_UNISTD_H
