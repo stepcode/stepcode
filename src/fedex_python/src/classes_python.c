@@ -883,6 +883,63 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 }
 
 /******************************************************************
+ ** Procedure:  RULEPrint
+ ** Parameters:  Rule *rule --  rule being processed
+ **     FILE* file  --  file being written to
+ ** Returns:
+ ** Description:  drives the functions for printing out code in lib
+ **  and initialization files for a specific rule
+ ** Status:  started 2012/3/1
+ ******************************************************************/
+void
+RULEPrint(Rule rule, FILES * files, Schema schema) {
+    char * n = RULEget_name( rule );
+    char * param_name;
+    fprintf( files->lib, "\n####################\n # RULE %s #\n####################\n", n );
+    /* write function definition */
+    fprintf(files->lib, "%s = Rule()\n",n);
+    /* write parameter list */
+    //LISTdo(RULEget_parameters( rule ), v, Variable)
+    //    param_name = EXPRto_string( VARget_name( v ) );
+    //    fprintf(files->lib, "%s,",param_name);
+    //LISTod
+    
+    //close function prototype
+    //fprintf(files->lib,"):\n");
+    /* so far, just raise "not implemented" */
+    //fprintf(files->lib, "\traise NotImplemented('Function %s not implemented)')\n",n);
+}
+
+/******************************************************************
+ ** Procedure:  FUNCPrint
+ ** Parameters:  Function *function --  function being processed
+ **     FILE* file  --  file being written to
+ ** Returns:
+ ** Description:  drives the functions for printing out code in lib
+ **  and initialization files for a specific function
+ ** Status:  started 2012/3/1
+ ******************************************************************/
+void
+FUNCPrint(Function function, FILES * files, Schema schema) {
+    char * n = FUNCget_name( function );
+    char * param_name;
+    fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", n );
+    /* write function definition */
+    fprintf(files->lib, "def %s(",n);
+    /* write parameter list */
+    LISTdo(FUNCget_parameters( function ), v, Variable)
+      param_name = EXPRto_string( VARget_name( v ) );
+      fprintf(files->lib, "%s,",param_name);
+    LISTod
+    
+    //close function prototype
+    fprintf(files->lib,"):\n");
+    /* so far, just raise "not implemented" */
+    fprintf(files->lib, "\traise NotImplemented('Function %s not implemented)')\n",n);
+}
+
+
+/******************************************************************
  ** Procedure:  ENTITYPrint
  ** Parameters:  Entity *entity --  entity being processed
  **     FILE* file  --  file being written to
@@ -892,7 +949,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
  ** Side Effects:  generates code in 3 files
  ** Status:  complete 1/15/91
  ******************************************************************/
-
 
 void
 ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
