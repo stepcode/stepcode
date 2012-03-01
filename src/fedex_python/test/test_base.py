@@ -60,6 +60,11 @@ class TestINTEGER(unittest.TestCase):
         a = INTEGER(5)
         self.assertTrue(type(a) == INTEGER)
     
+    def test_inherit_from_NUMBER(self):
+        a = INTEGER(6)
+        self.assertTrue(isinstance(a,INTEGER))
+        self.assertTrue(isinstance(a,NUMBER))
+
     def test_INTEGER_ops(self):
         a = INTEGER(2)
         b = INTEGER(3)
@@ -100,6 +105,11 @@ class TestREAL(unittest.TestCase):
         a = REAL(5)
         self.assertTrue(type(a) == REAL)
     
+    def test_inherit_from_NUMBER(self):
+        a = REAL(4.5)
+        self.assertTrue(isinstance(a,REAL))
+        self.assertTrue(isinstance(a,NUMBER))
+
     def test_REAL_ops(self):
         a = REAL(1.5)
         b = REAL(2)
@@ -429,29 +439,6 @@ class TestSELECT(unittest.TestCase):
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
-#
-# TypeChecker
-#
-class TestTypeChecker(unittest.TestCase):
-    def test_match_type(self):
-        class P:
-            pass
-        p = P()
-        match_type = check_type(p,P) #should return True
-        self.assertTrue(match_type)
-    
-    def test_type_dontmatch(self):
-        class P:
-            pass
-        p = P()
-        try:
-            check_type(3,P)
-        except TypeError:
-            pass
-        except e:
-            self.fail('Unexpected exception thrown:', e)
-        else:
-            self.fail('ExpectedException not thrown')
 
 def suite():
    suite = unittest.TestSuite()
@@ -459,7 +446,10 @@ def suite():
    suite.addTest(unittest.makeSuite(TestREAL))
    suite.addTest(unittest.makeSuite(TestARRAY))
    suite.addTest(unittest.makeSuite(TestLIST))
-   suite.addTest(unittest.makeSuite(TestTypeChecker))
+   suite.addTest(unittest.makeSuite(TestBAG))
+   suite.addTest(unittest.makeSuite(TestSET))
+   suite.addTest(unittest.makeSuite(TestENUMERATION))
+   suite.addTest(unittest.makeSuite(TestSELECT))
    return suite
 
 if __name__ == '__main__':
