@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'test_multiple_inheritance'
 
@@ -237,8 +238,8 @@ class personal_address(address):
 	:param description
 	:type description:STRING
 	'''
-	def __init__( self , address__internal_location , address__street_number , address__street , address__postal_box , address__town , address__region , address__postal_code , address__country , address__facsimile_number , address__telephone_number , address__electronic_mail_address , address__telex_number , people,description, ):
-		address.__init__(self , address__internal_location , address__street_number , address__street , address__postal_box , address__town , address__region , address__postal_code , address__country , address__facsimile_number , address__telephone_number , address__electronic_mail_address , address__telex_number , )
+	def __init__( self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , people,description, ):
+		address.__init__(self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , )
 		self.people = people
 		self.description = description
 
@@ -280,8 +281,8 @@ class organizational_address(address):
 	:param description
 	:type description:STRING
 	'''
-	def __init__( self , address__internal_location , address__street_number , address__street , address__postal_box , address__town , address__region , address__postal_code , address__country , address__facsimile_number , address__telephone_number , address__electronic_mail_address , address__telex_number , organizations,description, ):
-		address.__init__(self , address__internal_location , address__street_number , address__street , address__postal_box , address__town , address__region , address__postal_code , address__country , address__facsimile_number , address__telephone_number , address__electronic_mail_address , address__telex_number , )
+	def __init__( self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , organizations,description, ):
+		address.__init__(self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , )
 		self.organizations = organizations
 		self.description = description
 
@@ -487,9 +488,9 @@ class person_and_organization_address(organizational_address,personal_address):
 	:param personal_address_people
 	:type personal_address_people:SET(1,1,'person', scope = schema_scope)
 	'''
-	def __init__( self , organizational_address__organizations , organizational_address__description , personal_address__people , personal_address__description , organizational_address_organizations,personal_address_people, ):
-		organizational_address.__init__(self , organizational_address__organizations , organizational_address__description , )
-		personal_address.__init__(self , personal_address__people , personal_address__description , )
+	def __init__( self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , inherited12__organizations , inherited13__description , inherited14__internal_location , inherited15__street_number , inherited16__street , inherited17__postal_box , inherited18__town , inherited19__region , inherited20__postal_code , inherited21__country , inherited22__facsimile_number , inherited23__telephone_number , inherited24__electronic_mail_address , inherited25__telex_number , inherited26__people , inherited27__description , organizational_address_organizations,personal_address_people, ):
+		organizational_address.__init__(self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , inherited12__organizations , inherited13__description , )
+		personal_address.__init__(self , inherited14__internal_location , inherited15__street_number , inherited16__street , inherited17__postal_box , inherited18__town , inherited19__region , inherited20__postal_code , inherited21__country , inherited22__facsimile_number , inherited23__telephone_number , inherited24__electronic_mail_address , inherited25__telex_number , inherited26__people , inherited27__description , )
 		self.organizational_address_organizations = organizational_address_organizations
 		self.personal_address_people = personal_address_people
 

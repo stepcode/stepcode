@@ -576,7 +576,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ], parent_attrnm[BUFSIZ];
     char * attr_type;
     bool generate_constructor = true; //by default, generates a python constructor
-    bool inheritance = false;
+    bool single_inheritance = false;
+    bool multiple_inheritance = false;
     Type t;
     Linked_List list;
     int num_parent = 0;
@@ -595,7 +596,6 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     list = ENTITYget_supertypes( entity );
     num_parent = 0;
     if( ! LISTempty( list ) ) {
-        inheritance = true;
         LISTdo( list, e, Entity )
         /*  if there\'s no super class yet,
             or the super class doesn\'t have any attributes
@@ -605,6 +605,14 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         else {fprintf(file,"%s",ENTITYget_name(e));}
         num_parent++;
         LISTod;
+        if (num_parent==1) {
+            single_inheritance = true;
+            multiple_inheritance = false;
+        }
+        else {
+            single_inheritance = false;
+            multiple_inheritance = true;
+        }
     }
     else {
         //inherit from BaseEntityClass by default, in order to enable decorators
@@ -612,6 +620,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         fprintf(file,"BaseEntityClass");
     }
     fprintf(file,"):\n");
+    
     /*
     * Write docstrings in a Sphinx compliant manner
     */
@@ -645,7 +654,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         attr_count_tmp++;
     }  
     LISTod
-    if ((attr_count_tmp == 0) && !inheritance) {
+    if ((attr_count_tmp == 0) && !single_inheritance && !multiple_inheritance) {
         fprintf(file,"\t# This class does not define any attribute.\n");
         fprintf(file,"\tpass\n");
         generate_constructor = false;
@@ -665,10 +674,13 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
             /*  search attribute names for superclass */
-            LISTdo(ENTITYget_attributes( e ), v2, Variable)
+            LISTdo(ENTITYget_all_attributes( e ), v2, Variable)
                 generate_attribute_name( v2, parent_attrnm );
-                fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
-                index_attribute++;
+                //fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                if (!VARis_derived(v2) && !VARget_inverse(v2)) {
+                    fprintf(file,"inherited%i__%s , ",index_attribute,parent_attrnm);
+                    index_attribute++;
+                }
             LISTod
         num_parent++;
         LISTod;
@@ -683,14 +695,20 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     if (generate_constructor) fprintf(file," ):\n");
     /** if inheritance, first init base class **/
     list = ENTITYget_supertypes( entity );
+    index_attribute = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
         fprintf(file,"\t\t%s.__init__(self , ",ENTITYget_name(e));
         /*  search and write attribute names for superclass */
-            LISTdo(ENTITYget_attributes( e ), v2, Variable)
+            LISTdo(ENTITYget_all_attributes( e ), v2, Variable)
                 generate_attribute_name( v2, parent_attrnm );
-                fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                //fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                if (!VARis_derived(v2) && !VARget_inverse(v2)) {
+                    fprintf(file,"inherited%i__%s , ",index_attribute,parent_attrnm);
+                    index_attribute++;
+                }
             LISTod
+                num_parent++;
         fprintf(file,")\n"); //separator for parent classes names
         LISTod;
     }
@@ -932,11 +950,11 @@ FUNCPrint(Function function, FILES * files, Schema schema) {
     LISTdo(FUNCget_parameters( function ), v, Variable)
       param_name = EXPRto_string( VARget_name( v ) );
       t = VARget_type( v );
-      fprintf(files->lib, "['%s', %s],",param_name, GetAttrTypeName(t));
+      fprintf(files->lib, "['%s', '%s'],",param_name, GetAttrTypeName(t));
     LISTod
     fprintf(files->lib,"],");
     /* print return type */
-    fprintf(files->lib,"return_type = %s",GetAttrTypeName(return_type));
+    fprintf(files->lib,"return_type = '%s'",GetAttrTypeName(return_type));
     //* print function body */
     //LISTdo(FUNCget_body(function),v,Variable)
     //    param_name = VARget_name( v ) ;
@@ -946,7 +964,7 @@ FUNCPrint(Function function, FILES * files, Schema schema) {
     /* function definition */
     fprintf(files->lib,", function_definition = '''\n");
     fprintf(files->lib,"\n%s\n",FUNCto_string( function ));
-    fprintf(files->lib,"''')\n");
+    fprintf(files->lib,"''', scope = schema_scope)\n");
 
 }
 

@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'test_single_inheritance_multi_level'
 
@@ -70,8 +71,8 @@ class shape(BaseEntityClass):
 class subshape(shape):
 	'''Entity subshape definition.
 	'''
-	def __init__( self , shape__item_name , shape__number_of_sides ,  ):
-		shape.__init__(self , shape__item_name , shape__number_of_sides , )
+	def __init__( self , inherited0__item_name , inherited1__number_of_sides ,  ):
+		shape.__init__(self , inherited0__item_name , inherited1__number_of_sides , )
 
 ####################
  # ENTITY rectangle #
@@ -85,8 +86,8 @@ class rectangle(subshape):
 	:param width
 	:type width:REAL
 	'''
-	def __init__( self , height,width, ):
-		subshape.__init__(self , )
+	def __init__( self , inherited0__item_name , inherited1__number_of_sides , height,width, ):
+		subshape.__init__(self , inherited0__item_name , inherited1__number_of_sides , )
 		self.height = height
 		self.width = width
 

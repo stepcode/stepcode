@@ -54,28 +54,81 @@ class TestSelectDataType(unittest.TestCase):
 
 class TestSingleInheritance(unittest.TestCase):
     '''
-    unitary_schemas/test_single_inheritance.py
+    unitary_schemas/test_single_inheritance.py, generated from:
+    SCHEMA test_single_inheritance;
+
+    TYPE label = STRING;
+    END_TYPE;
+
+    TYPE length_measure = REAL;
+    END_TYPE;
+
+    TYPE point = REAL;
+    END_TYPE;
+
+    ENTITY shape
+    SUPERTYPE OF (rectangle);
+        item_name : label;
+        number_of_sides : INTEGER;
+    END_ENTITY;
+
+    ENTITY rectangle
+    SUBTYPE OF (shape);
+        height : length_measure;
+        width : length_measure;
+    END_ENTITY;
+
+    END_SCHEMA;
     '''
     def test_import_schema_module(self):
         import test_single_inheritance
     
     def test_schema(self):
         import test_single_inheritance
-        my_base_shape = test_single_inheritance.shape(item_name = STRING("spherical shape"),number_of_sides = INTEGER(1))
-        my_shape = test_single_inheritance.rectangle(shape__item_name = STRING("rect"),shape__number_of_sides = INTEGER(6), height = REAL(30.0), width = REAL(45.))
+        my_base_shape = test_single_inheritance.shape(STRING("spherical shape"),INTEGER(1))
+        my_shape = test_single_inheritance.rectangle(STRING("rect"),INTEGER(6),REAL(30.0),REAL(45.))
 
 
 class TestSingleInheritanceMultiLevel(unittest.TestCase):
     '''
-    unitary_schemas/test_single_inheritance_multi_level.py
+    unitary_schemas/test_single_inheritance_multi_level.py, generated from schema:
+    SCHEMA test_single_inheritance_multi_level;
+
+    TYPE label = STRING;
+    END_TYPE;
+
+    TYPE length_measure = REAL;
+    END_TYPE;
+
+    TYPE point = REAL;
+    END_TYPE;
+
+    ENTITY shape
+    SUPERTYPE OF (subshape);
+        item_name : label;
+        number_of_sides : INTEGER;
+    END_ENTITY;
+
+    ENTITY subshape
+    SUPERTYPE OF (rectangle)
+    SUBTYPE OF (shape);
+    END_ENTITY;
+
+    ENTITY rectangle
+    SUBTYPE OF (subshape);
+        height : length_measure;
+        width : length_measure;
+    END_ENTITY;
+
+    END_SCHEMA;
     '''
     def test_import_schema_module(self):
         import test_single_inheritance_multi_level
     
     def test_schema(self):
         import test_single_inheritance_multi_level
-        #my_base_shape = test_single_inheritance.shape(item_name = STRING("spherical shape"),number_of_sides = INTEGER(1))
-        #my_shape = test_single_inheritance.rectangle(shape__item_name = STRING("rect"),shape__number_of_sides = INTEGER(6), height = REAL(30.0), width = REAL(45.))
+        my_base_shape = test_single_inheritance_multi_level.shape(STRING("spherical shape"),INTEGER(1))
+        my_shape = test_single_inheritance_multi_level.rectangle(STRING("rect"),INTEGER(6), height = REAL(30.0), width = REAL(45.))
 
 
 class TestEnumEntityName(unittest.TestCase):

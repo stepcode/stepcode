@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'multiple_rep'
 
@@ -100,8 +101,8 @@ class representation_relationship(BaseEntityClass):
 class shape_representation_relationship(representation_relationship):
 	'''Entity shape_representation_relationship definition.
 	'''
-	def __init__( self , representation_relationship__name , representation_relationship__rep_1 , representation_relationship__rep_2 ,  ):
-		representation_relationship.__init__(self , representation_relationship__name , representation_relationship__rep_1 , representation_relationship__rep_2 , )
+	def __init__( self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 ,  ):
+		representation_relationship.__init__(self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 , )
 
 ####################
  # ENTITY representation #
@@ -241,8 +242,8 @@ class context_dependent_shape_representation(BaseEntityClass):
 class definitional_representation_relationship(representation_relationship):
 	'''Entity definitional_representation_relationship definition.
 	'''
-	def __init__( self , representation_relationship__name , representation_relationship__rep_1 , representation_relationship__rep_2 ,  ):
-		representation_relationship.__init__(self , representation_relationship__name , representation_relationship__rep_1 , representation_relationship__rep_2 , )
+	def __init__( self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 ,  ):
+		representation_relationship.__init__(self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 , )
 
 ####################
  # ENTITY component_2d_location #
@@ -253,10 +254,10 @@ class component_2d_location(context_dependent_shape_representation,shape_represe
 	:param context_dependent_shape_representation_representation_relation
 	:type context_dependent_shape_representation_representation_relation:component_2d_location
 	'''
-	def __init__( self , context_dependent_shape_representation__representation_relation ,  ):
-		context_dependent_shape_representation.__init__(self , context_dependent_shape_representation__representation_relation , )
-		shape_representation_relationship.__init__(self , )
-		definitional_representation_relationship.__init__(self , )
+	def __init__( self , inherited0__representation_relation , inherited1__name , inherited2__rep_1 , inherited3__rep_2 , inherited4__name , inherited5__rep_1 , inherited6__rep_2 ,  ):
+		context_dependent_shape_representation.__init__(self , inherited0__representation_relation , )
+		shape_representation_relationship.__init__(self , inherited1__name , inherited2__rep_1 , inherited3__rep_2 , )
+		definitional_representation_relationship.__init__(self , inherited4__name , inherited5__rep_1 , inherited6__rep_2 , )
 
 	@apply
 	def context_dependent_shape_representation_representation_relation():

@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'test_enum_entity_name'
 

@@ -72,7 +72,7 @@ class FUNCTION(Algorithm):
     scope, i.e., if the current function is declared within the algorithm_head of a function,
     procedure or rule.
     """
-    def __init__(self,function_name,params,return_type,function_definition):
+    def __init__(self,function_name,params,return_type,function_definition,scope):
         """
         param_names: a list that contains param_names as strings
         param_types: a list the contains param_types
@@ -83,11 +83,11 @@ class FUNCTION(Algorithm):
         self._parameters = params
         self._return_type = return_type
         self._function_definition = function_definition
+        self._scope = scope
         
     def __call__(self, *parameters):
         if len(parameters)!=len(self._parameters):
             raise TypeError("%s() takes exactly %i argument (%i given)"%(self._function_name,len(self._parameters),len(parameters)))
-        exec self._function_python_ready
 
 class PROCEDURE(Algorithm):
     """
@@ -112,20 +112,3 @@ class PROCEDURE(Algorithm):
     rule.
     """
     pass
-
-add = FUNCTION( function_name = 'add',params = [['r1', REAL],['r2', REAL],],return_type = REAL, function_definition = '''
-
-FUNCTION add(
-             r1: REAL;
-             r2: REAL
-    ): REAL;
-
-  LOCAL
-    result : REAL;
-  END_LOCAL;
-  result := r1 + r2;
-  RETURN(result);
-
-END_FUNCTION; -- add
-
-    ''')

@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'test_single_inheritance'
 
@@ -76,8 +77,8 @@ class rectangle(shape):
 	:param width
 	:type width:REAL
 	'''
-	def __init__( self , shape__item_name , shape__number_of_sides , height,width, ):
-		shape.__init__(self , shape__item_name , shape__number_of_sides , )
+	def __init__( self , inherited0__item_name , inherited1__number_of_sides , height,width, ):
+		shape.__init__(self , inherited0__item_name , inherited1__number_of_sides , )
 		self.height = height
 		self.width = width
 

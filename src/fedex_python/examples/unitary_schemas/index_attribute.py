@@ -11,6 +11,7 @@ from SCL.TypeChecker import check_type
 from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
+from SCL.Algorithms import *
 
 schema_name = 'index_attribute'
 
@@ -77,8 +78,8 @@ class general_datum_reference(shape_aspect):
 	:param base
 	:type base:datum_or_common_datum
 	'''
-	def __init__( self , shape_aspect__name , shape_aspect__of_shape , base, ):
-		shape_aspect.__init__(self , shape_aspect__name , shape_aspect__of_shape , )
+	def __init__( self , inherited0__name , inherited1__of_shape , base, ):
+		shape_aspect.__init__(self , inherited0__name , inherited1__of_shape , )
 		self.base = base
 
 	@apply
@@ -110,8 +111,8 @@ class product_definition_shape(BaseEntityClass):
 class datum_reference_element(general_datum_reference):
 	'''Entity datum_reference_element definition.
 	'''
-	def __init__( self , general_datum_reference__base ,  ):
-		general_datum_reference.__init__(self , general_datum_reference__base , )
+	def __init__( self , inherited0__name , inherited1__of_shape , inherited2__base ,  ):
+		general_datum_reference.__init__(self , inherited0__name , inherited1__of_shape , inherited2__base , )
 
 ####################
  # ENTITY datum #
@@ -119,5 +120,5 @@ class datum_reference_element(general_datum_reference):
 class datum(shape_aspect):
 	'''Entity datum definition.
 	'''
-	def __init__( self , shape_aspect__name , shape_aspect__of_shape ,  ):
-		shape_aspect.__init__(self , shape_aspect__name , shape_aspect__of_shape , )
+	def __init__( self , inherited0__name , inherited1__of_shape ,  ):
+		shape_aspect.__init__(self , inherited0__name , inherited1__of_shape , )
