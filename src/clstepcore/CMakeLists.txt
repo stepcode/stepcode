@@ -85,5 +85,7 @@ include_directories(
 
 SCL_ADDLIB(stepcore "${LIBSTEPCORE_SRCS} ${LIBDEPEND_SRCS}" "express steputils stepdai")
 if(APPLE)
-    set_target_properties(stepcore PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    if(SCL_BUILD_SHARED_LIBS)
+        set_target_properties(stepcore PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(SCL_BUILD_SHARED_LIBS)
 endif(APPLE)

@@ -8,7 +8,7 @@ FUNCTION( TESTABLE_TARGET target )
 ENDFUNCTION( TESTABLE_TARGET )
 
 # To build one or more schemas, configure with 
-# 'cmake -DBUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
+# 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
 # This function runs fedex on one express file. The generated source goes in a dir 
 # in the build dir, and it is compiled into a library. A p21read executable is 
@@ -120,11 +120,11 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
 
 ENDFUNCTION(BUILD_A_SCHEMA)
 
-if( DEFINED BUILD_SCHEMAS )
-    if( BUILD_SCHEMAS STREQUAL "ALL" )
-        file( GLOB_RECURSE BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
+if( DEFINED SCL_BUILD_SCHEMAS )
+    if( SCL_BUILD_SCHEMAS STREQUAL "ALL" )
+        file( GLOB_RECURSE SCL_BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
     endif()
-    foreach( ap ${BUILD_SCHEMAS} )
+    foreach( ap ${SCL_BUILD_SCHEMAS} )
         BUILD_A_SCHEMA( ${ap} )
     endforeach()
 endif()
