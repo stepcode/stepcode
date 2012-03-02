@@ -9,6 +9,8 @@ from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Expr import *
+from SCL.Builtin import *
+from SCL.Rules import *
 
 schema_name = 'test_array_of_array_of_simple_types'
 

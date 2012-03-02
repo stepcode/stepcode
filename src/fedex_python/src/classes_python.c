@@ -921,21 +921,33 @@ RULEPrint(Rule rule, FILES * files, Schema schema) {
  ******************************************************************/
 void
 FUNCPrint(Function function, FILES * files, Schema schema) {
-    char * n = FUNCget_name( function );
+    char * function_name = FUNCget_name( function );
     char * param_name;
-    fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", n );
+    Type t, return_type = FUNCget_return_type( function );
+    fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", function_name );
     /* write function definition */
-    fprintf(files->lib, "def %s(",n);
+    fprintf(files->lib,"%s = FUNCTION( function_name = '%s',", function_name, function_name);
     /* write parameter list */
+    fprintf(files->lib,"params = [");
     LISTdo(FUNCget_parameters( function ), v, Variable)
       param_name = EXPRto_string( VARget_name( v ) );
-      fprintf(files->lib, "%s,",param_name);
+      t = VARget_type( v );
+      fprintf(files->lib, "['%s', %s],",param_name, GetAttrTypeName(t));
     LISTod
-    
-    //close function prototype
-    fprintf(files->lib,"):\n");
-    /* so far, just raise "not implemented" */
-    fprintf(files->lib, "\traise NotImplemented('Function %s not implemented)')\n",n);
+    fprintf(files->lib,"],");
+    /* print return type */
+    fprintf(files->lib,"return_type = %s",GetAttrTypeName(return_type));
+    //* print function body */
+    //LISTdo(FUNCget_body(function),v,Variable)
+    //    param_name = VARget_name( v ) ;
+    //fprintf(files->lib,"\n%s\n",param_name);
+    //    //t = VARget_type( v );
+    //LISTod
+    /* function definition */
+    fprintf(files->lib,", function_definition = '''\n");
+    fprintf(files->lib,"\n%s\n",FUNCto_string( function ));
+    fprintf(files->lib,"''')\n");
+
 }
 
 
