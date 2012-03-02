@@ -42,5 +42,7 @@ include_directories(
 SCL_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils")
 
 if(APPLE)
-    set_target_properties(stepdai PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    if(SCL_BUILD_SHARED_LIBS)
+        set_target_properties(stepdai PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(SCL_BUILD_SHARED_LIBS)
 endif(APPLE)

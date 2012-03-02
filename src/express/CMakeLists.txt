@@ -87,7 +87,9 @@ endif()
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "base")
 
 if(APPLE)
-    set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    if(SCL_BUILD_SHARED_LIBS)
+        set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
+    endif(SCL_BUILD_SHARED_LIBS)
 endif(APPLE)
 
 SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_EXTRA_SOURCES}" express)
