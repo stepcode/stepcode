@@ -48,7 +48,7 @@ SET(SCL_VERSION ${SCL_VERSION_MAJOR}.${SCL_VERSION_MINOR})
 # SCL ABI version. SCL_ABI_SOVERSION should be incremented
 # for each release introducing API incompatibilities
 SET(SCL_ABI_SOVERSION 2)
-SET(SCL_ABI_VERSION {SCL_ABI_SOVERSION}.0.0)
+SET(SCL_ABI_VERSION ${SCL_ABI_SOVERSION}.0.0)
 
 # Minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
