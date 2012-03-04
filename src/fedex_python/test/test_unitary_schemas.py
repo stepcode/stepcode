@@ -151,10 +151,18 @@ class TestEnumEntityName(unittest.TestCase):
     
     def test_schema(self):
         import test_enum_entity_name
-        # CAREFUL: following line makes test fail
-        # @TODO: make sure that enum ids and entities can have same name without conflict
-        #check_type(test_enum_entity_name.line,test_enum_entity_name.simple_datum_reference_modifier)
+        check_type(test_enum_entity_name.simple_datum_reference_modifier.line,test_enum_entity_name.simple_datum_reference_modifier)
         check_type(test_enum_entity_name.translation,test_enum_entity_name.simple_datum_reference_modifier)
+        # if line is passed, should raise an error since it is an entity name
+        try:
+            check_type(test_enum_entity_name.line,test_enum_entity_name.simple_datum_reference_modifier)      
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        
         
 class TestArray(unittest.TestCase):
     '''

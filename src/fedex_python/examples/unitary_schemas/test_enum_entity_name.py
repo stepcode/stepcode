@@ -19,12 +19,10 @@ schema_scope = sys.modules[__name__]
 
 
 # ENUMERATION TYPE simple_datum_reference_modifier
-line = EnumerationId()
-translation = EnumerationId()
 simple_datum_reference_modifier = ENUMERATION(
-	line,
-	translation,
-	)
+	'line',
+	'translation',
+	scope = schema_scope)
 
 ####################
  # ENTITY line #

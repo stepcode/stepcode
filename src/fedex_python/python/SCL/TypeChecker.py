@@ -56,7 +56,7 @@ def check_type(instance, expected_type):
         print "Expected type: ", expected_type
     # in the case of an enumeration, we have to check if the instance is in the list
     if (isinstance(expected_type,ENUMERATION)):
-        allowed_ids = expected_type.get_allowed_enum_id()
+        allowed_ids = expected_type.get_enum_ids()
         if instance in allowed_ids:
             type_match = True
         else:

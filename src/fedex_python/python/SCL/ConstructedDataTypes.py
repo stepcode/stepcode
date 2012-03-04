@@ -32,36 +32,25 @@
 import sys
 import BaseType
 
-def type_is_defined(type_str):
-    """ Look for the type definition in the global scope from the type string.
-    @TODO: find a better implementation than testing all modules!
-    """
-    modules = sys.modules
-    for module in modules.values():
-        if (module is not None) and (not '__' in module.__name__):
-            module_variables = vars(module)
-            if module_variables.has_key(type_str):
-                typ = module_variables[type_str]
-                return True, vars(module)[type_str]
-    return False,None
-
 class EnumerationId(object):
-    """ An enumeration data type has as its domain an ordered set of names. The names represent
+    """
+    EXPRESS definition:
+    ===================
+    An enumeration data type has as its domain an ordered set of names. The names represent
     values of the enumeration data type. These names are designated by enumeration_ids and are
     referred to as enumeration items.
-    
-    Python implementation: before being defined, enums Id of the related enumeration must be
-    defined
-    ahead = EnumerationId()
-    behind = EnumerationId()
     """
     pass
 
 class ENUMERATION(object):
-    """ EXPRESS definition : An ENUMERATION data type has as its domain an ordered set of names. The names represent
+    """
+    EXPRESS definition:
+    ===================
+    An ENUMERATION data type has as its domain an ordered set of names. The names represent
     values of the enumeration data type.
     
     Python implementation:
+    ======================
     An enumeration is initialized from strings defining the types.
     For instance, some EXPRESS definition:
     TYPE ahead_or_behind = ENUMERATION OF
@@ -70,28 +59,47 @@ class ENUMERATION(object):
     END_TYPE; -- ahead_or_behind
     
     is implemented in python with the line:
-    ahead_of_behind = ENUMERATION('ahead','behind')
+    >>> ahead_of_behind = ENUMERATION('ahead','behind', the_current_scope)
+    >>> ahead_or_behind.ahead
+    >>> ahead_of_behind.behind
     
-    The ENUMERATION definition takes python strings because of the resolution ordre
-    that could be an issue.
-    
-    When getting the authorized types but the ENUMERATION, python looks for the object
-    definition from the globals() dictionary.
-    
-    ahead = EnumerationId()
-    behind = EnumerationId()
-    ahead_of_behind = ENUMERATION(ahead,behind)
+    And, if and only if ahead and/or behind are not in scope (e.g. they are not entity names,
+    and/or many enums define the same enumeration identifier):
+    >>> ahead
+    >>> behind
     """
-    def __init__(self,*kargs):
+    def __init__(self,*kargs,**args):
         # first defining the scope
-        passed_types = list(kargs)
-        # first check that all arguments are enums id
-        for passed_type in passed_types:
-            if not isinstance(passed_type, EnumerationId):
-                raise TypeError("%s is not an enumeration identifier."%passed_type)
-        self._enum_ids = list(kargs)
+        if args.has_key('scope'):
+            self._scope = args['scope']
+        else:
+            self._scope = None
+        # store passed enum identifiers
+        self._enum_id_names = list(kargs)
+        self._enum_ids = []
+        # we create enums id from names, and create attributes
+        # for instance, from the identifier name 'ahead',
+        # we create an attribute ahead with which is a new
+        # instance of EnumerationId
+        for enum_id_name in self._enum_id_names:
+            setattr(self,enum_id_name,EnumerationId())
+            # we store this new attributes to the enum_ids list, which
+            # will be accessed by the type checker with the get_enum_ids method
+            self._enum_ids.append(self.__getattribute__(enum_id_name))
+        #
+        # Then we check if the enums names can be added to the current scope:
+        # if the name is already in the scope, then another enums id or select
+        # has the same name -> we do nothing, enums will be called 
+        # with ahead_of_behind.ahead or ahead_or_behind.behind.
+        # otherwise, they can be called as only ahead or behind
+        # Note: since ENUMERATIONS are defined *before* entities, if an entity
+        # has the same name as an enum id, it will replace it in the current scope.
+        #
+        for enum_id_name in self._enum_id_names:
+            if not vars(self._scope).has_key(enum_id_name):
+                vars(self._scope)[enum_id_name] = self.__getattribute__(enum_id_name)
 
-    def get_allowed_enum_id(self):
+    def get_enum_ids(self):
         return self._enum_ids
         
 class SELECT(object):
@@ -129,14 +137,3 @@ class SELECT(object):
             else:
                 b = _auth_types
         return b
-        
-if __name__=='__main__':
-    class line:
-        pass
-    class point:
-        pass
-    import sys
-    scp = sys.modules[__name__]
-    a = ENUMERATION('line','point',scope = scp)
-    print a.get_allowed_types()
-    

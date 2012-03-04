@@ -403,9 +403,8 @@ class TestSET(unittest.TestCase):
 #
 class TestENUMERATION(unittest.TestCase):
     def test_simple_enum(self):
-        ahead = EnumerationId()
-        behind = EnumerationId()
-        ahead_or_behind = ENUMERATION(ahead,behind)
+        scp = sys.modules[__name__]
+        ahead_or_behind = ENUMERATION('ahead','behind',scope=scp)
         check_type(ahead,ahead_or_behind)
         check_type(behind,ahead_or_behind)
         try:

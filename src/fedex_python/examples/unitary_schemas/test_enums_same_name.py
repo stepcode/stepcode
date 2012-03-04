@@ -19,17 +19,13 @@ schema_scope = sys.modules[__name__]
 
 
 # ENUMERATION TYPE hair_color
-bald = EnumerationId()
-red = EnumerationId()
 hair_color = ENUMERATION(
-	bald,
-	red,
-	)
+	'bald',
+	'red',
+	scope = schema_scope)
 
 # ENUMERATION TYPE favorite_color
-clear = EnumerationId()
-red = EnumerationId()
 favorite_color = ENUMERATION(
-	clear,
-	red,
-	)
+	'clear',
+	'red',
+	scope = schema_scope)
