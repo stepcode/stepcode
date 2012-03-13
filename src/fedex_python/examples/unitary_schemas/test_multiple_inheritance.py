@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *
@@ -22,9 +21,15 @@ classification_item = SELECT(
 	'person_and_organization_address',
 	'address',
 	scope = schema_scope)
-text = STRING
-identifier = STRING
-label = STRING
+# Defined datatype text
+class text(STRING):
+	pass
+# Defined datatype identifier
+class identifier(STRING):
+	pass
+# Defined datatype label
+class label(STRING):
+	pass
 
 ####################
  # ENTITY address #
@@ -33,40 +38,40 @@ class address(BaseEntityClass):
 	'''Entity address definition.
 
 	:param internal_location
-	:type internal_location:STRING
+	:type internal_location:label
 
 	:param street_number
-	:type street_number:STRING
+	:type street_number:label
 
 	:param street
-	:type street:STRING
+	:type street:label
 
 	:param postal_box
-	:type postal_box:STRING
+	:type postal_box:label
 
 	:param town
-	:type town:STRING
+	:type town:label
 
 	:param region
-	:type region:STRING
+	:type region:label
 
 	:param postal_code
-	:type postal_code:STRING
+	:type postal_code:label
 
 	:param country
-	:type country:STRING
+	:type country:label
 
 	:param facsimile_number
-	:type facsimile_number:STRING
+	:type facsimile_number:label
 
 	:param telephone_number
-	:type telephone_number:STRING
+	:type telephone_number:label
 
 	:param electronic_mail_address
-	:type electronic_mail_address:STRING
+	:type electronic_mail_address:label
 
 	:param telex_number
-	:type telex_number:STRING
+	:type telex_number:label
 	'''
 	def __init__( self , internal_location,street_number,street,postal_box,town,region,postal_code,country,facsimile_number,telephone_number,electronic_mail_address,telex_number, ):
 		self.internal_location = internal_location
@@ -88,8 +93,8 @@ class address(BaseEntityClass):
 			return self._internal_location
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._internal_location = STRING(value)
+				if not check_type(value,label):
+					self._internal_location = label(value)
 			else:
 				self._internal_location = value
 		return property(**locals())
@@ -100,8 +105,8 @@ class address(BaseEntityClass):
 			return self._street_number
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._street_number = STRING(value)
+				if not check_type(value,label):
+					self._street_number = label(value)
 			else:
 				self._street_number = value
 		return property(**locals())
@@ -112,8 +117,8 @@ class address(BaseEntityClass):
 			return self._street
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._street = STRING(value)
+				if not check_type(value,label):
+					self._street = label(value)
 			else:
 				self._street = value
 		return property(**locals())
@@ -124,8 +129,8 @@ class address(BaseEntityClass):
 			return self._postal_box
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._postal_box = STRING(value)
+				if not check_type(value,label):
+					self._postal_box = label(value)
 			else:
 				self._postal_box = value
 		return property(**locals())
@@ -136,8 +141,8 @@ class address(BaseEntityClass):
 			return self._town
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._town = STRING(value)
+				if not check_type(value,label):
+					self._town = label(value)
 			else:
 				self._town = value
 		return property(**locals())
@@ -148,8 +153,8 @@ class address(BaseEntityClass):
 			return self._region
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._region = STRING(value)
+				if not check_type(value,label):
+					self._region = label(value)
 			else:
 				self._region = value
 		return property(**locals())
@@ -160,8 +165,8 @@ class address(BaseEntityClass):
 			return self._postal_code
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._postal_code = STRING(value)
+				if not check_type(value,label):
+					self._postal_code = label(value)
 			else:
 				self._postal_code = value
 		return property(**locals())
@@ -172,8 +177,8 @@ class address(BaseEntityClass):
 			return self._country
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._country = STRING(value)
+				if not check_type(value,label):
+					self._country = label(value)
 			else:
 				self._country = value
 		return property(**locals())
@@ -184,8 +189,8 @@ class address(BaseEntityClass):
 			return self._facsimile_number
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._facsimile_number = STRING(value)
+				if not check_type(value,label):
+					self._facsimile_number = label(value)
 			else:
 				self._facsimile_number = value
 		return property(**locals())
@@ -196,8 +201,8 @@ class address(BaseEntityClass):
 			return self._telephone_number
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._telephone_number = STRING(value)
+				if not check_type(value,label):
+					self._telephone_number = label(value)
 			else:
 				self._telephone_number = value
 		return property(**locals())
@@ -208,8 +213,8 @@ class address(BaseEntityClass):
 			return self._electronic_mail_address
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._electronic_mail_address = STRING(value)
+				if not check_type(value,label):
+					self._electronic_mail_address = label(value)
 			else:
 				self._electronic_mail_address = value
 		return property(**locals())
@@ -220,8 +225,8 @@ class address(BaseEntityClass):
 			return self._telex_number
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._telex_number = STRING(value)
+				if not check_type(value,label):
+					self._telex_number = label(value)
 			else:
 				self._telex_number = value
 		return property(**locals())
@@ -236,7 +241,7 @@ class personal_address(address):
 	:type people:SET(1,None,'person', scope = schema_scope)
 
 	:param description
-	:type description:STRING
+	:type description:text
 	'''
 	def __init__( self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , people,description, ):
 		address.__init__(self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , )
@@ -263,8 +268,8 @@ class personal_address(address):
 			return self._description
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._description = STRING(value)
+				if not check_type(value,text):
+					self._description = text(value)
 			else:
 				self._description = value
 		return property(**locals())
@@ -279,7 +284,7 @@ class organizational_address(address):
 	:type organizations:SET(1,None,'organization', scope = schema_scope)
 
 	:param description
-	:type description:STRING
+	:type description:text
 	'''
 	def __init__( self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , organizations,description, ):
 		address.__init__(self , inherited0__internal_location , inherited1__street_number , inherited2__street , inherited3__postal_box , inherited4__town , inherited5__region , inherited6__postal_code , inherited7__country , inherited8__facsimile_number , inherited9__telephone_number , inherited10__electronic_mail_address , inherited11__telex_number , )
@@ -306,8 +311,8 @@ class organizational_address(address):
 			return self._description
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._description = STRING(value)
+				if not check_type(value,text):
+					self._description = text(value)
 			else:
 				self._description = value
 		return property(**locals())
@@ -319,13 +324,13 @@ class person(BaseEntityClass):
 	'''Entity person definition.
 
 	:param id
-	:type id:STRING
+	:type id:identifier
 
 	:param last_name
-	:type last_name:STRING
+	:type last_name:label
 
 	:param first_name
-	:type first_name:STRING
+	:type first_name:label
 
 	:param middle_names
 	:type middle_names:LIST(1,None,'STRING', scope = schema_scope)
@@ -352,8 +357,8 @@ class person(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument id is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._id = STRING(value)
+			if not check_type(value,identifier):
+				self._id = identifier(value)
 			else:
 				self._id = value
 		return property(**locals())
@@ -364,8 +369,8 @@ class person(BaseEntityClass):
 			return self._last_name
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._last_name = STRING(value)
+				if not check_type(value,label):
+					self._last_name = label(value)
 			else:
 				self._last_name = value
 		return property(**locals())
@@ -376,8 +381,8 @@ class person(BaseEntityClass):
 			return self._first_name
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._first_name = STRING(value)
+				if not check_type(value,label):
+					self._first_name = label(value)
 			else:
 				self._first_name = value
 		return property(**locals())
@@ -425,13 +430,13 @@ class organization(BaseEntityClass):
 	'''Entity organization definition.
 
 	:param id
-	:type id:STRING
+	:type id:identifier
 
 	:param name
-	:type name:STRING
+	:type name:label
 
 	:param description
-	:type description:STRING
+	:type description:text
 	'''
 	def __init__( self , id,name,description, ):
 		self.id = id
@@ -444,8 +449,8 @@ class organization(BaseEntityClass):
 			return self._id
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._id = STRING(value)
+				if not check_type(value,identifier):
+					self._id = identifier(value)
 			else:
 				self._id = value
 		return property(**locals())
@@ -458,8 +463,8 @@ class organization(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._name = STRING(value)
+			if not check_type(value,label):
+				self._name = label(value)
 			else:
 				self._name = value
 		return property(**locals())
@@ -470,8 +475,8 @@ class organization(BaseEntityClass):
 			return self._description
 		def fset( self, value ):
 			if value != None: # OPTIONAL attribute
-				if not check_type(value,STRING):
-					self._description = STRING(value)
+				if not check_type(value,text):
+					self._description = text(value)
 			else:
 				self._description = value
 		return property(**locals())

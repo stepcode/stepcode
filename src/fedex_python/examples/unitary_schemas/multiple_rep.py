@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *
@@ -17,21 +16,39 @@ schema_name = 'multiple_rep'
 
 schema_scope = sys.modules[__name__]
 
-text = STRING
-representation_context = STRING
-identifier = STRING
-shape_definition = STRING
-transformation = STRING
-representation_item = STRING
-characterized_product_definition = STRING
+# Defined datatype text
+class text(STRING):
+	pass
+# Defined datatype representation_context
+class representation_context(STRING):
+	pass
+# Defined datatype identifier
+class identifier(STRING):
+	pass
+# Defined datatype shape_definition
+class shape_definition(STRING):
+	pass
+# Defined datatype transformation
+class transformation(STRING):
+	pass
+# Defined datatype representation_item
+class representation_item(STRING):
+	pass
+# Defined datatype characterized_product_definition
+class characterized_product_definition(STRING):
+	pass
 # SELECT TYPE characterized_definition
 characterized_definition = SELECT(
 	'characterized_object',
 	'characterized_product_definition',
 	'shape_definition',
 	scope = schema_scope)
-label = STRING
-characterized_object = STRING
+# Defined datatype label
+class label(STRING):
+	pass
+# Defined datatype characterized_object
+class characterized_object(STRING):
+	pass
 
 ####################
  # ENTITY representation_relationship #
@@ -40,7 +57,7 @@ class representation_relationship(BaseEntityClass):
 	'''Entity representation_relationship definition.
 
 	:param name
-	:type name:STRING
+	:type name:label
 
 	:param rep_1
 	:type rep_1:representation
@@ -61,8 +78,8 @@ class representation_relationship(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._name = STRING(value)
+			if not check_type(value,label):
+				self._name = label(value)
 			else:
 				self._name = value
 		return property(**locals())
@@ -111,13 +128,13 @@ class representation(BaseEntityClass):
 	'''Entity representation definition.
 
 	:param name
-	:type name:STRING
+	:type name:label
 
 	:param items
 	:type items:SET(1,None,'STRING', scope = schema_scope)
 
 	:param context_of_items
-	:type context_of_items:STRING
+	:type context_of_items:representation_context
 	'''
 	def __init__( self , name,items,context_of_items, ):
 		self.name = name
@@ -132,8 +149,8 @@ class representation(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._name = STRING(value)
+			if not check_type(value,label):
+				self._name = label(value)
 			else:
 				self._name = value
 		return property(**locals())
@@ -160,8 +177,8 @@ class representation(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument context_of_items is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._context_of_items = STRING(value)
+			if not check_type(value,representation_context):
+				self._context_of_items = representation_context(value)
 			else:
 				self._context_of_items = value
 		return property(**locals())
@@ -173,7 +190,7 @@ class property_definition(BaseEntityClass):
 	'''Entity property_definition definition.
 
 	:param name
-	:type name:STRING
+	:type name:label
 
 	:param definition
 	:type definition:characterized_definition
@@ -190,8 +207,8 @@ class property_definition(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._name = STRING(value)
+			if not check_type(value,label):
+				self._name = label(value)
 			else:
 				self._name = value
 		return property(**locals())

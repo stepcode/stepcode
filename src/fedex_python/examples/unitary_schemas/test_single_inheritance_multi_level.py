@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *
@@ -17,9 +16,15 @@ schema_name = 'test_single_inheritance_multi_level'
 
 schema_scope = sys.modules[__name__]
 
-length_measure = REAL
-label = STRING
-point = REAL
+# Defined datatype length_measure
+class length_measure(REAL):
+	pass
+# Defined datatype label
+class label(STRING):
+	pass
+# Defined datatype point
+class point(REAL):
+	pass
 
 ####################
  # ENTITY shape #
@@ -28,7 +33,7 @@ class shape(BaseEntityClass):
 	'''Entity shape definition.
 
 	:param item_name
-	:type item_name:STRING
+	:type item_name:label
 
 	:param number_of_sides
 	:type number_of_sides:INTEGER
@@ -45,8 +50,8 @@ class shape(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument item_name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._item_name = STRING(value)
+			if not check_type(value,label):
+				self._item_name = label(value)
 			else:
 				self._item_name = value
 		return property(**locals())
@@ -81,10 +86,10 @@ class rectangle(subshape):
 	'''Entity rectangle definition.
 
 	:param height
-	:type height:REAL
+	:type height:length_measure
 
 	:param width
-	:type width:REAL
+	:type width:length_measure
 	'''
 	def __init__( self , inherited0__item_name , inherited1__number_of_sides , height,width, ):
 		subshape.__init__(self , inherited0__item_name , inherited1__number_of_sides , )
@@ -99,8 +104,8 @@ class rectangle(subshape):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument height is mantatory and can not be set to None')
-			if not check_type(value,REAL):
-				self._height = REAL(value)
+			if not check_type(value,length_measure):
+				self._height = length_measure(value)
 			else:
 				self._height = value
 		return property(**locals())
@@ -113,8 +118,8 @@ class rectangle(subshape):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument width is mantatory and can not be set to None')
-			if not check_type(value,REAL):
-				self._width = REAL(value)
+			if not check_type(value,length_measure):
+				self._width = length_measure(value)
 			else:
 				self._width = value
 		return property(**locals())

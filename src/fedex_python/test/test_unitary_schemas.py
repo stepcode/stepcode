@@ -85,8 +85,8 @@ class TestSingleInheritance(unittest.TestCase):
     
     def test_schema(self):
         import test_single_inheritance
-        my_base_shape = test_single_inheritance.shape(STRING("spherical shape"),INTEGER(1))
-        my_shape = test_single_inheritance.rectangle(STRING("rect"),INTEGER(6),REAL(30.0),REAL(45.))
+        my_base_shape = test_single_inheritance.shape(test_single_inheritance.label("spherical shape"),INTEGER(1))
+        my_shape = test_single_inheritance.rectangle(test_single_inheritance.label("rect"),INTEGER(6),test_single_inheritance.length_measure(30.0),test_single_inheritance.length_measure(45.))
 
 
 class TestSingleInheritanceMultiLevel(unittest.TestCase):

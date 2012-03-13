@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *
@@ -17,7 +16,9 @@ schema_name = 'gcc_incomplete_type'
 
 schema_scope = sys.modules[__name__]
 
-maths_number = NUMBER
+# Defined datatype maths_number
+class maths_number(NUMBER):
+	pass
 # SELECT TYPE atom_based_value
 atom_based_value = SELECT(
 	'maths_number',

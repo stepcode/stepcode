@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *

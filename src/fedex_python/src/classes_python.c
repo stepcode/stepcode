@@ -649,7 +649,13 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         fprintf(file,"\n");
     }
     else {
-        fprintf(file,"%s\n",GetAttrTypeName(t));
+        if (TYPEget_name(t) == NULL) {
+            attr_type = GetAttrTypeName(t);
+        }
+        else {
+        attr_type = TYPEget_name(t);
+        }
+        fprintf(file,"%s\n",attr_type);
     }
     attr_count_tmp++;
     LISTod
@@ -756,7 +762,13 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     fprintf(file,"\t\tdef fset( self, value ):\n");
     t = VARget_type( v );
     
-    attr_type = GetAttrTypeName(t);
+    // find attr type name
+    if (TYPEget_name(t) == NULL) {
+        attr_type = GetAttrTypeName(t);
+    }
+    else {
+    attr_type = TYPEget_name(t);
+    }
    
     if (!VARis_derived(v) && !VARget_inverse(v)) {
         // if the argument is not optional
@@ -1903,8 +1915,17 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             TYPEselect_lib_print( type, files -> lib );
         }
         else {
-            fprintf(files->lib, "%s = ",TYPEget_name(type));
-            fprintf(files->lib,"%s\n",output);
+            // the defined datatype inherits from the base type
+            fprintf(files->lib, "# Defined datatype %s\n", TYPEget_name(type));
+            fprintf(files->lib, "class %s(",TYPEget_name(type));
+            if (TYPEget_head( type ) != NULL) {
+                 fprintf(files->lib, "%s):\n",TYPEget_name( TYPEget_head( type ) ));
+             }
+             else {
+                 fprintf(files->lib,"%s):\n",output);
+             }
+             fprintf(files->lib,"\tpass\n");
+            
         }
     }
     else {

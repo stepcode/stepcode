@@ -8,7 +8,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 from SCL.Builtin import *
 from SCL.Rules import *
 from SCL.Algorithms import *
@@ -18,7 +17,9 @@ schema_name = 'index_attribute'
 schema_scope = sys.modules[__name__]
 
 common_datum_list = LIST(1,None,'datum_reference_element', scope = schema_scope)
-label = STRING
+# Defined datatype label
+class label(STRING):
+	pass
 # SELECT TYPE datum_or_common_datum
 datum_or_common_datum = SELECT(
 	'common_datum_list',
@@ -32,7 +33,7 @@ class shape_aspect(BaseEntityClass):
 	'''Entity shape_aspect definition.
 
 	:param name
-	:type name:STRING
+	:type name:label
 
 	:param of_shape
 	:type of_shape:product_definition_shape
@@ -49,8 +50,8 @@ class shape_aspect(BaseEntityClass):
 		# Mandatory argument
 			if value==None:
 				raise AssertionError('Argument name is mantatory and can not be set to None')
-			if not check_type(value,STRING):
-				self._name = STRING(value)
+			if not check_type(value,label):
+				self._name = label(value)
 			else:
 				self._name = value
 		return property(**locals())
