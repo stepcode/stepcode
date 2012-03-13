@@ -426,7 +426,7 @@ Error ERRORcreate( char * message, Severity severity ) {
     return n;
 }
 
-void ERRORdestroy( Error * error ) {
+void ERRORdestroy( Error error ) {
     scl_free( error );
 }
 
