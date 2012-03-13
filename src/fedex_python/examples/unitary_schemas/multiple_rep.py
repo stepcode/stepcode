@@ -262,7 +262,8 @@ class component_2d_location(context_dependent_shape_representation,shape_represe
 	@apply
 	def context_dependent_shape_representation_representation_relation():
 		def fget( self ):
-			return EvalDerivedAttribute(self,'''SELF''')
+			attribute_eval = self
+			return attribute_eval
 		def fset( self, value ):
 		# DERIVED argument
 			raise AssertionError('Argument context_dependent_shape_representation_representation_relation is DERIVED. It is computed and can not be set to any value')

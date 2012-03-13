@@ -98,7 +98,8 @@ class circle(BaseEntityClass):
 	@apply
 	def area():
 		def fget( self ):
-			return EvalDerivedAttribute(self,'''PI * (radius ** 2)''')
+			attribute_eval = ( PI   *  (radius  **  2))
+			return attribute_eval
 		def fset( self, value ):
 		# DERIVED argument
 			raise AssertionError('Argument area is DERIVED. It is computed and can not be set to any value')
@@ -107,7 +108,8 @@ class circle(BaseEntityClass):
 	@apply
 	def perimeter():
 		def fget( self ):
-			return EvalDerivedAttribute(self,'''2 * PI * radius''')
+			attribute_eval = ((2  *   PI )  *  radius)
+			return attribute_eval
 		def fset( self, value ):
 		# DERIVED argument
 			raise AssertionError('Argument perimeter is DERIVED. It is computed and can not be set to any value')
