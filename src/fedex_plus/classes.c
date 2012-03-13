@@ -121,6 +121,7 @@ void format_for_std_stringout( FILE * f, const char * orig_buf ) {
         optr++;
     }
     fprintf( f,  s_end );
+    scl_free( orig_buf );
 }
 
 void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {
@@ -2015,11 +2016,9 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 
             fprintf( file, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
 
-            tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
-            format_for_std_stringout( file, tmp );
+            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
             fprintf( file, "\n      str.append( \")\" );\n" );
             fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
-            scl_free( tmp );
         } else {
             fprintf( file, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
                                                                 schema_name, ENT_PREFIX, entity_name );
@@ -2027,10 +2026,8 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     } else {
         if( entity->u.entity->subtype_expression ) {
             fprintf( file, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
-            tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
-            format_for_std_stringout( file, tmp );
+            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
             fprintf( file, "\n      str.append( \")\" );\n" );
-            scl_free( tmp );
             fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         }
     }
@@ -2524,6 +2521,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
             }
             uniqRule = EXPRto_string( v->name );
             fprintf( files->create, "%s", uniqRule );
+            scl_free( uniqRule );
         }
         LISTod
         fprintf( files->create, ";\\n\");\n" );
@@ -2532,6 +2530,8 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
         LISTod
         /********/
 
+        if ( whereRule_formatted_size == 0 )
+            scl_free( uniqRule_formatted );
     }
 
     if( whereRule_formatted_size > 0 ) {
@@ -3363,10 +3363,13 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
     /*  in source - the real definition of the TypeDescriptor   */
 
     if( TYPEis_select( type ) ) {
+        char * temp;
+        temp = non_unique_types_string( type );
         fprintf( create,
                  "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n",
                  TYPEtd_name( type ),
-                 non_unique_types_string( type ) );
+                 temp );
+        scl_free( temp );
         /* DAS ORIG SCHEMA FIX */
         TYPEprint_nm_ft_desc( schema, type, create, "," );
 
