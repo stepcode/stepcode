@@ -469,8 +469,9 @@ class TestTAN(unittest.TestCase):
             self.assertAlmostEqual(TAN(angle),0.) #result should be indeterminate
 
 class TestTYPEOF(unittest.TestCase):
-    # @TODO: not implemented yet
-    pass
+    def test_TYPEOF_REAL(self):
+        a = REAL(5.6)
+        self.assertEqual(TYPEOF(a),set(['REAL','NUMBER']))
 
 class TestUSEDIN(unittest.TestCase):
     # @TODO: not implemented yet

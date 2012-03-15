@@ -599,7 +599,22 @@ def TAN(V):
 #aggregation data type. It may be derived by the following algorithm (which is given here for
 #specification purposes rather than to prescribe any particular type of implementation)
 def TYPEOF(V):
-    raise NotImplemented("TYPEOF function not yet implemented.")
+    # Create the set to return
+    v_types = set()
+    # append the type of V to the set
+    try: #it's a class
+        to_add = V.__name__.upper()
+    except AttributeError: #it's an instance, first retrieve the type
+        to_add = type(V).__name__.upper()
+    if not to_add in ['FLOAT','INT','AGGREGATE']:
+        v_types.add(to_add)
+    # recursively adds the base class names
+    for base_type in type(V).__bases__:
+        #print base_type
+        if not base_type == object:
+            v_types = v_types.union(TYPEOF(base_type))
+    # finally, converts the v_types set to SET
+    return v_types
 
 # EXPRESS definition:
 # ===================  
