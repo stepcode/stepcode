@@ -23,13 +23,19 @@ classification_item = SELECT(
 	scope = schema_scope)
 # Defined datatype text
 class text(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype identifier
 class identifier(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype label
 class label(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 
 ####################
  # ENTITY address #

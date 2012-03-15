@@ -18,7 +18,9 @@ schema_scope = sys.modules[__name__]
 
 # Defined datatype maths_number
 class maths_number(NUMBER):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # SELECT TYPE atom_based_value
 atom_based_value = SELECT(
 	'maths_number',

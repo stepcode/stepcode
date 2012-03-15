@@ -956,6 +956,7 @@ RULEPrint(Rule rule, FILES * files, Schema schema) {
     //fprintf(files->lib, "\traise NotImplemented('Function %s not implemented)')\n",n);
 }
 
+
 /******************************************************************
  ** Procedure:  FUNCPrint
  ** Parameters:  Function *function --  function being processed
@@ -1440,6 +1441,43 @@ EXPRop_length( struct Op_Subexpression * oe ) {
     return 0;
 }
 
+void
+WHEREPrint( Linked_List wheres, int level , FILE *file ) {
+    python_indent(file,level);
+    unsigned int max_indent=0;
+    int where_rule_number = 0;
+    char *rule_name;
+    if( !wheres ) {
+        return;
+    }
+
+    /* pass 2: now print labels and exprs */
+    LISTdo( wheres, w, Where )
+    if( strcmp(w->label->name,"<unnamed>") ) {
+        // define a function with the name 'label'
+        fprintf(file,"\tdef %s(self):\n",w->label->name);
+        fprintf(file,"\t\teval_%s_wr = ",w->label->name);
+    } else {
+        /* no label */
+        fprintf(file, "\tdef unnamed_wr_%i(self):\n",where_rule_number);
+        fprintf(file,"\t\teval_unnamed_wr_%i = ",where_rule_number);
+    }
+    EXPRESSION_out( w->expr, level+1 , file );
+    // raise exception if rule violated
+    if( strcmp(w->label->name,"<unnamed>") ) {
+        fprintf(file,"\n\t\tif not eval_%s_wr:\n",w->label->name);
+        fprintf(file,"\t\t\traise AssertionError('Rule %s violated')\n",w->label->name);
+        fprintf(file,"\t\telse:\n\t\t\treturn eval_%s_wr\n\n",w->label->name);
+    } else {
+        /* no label */
+        fprintf(file, "\n\t\tif not eval_unnamed_wr_%i:\n",where_rule_number);
+        fprintf(file,"\t\t\traise AssertionError('Rule unnamed_wr_%i violated')\n",where_rule_number);
+        fprintf(file,"\t\telse:\n\t\t\treturn eval_unnamed_wr_%i\n\n",where_rule_number);
+        where_rule_number++;
+    }
+    LISTod
+}
+
 int curpos; 
 int indent2; 
 char * exppp_bufp = 0;      /* pointer to write position in expppbuf */
@@ -1891,6 +1929,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
          base [BUFSIZ],
          nm [BUFSIZ];
     Type i;
+    int where_rule_number = 0;
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
@@ -1924,8 +1963,22 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
              else {
                  fprintf(files->lib,"%s):\n",output);
              }
-             fprintf(files->lib,"\tpass\n");
-            
+             fprintf(files->lib,"\tdef __init__(self,*kargs):\n");
+             fprintf(files->lib,"\t\tpass\n");
+             // call the where / rules
+             LISTdo( type->where, w, Where )
+             if( strcmp(w->label->name,"<unnamed>") ) {
+                 // define a function with the name 'label'
+                 fprintf(files->lib,"\t\tself.%s()\n",w->label->name);
+             } else {
+                 /* no label */
+                 fprintf(files->lib, "\t\tself.unnamed_wr_%i()\n",where_rule_number );
+                 where_rule_number ++;
+             }
+             LISTod
+                 fprintf(files->lib,"\n");
+            // then we process the where rules
+             WHEREPrint( type->where, 0, files->lib );
         }
     }
     else {

@@ -127,8 +127,11 @@ class TestSingleInheritanceMultiLevel(unittest.TestCase):
     
     def test_schema(self):
         import test_single_inheritance_multi_level
-        my_base_shape = test_single_inheritance_multi_level.shape(STRING("spherical shape"),INTEGER(1))
-        my_shape = test_single_inheritance_multi_level.rectangle(STRING("rect"),INTEGER(6), height = REAL(30.0), width = REAL(45.))
+        my_base_shape = test_single_inheritance_multi_level.shape(test_single_inheritance_multi_level.label("spherical shape"),INTEGER(1))
+        my_shape = test_single_inheritance_multi_level.rectangle(test_single_inheritance_multi_level.label("rect"),\
+                                                                INTEGER(6),\
+                                                                test_single_inheritance_multi_level.length_measure(30.0),\
+                                                                test_single_inheritance_multi_level.length_measure(45.))
 
 
 class TestEnumEntityName(unittest.TestCase):
@@ -254,12 +257,66 @@ class TestArrayOfArrayOfReal(unittest.TestCase):
         # create a new 'transformation' instance
         trsf = test_array_of_array_of_simple_types.transformation(my_matrix)
 
+class TestDefinedTypesWhereRule(unittest.TestCase):
+    '''
+    unitary_schemas/test_where_rule.py, generated from schema:
+    SCHEMA test_where_rule;
+
+    TYPE positive = INTEGER;
+    WHERE
+    notnegative : SELF > 0;
+    END_TYPE;
+
+    TYPE month = INTEGER;
+    WHERE
+    SELF<=12;
+    SELF>=1;
+    END_TYPE;
+
+    END_SCHEMA;
+    '''
+    def test_import_schema_module(self):
+        import test_where_rule
+    
+    def test_rule_notnegative(self):
+        import test_where_rule
+        my_p = test_where_rule.positive(30)
+        try:
+            my_p = test_where_rule.positive(0)      
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+    
+    def test_month(self):
+        import test_where_rule
+        m = test_where_rule.month(11)
+        try:
+            m = test_where_rule.month(0)      
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        try:
+            m = test_where_rule.month(13)      
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
 def suite():
    suite = unittest.TestSuite()
    suite.addTest(unittest.makeSuite(TestSelectDataType))
    suite.addTest(unittest.makeSuite(TestSingleInheritance))
    suite.addTest(unittest.makeSuite(TestSingleInheritanceMultiLevel))
    suite.addTest(unittest.makeSuite(TestEnumEntityName))
+   suite.addTest(unittest.makeSuite(TestDefinedTypesWhereRule))
    return suite
 
 if __name__ == '__main__':

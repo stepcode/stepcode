@@ -18,13 +18,19 @@ schema_scope = sys.modules[__name__]
 
 # Defined datatype measure
 class measure(REAL):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype type2
 class type2(INTEGER):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype type3
 class type3(type2):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 
 ####################
  # ENTITY line #

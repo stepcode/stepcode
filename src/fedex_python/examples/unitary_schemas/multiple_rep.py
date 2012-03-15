@@ -18,25 +18,39 @@ schema_scope = sys.modules[__name__]
 
 # Defined datatype text
 class text(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype representation_context
 class representation_context(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype identifier
 class identifier(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype shape_definition
 class shape_definition(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype transformation
 class transformation(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype representation_item
 class representation_item(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype characterized_product_definition
 class characterized_product_definition(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # SELECT TYPE characterized_definition
 characterized_definition = SELECT(
 	'characterized_object',
@@ -45,10 +59,14 @@ characterized_definition = SELECT(
 	scope = schema_scope)
 # Defined datatype label
 class label(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype characterized_object
 class characterized_object(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 
 ####################
  # ENTITY representation_relationship #

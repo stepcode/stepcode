@@ -18,13 +18,19 @@ schema_scope = sys.modules[__name__]
 
 # Defined datatype length_measure
 class length_measure(REAL):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype label
 class label(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # Defined datatype point
 class point(REAL):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 
 ####################
  # ENTITY shape #

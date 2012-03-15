@@ -19,7 +19,9 @@ schema_scope = sys.modules[__name__]
 common_datum_list = LIST(1,None,'datum_reference_element', scope = schema_scope)
 # Defined datatype label
 class label(STRING):
-	pass
+	def __init__(self,*kargs):
+		pass
+
 # SELECT TYPE datum_or_common_datum
 datum_or_common_datum = SELECT(
 	'common_datum_list',
