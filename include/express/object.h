@@ -108,6 +108,7 @@ GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 /***********************/
 
 extern SCL_EXPRESS_EXPORT void OBJinitialize PROTO( ( void ) );
+extern SCL_EXPRESS_EXPORT void OBJcleanup PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
 extern SCL_EXPRESS_EXPORT Symbol * UNK_get_symbol PROTO( ( Generic x ) );
 
