@@ -10,7 +10,6 @@ from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
 from SCL.Builtin import *
 from SCL.Rules import *
-from SCL.Algorithms import *
 
 schema_name = 'gcc_incomplete_type'
 

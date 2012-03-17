@@ -1029,7 +1029,7 @@ STATEMENTPrint(Statement s, int indent_level, FILE *file) {
                 fprintf(file,"\n");
                 break;
             case STMT_CASE:
-                CASEout( s->u.Case, indent_level+1, file );
+                CASEout( s->u.Case, indent_level, file );
                 break;
             case STMT_RETURN:
                 fprintf(file, "return ");
@@ -1087,29 +1087,13 @@ void
 CASEout( struct Case_Statement_ *c, int level, FILE *file ) {
     int len = 0;
     int max_indent;
-    fprintf(file, "for case in switch(");
-    //raw( "%*sCASE ", level, "" );
-    EXPRESSION_out( c->selector, 0 , file);
-    fprintf(file,"):\n");
-    //fprintf(files->lib,  " OF\n" );
-
-    /* pass 1: calculate length of longest label */
-    //max_indent = 0;
-    //LISTdo( c->cases, ci, Case_Item )
-    //if( ci->labels ) {
-    //    LISTdo( ci->labels, label, Expression )
-    //    len = EXPRlength( label );
-    //    LISTod
-    //} else {
-    //    len = strlen( "OTHERWISE" );
-    //}
-    //if( len > max_indent ) {
-    //    max_indent = len;
-    //}
-    //LISTod
-
-    //level += exppp_nesting_indent;
-
+    int if_number = 0;
+    //fprintf(file, "for case in switch(");
+    //EXPRESSION_out( c->selector, 0 , file);
+    //fprintf(file,"):\n");
+    fprintf(file,"case_selector = ");
+    EXPRESSION_out(c->selector,0,file);
+    fprintf(file,"\n");
     /* pass 2: print them */
     LISTdo( c->cases, ci, Case_Item )
     if( ci->labels ) {
@@ -1117,12 +1101,20 @@ CASEout( struct Case_Statement_ *c, int level, FILE *file ) {
         /* print label(s) */
         //indent2 = level + exppp_continuation_indent;
         python_indent(file,level);
-        fprintf(file, "if case(");
+        //fprintf(file, "if case(");
+        if (if_number == 0) {
+            fprintf(file,"if ");
+            }
+        else {
+            fprintf(file,"elif");
+        }
+        fprintf(file," case_selector == ");
         EXPRESSION_out( label, 0, file );
-        fprintf(file,"):\n");
+        fprintf(file,":\n");
 
         /* print action */
         STATEMENTPrint( ci->action, level+1, file );
+        if_number++;
         LISTod
     } else {
         /* print OTHERWISE */
@@ -1130,7 +1122,8 @@ CASEout( struct Case_Statement_ *c, int level, FILE *file ) {
         //fprintf(files->lib,  "%*s", level, "" );
         //python_indent(files->lib,level+1);
         python_indent(file,level);
-        fprintf(file,  "if case():\n" );
+        //fprintf(file,  "if case():\n" );
+        fprintf(file,  "else:\n" );
         //fprintf(files->lib,  "%*s : ", level , "" );
 
         /* print action */

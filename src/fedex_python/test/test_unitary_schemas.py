@@ -310,6 +310,78 @@ class TestDefinedTypesWhereRule(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
 
+class TestFunctions(unittest.TestCase):
+    '''
+    unitary_schemas/test_function.py, generated from schema:
+    '''
+    def test_import_schema_module(self):
+        import test_function
+    
+    def test_add_function(self):
+        '''
+        FUNCTION add(r1:REAL;r2:REAL):REAL;
+        LOCAL
+        result : REAL;
+        END_LOCAL;
+        result := r1+r2;
+        RETURN(result);
+        END_FUNCTION;
+        '''
+        from test_function import add
+        a = REAL(1.0)
+        b = REAL(2.0)
+        c = add(a,b)
+        self.assertEqual(c,REAL(3.0))
+    
+    def test_pow_n_function(self):
+        '''
+        FUNCTION pow_n(r1:REAL;n:INTEGER):REAL;
+        LOCAL
+        result : REAL;
+        END_LOCAL;
+        IF n = 0 THEN
+          RETURN(1);
+        ELSE
+          result := r1;
+          REPEAT i := 1 TO n;
+            result := result * r1;
+          END_REPEAT;
+          RETURN(result);
+        END_IF;
+        END_FUNCTION;
+        '''
+        from test_function import pow_n
+        a = REAL(10)
+        b = INTEGER(3)
+        c = pow_n(a,b)
+        self.assertEqual(c,REAL(1000))
+        self.assertEqual(pow_n(REAL(10),INTEGER(0)),REAL(1.))
+    
+    def test_case_1_function(self):
+        '''
+        FUNCTION case_1(a:INTEGER):REAL;
+        LOCAL
+        x : REAL;
+        END_LOCAL;
+        CASE a OF
+        1 : x := SIN(a) ;
+        2 : x := EXP(a) ;
+        3 : x := SQRT(a) ; 
+        4, 5 : x := LOG(a) ;
+        OTHERWISE : x := 0.0 ;
+        END_CASE ;
+        RETURN(x);
+        END_FUNCTION;
+        '''
+        from test_function import case_1
+        from math import sin,exp,sqrt,log
+        self.assertEqual(case_1(INTEGER(1)),sin(1.))
+        self.assertEqual(case_1(INTEGER(2)),exp(2.))
+        self.assertEqual(case_1(INTEGER(3)),sqrt(3.))
+        self.assertEqual(case_1(INTEGER(4)),log(4.))
+        self.assertEqual(case_1(INTEGER(5)),log(5.))
+        self.assertEqual(case_1(INTEGER(6)),0.)
+
 def suite():
    suite = unittest.TestSuite()
    suite.addTest(unittest.makeSuite(TestSelectDataType))
@@ -317,6 +389,7 @@ def suite():
    suite.addTest(unittest.makeSuite(TestSingleInheritanceMultiLevel))
    suite.addTest(unittest.makeSuite(TestEnumEntityName))
    suite.addTest(unittest.makeSuite(TestDefinedTypesWhereRule))
+   suite.addTest(unittest.makeSuite(TestFunctions))
    return suite
 
 if __name__ == '__main__':

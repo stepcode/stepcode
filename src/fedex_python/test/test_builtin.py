@@ -451,6 +451,13 @@ class TestSIZEOF(unittest.TestCase):
         s4 = SIZEOF(s)
         self.assertEqual(s4,3)
 
+class TestSQRT(unittest.TestCase):
+    def test_SQRT_INTEGER(self):
+        self.assertEqual(SQRT(INTEGER(9)),REAL(3.0))
+    
+    def test_SQRT_REAL(self):
+        self.assertEqual(SQRT(REAL(25.0)),REAL(5.0))
+
 class TestTAN(unittest.TestCase):
     def test_tan_REAL(self):
         a = REAL(0.0)
@@ -533,6 +540,7 @@ def suite():
    suite.addTest(unittest.makeSuite(TestROLESOF))
    suite.addTest(unittest.makeSuite(TestSIN))
    suite.addTest(unittest.makeSuite(TestSIZEOF))
+   suite.addTest(unittest.makeSuite(TestSQRT))
    suite.addTest(unittest.makeSuite(TestTAN))
    suite.addTest(unittest.makeSuite(TestTYPEOF))
    suite.addTest(unittest.makeSuite(TestUSEDIN))

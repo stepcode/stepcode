@@ -130,13 +130,13 @@ def ABS(V):
 # ACOS is mapped to python math.acos builtin function
 def ACOS(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("ABS function takes a NUMBER parameter")
+        raise TypeError("ACOS function takes a NUMBER parameter")
     return REAL(math.acos(V))
 
 # it's the same for ASIN and ATAN
 def ASIN(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("ABS function takes a NUMBER parameter")
+        raise TypeError("ASIN function takes a NUMBER parameter")
     return REAL(math.asin(V))
 
 # EXPRESS definition:
@@ -154,7 +154,7 @@ def ASIN(V):
 #EXAMPLE 128 { ATAN ( -5.5, 3.0 ) --> -1.071449...
 def ATAN(V1,V2):
     if not isinstance(V1,NUMBER) and not isinstance(V2,NUMBER):
-        raise TypeError("ABS function takes 2 NUMBER parameters")
+        raise TypeError("ATAN function takes 2 NUMBER parameters")
     if V2 == 0:
         if V1>0:
             return REAL(math.pi/2)
@@ -206,7 +206,7 @@ def COS(V):
     return REAL(math.cos(V))
 def SIN(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("COS function takes a NUMBER parameter")
+        raise TypeError("SIN function takes a NUMBER parameter")
     return REAL(math.sin(V))
 
 # EXPRESS definition:
@@ -408,15 +408,15 @@ def LOBOUND(V):
 #EXAMPLE 139 { LOG10 ( 10 ) --> 1.00...E0
 def LOG(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("EXP function takes a NUMBER parameter")
+        raise TypeError("LOG function takes a NUMBER parameter")
     return REAL(math.log(V))
 def LOG2(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("EXP function takes a NUMBER parameter")
+        raise TypeError("LOG2 function takes a NUMBER parameter")
     return REAL(math.log(V,2))
 def LOG10(V):
     if not isinstance(V,NUMBER):
-        raise TypeError("EXP function takes a NUMBER parameter")
+        raise TypeError("LOG10 function takes a NUMBER parameter")
     return REAL(math.log10(V))
 
 # EXPRESS definition:
@@ -439,7 +439,7 @@ def LOG10(V):
 #h3 := LOINDEX(a[-3][1]); -- = 1 (for list)
 def LOINDEX(V):
     if not isinstance(V,Aggregate):
-        raise TypeError("HIINDEX takes an aggregate of generic")
+        raise TypeError("LOINDEX takes an aggregate of generic")
     return V.get_loindex()
 
 # EXPRESS definition:
@@ -562,6 +562,22 @@ def SIZEOF(V):
 
 # EXPRESS definition:
 # ===================  
+#15.23 Sqrt - arithmetic function
+#FUNCTION SQRT ( V:NUMBER ) : REAL;
+#The sqrt function returns the non-negative square root of a number.
+#Parameters : V is any non-negative number.
+#Result : The non-negative square root of V.
+#Conditions : V  0:0
+#EXAMPLE 146 - SQRT ( 121 ) --> 11.0
+def SQRT(V):
+    if not isinstance(V,NUMBER):
+        raise TypeError("SQRT function takes a NUMBER parameter")
+    if V<0.0:
+        raise ValueError("SQRT takes a non-negative parameter")
+    return REAL(math.sqrt(V))
+    
+# EXPRESS definition:
+# ===================  
 #15.24 Tan - arithmetic function
 #FUNCTION TAN ( V:NUMBER ) : REAL;
 #The tan function returns the tangent of of an angle.
@@ -638,7 +654,7 @@ def USEDIN(T,R):
 #VALUE ( 'abc' ) --> ? null
 def VALUE(V):
     if not isinstance(V,STRING):
-        raise TypeError("STRING function takes a NUMBER parameter")
+        raise TypeError("VALULE function takes a NUMBER parameter")
     # first try to instanciate an INTEGER from the string:
     try:
         return INTEGER(V)

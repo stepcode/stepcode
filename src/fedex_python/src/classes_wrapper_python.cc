@@ -362,7 +362,6 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     fprintf(libfile,"from SCL.TypeChecker import check_type\n");
     fprintf(libfile,"from SCL.Builtin import *\n");
     fprintf(libfile,"from SCL.Rules import *\n");
-    fprintf(libfile,"from SCL.Algorithms import *\n");
     
     /********* export schema name *******/
     fprintf(libfile,"\nschema_name = '%s'\n\n",SCHEMAget_name(schema));
