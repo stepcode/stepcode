@@ -27,6 +27,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include <scl_memmgr.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "classes.h"
 
 int isAggregateType( const Type t );
@@ -1887,8 +1888,87 @@ bool TYPEis_builtin( const Type t ) {
     return false;
 }
 
-/** go down through a type'sbase type chain,
-   Make and print new TypeDescriptors for each type with no name.
+/**
+ * For aggregates, initialize Bound1, Bound2, OptionalElements, UniqueElements.
+ * Handles bounds that depend on attributes (via SetBound1FromMemberAccessor() ), or
+ * on function calls (via SetBound1FromExpressFuncall() ). In C++, runtime bounds
+ * look like `t_0->Bound2FromMemberAccessor(SdaiStructured_mesh::index_count_);`
+ * \param f the file to write to
+ * \param t the Type
+ * \param var_name the name of the C++ variable, such as t_1 or schema::t_name
+ */
+void AGGRprint_init( FILES* files, const Type t, const char* var_name ) {
+    ///called from print_typechain and TYPEprint_init. print_typechain called from Tp_i and ENTITYincode_print
+    ///Need FILES* not FILE*, so modify those functions
+    if( !TYPEget_head( t ) ) {
+        if( yydebug ) {
+            if ( !t->superscope->symbol.resolved ) {
+                printf("%s:%d: unresolved type %s at %d\n",__FILE__,__LINE__, t->superscope->symbol.name, t->superscope->symbol.line);
+            }
+            if( TYPEget_body( t )->lower ) {
+                printf("bound1  resolved:%d   int:%d   op2.symbol.name:%s\n", TYPEget_body( t )->lower->symbol.resolved,TYPEget_body( t )->lower->u.integer,( TYPEget_body( t )->lower->e.op2 ? TYPEget_body( t )->lower->e.op2->symbol.name : "--" ) );
+            }
+            if( TYPEget_body( t )->upper ) {
+                printf("bound2  resolved:%d   int:%d   op2.symbol.name:%s\n", TYPEget_body( t )->upper->symbol.resolved,TYPEget_body( t )->upper->u.integer,( TYPEget_body( t )->upper->e.op2 ? TYPEget_body( t )->upper->e.op2->symbol.name : "--" ) );
+            }
+            if( TYPEget_body( t )->lower && TYPEget_body( t )->upper ) {
+                if ( TYPEget_body( t )->lower->u.integer  ==  TYPEget_body( t )->upper->u.integer ) {
+                    fprintf(stderr, "WARNING: upper and lower bounds are equal for %s at schema line %d\n", (t->symbol.name ?: t->superscope->symbol.name), (t->symbol.name ? t->symbol.line : t->superscope->symbol.line) );
+                }
+            }
+        }
+        //the code for lower and upper is almost identical
+        if( TYPEget_body( t )->lower ) {
+            if (TYPEget_body( t )->lower->symbol.resolved ) {
+                if( TYPEget_body( t )->lower->type == Type_Funcall ) {
+                    //assert( TYPEget_body( t )->lower->return_type == Type_Integer );
+                    fprintf( files->init, "        %s->SetBound1FromExpressFuncall(\"%s\");\n", var_name,
+                             EXPRto_string( TYPEget_body( t )->lower) );
+                } else {
+                    fprintf( files->init, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
+                }
+            } else { //resolved == 0 seems to mean that this is Type_Runtime
+                assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->lower->e.op2 ) &&
+                        ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
+                fprintf( files->init, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
+                        ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );
+                fprintf( files->helpers, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );
+                fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n};\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );
+            }
+        }
+        if( TYPEget_body( t )->upper ) {
+            if (TYPEget_body( t )->upper->symbol.resolved ) {
+                if( TYPEget_body( t )->upper->type == Type_Funcall ) {
+                    //assert( TYPEget_body( t )->upper->return_type == Type_Integer );
+                    fprintf( files->init, "        %s->SetBound2FromExpressFuncall(\"%s\");\n", var_name,
+                             EXPRto_string( TYPEget_body( t )->upper ) );
+                } else {
+                    fprintf( files->init, "        %s->SetBound2(%d);\n", var_name, TYPEget_body( t )->upper->u.integer );
+                }
+            } else { //resolved == 0 seems to mean that this is Type_Runtime
+                assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->upper->e.op2 ) &&
+                        ( TYPEget_body( t )->upper->e.op2->symbol.name ) );
+                fprintf( files->init, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );
+                fprintf( files->helpers, "inline SDAI_Integer getBound2_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );
+                fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n};\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );
+            }
+        }
+        if( TYPEget_body( t )->flags.unique ) {
+            fprintf( files->init, "        %s->UniqueElements(LTrue);\n", var_name );
+        }
+        if( TYPEget_body( t )->flags.optional ) {
+            fprintf( files->init, "        %s->OptionalElements(LTrue);\n", var_name );
+        }
+    }
+}
+
+/** go down through a type's base type chain,
+   make and print new TypeDescriptors for each type with no name.
 
    This function should only be called for types that don't have an
    associated Express name.  Currently this only includes aggregates.
@@ -1914,7 +1994,7 @@ bool TYPEis_builtin( const Type t ) {
         that can be referenced to refer to the type that was created for
     Type t.
 */
-void print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
+void print_typechain( FILES * files, const Type t, char * buf, Schema schema ) {
     /* if we've been called, current type has no name */
     /* nor is it a built-in type */
     /* the type_count variable is there for debugging purposes  */
@@ -1922,7 +2002,8 @@ void print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
     const char * ctype = TYPEget_ctype( t );
     Type base = 0;
     int count = type_count++;
-    char typename_buf[MAX_LEN];
+    char name_buf[MAX_LEN];
+    int s;
 
     switch( TYPEget_body( t )->type ) {
         case aggregate_:
@@ -1931,56 +2012,47 @@ void print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
         case set_:
         case list_:
             /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-            fprintf( f, "        %s * %s%d = new %s;\n",
+            fprintf( files->init, "        %s * %s%d = new %s;\n",
                      GetTypeDescriptorName( t ), TD_PREFIX, count,
                      GetTypeDescriptorName( t ) );
 
-            fprintf( f,
+            fprintf( files->init,
                      "        %s%d->AssignAggrCreator((AggregateCreator) create_%s);%s",
                      TD_PREFIX, count, ctype, "        // Creator function \n" );
-            if( !TYPEget_head( t ) ) {
-                if( TYPEget_body( t )->lower )
-                    fprintf( f, "        %s%d->Bound1(%d);\n", TD_PREFIX, count,
-                             TYPEget_body( t )->lower->u.integer );
-                if( TYPEget_body( t )->upper )
-                    fprintf( f, "        %s%d->Bound2(%d);\n", TD_PREFIX, count,
-                             TYPEget_body( t )->upper->u.integer );
-                if( TYPEget_body( t )->flags.unique )
-                    fprintf( f, "        %s%d->UniqueElements(LTrue);\n",
-                             TD_PREFIX, count );
-                if( TYPEget_body( t )->flags.optional )
-                    fprintf( f, "        %s%d->OptionalElements(LTrue);\n",
-                             TD_PREFIX, count );
-            }
+
+            s = snprintf( name_buf, MAX_LEN, "%s%d", TD_PREFIX, count );
+            assert( ( s > 0 ) && ( s < MAX_LEN ) );
+            AGGRprint_init( files, t, name_buf );
+
             break;
 
         default: /* this should not happen since only aggregates are allowed to
           not have a name. This funct should only be called for aggrs
           without names. */
-            fprintf( f, "        TypeDescriptor * %s%d = new TypeDescriptor;\n",
+            fprintf( files->init, "        TypeDescriptor * %s%d = new TypeDescriptor;\n",
                      TD_PREFIX, count );
     }
 
     /* there is no name so name doesn't need to be initialized */
 
-    fprintf( f, "        %s%d->FundamentalType(%s);\n", TD_PREFIX, count,
+    fprintf( files->init, "        %s%d->FundamentalType(%s);\n", TD_PREFIX, count,
              FundamentalType( t, 1 ) );
-    fprintf( f, "        %s%d->Description(\"%s\");\n", TD_PREFIX, count,
+    fprintf( files->init, "        %s%d->Description(\"%s\");\n", TD_PREFIX, count,
              TypeDescription( t ) );
 
     /* DAS ORIG SCHEMA FIX */
-    fprintf( f, "        %s%d->OriginatingSchema(%s::schema);\n", TD_PREFIX, count, SCHEMAget_name( schema ) );
+    fprintf( files->init, "        %s%d->OriginatingSchema(%s::schema);\n", TD_PREFIX, count, SCHEMAget_name( schema ) );
 
-    if( TYPEget_RefTypeVarNm( t, typename_buf, schema ) ) {
-        fprintf( f, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, typename_buf );
+    if( TYPEget_RefTypeVarNm( t, name_buf, schema ) ) {
+        fprintf( files->init, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, name_buf );
     } else {
         /* no name, recurse */
         char callee_buffer[MAX_LEN];
         if( TYPEget_body( t ) ) {
             base = TYPEget_body( t )->base;
         }
-        print_typechain( f, base, callee_buffer, schema );
-        fprintf( f, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
+        print_typechain( files, base, callee_buffer, schema );
+        fprintf( files->init, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
     }
     sprintf( buf, "%s%d", TD_PREFIX, count );
 }
@@ -1995,7 +2067,7 @@ void print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
  ** Side Effects:
  ** Status:  ok 1/15/91
  ******************************************************************/
-void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
+void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
 #define entity_name ENTITYget_name(entity)
 #define schema_name SCHEMAget_name(schema)
     char attrnm [BUFSIZ];
@@ -2006,7 +2078,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */
     /* insert the entity into the schema descriptor */
-    fprintf( file,
+    fprintf( files->init,
              "        ((SDAIAGGRH(Set,EntityH))%s::schema->Entities())->Add(%s::%s%s);\n",
              schema_name, schema_name, ENT_PREFIX, entity_name );
 #endif
@@ -2014,34 +2086,34 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( ENTITYget_abstract( entity ) ) {
         if( entity->u.entity->subtype_expression ) {
 
-            fprintf( file, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
+            fprintf( files->init, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
 
-            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( file, "\n      str.append( \")\" );\n" );
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            format_for_std_stringout( files->init, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
+            fprintf( files->init, "\n      str.append( \")\" );\n" );
+            fprintf( files->init, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         } else {
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
+            fprintf( files->init, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
                                                                 schema_name, ENT_PREFIX, entity_name );
         }
     } else {
         if( entity->u.entity->subtype_expression ) {
-            fprintf( file, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
-            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( file, "\n      str.append( \")\" );\n" );
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            fprintf( files->init, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
+            format_for_std_stringout( files->init, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
+            fprintf( files->init, "\n      str.append( \")\" );\n" );
+            fprintf( files->init, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         }
     }
     LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
     /*  set the owning schema of the supertype  */
     super_schema = SCHEMAget_name( ENTITYget_schema( sup ) );
     /* print the supertype list for this entity */
-    fprintf( file, "        %s::%s%s->AddSupertype(%s::%s%s);\n",
+    fprintf( files->init, "        %s::%s%s->AddSupertype(%s::%s%s);\n",
              schema_name, ENT_PREFIX, entity_name,
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ) );
 
     /* add this entity to the subtype list of it's supertype    */
-    fprintf( file, "        %s::%s%s->AddSubtype(%s::%s%s);\n",
+    fprintf( files->init, "        %s::%s%s->AddSubtype(%s::%s%s);\n",
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ),
              schema_name, ENT_PREFIX, entity_name );
@@ -2055,7 +2127,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+            fprintf( files->init, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                      SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
@@ -2088,7 +2160,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                      schema_name, ENT_PREFIX, TYPEget_name( entity )
                    );
         } else {
-            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+            fprintf( files->init, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                      SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
@@ -2118,7 +2190,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     } else if( TYPEis_builtin( v->type ) ) {
         /*  the type wasn\'t named -- it must be built in or aggregate  */
 
-        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+        fprintf( files->init, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                  SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
@@ -2143,8 +2215,8 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     } else {
         /* manufacture new one(s) on the spot */
         char typename_buf[MAX_LEN];
-        print_typechain( file, v->type, typename_buf, schema );
-        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+        print_typechain( files, v->type, typename_buf, schema );
+        fprintf( files->init, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s::%s%s);\n",
                  SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
@@ -2168,7 +2240,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
                );
     }
 
-    fprintf( file, "        %s::%s%s->Add%sAttr (%s::%s%d%s%s);\n",
+    fprintf( files->init, "        %s::%s%s->Add%sAttr (%s::%s%d%s%s);\n",
              schema_name, ENT_PREFIX, TYPEget_name( entity ),
              ( VARget_inverse( v ) ? "Inverse" : "Explicit" ),
              SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
@@ -2180,7 +2252,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
     if( VARis_derived( v ) && v->initializer ) {
         tmp = EXPRto_string( v->initializer );
         tmp2 = ( char * )scl_malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
-        fprintf( file, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
+        fprintf( files->init, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
@@ -2190,46 +2262,46 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
         scl_free( tmp2 );
     }
     if( VARget_inverse( v ) ) {
-        fprintf( file, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
+        fprintf( files->init, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm, v->inverse_attribute->name->symbol.name );
         if( v->type->symbol.name ) {
-            fprintf( file,
+            fprintf( files->init,
                      "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
                      schema_name, ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                      v->type->symbol.name );
-            fprintf( file, "// inverse entity 1 %s\n", v->type->symbol.name );
+            fprintf( files->init, "// inverse entity 1 %s\n", v->type->symbol.name );
         } else {
             switch( TYPEget_body( v->type )->type ) {
                 case entity_:
-                    fprintf( file,
+                    fprintf( files->init,
                              "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
                              schema_name, ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                              TYPEget_body( v->type )->entity->symbol.name );
-                    fprintf( file, "// inverse entity 2 %s\n", TYPEget_body( v->type )->entity->symbol.name );
+                    fprintf( files->init, "// inverse entity 2 %s\n", TYPEget_body( v->type )->entity->symbol.name );
                     break;
                 case aggregate_:
                 case array_:
                 case bag_:
                 case set_:
                 case list_:
-                    fprintf( file,
+                    fprintf( files->init,
                              "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
                              schema_name, ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                              TYPEget_body( v->type )->base->symbol.name );
-                    fprintf( file, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
+                    fprintf( files->init, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
                     break;
                 default:
                     printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( v->type )->type );
@@ -2241,7 +2313,7 @@ void ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 
     LISTod
 
-    fprintf( file, "        reg.AddEntity (*%s::%s%s);\n",
+    fprintf( files->init, "        reg.AddEntity (*%s::%s%s);\n",
              schema_name, ENT_PREFIX, entity_name );
 
 #undef schema_name
@@ -2323,7 +2395,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
         fprintf( files->lib,     "/////////         END_ENTITY %s\n", n );
 
         fprintf( files->init,  "\n/////////         ENTITY %s\n", n );
-        ENTITYincode_print( entity, files -> init, schema );
+        ENTITYincode_print( entity, files, schema );
         fprintf( files->init,    "/////////         END_ENTITY %s\n", n );
 
         DEBUG( "DONE ENTITYPrint\n" )    ;
@@ -3268,34 +3340,21 @@ static void printEnumAggrCrBody( FILE * lib, const Type type ) {
     fprintf( lib, "    return new %s_agg( %s );\n}\n", n, tdnm );
 }
 
-void TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
+void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
     char tdnm [BUFSIZ];
     char typename_buf[MAX_LEN];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
     if( isAggregateType( type ) ) {
-        if( !TYPEget_head( type ) ) {
-            if( TYPEget_body( type )->lower )
-                fprintf( ifile, "        %s->Bound1(%d);\n", tdnm,
-                         TYPEget_body( type )->lower->u.integer );
-            if( TYPEget_body( type )->upper )
-                fprintf( ifile, "        %s->Bound2(%d);\n", tdnm,
-                         TYPEget_body( type )->upper->u.integer );
-            if( TYPEget_body( type )->flags.unique ) {
-                fprintf( ifile, "        %s->UniqueElements(\"LTrue\");\n", tdnm );
-            }
-            if( TYPEget_body( type )->flags.optional ) {
-                fprintf( ifile, "        %s->OptionalElements(\"LTrue\");\n", tdnm );
-            }
-        }
+        AGGRprint_init( files, type, tdnm );
     }
 
     /* fill in the TD's values in the SchemaInit function (it is already
     declared with basic values) */
 
     if( TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        fprintf( ifile, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
+        fprintf( files->init, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
     } else {
         switch( TYPEget_body( type )->type ) {
             case aggregate_: /* aggregate_ should not happen? DAS */
@@ -3305,9 +3364,9 @@ void TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
             case list_: {
 
                 if( isMultiDimAggregateType( type ) ) {
-                    print_typechain( ifile, TYPEget_body( type )->base,
+                    print_typechain( files, TYPEget_body( type )->base,
                                      typename_buf, schema );
-                    fprintf( ifile, "        %s->ReferentType(%s);\n", tdnm,
+                    fprintf( files->init, "        %s->ReferentType(%s);\n", tdnm,
                              typename_buf );
                 }
                 break;
@@ -3320,17 +3379,17 @@ void TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
     /* DAR - moved fn call below from TYPEselect_print to here to put all init
     ** info together. */
     if( TYPEis_select( type ) ) {
-        TYPEselect_init_print( type, ifile, schema );
+        TYPEselect_init_print( type, files->init, schema );
     }
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */
     /* insert the type into the schema descriptor */
-    fprintf( ifile,
+    fprintf( files->init,
              "        ((SDAIAGGRH(Set,DefinedTypeH))%s::schema->Types())->Add((DefinedTypeH)%s);\n",
              SCHEMAget_name( schema ), tdnm );
 #endif
     /* insert into type dictionary */
-    fprintf( ifile, "        reg.AddType (*%s);\n", tdnm );
+    fprintf( files->init, "        reg.AddType (*%s);\n", tdnm );
 }
 
 /** print name, fundamental type, and description initialization function
