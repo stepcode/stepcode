@@ -139,6 +139,7 @@ int main( int argc, char ** argv ) {
     char * cp;
     int no_warnings = 1;
     int resolve = 1;
+    int result;
 
     bool buffer_messages = false;
     char * filename = 0;
@@ -269,6 +270,7 @@ int main( int argc, char ** argv ) {
     if( !filename ) {
         filename = argv[optind];
         if( !filename ) {
+            EXPRESScleanup();
             if( no_need_to_work ) {
                 return( 0 );
             } else {
@@ -289,7 +291,10 @@ int main( int argc, char ** argv ) {
     model = EXPRESScreate();
     EXPRESSparse( model, ( FILE * )0, filename );
     if( ERRORoccurred ) {
-        return( EXPRESS_fail( model ) );
+        result = EXPRESS_fail( model );
+        EXPRESScleanup();
+        EXPRESSdestroy( model );
+        return result;
     }
 
 #ifdef debugging
@@ -302,7 +307,10 @@ int main( int argc, char ** argv ) {
     if( resolve ) {
         EXPRESSresolve( model );
         if( ERRORoccurred ) {
-            return( EXPRESS_fail( model ) );
+            result = EXPRESS_fail( model ); 
+            EXPRESScleanup();
+            EXPRESSdestroy( model );
+            return result;
         }
     }
 
@@ -311,8 +319,14 @@ int main( int argc, char ** argv ) {
     }
 
     if( ERRORoccurred ) {
-        return( EXPRESS_fail( model ) );
+        result = EXPRESS_fail( model );
+        EXPRESScleanup();
+        EXPRESSdestroy( model );
+        return result;
     }
 
-    return( EXPRESS_succeed( model ) );
+    result = EXPRESS_succeed( model ); 
+    EXPRESScleanup();
+    EXPRESSdestroy( model );
+    return result;
 }

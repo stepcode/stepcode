@@ -63,6 +63,12 @@ void DICTinitialize( void ) {
                                          "Redeclaration of %s.  Previous declaration was on line %d in file %s.", SEVERITY_ERROR );
 }
 
+/** Clean up the Dictionary module */
+void DICTcleanup( void ) {
+    ERRORdestroy( ERROR_duplicate_decl );
+    ERRORdestroy( ERROR_duplicate_decl_diff_file );
+}
+
 /** \def DICTcreate
 ** \param size   - estimated (initial) max # of entries
 ** \return  a new dictionary of the specified size
