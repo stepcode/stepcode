@@ -2,7 +2,7 @@
 #this sets a property so that the target doesn't get built by 'make' or 'make all'
 #useful when testing generation of schema code/compiling schem libs/etc
 FUNCTION( TESTABLE_TARGET target )
-    if(ENABLE_TESTING)
+    if(SCL_ENABLE_TESTING)
         set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
     endif()
 ENDFUNCTION( TESTABLE_TARGET )
