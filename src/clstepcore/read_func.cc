@@ -4,6 +4,7 @@
 #include <sdai.h>
 #include <read_func.h>
 #include <STEPattribute.h>
+#include "scl_memmgr.h"
 
 const int RealNumPrecision = REAL_NUM_PRECISION;
 

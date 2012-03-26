@@ -2,6 +2,7 @@
 #include <cfloat>
 
 #include <sdai.h>
+#include "scl_memmgr.h"
 
 const char * SCLversion = "STEP Class Library, github.com/mpictor/StepClassLibrary";
 

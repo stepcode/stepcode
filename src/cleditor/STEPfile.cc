@@ -35,6 +35,8 @@
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)
 #include <STEPundefined.h>
 
+#include "scl_memmgr.h"
+
 /***************************
 function:     SetFileName
 returns:      (const std::string) The new file name for the class.
