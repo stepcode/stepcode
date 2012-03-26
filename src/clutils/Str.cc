@@ -11,6 +11,7 @@
 */
 
 #include <Str.h>
+#include <scl_memmgr.h>
 #ifndef STRING_DELIM
 #define STRING_DELIM '\''
 #endif
