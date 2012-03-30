@@ -1,7 +1,7 @@
 
 set(fedex_plus_SOURCES
     classes_misc.c
-    ${SCL_SOURCE_DIR}/src/express/fedex.c
+    ../express/fedex.c
     fedex_main.c 
     classes_wrapper.cc 
     classes.c 
