@@ -41,20 +41,20 @@ int print_logging = 0;
 int corba_binding = 0;
 int old_accessors = 0;
 
-/* several classes use attr_count for naming attr dictionary entry
-   variables.  All but the last function generating code for a particular
-   entity increment a copy of it for naming each attr in the entity.
-   Here are the functions:
-   ENTITYhead_print (Entity entity, FILE* file,Schema schema)
-   LIBdescribe_entity (Entity entity, FILE* file, Schema schema)
-   LIBcopy_constructor (Entity ent, FILE* file)
-   LIBstructor_print (Entity entity, FILE* file, Schema schema)
-   LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
-   ENTITYincode_print (Entity entity, FILE* file,Schema schema)
-   DAS
- */
-static int attr_count;  ///< number each attr to avoid inter-entity clashes
-static int type_count;  ///< number each temporary type for same reason above
+static int attr_count;  /**< number each attr to avoid inter-entity clashes
+                            several classes use attr_count for naming attr dictionary entry
+                            variables.  All but the last function generating code for a particular
+                            entity increment a copy of it for naming each attr in the entity.
+                            Here are the functions:
+                            ENTITYhead_print (Entity entity, FILE* file,Schema schema)
+                            LIBdescribe_entity (Entity entity, FILE* file, Schema schema)
+                            LIBcopy_constructor (Entity ent, FILE* file)
+                            LIBstructor_print (Entity entity, FILE* file, Schema schema)
+                            LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
+                            ENTITYincode_print (Entity entity, FILES* files,Schema schema)
+                            DAS
+                        */
+static int type_count;  ///< number each temporary type for same reason as \sa attr_count
 
 extern int any_duplicates_in_select( const Linked_List list );
 extern int unique_types( const Linked_List list );
