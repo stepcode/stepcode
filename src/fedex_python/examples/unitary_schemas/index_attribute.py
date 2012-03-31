@@ -70,6 +70,13 @@ class shape_aspect(BaseEntityClass):
 			else:
 				self._of_shape = value
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (SIZEOF(USEDIN(self,'INDEX_ATTRIBUTE.'  +  'ID_ATTRIBUTE.IDENTIFIED_ITEM'))  <=  1)
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
 
 ####################
  # ENTITY general_datum_reference #
@@ -97,6 +104,13 @@ class general_datum_reference(shape_aspect):
 			else:
 				self._base = value
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (( not ('INDEX_ATTRIBUTE.COMMON_DATUM_LIST'  ==  TYPEOF(self.base)))  or  (self.self.shape_aspect.self.of_shape  ==  self.base[1].self.shape_aspect.self.of_shape))
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
 
 ####################
  # ENTITY product_definition_shape #

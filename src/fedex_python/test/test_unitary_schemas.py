@@ -382,6 +382,73 @@ class TestFunctions(unittest.TestCase):
         self.assertEqual(case_1(INTEGER(5)),log(5.))
         self.assertEqual(case_1(INTEGER(6)),0.)
 
+class TestEntityWhereRules(unittest.TestCase):
+    '''
+    unitary/test_entity_where_rule
+    '''
+    def test_import_schema(self):
+        import test_entity_where_rule
+        
+    def test_entity_unit_vector(self):
+        '''
+        ENTITY unit_vector;
+          a, b, c : REAL;
+        WHERE
+          length_1 : a**2 + b**2 + c**2 = 1.0;
+        END_ENTITY;
+        '''
+        from test_entity_where_rule import unit_vector
+        u = unit_vector(REAL(1),REAL(0),REAL(0))
+        self.assertTrue(u.length_1())
+        v = unit_vector(REAL(0),REAL(0),REAL(0.5))
+        
+    def test_entity_address(self):
+        '''
+        TYPE label = STRING;
+        END_TYPE; -- label
+
+        ENTITY address;
+          internal_location       : OPTIONAL label;
+          street_number           : OPTIONAL label;
+          street                  : OPTIONAL label;
+          postal_box              : OPTIONAL label;
+          town                    : OPTIONAL label;
+          region                  : OPTIONAL label;
+          postal_code             : OPTIONAL label;
+          country                 : OPTIONAL label;
+          facsimile_number        : OPTIONAL label;
+          telephone_number        : OPTIONAL label;
+          electronic_mail_address : OPTIONAL label;
+          telex_number            : OPTIONAL label;
+        WHERE
+          WR1: EXISTS(internal_location)       OR
+               EXISTS(street_number)           OR
+               EXISTS(street)                  OR
+               EXISTS(postal_box)              OR
+               EXISTS(town)                    OR
+               EXISTS(region)                  OR
+               EXISTS(postal_code)             OR
+               EXISTS(country)                 OR
+               EXISTS(facsimile_number)        OR
+               EXISTS(telephone_number)        OR
+               EXISTS(electronic_mail_address) OR
+               EXISTS(telex_number);
+        END_ENTITY; -- address
+        '''
+        from test_entity_where_rule import address, label
+        a = address(None,None,None,None,None,None,None,None,None,None,None,None)
+        # wr1 should raise an issue since a.wr1()
+        try:
+            a.wr1()    
+        except AssertionError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+        a.town = label('Paris')
+        a.wr1()
+        
 def suite():
    suite = unittest.TestSuite()
    suite.addTest(unittest.makeSuite(TestSelectDataType))
@@ -390,6 +457,7 @@ def suite():
    suite.addTest(unittest.makeSuite(TestEnumEntityName))
    suite.addTest(unittest.makeSuite(TestDefinedTypesWhereRule))
    suite.addTest(unittest.makeSuite(TestFunctions))
+   suite.addTest(unittest.makeSuite(TestEntityWhereRules))
    return suite
 
 if __name__ == '__main__':

@@ -137,6 +137,13 @@ class shape_representation_relationship(representation_relationship):
 	'''
 	def __init__( self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 ,  ):
 		representation_relationship.__init__(self , inherited0__name , inherited1__rep_1 , inherited2__rep_2 , )
+	def wr1(self):
+		eval_wr1_wr = ('MULTIPLE_REP.SHAPE_REPRESENTATION'  ==  (TYPEOF(self.self.representation_relationship.self.rep_1)  +  TYPEOF(self.self.representation_relationship.self.rep_2)))
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
 
 ####################
  # ENTITY representation #
@@ -199,6 +206,20 @@ class representation(BaseEntityClass):
 			else:
 				self._context_of_items = value
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (SIZEOF(USEDIN(self,'MULTIPLE_REP.'  +  'ID_ATTRIBUTE.IDENTIFIED_ITEM'))  <=  1)
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
+	def wr2(self):
+		eval_wr2_wr = (SIZEOF(USEDIN(self,'MULTIPLE_REP.'  +  'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM'))  <=  1)
+		if not eval_wr2_wr:
+			raise AssertionError('Rule wr2 violated')
+		else:
+			return eval_wr2_wr
+
 
 ####################
  # ENTITY property_definition #
@@ -243,6 +264,13 @@ class property_definition(BaseEntityClass):
 			else:
 				self._definition = value
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (SIZEOF(USEDIN(self,'MULTIPLE_REP.'  +  'ID_ATTRIBUTE.IDENTIFIED_ITEM'))  <=  1)
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
 
 ####################
  # ENTITY context_dependent_shape_representation #
@@ -269,6 +297,20 @@ class context_dependent_shape_representation(BaseEntityClass):
 			else:
 				self._representation_relation = value
 		return property(**locals())
+	def wr2(self):
+		eval_wr2_wr = (SIZEOF(USEDIN(self,'MULTIPLE_REP.'  +  'DESCRIPTION_ATTRIBUTE.DESCRIBED_ITEM'))  <=  1)
+		if not eval_wr2_wr:
+			raise AssertionError('Rule wr2 violated')
+		else:
+			return eval_wr2_wr
+
+	def wr3(self):
+		eval_wr3_wr = (SIZEOF(USEDIN(self,'MULTIPLE_REP.'  +  'NAME_ATTRIBUTE.NAMED_ITEM'))  <=  1)
+		if not eval_wr3_wr:
+			raise AssertionError('Rule wr3 violated')
+		else:
+			return eval_wr3_wr
+
 
 ####################
  # ENTITY definitional_representation_relationship #
@@ -302,3 +344,10 @@ class component_2d_location(context_dependent_shape_representation,shape_represe
 		# DERIVED argument
 			raise AssertionError('Argument context_dependent_shape_representation_representation_relation is DERIVED. It is computed and can not be set to any value')
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (self.self.representation_relationship.self.name  ==  'component 2d location')
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+

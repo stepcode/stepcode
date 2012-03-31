@@ -38,6 +38,11 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
         EXPRESSIONop2__out(oe,string,paren,pad,OP_UNKNOWN,f)
 #define EXPRESSIONop_out(oe,paren,f) EXPRESSIONop__out(oe,paren,OP_UNKNOWN,f)
 
+#define ATTRIBUTE_INITIALIZER_out(e,p,f) ATTRIBUTE_INITIALIZER__out(e,p,OP_UNKNOWN,f)
+#define ATTRIBUTE_INITIALIZERop2_out(oe,string,paren,pad,f) \
+        ATTRIBUTE_INITIALIZERop2__out(oe,string,paren,pad,OP_UNKNOWN,f)
+#define ATTRIBUTE_INITIALIZERop_out(oe,paren,f) ATTRIBUTE_INITIALIZERop__out(oe,paren,OP_UNKNOWN,f)
+
 #define PAD 1
 #define NOPAD   0
 
@@ -754,7 +759,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         // evaluation of attribute
         fprintf(file,"\t\t\tattribute_eval = ");
         // outputs expression initializer
-        EXPRESSION_out(v->initializer,1,file);
+        ATTRIBUTE_INITIALIZER_out(v->initializer,1,file);
         // then returns the value
         fprintf(file,"\n\t\t\treturn attribute_eval\n");        
     }
@@ -801,12 +806,15 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
              fprintf(file, "\t\t\t\tself._%s = ",attrnm);
              print_aggregate_type(file,t);
              fprintf(file,"(value)\n");
-             fprintf(file, "\t\t\telse:\n\t");
          }
         else {
             fprintf(file, "\t\t\t\tself._%s = %s(value)\n",attrnm,attr_type);
-            fprintf(file, "\t\t\telse:\n\t");
         }
+        if (VARget_optional(v)) {
+            fprintf(file,"\t\t\t\telse:\n");
+            fprintf(file,"\t\t\t\t\tself._%s = value\n",attrnm);
+        }
+        fprintf(file, "\t\t\telse:\n\t");
         fprintf(file,"\t\t\tself._%s = value\n",attrnm);
     }
     // if the attribute is derived, prevent fset to attribute to be set
@@ -821,6 +829,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     fprintf(file,"\t\treturn property(**locals())\n");
     LISTod
     }
+    // before exiting, process where rules
+    WHEREPrint( entity->where, 0, file );
 }
 
 int
@@ -1174,6 +1184,126 @@ STATEMENTlist_out( Linked_List stmts, int indent_level, FILE *file ) {
     STATEMENTPrint( stmt, indent_level, file );
     LISTod
 }
+/*****************************************************************
+** Procedure:  ATTRIBUTE_INITIALIZER__out
+** Description:  this method is almost the same as EXPRESSION__out
+** but it adds self. before each attribute identifier
+**
+******************************************************************/
+void
+ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE *file) {
+      fprintf(stdout, "on est dedan!!");
+      int i;  /* trusty temporary */
+        switch( TYPEis( e->type ) ) {
+            case integer_:
+                if( e == LITERAL_INFINITY ) {
+                    fprintf(file," None ");
+                } else {
+                    fprintf(file,"%d", e->u.integer );
+                }
+                break;
+            case real_:
+                if( e == LITERAL_PI ) {
+                    fprintf(file," PI ");
+                } else if( e == LITERAL_E ) {
+                    fprintf(file," E ");;
+                } else {
+                    fprintf(file, "%g", e->u.real );
+                }
+                break;
+            case binary_:
+                fprintf(file, "%%%s", e->u.binary ); /* put "%" back */
+                break;
+            case logical_:
+            case boolean_:
+                switch( e->u.logical ) {
+                    case Ltrue:
+                        fprintf(file,"TRUE");
+                        break;
+                    case Lfalse:
+                        fprintf(file,"FALSE" );
+                        break;
+                    default:
+                        fprintf(file,"UNKNOWN" );
+                        break;
+                }
+                break;
+            case string_:
+                if( TYPEis_encoded( e->type ) ) {
+                    fprintf(file, "\"%s\"", e->symbol.name );
+                } else {
+                    fprintf(file, "'%s'", e->symbol.name );
+                }
+                break;
+            case entity_:
+            case identifier_:
+                fprintf(file, "self.%s", e->symbol.name );
+                break;
+            case attribute_:
+                fprintf(file, "%s", e->symbol.name );
+                break;
+            case enumeration_:
+                fprintf(file, "%s", e->symbol.name );
+                break;
+            case query_:
+                //fprintf(file, "QUERY ( %s <* ", e->u.query->local->name->symbol.name );
+                //EXPRESSION_out( e->u.query->aggregate, 1, files );
+                //fprintf(file, " | " );
+                //EXPRESSION_out( e->u.query->expression, 1 ,files);
+                //fprintf(file, " )" );
+                //break;
+
+                // so far we don't handle queries
+                fprintf(file, "None");
+                break;
+            case self_:
+                fprintf(file, "self" );
+                break;
+            case funcall_:
+                fprintf(file, "%s(", e->symbol.name );
+                i = 0;
+                LISTdo( e->u.funcall.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0 ,file);
+                LISTod
+                fprintf(file, ")" );
+                break;
+            case op_:
+                ATTRIBUTE_INITIALIZERop__out( &e->e, paren, previous_op, file );
+                break;
+            case aggregate_:
+                fprintf(file,"[" );
+                i = 0;
+                LISTdo( e->u.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0 , file);
+                LISTod
+                fprintf(file, "]" );
+                break;
+            case oneof_:
+                fprintf(file, "ONEOF (" );
+
+                i = 0;
+                LISTdo( e->u.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0, file );
+                LISTod
+
+                fprintf(file, ")" );
+                break;
+            default:
+                fprintf(file, "unknown expression, type %d", TYPEis( e->type ) );
+        }
+    }
 
 /*****************************************************************
 ** Procedure:  EXPRESSION__out
@@ -1294,6 +1424,99 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE *file) {
     }
 }
 
+void
+ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file) {
+    switch( oe->op_code ) {
+        case OP_AND:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " and ", paren, PAD, file );
+            break;
+        case OP_ANDOR:
+        case OP_OR:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " or ", paren, PAD, file );
+            break;
+        case OP_CONCAT:
+        case OP_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file );
+            break;
+        case OP_PLUS:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " + ", paren, PAD, file );
+            break;
+        case OP_TIMES:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " * ", paren, PAD, file );
+            break;
+        case OP_XOR:
+            ATTRIBUTE_INITIALIZERop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            break;
+        case OP_EXP:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " ** ", paren, PAD, file );
+            break;
+        case OP_GREATER_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " >= ", paren, PAD, file );
+            break;
+        case OP_GREATER_THAN:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " > ", paren, PAD, file );
+            break;
+        case OP_IN:
+        //    EXPRESSIONop2_out( oe, " in ", paren, PAD, file );
+        //    break;
+        case OP_INST_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file);
+            break;
+        case OP_INST_NOT_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD, file );
+            break;
+        case OP_LESS_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " <= ", paren, PAD, file );
+            break;
+        case OP_LESS_THAN:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " < ", paren, PAD, file );
+            break;
+        case OP_LIKE:
+        case OP_MOD:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " % ", paren, PAD, file );
+            break;
+        case OP_NOT_EQUAL:
+            //EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file);
+            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD ,file);
+            break;
+        case OP_NOT:
+            ATTRIBUTE_INITIALIZERop1_out( oe, " not ", paren, file );
+            break;
+        case OP_REAL_DIV:
+        case OP_DIV:
+            ATTRIBUTE_INITIALIZERop2_out( oe, "/", paren, PAD, file );
+            break;
+        case OP_MINUS:
+            ATTRIBUTE_INITIALIZERop2_out( oe, "-", paren, PAD, file );
+            break;
+        case OP_DOT:
+            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_GROUP:
+            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_NEGATE:
+            ATTRIBUTE_INITIALIZERop1_out( oe, "-", paren, file );
+            break;
+        case OP_ARRAY_ELEMENT:
+            ATTRIBUTE_INITIALIZER_out( oe->op1, 1, file );
+            fprintf(file, "[" );
+            ATTRIBUTE_INITIALIZER_out( oe->op2, 0, file );
+            fprintf(file, "]" );
+            break;
+        case OP_SUBCOMPONENT:
+            ATTRIBUTE_INITIALIZER_out( oe->op1, 1 , file);
+            fprintf(file, "[" );
+            ATTRIBUTE_INITIALIZER_out( oe->op2, 0, file );
+            fprintf(file, ":" );
+            ATTRIBUTE_INITIALIZER_out( oe->op3, 0, file );
+            fprintf(file, "]" );
+            break;
+        default:
+            fprintf(file, "(* unknown op-expression *)" );
+    }
+}
+
 /* print expression that has op and operands */
 void
 EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file) {
@@ -1407,6 +1630,25 @@ EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int 
     }
 }
 
+void
+ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE *file ) {
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file,"(" );
+    }
+    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code , file);
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    fprintf(file, "%s", ( opcode ? opcode : EXPop_table[eo->op_code].token ) );
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    ATTRIBUTE_INITIALIZER__out( eo->op2, 1, eo->op_code, file );
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file, ")" );
+    }
+}
+
 /* Print out a one-operand operation.  If there were more than two of these */
 /* I'd generalize it to do padding, but it's not worth it. */
 void
@@ -1416,6 +1658,18 @@ EXPRESSIONop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE 
     }
     fprintf(file, "%s", opcode );
     EXPRESSION_out( eo->op1, 1, file );
+    if( paren ) {
+        fprintf(file, ")" );
+    }
+}
+
+void
+ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE *file ) {
+    if( paren ) {
+        fprintf(file, "(" );
+    }
+    fprintf(file, "%s", opcode );
+    ATTRIBUTE_INITIALIZER_out( eo->op1, 1, file );
     if( paren ) {
         fprintf(file, ")" );
     }
@@ -1455,7 +1709,8 @@ WHEREPrint( Linked_List wheres, int level , FILE *file ) {
         fprintf(file, "\tdef unnamed_wr_%i(self):\n",where_rule_number);
         fprintf(file,"\t\teval_unnamed_wr_%i = ",where_rule_number);
     }
-    EXPRESSION_out( w->expr, level+1 , file );
+    //EXPRESSION_out( w->expr, level+1 , file );
+    ATTRIBUTE_INITIALIZER_out( w->expr, level+1 , file );
     // raise exception if rule violated
     if( strcmp(w->label->name,"<unnamed>") ) {
         fprintf(file,"\n\t\tif not eval_%s_wr:\n",w->label->name);

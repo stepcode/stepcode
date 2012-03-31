@@ -100,6 +100,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._internal_location = label(value)
+				else:
+					self._internal_location = value
 			else:
 				self._internal_location = value
 		return property(**locals())
@@ -112,6 +114,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._street_number = label(value)
+				else:
+					self._street_number = value
 			else:
 				self._street_number = value
 		return property(**locals())
@@ -124,6 +128,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._street = label(value)
+				else:
+					self._street = value
 			else:
 				self._street = value
 		return property(**locals())
@@ -136,6 +142,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._postal_box = label(value)
+				else:
+					self._postal_box = value
 			else:
 				self._postal_box = value
 		return property(**locals())
@@ -148,6 +156,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._town = label(value)
+				else:
+					self._town = value
 			else:
 				self._town = value
 		return property(**locals())
@@ -160,6 +170,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._region = label(value)
+				else:
+					self._region = value
 			else:
 				self._region = value
 		return property(**locals())
@@ -172,6 +184,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._postal_code = label(value)
+				else:
+					self._postal_code = value
 			else:
 				self._postal_code = value
 		return property(**locals())
@@ -184,6 +198,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._country = label(value)
+				else:
+					self._country = value
 			else:
 				self._country = value
 		return property(**locals())
@@ -196,6 +212,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._facsimile_number = label(value)
+				else:
+					self._facsimile_number = value
 			else:
 				self._facsimile_number = value
 		return property(**locals())
@@ -208,6 +226,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._telephone_number = label(value)
+				else:
+					self._telephone_number = value
 			else:
 				self._telephone_number = value
 		return property(**locals())
@@ -220,6 +240,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._electronic_mail_address = label(value)
+				else:
+					self._electronic_mail_address = value
 			else:
 				self._electronic_mail_address = value
 		return property(**locals())
@@ -232,6 +254,8 @@ class address(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._telex_number = label(value)
+				else:
+					self._telex_number = value
 			else:
 				self._telex_number = value
 		return property(**locals())
@@ -275,6 +299,8 @@ class personal_address(address):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,text):
 					self._description = text(value)
+				else:
+					self._description = value
 			else:
 				self._description = value
 		return property(**locals())
@@ -318,6 +344,8 @@ class organizational_address(address):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,text):
 					self._description = text(value)
+				else:
+					self._description = value
 			else:
 				self._description = value
 		return property(**locals())
@@ -376,6 +404,8 @@ class person(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._last_name = label(value)
+				else:
+					self._last_name = value
 			else:
 				self._last_name = value
 		return property(**locals())
@@ -388,6 +418,8 @@ class person(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,label):
 					self._first_name = label(value)
+				else:
+					self._first_name = value
 			else:
 				self._first_name = value
 		return property(**locals())
@@ -400,6 +432,8 @@ class person(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._middle_names = LIST(value)
+				else:
+					self._middle_names = value
 			else:
 				self._middle_names = value
 		return property(**locals())
@@ -412,6 +446,8 @@ class person(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._prefix_titles = LIST(value)
+				else:
+					self._prefix_titles = value
 			else:
 				self._prefix_titles = value
 		return property(**locals())
@@ -424,9 +460,18 @@ class person(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,LIST(1,None,'STRING', scope = schema_scope)):
 					self._suffix_titles = LIST(value)
+				else:
+					self._suffix_titles = value
 			else:
 				self._suffix_titles = value
 		return property(**locals())
+	def wr1(self):
+		eval_wr1_wr = (EXISTS(self.last_name)  or  EXISTS(self.first_name))
+		if not eval_wr1_wr:
+			raise AssertionError('Rule wr1 violated')
+		else:
+			return eval_wr1_wr
+
 
 ####################
  # ENTITY organization #
@@ -456,6 +501,8 @@ class organization(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,identifier):
 					self._id = identifier(value)
+				else:
+					self._id = value
 			else:
 				self._id = value
 		return property(**locals())
@@ -482,6 +529,8 @@ class organization(BaseEntityClass):
 			if value != None: # OPTIONAL attribute
 				if not check_type(value,text):
 					self._description = text(value)
+				else:
+					self._description = value
 			else:
 				self._description = value
 		return property(**locals())

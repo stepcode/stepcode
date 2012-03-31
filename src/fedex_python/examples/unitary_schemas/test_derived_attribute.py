@@ -96,7 +96,7 @@ class circle(BaseEntityClass):
 	@apply
 	def area():
 		def fget( self ):
-			attribute_eval = ( PI   *  (radius  **  2))
+			attribute_eval = ( PI   *  (self.radius  **  2))
 			return attribute_eval
 		def fset( self, value ):
 		# DERIVED argument
@@ -106,7 +106,7 @@ class circle(BaseEntityClass):
 	@apply
 	def perimeter():
 		def fget( self ):
-			attribute_eval = ((2  *   PI )  *  radius)
+			attribute_eval = ((2  *   PI )  *  self.radius)
 			return attribute_eval
 		def fset( self, value ):
 		# DERIVED argument
