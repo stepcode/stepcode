@@ -133,4 +133,11 @@ if(NOT SKIP_TEST_EXCHANGE_FILE )
     SUBMIT_TEST( Test )
 endif()
 
+if(NOT SKIP_TEST_CPP_SCHEMA_SPECIFIC )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                PARALLEL_LEVEL ${PROCESSOR_COUNT} INCLUDE_LABEL "cpp_schema_specific" )
+    SUBMIT_TEST( Test )
+endif()
+
+
 # ctest_coverage( )
