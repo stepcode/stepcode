@@ -1687,19 +1687,19 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
 
 
         /// find bound type
-        AggrBoundTypeEnum Bound1Type() { return _bound1_type; };
+        AggrBoundTypeEnum Bound1Type() const { return _bound1_type; };
         /// get a constant bound
-        SDAI_Integer Bound1( ) {
+        SDAI_Integer Bound1( ) const {
             assert( _bound1_type == bound_constant );
             return _bound1;
         }
         /// get a runtime bound using an object's 'this' pointer
-        SDAI_Integer Bound1Runtime( SDAI_Application_instance* this_ptr) {
+        SDAI_Integer Bound1Runtime( SDAI_Application_instance* this_ptr) const {
             assert( this_ptr && ( _bound1_type == bound_runtime ) );
             return _bound1_callback(this_ptr) ;
         }
         /// get a bound's EXPRESS function call string
-        std::string Bound1Funcall() {
+        std::string Bound1Funcall() const {
             return _bound1_str;
         }
         /// set bound to a constant
@@ -1719,19 +1719,19 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
         }
 
         /// find bound type
-        AggrBoundTypeEnum Bound2Type() { return _bound2_type; };
+        AggrBoundTypeEnum Bound2Type() const { return _bound2_type; };
         /// get a constant bound
-        SDAI_Integer Bound2( ) {
+        SDAI_Integer Bound2( ) const {
             assert( _bound2_type == bound_constant );
             return _bound2;
         }
         /// get a runtime bound using an object's 'this' pointer
-        SDAI_Integer Bound2Runtime( SDAI_Application_instance* this_ptr) {
+        SDAI_Integer Bound2Runtime( SDAI_Application_instance* this_ptr) const {
             assert( this_ptr && ( _bound2_type == bound_runtime ) );
             return _bound2_callback(this_ptr) ;
         }
         /// get a bound's EXPRESS function call string
-        std::string Bound2Funcall() {
+        std::string Bound2Funcall() const {
             return _bound2_str;
         }
         /// set bound to a constant
