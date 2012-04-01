@@ -10,20 +10,25 @@ INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor 
 FUNCTION( add_schema_dependent_test name sdai_lib args )
     add_executable( tst_${name} "${name}.cc" )
     set_target_properties( tst_${name} PROPERTIES COMPILE_FLAGS "-I${CMAKE_BINARY_DIR}/${sdai_lib}" )
-    set_target_properties( tst_${name} PROPERTIES EXCLUDE_FROM_ALL ON )
     target_link_libraries( tst_${name} sdai_${sdai_lib} )
     add_test( NAME test_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND tst_${name} ${args} )
-    set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_sdai_${sdai_lib} LABELS cpp_schema_specific )
+              COMMAND $<TARGET_FILE:tst_${name}> ${args} )
+    set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_sdai_${sdai_lib}
+                          DEPENDS tst_${name}
+                          LABELS cpp_schema_specific )
 ENDFUNCTION( add_schema_dependent_test name sdai_lib args )
 
+SET(SCL_ENABLE_TESTING OFF)
 BUILD_A_SCHEMA( ${SCL_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp )
+SET(SCL_ENABLE_TESTING ON)
+
 add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"
                            "${SCL_SOURCE_DIR}/test/p21/test_array_bounds.p21" )
 
 add_test( NAME test_aggregate_bound_runtime_FAIL1
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-          COMMAND tst_aggregate_bound_runtime "${SCL_SOURCE_DIR}/test/p21/test_array_bounds_FAIL1.p21" )
+          COMMAND $<TARGET_FILE:tst_aggregate_bound_runtime> "${SCL_SOURCE_DIR}/test/p21/test_array_bounds_FAIL1.p21" )
 set_tests_properties( test_aggregate_bound_runtime_FAIL1 PROPERTIES
-                      DEPENDS test_aggregate_bound_runtime WILL_FAIL true LABELS cpp )
+                      DEPENDS test_aggregate_bound_runtime WILL_FAIL true
+                      LABELS cpp_schema_specific )

@@ -28,7 +28,7 @@ int main( int argc, char * argv[] ) {
     Severity readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
         sfile.Error().PrintContents(cout);
-        abort();
+        exit(EXIT_FAILURE);
     }
 
     // Keeps track of the last processed ent id
@@ -45,7 +45,7 @@ int main( int argc, char * argv[] ) {
             const AggrTypeDescriptor* atd = (const AggrTypeDescriptor*) attrDesc->DomainType();
             if( !( atd->Bound1Type() == bound_constant ) || !( atd->Bound2Type() == bound_runtime ) ) {
                 cerr << "Invalid bounds. Exiting." << endl;
-                abort();
+                exit(EXIT_FAILURE);
             }
             cout << " -- bound 1 is a constant (" << atd->Bound1() << "). bound 2 depends upon the instance." << endl;
             descAggrCount++;
@@ -54,7 +54,7 @@ int main( int argc, char * argv[] ) {
     }
     if( descAggrCount != 1 ) {
         cerr << "Expected 1 aggregate attribute descriptor, found " << descAggrCount <<". Exiting." << endl;
-        abort();
+        exit(EXIT_FAILURE);
     }
 
 
@@ -72,11 +72,11 @@ int main( int argc, char * argv[] ) {
         cout << "Ent #" << id << " - ";
         if( cnt != 3 ) {
             cerr << "Expected 3 attributes, found " << cnt << ". Exiting." << endl;
-            abort();
+            exit(EXIT_FAILURE);
         }
         if( id > 2 ) {
             cerr << "Expected 2 instances, found " << cnt << ". Exiting." << endl;
-            abort();
+            exit(EXIT_FAILURE);
         }
         //loop over the attributes
         for( int i = 0; i < cnt; i++ ) {
@@ -87,7 +87,7 @@ int main( int argc, char * argv[] ) {
                 if( ( ( id == 1 ) && ( b2 != 3 ) ) || ( ( id == 2 ) && ( b2 != 5 ) ) ) {
                     cerr << "Instance " << id << ": value " << b2 << " is invalid for bound 2.";
                     cerr << " Expecting 3 for instance #1 or 5 for #2." << endl;
-                    abort();
+                    exit(EXIT_FAILURE);
                 }
             }
         }
@@ -98,12 +98,12 @@ int main( int argc, char * argv[] ) {
         while( aggrNode != 0 ) {
             if( node >= b2 ) {
                 cerr << "Instance " << id << ": Number of values exceeds upper bound. Exiting." << endl;
-                abort();
+                exit(EXIT_FAILURE);
             }
             cout << aggrNode->value << " ";
             if( aggrValues[id-1][node] != aggrNode->value ) {
                 cerr << "Instance " << id << ": aggregate value " << aggrNode->value << " at index " << node << " is incorrect. Exiting." << endl;
-                abort();
+                exit(EXIT_FAILURE);
             }
             aggrNode = (IntNode*) aggrNode->NextNode();
             node++;
@@ -112,7 +112,7 @@ int main( int argc, char * argv[] ) {
 
         if( instAggrCnt != 1 ) {
             cerr << "Expected 1 aggregate attribute in this instance, found " << instAggrCnt << ". Exiting." << endl;
-            abort();
+            exit(EXIT_FAILURE);
         }
 
 
