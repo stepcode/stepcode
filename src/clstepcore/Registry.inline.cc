@@ -68,6 +68,7 @@ Registry::Registry( CF_init initFunct )
 }
 
 Registry::~Registry() {
+    DeleteContents();
     HASHdestroy( primordialSwamp );
     HASHdestroy( active_schemas );
     HASHdestroy( active_types );
