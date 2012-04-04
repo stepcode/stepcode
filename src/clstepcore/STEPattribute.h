@@ -90,6 +90,7 @@ class SCL_CORE_EXPORT STEPattribute {
 
     public:
         const AttrDescriptor * aDesc;
+        int refCount;
 
         /** \union ptr
         ** You know which of these to use based on the return value of

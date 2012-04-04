@@ -18,32 +18,32 @@
 
 ///  This is needed so that STEPattribute's can be passed as references to inline functions
 STEPattribute::STEPattribute( const STEPattribute & a )
-    : _derive( 0 ), _redefAttr( 0 ), aDesc( a.aDesc ) {}
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( a.aDesc ), refCount( 0 ) {}
 
 ///  INTEGER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p )
-    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )  {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.i = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  BINARY
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Binary * p )
-    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.b = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  STRING
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_String * p )
-    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.S = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  REAL & NUMBER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Real * p )
-    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.r = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
@@ -51,21 +51,21 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Real * p )
 ///  ENTITY
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               SDAI_Application_instance* *p )
-    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.c = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  AGGREGATE
 STEPattribute::STEPattribute( const class AttrDescriptor & d, STEPaggregate * p )
-    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.a =  p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  ENUMERATION  and Logical
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Enum * p )
-    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ) {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.e = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
@@ -73,14 +73,14 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Enum * p )
 ///  SELECT
 STEPattribute::STEPattribute( const class AttrDescriptor & d,
                               class SDAI_Select * p )
-    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d )  {
+    : _derive( 0 ),  _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.sh = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  UNDEFINED
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p )
-    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d )   {
+    : _derive( 0 ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
     ptr.u = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
