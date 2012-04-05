@@ -1071,7 +1071,7 @@ void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
 
-    fprintf( file, "\nclass %s  :  ", entnm );
+    fprintf( file, "\nclass SCL_SCHEMA_EXPORT %s  :  ", entnm );
 
     /* inherit from either supertype entity class or root class of
        all - i.e. SDAI_Application_instance */
@@ -1911,7 +1911,7 @@ void AGGRprint_init( FILES* files, const Type t, const char* var_name, const cha
             }
             if( TYPEget_body( t )->lower && TYPEget_body( t )->upper ) {
                 if ( TYPEget_body( t )->lower->u.integer  ==  TYPEget_body( t )->upper->u.integer ) {
-                    fprintf(stderr, "WARNING: upper and lower bounds are equal for %s at schema line %d\n", (t->symbol.name ?: t->superscope->symbol.name), (t->symbol.name ? t->symbol.line : t->superscope->symbol.line) );
+                    fprintf(stderr, "WARNING: upper and lower bounds are equal for %s at schema line %d\n", (t->symbol.name ? t->symbol.name : t->superscope->symbol.name), (t->symbol.name ? t->symbol.line : t->superscope->symbol.line) );
                 }
             }
         }
@@ -2016,7 +2016,7 @@ void print_typechain( FILES * files, const Type t, char * buf, Schema schema, co
                      "        %s%d->AssignAggrCreator((AggregateCreator) create_%s);%s",
                      TD_PREFIX, count, ctype, "        // Creator function \n" );
 
-            s = snprintf( name_buf, MAX_LEN, "%s%d", TD_PREFIX, count );
+            s = sprintf( name_buf, "%s%d", TD_PREFIX, count );
             assert( ( s > 0 ) && ( s < MAX_LEN ) );
             AGGRprint_init( files, t, name_buf, type_name );
 

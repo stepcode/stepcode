@@ -1,5 +1,4 @@
 
-extern void SchemaInit( class Registry & );
 #include "scl_version_string.h"
 #include <STEPfile.h>
 #include <sdai.h>
@@ -9,7 +8,9 @@ extern void SchemaInit( class Registry & );
 #include <errordesc.h>
 #include <algorithm>
 #include <string>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
 
 #include "SdaiTEST_ARRAY_BOUNDS_EXPR.h"
 
