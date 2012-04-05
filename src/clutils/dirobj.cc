@@ -82,6 +82,7 @@ DirObj::DirObj( const char * dirName ) {
 
 DirObj::~DirObj() {
     ClearFileList();
+    delete [] fileList;
 }
 
 //////////////////////////////// RealPath() ///////////////////////////////////
