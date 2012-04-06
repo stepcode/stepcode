@@ -10,13 +10,19 @@ INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor 
 # two optional args: ARGV3, ARGV4 are compile flags and libs, respectively.
 FUNCTION( add_schema_dependent_test name sdai_lib exe_args )
     add_executable( tst_${name} "${name}.cc" )
-    set_target_properties( tst_${name} PROPERTIES COMPILE_FLAGS "-I${CMAKE_BINARY_DIR}/${sdai_lib} ${ARGV3}" )
+    set_target_properties( tst_${name} PROPERTIES COMPILE_FLAGS "-I${CMAKE_BINARY_DIR}/${sdai_lib} ${ARGV3}" EXCLUDE_FROM_ALL ON )
     target_link_libraries( tst_${name} sdai_${sdai_lib} ${ARGV4} )
+    add_test( NAME build_cpp_${name}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target tst_${name}
+                                       --config $<CONFIGURATION> )
+    set_tests_properties( build_cpp_${name} PROPERTIES DEPENDS build_cpp_sdai_${sdai_lib}
+                          LABELS cpp_schema_specific )
     add_test( NAME test_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND $<TARGET_FILE:tst_${name}> ${exe_args} )
-    set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_sdai_${sdai_lib}
-                          DEPENDS tst_${name}
+    set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_${name}
                           LABELS cpp_schema_specific )
 ENDFUNCTION( add_schema_dependent_test name sdai_lib exe_args )
 
