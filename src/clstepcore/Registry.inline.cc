@@ -13,82 +13,122 @@
 #include <Registry.h>
 #include "scl_memmgr.h"
 
-const TypeDescriptor  * t_sdaiINTEGER;
-const TypeDescriptor  * t_sdaiREAL;
-const TypeDescriptor  * t_sdaiNUMBER;
-const TypeDescriptor  * t_sdaiSTRING;
-const TypeDescriptor  * t_sdaiBINARY;
-const TypeDescriptor  * t_sdaiBOOLEAN;
-const TypeDescriptor  * t_sdaiLOGICAL;
+const TypeDescriptor  * t_sdaiINTEGER = NULL;
+const TypeDescriptor  * t_sdaiREAL = NULL;
+const TypeDescriptor  * t_sdaiNUMBER = NULL;
+const TypeDescriptor  * t_sdaiSTRING = NULL;
+const TypeDescriptor  * t_sdaiBINARY = NULL;
+const TypeDescriptor  * t_sdaiBOOLEAN = NULL;
+const TypeDescriptor  * t_sdaiLOGICAL = NULL;
 
 static int uniqueNames( const char *, const SchRename * );
 
 Registry::Registry( CF_init initFunct )
     : col( 0 ), entity_cnt( 0 ), all_ents_cnt( 0 ) {
 
-    /* Registry tables aren't always initialized */
-    HASHinitialize();
-    primordialSwamp = HASHcreate( 1000 );
-    active_schemas = HASHcreate( 10 );
-    active_types = HASHcreate( 100 );
+    primordialSwamp = SCL_HASHcreate( 1000 );
+    active_schemas = SCL_HASHcreate( 10 );
+    active_types = SCL_HASHcreate( 100 );
 
-    t_sdaiINTEGER = new TypeDescriptor( "INTEGER",    // Name
-                                        sdaiINTEGER, // FundamentalType
-                                        0, // Originating Schema
-                                        "INTEGER" );  // Description;
-
-    t_sdaiREAL = new TypeDescriptor( "REAL", sdaiREAL,
-                                     0, // Originating Schema
-                                     "Real" );
-
-    t_sdaiSTRING = new TypeDescriptor( "STRING", sdaiSTRING,
-                                       0, // Originating Schema
-                                       "String" );
-
-    t_sdaiBINARY = new TypeDescriptor( "BINARY", sdaiBINARY,
-                                       0, // Originating Schema
-                                       "Binary" );
-
-    t_sdaiBOOLEAN = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN,
-                                        0, // Originating Schema
-                                        "Boolean" );
-
-    t_sdaiLOGICAL = new TypeDescriptor( "LOGICAL", sdaiLOGICAL,
-                                        0, // Originating Schema
-                                        "Logical" );
-
-    t_sdaiNUMBER = new TypeDescriptor( "NUMBER", sdaiNUMBER,
-                                       0, // Originating Schema
-                                       "Number" );
+    if ( !t_sdaiINTEGER ) {
+        t_sdaiINTEGER = new TypeDescriptor( "INTEGER",    // Name
+                                            sdaiINTEGER, // FundamentalType
+                                            0, // Originating Schema
+                                            "INTEGER" );  // Description;
+    }
+    if ( !t_sdaiREAL ) {
+        t_sdaiREAL = new TypeDescriptor( "REAL", sdaiREAL,
+                                         0, // Originating Schema
+                                         "Real" );
+    }
+    if ( !t_sdaiSTRING) {
+        t_sdaiSTRING = new TypeDescriptor( "STRING", sdaiSTRING,
+                                           0, // Originating Schema
+                                           "String" );
+    }
+    if ( !t_sdaiBINARY) {
+        t_sdaiBINARY = new TypeDescriptor( "BINARY", sdaiBINARY,
+                                           0, // Originating Schema
+                                           "Binary" );
+    }
+    if ( !t_sdaiBOOLEAN ) {
+        t_sdaiBOOLEAN = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN,
+                                            0, // Originating Schema
+                                            "Boolean" );
+    }
+    if ( !t_sdaiLOGICAL ) {
+        t_sdaiLOGICAL = new TypeDescriptor( "LOGICAL", sdaiLOGICAL,
+                                            0, // Originating Schema
+                                            "Logical" );
+    }
+    if ( !t_sdaiNUMBER ) {
+        t_sdaiNUMBER = new TypeDescriptor( "NUMBER", sdaiNUMBER,
+                                           0, // Originating Schema
+                                           "Number" );
+    }
 
     initFunct( *this );
-    HASHlistinit( active_types, &cur_type );
-    HASHlistinit( primordialSwamp, &cur_entity ); // initialize cur's
-    HASHlistinit( active_schemas, &cur_schema );
+    SCL_HASHlistinit( active_types, &cur_type );
+    SCL_HASHlistinit( primordialSwamp, &cur_entity ); // initialize cur's
+    SCL_HASHlistinit( active_schemas, &cur_schema );
 }
 
 Registry::~Registry() {
-    HASHdestroy( primordialSwamp );
-    HASHdestroy( active_schemas );
-    HASHdestroy( active_types );
+    DeleteContents();
+
+    SCL_HASHdestroy( primordialSwamp );
+    SCL_HASHdestroy( active_schemas );
+    SCL_HASHdestroy( active_types );
     delete col;
+
+    if ( t_sdaiINTEGER ) {
+        delete t_sdaiINTEGER;
+        t_sdaiINTEGER = NULL;
+    }
+    if ( t_sdaiREAL ) {
+        delete t_sdaiREAL;
+        t_sdaiREAL = NULL;
+    }
+    if ( t_sdaiSTRING ) {
+        delete t_sdaiSTRING;
+        t_sdaiSTRING = NULL;
+    }
+    if ( t_sdaiBINARY ) {
+        delete t_sdaiBINARY;
+        t_sdaiBINARY = NULL;
+    }
+    if ( t_sdaiBOOLEAN ) {
+        delete t_sdaiBOOLEAN;
+        t_sdaiBOOLEAN = NULL;
+    }
+    if ( t_sdaiLOGICAL ) {
+        delete t_sdaiLOGICAL;
+        t_sdaiLOGICAL = NULL;
+    }
+    if ( t_sdaiNUMBER ) {
+        delete t_sdaiNUMBER;
+        t_sdaiNUMBER = NULL;
+    }
 }
 
 void Registry::DeleteContents() {
     // entities first
-    HASHlistinit( primordialSwamp, &cur_entity );
-    while( HASHlist( &cur_entity ) ) {
+    SCL_HASHlistinit( primordialSwamp, &cur_entity );
+    while( SCL_HASHlist( &cur_entity ) ) {
         delete( EntityDescriptor * ) cur_entity.e->data;
     }
 
     // schemas
-    HASHlistinit( active_schemas, &cur_schema );
-    while( HASHlist( &cur_schema ) ) {
+    SCL_HASHlistinit( active_schemas, &cur_schema );
+    while( SCL_HASHlist( &cur_schema ) ) {
         delete( Schema * ) cur_schema.e->data;
     }
 
     // types
-
+    SCL_HASHlistinit( active_types, &cur_type );
+    while ( SCL_HASHlist( &cur_type ) ) {
+        delete( TypeDescriptor * ) cur_type.e->data;
+    }
 }
 
 /**
@@ -106,9 +146,9 @@ const EntityDescriptor * Registry::FindEntity( const char * e, const char * schN
     char schformat[BUFSIZ], altName[BUFSIZ];
 
     if( check_case ) {
-        entd = ( EntityDescriptor * )HASHfind( primordialSwamp, ( char * )e );
+        entd = ( EntityDescriptor * )SCL_HASHfind( primordialSwamp, ( char * )e );
     } else {
-        entd = ( EntityDescriptor * )HASHfind( primordialSwamp,
+        entd = ( EntityDescriptor * )SCL_HASHfind( primordialSwamp,
                                                ( char * )PrettyTmpName( e ) );
     }
     if( entd && schNm ) {
@@ -142,34 +182,34 @@ const EntityDescriptor * Registry::FindEntity( const char * e, const char * schN
 
 const Schema * Registry::FindSchema( const char * n, int check_case ) const {
     if( check_case ) {
-        return ( const Schema * ) HASHfind( active_schemas, ( char * ) n );
+        return ( const Schema * ) SCL_HASHfind( active_schemas, ( char * ) n );
     }
 
-    return ( const Schema * ) HASHfind( active_schemas,
+    return ( const Schema * ) SCL_HASHfind( active_schemas,
                                         ( char * )PrettyTmpName( n ) );
 }
 
 const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
     if( check_case ) {
-        return ( const TypeDescriptor * ) HASHfind( active_types, ( char * ) n );
+        return ( const TypeDescriptor * ) SCL_HASHfind( active_types, ( char * ) n );
     }
-    return ( const TypeDescriptor * ) HASHfind( active_types,
+    return ( const TypeDescriptor * ) SCL_HASHfind( active_types,
             ( char * )PrettyTmpName( n ) );
 }
 
 void Registry::ResetTypes() {
-    HASHlistinit( active_types, &cur_type );
+    SCL_HASHlistinit( active_types, &cur_type );
 }
 
 const TypeDescriptor * Registry::NextType() {
-    if( 0 == HASHlist( &cur_type ) ) {
+    if( 0 == SCL_HASHlist( &cur_type ) ) {
         return 0;
     }
     return ( const TypeDescriptor * ) cur_type.e->data;
 }
 
 void Registry::AddEntity( const EntityDescriptor & e ) {
-    HASHinsert( primordialSwamp, ( char * ) e.Name(), ( EntityDescriptor * ) &e );
+    SCL_HASHinsert( primordialSwamp, ( char * ) e.Name(), ( EntityDescriptor * ) &e );
     ++entity_cnt;
     ++all_ents_cnt;
     AddClones( e );
@@ -177,11 +217,11 @@ void Registry::AddEntity( const EntityDescriptor & e ) {
 
 
 void Registry::AddSchema( const Schema & d ) {
-    HASHinsert( active_schemas, ( char * ) d.Name(), ( Schema * ) &d );
+    SCL_HASHinsert( active_schemas, ( char * ) d.Name(), ( Schema * ) &d );
 }
 
 void Registry::AddType( const TypeDescriptor & d ) {
-    HASHinsert( active_types, ( char * ) d.Name(), ( TypeDescriptor * ) &d );
+    SCL_HASHinsert( active_types, ( char * ) d.Name(), ( TypeDescriptor * ) &d );
 }
 
 /**
@@ -195,7 +235,7 @@ void Registry::AddClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
 
     while( alts ) {
-        HASHinsert( primordialSwamp, ( char * )alts->objName(),
+        SCL_HASHinsert( primordialSwamp, ( char * )alts->objName(),
                     ( EntityDescriptor * )&e );
         alts = alts->next;
     }
@@ -238,20 +278,20 @@ void Registry::RemoveEntity( const char * n ) {
         RemoveClones( *e );
     }
     tmp.key = ( char * ) n;
-    HASHsearch( primordialSwamp, &tmp, HASH_DELETE ) ? --entity_cnt : 0;
+    SCL_HASHsearch( primordialSwamp, &tmp, HASH_DELETE ) ? --entity_cnt : 0;
 
 }
 
 void Registry::RemoveSchema( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
-    HASHsearch( active_schemas, &tmp, HASH_DELETE );
+    SCL_HASHsearch( active_schemas, &tmp, HASH_DELETE );
 }
 
 void Registry::RemoveType( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
-    HASHsearch( active_types, &tmp, HASH_DELETE );
+    SCL_HASHsearch( active_types, &tmp, HASH_DELETE );
 }
 
 /**
@@ -264,7 +304,7 @@ void Registry::RemoveClones( const EntityDescriptor & e ) {
     while( alts ) {
         tmp = new Element;
         tmp->key = ( char * ) alts->objName();
-        HASHsearch( primordialSwamp, tmp, HASH_DELETE );
+        SCL_HASHsearch( primordialSwamp, tmp, HASH_DELETE );
         alts = alts->next;
     }
 }
@@ -296,23 +336,23 @@ int Registry::GetEntityCnt() {
 }
 
 void Registry::ResetEntities() {
-    HASHlistinit( primordialSwamp, &cur_entity );
+    SCL_HASHlistinit( primordialSwamp, &cur_entity );
 
 }
 
 const EntityDescriptor * Registry::NextEntity() {
-    if( 0 == HASHlist( &cur_entity ) ) {
+    if( 0 == SCL_HASHlist( &cur_entity ) ) {
         return 0;
     }
     return ( const EntityDescriptor * ) cur_entity.e->data;
 }
 
 void Registry::ResetSchemas() {
-    HASHlistinit( active_schemas, &cur_schema );
+    SCL_HASHlistinit( active_schemas, &cur_schema );
 }
 
 const Schema * Registry::NextSchema() {
-    if( 0 == HASHlist( &cur_schema ) ) {
+    if( 0 == SCL_HASHlist( &cur_schema ) ) {
         return 0;
     }
     return ( const Schema * ) cur_schema.e->data;

@@ -90,6 +90,7 @@ class SCL_CORE_EXPORT STEPattribute {
 
     public:
         const AttrDescriptor * aDesc;
+        int refCount;
 
         /** \union ptr
         ** You know which of these to use based on the return value of
@@ -104,10 +105,10 @@ class SCL_CORE_EXPORT STEPattribute {
             SDAI_Binary * b;                 // BINARY_TYPE
             SDAI_Real * r;                   // REAL_TYPE and NUMBER_TYPE (Real is a double)
             SDAI_Application_instance * * c; // ENTITY_TYPE
-            STEPaggregate * a;                  // AGGREGATE_TYPE
+            STEPaggregate * a;               // AGGREGATE_TYPE
             SDAI_Enum * e;                   // ENUM_TYPE, BOOLEAN_TYPE, and LOGICAL_TYPE
             SDAI_Select * sh;                // SELECT_TYPE
-            SCLundefined * u;                   // UNKNOWN_TYPE
+            SCLundefined * u;                // UNKNOWN_TYPE
             void * p;
 
         } ptr;
