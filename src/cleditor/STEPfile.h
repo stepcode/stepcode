@@ -49,13 +49,13 @@ class SCL_EDITOR_EXPORT STEPfile {
         Registry & reg() {
             return _reg;
         }
-        int _fileIdIncr;   //Increment value to be added to FileId Numbers on input
+        int _fileIdIncr;   ///< Increment value to be added to FileId Numbers on input
 
 //header information
         InstMgr * _headerInstances;
         Registry * _headerRegistry;
 
-        int _headerId;     //STEPfile_id given to SDAI_Application_instance from header section
+        int _headerId;     ///< STEPfile_id given to SDAI_Application_instance from header section
 
 //file information
         DirObj * _currentDir;
@@ -65,13 +65,13 @@ class SCL_EDITOR_EXPORT STEPfile {
         ErrorDescriptor _error;
 
         // new errors
-        int _entsNotCreated; // num entities not created in first pass
-        int _entsInvalid;    // num entities that had invalid attr values
-        int _entsIncomplete; // num entities that had missing attr values
-        // (includes entities that had invalid values
-        // for required attrs)
-        int _entsWarning;    // num entities that may have had problems
-        // with attrs - reported as an attr user msg
+        int _entsNotCreated; ///< num entities not created in first pass
+        int _entsInvalid;    ///< num entities that had invalid attr values
+        int _entsIncomplete; /**< num entities that had missing attr values
+                                  (includes entities that had invalid values
+                                  for required attrs)*/
+        int _entsWarning;    /**< num entities that may have had problems
+                                  with attrs - reported as an attr user msg */
 
         // old errors
         int _errorCount;
@@ -165,8 +165,8 @@ class SCL_EDITOR_EXPORT STEPfile {
 
     protected:
 //member functions
-        const std::string schemaName(); // returns and copies out schema name from header instances
-//called by ReadExchangeFile
+        const std::string schemaName(); /**< Returns and copies out schema name from header instances.
+                                             Called by ReadExchangeFile */
         istream * OpenInputFile( const std::string filename = "" );
         void CloseInputFile( istream * in );
 
@@ -178,9 +178,8 @@ class SCL_EDITOR_EXPORT STEPfile {
         int HeaderId( int increment = 1 );
         int HeaderId( const std::string name );
 
-        int ReadData1( istream & in ); // first pass to create instances
-        // second pass to read instances
-        int ReadData2( istream & in, bool useTechCor = true );
+        int ReadData1( istream & in ); /**< First pass, to create instances */
+        int ReadData2( istream & in, bool useTechCor = true ); /**< Second pass, to read instances */
 
 // obsolete
         int ReadWorkingData1( istream & in );
@@ -188,18 +187,17 @@ class SCL_EDITOR_EXPORT STEPfile {
 
         void ReadRestOfFile( istream & in );
 
-        // create instance - used by ReadData1()
+        /// create instance - used by ReadData1()
         SDAI_Application_instance  * CreateInstance( istream & in, ostream & out );
-        // create complex instance - used by CreateInstance()
+        /// create complex instance - used by CreateInstance()
         SDAI_Application_instance * CreateSubSuperInstance( istream & in, int fileid,
                 ErrorDescriptor & );
 
-        // read the instance - used by ReadData2()
+        /// read the instance - used by ReadData2()
         SDAI_Application_instance * ReadInstance( istream & in, ostream & out,
                 std::string & cmtStr, bool useTechCor = true );
 
-        //  reading scopes are still incomplete
-        //  these functions are stubs
+        ///  reading scopes are still incomplete, CreateScopeInstances and ReadScopeInstances are stubs
         Severity CreateScopeInstances( istream & in, SDAI_Application_instance_ptr ** scopelist );
         Severity ReadScopeInstances( istream & in );
 //    Severity ReadSubSuperInstance(istream& in);

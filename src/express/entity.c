@@ -390,7 +390,7 @@ bool ENTITYhas_immediate_supertype( Entity child, Entity parent ) {
     return false;
 }
 
-/// called by \sa ENTITYget_all_attributes
+/// called by ENTITYget_all_attributes(). \sa ENTITYget_all_attributes
 static void ENTITY_get_all_attributes( Entity entity, Linked_List result ) {
     LISTdo( entity->u.entity->supertypes, super, Entity )
     /*  if (OBJis_kind_of(super, Class_Entity))*/
