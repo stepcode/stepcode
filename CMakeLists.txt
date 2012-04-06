@@ -229,6 +229,8 @@ INCLUDE(CheckLibraryExists)
 INCLUDE(CheckIncludeFile)
 INCLUDE(CheckFunctionExists)
 INCLUDE(CheckTypeSize)
+INCLUDE(CMakePushCheckState)
+INCLUDE(CheckCXXSourceRuns)
 INCLUDE(${SCL_CMAKE_DIR}/FindLEX.cmake)
 INCLUDE(${SCL_CMAKE_DIR}/FindYACC.cmake)
 
@@ -249,6 +251,26 @@ CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
 CHECK_FUNCTION_EXISTS(getopt HAVE_GETOPT)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
+
+set( TEST_STD_THREAD "
+#include <iostream>
+#include <thread>
+void do_work() {
+        std::cout << \"thread\" << std::endl;
+}
+int main() {
+        std::thread t(do_work);
+        t.join();
+}
+" )
+cmake_push_check_state()
+  if( UNIX )
+    set( CMAKE_REQUIRED_FLAGS "-pthread -std=c++0x" )
+  else( UNIX )
+    # vars probably need set for MSVC11, embarcadero, etc
+  endif( UNIX )
+  CHECK_CXX_SOURCE_RUNS( "${TEST_STD_THREAD}" HAVE_STD_THREAD )   #quotes are *required*!
+cmake_pop_check_state()
 
 # Now that all the tests are done, configure the scl_cf.h file:
 get_property(CONFIG_H_FILE_CONTENTS GLOBAL PROPERTY SCL_CONFIG_H_CONTENTS)
