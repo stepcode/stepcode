@@ -29,7 +29,9 @@ STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool 
     _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
     _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
     _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
-    _maxErrorCount( 5000 ), _strict( strict ) {
+    _maxErrorCount( 5000 ), _strict( strict ),_iFileSize( 0 ),
+    _iFileCurrentPosition( 0 ), _oFileInstsWritten( 0 ),
+    _iFileStage1Done( false ) {
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
@@ -174,6 +176,8 @@ Severity STEPfile::AppendWorkingFile( const std::string filename, bool useTechCo
 
 /******************************************************/
 istream * STEPfile::OpenInputFile( const std::string filename ) {
+    _iFileCurrentPosition = 0;
+
     //  if there's no filename to use, fail
     if( filename.empty() && FileName().empty() ) {
         _error.AppendToUserMsg( "Unable to open file for input. No current file name.\n" );
@@ -205,6 +209,10 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
         return ( 0 );
     }
 
+    //check size of file
+    in->seekg( 0, std::ifstream::end );
+    _iFileSize = in->tellg();
+    in->seekg( 0, std::ifstream::beg );
     return in;
 }
 
@@ -213,6 +221,10 @@ void STEPfile::CloseInputFile( istream * in ) {
     if( in && *in != std::cin ) {
         delete in;
     }
+
+    //reset file size
+    _iFileSize = 0;
+    _iFileCurrentPosition = 0;
 }
 
 
@@ -240,10 +252,12 @@ ofstream * STEPfile::OpenOutputFile( const std::string filename ) {
         _error.AppendToUserMsg( "unable to open file for output\n" );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
     }
+    _oFileInstsWritten = 0;
     return out;
 }
 
 void STEPfile::CloseOutputFile( ostream * out ) {
+    _oFileInstsWritten = 0;
     delete out;
 }
 
