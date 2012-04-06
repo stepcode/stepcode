@@ -53,11 +53,11 @@ class SCL_EDITOR_EXPORT InstMgr {
         virtual ~InstMgr();
 
 // MASTER LIST OPERATIONS
-        int InstanceCount()         {
+        int InstanceCount() const {
             return master->Count();
         }
 
-        int OwnsInstances() {
+        int OwnsInstances() const {
             return _ownsInstances;
         }
         void OwnsInstances( int ownsInstances ) {
