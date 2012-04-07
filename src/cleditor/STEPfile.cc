@@ -1599,6 +1599,13 @@ STEPfile::CreateSubSuperInstance( istream & in, int fileid, ErrorDescriptor & e 
         delete obj;
         obj = ENTITY_NULL;
     }
+
+    enaIndex = 0;
+    while ( entNmArr[enaIndex] != 0) {
+        delete entNmArr[enaIndex];
+        enaIndex ++;
+    }
+
     return obj;
 }
 

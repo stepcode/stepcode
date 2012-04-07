@@ -43,10 +43,10 @@ typedef unsigned long Address;
 #define DIV(x,y)        ((x) >> (y##_SHIFT))
 #define MOD(x,y)        ((x) & ((y)-1))
 
-#define HASH_Table_new()    new Hash_Table
-#define HASH_Table_destroy(x)   delete x
-#define HASH_Element_new()  new Element
-#define HASH_Element_destroy(x) delete x
+#define SCL_HASH_Table_new()        new Hash_Table
+#define SCL_HASH_Table_destroy(x)   delete x
+#define SCL_HASH_Element_new()      new Element
+#define SCL_HASH_Element_destroy(x) delete x
 
 typedef struct Element * ElementP;
 typedef struct Hash_Table * Hash_TableP;
@@ -55,39 +55,39 @@ typedef struct Hash_Table * Hash_TableP;
 ** Internal routines
 */
 
-Address     HASHhash( char *, Hash_TableP );
-static void HASHexpand_table( Hash_TableP );
+Address     SCL_HASHhash( char *, Hash_TableP );
+static void SCL_HASHexpand_table( Hash_TableP );
 
 # if HASH_STATISTICS
 static long     HashAccesses, HashCollisions;
 # endif
 
 void *
-HASHfind( Hash_TableP t, char * s ) {
+SCL_HASHfind( Hash_TableP t, char * s ) {
     struct Element e;
     struct Element * ep;
 
     e.key = s;
     e.symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
-    ep = HASHsearch( t, &e, HASH_FIND );
+    ep = SCL_HASHsearch( t, &e, HASH_FIND );
     return( ep ? ep->data : 0 );
 }
 
 void
-HASHinsert( Hash_TableP t, char * s, void * data ) {
+SCL_HASHinsert( Hash_TableP t, char * s, void * data ) {
     struct Element e, *e2;
 
     e.key = s;
     e.data = data;
     e.symbol = 0;
-    e2 = HASHsearch( t, &e, HASH_INSERT );
+    e2 = SCL_HASHsearch( t, &e, HASH_INSERT );
     if( e2 ) {
         printf( "Redeclaration of %s\n", s );
     }
 }
 
 Hash_TableP
-HASHcreate( unsigned count ) {
+SCL_HASHcreate( unsigned count ) {
     unsigned int i;
     Hash_TableP table;
 
@@ -101,7 +101,7 @@ HASHcreate( unsigned count ) {
     }
     count = DIV( i, SEGMENT_SIZE );
 
-    table = ( Hash_TableP ) HASH_Table_new();
+    table = ( Hash_TableP ) SCL_HASH_Table_new();
     table->SegmentCount = table->p = table->KeyCount = 0;
     /*
     ** First initialize directory to 0\'s
@@ -141,7 +141,7 @@ HASHcreate( unsigned count ) {
 /* initialize pointer to beginning of hash table so we can step through it */
 /* on repeated calls to HASHlist - DEL */
 void
-HASHlistinit( Hash_TableP table, HashEntry * he ) {
+SCL_HASHlistinit( Hash_TableP table, HashEntry * he ) {
     he->i = he->j = 0;
     he->p = 0;
     he->table = table;
@@ -150,7 +150,7 @@ HASHlistinit( Hash_TableP table, HashEntry * he ) {
 }
 
 void
-HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
+SCL_HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
     he->i = he->j = 0;
     he->p = 0;
     he->table = table;
@@ -160,7 +160,7 @@ HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
 
 /* provide a way to step through the hash */
 struct Element *
-HASHlist( HashEntry * he ) {
+SCL_HASHlist( HashEntry * he ) {
     int i2 = he->i;
     int j2 = he->j;
     struct Element ** s;
@@ -194,6 +194,9 @@ HASHlist( HashEntry * he ) {
                             again = false;
                         }
                     }
+                    else {
+                        again = false;
+                    }
                 } while( again );
                 /* avoid incrementing he->j by returning here */
                 if( he->p ) {
@@ -208,7 +211,7 @@ HASHlist( HashEntry * he ) {
 }
 
 void
-HASHdestroy( Hash_TableP table ) {
+SCL_HASHdestroy( Hash_TableP table ) {
     unsigned int i, j;
     struct Element ** s;
     struct Element * p, *q;
@@ -221,7 +224,7 @@ HASHdestroy( Hash_TableP table ) {
                     p = s[j];
                     while( p != NULL ) {
                         q = p->next;
-                        HASH_Element_destroy( p );
+                        SCL_HASH_Element_destroy( p );
                         p = q;
                     }
                 }
@@ -229,7 +232,7 @@ HASHdestroy( Hash_TableP table ) {
                 delete [] table->Directory[i];
             }
         }
-        HASH_Table_destroy( table );
+        SCL_HASH_Table_destroy( table );
 # if HASH_STATISTICS && DEBUG
         fprintf( stderr,
                  "[hdestroy] Accesses %ld Collisions %ld\n",
@@ -240,7 +243,7 @@ HASHdestroy( Hash_TableP table ) {
 }
 
 struct Element *
-HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
+SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
     Address h;
     struct Element ** CurrentSegment;
     int     SegmentIndex;
@@ -252,7 +255,7 @@ HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
 # if HASH_STATISTICS
     HashAccesses++;
 # endif
-    h = HASHhash( item->key, table );
+    h = SCL_HASHhash( item->key, table );
     SegmentDir = ( int ) DIV( h, SEGMENT_SIZE );
     SegmentIndex = ( int ) MOD( h, SEGMENT_SIZE );
     /*
@@ -286,7 +289,7 @@ HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
             deleteme = q;
             *p = q->next;
             /*STRINGfree(deleteme->key);*/
-            HASH_Element_destroy( deleteme );
+            SCL_HASH_Element_destroy( deleteme );
             --table->KeyCount;
             return( deleteme ); /* of course, user shouldn't deref this! */
         case HASH_INSERT:
@@ -296,7 +299,7 @@ HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
             }
 
             /* at this point, element does not exist and action == INSERT */
-            q = ( ElementP ) HASH_Element_new();
+            q = ( ElementP ) SCL_HASH_Element_new();
             *p = q;             /* link into chain  */
             /*
             ** Initialize new element
@@ -312,7 +315,7 @@ HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
             ** table over-full?
             */
             if( ++table->KeyCount / MUL( table->SegmentCount, SEGMENT_SIZE ) > table->MaxLoadFactor ) {
-                HASHexpand_table( table );    /* doesn't affect q   */
+                SCL_HASHexpand_table( table );    /* doesn't affect q   */
             }
     }
     return( ( struct Element * )0 ); /* was return (Element)q */
@@ -323,7 +326,7 @@ HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
 */
 
 Address
-HASHhash( char * Key, Hash_TableP table ) {
+SCL_HASHhash( char * Key, Hash_TableP table ) {
     Address     h, address;
     register unsigned char * k = ( unsigned char * )Key;
 
@@ -344,7 +347,7 @@ HASHhash( char * Key, Hash_TableP table ) {
 
 static
 void
-HASHexpand_table( Hash_TableP table ) {
+SCL_HASHexpand_table( Hash_TableP table ) {
     Address NewAddress;
     int     OldSegmentIndex, NewSegmentIndex;
     int     OldSegmentDir, NewSegmentDir;
@@ -389,7 +392,7 @@ HASHexpand_table( Hash_TableP table ) {
         LastOfNew = &NewSegment[NewSegmentIndex];
         *LastOfNew = NULL;
         while( Current != NULL ) {
-            if( HASHhash( Current->key, table ) == NewAddress ) {
+            if( SCL_HASHhash( Current->key, table ) == NewAddress ) {
                 /*
                 ** Attach it to the end of the new chain
                 */
