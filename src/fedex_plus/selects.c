@@ -809,9 +809,14 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "    *logStream << \"DAVE ERR entering %s constructor.\" << std::endl;\n", n );
     fprintf( f, "    }\n#endif\n" );
-    /*  fprintf( f, "#ifdef  WE_WANT_TO_HAVE_THIS_CONSTRUCTOR\n" );*/
+
+    //create objects for data member pointers. also in two more ctors below, and deleted in dtor which is printed at end of this function.
+    LISTdo( dups, t, Type ) {
+        if( isAggregateType( t ) && t->u.type->body->base ) {
+            fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+        }
+    } LISTod;
     fprintf( f, "   nullify();\n" );
-    /*  fprintf( f, "#endif\n" );*/
     fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "//    *logStream << \"DAVE ERR exiting %s constructor.\" << std::endl;\n", n );
     fprintf( f, "    }\n#endif\n" );
@@ -847,6 +852,9 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
         fprintf( f, "    }\n#endif\n" );
 
         if( isAggregateType( t ) ) {
+            if( t->u.type->body->base ) {
+                fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+            }
             fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
                 ( ( t->u.type->body->base ) ? "->" : "." ) );
         } else {
@@ -881,6 +889,9 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
                      "    *logStream << \"DAVE ERR entering %s constructor.\""
                      " << std::endl;\n", n );
             fprintf( f, "    }\n#endif\n" );
+            if( t->u.type->body->base ) {
+                fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+            }
             fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ), ( ( t->u.type->body->base ) ? "->" : "." ) );
         } else {
             fprintf( f, "%s::%s( const %s& o,\n", n, n, TYPEget_utype( t ) );
@@ -906,7 +917,16 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     }
     LISTod;
 
+    //dtor
     fprintf( f, "%s::~%s()\n{\n", n, n );
+    //delete objects that data members point to
+    LISTdo( dups, t, Type ) {
+        if( isAggregateType( t ) && t->u.type->body->base ) {
+            fprintf( f, "   if( _%s ) {\n", SEL_ITEMget_dmname( t ) );
+            fprintf( f, "       delete _%s;\n", SEL_ITEMget_dmname( t ) );
+            fprintf( f, "       _%s = 0;\n    }\n", SEL_ITEMget_dmname( t ) );
+        }
+    } LISTod;
     fprintf( f, "}\n\n" );
 
     fprintf( f, "%s_agg::%s_agg( SelectTypeDescriptor *s)\n"
