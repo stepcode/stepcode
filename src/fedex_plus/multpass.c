@@ -35,6 +35,8 @@
 #include <stdlib.h>
 #include "classes.h"
 
+#include <scl_trace_fprintf.h>
+
 #define FALSE 0
 #define TRUE  1
 

@@ -30,6 +30,8 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <assert.h>
 #include "classes.h"
 
+#include <scl_trace_fprintf.h>
+
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );

@@ -26,6 +26,8 @@ extern int multiple_inheritance;
 #include <stdlib.h>
 #include "classes.h"
 
+#include <scl_trace_fprintf.h>
+
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
 void ATTRsign_access_methods( Variable a, FILE * file );

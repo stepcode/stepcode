@@ -78,6 +78,8 @@
 #include "../express/express.h"
 #include "../express/resolve.h"
 
+#include <scl_trace_fprintf.h>
+
 extern void print_fedex_version( void );
 
 static void fedex_plus_usage( void ) {
