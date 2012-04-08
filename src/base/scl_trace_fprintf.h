@@ -12,14 +12,15 @@
  * \sa trace_fprintf
 **/
 
+#include "scl_export.h"
+
 /** used to find where generated c++ originates from in fedex_plus
  * To enable, configure with 'cmake .. -DSCL_TRACE_FPRINTF=ON'
  */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void trace_fprintf (char const *sourcefile, int line, FILE* file, const char *format, ...);
+    SCL_BASE_EXPORT void trace_fprintf (char const *sourcefile, int line, FILE* file, const char *format, ...);
 #ifdef __cplusplus
 }
 #endif
