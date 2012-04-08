@@ -1071,7 +1071,7 @@ void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
 
-    fprintf( file, "\nclass SCL_SCHEMA_EXPORT %s  :  ", entnm );
+    fprintf( file, "\nclass %s  :  ", entnm );
 
     /* inherit from either supertype entity class or root class of
        all - i.e. SDAI_Application_instance */
