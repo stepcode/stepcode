@@ -2070,7 +2070,7 @@ void print_typechain( FILES * files, const Type t, char * buf, Schema schema, co
     sprintf( buf, "%s%d", TD_PREFIX, count );
 
     /* Types */
-    fprintf( f, "        %s::schema->AddUnnamedType(%s%d);\n", SCHEMAget_name( schema ), TD_PREFIX, count );
+    fprintf( files->init, "        %s::schema->AddUnnamedType(%s%d);\n", SCHEMAget_name( schema ), TD_PREFIX, count );
 }
 
 /**************************************************************//**
