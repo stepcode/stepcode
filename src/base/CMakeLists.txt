@@ -1,6 +1,7 @@
 
 set(SCL_BASE_SOURCES
     scl_memmgr.cc
+    scl_trace_fprintf.c
 )
 
 include_directories(
