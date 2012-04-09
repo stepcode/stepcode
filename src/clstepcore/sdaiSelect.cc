@@ -572,6 +572,10 @@ const char * SDAI_Select::STEPwrite( std::string & s, const char * currSch )  co
     return const_cast<char *>( s.c_str() );
 }
 
+SDAI_Select & SDAI_Select::operator =( const SDAI_Select & ) {
+    return *this;
+}
+
 int SDAI_Select::set_null() {
     nullify();
     return 1;
