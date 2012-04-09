@@ -76,11 +76,14 @@ ENDMACRO( OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT )
 # build shared libs by default
 OPTION_WITH_DEFAULT(SCL_BUILD_SHARED_LIBS "Build shared libs" ON )
 
-# build static libs by default
+# don't build static libs by default
 OPTION_WITH_DEFAULT(SCL_BUILD_STATIC_LIBS "Build static libs" OFF)
 
-OPTION_WITH_DEFAULT(SCL_PYTHON_GENERATOR "Compile fedex_plus_python" ON)
+OPTION_WITH_DEFAULT(SCL_PYTHON_GENERATOR "Compile fedex_python" ON)
 OPTION_WITH_DEFAULT(SCL_CPP_GENERATOR "Compile fedex_plus" ON)
+
+OPTION_WITH_DEFAULT(SCL_MEMMGR_ENABLE_CHECKS "Enable scl_memmgr's memory leak detection" OFF)
+OPTION_WITH_DEFAULT(SCL_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in fedex_plus may be located" OFF)
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.

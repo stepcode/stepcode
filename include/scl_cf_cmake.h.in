@@ -14,6 +14,8 @@
 #cmakedefine HAVE_IO_H 1
 
 #cmakedefine YYTEXT_POINTER 1
+#cmakedefine SCL_TRACE_FPRINTF 1
+#cmakedefine SCL_MEMMGR_ENABLE_CHECKS 1
 
 #cmakedefine HAVE_ABS 1
 #cmakedefine HAVE_MEMCPY 1
