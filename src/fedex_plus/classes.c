@@ -1071,7 +1071,7 @@ void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
 
-    fprintf( file, "\nclass %s  :  ", entnm );
+    fprintf( file, "\nclass SCL_SCHEMA_EXPORT %s  :  ", entnm );
 
     /* inherit from either supertype entity class or root class of
        all - i.e. SDAI_Application_instance */
@@ -2728,7 +2728,7 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     /*  print class for enumeration */
     n = TYPEget_ctype( type );
-    fprintf( inc, "\nclass %s  :  public SDAI_Enum  {\n", n );
+    fprintf( inc, "\nclass SCL_SCHEMA_EXPORT %s  :  public SDAI_Enum  {\n", n );
 
     fprintf( inc, "  protected:\n        EnumTypeDescriptor *type;\n\n" );
 
@@ -2773,7 +2773,7 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     /*  print things for aggregate class  */
     sprintf( enumAggrNm, "%s_agg", n );
 
-    fprintf( inc, "\nclass %s_agg  :  public EnumAggregate  {\n", n );
+    fprintf( inc, "\nclass SCL_SCHEMA_EXPORT %s_agg  :  public EnumAggregate  {\n", n );
 
     fprintf( inc, "  protected:\n    EnumTypeDescriptor *enum_type;\n\n" );
     fprintf( inc, "  public:\n" );
