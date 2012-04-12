@@ -2,6 +2,9 @@
 #include <scl_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
+
+#include <scl_trace_fprintf.h>
+
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
 ** December  5, 1989
