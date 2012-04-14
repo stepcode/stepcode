@@ -550,11 +550,23 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             while( i < n - 1 ) {
                 i++; // check if following attributes are redefined
                 if( !( attributes[i].aDesc->AttrType() == AttrType_Redefining ) ) {
-                    PrependEntityErrMsg();
-                    _error.AppendToDetailMsg( "Missing attribute value[s].\n" );
-                    // recoverable error
-                    _error.GreaterSeverity( SEVERITY_WARNING );
-                    return _error.severity();
+
+                    //The attribute is missing. If it's a string, use ''.
+                    if( ( !strict ) && ( attributes[i].aDesc->NonRefType() == STRING_TYPE ) ) {
+                        attributes[i].StrToVal("''", instance_set, idIncr);
+                        _error.AppendToDetailMsg("Missing required non-redefined attribute of type string added as null string.\n" );
+                        _error.GreaterSeverity( SEVERITY_INCOMPLETE );
+                        std::ostringstream oss;
+                        oss << "/* Entity #" << id <<", attribute #" << i;
+                        oss << ": a missing, required, non-redefined string; added as null string. */\n";
+                        p21Comment.append( oss.str() );
+                    } else {
+                        PrependEntityErrMsg();
+                        _error.AppendToDetailMsg( "Missing attribute value[s].\n" );
+                        // recoverable error
+                        _error.GreaterSeverity( SEVERITY_WARNING );
+                        return _error.severity();
+                    }
                 }
                 i++;
             }
