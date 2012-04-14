@@ -152,8 +152,8 @@ int main( int argc, char * argv[] ) {
     sfile.ReadExchangeFile( flnm );
     sfile.Error().PrintContents( cout );
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE )
-        exit(1);
+    if ( sfile.Error().severity() < SEVERITY_INCOMPLETE )
+        exit( EXIT_FAILURE );
 
     checkSchemaName( registry, sfile, ignoreErr );
 
@@ -169,7 +169,7 @@ int main( int argc, char * argv[] ) {
     sfile.Error().PrintContents( cout );
     cout << flnm << " written"  << endl;
 
-    if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
-        exit( 1 );
+    if( sfile.Error().severity() < SEVERITY_INCOMPLETE ) { //lower is worse
+        exit( EXIT_FAILURE );
     }
 }
