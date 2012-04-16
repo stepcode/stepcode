@@ -28,31 +28,23 @@ set(LIBSTEPCORE_SRCS
 )
 
 if(MINGW)
-	set(LIBDEPEND_SRCS
-		${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
-		${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
-	)
+    set(LIBDEPEND_SRCS
+        ${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
+    )
 endif(MINGW)
 
 if(MSVC OR BORLAND)
-	set(LIBDEPEND_SRCS
-		${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
-		${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
-		${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
-	)
-endif()
-
-if(MSVC OR BORLAND)
-	add_definitions( -DSCL_CORE_DLL_EXPORTS )
-	add_definitions( -DSCL_BASE_DLL_IMPORTS )
-	add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
-	add_definitions( -DSCL_UTILS_DLL_IMPORTS )
-	add_definitions( -DSCL_DAI_DLL_IMPORTS )
+    set(LIBDEPEND_SRCS
+        ${SCL_SOURCE_DIR}/src/cleditor/instmgr.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/mgrnode.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/dispnode.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/mgrnodearray.cc
+        ${SCL_SOURCE_DIR}/src/cleditor/needFunc.cc
+    )
 endif()
 
 SET(LIBSTEPCORE_PRIVATE_HDRS
@@ -86,8 +78,3 @@ include_directories(
 )
 
 SCL_ADDLIB(stepcore "${LIBSTEPCORE_SRCS} ${LIBDEPEND_SRCS}" "express steputils stepdai base")
-if(APPLE)
-    if(SCL_BUILD_SHARED_LIBS)
-        set_target_properties(stepcore PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
-    endif(SCL_BUILD_SHARED_LIBS)
-endif(APPLE)
