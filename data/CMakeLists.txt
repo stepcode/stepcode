@@ -110,7 +110,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
 
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
-    file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 )
+    file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 ${SCHEMA_DIR}/*.ifc )
     foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
         add_test( NAME read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
