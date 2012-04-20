@@ -842,6 +842,7 @@ void CASE_ITresolve( Case_Item item, Scope scope, Type type ) {
 void STMTresolve( Statement statement, Scope scope ) {
     Type type;
     Scope proc;
+    Statement lastCondStmt = 0; ///< used to store the previous value of currCondStmt
 
     if( !statement ) {
         return;    /* could be null statement */
@@ -871,10 +872,19 @@ void STMTresolve( Statement statement, Scope scope ) {
             STMTlist_resolve( statement->u.compound->statements, scope );
             break;
         case STMT_COND:
+            if( currCondStmt ) {
+                lastCondStmt = currCondStmt;
+            }
+            currCondStmt = statement;
             EXPresolve( statement->u.cond->test, scope, Type_Dont_Care );
             STMTlist_resolve( statement->u.cond->code, scope );
             if( statement->u.cond->otherwise ) {
                 STMTlist_resolve( statement->u.cond->otherwise, scope );
+            }
+            if( lastCondStmt ) {
+                currCondStmt = lastCondStmt;
+            } else {
+                currCondStmt = 0;
             }
             break;
         case STMT_PCALL:

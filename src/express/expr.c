@@ -286,6 +286,17 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, c
     }
 }
 
+/// evaluate the test for the conditional statement that we're currently in
+/// if its value can be determined, return LTrue/LFalse, otherwise LUnknown
+Logical EXP_eval_conditional() {
+    Expression t = currCondStmt->u.cond->test;
+    //go through t, looking for tautologies
+    //if found, store and print warning when execution is done (per Tom T)
+    FIXME //FIXME incomplete
+
+    return Lunknown;
+}
+
 Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Expression op1 = expr->e.op1;
     Expression op2 = expr->e.op2;
@@ -328,10 +339,14 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             switch( options ) {
                 case 0:
                     /* no possible resolutions */
-                    ERRORreport_with_symbol( ERROR_undefined_attribute,
+                    if( ( currCondStmt != 0 ) && ( EXP_eval_conditional() != Lunknown) ) {
+                        return( Type_Runtime );
+                    } else {
+                        ERRORreport_with_symbol( ERROR_undefined_attribute,
                                              &op2->symbol, op2->symbol.name );
-                    resolve_failed( expr );
-                    return( Type_Bad );
+                        resolve_failed( expr );
+                        return( Type_Bad );
+                    }
                 case 1:
                     /* only one possible resolution */
                     if( dt != OBJ_VARIABLE ) {

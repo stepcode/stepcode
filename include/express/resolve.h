@@ -65,6 +65,14 @@ GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_circular_reference    INITIALLY( ERROR_
 GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_attribute   INITIALLY( ERROR_none );
 GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_group       INITIALLY( ERROR_none );
 
+/** If we're inside a conditional statement (within a function, procedure, etc)
+ *  then this variable points to that statement. Currently the only use is to
+ *  suppress errors when the test in an IF...ENDIF always evaluates one way.
+ *  Set within STMTresolve().
+ *  \sa STMTresolve
+ */
+GLOBAL SCL_EXPRESS_EXPORT Statement currCondStmt INITIALLY(0);
+
 #undef GLOBAL
 #undef INITIALLY
 
