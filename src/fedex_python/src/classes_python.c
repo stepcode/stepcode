@@ -2275,7 +2275,7 @@ printEnumAggrCrBody( FILE * lib, const Type type ) {
 }
 
 void
-TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
+TYPEprint_init( const Type type, FILES * files, Schema schema ) {
 }
 
 /* print name, fundamental type, and description initialization function
