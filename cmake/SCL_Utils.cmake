@@ -47,11 +47,11 @@ ENDMACRO( DEFINE_DLL_IMPORTS tgt libs )
 # EXCLUDE_FROM_ALL cannot be set on targets that are to be installed,
 # so either test the target or install it - but not both
 MACRO(EXCLUDE_OR_INSTALL target dest arg_3 )
-    if( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+    if( NOT ( ( SCL_ENABLE_TESTING ) AND ( "${arg_3}" STREQUAL "TESTABLE" ) ) )
         INSTALL(TARGETS ${target} DESTINATION ${dest})
-    else( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+    else( NOT ( ( SCL_ENABLE_TESTING ) AND ( "${arg_3}" STREQUAL "TESTABLE" ) ) )
         set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
-    endif( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+    endif( NOT ( ( SCL_ENABLE_TESTING ) AND ( "${arg_3}" STREQUAL "TESTABLE" ) ) )
 ENDMACRO(EXCLUDE_OR_INSTALL target dest arg_3 )
 
 #SCL_ADDEXEC( execname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
