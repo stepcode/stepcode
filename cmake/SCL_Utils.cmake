@@ -1,7 +1,7 @@
 
 MACRO(DEFINE_DLL_EXPORTS libname)
     IF( MSVC OR BORLAND )
-        if( ${libname} MATCHES "SDAI_.*" )
+        if( ${libname} MATCHES "sdai_.*" )
             set( export "SCL_SCHEMA_DLL_EXPORTS" )
         else()
             STRING(REGEX REPLACE "lib" "" shortname "${libname}")
