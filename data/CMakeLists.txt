@@ -1,12 +1,3 @@
-
-#this sets a property so that the target doesn't get built by 'make' or 'make all'
-#useful when testing generation of schema code/compiling schem libs/etc
-FUNCTION( TESTABLE_TARGET target )
-    if(SCL_ENABLE_TESTING)
-        set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
-    endif()
-ENDFUNCTION( TESTABLE_TARGET )
-
 # To build one or more schemas, configure with 
 # 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
@@ -63,11 +54,11 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         WORKING_DIRECTORY ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
-    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai stepcore express stepeditor steputils base" )
+    # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
+    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai stepcore express stepeditor steputils base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    TESTABLE_TARGET( ${PROJECT_NAME} )
 
     add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -87,11 +78,10 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if(MSVC OR BORLAND)
         set( WIN_EXTRA_SRCS ${SCL_SOURCE_DIR}/src/fedex_plus/xgetopt.cc )
     endif()
-    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc ${WIN_EXTRA_SRCS}" "${PROJECT_NAME}" )
+    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc ${WIN_EXTRA_SRCS}" "${PROJECT_NAME}" "TESTABLE" )
     add_dependencies( p21read_${PROJECT_NAME} version_string )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    TESTABLE_TARGET( p21read_${PROJECT_NAME} )
 
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )

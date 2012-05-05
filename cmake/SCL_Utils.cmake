@@ -1,4 +1,5 @@
 
+# set compile definitions for dll exports on windows
 MACRO(DEFINE_DLL_EXPORTS libname)
     IF( MSVC OR BORLAND )
         if( ${libname} MATCHES "sdai_.*" )
@@ -19,6 +20,7 @@ MACRO(DEFINE_DLL_EXPORTS libname)
     ENDIF( MSVC OR BORLAND )
 ENDMACRO(DEFINE_DLL_EXPORTS libname)
 
+# set compile definitions for dll imports on windows
 MACRO( DEFINE_DLL_IMPORTS tgt libs )
     IF( MSVC OR BORLAND )
         get_target_property(defs ${tgt} COMPILE_DEFINITIONS )
@@ -39,13 +41,30 @@ MACRO( DEFINE_DLL_IMPORTS tgt libs )
     ENDIF( MSVC OR BORLAND )
 ENDMACRO( DEFINE_DLL_IMPORTS tgt libs )
 
+#EXCLUDE_OR_INSTALL(target destination ARGV3)
+# installs ${target} in ${destination} unless testing is enabled AND ${arg_3} == "TESTABLE",
+# in which case the EXCLUDE_FROM_ALL property is set for testing.
+# EXCLUDE_FROM_ALL cannot be set on targets that are to be installed,
+# so either test the target or install it - but not both
+MACRO(EXCLUDE_OR_INSTALL target dest arg_3 )
+    if( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+        INSTALL(TARGETS ${target} DESTINATION ${dest})
+    else( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+        set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
+    endif( NOT ( ( SCL_ENABLE_TESTING ) AND ( ${arg_3} STREQUAL "TESTABLE" ) ) )
+ENDMACRO(EXCLUDE_OR_INSTALL target dest arg_3 )
+
+#SCL_ADDEXEC( execname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
+# optional 4th argument of "TESTABLE", passed to EXCLUDE_OR_INSTALL macro
+# optional args can also be used by MSVC-specific code, but it looks like these two uses
+# will not conflict because the MSVC args must contain "STRICT"
 MACRO(SCL_ADDEXEC execname srcs libs)
     STRING(REGEX REPLACE " " ";" srcslist "${srcs}")
     STRING(REGEX REPLACE " " ";" libslist "${libs}")
     add_executable(${execname} ${srcslist})
     target_link_libraries(${execname} ${libslist})
     DEFINE_DLL_IMPORTS(${execname} "${libslist}")  #add import definitions for all libs that the executable is linked to
-    INSTALL(TARGETS ${execname} DESTINATION bin)
+    EXCLUDE_OR_INSTALL( ${execname} "bin" "${ARGV3}" )
     # Enable extra compiler flags if local executables and/or global options dictate
     SET(LOCAL_COMPILE_FLAGS "")
     FOREACH(extraarg ${ARGN})
@@ -58,6 +77,10 @@ MACRO(SCL_ADDEXEC execname srcs libs)
     ENDIF(LOCAL_COMPILE_FLAGS)
 ENDMACRO(SCL_ADDEXEC execname srcs libs)
 
+#SCL_ADDLIB( libname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
+# optional 4th argument of "TESTABLE", passed to EXCLUDE_OR_INSTALL macro
+# optional args can also be used by MSVC-specific code, but it looks like these two uses
+# will not conflict because the MSVC args must contain "STRICT"
 MACRO(SCL_ADDLIB libname srcs libs)
   STRING(REGEX REPLACE " " ";" srcslist "${srcs}")
   STRING(REGEX REPLACE " " ";" libslist1 "${libs}")
@@ -70,7 +93,7 @@ MACRO(SCL_ADDLIB libname srcs libs)
           DEFINE_DLL_IMPORTS(${libname} "${libslist}" )
       endif(NOT ${libs} MATCHES "NONE")
       SET_TARGET_PROPERTIES(${libname} PROPERTIES VERSION ${SCL_ABI_VERSION} SOVERSION ${SCL_ABI_SOVERSION} )
-      INSTALL(TARGETS ${libname} DESTINATION lib)
+      EXCLUDE_OR_INSTALL( ${libname} "lib" "${ARGV3}" )
     if(APPLE)
         set_target_properties(${libname} PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
     endif(APPLE)
@@ -91,7 +114,7 @@ MACRO(SCL_ADDLIB libname srcs libs)
           # http://www.cmake.org/Wiki/CMake_FAQ#How_do_I_make_my_shared_and_static_libraries_have_the_same_root_name.2C_but_different_suffixes.3F
           SET_TARGET_PROPERTIES(${libname}-static PROPERTIES PREFIX "lib")
       ENDIF(WIN32)
-      INSTALL(TARGETS ${libname}-static DESTINATION lib)
+      EXCLUDE_OR_INSTALL( ${libname}-static "lib" "${ARGV3}" )
     if(APPLE)
         set_target_properties(${libname}-static PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
     endif(APPLE)
