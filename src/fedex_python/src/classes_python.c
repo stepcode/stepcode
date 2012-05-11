@@ -1192,7 +1192,6 @@ STATEMENTlist_out( Linked_List stmts, int indent_level, FILE *file ) {
 ******************************************************************/
 void
 ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE *file) {
-      fprintf(stdout, "on est dedan!!");
       int i;  /* trusty temporary */
         switch( TYPEis( e->type ) ) {
             case integer_:
