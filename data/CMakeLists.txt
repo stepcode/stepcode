@@ -1,12 +1,3 @@
-
-#this sets a property so that the target doesn't get built by 'make' or 'make all'
-#useful when testing generation of schema code/compiling schem libs/etc
-FUNCTION( TESTABLE_TARGET target )
-    if(SCL_ENABLE_TESTING)
-        set_target_properties( ${target} PROPERTIES EXCLUDE_FROM_ALL ON )
-    endif()
-ENDFUNCTION( TESTABLE_TARGET )
-
 # To build one or more schemas, configure with 
 # 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
@@ -63,24 +54,11 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         WORKING_DIRECTORY ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
-    if(MSVC OR BORLAND)
-        add_definitions( -DSCL_SCHEMA_DLL_EXPORTS )
-        add_definitions( -DSCL_BASE_DLL_IMPORTS )
-        add_definitions( -DSCL_EXPRESS_DLL_IMPORTS )
-        add_definitions( -DSCL_UTILS_DLL_IMPORTS )
-        add_definitions( -DSCL_DAI_DLL_IMPORTS )
-        add_definitions( -DSCL_CORE_DLL_IMPORTS )
-        add_definitions( -DSCL_EDITOR_DLL_IMPORTS )
-    endif()
-    add_library( ${PROJECT_NAME} SHARED ${FEDEX_OUT} )
-    target_link_libraries(${PROJECT_NAME} stepdai stepcore express stepeditor steputils base )
+    # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
+    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai stepcore express stepeditor steputils base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    if(APPLE)
-        set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
-    endif(APPLE)
-    TESTABLE_TARGET( ${PROJECT_NAME} )
 
     add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -98,15 +76,12 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
     if(MSVC OR BORLAND)
-        add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc ${SCL_SOURCE_DIR}/src/fedex_plus/xgetopt.cc )
-    else()
-        add_executable( p21read_${PROJECT_NAME} ${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc )
+        set( WIN_EXTRA_SRCS ${SCL_SOURCE_DIR}/src/fedex_plus/xgetopt.cc )
     endif()
+    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc ${WIN_EXTRA_SRCS}" "${PROJECT_NAME}" "TESTABLE" )
     add_dependencies( p21read_${PROJECT_NAME} version_string )
-    target_link_libraries( p21read_${PROJECT_NAME} ${PROJECT_NAME} )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    TESTABLE_TARGET( p21read_${PROJECT_NAME} )
 
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
