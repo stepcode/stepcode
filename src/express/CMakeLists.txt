@@ -80,21 +80,9 @@ add_definitions( -DYY_NO_UNISTD_H )
 endif()
 
 if(BORLAND)
-add_definitions( -D__STDC__ )
-add_definitions( -DSCL_BASE_DLL_IMPORTS )
+    add_definitions( -D__STDC__ )
 endif()
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "base")
 
-if(APPLE)
-    if(SCL_BUILD_SHARED_LIBS)
-        set_target_properties(express PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
-    endif(SCL_BUILD_SHARED_LIBS)
-endif(APPLE)
-
 SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_EXTRA_SOURCES}" express)
-
-if(MSVC OR BORLAND)
-set_target_properties(express PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_EXPORTS)
-set_target_properties("check-express" PROPERTIES COMPILE_DEFINITIONS SCL_EXPRESS_DLL_IMPORTS)
-endif()
