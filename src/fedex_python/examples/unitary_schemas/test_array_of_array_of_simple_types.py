@@ -11,33 +11,33 @@ from SCL.TypeChecker import check_type
 from SCL.Builtin import *
 from SCL.Rules import *
 
-schema_name = 'test_array'
+schema_name = 'test_array_of_array_of_simple_types'
 
 schema_scope = sys.modules[__name__]
 
 
 ####################
- # ENTITY point #
+ # ENTITY transformation #
 ####################
-class point(BaseEntityClass):
-	'''Entity point definition.
+class transformation(BaseEntityClass):
+	'''Entity transformation definition.
 
-	:param coords
-	:type coords:ARRAY(1,3,'REAL', scope = schema_scope)
+	:param rotation
+	:type rotation:ARRAY(1,3,ARRAY(1,3,'REAL', scope = schema_scope))
 	'''
-	def __init__( self , coords, ):
-		self.coords = coords
+	def __init__( self , rotation, ):
+		self.rotation = rotation
 
 	@apply
-	def coords():
+	def rotation():
 		def fget( self ):
-			return self._coords
+			return self._rotation
 		def fset( self, value ):
 		# Mandatory argument
 			if value==None:
-				raise AssertionError('Argument coords is mantatory and can not be set to None')
-			if not check_type(value,ARRAY(1,3,'REAL', scope = schema_scope)):
-				self._coords = ARRAY(value)
+				raise AssertionError('Argument rotation is mantatory and can not be set to None')
+			if not check_type(value,ARRAY(1,3,ARRAY(1,3,'REAL', scope = schema_scope))):
+				self._rotation = ARRAY(value)
 			else:
-				self._coords = value
+				self._rotation = value
 		return property(**locals())

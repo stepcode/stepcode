@@ -29,43 +29,41 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from math import *
-PI = pi #in EXPRESS, PI is uppercase
-
-def EvalDerivedAttribute(class_instance, str_expr):
+class Type(object):
     '''
-    This functions tries to evaluate EXPRESS math expr.
-    For instance in the following example:
-    ==
-    ENTITY circle;
-      centre : point;
-      radius : REAL;
-      axis : vector;
-    DERIVE
-      area : REAL := PI*radius**2;
-      perimeter : REAL := 2.0*PI*radius;
-
-    END_ENTITY;
-    ==
-    The following string should be passed to EvalExpr:
-    'PI*radius**2'
+    A type can be defined from its name and scope
+    Looking into the scope dict returns the python type class.
+    This is the base class for aggregated data types or constructed data types
     '''
-    # first, try to find class paramters
-    # in the previous example, we should replace radius with self.radius before eval'ing expr
-    props = []
-    for prop in dir(class_instance):
-        if not prop.startswith("_"): #means prop is an item that might be considered
-            props.append(prop)
-    for item in props:
-        str_expr = str_expr.replace(item,"class_instance.%s"%item)
-    # after that step, the expression should be:
-    # PI*class_instance.radius*class_instance.radius
-    # this can be evaluated with the eval function
-    # CAREFUL: eval is known to be unsafe. This should be changed in the future
-    # (using a parser, or simpy for instance)
-    try:
-        return eval(str_expr.lower())
-    except:
-        print 'Error evaluating expression'
-        return None
+    def __init__(self, typedef, scope):
+        self._scope = scope
+        self._typedef = typedef
+        
+    def get_scope(self):
+        return self._scope
+    
+    def get_type(self):
+        if type(self._typedef) == str:
+            if self._scope == None:
+                raise AssertionError('No scope defined for this type')
+            elif vars(self._scope).has_key(self._typedef):
+                return vars(self._scope)[self._typedef]
+            else:
+                raise TypeError("Type '%s' is not defined in given scope"%self._typedef)
+        else:
+            return self._typedef
 
+class Aggregate:
+    '''
+    This is an abstract class. ARRAY, LIST, SET and BAG inherit from this class
+    '''
+    pass
+
+if __name__ == "__main__":
+    import sys
+    scp = sys.modules[__name__]
+    class line:
+        pass
+    new_type = Type('lie',scp)
+    print new_type.get_type()
+    

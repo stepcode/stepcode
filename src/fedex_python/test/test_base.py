@@ -29,6 +29,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import unittest
 
 from SCL.SimpleDataTypes import *
@@ -59,6 +60,11 @@ class TestINTEGER(unittest.TestCase):
         a = INTEGER(5)
         self.assertTrue(type(a) == INTEGER)
     
+    def test_inherit_from_NUMBER(self):
+        a = INTEGER(6)
+        self.assertTrue(isinstance(a,INTEGER))
+        self.assertTrue(isinstance(a,NUMBER))
+
     def test_INTEGER_ops(self):
         a = INTEGER(2)
         b = INTEGER(3)
@@ -99,6 +105,11 @@ class TestREAL(unittest.TestCase):
         a = REAL(5)
         self.assertTrue(type(a) == REAL)
     
+    def test_inherit_from_NUMBER(self):
+        a = REAL(4.5)
+        self.assertTrue(isinstance(a,REAL))
+        self.assertTrue(isinstance(a,NUMBER))
+
     def test_REAL_ops(self):
         a = REAL(1.5)
         b = REAL(2)
@@ -136,7 +147,7 @@ class TestBOOLEAN(unittest.TestCase):
         self.assertFalse(b)
         
 #
-# AggregationDataTypeSimple
+# AggregationDataType
 #
 class TestARRAY(unittest.TestCase):
     '''
@@ -160,6 +171,12 @@ class TestARRAY(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
     
+    def test_create_array_from_type_string(self):
+        # the scope is the current module
+        scp = sys.modules[__name__]
+        a = ARRAY(1,7,'REAL',scope = scp)
+        a[2] = REAL(2.3)
+
     def test_array_bounds(self):
         a = ARRAY(3,8,REAL)
         try:
@@ -191,7 +208,7 @@ class TestARRAY(unittest.TestCase):
         a = ARRAY(1,4,REAL,UNIQUE=True)
         a[3] = REAL(4)
         try:
-            a[3] = REAL(4)
+            a[4] = REAL(4)
         except AssertionError:
             pass
         except e:
@@ -216,10 +233,22 @@ class TestARRAY(unittest.TestCase):
         b = ARRAY(1,3,REAL,OPTIONAL=True)
         b[2] = REAL(5)
         b[3] = REAL(5)
-        
-#
-# AggregationDataTypeSimple
-#
+    
+    def test_array_of_array_of_real(self):
+        '''
+        create a 3*3 identify matrix
+        '''
+        my_matrix = ARRAY(1,3,ARRAY(1,3,REAL))
+        my_matrix[1] = ARRAY(1,3,REAL)
+        my_matrix[2] = ARRAY(1,3,REAL)
+        my_matrix[3] = ARRAY(1,3,REAL)
+        my_matrix[1][1] = REAL(1.0)
+        my_matrix[2][2] = REAL(1.0)
+        my_matrix[3][3] = REAL(1.0)
+        my_matrix[1][2] = my_matrix[1][2] = REAL(0.0)
+        my_matrix[1][3] = my_matrix[3][1] = REAL(0.0)
+        my_matrix[2][3] = my_matrix[3][2] = REAL(0.0)
+
 class TestLIST(unittest.TestCase):
     '''
     LIST test
@@ -296,24 +325,90 @@ class TestLIST(unittest.TestCase):
             self.fail('Unexpected exception thrown:', e)
         else:
             self.fail('ExpectedException not thrown')
-        
-#
-# TypeChecker
-#
-class TestTypeChecker(unittest.TestCase):
-    def test_match_type(self):
-        class P:
-            pass
-        p = P()
-        match_type = check_type(p,P) #should return True
-        self.assertTrue(match_type)
     
-    def test_type_dontmatch(self):
-        class P:
-            pass
-        p = P()
+class TestBAG(unittest.TestCase):
+    '''
+    BAG test
+    '''
+    def test_create_bounded_bag(self):
+        BAG(1,7,REAL)
+        BAG(1,5,INTEGER)
+        BAG(0,0,REAL)
+    
+    def test_create_unbounded_bag(self):
+        a = BAG(0,None,REAL)
+    
+    def test_fill_bounded_bag(self):
+        b = BAG(1,3,REAL)
+        b.add(REAL(1.0))
+        b.add(REAL(2.0))
+        b.add(REAL(3.0))
+        # the bag is full, trying to add other item
+        # will raise an exception
         try:
-            check_type(3,P)
+            b.add(REAL(4.0))
+        except AssertionError:
+             pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_fill_unbounded_bag(self):
+        '''
+        Fill an unbounded bag with one thousand reals
+        This should not raise any exception
+        '''
+        b = BAG(0,None,REAL)
+        for i in range(1000):
+            b.add(REAL(1.0))
+
+class TestSET(unittest.TestCase):
+    '''
+    SET test
+    '''
+    def test_create_bounded_set(self):
+        SET(1,7,REAL)
+        SET(1,5,INTEGER)
+        SET(0,0,REAL)
+
+    def test_create_unbounded_set(self):
+        a = SET(0,None,REAL)
+
+    def test_fill_bounded_set(self):
+        b = SET(1,3,REAL)
+        b.add(REAL(1.0))
+        b.add(REAL(2.0))
+        b.add(REAL(3.0))
+        # the bag is full, trying to add other item
+        # will raise an exception
+        try:
+            b.add(REAL(4.0))
+        except AssertionError:
+             pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
+
+    def test_fill_bounded_set(self):
+        # create a set with one value allowed
+        c = SET(0,0,REAL)
+        # fill in with the same value n times
+        # the total size of the set should not increase
+        for i in range(1000):
+            c.add(REAL(1.0))
+# 
+# Constructed Data Types
+#
+class TestENUMERATION(unittest.TestCase):
+    def test_simple_enum(self):
+        scp = sys.modules[__name__]
+        ahead_or_behind = ENUMERATION('ahead','behind',scope=scp)
+        check_type(ahead,ahead_or_behind)
+        check_type(behind,ahead_or_behind)
+        try:
+            check_type("some string",ahead_or_behind)
         except TypeError:
             pass
         except e:
@@ -321,8 +416,42 @@ class TestTypeChecker(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
 
-    def test_check_enum_type(self):
-        enum = ENUMERATION(["my","string"])
+class ob1(object):
+    pass
+class ob2(object):
+    pass
+class TestSELECT(unittest.TestCase):
+    def test_select(self):
+        scp = sys.modules[__name__]
+        select_typedef = SELECT('ob1','ob2',scope = scp)
+        ob1_instance = ob1()
+        ob2_instance = ob2()
+        # test that line_instance is in enum type
+        check_type(ob1_instance, select_typedef)
+        check_type(ob2_instance,select_typedef)
+        # this one should raise an exception:
+        try:
+            check_type(REAL(3.4),select_typedef)
+        except TypeError:
+            pass
+        except e:
+            self.fail('Unexpected exception thrown:', e)
+        else:
+            self.fail('ExpectedException not thrown')
 
-unittest.main()
+def suite():
+   suite = unittest.TestSuite()
+   suite.addTest(unittest.makeSuite(TestINTEGER))
+   suite.addTest(unittest.makeSuite(TestREAL))
+   suite.addTest(unittest.makeSuite(TestARRAY))
+   suite.addTest(unittest.makeSuite(TestLIST))
+   suite.addTest(unittest.makeSuite(TestBAG))
+   suite.addTest(unittest.makeSuite(TestSET))
+   suite.addTest(unittest.makeSuite(TestENUMERATION))
+   suite.addTest(unittest.makeSuite(TestSELECT))
+   return suite
+
+if __name__ == '__main__':
+    unittest.main()
+
 

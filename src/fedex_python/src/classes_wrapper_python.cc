@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "complexSupport.h"
+
 extern int corba_binding;
 
 void use_ref( Schema, Express, FILES * );
@@ -142,6 +143,8 @@ void
 SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
             ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
+    Linked_List function_list = SCOPEget_functions(scope);
+    Linked_List rule_list = SCOPEget_rules(scope);
     DictionaryEntry de;
     Type i;
     int redefs = 0;// index = 0;
@@ -207,9 +210,21 @@ SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
           ENTITYPrint( e, files, schema );
           e->search_id = PROCESSED;
       }
-    LISTod;   
-    
+    LISTod;
     LISTfree( list );
+    
+    // process each function. This must be done *before* typedefs are defined
+    LISTdo( function_list, f, Function );
+        FUNCPrint( f, files, schema );
+    LISTod;
+    LISTfree( function_list );
+    
+    // process each rule. This must be done *before* typedefs are defined
+    LISTdo( rule_list, r, Rule );
+        RULEPrint( r, files, schema );
+    LISTod;
+    LISTfree( rule_list );
+    
 }
 
 
@@ -338,12 +353,22 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
         return;
     }
     //fprintf( libfile, "/* %cId$  */ \n", '$' );
+    fprintf(libfile,"import sys\n");
+    fprintf(libfile,"\n");
     fprintf(libfile,"from SCL.SCLBase import *\n");
     fprintf(libfile,"from SCL.SimpleDataTypes import *\n");
     fprintf(libfile,"from SCL.ConstructedDataTypes import *\n");
     fprintf(libfile,"from SCL.AggregationDataTypes import *\n");
     fprintf(libfile,"from SCL.TypeChecker import check_type\n");
-    fprintf(libfile,"from SCL.Expr import *\n");
+    fprintf(libfile,"from SCL.Builtin import *\n");
+    fprintf(libfile,"from SCL.Rules import *\n");
+    
+    /********* export schema name *******/
+    fprintf(libfile,"\nschema_name = '%s'\n\n",SCHEMAget_name(schema));
+    
+    /******** export schema scope *******/
+    fprintf(libfile,"schema_scope = sys.modules[__name__]\n\n");
+    
     
     /**********  do the schemas ***********/
 

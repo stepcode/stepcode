@@ -27,6 +27,25 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include "classes.h"
 
+#ifdef __STDC__
+#include <stdarg.h>
+#else
+#include <varargs.h>
+#endif
+
+#define EXPRESSION_out(e,p,f) EXPRESSION__out(e,p,OP_UNKNOWN,f)
+#define EXPRESSIONop2_out(oe,string,paren,pad,f) \
+        EXPRESSIONop2__out(oe,string,paren,pad,OP_UNKNOWN,f)
+#define EXPRESSIONop_out(oe,paren,f) EXPRESSIONop__out(oe,paren,OP_UNKNOWN,f)
+
+#define ATTRIBUTE_INITIALIZER_out(e,p,f) ATTRIBUTE_INITIALIZER__out(e,p,OP_UNKNOWN,f)
+#define ATTRIBUTE_INITIALIZERop2_out(oe,string,paren,pad,f) \
+        ATTRIBUTE_INITIALIZERop2__out(oe,string,paren,pad,OP_UNKNOWN,f)
+#define ATTRIBUTE_INITIALIZERop_out(oe,paren,f) ATTRIBUTE_INITIALIZERop__out(oe,paren,OP_UNKNOWN,f)
+
+#define PAD 1
+#define NOPAD   0
+
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
@@ -566,7 +585,7 @@ process_aggregate (FILE *file, Type t) {
           else {
               char * array_base_type = GetAttrTypeName(TYPEget_base_type(t));
               //fprintf(file,"%s)",array_base_type);
-              fprintf(file,"'%s')",array_base_type);
+              fprintf(file,"'%s', scope = schema_scope)",array_base_type);
           }
 }
 
@@ -576,7 +595,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ], parent_attrnm[BUFSIZ];
     char * attr_type;
     bool generate_constructor = true; //by default, generates a python constructor
-    bool inheritance = false;
+    bool single_inheritance = false;
+    bool multiple_inheritance = false;
     Type t;
     Linked_List list;
     int num_parent = 0;
@@ -595,7 +615,6 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     list = ENTITYget_supertypes( entity );
     num_parent = 0;
     if( ! LISTempty( list ) ) {
-        inheritance = true;
         LISTdo( list, e, Entity )
         /*  if there\'s no super class yet,
             or the super class doesn\'t have any attributes
@@ -605,13 +624,22 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         else {fprintf(file,"%s",ENTITYget_name(e));}
         num_parent++;
         LISTod;
+        if (num_parent==1) {
+            single_inheritance = true;
+            multiple_inheritance = false;
+        }
+        else {
+            single_inheritance = false;
+            multiple_inheritance = true;
+        }
     }
     else {
-        //inherit from BaeEntityClass by default, in order to enable decorators
+        //inherit from BaseEntityClass by default, in order to enable decorators
         // as well as advanced __repr__ feature
         fprintf(file,"BaseEntityClass");
     }
     fprintf(file,"):\n");
+    
     /*
     * Write docstrings in a Sphinx compliant manner
     */
@@ -626,7 +654,13 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         fprintf(file,"\n");
     }
     else {
-        fprintf(file,"%s\n",GetAttrTypeName(t));
+        if (TYPEget_name(t) == NULL) {
+            attr_type = GetAttrTypeName(t);
+        }
+        else {
+        attr_type = TYPEget_name(t);
+        }
+        fprintf(file,"%s\n",attr_type);
     }
     attr_count_tmp++;
     LISTod
@@ -645,7 +679,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         attr_count_tmp++;
     }  
     LISTod
-    if ((attr_count_tmp == 0) && !inheritance) {
+    if ((attr_count_tmp == 0) && !single_inheritance && !multiple_inheritance) {
         fprintf(file,"\t# This class does not define any attribute.\n");
         fprintf(file,"\tpass\n");
         generate_constructor = false;
@@ -665,10 +699,13 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
             /*  search attribute names for superclass */
-            LISTdo(ENTITYget_attributes( e ), v2, Variable)
+            LISTdo(ENTITYget_all_attributes( e ), v2, Variable)
                 generate_attribute_name( v2, parent_attrnm );
-                fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
-                index_attribute++;
+                //fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                if (!VARis_derived(v2) && !VARget_inverse(v2)) {
+                    fprintf(file,"inherited%i__%s , ",index_attribute,parent_attrnm);
+                    index_attribute++;
+                }
             LISTod
         num_parent++;
         LISTod;
@@ -683,14 +720,20 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     if (generate_constructor) fprintf(file," ):\n");
     /** if inheritance, first init base class **/
     list = ENTITYget_supertypes( entity );
+    index_attribute = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
         fprintf(file,"\t\t%s.__init__(self , ",ENTITYget_name(e));
         /*  search and write attribute names for superclass */
-            LISTdo(ENTITYget_attributes( e ), v2, Variable)
+            LISTdo(ENTITYget_all_attributes( e ), v2, Variable)
                 generate_attribute_name( v2, parent_attrnm );
-                fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                //fprintf(file,"%s__%s , ",ENTITYget_name(e),parent_attrnm);
+                if (!VARis_derived(v2) && !VARget_inverse(v2)) {
+                    fprintf(file,"inherited%i__%s , ",index_attribute,parent_attrnm);
+                    index_attribute++;
+                }
             LISTod
+                num_parent++;
         fprintf(file,")\n"); //separator for parent classes names
         LISTod;
     }
@@ -713,16 +756,24 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         fprintf(file,"\t\t\treturn self._%s\n",attrnm);
     }
     else {
-        // expression initializer
-        char * expression_string = EXPRto_string( v->initializer );
-        fprintf(file,"\t\t\treturn EvalDerivedAttribute(self,'''%s''')\n",expression_string);
-        free( expression_string );
+        // evaluation of attribute
+        fprintf(file,"\t\t\tattribute_eval = ");
+        // outputs expression initializer
+        ATTRIBUTE_INITIALIZER_out(v->initializer,1,file);
+        // then returns the value
+        fprintf(file,"\n\t\t\treturn attribute_eval\n");        
     }
     // fset
     fprintf(file,"\t\tdef fset( self, value ):\n");
     t = VARget_type( v );
     
-    attr_type = GetAttrTypeName(t);
+    // find attr type name
+    if (TYPEget_name(t) == NULL) {
+        attr_type = GetAttrTypeName(t);
+    }
+    else {
+    attr_type = TYPEget_name(t);
+    }
    
     if (!VARis_derived(v) && !VARget_inverse(v)) {
         // if the argument is not optional
@@ -755,12 +806,15 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
              fprintf(file, "\t\t\t\tself._%s = ",attrnm);
              print_aggregate_type(file,t);
              fprintf(file,"(value)\n");
-             fprintf(file, "\t\t\telse:\n\t");
          }
         else {
             fprintf(file, "\t\t\t\tself._%s = %s(value)\n",attrnm,attr_type);
-            fprintf(file, "\t\t\telse:\n\t");
         }
+        if (VARget_optional(v)) {
+            fprintf(file,"\t\t\t\telse:\n");
+            fprintf(file,"\t\t\t\t\tself._%s = value\n",attrnm);
+        }
+        fprintf(file, "\t\t\telse:\n\t");
         fprintf(file,"\t\t\tself._%s = value\n",attrnm);
     }
     // if the attribute is derived, prevent fset to attribute to be set
@@ -775,6 +829,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     fprintf(file,"\t\treturn property(**locals())\n");
     LISTod
     }
+    // before exiting, process where rules
+    WHEREPrint( entity->where, 0, file );
 }
 
 int
@@ -883,6 +939,905 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
 }
 
 /******************************************************************
+ ** Procedure:  RULEPrint
+ ** Parameters:  Rule *rule --  rule being processed
+ **     FILE* file  --  file being written to
+ ** Returns:
+ ** Description:  drives the functions for printing out code in lib
+ **  and initialization files for a specific rule
+ ** Status:  started 2012/3/1
+ ******************************************************************/
+void
+RULEPrint(Rule rule, FILES * files, Schema schema) {
+    char * n = RULEget_name( rule );
+    char * param_name;
+    fprintf( files->lib, "\n####################\n # RULE %s #\n####################\n", n );
+    /* write function definition */
+    fprintf(files->lib, "%s = Rule()\n",n);
+    /* write parameter list */
+    //LISTdo(RULEget_parameters( rule ), v, Variable)
+    //    param_name = EXPRto_string( VARget_name( v ) );
+    //    fprintf(files->lib, "%s,",param_name);
+    //LISTod
+    
+    //close function prototype
+    //fprintf(files->lib,"):\n");
+    /* so far, just raise "not implemented" */
+    //fprintf(files->lib, "\traise NotImplemented('Function %s not implemented)')\n",n);
+}
+
+
+/******************************************************************
+ ** Procedure:  FUNCPrint
+ ** Parameters:  Function *function --  function being processed
+ **     FILE* file  --  file being written to
+ ** Returns:
+ ** Description:  drives the functions for printing out code in lib
+ **  and initialization files for a specific function
+ ** Status:  started 2012/3/1
+ ******************************************************************/
+void
+FUNCPrint(Function function, FILES * files, Schema schema) {
+    char * function_name = FUNCget_name( function );
+    char * param_name;
+    Type t, return_type = FUNCget_return_type( function );
+    fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", function_name );
+    
+    /* write function definition */
+    fprintf(files->lib,"def %s(",function_name);
+    
+    /* write parameter list */
+    LISTdo(FUNCget_parameters( function ), v, Variable)
+      param_name = EXPRto_string( VARget_name( v ) );
+      t = VARget_type( v );
+      fprintf(files->lib, "%s,",param_name);
+    LISTod
+    fprintf(files->lib,"):\n");
+    
+    // print function docstring
+    fprintf(files->lib,"\t'''\n");
+    LISTdo(FUNCget_parameters( function ), v, Variable)
+      param_name = EXPRto_string( VARget_name( v ) );
+      t = VARget_type( v );
+      fprintf(files->lib, "\t:param %s\n",param_name);
+      fprintf(files->lib, "\t:type %s:%s\n",param_name, GetAttrTypeName(t));
+    LISTod
+    fprintf(files->lib,"\t'''\n");
+    
+    // process statements. The indent_level is set to 1 (the number of tabs \t)
+    STATEMENTSPrint(function->u.proc->body, 1, files->lib);
+
+}
+
+void
+STATEMENTSPrint( Linked_List stmts , int indent_level, FILE *file) {
+    LISTdo( stmts, stmt, Statement )
+    STATEMENTPrint(stmt, indent_level, file);
+    LISTod 
+}
+
+void python_indent(FILE *file, int indent_level) {
+    int i;
+    for(i=0;i<indent_level;i++) {
+        fprintf(file,"\t");
+    }
+}
+
+void
+STATEMENTPrint(Statement s, int indent_level, FILE *file) {
+        bool first_time = true;
+        python_indent(file,indent_level);
+        if( !s ) {  /* null statement */
+            fprintf(file, "pass");
+            return;
+        }
+        switch( s->type ) {
+            case STMT_ASSIGN:
+                EXPRESSION_out( s->u.assign->lhs, 0, file );
+                fprintf(file," = ");
+                EXPRESSION_out( s->u.assign->rhs, 0, file );
+                fprintf(file,"\n");
+                break;
+            case STMT_CASE:
+                CASEout( s->u.Case, indent_level, file );
+                break;
+            case STMT_RETURN:
+                fprintf(file, "return ");
+                if( s->u.ret->value ) {
+                    EXPRESSION_out( s->u.ret->value, 0, file );
+                }
+                fprintf(file, "\n" );
+                break;
+            case STMT_LOOP:
+                LOOPpyout( s->u.loop, indent_level ,file);
+                break;
+            case STMT_ALIAS:
+                fprintf(file, "%s = %s\n",s->symbol.name,
+                s->u.alias->variable->name->symbol.name );
+                STATEMENTlist_out( s->u.alias->statements, indent_level , file );
+                break;
+            case STMT_SKIP:
+                fprintf(file, "break\n"); // @TODO: is that correct?
+                break;
+            case STMT_ESCAPE:
+                fprintf(file, "break\n");
+                break;
+            case STMT_COMPOUND:
+                // following line is necessary other wise indentation
+                // errors in python
+                fprintf(file, "# begin/end block\n");
+                STATEMENTlist_out( s->u.compound->statements, indent_level, file);
+                break;
+            case STMT_COND:
+                fprintf(file,"if (");
+                EXPRESSION_out( s->u.cond->test, 0 ,file);
+                fprintf(file,"):\n");
+                STATEMENTlist_out( s->u.cond->code, indent_level+1, file );
+                if( s->u.cond->otherwise ) {
+                    python_indent(file,indent_level);
+                    fprintf(file, "else:\n");
+                    STATEMENTlist_out( s->u.cond->otherwise, indent_level+1, file );
+                }
+                break;    
+            case STMT_PCALL:
+                fprintf(file, "%s(", s->symbol.name );
+                LISTdo( s->u.proc->parameters, p, Expression )
+                if( first_time ) {
+                    first_time = false;
+                } else {
+                    fprintf(file, "," );
+                }
+                EXPRESSION_out( p, 0, file );
+                LISTod
+                fprintf(file, ")\n" );            
+        }
+}
+
+void
+CASEout( struct Case_Statement_ *c, int level, FILE *file ) {
+    int len = 0;
+    int max_indent;
+    int if_number = 0;
+    //fprintf(file, "for case in switch(");
+    //EXPRESSION_out( c->selector, 0 , file);
+    //fprintf(file,"):\n");
+    fprintf(file,"case_selector = ");
+    EXPRESSION_out(c->selector,0,file);
+    fprintf(file,"\n");
+    /* pass 2: print them */
+    LISTdo( c->cases, ci, Case_Item )
+    if( ci->labels ) {
+        LISTdo( ci->labels, label, Expression )
+        /* print label(s) */
+        //indent2 = level + exppp_continuation_indent;
+        python_indent(file,level);
+        //fprintf(file, "if case(");
+        if (if_number == 0) {
+            fprintf(file,"if ");
+            }
+        else {
+            fprintf(file,"elif");
+        }
+        fprintf(file," case_selector == ");
+        EXPRESSION_out( label, 0, file );
+        fprintf(file,":\n");
+
+        /* print action */
+        STATEMENTPrint( ci->action, level+1, file );
+        if_number++;
+        LISTod
+    } else {
+        /* print OTHERWISE */
+        //indent2 = level + exppp_continuation_indent;
+        //fprintf(files->lib,  "%*s", level, "" );
+        //python_indent(files->lib,level+1);
+        python_indent(file,level);
+        //fprintf(file,  "if case():\n" );
+        fprintf(file,  "else:\n" );
+        //fprintf(files->lib,  "%*s : ", level , "" );
+
+        /* print action */
+        STATEMENTPrint( ci->action, level +1, file );
+    }
+    LISTod
+}
+
+void
+LOOPpyout( struct Loop_ *loop, int level, FILE *file ) {
+    Variable v;
+    fprintf(file, "for ");
+
+    /* increment */
+    /*  if (loop->scope->u.incr) {*/
+    if( loop->scope ) {
+        DictionaryEntry de;
+
+        DICTdo_init( loop->scope->symbol_table, &de );
+        v = ( Variable )DICTdo( &de );
+        fprintf(file, " %s in range(", v->name->symbol.name );
+        EXPRESSION_out( loop->scope->u.incr->init, 0 ,file);
+        fprintf(file, "," );
+        EXPRESSION_out( loop->scope->u.incr->end, 0 ,file);
+        fprintf(file, "," ); /* parser always forces a "by" expr */
+        EXPRESSION_out( loop->scope->u.incr->increment, 0 ,file);
+        fprintf(file, "):\n" );
+    }
+
+    /* while */
+    if( loop->while_expr ) {
+        fprintf(file, " while " );
+        EXPRESSION_out( loop->while_expr, 0 ,file);
+    }
+
+    /* until */
+    if( loop->until_expr ) {
+        fprintf(file, " UNTIL " );
+        EXPRESSION_out( loop->until_expr, 0 ,file);
+    }
+
+    STATEMENTlist_out( loop->statements, level+1 , file );
+}
+
+void
+STATEMENTlist_out( Linked_List stmts, int indent_level, FILE *file ) {
+    LISTdo( stmts, stmt, Statement )
+    STATEMENTPrint( stmt, indent_level, file );
+    LISTod
+}
+/*****************************************************************
+** Procedure:  ATTRIBUTE_INITIALIZER__out
+** Description:  this method is almost the same as EXPRESSION__out
+** but it adds self. before each attribute identifier
+**
+******************************************************************/
+void
+ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE *file) {
+      int i;  /* trusty temporary */
+        switch( TYPEis( e->type ) ) {
+            case integer_:
+                if( e == LITERAL_INFINITY ) {
+                    fprintf(file," None ");
+                } else {
+                    fprintf(file,"%d", e->u.integer );
+                }
+                break;
+            case real_:
+                if( e == LITERAL_PI ) {
+                    fprintf(file," PI ");
+                } else if( e == LITERAL_E ) {
+                    fprintf(file," E ");;
+                } else {
+                    fprintf(file, "%g", e->u.real );
+                }
+                break;
+            case binary_:
+                fprintf(file, "%%%s", e->u.binary ); /* put "%" back */
+                break;
+            case logical_:
+            case boolean_:
+                switch( e->u.logical ) {
+                    case Ltrue:
+                        fprintf(file,"TRUE");
+                        break;
+                    case Lfalse:
+                        fprintf(file,"FALSE" );
+                        break;
+                    default:
+                        fprintf(file,"UNKNOWN" );
+                        break;
+                }
+                break;
+            case string_:
+                if( TYPEis_encoded( e->type ) ) {
+                    fprintf(file, "\"%s\"", e->symbol.name );
+                } else {
+                    fprintf(file, "'%s'", e->symbol.name );
+                }
+                break;
+            case entity_:
+            case identifier_:
+                fprintf(file, "self.%s", e->symbol.name );
+                break;
+            case attribute_:
+                fprintf(file, "%s", e->symbol.name );
+                break;
+            case enumeration_:
+                fprintf(file, "%s", e->symbol.name );
+                break;
+            case query_:
+                //fprintf(file, "QUERY ( %s <* ", e->u.query->local->name->symbol.name );
+                //EXPRESSION_out( e->u.query->aggregate, 1, files );
+                //fprintf(file, " | " );
+                //EXPRESSION_out( e->u.query->expression, 1 ,files);
+                //fprintf(file, " )" );
+                //break;
+
+                // so far we don't handle queries
+                fprintf(file, "None");
+                break;
+            case self_:
+                fprintf(file, "self" );
+                break;
+            case funcall_:
+                fprintf(file, "%s(", e->symbol.name );
+                i = 0;
+                LISTdo( e->u.funcall.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0 ,file);
+                LISTod
+                fprintf(file, ")" );
+                break;
+            case op_:
+                ATTRIBUTE_INITIALIZERop__out( &e->e, paren, previous_op, file );
+                break;
+            case aggregate_:
+                fprintf(file,"[" );
+                i = 0;
+                LISTdo( e->u.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0 , file);
+                LISTod
+                fprintf(file, "]" );
+                break;
+            case oneof_:
+                fprintf(file, "ONEOF (" );
+
+                i = 0;
+                LISTdo( e->u.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    fprintf(file, "," );
+                }
+                ATTRIBUTE_INITIALIZER_out( arg, 0, file );
+                LISTod
+
+                fprintf(file, ")" );
+                break;
+            default:
+                fprintf(file, "unknown expression, type %d", TYPEis( e->type ) );
+        }
+    }
+
+/*****************************************************************
+** Procedure:  EXPRESSION__out
+** Description:  converts an EXPRESS expression to python
+**     include, and initialization files for a specific entity class
+******************************************************************/
+void
+EXPRESSION__out( Expression e, int paren, int previous_op , FILE *file) {
+    int i;  /* trusty temporary */
+    switch( TYPEis( e->type ) ) {
+        case integer_:
+            if( e == LITERAL_INFINITY ) {
+                fprintf(file," None ");
+            } else {
+                fprintf(file,"%d", e->u.integer );
+            }
+            break;
+        case real_:
+            if( e == LITERAL_PI ) {
+                fprintf(file," PI ");
+            } else if( e == LITERAL_E ) {
+                fprintf(file," E ");;
+            } else {
+                fprintf(file, "%g", e->u.real );
+            }
+            break;
+        case binary_:
+            fprintf(file, "%%%s", e->u.binary ); /* put "%" back */
+            break;
+        case logical_:
+        case boolean_:
+            switch( e->u.logical ) {
+                case Ltrue:
+                    fprintf(file,"TRUE");
+                    break;
+                case Lfalse:
+                    fprintf(file,"FALSE" );
+                    break;
+                default:
+                    fprintf(file,"UNKNOWN" );
+                    break;
+            }
+            break;
+        case string_:
+            if( TYPEis_encoded( e->type ) ) {
+                fprintf(file, "\"%s\"", e->symbol.name );
+            } else {
+                fprintf(file, "'%s'", e->symbol.name );
+            }
+            break;
+        case entity_:
+        case identifier_:
+            fprintf(file, "%s", e->symbol.name );
+            break;
+        case attribute_:
+            fprintf(file, "%s", e->symbol.name );
+            break;
+        case enumeration_:
+            fprintf(file, "%s", e->symbol.name );
+            break;
+        case query_:
+            //fprintf(file, "QUERY ( %s <* ", e->u.query->local->name->symbol.name );
+            //EXPRESSION_out( e->u.query->aggregate, 1, files );
+            //fprintf(file, " | " );
+            //EXPRESSION_out( e->u.query->expression, 1 ,files);
+            //fprintf(file, " )" );
+            //break;
+            
+            // so far we don't handle queries
+            fprintf(file, "None");
+            break;
+        case self_:
+            fprintf(file, "self" );
+            break;
+        case funcall_:
+            fprintf(file, "%s(", e->symbol.name );
+            i = 0;
+            LISTdo( e->u.funcall.list, arg, Expression )
+            i++;
+            if( i != 1 ) {
+                fprintf(file, "," );
+            }
+            EXPRESSION_out( arg, 0 ,file);
+            LISTod
+            fprintf(file, ")" );
+            break;
+        case op_:
+            EXPRESSIONop__out( &e->e, paren, previous_op, file );
+            break;
+        case aggregate_:
+            fprintf(file,"[" );
+            i = 0;
+            LISTdo( e->u.list, arg, Expression )
+            i++;
+            if( i != 1 ) {
+                fprintf(file, "," );
+            }
+            EXPRESSION_out( arg, 0 , file);
+            LISTod
+            fprintf(file, "]" );
+            break;
+        case oneof_:
+            fprintf(file, "ONEOF (" );
+
+            i = 0;
+            LISTdo( e->u.list, arg, Expression )
+            i++;
+            if( i != 1 ) {
+                fprintf(file, "," );
+            }
+            EXPRESSION_out( arg, 0, file );
+            LISTod
+
+            fprintf(file, ")" );
+            break;
+        default:
+            fprintf(file, "unknown expression, type %d", TYPEis( e->type ) );
+    }
+}
+
+void
+ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file) {
+    switch( oe->op_code ) {
+        case OP_AND:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " and ", paren, PAD, file );
+            break;
+        case OP_ANDOR:
+        case OP_OR:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " or ", paren, PAD, file );
+            break;
+        case OP_CONCAT:
+        case OP_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file );
+            break;
+        case OP_PLUS:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " + ", paren, PAD, file );
+            break;
+        case OP_TIMES:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " * ", paren, PAD, file );
+            break;
+        case OP_XOR:
+            ATTRIBUTE_INITIALIZERop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            break;
+        case OP_EXP:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " ** ", paren, PAD, file );
+            break;
+        case OP_GREATER_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " >= ", paren, PAD, file );
+            break;
+        case OP_GREATER_THAN:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " > ", paren, PAD, file );
+            break;
+        case OP_IN:
+        //    EXPRESSIONop2_out( oe, " in ", paren, PAD, file );
+        //    break;
+        case OP_INST_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file);
+            break;
+        case OP_INST_NOT_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD, file );
+            break;
+        case OP_LESS_EQUAL:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " <= ", paren, PAD, file );
+            break;
+        case OP_LESS_THAN:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " < ", paren, PAD, file );
+            break;
+        case OP_LIKE:
+        case OP_MOD:
+            ATTRIBUTE_INITIALIZERop2_out( oe, " % ", paren, PAD, file );
+            break;
+        case OP_NOT_EQUAL:
+            //EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file);
+            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD ,file);
+            break;
+        case OP_NOT:
+            ATTRIBUTE_INITIALIZERop1_out( oe, " not ", paren, file );
+            break;
+        case OP_REAL_DIV:
+        case OP_DIV:
+            ATTRIBUTE_INITIALIZERop2_out( oe, "/", paren, PAD, file );
+            break;
+        case OP_MINUS:
+            ATTRIBUTE_INITIALIZERop2_out( oe, "-", paren, PAD, file );
+            break;
+        case OP_DOT:
+            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_GROUP:
+            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_NEGATE:
+            ATTRIBUTE_INITIALIZERop1_out( oe, "-", paren, file );
+            break;
+        case OP_ARRAY_ELEMENT:
+            ATTRIBUTE_INITIALIZER_out( oe->op1, 1, file );
+            fprintf(file, "[" );
+            ATTRIBUTE_INITIALIZER_out( oe->op2, 0, file );
+            fprintf(file, "]" );
+            break;
+        case OP_SUBCOMPONENT:
+            ATTRIBUTE_INITIALIZER_out( oe->op1, 1 , file);
+            fprintf(file, "[" );
+            ATTRIBUTE_INITIALIZER_out( oe->op2, 0, file );
+            fprintf(file, ":" );
+            ATTRIBUTE_INITIALIZER_out( oe->op3, 0, file );
+            fprintf(file, "]" );
+            break;
+        default:
+            fprintf(file, "(* unknown op-expression *)" );
+    }
+}
+
+/* print expression that has op and operands */
+void
+EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file) {
+    switch( oe->op_code ) {
+        case OP_AND:
+            EXPRESSIONop2_out( oe, " and ", paren, PAD, file );
+            break;
+        case OP_ANDOR:
+        case OP_OR:
+            EXPRESSIONop2_out( oe, " or ", paren, PAD, file );
+            break;
+        case OP_CONCAT:
+        case OP_EQUAL:
+            EXPRESSIONop2_out( oe, " == ", paren, PAD, file );
+            break;
+        case OP_PLUS:
+            EXPRESSIONop2_out( oe, " + ", paren, PAD, file );
+            break;
+        case OP_TIMES:
+            EXPRESSIONop2_out( oe, " * ", paren, PAD, file );
+            break;
+        case OP_XOR:
+            EXPRESSIONop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            break;
+        case OP_EXP:
+            EXPRESSIONop2_out( oe, " ** ", paren, PAD, file );
+            break;
+        case OP_GREATER_EQUAL:
+            EXPRESSIONop2_out( oe, " >= ", paren, PAD, file );
+            break;
+        case OP_GREATER_THAN:
+            EXPRESSIONop2_out( oe, " > ", paren, PAD, file );
+            break;
+        case OP_IN:
+        //    EXPRESSIONop2_out( oe, " in ", paren, PAD, file );
+        //    break;
+        case OP_INST_EQUAL:
+            EXPRESSIONop2_out( oe, " == ", paren, PAD, file);
+            break;
+        case OP_INST_NOT_EQUAL:
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
+            break;
+        case OP_LESS_EQUAL:
+            EXPRESSIONop2_out( oe, " <= ", paren, PAD, file );
+            break;
+        case OP_LESS_THAN:
+            EXPRESSIONop2_out( oe, " < ", paren, PAD, file );
+            break;
+        case OP_LIKE:
+        case OP_MOD:
+            EXPRESSIONop2_out( oe, " % ", paren, PAD, file );
+            break;
+        case OP_NOT_EQUAL:
+            //EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file);
+            EXPRESSIONop2_out( oe, " != ", paren, PAD ,file);
+            break;
+        case OP_NOT:
+            EXPRESSIONop1_out( oe, " not ", paren, file );
+            break;
+        case OP_REAL_DIV:
+        case OP_DIV:
+            EXPRESSIONop2_out( oe, "/", paren, PAD, file );
+            break;
+        case OP_MINUS:
+            EXPRESSIONop2_out( oe, "-", paren, PAD, file );
+            break;
+        case OP_DOT:
+            EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_GROUP:
+            EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
+            break;
+        case OP_NEGATE:
+            EXPRESSIONop1_out( oe, "-", paren, file );
+            break;
+        case OP_ARRAY_ELEMENT:
+            EXPRESSION_out( oe->op1, 1, file );
+            fprintf(file, "[" );
+            EXPRESSION_out( oe->op2, 0, file );
+            fprintf(file, "]" );
+            break;
+        case OP_SUBCOMPONENT:
+            EXPRESSION_out( oe->op1, 1 , file);
+            fprintf(file, "[" );
+            EXPRESSION_out( oe->op2, 0, file );
+            fprintf(file, ":" );
+            EXPRESSION_out( oe->op3, 0, file );
+            fprintf(file, "]" );
+            break;
+        default:
+            fprintf(file, "(* unknown op-expression *)" );
+    }
+}
+
+void
+EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE *file ) {
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file,"(" );
+    }
+    EXPRESSION__out( eo->op1, 1, eo->op_code , file);
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    fprintf(file, "%s", ( opcode ? opcode : EXPop_table[eo->op_code].token ) );
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    EXPRESSION__out( eo->op2, 1, eo->op_code, file );
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file, ")" );
+    }
+}
+
+void
+ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE *file ) {
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file,"(" );
+    }
+    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code , file);
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    fprintf(file, "%s", ( opcode ? opcode : EXPop_table[eo->op_code].token ) );
+    if( pad ) {
+        fprintf(file, " " );
+    }
+    ATTRIBUTE_INITIALIZER__out( eo->op2, 1, eo->op_code, file );
+    if( pad && paren && ( eo->op_code != previous_op ) ) {
+        fprintf(file, ")" );
+    }
+}
+
+/* Print out a one-operand operation.  If there were more than two of these */
+/* I'd generalize it to do padding, but it's not worth it. */
+void
+EXPRESSIONop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE *file ) {
+    if( paren ) {
+        fprintf(file, "(" );
+    }
+    fprintf(file, "%s", opcode );
+    EXPRESSION_out( eo->op1, 1, file );
+    if( paren ) {
+        fprintf(file, ")" );
+    }
+}
+
+void
+ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE *file ) {
+    if( paren ) {
+        fprintf(file, "(" );
+    }
+    fprintf(file, "%s", opcode );
+    ATTRIBUTE_INITIALIZER_out( eo->op1, 1, file );
+    if( paren ) {
+        fprintf(file, ")" );
+    }
+}
+
+int
+EXPRop_length( struct Op_Subexpression * oe ) {
+    switch( oe->op_code ) {
+        case OP_DOT:
+        case OP_GROUP:
+            return( 1 + EXPRlength( oe->op1 )
+                    + EXPRlength( oe->op2 ) );
+        default:
+            fprintf( stdout, "EXPRop_length: unknown op-expression" );
+    }
+    return 0;
+}
+
+void
+WHEREPrint( Linked_List wheres, int level , FILE *file ) {
+    python_indent(file,level);
+    unsigned int max_indent=0;
+    int where_rule_number = 0;
+    char *rule_name;
+    if( !wheres ) {
+        return;
+    }
+
+    /* pass 2: now print labels and exprs */
+    LISTdo( wheres, w, Where )
+    if( strcmp(w->label->name,"<unnamed>") ) {
+        // define a function with the name 'label'
+        fprintf(file,"\tdef %s(self):\n",w->label->name);
+        fprintf(file,"\t\teval_%s_wr = ",w->label->name);
+    } else {
+        /* no label */
+        fprintf(file, "\tdef unnamed_wr_%i(self):\n",where_rule_number);
+        fprintf(file,"\t\teval_unnamed_wr_%i = ",where_rule_number);
+    }
+    //EXPRESSION_out( w->expr, level+1 , file );
+    ATTRIBUTE_INITIALIZER_out( w->expr, level+1 , file );
+    // raise exception if rule violated
+    if( strcmp(w->label->name,"<unnamed>") ) {
+        fprintf(file,"\n\t\tif not eval_%s_wr:\n",w->label->name);
+        fprintf(file,"\t\t\traise AssertionError('Rule %s violated')\n",w->label->name);
+        fprintf(file,"\t\telse:\n\t\t\treturn eval_%s_wr\n\n",w->label->name);
+    } else {
+        /* no label */
+        fprintf(file, "\n\t\tif not eval_unnamed_wr_%i:\n",where_rule_number);
+        fprintf(file,"\t\t\traise AssertionError('Rule unnamed_wr_%i violated')\n",where_rule_number);
+        fprintf(file,"\t\telse:\n\t\t\treturn eval_unnamed_wr_%i\n\n",where_rule_number);
+        where_rule_number++;
+    }
+    LISTod
+}
+
+int curpos; 
+int indent2; 
+char * exppp_bufp = 0;      /* pointer to write position in expppbuf */
+char * exppp_buf = 0; 
+Symbol error_sym;   /* only used when printing errors */
+int exppp_buflen = 0;       /* remaining space in expppbuf */
+
+void
+expression_output( char * buf, int len ) {
+    FILE * exppp_fp = NULL; 
+    FILE * fp = ( exppp_fp ? exppp_fp : stdout );
+
+    error_sym.line += count_newlines( buf );
+
+    if( exppp_buf ) {
+        /* output to string */
+        if( len > exppp_buflen ) {
+            /* should provide flag to enable complaint */
+            /* for now, just ignore */
+            return;
+        }
+        memcpy( exppp_bufp, buf, len + 1 );
+        exppp_bufp += len;
+        exppp_buflen -= len;
+    } else {
+        /* output to file */
+        fwrite( buf, 1, len, fp );
+    }
+}
+
+void
+#ifdef __STDC__
+raw_python( char * fmt, ... ) {
+#else
+raw_python( va_alist )
+va_dcl {
+    char * fmt;
+#endif
+    char * p;
+    char buf[10000];
+    int len;
+    va_list args;
+#ifdef __STDC__
+    va_start( args, fmt );
+#else
+    va_start( args );
+    fmt = va_arg( args, char * );
+#endif
+
+    vsprintf( buf, fmt, args );
+    len = strlen( buf );
+
+    expression_output( buf, len );
+
+    if( len ) {
+        /* reset cur position based on last newline seen */
+        if( 0 == ( p = strrchr( buf, '\n' ) ) ) {
+            curpos += len;
+        } else {
+            curpos = len + buf - p;
+        }
+    }
+}
+
+void
+#ifdef __STDC__
+wrap_python( char * fmt, ... ) {
+#else
+wrap_python( va_alist )
+va_dcl {
+    char * fmt;
+#endif
+    char * p;
+    char buf[10000];
+    int len;
+    va_list args;
+#ifdef __STDC__
+    va_start( args, fmt );
+#else
+    va_start( args );
+    fmt = va_arg( args, char * );
+#endif
+    int exppp_linelength = 75;      /* leave some slop for closing
+    vsprintf( buf, fmt, args );
+    len = strlen( buf );
+
+    /* 1st condition checks if string cant fit into current line */
+    /* 2nd condition checks if string cant fit into any line */
+    /* I.e., if we still can't fit after indenting, don't bother to */
+    /* go to newline, just print a long line */
+    if( ( ( curpos + len ) > exppp_linelength ) &&
+    ( ( indent2 + len ) < exppp_linelength ) ) {
+        /* move to new continuation line */
+        char line[1000];
+        sprintf( line, "\n%*s", indent2, "" );
+        expression_output( line, 1 + indent2 );
+
+        curpos = indent2;       /* reset current position */
+    }
+
+    expression_output( buf, len );
+
+    if( len ) {
+        /* reset cur position based on last newline seen */
+        if( 0 == ( p = strrchr( buf, '\n' ) ) ) {
+            curpos += len;
+        } else {
+            curpos = len + buf - p;
+        }
+    }
+}
+
+/******************************************************************
  ** Procedure:  ENTITYPrint
  ** Parameters:  Entity *entity --  entity being processed
  **     FILE* file  --  file being written to
@@ -892,7 +1847,6 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
  ** Side Effects:  generates code in 3 files
  ** Status:  complete 1/15/91
  ******************************************************************/
-
 
 void
 ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
@@ -961,16 +1915,6 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     }
     // first write all the values of the enum
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
-    while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
-        strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
-        fprintf(f,"if (not '%s' in globals().keys()):\n",EXPget_name(expr));
-        if (is_python_keyword(EXPget_name(expr))) {
-            fprintf(f,"\t%s_ = '%s_'\n",EXPget_name(expr),EXPget_name(expr));
-        }
-        else {
-            fprintf(f,"\t%s = '%s'\n",EXPget_name(expr),EXPget_name(expr));
-        }
-    }
     // then outputs the enum
     if (is_python_keyword(TYPEget_name( type ))) {
         fprintf(f,"%s_ = ENUMERATION(",TYPEget_name( type ));
@@ -986,13 +1930,13 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if (is_python_keyword(EXPget_name(expr))) {
-            fprintf(f,"\n\'%s_',",EXPget_name(expr));
+            fprintf(f,"\n'%s_',",EXPget_name(expr));
         }
         else {
             fprintf(f,"\n\t'%s',",EXPget_name(expr));
         }
     }
-    fprintf(f,"\n\t)\n");
+    fprintf(f,"\n\tscope = schema_scope)\n");
 }
 
 
@@ -1232,6 +2176,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
          base [BUFSIZ],
          nm [BUFSIZ];
     Type i;
+    int where_rule_number = 0;
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
@@ -1256,8 +2201,31 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             TYPEselect_lib_print( type, files -> lib );
         }
         else {
-            fprintf(files->lib, "%s = ",TYPEget_name(type));
-            fprintf(files->lib,"%s\n",output);
+            // the defined datatype inherits from the base type
+            fprintf(files->lib, "# Defined datatype %s\n", TYPEget_name(type));
+            fprintf(files->lib, "class %s(",TYPEget_name(type));
+            if (TYPEget_head( type ) != NULL) {
+                 fprintf(files->lib, "%s):\n",TYPEget_name( TYPEget_head( type ) ));
+             }
+             else {
+                 fprintf(files->lib,"%s):\n",output);
+             }
+             fprintf(files->lib,"\tdef __init__(self,*kargs):\n");
+             fprintf(files->lib,"\t\tpass\n");
+             // call the where / rules
+             LISTdo( type->where, w, Where )
+             if( strcmp(w->label->name,"<unnamed>") ) {
+                 // define a function with the name 'label'
+                 fprintf(files->lib,"\t\tself.%s()\n",w->label->name);
+             } else {
+                 /* no label */
+                 fprintf(files->lib, "\t\tself.unnamed_wr_%i()\n",where_rule_number );
+                 where_rule_number ++;
+             }
+             LISTod
+                 fprintf(files->lib,"\n");
+            // then we process the where rules
+             WHEREPrint( type->where, 0, files->lib );
         }
     }
     else {
@@ -1306,7 +2274,7 @@ printEnumAggrCrBody( FILE * lib, const Type type ) {
 }
 
 void
-TYPEprint_init( const Type type, FILE * ifile, Schema schema ) {
+TYPEprint_init( const Type type, FILES * files, Schema schema ) {
 }
 
 /* print name, fundamental type, and description initialization function
