@@ -116,16 +116,6 @@ IF(_orig_lang)
   SET(ENV{LANG}        C)
 ENDIF(_orig_lang)
 
-#---------------------------------------------------------------------
-# Testing option
-OPTION_WITH_DEFAULT( SCL_ENABLE_TESTING "Enable unittesting framework" OFF )
-IF(SCL_ENABLE_TESTING)
-  if( NOT DEFINED SCL_BUILD_SCHEMAS )
-    set( SCL_BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
-  endif()
-  INCLUDE(CTest)
-  ENABLE_TESTING()
-ENDIF(SCL_ENABLE_TESTING)
 
 #---------------------------------------------------------------------
 # Coverage option
@@ -140,6 +130,17 @@ IF(SCL_ENABLE_COVERAGE)
   SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
   SET(SCL_BUILD_TYPE "Debug" CACHE STRING "Build type required by testing framework" FORCE)
 ENDIF(SCL_ENABLE_COVERAGE)
+
+#---------------------------------------------------------------------
+# Testing option
+OPTION_WITH_DEFAULT( SCL_ENABLE_TESTING "Enable unittesting framework" OFF )
+IF(SCL_ENABLE_TESTING)
+  if( NOT DEFINED SCL_BUILD_SCHEMAS )
+    set( SCL_BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
+  endif()
+  INCLUDE(CTest)
+  ENABLE_TESTING()
+ENDIF(SCL_ENABLE_TESTING)
 
 #---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in
