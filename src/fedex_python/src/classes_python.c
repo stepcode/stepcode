@@ -86,6 +86,21 @@ void printAccessHookHdr( FILE *, const char * );
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema );
 void TypeBody_Description( TypeBody body, char * buf );
 
+void STATEMENTSPrint( Linked_List stmts , int indent_level, FILE *file );
+void STATEMENTPrint( Statement s, int indent_level, FILE *file );
+void STATEMENTlist_out( Linked_List stmts, int indent_level, FILE *file );
+void EXPRESSION__out( Expression e, int paren, int previous_op , FILE *file);
+void EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file);
+void EXPRESSIONop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE *file );
+void EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE *file );
+void ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE *file );
+void ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE *file );
+void ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE *file );
+void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE *file );
+void CASEout( struct Case_Statement_ *c, int level, FILE *file );
+void LOOPpyout( struct Loop_ *loop, int level, FILE *file );
+void WHEREPrint( Linked_List wheres, int level , FILE *file );
+
 /*
 Turn the string into a new string that will be printed the same as the
 original string. That is, turn backslash into a quoted backslash and
@@ -1689,10 +1704,12 @@ EXPRop_length( struct Op_Subexpression * oe ) {
 
 void
 WHEREPrint( Linked_List wheres, int level , FILE *file ) {
-    python_indent(file,level);
     unsigned int max_indent=0;
     int where_rule_number = 0;
     char *rule_name;
+
+    python_indent(file,level);
+
     if( !wheres ) {
         return;
     }
@@ -1800,6 +1817,7 @@ va_dcl {
     char * p;
     char buf[10000];
     int len;
+	int exppp_linelength;
     va_list args;
 #ifdef __STDC__
     va_start( args, fmt );
@@ -1807,7 +1825,7 @@ va_dcl {
     va_start( args );
     fmt = va_arg( args, char * );
 #endif
-    int exppp_linelength = 75;      /* leave some slop for closing
+    exppp_linelength = 75;      /* leave some slop for closing
     vsprintf( buf, fmt, args );
     len = strlen( buf );
 
