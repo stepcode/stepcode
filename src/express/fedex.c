@@ -103,7 +103,7 @@ char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
 int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
 void print_fedex_version( void ) {
-    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/mpictor/StepClassLibrary\n", EXPRESSprogram_name, scl_version() );
+    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, scl_version() );
     no_need_to_work = 1;
 }
 
