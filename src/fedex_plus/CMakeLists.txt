@@ -28,14 +28,10 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/base
 )
 
-IF(MSVC OR BORLAND)
-    set(fedex_plus_EXTRA_SOURCES xgetopt.cc )
-ENDIF()
-
 IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
   add_definitions( -DYYDEBUG ) #-Ddebugging )
 ENDIF()
 
-SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES} ${fedex_plus_EXTRA_SOURCES}" "libexppp express base")
+SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES}" "libexppp express base")
 
 add_dependencies( fedex_plus version_string )

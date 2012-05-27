@@ -1,3 +1,4 @@
+/****** RENAMED from xgetopt.h to sc_getopt.h ***********/
 // XGetopt.h  Version 1.2
 //
 // Author:  Hans Dietrich
@@ -22,7 +23,7 @@ extern "C" {
     extern int optind, opterr;
     extern char * optarg;
 
-    int getopt( int argc, char * argv[], char * optstring );
+    int sc_getopt( int argc, char * argv[], char * optstring );
 
 #ifdef __cplusplus
 }

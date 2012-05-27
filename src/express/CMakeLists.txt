@@ -56,8 +56,7 @@ SET(CHECK_EXPRESS_SOURCES
 
 IF(MSVC OR BORLAND)
 set(CHECK_EXPRESS_EXTRA_SOURCES
-    xgetopt.cc
-	inithook.c
+    inithook.c
 )
 ENDIF() 
 
