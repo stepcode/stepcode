@@ -56,3 +56,7 @@ SCL_EXPPP_EXPORT int TYPEto_buffer( Type t, char * buffer, int length );
 SCL_EXPPP_EXPORT int TYPEhead_to_buffer( Type t, char * buffer, int length );
 SCL_EXPPP_EXPORT int TYPEbody_to_buffer( Type t, char * buffer, int length );
 SCL_EXPPP_EXPORT int WHEREto_buffer( Linked_List w, char * buffer, int length );
+
+SCL_EXPPP_EXPORT int EXPRlength( Expression e );
+SCL_EXPPP_EXPORT int count_newlines( char *s );
+
