@@ -15,15 +15,16 @@
 
 #ifndef XGETOPT_H
 #define XGETOPT_H
+#include "scl_export.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    extern int optind, opterr;
-    extern char * optarg;
+    extern SCL_BASE_EXPORT int optind, opterr;
+    extern SCL_BASE_EXPORT char * optarg;
 
-    int sc_getopt( int argc, char * argv[], char * optstring );
+    int    SCL_BASE_EXPORT sc_getopt( int argc, char * argv[], char * optstring );
 
 #ifdef __cplusplus
 }
