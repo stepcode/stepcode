@@ -836,21 +836,30 @@ void STMTlist_resolve( Linked_List list, Scope scope ) {
 }
 
 /**
-** \param item case item to resolve
-** \param scope scope in which to resolve
-**
-** Resolve all references in a case item
-*/
-void CASE_ITresolve( Case_Item item, Scope scope, Type type ) {
-    LISTdo( item->labels, e, Expression )
-    EXPresolve( e, scope, type );
-    LISTod;
-    STMTresolve( item->action, scope );
+ * \param item case item to resolve
+ * \param scope scope in which to resolve
+ * \param statement the CASE statement (for return type, etc)
+ *
+ * Resolve all references in a case item
+ */
+void CASE_ITresolve( Case_Item item, Scope scope, Statement statement ) {
+    int validLabels = 0;
+    LISTdo( item->labels, e, Expression ) {
+        EXPresolve( e, scope, statement->u.Case->selector->return_type );
+        if ( e->return_type != Type_Bad ) {
+            validLabels++;
+        }
+    } LISTod;
+    if( validLabels ) {
+        STMTresolve( item->action, scope );
+    }
 }
 
 void STMTresolve( Statement statement, Scope scope ) {
-    Type type;
+    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements();
     Scope proc;
+    Logical eval;
+    bool skipped = false;
 
     if( !statement ) {
         return;    /* could be null statement */
@@ -871,10 +880,9 @@ void STMTresolve( Statement statement, Scope scope ) {
             break;
         case STMT_CASE:
             EXPresolve( statement->u.Case->selector, scope, Type_Dont_Care );
-            type = statement->u.Case->selector->return_type;
-            LISTdo( statement->u.Case->cases, c, Case_Item )
-            CASE_ITresolve( c, scope, type );
-            LISTod;
+            LISTdo( statement->u.Case->cases, c, Case_Item ) {
+                CASE_ITresolve( c, scope, statement );
+            } LISTod;
             break;
         case STMT_COMPOUND:
             STMTlist_resolve( statement->u.compound->statements, scope );
