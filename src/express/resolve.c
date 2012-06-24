@@ -930,7 +930,7 @@ void STMTresolve( Statement statement, Scope scope ) {
             break;
         case STMT_SKIP:
         case STMT_ESCAPE:
-            /* do nothing */
+            /* do nothing */ //WARNING should we really *not* do anything for these?
             ;
     }
 }
@@ -1066,12 +1066,12 @@ void ENTITYcheck_missing_supertypes( Entity ent ) {
 void ENTITYcalculate_inheritance( Entity e ) {
     e->u.entity->inheritance = 0;
 
-    LISTdo( e->u.entity->supertypes, super, Entity )
-    if( super->u.entity->inheritance == ENTITY_INHERITANCE_UNINITIALIZED ) {
-        ENTITYcalculate_inheritance( super );
-    }
-    e->u.entity->inheritance += ENTITYget_size( super );
-    LISTod
+    LISTdo( e->u.entity->supertypes, super, Entity ) {
+        if( super->u.entity->inheritance == ENTITY_INHERITANCE_UNINITIALIZED ) {
+            ENTITYcalculate_inheritance( super );
+        }
+        e->u.entity->inheritance += ENTITYget_size( super );
+    } LISTod
 }
 
 /** returns 1 if entity is involved in circularity, else 0 */

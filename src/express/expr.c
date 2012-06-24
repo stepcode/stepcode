@@ -396,12 +396,12 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             resolved_all( expr );
             return( op2->return_type );
         case enumeration_:
+            /* enumerations within a select will be handled by `case select_` above,
+             * which calls EXP_resolve_op_dot_fuzzy(). */
             item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
-            /*  item = (Expression )DICTlookup(TYPEget_enum_tags(op1->return_type),op2->symbol.name);*/
             if( !item ) {
                 ERRORreport_with_symbol( ERROR_enum_no_such_item, &op2->symbol,
                                          op1type->symbol.name, op2->symbol.name );
-                /*      ERRORreport_with_symbol(ERROR_enum_no_such_item,&op2->symbol,op1->return_type->symbol.name,op2->symbol.name);*/
                 resolve_failed( expr );
                 return( Type_Bad );
             }
@@ -784,10 +784,14 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
     return e->e.op1->return_type;
 }
 
-/**
+/** Initialize one entry in EXPop_table
+ * This table's function pointers are resolved in \sa EXP_resolve()
+ * , at approx resolve.c:520
+ * \sa EXPop_init()
+ *
+ * \param token_number operator value, usually in macro form
+ * \param string human-readable description
  * \param resolve_func   resolves an expression of this type
- * \param type_func  returns final type of expression of this type
- * avoids resolution if possible
  */
 void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {
     EXPop_table[token_number].token = string;
