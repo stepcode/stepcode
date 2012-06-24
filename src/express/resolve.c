@@ -213,9 +213,16 @@ void RESOLVEinitialize( void ) {
     ERROR_missing_self = ERRORcreate(
                              "Domain rule %s must refer to SELF or attribute.", SEVERITY_ERROR );
 
+    WARNING_fn_skip_branch = ERRORcreate(
+        "IF statement condition is always %s. Ignoring branch that is never taken.", SEVERITY_WARNING );
+
+    WARNING_case_skip_label = ERRORcreate("CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING);
+
     ERRORcreate_warning( "circular_subtype", ERROR_subsuper_loop );
     ERRORcreate_warning( "circular_select", ERROR_select_loop );
     ERRORcreate_warning( "entity_as_type", ERROR_type_is_entity );
+    ERRORcreate_warning( "invariant_condition", WARNING_fn_skip_branch );
+    ERRORcreate_warning( "invalid_case", WARNING_case_skip_label );
 }
 
 /** Clean up the Fed-X second pass */
@@ -252,6 +259,8 @@ void RESOLVEcleanup( void ) {
     ERRORdestroy( ERROR_redecl_no_such_attribute );
     ERRORdestroy( ERROR_redecl_no_such_supertype );
     ERRORdestroy( ERROR_missing_self );
+    ERRORdestroy( WARNING_case_skip_label );
+    ERRORdestroy( WARNING_fn_skip_branch );
 }
 
 /**
