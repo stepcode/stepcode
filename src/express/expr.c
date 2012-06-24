@@ -81,6 +81,7 @@
 #include "express/resolve.h"
 
 #include <assert.h>
+#include <limits.h>
 
 #ifdef YYDEBUG
 extern int yydebug;
@@ -167,7 +168,7 @@ void EXPinitialize( void ) {
     resolved_all( LITERAL_PI );
 
     LITERAL_INFINITY = EXPcreate_simple( Type_Integer );
-    LITERAL_INFINITY->u.integer = MAXINT;
+    LITERAL_INFINITY->u.integer = INT_MAX;
     resolved_all( LITERAL_INFINITY );
 
     LITERAL_ZERO = EXPcreate_simple( Type_Integer );
