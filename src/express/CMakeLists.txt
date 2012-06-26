@@ -84,4 +84,4 @@ endif()
 
 SCL_ADDLIB(express "${EXPRESS_SOURCES}" "base")
 
-SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_EXTRA_SOURCES}" express)
+SCL_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES} ${CHECK_EXPRESS_EXTRA_SOURCES}" "express base" )
