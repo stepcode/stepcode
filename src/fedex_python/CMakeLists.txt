@@ -10,12 +10,6 @@ include_directories(
 
 add_definitions( -DHAVE_CONFIG_H )
 
-IF(MSVC OR BORLAND)
-set(fedex_plus_MSVC_SOURCES
-    ${SCL_SOURCE_DIR}/src/fedex_plus/xgetopt.cc
-)
-ENDIF(MSVC OR BORLAND)
-
 set(fedex_python_SOURCES
     src/classes_misc_python.c
     ${SCL_SOURCE_DIR}/src/express/fedex.c
@@ -37,7 +31,7 @@ set(fedex_python_SOURCES
     ${SCL_SOURCE_DIR}/src/fedex_plus/write.cc 
     ${SCL_SOURCE_DIR}/src/fedex_plus/print.cc
 )
-SCL_ADDEXEC(fedex_python "${fedex_python_SOURCES} ${fedex_plus_MSVC_SOURCES}" "libexppp express base")
+SCL_ADDEXEC(fedex_python "${fedex_python_SOURCES}" "libexppp express base")
 
 add_dependencies( fedex_python version_string )
 endif(SCL_PYTHON_GENERATOR)
