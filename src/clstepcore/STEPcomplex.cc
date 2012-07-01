@@ -69,7 +69,7 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
     *eptr = ents, *prev = NULL, *enext;
     const EntityDescriptor * enDesc;
     char nm[BUFSIZ];
-    int invalid = 0, outOfOrder = 0;
+    bool invalid = false, outOfOrder = false;
 
     // Splice out the invalid names from our list:
     while( eptr ) {
@@ -88,11 +88,11 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
                 // support structs only deal with the original names) and have
                 // ents re-ort eptr properly in the list:
                 eptr->Name( StrToLower( enDesc->Name(), nm ) );
-                outOfOrder = 1;
+                outOfOrder = true;
             }
             prev = eptr;
         } else {
-            invalid = 1;
+            invalid = true;
             cerr << "ERROR: Invalid entity \"" << eptr->Name()
                  << "\" found in complex entity.\n";
             if( !prev ) {

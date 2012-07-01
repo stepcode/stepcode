@@ -227,6 +227,9 @@ Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down
     return 0;
 }
 
+/** find a (possibly inherited) attribute
+ * \sa ENTITY_find_inherited_attribute
+ */
 Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
                                 struct Symbol_ ** down_sym ) {
     extern int __SCOPE_search_id;
