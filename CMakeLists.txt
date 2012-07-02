@@ -1,6 +1,6 @@
 #       C M A K E L I S T S . T X T   F O R   S C L
 #
-# This file is Copyright (c) 2010 United States Government as 
+# This file is Copyright (c) 2010 United States Government as
 # represented by the U.S. Army Research Laboratory.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@
 # ***                   SCL's CMakeLists.txt                      ***
 # *******************************************************************
 
-# This file contains the top level CMakeLists.txt logic for the 
+# This file contains the top level CMakeLists.txt logic for the
 # SCL software package.
 
 PROJECT(SCL)
@@ -84,6 +84,11 @@ OPTION_WITH_DEFAULT(SCL_CPP_GENERATOR "Compile fedex_plus" ON)
 
 OPTION_WITH_DEFAULT(SCL_MEMMGR_ENABLE_CHECKS "Enable scl_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SCL_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in fedex_plus may be located" OFF)
+
+#this makes SCL_BUILD_SCHEMAS show up in cmake-gui
+if( NOT DEFINED ${SCL_BUILD_SCHEMAS} )
+    SET(SCL_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
+endif( NOT DEFINED ${SCL_BUILD_SCHEMAS} )
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
@@ -189,9 +194,9 @@ ENDFOREACH()
 
 
 #-----------------------------------------------------------------------------
-# Configure install locations. 
+# Configure install locations.
 
-# The location in which to install SCL. Need a good Debug location 
+# The location in which to install SCL. Need a good Debug location
 # for Windows.  Only do this if CMAKE_INSTALL_PREFIX hasn't been set
 # already, to try and allow parent builds (if any) some control.
 if(NOT SCL_IS_SUBBUILD)
@@ -210,7 +215,7 @@ endif(NOT SCL_IS_SUBBUILD)
 OPTION(SCL_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 MARK_AS_ADVANCED(SCL_BUILD_EXPRESS_ONLY)
 
-# Take the scl config file template as the starting point for 
+# Take the scl config file template as the starting point for
 # scl_cf.h.in - scripts may need to append to the template, so
 # it is read into memory initially.
 SET(CONFIG_H_FILE ${SCL_BINARY_DIR}/include/scl_cf.h.in)

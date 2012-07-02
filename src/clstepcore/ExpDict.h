@@ -1108,7 +1108,7 @@ class SCL_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
         }
 
         // below are obsolete (and not implemented anyway)
-        class AttrDescriptor * InverseAttribute() {
+        class AttrDescriptor * InverseAttribute() const {
                 return _inverted_attr;
         }
         void InverseOf( AttrDescriptor * invAttr ) {
