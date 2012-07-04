@@ -81,6 +81,7 @@
 #include "express/resolve.h"
 
 #include <assert.h>
+#include <limits.h>
 
 #ifdef YYDEBUG
 extern int yydebug;
@@ -167,7 +168,7 @@ void EXPinitialize( void ) {
     resolved_all( LITERAL_PI );
 
     LITERAL_INFINITY = EXPcreate_simple( Type_Integer );
-    LITERAL_INFINITY->u.integer = MAXINT;
+    LITERAL_INFINITY->u.integer = INT_MAX;
     resolved_all( LITERAL_INFINITY );
 
     LITERAL_ZERO = EXPcreate_simple( Type_Integer );
@@ -233,12 +234,19 @@ void EXPcleanup( void ) {
 }
 
 /**
+ * \param selection the Type to look in (i.e. an enum)
+ * \param ref the Symbol to be found
+ * \param e set to the Expression found, when an enum is found
+ * \param v set to the Variable found, when a variable is found
+ * \param dt set to DICT_type when a match is found (use to determine whether to use e or v)
+ * \param where used by ENTITYfind_inherited_attribute, not sure of purpose
  * \param s_id the search id, a parameter to avoid colliding with ENTITYfind...
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, char * dt,
-                          struct Symbol_ ** where, int s_id ) {
+static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
+                      Variable * v, char * dt, struct Symbol_ ** where, int s_id ) {
+    Expression item;
     Variable tmp;
     int options = 0;
     struct Symbol_ *w = NULL;
@@ -264,7 +272,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, c
         case select_:
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_dot_fuzzy( t, ref, v, dt, &w, s_id ) ) {
+            if( EXP_resolve_op_dot_fuzzy( t, ref, e, v, dt, &w, s_id ) ) {
                 if( w != NULL ) {
                     *where = w;
                 }
@@ -281,6 +289,13 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Variable * v, c
                     *v = VARIABLE_NULL;
                     return 1;
             }
+        case enumeration_:
+            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), ref.name );
+            if( item ) {
+                *e = item;
+                *dt = DICT_type;
+                return 1;
+            }
         default:
             return 0;
     }
@@ -292,6 +307,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Variable v;
     Expression item;
     Type op1type;
+    bool all_enums = true; //used by 'case select_'
 
     /* stuff for dealing with select_ */
     int options = 0;
@@ -318,34 +334,50 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             /* don't think this actually actually catches anything on the */
             /* first go-round, but let's be consistent */
             op1type->search_id = __SCOPE_search_id;
-            LISTdo( op1type->u.type->body->list, t, Type )
-            if( EXP_resolve_op_dot_fuzzy( t, op2->symbol, &v, &dt, &where,
-                                          __SCOPE_search_id ) ) {
-                ++options;
-            }
-            LISTod;
-
+            LISTdo( op1type->u.type->body->list, t, Type ) {
+                if( EXP_resolve_op_dot_fuzzy( t, op2->symbol, &item, &v, &dt, &where,
+                                                __SCOPE_search_id ) ) {
+                    ++options;
+                }
+            } LISTod;
             switch( options ) {
                 case 0:
-                    /* no possible resolutions */
-                    ERRORreport_with_symbol( ERROR_undefined_attribute,
-                                             &op2->symbol, op2->symbol.name );
+                    LISTdo( op1type->u.type->body->list, t, Type ) {
+                        if( t->u.type->body->type != enumeration_ ) {
+                            all_enums = false;
+                        }
+                    } LISTod;
+
+                    if( all_enums ) {
+                        ERRORreport_with_symbol( WARNING_case_skip_label, &op2->symbol, op2->symbol.name );
+                    } else {
+                        /* no possible resolutions */
+                        ERRORreport_with_symbol( ERROR_undefined_attribute,
+                                                &op2->symbol, op2->symbol.name );
+                    }
                     resolve_failed( expr );
                     return( Type_Bad );
                 case 1:
                     /* only one possible resolution */
-                    if( dt != OBJ_VARIABLE ) {
+                    if( dt == OBJ_VARIABLE ) {
+                        if( where ) {
+                            ERRORreport_with_symbol( ERROR_implicit_downcast, &op2->symbol,
+                                                    where->name );
+                        }
+
+                        op2->u.variable = v;
+                        op2->return_type = v->type;
+                        resolved_all( expr );
+                        return( v->type );
+                    } else if ( dt == OBJ_ENUM ) {
+                        op2->u.expression = item;
+                        op2->return_type = item->type;
+                        resolved_all( expr );
+                        return( item->type );
+                    } else {
                         printf( "EXPresolved_op_dot: attribute not an attribute?\n" );
                         ERRORabort( 0 );
-                    } else if( where ) {
-                        ERRORreport_with_symbol( ERROR_implicit_downcast, &op2->symbol,
-                                                 where->name );
                     }
-
-                    op2->u.variable = v;
-                    op2->return_type = v->type;
-                    resolved_all( expr );
-                    return( v->type );
                 default:
                     /* compile-time ambiguous */
                     if( where ) {
@@ -395,12 +427,12 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             resolved_all( expr );
             return( op2->return_type );
         case enumeration_:
+            /* enumerations within a select will be handled by `case select_` above,
+             * which calls EXP_resolve_op_dot_fuzzy(). */
             item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
-            /*  item = (Expression )DICTlookup(TYPEget_enum_tags(op1->return_type),op2->symbol.name);*/
             if( !item ) {
                 ERRORreport_with_symbol( ERROR_enum_no_such_item, &op2->symbol,
                                          op1type->symbol.name, op2->symbol.name );
-                /*      ERRORreport_with_symbol(ERROR_enum_no_such_item,&op2->symbol,op1->return_type->symbol.name,op2->symbol.name);*/
                 resolve_failed( expr );
                 return( Type_Bad );
             }
@@ -783,10 +815,14 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
     return e->e.op1->return_type;
 }
 
-/**
+/** Initialize one entry in EXPop_table
+ * This table's function pointers are resolved in \sa EXP_resolve()
+ * , at approx resolve.c:520
+ * \sa EXPop_init()
+ *
+ * \param token_number operator value, usually in macro form
+ * \param string human-readable description
  * \param resolve_func   resolves an expression of this type
- * \param type_func  returns final type of expression of this type
- * avoids resolution if possible
  */
 void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {
     EXPop_table[token_number].token = string;

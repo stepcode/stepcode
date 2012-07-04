@@ -131,7 +131,7 @@ struct Compound_Statement_ {
 
 struct Conditional_ {
     Expression test;
-    Linked_List code;       /**< list of statements */
+    Linked_List code;           /**< list of statements */
     Linked_List otherwise;      /**< list of statements */
 };
 

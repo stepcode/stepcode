@@ -1,7 +1,7 @@
 #ifndef EXPRESSION_H
 #define EXPRESSION_H
 
-/** **********************************************************************
+/*********************************************************************//**
 ** Module:  Expression \file expr.h
 ** Description: This module implements the Expression abstraction.
 **  Several types of expressions are supported: identifiers,
@@ -63,10 +63,6 @@
 #include <scl_export.h>
 #include <math.h>
 #include "expbasic.h"   /* get basic definitions */
-
-#ifndef MAXINT
-#define MAXINT (~(1 << 31))
-#endif
 
 /************/
 /* typedefs */

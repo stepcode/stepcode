@@ -65,6 +65,9 @@ GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_circular_reference    INITIALLY( ERROR_
 GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_attribute   INITIALLY( ERROR_none );
 GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_group       INITIALLY( ERROR_none );
 
+GLOBAL SCL_EXPRESS_EXPORT Error    WARNING_case_skip_label     INITIALLY( ERROR_none );
+GLOBAL SCL_EXPRESS_EXPORT Error    WARNING_fn_skip_branch      INITIALLY( ERROR_none );
+
 #undef GLOBAL
 #undef INITIALLY
 

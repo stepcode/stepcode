@@ -1106,7 +1106,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                 } else {
                     /*  types are not the same issue a warning  */
                     fprintf( stderr,
-                             "WARNING: in SELECT TYPE %s: \n    ambiguous "
+                             "WARNING: in SELECT TYPE %s: ambiguous "
                              "attribute \"%s\" from underlying type \"%s\".\n\n",
                              TYPEget_name( type ), attrnm, TYPEget_name( t ) );
                     fprintf( f, "  //  %s\n    //  attribute access function"
