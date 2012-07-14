@@ -25,13 +25,13 @@ extern void HeaderSchemaInit( Registry & reg );
 
 //constructor & destructor
 
-STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool strict ) :
+STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool strict, bool verbose ) :
     _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
     _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
     _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
-    _maxErrorCount( 5000 ), _strict( strict ),_iFileSize( 0 ),
-    _iFileCurrentPosition( 0 ), _oFileInstsWritten( 0 ),
-    _iFileStage1Done( false ) {
+    _maxErrorCount( 5000 ), _strict( strict ), _verbose( verbose ),
+    _iFileSize( 0 ), _iFileCurrentPosition( 0 ),
+    _oFileInstsWritten( 0 ), _iFileStage1Done( false ) {
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
