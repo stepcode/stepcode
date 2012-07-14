@@ -86,6 +86,7 @@ class SCL_EDITOR_EXPORT STEPfile {
         int _maxErrorCount;
 
         bool _strict;       ///< If false, "missing and required" attributes are replaced with a generic value when file is read
+        bool _verbose;      ///< Defaults to false; if true, info is always printed to stdout.
 
     protected:
 
@@ -168,7 +169,7 @@ class SCL_EDITOR_EXPORT STEPfile {
         void Renumber();
 
 //constructors
-        STEPfile( Registry & r, InstMgr & i, const std::string filename = "", bool strict = true );
+        STEPfile( Registry & r, InstMgr & i, const std::string filename = "", bool strict = true, bool verbose = false );
         virtual ~STEPfile();
 
     protected:
