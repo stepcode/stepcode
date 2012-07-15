@@ -47,6 +47,7 @@ set_tests_properties( test_aggregate_bound_runtime_FAIL1 PROPERTIES
 add_schema_dependent_test( "inverse_attr1" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
 add_schema_dependent_test( "inverse_attr2" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
 add_schema_dependent_test( "inverse_attr3" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
+add_schema_dependent_test( "attribute" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
 
 if(HAVE_STD_THREAD)
 # for best results, use a large file. as1-oc-214.stp is currently the largest file in the repo that scl works with.
