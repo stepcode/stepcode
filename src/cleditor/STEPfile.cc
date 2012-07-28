@@ -1680,24 +1680,28 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         return SEVERITY_INPUT_ERROR;
     }
 
-    cout << "Reading Data from " << ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) << "...\n";
+    if( _verbose || _errorCount || _warningCount ) {
+        cout << "Reading Data from " << ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) << "...\n";
+    }
 
     //  Read header
     rval = ReadHeader( *in );
-    cout << "\nHEADER read:";
-    if( rval < SEVERITY_WARNING ) {
-        sprintf( errbuf,
-                 "Error: non-recoverable error in reading header section. "
-                 "There were %d errors encountered. Rest of file is ignored.\n",
-                 _errorCount );
-        _error.AppendToUserMsg( errbuf );
-        return rval;
-    } else if( rval != SEVERITY_NULL ) {
-        sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
-                 _errorCount, _warningCount );
-        cout << errbuf;
-    } else {
-        cout << endl;
+    if( _verbose || _errorCount || _warningCount ) {
+        cout << "\nHEADER read:";
+        if( rval < SEVERITY_WARNING ) {
+            sprintf( errbuf,
+                    "Error: non-recoverable error in reading header section. "
+                    "There were %d errors encountered. Rest of file is ignored.\n",
+                    _errorCount );
+            _error.AppendToUserMsg( errbuf );
+            return rval;
+        } else if( rval != SEVERITY_NULL ) {
+            sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
+                    _errorCount, _warningCount );
+            cout << errbuf;
+        } else {
+            cout << endl;
+        }
     }
 
     if( !FindDataSection( *in ) ) {
@@ -1709,12 +1713,14 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     _errorCount = 0;
     total_insts = ReadData1( *in );
 
-    cout << "\nFIRST PASS complete:  " << total_insts
+    if( _verbose || _errorCount || _warningCount ) {
+        cout << "\nFIRST PASS complete:  " << total_insts
          << " instances created.\n";
-    sprintf( errbuf,
-             "  %d  ERRORS\t  %d  WARNINGS\n\n",
-             _errorCount, _warningCount );
-    cout << errbuf;
+        sprintf( errbuf,
+                "  %d  ERRORS\t  %d  WARNINGS\n\n",
+                _errorCount, _warningCount );
+        cout << errbuf;
+    }
 
     //  PASS 2
     //  This would be nicer if you didn't actually have to close the
@@ -1762,13 +1768,15 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         return _error.GreaterSeverity( SEVERITY_WARNING );
     }
 
-    cout << "\nSECOND PASS complete:  " << valid_insts
+    if( _verbose || _errorCount || _warningCount ) {
+        cout << "\nSECOND PASS complete:  " << valid_insts
          << " instances valid.\n";
-    sprintf( errbuf,
-             "  %d  ERRORS\t  %d  WARNINGS\n\n",
-             _errorCount, _warningCount );
-    _error.AppendToUserMsg( errbuf );
-    cout << errbuf;
+        sprintf( errbuf,
+                "  %d  ERRORS\t  %d  WARNINGS\n\n",
+                _errorCount, _warningCount );
+        _error.AppendToUserMsg( errbuf );
+        cout << errbuf;
+    }
 
 
     //check for "ENDSTEP;" || "END-ISO-10303-21;"
@@ -1796,7 +1804,9 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         return _error.GreaterSeverity( SEVERITY_WARNING );
     }
     CloseInputFile( in2 );
-    cout << "Finished reading file.\n\n";
+    if( _verbose || _errorCount || _warningCount ) {
+        cout << "Finished reading file.\n\n";
+    }
     return SEVERITY_NULL;
 }
 

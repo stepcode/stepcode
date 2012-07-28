@@ -43,7 +43,7 @@ set( vstring "//scl_version_string.h - written by cmake. Changes will be lost!\n
              "** 'g' is unknown, 5e1fb47 is the first 7 chars of the git sha1 commit id, and TIME\n"
              "** and DATE are substituted by the compiler.\n*/\n\n"
              "const char* scl_version() {\n"
-             "    return \"git commit id ${GIT_COMMIT_ID}, built at \"__TIME__\" on \"__DATE__\;\n"
+             "    return \"git commit id ${GIT_COMMIT_ID}, built at \" __TIME__ \" on \" __DATE__ \;\n"
              "}\n\n"
              "#endif\n"
    )

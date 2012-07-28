@@ -527,7 +527,7 @@ char * TYPEget_express_type( const Type t ) {
     Class_Of_Type class;
     Type bt;
     char retval [BUFSIZ];
-    char * n, * permval, * aggr_type;
+    char * n, * permval, * aggr_type = 0;
 
 
     /*  1.  "DEFINED" types */
