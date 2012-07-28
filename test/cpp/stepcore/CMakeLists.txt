@@ -1,0 +1,21 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+#c++ tests for clstepcore
+
+INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor ${SCL_SOURCE_DIR}/src/clutils
+         ${SCL_SOURCE_DIR}/src/clstepcore ${SCL_SOURCE_DIR}/src/base )
+
+function(add_stepcore_test name libs)
+    SCL_ADDEXEC( tst_${name} test_${name}.cc "${libs}" )
+    add_test( NAME build_cpp_${name}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target tst_${name}
+                                       --config $<CONFIGURATION> )
+    add_test( NAME test_${name}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND $<TARGET_FILE:tst_${name}>  )
+    set_tests_properties( build_cpp_${name} PROPERTIES LABELS cpp_stepcore DEPENDS stepcore )
+    set_tests_properties( test_${name} PROPERTIES LABELS cpp_stepcore DEPENDS build_cpp_${name} )
+endfunction(add_stepcore_test name libs)
+
+add_stepcore_test( "SupertypesIterator" "stepcore steputils stepeditor stepdai base" )
