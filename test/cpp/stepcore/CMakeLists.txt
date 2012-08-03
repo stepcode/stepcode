@@ -14,8 +14,8 @@ function(add_stepcore_test name libs)
     add_test( NAME test_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND $<TARGET_FILE:tst_${name}>  )
-    set_tests_properties( build_cpp_${name} PROPERTIES LABELS cpp_stepcore DEPENDS stepcore )
-    set_tests_properties( test_${name} PROPERTIES LABELS cpp_stepcore DEPENDS build_cpp_${name} )
+    set_tests_properties( build_cpp_${name} PROPERTIES LABELS cpp_unit_stepcore DEPENDS stepcore )
+    set_tests_properties( test_${name} PROPERTIES LABELS cpp_unit_stepcore DEPENDS build_cpp_${name} )
 endfunction(add_stepcore_test name libs)
 
 add_stepcore_test( "SupertypesIterator" "stepcore steputils stepeditor stepdai base" )
