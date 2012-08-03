@@ -129,6 +129,7 @@ IF(SCL_ENABLE_COVERAGE)
   SET(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
   SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
   SET(SCL_BUILD_TYPE "Debug" CACHE STRING "Build type required by testing framework" FORCE)
+  SET( SCL_PYTHON_GENERATOR OFF ) #won't build with static libs
 ENDIF(SCL_ENABLE_COVERAGE)
 
 #---------------------------------------------------------------------

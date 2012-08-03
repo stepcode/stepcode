@@ -1,8 +1,8 @@
-# To build one or more schemas, configure with 
+# To build one or more schemas, configure with
 # 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
-# This function runs fedex on one express file. The generated source goes in a dir 
-# in the build dir, and it is compiled into a library. A p21read executable is 
+# This function runs fedex on one express file. The generated source goes in a dir
+# in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #try absolute path. if that fails, must already be absolute.
@@ -27,7 +27,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
     get_filename_component( SCHEMA_SN ${SCHEMA_FILE} NAME )
     string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_SHORT_NAME ${SCHEMA_SN} )
-    
+
     project( sdai_${SCHEMA_SHORT_NAME} )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
     set( SCHEMA_OUTPUT_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
@@ -54,11 +54,23 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         WORKING_DIRECTORY ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
+
+    if( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+      # Coverage will always be sparse on schema libs. Compiling the libs with the -fprofile-arcs and
+      # -ftest-coverage is extremely slow. We can avoid that by temporarily changing build type to release.
+      set( PREV_BUILD_TYPE ${CMAKE_BUILD_TYPE} )
+      set( CMAKE_BUILD_TYPE "Release" )
+    endif( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+
     # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
     SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai stepcore express stepeditor steputils base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+
+    if( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+      set( CMAKE_BUILD_TYPE ${PREV_BUILD_TYPE} )
+    endif( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
 
     add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -92,6 +104,8 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
+
+#----------------------------------------------------------------------------------------------------
 
 if( DEFINED SCL_BUILD_SCHEMAS )
     if( SCL_BUILD_SCHEMAS STREQUAL "ALL" )
