@@ -22,6 +22,7 @@ extern void SchemaInit( class Registry & );
 #include <errordesc.h>
 #include <algorithm>
 #include <string>
+#include "sc_benchmark.h"
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -97,6 +98,7 @@ void printUse( const char * exe ) {
     std::cout << "p21read - read a STEP Part 21 exchange file using SCL, and write the data to another file." << std::endl;
     std::cout << "Syntax:  " << exe << " [-i] [-s] infile [outfile]" << std::endl;
     std::cout << "Use '-i' to ignore a schema name mismatch." << std::endl;
+    std::cout << "Use '-m' to turn off memory info." << std::endl;
     std::cout << "Use '-s' for strict interpretation (attributes that are \"missing and required\" will cause errors)." << std::endl;
     std::cout << "Use '-v' to print the version info below and exit." << std::endl;
     std::cout << "Use '--' as the last argument if a file name starts with a dash." << std::endl;
@@ -107,14 +109,20 @@ void printUse( const char * exe ) {
 int main( int argc, char * argv[] ) {
     bool ignoreErr = false;
     bool strict = false;
+    bool memInfo = true;
     char c;
+    double physMem, virtMem, preReadPhysMem, preReadVirtMem; //for memory monitoring
+
     if( argc > 4 || argc < 2 ) {
         printUse( argv[0] );
     }
-    while( ( c = sc_getopt( argc, argv, "isv" ) ) != -1 ) {
+    while( ( c = sc_getopt( argc, argv, "imsv" ) ) != -1 ) {
         switch( c ) {
             case 'i':
                 ignoreErr = true;
+                break;
+            case 'm':
+                memInfo = false;
                 break;
             case 's':
                 strict = true;
@@ -127,7 +135,6 @@ int main( int argc, char * argv[] ) {
                 printUse( argv[0] );
         }
     }
-
 
     ///////////////////////////////////////////////////////////////////////////////
     // You have to initialize the schema before you do anything else.
@@ -142,31 +149,41 @@ int main( int argc, char * argv[] ) {
     STEPfile  sfile( registry, instance_list, "", strict );
     char   *  flnm;
 
-    cout << "\nEXAMPLE :  load file ..." << endl;
+    benchmark stats( "p21 ReadExchangeFile()" );
+
+    cout << argv[0] << ": load file ..." << endl;
     if( argc >= ( optind + 1 ) ) {
         flnm = argv[optind];
     } else {
         flnm = ( char * )"testfile.step";
     }
     sfile.ReadExchangeFile( flnm );
-    sfile.Error().PrintContents( cout );
+    if( sfile.Error().severity() < SEVERITY_USERMSG ) {
+        sfile.Error().PrintContents( cout );
+    }
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE )
+    stats.stop();
+    stats.out( );
+
+    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         exit(1);
+    }
 
     checkSchemaName( registry, sfile, ignoreErr );
 
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
 
-    cout << "EXAMPLE :  write file ..." << endl;
+    cout << argv[0] << ": write file ..." << endl;
     if( argc == optind + 2 ) {
         flnm = argv[optind + 1];
     } else {
         flnm = ( char * )"file.out";
     }
     sfile.WriteExchangeFile( flnm );
-    sfile.Error().PrintContents( cout );
-    cout << flnm << " written"  << endl;
+    if( sfile.Error().severity() < SEVERITY_USERMSG ) {
+        sfile.Error().PrintContents( cout );
+    }
+    cout << argv[0] << ": " << flnm << " written"  << endl;
 
     if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
         exit( 1 );
