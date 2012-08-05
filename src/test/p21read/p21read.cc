@@ -97,6 +97,7 @@ void printUse( const char * exe ) {
     std::cout << "p21read - read a STEP Part 21 exchange file using SCL, and write the data to another file." << std::endl;
     std::cout << "Syntax:  " << exe << " [-i] [-s] infile [outfile]" << std::endl;
     std::cout << "Use '-i' to ignore a schema name mismatch." << std::endl;
+    std::cout << "Use '-m' to turn off memory info." << std::endl;
     std::cout << "Use '-s' for strict interpretation (attributes that are \"missing and required\" will cause errors)." << std::endl;
     std::cout << "Use '-v' to print the version info below and exit." << std::endl;
     std::cout << "Use '--' as the last argument if a file name starts with a dash." << std::endl;
@@ -104,17 +105,66 @@ void printUse( const char * exe ) {
     exit( 1 );
 }
 
+/// adapted from http://stackoverflow.com/questions/669438/how-to-get-memory-usage-at-run-time-in-c
+/// virtMem and physMem are set to the virtual and physical memory use amounts, in kb.
+void getMemUseKB( double& virtMem, double& physMem ) {
+    using std::ios_base;
+    using std::ifstream;
+    using std::string;
+
+    virtMem     = 0.0;
+    physMem = 0.0;
+
+#ifdef __linux__
+    // 'file' stat seems to give the most reliable results
+    ifstream stat_stream("/proc/self/stat",ios_base::in);
+
+    // dummy vars for leading entries in stat that we don't care about
+    string pid, comm, state, ppid, pgrp, session, tty_nr;
+    string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+    string utime, stime, cutime, cstime, priority, nice;
+    string O, itrealvalue, starttime;
+
+    // the two fields we want
+    unsigned long vsize;
+    long rss;
+
+    stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr
+                >> tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt
+                >> utime >> stime >> cutime >> cstime >> priority >> nice
+                >> O >> itrealvalue >> starttime >> vsize >> rss; // don't care about the rest
+
+//     stat_stream.close();
+
+    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024; // in case x86-64 is configured to use 2MB pages
+    virtMem     = vsize / 1024.0;
+    physMem = 1.0 * rss * page_size_kb;
+#elif defined(__APPLE__)
+    // http://stackoverflow.com/a/1911863/382458
+#elif defined(__WIN32)
+    // http://stackoverflow.com/a/282220/382458 and http://stackoverflow.com/a/64166/382458
+#else
+    #warning Unknown platform!
+#endif //__linux__
+}
+
 int main( int argc, char * argv[] ) {
     bool ignoreErr = false;
     bool strict = false;
+    bool memInfo = true;
     char c;
+    double physMem, virtMem, preReadPhysMem, preReadVirtMem; //for memory monitoring
+
     if( argc > 4 || argc < 2 ) {
         printUse( argv[0] );
     }
-    while( ( c = sc_getopt( argc, argv, "isv" ) ) != -1 ) {
+    while( ( c = sc_getopt( argc, argv, "imsv" ) ) != -1 ) {
         switch( c ) {
             case 'i':
                 ignoreErr = true;
+                break;
+            case 'm':
+                memInfo = false;
                 break;
             case 's':
                 strict = true;
@@ -128,6 +178,10 @@ int main( int argc, char * argv[] ) {
         }
     }
 
+    if( memInfo ) {
+        getMemUseKB( virtMem, physMem );
+        std::cout << "Memory used before initializing anything: Physical " << physMem << "kb, Virtual " << virtMem << "kb" << std::endl;
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     // You have to initialize the schema before you do anything else.
@@ -142,31 +196,46 @@ int main( int argc, char * argv[] ) {
     STEPfile  sfile( registry, instance_list, "", strict );
     char   *  flnm;
 
-    cout << "\nEXAMPLE :  load file ..." << endl;
+    if( memInfo ) {
+        getMemUseKB( preReadVirtMem, preReadPhysMem );
+        std::cout << "Memory used before ReadExchangeFile(): Physical " << preReadPhysMem << "kb, Virtual " << preReadVirtMem << "kb" << std::endl;
+    }
+
+    cout << argv[0] << ": load file ..." << endl;
     if( argc >= ( optind + 1 ) ) {
         flnm = argv[optind];
     } else {
         flnm = ( char * )"testfile.step";
     }
     sfile.ReadExchangeFile( flnm );
-    sfile.Error().PrintContents( cout );
+    if( sfile.Error().severity() < SEVERITY_USERMSG ) {
+        sfile.Error().PrintContents( cout );
+    }
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE )
+    if( memInfo ) {
+        getMemUseKB( virtMem, physMem );
+        std::cout << "Memory used by ReadExchangeFile(): Physical " << physMem - preReadPhysMem << "kb, Virtual " << virtMem - preReadVirtMem << "kb" << std::endl;
+    }
+
+    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         exit(1);
+    }
 
     checkSchemaName( registry, sfile, ignoreErr );
 
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
 
-    cout << "EXAMPLE :  write file ..." << endl;
+    cout << argv[0] << ": write file ..." << endl;
     if( argc == optind + 2 ) {
         flnm = argv[optind + 1];
     } else {
         flnm = ( char * )"file.out";
     }
     sfile.WriteExchangeFile( flnm );
-    sfile.Error().PrintContents( cout );
-    cout << flnm << " written"  << endl;
+    if( sfile.Error().severity() < SEVERITY_USERMSG ) {
+        sfile.Error().PrintContents( cout );
+    }
+    cout << argv[0] << ": " << flnm << " written"  << endl;
 
     if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
         exit( 1 );
