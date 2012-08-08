@@ -98,7 +98,7 @@ void printUse( const char * exe ) {
     std::cout << "p21read - read a STEP Part 21 exchange file using SCL, and write the data to another file." << std::endl;
     std::cout << "Syntax:  " << exe << " [-i] [-s] infile [outfile]" << std::endl;
     std::cout << "Use '-i' to ignore a schema name mismatch." << std::endl;
-    std::cout << "Use '-m' to turn off memory info." << std::endl;
+    std::cout << "Use '-t' to turn off statistics tracking." << std::endl;
     std::cout << "Use '-s' for strict interpretation (attributes that are \"missing and required\" will cause errors)." << std::endl;
     std::cout << "Use '-v' to print the version info below and exit." << std::endl;
     std::cout << "Use '--' as the last argument if a file name starts with a dash." << std::endl;
@@ -109,20 +109,19 @@ void printUse( const char * exe ) {
 int main( int argc, char * argv[] ) {
     bool ignoreErr = false;
     bool strict = false;
-    bool memInfo = true;
+    bool trackStats = true;
     char c;
-    double physMem, virtMem, preReadPhysMem, preReadVirtMem; //for memory monitoring
 
     if( argc > 4 || argc < 2 ) {
         printUse( argv[0] );
     }
-    while( ( c = sc_getopt( argc, argv, "imsv" ) ) != -1 ) {
+    while( ( c = sc_getopt( argc, argv, "itsv" ) ) != -1 ) {
         switch( c ) {
             case 'i':
                 ignoreErr = true;
                 break;
-            case 'm':
-                memInfo = false;
+            case 't':
+                trackStats = false;
                 break;
             case 's':
                 strict = true;
@@ -162,8 +161,10 @@ int main( int argc, char * argv[] ) {
         sfile.Error().PrintContents( cout );
     }
 
-    stats.stop();
-    stats.out( );
+    if( trackStats ) {
+        stats.stop();
+        stats.out( );
+    }
 
     if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         exit(1);
