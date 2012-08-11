@@ -215,11 +215,11 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
             _error.severity( SEVERITY_NULL );
         } else {
             _error.severity( SEVERITY_WARNING );
-            _error.AppendToDetailMsg( "  WARNING: attribute " );
+            _error.AppendToDetailMsg( "  WARNING: attribute '" );
             _error.AppendToDetailMsg( aDesc->Name() );
-            _error.AppendToDetailMsg( " of type " );
+            _error.AppendToDetailMsg( "' of type '" );
             _error.AppendToDetailMsg( aDesc->TypeName() );
-            _error.AppendToDetailMsg( "Missing asterisk for derived attribute.\n" );
+            _error.AppendToDetailMsg( "' - missing asterisk for derived attribute.\n" );
         }
         CheckRemainingInput( in, &_error, aDesc->TypeName(), ",)" );
         return _error.severity();
