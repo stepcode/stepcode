@@ -111,5 +111,10 @@ if(NOT SKIP_TEST_CPP_SCHEMA_SPECIFIC )
     SUBMIT_TEST( Test )
 endif()
 
+if(NOT SKIP_TEST_CPP_UNIT )
+    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+                INCLUDE_LABEL "cpp_unit_....*" )
+    SUBMIT_TEST( Test )
+endif()
 
 # ctest_coverage( )
