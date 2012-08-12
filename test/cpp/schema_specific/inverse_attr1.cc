@@ -6,6 +6,7 @@
 #include <scl_cf.h>
 extern void SchemaInit( class Registry & );
 #include "scl_version_string.h"
+#include "SubSuperIterators.h"
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>
@@ -59,6 +60,7 @@ int main( int argc, char * argv[] ) {
     STEPfile  sfile( registry, instance_list, "", false );
     bool inverseAttrsFound = false;
     if( argc != 2 ) {
+        cout << "wrong args" << endl;
         exit( EXIT_FAILURE );
     }
     sfile.ReadExchangeFile( argv[1] );
@@ -77,9 +79,10 @@ int main( int argc, char * argv[] ) {
     }
 
     //now, find inherited inverse attrs
-    EntityDescItr edi( ed->GetSupertypes() );
+    supertypesIterator iter( ed );
     const EntityDescriptor * super;
-    while( 0 != ( super = edi.NextEntityDesc() ) ) {
+    for( ; !iter.empty(); iter++ ) {
+        super = iter.current();
         cout << "supertype " << super->Name() << endl;
         InverseAItr superIaIter( super->InverseAttr() );
         if( findInverseAttrs1( superIaIter, instance_list ) ) {
