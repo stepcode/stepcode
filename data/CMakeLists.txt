@@ -1,8 +1,8 @@
-# To build one or more schemas, configure with 
+# To build one or more schemas, configure with
 # 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
-# This function runs fedex on one express file. The generated source goes in a dir 
-# in the build dir, and it is compiled into a library. A p21read executable is 
+# This function runs fedex on one express file. The generated source goes in a dir
+# in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #is it a path relative to build dir?
@@ -27,7 +27,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #fedex_plus always uses upper case for file names
     get_filename_component( SCHEMA_SN ${SCHEMA_FILE} NAME )
     string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_SHORT_NAME ${SCHEMA_SN} )
-    
+
     project( sdai_${SCHEMA_SHORT_NAME} )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
     set( SCHEMA_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
