@@ -32,6 +32,3 @@
 #include <needFunc.h>
 
 extern void SchemaInit( Registry & );
-
-/* STEPentity* Iterator class definition */
-#include <SEarritr.h>
