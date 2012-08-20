@@ -85,6 +85,10 @@ OPTION_WITH_DEFAULT(SCL_CPP_GENERATOR "Compile fedex_plus" ON)
 OPTION_WITH_DEFAULT(SCL_MEMMGR_ENABLE_CHECKS "Enable scl_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SCL_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in fedex_plus may be located" OFF)
 
+if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
+  set( SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs" )
+endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
+
 #this makes SCL_BUILD_SCHEMAS show up in cmake-gui
 if( NOT DEFINED ${SCL_BUILD_SCHEMAS} )
     SET(SCL_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
