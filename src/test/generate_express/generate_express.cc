@@ -8,7 +8,10 @@
    init function, we don't need to include the schema's header file inside
    tests.h  */
 #define DONT_NEED_HEADER
-#include <tests.h>
+#include "../tests.h"
+
+/* STEPentity* Iterator class definition */
+#include "../SEarritr.h"
 
 /********************  main()  ****************************/
 
@@ -50,15 +53,17 @@ main() {
     registry->AddEntity( *ent );
 #endif
     schema = ( SchemaDescriptor * )registry->FindSchema( "Example_Schema" );
-    EntityDescriptor * ed = ( EntityDescriptor * )registry->FindEntity( "Circle" );
-    Uniqueness_rule_ptr ur = new Uniqueness_rule;
-    ur->comment_( "(* Hi Dave *)\n" );
-    if( ed->_uniqueness_rules ) {
-        ed->_uniqueness_rules->Append( ur );
-    } else {
-//  Uniqueness_rule__set_var ursv = new Uniqueness_rule__set;
-        ed->uniqueness_rules_( new Uniqueness_rule__set );
-        ed->_uniqueness_rules->Append( ur );
+    if( schema ) { //adds a comment, but only to one entity of one schema
+        EntityDescriptor * ed = ( EntityDescriptor * )registry->FindEntity( "Circle" );
+        Uniqueness_rule_ptr ur = new Uniqueness_rule;
+        ur->comment_( "(* Hi Dave *)\n" );
+        if( ed->_uniqueness_rules ) {
+            ed->_uniqueness_rules->Append( ur );
+        } else {
+    //  Uniqueness_rule__set_var ursv = new Uniqueness_rule__set;
+            ed->uniqueness_rules_( new Uniqueness_rule__set );
+            ed->_uniqueness_rules->Append( ur );
+        }
     }
 
     registry->ResetSchemas();
@@ -69,8 +74,8 @@ main() {
     while( schema != 0 ) {
 //  str = "new";
         str = "";
-        str.Append( StrToLower( schema->Name(), tmp ) );
-        str.Append( ".exp" );
+        str.append( StrToLower( schema->Name(), tmp ) );
+        str.append( ".exp" );
         efile = new ofstream( str.c_str() );
         cout << "Generating: " << str << endl;
         schema->GenerateExpress( *efile );

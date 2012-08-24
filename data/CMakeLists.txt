@@ -92,6 +92,16 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
 
+    #add user-defined executables
+    foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
+        get_filename_component( name ${src} NAME_WE )
+        get_filename_component( path ${src} ABSOLUTE )
+        SCL_ADDEXEC( ${name}_${PROJECT_NAME} "${src}" "${PROJECT_NAME} base" "TESTABLE" )
+        add_dependencies( ${name}_${PROJECT_NAME} version_string )
+        set_target_properties( ${name}_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
+                               "${${PROJECT_NAME}_COMPILE_FLAGS} -I${path}" )
+    endforeach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
+
     #find all part 21 files in schema dir, add a test for each one
     get_filename_component( SCHEMA_DIR ${SCHEMA_FILE} PATH )
     file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 ${SCHEMA_DIR}/*.ifc )
@@ -108,6 +118,11 @@ ENDFUNCTION(BUILD_A_SCHEMA)
 #----------------------------------------------------------------------------------------------------
 
 if( DEFINED SCL_BUILD_SCHEMAS )
+    foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
+        get_filename_component( name ${src} NAME_WE )
+        message( STATUS "Additional SDAI executable: ${name}" )
+    endforeach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
+
     if( SCL_BUILD_SCHEMAS STREQUAL "ALL" )
         file( GLOB_RECURSE SCL_BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
     endif()
