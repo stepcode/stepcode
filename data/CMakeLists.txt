@@ -5,12 +5,12 @@
 # in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
-    if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #try absolute path. if that fails, must already be absolute.
+    if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #is it a path relative to build dir?
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
-    else()
-        if( NOT EXISTS ${SCHEMA_FILE} )
-            message( FATAL_ERROR "Cannot find ${CMAKE_BINARY_DIR}/${SCHEMA_FILE} or ${SCHEMA_FILE}")
-        endif()
+    elseif( EXISTS "${SCL_SOURCE_DIR}/data/${SCHEMA_FILE}" )  # path relative to STEPcode/data?
+        set( SCHEMA_FILE "${SCL_SOURCE_DIR}/data/${SCHEMA_FILE}" )
+    elseif( NOT EXISTS ${SCHEMA_FILE} ) # absolute path
+        message( FATAL_ERROR "Cannot find ${CMAKE_BINARY_DIR}/${SCHEMA_FILE} or ${SCL_SOURCE_DIR}/data/${SCHEMA_FILE} or ${SCHEMA_FILE}" )
     endif()
 
     if( IS_DIRECTORY ${SCHEMA_FILE} ) #if it is a dir, look for one .exp file inside
@@ -30,7 +30,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
 
     project( sdai_${SCHEMA_SHORT_NAME} )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
-    set( SCHEMA_OUTPUT_DIR ${CMAKE_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
+    set( SCHEMA_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
     #the names of the files that will be generated
     set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h
