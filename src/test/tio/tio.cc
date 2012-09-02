@@ -16,7 +16,10 @@
 
 /* A switch for tests.h, because we don't need to schema header file */
 #define DONT_NEED_HEADER
-#include "tests.h"
+#include "../tests.h"
+
+/* STEPentity* Iterator class definition */
+#include "../SEarritr.h"
 
 int main( int argc, char * argv[] ) {
     int using_outfile = 0;
