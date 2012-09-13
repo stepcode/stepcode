@@ -7,20 +7,9 @@
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
 // #include <ExpDict.h>
+#include "lazyTypes.h"
 
 
-
-// typedefs for instanceRefMMap, instanceTypeMMap, instancesLoaded
-typedef std::multimap< instanceID, instanceID > instanceRefMMap_t;
-typedef std::pair< instanceID, instanceID > instanceRefMMap_pair;
-typedef std::pair< instanceRefMMap_t::iterator, instanceRefMMap_t::iterator > instanceRefMMap_range;
-typedef std::multimap< std::string, instanceID > instanceTypeMMap_t;
-typedef std::pair< std::string, instanceID > instanceTypeMMap_pair;
-typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
-typedef std::map< instanceID, SDAI_Application_instance * > instancesLoaded_t;
-typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pair;
-// typedef std::map< instanceID, lazyInstance * > instancesLazy_t;
-// typedef std::pair< instanceID, lazyInstance * > instancesLazy_pair;
 
 
 class lazyInstMgr {
@@ -42,11 +31,17 @@ protected:
      */
     instancesLoaded_t instancesLoaded;
 
-    /** map from instance number to instance pointer (instances not loaded only)
-     * \sa instancesLoaded
-     * \sa instancesLoaded_pair
+//     /** map from instance number to instance pointer (instances not loaded only)
+//      * \sa instancesLoaded
+//      * \sa instancesLoaded_pair
+//      */
+//     instancesLazy_t instancesLazy;
+
+    /** map from instance number to beginning and end positions in the stream
+     * \sa instanceStreamPosMap_pair
      */
-    instancesLazy_t instancesLazy;
+    instanceStreamPosMap_t instanceStreamPosMap;
+
 public:
     void addSchema( void (*initFn) ());
     void addFile( std::string fname );
