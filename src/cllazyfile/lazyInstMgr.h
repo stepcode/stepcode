@@ -37,19 +37,25 @@ protected:
 //      */
 //     instancesLazy_t instancesLazy;
 
-    /** map from instance number to beginning and end positions in the stream
+    /** map from instance number to beginning and end positions and the data section
      * \sa instanceStreamPosMap_pair
      */
     instanceStreamPosMap_t instanceStreamPosMap;
 
+    dataSectionReaderVec_t dataSections;
+
+    lazyFileReaderVec_t files;
+
 public:
-    void addSchema( void (*initFn) ());
-    void addFile( std::string fname );
+    void addSchema( void (*initFn) () ); //?
+    void openFile( std::string fname ) {
+        files.push_back( new lazyFileReader( fname, dataSections, instanceStreamPosMap ) );
+    }
     // what about the registry?
 
 //     addInstance(lazyInstance l, lazyFileReader* r);                ///< only used by lazy file reader functions
-    void addLazyInstance(streamRange range, lazyDataSectionReader* r );
-    void addDataSection(lazyDataSectionReader* d, lazyFileReader* f);   ///< only used by lazy file reader functions
+    void addLazyInstance( lazyInstance range, lazyDataSectionReader* r );
+    void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
 };
 
 #endif //LAZYINSTMGR_H
