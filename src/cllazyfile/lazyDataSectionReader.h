@@ -24,7 +24,7 @@ protected:
 
 
     /// only makes sense to call the ctor from derived class ctors
-    lazyDataSectionReader(std::ifstream* f/*, lazyFileReader* p*/ ): file(f)/*, parent(p)*/ {
+    lazyDataSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): sectionReader( parent, file, start ) {
     }
 public:
     bool success() {

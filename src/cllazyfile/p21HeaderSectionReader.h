@@ -3,10 +3,14 @@
 
 #include "headerSectionReader.h"
 
+
 class p21HeaderSectionReader: public headerSectionReader {
 public:
-    p21HeaderSectionReader(std::ifstream* f/*, lazyFileReader* p*/ ): headerSectionReader( f/*, p */) {
+    p21HeaderSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): headerSectionReader( parent, file, start ) {
     }
+//     std::streampos findSectionEnd() {
+//
+//     }
 };
 
 #endif //P21HEADERSECTIONREADER_H

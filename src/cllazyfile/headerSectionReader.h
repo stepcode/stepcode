@@ -4,17 +4,17 @@
 #include <iostream>
 #include <fstream>
 #include "lazyFileReader.h"
+#include "sectionReader.h"
 
 // #include "SdaiSchemaInit.h"
-
+//differs from the lazyDataSectionReader in that all instances are always loaded
 class headerSectionReader: public sectionReader {
 protected:
-    std::ifstream* file;
-    std::ios::streampos headerEnd;
+//     std::ios::streampos headerEnd;
 //     lazyFileReader* parent;
 
     /// must derive from this class
-    headerSectionReader(std::ifstream* f/*, lazyFileReader* p*/ ): file(f)/*, parent(p)*/ {
+    headerSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): sectionReader( parent, file, start ) {
     }
 public:
     // what functions?

@@ -3,14 +3,18 @@
 
 #include <map>
 #include <iostream>
+#include <vector>
 // #include "sdaiApplication_instance.h"
 
 class SDAI_Application_instance;
 class sectionReader;
 class lazyFileReader;
 
+enum fileTypeEnum { Part21, Part28 };
+
 typedef long instanceID; ///< the number assigned to an instance in the file
-typedef int sectionID; ///< the index of a sectionReader in a sectionReaderVec_t
+typedef int sectionID;   ///< the index of a sectionReader in a sectionReaderVec_t
+typedef int fileID;      ///< the index of a lazyFileReader in a lazyFileReaderVec_t
 
 /** This struct contains all the information necessary to locate an instance. It is primarily
  * for instances that are present in a file but not memory. It could be useful in other
@@ -19,6 +23,7 @@ typedef int sectionID; ///< the index of a sectionReader in a sectionReaderVec_t
 typedef struct {
     std::streampos begin, end;
     sectionID section;
+    fileID file;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is
     unmodified, simply copy it from the input file to the output file */
 } lazyInstance;
@@ -37,13 +42,20 @@ typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > 
 typedef std::map< instanceID, SDAI_Application_instance * > instancesLoaded_t;
 typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pair;
 
-// instanceStreamPosMap - map instance id to a range in a particular file
-typedef std::map< instanceID, lazyInstance > instanceStreamPosMap_t;
-typedef std::pair< instanceID, lazyInstance > instanceStreamPosMap_pair;
+// instanceStreamPosMMap - map instance id to a range in a particular data section
+// use multimap because there could be multiple instances with the same ID
+typedef std::multimap< instanceID, lazyInstance > instanceStreamPosMMap_t;
+typedef std::pair< instanceID, lazyInstance > instanceStreamPosMMap_pair;
+typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
+
 
 // data sections
 typedef std::vector< sectionReader * > dataSectionReaderVec_t;
 
+// files
 typedef std::vector< lazyFileReader * > lazyFileReaderVec_t;
+
+// type for performing actions on multiple instances
+// NOTE not useful? typedef std::vector< lazyInstance > lazyInstanceVec_t;
 
 #endif //LAZYTYPES_H

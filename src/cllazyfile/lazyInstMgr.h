@@ -18,18 +18,18 @@ protected:
      * \sa instanceRefMMap_pair
      * \sa instanceRefMMap_range
      */
-    instanceRefMMap_t  instanceRefMMap;
+    instanceRefMMap_t  _instanceRefMMap;
 
     /** multimap from instance type to instance number
      * \sa instanceTypeMMap_pair
      * \sa instanceTypeMMap_range
      */
-    instanceTypeMMap_t instanceTypeMMap;
+    instanceTypeMMap_t _instanceTypeMMap;
 
     /** map from instance number to instance pointer (loaded instances only)
      * \sa instancesLoaded_pair
      */
-    instancesLoaded_t instancesLoaded;
+    instancesLoaded_t _instancesLoaded;
 
 //     /** map from instance number to instance pointer (instances not loaded only)
 //      * \sa instancesLoaded
@@ -40,22 +40,46 @@ protected:
     /** map from instance number to beginning and end positions and the data section
      * \sa instanceStreamPosMap_pair
      */
-    instanceStreamPosMap_t instanceStreamPosMap;
+    instanceStreamPosMMap_t _instanceStreamPosMap;
 
-    dataSectionReaderVec_t dataSections;
+    dataSectionReaderVec_t _dataSections;
 
-    lazyFileReaderVec_t files;
+    lazyFileReaderVec_t _files;
 
 public:
     void addSchema( void (*initFn) () ); //?
     void openFile( std::string fname ) {
-        files.push_back( new lazyFileReader( fname, dataSections, instanceStreamPosMap ) );
+        _files.push_back( new lazyFileReader( fname, this ) );
     }
     // what about the registry?
 
 //     addInstance(lazyInstance l, lazyFileReader* r);                ///< only used by lazy file reader functions
-    void addLazyInstance( lazyInstance range, lazyDataSectionReader* r );
+//     void addLazyInstance( lazyInstance range, lazyDataSectionReader* r );
     void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
+
+
+    instanceRefMMap_range getReferentInstances( instanceID id ) {
+        return _instanceRefMMap.equal_range(id);
+    }
+
+    instanceTypeMMap_range getInstances( std::string type ) {
+        return _instanceTypeMMap.equal_range( type );
+    }
+
+    sectionID getSectionID( sectionReader * reader ) {
+        sectionID i = 0, l = _dataSections.size();
+        while( i < l ) {
+            if( _dataSections[i] == reader ) {
+                return i;
+            }
+        }
+        abort();
+//         return -1;
+    }
+    fileID getFileID();
+
+    // TODO void useDataSection( sectionID id ); ///< tell instMgr to use instances from this section
+    // TODO support references from one file to another
 };
 
 #endif //LAZYINSTMGR_H

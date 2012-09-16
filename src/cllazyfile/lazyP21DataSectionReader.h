@@ -7,8 +7,11 @@
 class lazyP21DataSectionReader: public lazyDataSectionReader {
 protected:
 public:
-    lazyP21DataSectionReader(std::ifstream* f/*, lazyFileReader* p */): lazyDataSectionReader( f/*, p */) {
+    lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): lazyDataSectionReader( parent, file, start ) {
     }
+//     std::streampos findSectionEnd() {
+//         //TODO look for ENDSEC
+//     }
 };
 
 #endif //LAZYP21DATASECTIONREADER_H
