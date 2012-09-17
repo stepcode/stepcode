@@ -11,6 +11,9 @@ public:
 //     std::streampos findSectionEnd() {
 //
 //     }
+    void findSectionStart() {
+        findString( "HEADER", true );
+    }
 };
 
 #endif //P21HEADERSECTIONREADER_H

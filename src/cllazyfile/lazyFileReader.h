@@ -15,6 +15,7 @@
  */
 
 class lazyInstMgr;
+class Registry;
 
 ///read an exchange file of any supported type (currently only p21)
 ///for use only from within lazyInstMgr
@@ -28,42 +29,25 @@ protected:
     std::string _fileName;
     std::ifstream* _file;
     fileTypeEnum _fileType;
-    void initP21() {
-        _header = new p21HeaderSectionReader( this, _file, 0 );
-        lazyDataSectionReader * r;
+    fileID _fileID;
 
-        //FIXME rework this? check for EOF instead of "success()"?
-        while( r = new lazyP21DataSectionReader( this, _file, _file->tellg() ), r->success() ) {
-            _lazyDataReaders.push_back(r);
-        }
-        delete r; //last read attempt failed
-    }
-    //TODO detect file type; for now, assume all are Part 21
+    void initP21();    //TODO detect file type; for now, assume all are Part 21
     void detectType() {
         _fileType = Part21;
     }
 public:
-    lazyFileReader( std::string fname, lazyInstMgr* i ): _fileName(fname), _parent(i) {
-        _file = new std::ifstream( _fileName.c_str() );
-        detectType();
-        switch( _fileType ) {
-            case Part21:
-                initP21();
-                break;
-            case Part28:
-                //initP28();
-                //break;
-            default:
-                std::cerr << "Reached default case, " << __FILE__ << ":" << __LINE__ << std::endl;
-                abort();
-        }
+    fileID ID() const {
+        return _fileID;
     }
+
+    lazyFileReader( std::string fname, lazyInstMgr* i );
+
     const fileTypeEnum type() const {
         return _fileType;
     }
-//     const lazyInstMgr* getInstMgr() const {
-//         return parent;
-//     }
+    lazyInstMgr* getInstMgr() const {
+        return _parent;
+    }
 
 };
 

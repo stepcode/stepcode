@@ -3,27 +3,56 @@
 
 // #include "lazyFileReader.h"
 // #include "sdaiApplication_instance.h"
-#include <iostream>
+#include <fstream>
 #include "lazyTypes.h"
 
 class SDAI_Application_instance;
 class lazyFileReader;
+class ErrorDescriptor;
 
 class sectionReader {
 protected:
-//     std::ifstream* file; //look this up in parent
-    std::streampos _sectionStart,  ///< the start of this section as reported by tellg()
-                   _sectionEnd,    ///< the end of this section as reported by tellg()
-                   _currentPos;    ///< current position (while scanning file and creating lazyInstance's)
-    unsigned long /*loadedInstances,*/ _totalInstances;
-    std::ifstream* _file;
+    //protected data members
 
-    lazyFileReader* _parent; //?
-    sectionReader( lazyFileReader* parent, std::ifstream * file, std::streampos start );
+    // std::ifstream* file; //look this up in parent
+    std::streampos _sectionStart,  ///< the start of this section as reported by tellg()
+                   _sectionEnd;    ///< the end of this section as reported by tellg()
+    unsigned long /*loadedInstances,*/ _totalInstances;
+    std::ifstream * _file;
+
+    ErrorDescriptor * _error;
+    lazyFileReader * _lazyFile;
+    sectionID _sectionID;
+    fileID _fileID;
+
+    // protected member functions
+
+    sectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start );
+
+    /** Find next occurence of str.
+     * \param semicolon if true, 'str' must be followed by a semicolon, possibly preceded by whitespace.
+     * \param currentPos if true, seekg() to currentPos when done. Otherwise, file pos in the returned value.
+     * \returns the position of the end of the found string
+     */
+    std::streampos findString( const std::string& str, bool semicolon = false, bool currentPos = false );
+
+    /** Get a keyword ending with one of delimiters.
+     */
+    std::string * getDelimitedKeyword( const char * delimiters );
+
+    /** Seek to the end of the current instance */
+    std::streampos seekInstanceEnd();
 public:
-    SDAI_Application_instance * getRealInstance( lazyInstance * inst );
-    //TODO add functions to find section begin/end (pure virtual), and to find instance begin/end
-//     virtual std::streampos findSectionEnd() = 0;
+    SDAI_Application_instance * getRealInstance( lazyInstanceLoc * inst );
+    sectionID ID() const {
+        return _sectionID;
+    }
+
+    virtual void findSectionStart() = 0;
+
+    void findSectionEnd() {
+        _sectionEnd = findString( "ENDSEC", true );
+    }
 
     std::streampos startPos() const {
         return _sectionStart;
@@ -31,16 +60,8 @@ public:
     std::streampos endPos() const {
         return _sectionEnd;
     }
-    const lazyInstance nextInstance() {
-        lazyInstance i;
-        i.begin = _currentPos;
-        // i.section =
-        // i.file =
-        //TODO find end
-        //         i.end = ...
-        return i;
-    }
-
+    void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
+    const lazyInstanceLoc nextInstance();
 };
 
 #endif //SECTIONREADER_H

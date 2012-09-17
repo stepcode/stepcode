@@ -12,6 +12,10 @@ public:
 //     std::streampos findSectionEnd() {
 //         //TODO look for ENDSEC
 //     }
+    void findSectionStart() {
+        findString( "DATA", true );
+    }
+
 };
 
 #endif //LAZYP21DATASECTIONREADER_H

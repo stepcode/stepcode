@@ -11,6 +11,7 @@ class sectionReader;
 class lazyFileReader;
 
 enum fileTypeEnum { Part21, Part28 };
+// enum loadingEnum { immediate, lazy };
 
 typedef long instanceID; ///< the number assigned to an instance in the file
 typedef int sectionID;   ///< the index of a sectionReader in a sectionReaderVec_t
@@ -22,11 +23,17 @@ typedef int fileID;      ///< the index of a lazyFileReader in a lazyFileReaderV
  */
 typedef struct {
     std::streampos begin, end;
+    instanceID instance;
     sectionID section;
     fileID file;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is
     unmodified, simply copy it from the input file to the output file */
-} lazyInstance;
+} lazyInstanceLoc;
+
+typedef struct {
+    lazyInstanceLoc loc;
+    std::string * name;
+} namedLazyInstance;
 
 // instanceRefMMap - multimap between an instanceID and instances that refer to it
 typedef std::multimap< instanceID, instanceID > instanceRefMMap_t;
@@ -44,8 +51,8 @@ typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pai
 
 // instanceStreamPosMMap - map instance id to a range in a particular data section
 // use multimap because there could be multiple instances with the same ID
-typedef std::multimap< instanceID, lazyInstance > instanceStreamPosMMap_t;
-typedef std::pair< instanceID, lazyInstance > instanceStreamPosMMap_pair;
+typedef std::multimap< instanceID, lazyInstanceLoc > instanceStreamPosMMap_t;
+typedef std::pair< instanceID, lazyInstanceLoc > instanceStreamPosMMap_pair;
 typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
 
 

@@ -9,8 +9,7 @@
 // #include <ExpDict.h>
 #include "lazyTypes.h"
 
-
-
+class Registry;
 
 class lazyInstMgr {
 protected:
@@ -40,13 +39,17 @@ protected:
     /** map from instance number to beginning and end positions and the data section
      * \sa instanceStreamPosMap_pair
      */
-    instanceStreamPosMMap_t _instanceStreamPosMap;
+    instanceStreamPosMMap_t _instanceStreamPosMMap;
 
     dataSectionReaderVec_t _dataSections;
 
     lazyFileReaderVec_t _files;
 
+    Registry * _headerRegistry;
+
+
 public:
+    lazyInstMgr();
     void addSchema( void (*initFn) () ); //?
     void openFile( std::string fname ) {
         _files.push_back( new lazyFileReader( fname, this ) );
@@ -54,7 +57,13 @@ public:
     // what about the registry?
 
 //     addInstance(lazyInstance l, lazyFileReader* r);                ///< only used by lazy file reader functions
-//     void addLazyInstance( lazyInstance range, lazyDataSectionReader* r );
+    void addLazyInstance( namedLazyInstance inst ) {
+        instanceStreamPosMMap_pair pos( inst.loc.instance, inst.loc );
+        _instanceStreamPosMMap.insert( pos );
+        instanceTypeMMap_pair type( *inst.name, inst.loc.instance );
+        _instanceTypeMMap.insert( type );
+        delete inst.name;
+    }
     void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
 
 
@@ -66,17 +75,12 @@ public:
         return _instanceTypeMMap.equal_range( type );
     }
 
-    sectionID getSectionID( sectionReader * reader ) {
-        sectionID i = 0, l = _dataSections.size();
-        while( i < l ) {
-            if( _dataSections[i] == reader ) {
-                return i;
-            }
-        }
-        abort();
-//         return -1;
+    Registry * getHeaderRegistry() {
+        return _headerRegistry;
     }
-    fileID getFileID();
+
+    sectionID getSectionID( sectionReader * sreader );
+    fileID getFileID( lazyFileReader * freader );
 
     // TODO void useDataSection( sectionID id ); ///< tell instMgr to use instances from this section
     // TODO support references from one file to another
