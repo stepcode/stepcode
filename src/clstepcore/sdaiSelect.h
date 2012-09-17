@@ -14,6 +14,9 @@
 
 #include <scl_export.h>
 
+class TypeDescriptor;
+class SDAI_Application_instance;
+
 /**
 ** \file sdaiSelect.h class definition for the select superclass SDAI_Select.
 **/

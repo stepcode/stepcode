@@ -19,6 +19,7 @@
 #include <string>
 #include <assert.h>
 
+class SDAI_Application_instance;
 typedef  SDAI_Application_instance * ( * Creator )() ;
 
 enum AttrType_Enum {
