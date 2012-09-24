@@ -21,11 +21,12 @@ class lazyDataSectionReader: public sectionReader {
 protected:
     bool error, completelyLoaded;
 //     lazyFileReader* parent;
-
+    std::string _sectionIdentifier;
 
     /// only makes sense to call the ctor from derived class ctors
-    lazyDataSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start );
+    lazyDataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
 public:
+    virtual ~lazyDataSectionReader() {}
     bool success() {
         return !error;
     }

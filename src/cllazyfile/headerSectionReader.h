@@ -14,9 +14,10 @@ protected:
 //     lazyFileReader* parent;
 
     /// must derive from this class
-    headerSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): sectionReader( parent, file, start ) {
+    headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ): sectionReader( parent, file, start ) {
     }
 public:
+//     void findSectionStart();
     // what functions?
     // one to get all contents, or to get next?
     // callback... probably

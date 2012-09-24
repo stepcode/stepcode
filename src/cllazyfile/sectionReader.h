@@ -13,28 +13,27 @@ class ErrorDescriptor;
 class sectionReader {
 protected:
     //protected data members
+    lazyFileReader * _lazyFile;
+    std::ifstream & _file;
 
-    // std::ifstream* file; //look this up in parent
     std::streampos _sectionStart,  ///< the start of this section as reported by tellg()
                    _sectionEnd;    ///< the end of this section as reported by tellg()
     unsigned long /*loadedInstances,*/ _totalInstances;
-    std::ifstream * _file;
 
     ErrorDescriptor * _error;
-    lazyFileReader * _lazyFile;
     sectionID _sectionID;
     fileID _fileID;
 
     // protected member functions
 
-    sectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start );
+    sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
 
     /** Find next occurence of str.
      * \param semicolon if true, 'str' must be followed by a semicolon, possibly preceded by whitespace.
      * \param currentPos if true, seekg() to currentPos when done. Otherwise, file pos in the returned value.
      * \returns the position of the end of the found string
      */
-    std::streampos findString( const std::string& str, bool semicolon = false, bool currentPos = false );
+    std::streampos findString( const std::string& str, bool semicolon = false, bool resetPos = false );
 
     /** Get a keyword ending with one of delimiters.
      */
@@ -61,7 +60,7 @@ public:
         return _sectionEnd;
     }
     void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
-    const lazyInstanceLoc nextInstance();
+    const namedLazyInstance nextInstance( bool noNumber = false );
 };
 
 #endif //SECTIONREADER_H

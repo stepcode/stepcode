@@ -1,45 +1,58 @@
-#include <algorithm>
 #define SCL_CORE_EXPORT
 #define SCL_DAI_EXPORT
+
+#include <algorithm>
+#include <assert.h>
+
 #include "sdaiApplication_instance.h"
 #include "sectionReader.h"
 #include "lazyFileReader.h"
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
 
-sectionReader::sectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ):
+sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ):
                                 _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID(-1) {
     _fileID = _lazyFile->ID();
 }
 
-std::streampos sectionReader::findString( const std::string& str, bool semicolon, bool currentPos ) {
-    std::streampos found = 0, current = _file->tellg();
+std::streampos sectionReader::findString( const std::string& str, bool semicolon, bool resetPos ) {
+    std::streampos found = 0, current = _file.tellg();
     int i, l = str.length();
-    while( i < l && str[i] == _file->get() ) {
+    while( i < l && str[i] == _file.get() ) {
         i++;
     }
     if( i + 1 == l ) {
         if( semicolon ) {
-            *_file >> std::ws;
-            if( _file->get() == ';' ) {
-                found = _file->tellg();
+            _file >> std::ws;
+            if( _file.get() == ';' ) {
+                found = _file.tellg();
             }
         } else {
-            found = _file->tellg();
+            found = _file.tellg();
         }
     }
-    if( currentPos ) {
-        _file->seekg(current);
+    if( resetPos ) {
+        _file.seekg(current);
     }
+    assert( _file.is_open() && _file.good() );
     return found;
 }
 
+//NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
 std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     std::string * str = new std::string;
     char c;
-    while( c = _file->get(), _file->good() ) {
-        if( isupper( c ) || c == '-' || c == '_' )
+    while( c = _file.get(), _file.good() ) {
+        if( c == '-' || c == '_' || isupper( c ) ||
+            ( c == '!' && str->length() == 0 ) ) {
+            str->append( 1, c );
+        } else {
+            _file.putback( c );
+            break;
+        }
     }
+    c = _file.peek();
+    assert( strchr( delimiters, c ) );
     return str;
 }
 
@@ -48,20 +61,26 @@ std::streampos sectionReader::seekInstanceEnd() {
 }
 
 void sectionReader::locateAllInstances() {
-    lazyInstance inst;
-    while( inst = nextInstance(), _file->good() && ( inst.end < _sectionEnd ) ) {
-        _lazyFile->_parent->addLazyInstance();
+    namedLazyInstance inst;
+    while( inst = nextInstance(), _file.good() && ( inst.loc.end < _sectionEnd ) ) {
+        _lazyFile->getInstMgr()->addLazyInstance( inst );
     }
 }
 
 // part of readdata1
-const namedLazyInstance sectionReader::nextInstance() {
+const namedLazyInstance sectionReader::nextInstance( bool noNumber ) {
     namedLazyInstance i;
-    i.loc.begin = _file->tellg();
+    i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
     i.loc.file = _fileID;
     _file >> std::ws;
-    _file >> i.loc.instance;
+    if( !noNumber ) {
+        _file >> i.loc.instance;
+        _file >> std::ws;
+        char c = _file.peek();
+        assert( c == '=' );
+        _file >> std::ws;
+    }
     i.name = getDelimitedKeyword(";( /\\");
     i.loc.end = seekInstanceEnd();
     return i;
@@ -69,8 +88,12 @@ const namedLazyInstance sectionReader::nextInstance() {
 
 
 //most of the rest of readdata1, all of readdata2
-SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {}
+SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
+    assert( inst->instance == -1 );
+    return 0;
+}
 
+#ifdef stepfile
 /**
  * PASS 1:  create instances
  * starts at the data section
@@ -316,3 +339,5 @@ int sectionReader::ReadData2( istream & in, bool useTechCor ) {
     //  in.putback(c);
     return valid_insts;
 }
+
+#endif //stepfile

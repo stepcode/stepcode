@@ -30,12 +30,6 @@ protected:
      */
     instancesLoaded_t _instancesLoaded;
 
-//     /** map from instance number to instance pointer (instances not loaded only)
-//      * \sa instancesLoaded
-//      * \sa instancesLoaded_pair
-//      */
-//     instancesLazy_t instancesLazy;
-
     /** map from instance number to beginning and end positions and the data section
      * \sa instanceStreamPosMap_pair
      */
@@ -45,25 +39,18 @@ protected:
 
     lazyFileReaderVec_t _files;
 
-    Registry * _headerRegistry;
+    Registry * _headerRegistry, * _mainRegistry;
 
 
 public:
     lazyInstMgr();
     void addSchema( void (*initFn) () ); //?
     void openFile( std::string fname ) {
-        _files.push_back( new lazyFileReader( fname, this ) );
+        //  lazyFileReader adds itself to the file list - good idea or bad?
+        /*_files.push_back( */new lazyFileReader( fname, this ) /*)*/;
     }
-    // what about the registry?
 
-//     addInstance(lazyInstance l, lazyFileReader* r);                ///< only used by lazy file reader functions
-    void addLazyInstance( namedLazyInstance inst ) {
-        instanceStreamPosMMap_pair pos( inst.loc.instance, inst.loc );
-        _instanceStreamPosMMap.insert( pos );
-        instanceTypeMMap_pair type( *inst.name, inst.loc.instance );
-        _instanceTypeMMap.insert( type );
-        delete inst.name;
-    }
+    void addLazyInstance( namedLazyInstance inst );
     void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
 
 
@@ -75,15 +62,22 @@ public:
         return _instanceTypeMMap.equal_range( type );
     }
 
-    Registry * getHeaderRegistry() {
+    const Registry * getHeaderRegistry() const {
         return _headerRegistry;
     }
 
-    sectionID getSectionID( sectionReader * sreader );
-    fileID getFileID( lazyFileReader * freader );
 
-    // TODO void useDataSection( sectionID id ); ///< tell instMgr to use instances from this section
+    sectionID registerDataSection( lazyDataSectionReader * sreader );
+    fileID registerLazyFile( lazyFileReader * freader );
+
+    /* TODO impliment these
+     *    void normalizeInstanceIds();
+     *    void eliminateDuplicates();
+     *    void useDataSection( sectionID id ); ///< tell instMgr to use instances from this section
+     */
     // TODO support references from one file to another
+    // TODO registry
+
 };
 
 #endif //LAZYINSTMGR_H

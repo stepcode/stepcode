@@ -6,14 +6,8 @@
 
 class p21HeaderSectionReader: public headerSectionReader {
 public:
-    p21HeaderSectionReader( lazyFileReader * parent, std::ifstream * file, std::streampos start ): headerSectionReader( parent, file, start ) {
-    }
-//     std::streampos findSectionEnd() {
-//
-//     }
-    void findSectionStart() {
-        findString( "HEADER", true );
-    }
+    p21HeaderSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
+    void findSectionStart();
 };
 
 #endif //P21HEADERSECTIONREADER_H

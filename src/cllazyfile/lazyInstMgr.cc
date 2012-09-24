@@ -3,30 +3,21 @@
 #include "SdaiSchemaInit.h"
 
 lazyInstMgr::lazyInstMgr() {
-    //TODO init header registry
-    _headerRegistry = new Registry( SdaiHEADER_SECTION_SCHEMAInit );
+    _headerRegistry = new Registry( HeaderSchemaInit );
 }
 
-sectionID lazyInstMgr::getSectionID( sectionReader * sreader ) {
-    sectionID i = _dataSections.size() - 1;
-    while( i >= 0 ) {
-        if( _dataSections[i] == sreader ) {
-            return i;
-        }
-        i--;
-    }
-    abort();
-    // return -1;
+sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
+    _dataSections.push_back( sreader );
+    return _dataSections.size() - 1;
 }
 
-fileID lazyInstMgr::getFileID( lazyFileReader * freader ) {
-    sectionID i = _files.size() - 1;
-    while( i >= 0 ) {
-        if( _files[i] == freader ) {
-            return i;
-        }
-        i--;
-    }
-    abort();
-    // return -1;
+fileID lazyInstMgr::registerLazyFile( lazyFileReader * freader ) {
+    _files.push_back( freader );
+    return _files.size() - 1;
+}
+
+void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
+    _instanceStreamPosMMap.insert( instanceStreamPosMMap_pair( inst.loc.instance, inst.loc ) );
+    _instanceTypeMMap.insert( instanceTypeMMap_pair( *inst.name, inst.loc.instance ) );
+    delete inst.name;
 }
