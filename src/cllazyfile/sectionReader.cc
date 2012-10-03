@@ -16,12 +16,25 @@ sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std
 }
 
 std::streampos sectionReader::findString( const std::string& str, bool semicolon, bool resetPos ) {
-    std::streampos found = 0, current = _file.tellg();
-    int i, l = str.length();
-    while( i < l && str[i] == _file.get() ) {
-        i++;
+    std::streampos found = 0, current = _file.tellg(), nextTry = current;
+    int i = 0, l = str.length();
+    char c;
+    std::string s;
+//     while( _file.get() != str[0] && _file.good() );
+    while( i < l && _file.good() ) {
+        c = _file.get();
+        s.append( 1, c );
+        if( str[i] == c ) {
+            i++;
+            if( i == 1 ) {
+                nextTry = _file.tellg();
+            }
+        } else {
+            i = 0;
+            _file.seekg( nextTry );
+        }
     }
-    if( i + 1 == l ) {
+    if( i == l ) {
         if( semicolon ) {
             _file >> std::ws;
             if( _file.get() == ';' ) {
@@ -42,22 +55,28 @@ std::streampos sectionReader::findString( const std::string& str, bool semicolon
 std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     std::string * str = new std::string;
     char c;
+    _file >> ws;
     while( c = _file.get(), _file.good() ) {
-        if( c == '-' || c == '_' || isupper( c ) ||
+        if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
             ( c == '!' && str->length() == 0 ) ) {
             str->append( 1, c );
+        } else if ( c == '\n' ) {
+            //skip
         } else {
             _file.putback( c );
             break;
         }
     }
     c = _file.peek();
-    assert( strchr( delimiters, c ) );
+    if( !strchr( delimiters, c ) ) {
+        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << *str << std::endl;
+        abort();
+    }
     return str;
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
-    return findString( ")", true );
+    return findString( ");" );
 }
 
 void sectionReader::locateAllInstances() {
@@ -77,19 +96,27 @@ const namedLazyInstance sectionReader::nextInstance( bool noNumber ) {
     if( !noNumber ) {
         _file >> i.loc.instance;
         _file >> std::ws;
-        char c = _file.peek();
+        char c = _file.get();
         assert( c == '=' );
         _file >> std::ws;
     }
     i.name = getDelimitedKeyword(";( /\\");
     i.loc.end = seekInstanceEnd();
+
+    if( i.loc.end >= _sectionEnd ) {
+        //invalid instance, so clear everything
+        i.loc.end = i.loc.begin;
+        delete i.name;
+        i.name = 0;
+    }
     return i;
 }
 
 
-//most of the rest of readdata1, all of readdata2
+//TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
-    assert( inst->instance == -1 );
+//     assert( inst->instance == -1 );
+    std::cerr << __PRETTY_FUNCTION__ << ": unimplimented. Instance #" << inst->instance << "." << std::endl;
     return 0;
 }
 

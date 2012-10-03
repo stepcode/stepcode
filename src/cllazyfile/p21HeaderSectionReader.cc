@@ -4,7 +4,7 @@
 
 
 void p21HeaderSectionReader::findSectionStart() {
-    findString( "HEADER", true );
+    _sectionStart = findString( "HEADER", true );
     assert( _file.is_open() && _file.good() );
 }
 
@@ -13,6 +13,12 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
     findSectionStart();
     findSectionEnd();
     _file.seekg( _sectionStart );
-    nextInstance( true );
+    namedLazyInstance nl;
+    while( nl = nextInstance( true ), ( nl.loc.end != nl.loc.begin ) ) {
+        _headerInstances.insert( instancesLoaded_pair( nl.loc.instance, getRealInstance( &nl.loc ) ) );
+    }
+//     _headerInstances.insert();
+//     SDAI_Application_instance * getRealInstance( lazyInstanceLoc * inst );
+//     inst = nextInstance( true );
     std::cerr << "p21hsr ctor" << std::endl;
 }

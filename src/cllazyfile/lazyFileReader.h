@@ -32,7 +32,9 @@ protected:
     fileTypeEnum _fileType;
     fileID _fileID;
 
-    void initP21();    //TODO detect file type; for now, assume all are Part 21
+    void initP21();
+
+    ///TODO detect file type; for now, assume all are Part 21
     void detectType() {
         _fileType = Part21;
     }
