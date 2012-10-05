@@ -50,8 +50,11 @@ std::streampos sectionReader::findString( const std::string& str, bool semicolon
     if( resetPos ) {
         _file.seekg(current);
     }
-    assert( _file.is_open() && _file.good() );
-    return found;
+    if( _file.is_open() && _file.good() ) {
+        return found;
+    } else {
+        return -1;
+    }
 }
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
@@ -93,24 +96,28 @@ instanceID sectionReader::readInstanceNumber() {
     std::streampos hash,eq;
     char c;
     instanceID id = -1;
+//     std::string s;
 
     hash = findString( "#" );
     eq = findString( "=" );
-    std::cerr << "id from " << hash << " to " << eq << std::endl;
+//     std::cerr << "id from " << hash << " to " << eq << std::endl;
     _file.seekg( hash );
     do {
         //check chars in between
         _file.get( c );
+//         s.append(1,c);
+//         std::cout << c;
         if( !isdigit( c ) && ( c != ' ' ) && ( c != '\t' ) && ( c != '\n' ) ) {
             hash = findString( "#" );
             if( hash > eq ) {
                 eq = findString( "=" );
                 _file.seekg( hash );
             }
-            std::cerr << "id from " << hash << " to " << eq << std::endl;
+//             std::cerr << "id from " << hash << " to " << eq << std::endl;
             _file >> ws;
+//             s.clear();
         }
-    } while( _file.tellg() < eq && _file.good() );
+    } while( _file.tellg() < ( eq - 1L ) && _file.good() );
     if( _file.good() ) {
         _file.seekg( hash );
         _file >> id;

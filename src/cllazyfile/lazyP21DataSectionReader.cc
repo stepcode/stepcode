@@ -24,7 +24,10 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
 //     std::cerr << "inst id start: " << _file.tellg() << std::endl;
 //     _file >> i.loc.instance;
 //     std::cerr << "inst start: " << _file.tellg() << std::endl;
-    assert( _file.good() );
+    if( !_file.good() ) {
+        i.loc.end = i.loc.begin;
+        return i;
+    }
     _file >> std::ws;
     char c = _file.get();
     if( c != '=' ) {

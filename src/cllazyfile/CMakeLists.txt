@@ -10,6 +10,7 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/cldai
     ${SCL_SOURCE_DIR}/src/clstepcore
     ${SCL_SOURCE_DIR}/src/clutils
+    ${SCL_SOURCE_DIR}/src/base
 )
 
 
