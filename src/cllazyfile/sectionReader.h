@@ -60,7 +60,8 @@ public:
         return _sectionEnd;
     }
     void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
-    const namedLazyInstance nextInstance( bool noNumber = false );
+    virtual const namedLazyInstance nextInstance() = 0;
+    instanceID readInstanceNumber();
 };
 
 #endif //SECTIONREADER_H

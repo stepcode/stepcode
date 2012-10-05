@@ -1,5 +1,5 @@
 
-set( clLazyFile_SRCS lazyDataSectionReader.cc lazyFileReader.cc lazyInstMgr.cc p21HeaderSectionReader.cc sectionReader.cc )
+set( clLazyFile_SRCS lazyDataSectionReader.cc lazyFileReader.cc lazyInstMgr.cc p21HeaderSectionReader.cc sectionReader.cc lazyP21DataSectionReader.cc )
 
 set( clLazyFile_HDRS headerSectionReader.h lazyFileReader.h lazyP21DataSectionReader.h p21HeaderSectionReader.h
 lazyDataSectionReader.h lazyInstMgr.h lazyTypes.h sectionReader.h )

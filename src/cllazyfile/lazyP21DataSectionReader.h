@@ -7,12 +7,16 @@
 class lazyP21DataSectionReader: public lazyDataSectionReader {
 protected:
 public:
-    lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ): lazyDataSectionReader( parent, file, start ) {
-    }
+    lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
 
     void findSectionStart() {
         findString( "DATA", true );
     }
+    /** gets information (start, end, name, etc) about the next
+     * instance in the file and returns it in a namedLazyInstance
+     * \sa p21HeaderSectionReader::nextInstance()
+     */
+    const namedLazyInstance nextInstance();
 
 };
 
