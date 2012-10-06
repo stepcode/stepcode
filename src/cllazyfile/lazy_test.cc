@@ -24,8 +24,14 @@ int main (int argc, char ** argv ) {
     countTypeInstances( mgr, "CARTESIAN_POINT" );
     countTypeInstances( mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( mgr, "VERTEX_POINT" );
+
+    //complex instances
+    std::cerr << "Complex";
+    countTypeInstances( mgr, "" );
+
     std::cerr << "Longest type name: " << mgr.getLongestTypeName() << std::endl;
     std::cerr << "Total types: " << mgr.getNumTypes() << std::endl;
+    std::cerr << "Bytes read by sectionReader::findStringByteCount(): " << sectionReader::findStringByteCount() << std::endl;
 
     stats.stop();
     stats.out();

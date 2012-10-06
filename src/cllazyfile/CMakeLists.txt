@@ -15,4 +15,4 @@ include_directories(
 
 
 SCL_ADDLIB(steplazyfile "${clLazyFile_SRCS} ${clLazyFile_HDRS}" "stepcore stepdai steputils base")
-scl_addexec(lazy_test "main.cc" "steplazyfile stepeditor" )
+scl_addexec(lazy_test "lazy_test.cc" "steplazyfile stepeditor" )

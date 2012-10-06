@@ -24,16 +24,19 @@ protected:
     sectionID _sectionID;
     fileID _fileID;
 
+    static unsigned int _findStringBytes; // increment this every time a byte is read in findString()
+
     // protected member functions
 
     sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
 
-    /** Find next occurence of str.
+    /** Find a string, ignoring occurrences in comments or Part 21 strings (i.e. 'string with \S\' control directive' )
+     * \param str string to find
      * \param semicolon if true, 'str' must be followed by a semicolon, possibly preceded by whitespace.
      * \param currentPos if true, seekg() to currentPos when done. Otherwise, file pos in the returned value.
      * \returns the position of the end of the found string
      */
-    std::streampos findString( const std::string& str, bool semicolon = false, bool resetPos = false );
+    std::streampos findNormalString( const std::string& str, bool semicolon = false, bool resetPos = false );
 
     /** Get a keyword ending with one of delimiters.
      */
@@ -41,6 +44,7 @@ protected:
 
     /** Seek to the end of the current instance */
     std::streampos seekInstanceEnd();
+
 public:
     SDAI_Application_instance * getRealInstance( lazyInstanceLoc * inst );
     sectionID ID() const {
@@ -50,7 +54,7 @@ public:
     virtual void findSectionStart() = 0;
 
     void findSectionEnd() {
-        _sectionEnd = findString( "ENDSEC", true );
+        _sectionEnd = findNormalString( "ENDSEC", true );
     }
 
     std::streampos startPos() const {
@@ -62,6 +66,10 @@ public:
     void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
     virtual const namedLazyInstance nextInstance() = 0;
     instanceID readInstanceNumber();
+
+    static unsigned int findStringByteCount() {
+        return _findStringBytes;
+    }
 };
 
 #endif //SECTIONREADER_H

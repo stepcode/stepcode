@@ -4,7 +4,7 @@
 
 
 void p21HeaderSectionReader::findSectionStart() {
-    _sectionStart = findString( "HEADER", true );
+    _sectionStart = findNormalString( "HEADER", true );
     assert( _file.is_open() && _file.good() );
 }
 

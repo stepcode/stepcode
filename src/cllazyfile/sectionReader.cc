@@ -10,17 +10,29 @@
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
 
+unsigned int sectionReader::_findStringBytes = 0; // increment this every time a byte is read
+
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ):
                                 _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID(-1) {
     _fileID = _lazyFile->ID();
 }
 
-std::streampos sectionReader::findString( const std::string& str, bool semicolon, bool resetPos ) {
+std::streampos sectionReader::findNormalString( const std::string& str, bool semicolon, bool resetPos ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
     char c;
     while( i < l ) {
         c = _file.get();
+        _findStringBytes++;
+        if(  c == '\'' ) {
+            //push past string
+            _file.putback( c );
+            ToExpressStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+        }
+        if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
+            //push past comment
+            findNormalString( "*/" );
+        }
         if( str[i] == c ) {
             i++;
             if( i == 1 ) {
@@ -42,6 +54,7 @@ std::streampos sectionReader::findString( const std::string& str, bool semicolon
             if( _file.get() == ';' ) {
                 found = _file.tellg();
             }
+            _findStringBytes++;
         } else {
             found = _file.tellg();
         }
@@ -85,16 +98,22 @@ std::streampos sectionReader::seekInstanceEnd() {
     char c = 0;
     std::streampos closeparen;
     while( c != ';' ) {
-        closeparen = findString( ")" );
+        closeparen = findNormalString( ")" );
+        if( closeparen < 0 ) {
+            return -1;
+        }
         _file >> ws;
         c = _file.get();
+        if( _file.bad() ) {
+            return -1;
+        }
     }
     return _file.tellg();
 }
 
 void sectionReader::locateAllInstances() {
     namedLazyInstance inst;
-    while( inst = nextInstance(), _file.good() && ( inst.loc.end < _sectionEnd ) ) {
+    while( inst = nextInstance(), ( _file.good() ) && ( inst.loc.end < _sectionEnd ) ) {
         _lazyFile->getInstMgr()->addLazyInstance( inst );
     }
 }
@@ -104,16 +123,16 @@ instanceID sectionReader::readInstanceNumber() {
     char c;
     instanceID id = -1;
 
-    hash = findString( "#" );
-    eq = findString( "=" );
+    //find instance number boundaries, check chars in between
+    hash = findNormalString( "#" );
+    eq = findNormalString( "=" );
     _file.seekg( hash );
     do {
-        //check chars in between
         _file.get( c );
         if( !isdigit( c ) && ( c != ' ' ) && ( c != '\t' ) && ( c != '\n' ) ) {
-            hash = findString( "#" );
+            hash = findNormalString( "#" );
             if( hash > eq ) {
-                eq = findString( "=" );
+                eq = findNormalString( "=" );
                 _file.seekg( hash );
             }
             _file >> ws;
@@ -121,6 +140,7 @@ instanceID sectionReader::readInstanceNumber() {
     } while( _file.tellg() < ( eq - 1L ) && _file.good() );
     if( _file.good() ) {
         _file.seekg( hash );
+        _file >> ws;
         _file >> id;
     }
     return id;
@@ -129,7 +149,7 @@ instanceID sectionReader::readInstanceNumber() {
 //TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
 //     assert( inst->instance == -1 );
-    std::cerr << __PRETTY_FUNCTION__ << ": unimplimented. Instance #" << inst->instance << "." << std::endl;
+    std::cerr << __PRETTY_FUNCTION__ << ": unimplemented. Instance #" << inst->instance << "." << std::endl;
     return 0;
 }
 
