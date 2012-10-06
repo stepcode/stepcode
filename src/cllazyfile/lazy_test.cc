@@ -31,7 +31,7 @@ int main (int argc, char ** argv ) {
 
     std::cerr << "Longest type name: " << mgr.getLongestTypeName() << std::endl;
     std::cerr << "Total types: " << mgr.getNumTypes() << std::endl;
-    std::cerr << "Bytes read by sectionReader::findStringByteCount(): " << sectionReader::findStringByteCount() << std::endl;
+    std::cerr << "Bytes read by sectionReader::findNormalString(): " << sectionReader::findStringByteCount() << std::endl;
 
     stats.stop();
     stats.out();

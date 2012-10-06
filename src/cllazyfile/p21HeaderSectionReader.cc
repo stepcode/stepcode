@@ -44,7 +44,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
 
     i.loc.end = seekInstanceEnd();
 
-    if( i.loc.end >= _sectionEnd ) {
+    if( ( i.loc.end >= _sectionEnd ) || ( i.loc.end == -1 ) ) {
         //invalid instance, so clear everything
         i.loc.end = i.loc.begin;
         delete i.name;

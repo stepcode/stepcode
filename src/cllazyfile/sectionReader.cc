@@ -10,7 +10,7 @@
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
 
-unsigned int sectionReader::_findStringBytes = 0; // increment this every time a byte is read
+unsigned int sectionReader::_findStringBytes = 0; // incremented every time a byte is read in findNormalString()
 
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ):
                                 _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID(-1) {
@@ -21,9 +21,22 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
     char c;
-    while( i < l ) {
+
+    //i is reset every time a character doesn't match; if i == l, this means that we've found the entire string
+    while( i < l || semicolon ) {
+        _file >> std::ws;
         c = _file.get();
         _findStringBytes++;
+
+        if( ( i == l ) && ( semicolon ) ) {
+            if( c == ';' ) {
+                break;
+            } else {
+                i = 0;
+                _file.seekg( nextTry );
+                continue;
+            }
+        }
         if(  c == '\'' ) {
             //push past string
             _file.putback( c );
@@ -49,18 +62,10 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
         }
     }
     if( i == l ) {
-        if( semicolon ) {
-            _file >> std::ws;
-            if( _file.get() == ';' ) {
-                found = _file.tellg();
-            }
-            _findStringBytes++;
-        } else {
             found = _file.tellg();
-        }
     }
     if( resetPos ) {
-        _file.seekg(startPos);
+        _file.seekg( startPos );
     }
     if( _file.is_open() && _file.good() ) {
         return found;
@@ -88,27 +93,14 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     }
     c = _file.peek();
     if( !strchr( delimiters, c ) ) {
-        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << *str << std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << *str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
     return str;
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
-    char c = 0;
-    std::streampos closeparen;
-    while( c != ';' ) {
-        closeparen = findNormalString( ")" );
-        if( closeparen < 0 ) {
-            return -1;
-        }
-        _file >> ws;
-        c = _file.get();
-        if( _file.bad() ) {
-            return -1;
-        }
-    }
-    return _file.tellg();
+    return findNormalString( ")", true );
 }
 
 void sectionReader::locateAllInstances() {
