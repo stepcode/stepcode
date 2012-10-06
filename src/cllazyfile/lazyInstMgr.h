@@ -41,6 +41,10 @@ protected:
 
     Registry * _headerRegistry, * _mainRegistry;
 
+    unsigned long _lazyInstanceCount;
+    int _longestTypeNameLen;
+    std::string _longestTypeName;
+
 
 public:
     lazyInstMgr();
@@ -53,11 +57,12 @@ public:
     void addLazyInstance( namedLazyInstance inst );
     void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
 
-
+    /// FIXME don't return something that can be modified; also, template references will cause problems on windows
     instanceRefMMap_range getReferentInstances( instanceID id ) {
         return _instanceRefMMap.equal_range(id);
     }
 
+    /// FIXME don't return something that can be modified; also, template references will cause problems on windows
     instanceTypeMMap_range getInstances( std::string type ) {
         return _instanceTypeMMap.equal_range( type );
     }
@@ -66,6 +71,18 @@ public:
         return _headerRegistry;
     }
 
+    /// get the number of instances that have been found in the open files.
+    unsigned long getInstanceCount() const {
+        return _lazyInstanceCount;
+    }
+
+    /// get the longest type name
+    const std::string & getLongestTypeName() const {
+        return _longestTypeName;
+    }
+
+    /// get the number of types of instances.
+    unsigned long getNumTypes();
 
     sectionID registerDataSection( lazyDataSectionReader * sreader );
     fileID registerLazyFile( lazyFileReader * freader );
