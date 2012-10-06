@@ -30,6 +30,7 @@ typedef struct {
     unmodified, simply copy it from the input file to the output file */
 } lazyInstanceLoc;
 
+/// used when populating the instance type map \sa lazyInstMgr::_instanceTypeMMap
 typedef struct {
     lazyInstanceLoc loc;
     std::string * name;

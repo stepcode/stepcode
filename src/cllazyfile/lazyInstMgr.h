@@ -40,6 +40,7 @@ protected:
     lazyFileReaderVec_t _files;
 
     Registry * _headerRegistry, * _mainRegistry;
+    ErrorDescriptor * _errors;
 
     unsigned long _lazyInstanceCount;
     int _longestTypeNameLen;
@@ -49,13 +50,9 @@ protected:
 public:
     lazyInstMgr();
     void addSchema( void (*initFn) () ); //?
-    void openFile( std::string fname ) {
-        //  lazyFileReader adds itself to the file list - good idea or bad?
-        /*_files.push_back( */new lazyFileReader( fname, this ) /*)*/;
-    }
+    void openFile( std::string fname );
 
     void addLazyInstance( namedLazyInstance inst );
-    void addDataSection( lazyDataSectionReader* d, lazyFileReader* f );   ///< only used by lazy file reader functions
 
     /// FIXME don't return something that can be modified; also, template references will cause problems on windows
     instanceRefMMap_range getReferentInstances( instanceID id ) {
@@ -86,6 +83,10 @@ public:
 
     sectionID registerDataSection( lazyDataSectionReader * sreader );
     fileID registerLazyFile( lazyFileReader * freader );
+
+    ErrorDescriptor * getErrorDesc() {
+        return _errors;
+    }
 
     /* TODO impliment these
      *    void normalizeInstanceIds();

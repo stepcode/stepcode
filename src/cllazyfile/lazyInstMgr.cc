@@ -6,6 +6,7 @@ lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
     _lazyInstanceCount = 0;
     _longestTypeNameLen = 0;
+    _errors = new ErrorDescriptor();
 }
 
 sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
@@ -37,4 +38,9 @@ unsigned long lazyInstMgr::getNumTypes() /*const*/ {
         ++n;
     }
     return n ;
+}
+
+void lazyInstMgr::openFile( std::string fname ) {
+    //  lazyFileReader adds itself to the file list - good idea or bad?
+    /*_files.push_back( */new lazyFileReader( fname, this ) /*)*/;
 }

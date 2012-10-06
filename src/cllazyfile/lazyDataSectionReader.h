@@ -19,7 +19,7 @@
  */
 class lazyDataSectionReader: public sectionReader {
 protected:
-    bool error, completelyLoaded;
+    bool _error, _completelyLoaded;
 //     lazyFileReader* parent;
     std::string _sectionIdentifier;
 
@@ -28,7 +28,7 @@ protected:
 public:
     virtual ~lazyDataSectionReader() {}
     bool success() {
-        return !error;
+        return !_error;
     }
 //     SDAI_Application_instance* getRealInstance( std::streampos start, std::streampos end );
 };

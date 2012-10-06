@@ -6,6 +6,10 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
                                                     lazyDataSectionReader( parent, file, start ) {
     findSectionStart();
     findSectionEnd();
+    if( _sectionEnd < 0 ) {
+        _error = true;
+        return;
+    }
     _file.seekg( _sectionStart );
     namedLazyInstance nl;
     while( nl = nextInstance(), ( nl.loc.end != nl.loc.begin ) ) {
@@ -46,7 +50,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     i.name = getDelimitedKeyword(";( /\\");
     i.loc.end = seekInstanceEnd();
 
-    if( i.loc.end >= _sectionEnd ) {
+    if( ( i.loc.end < 0 ) || ( i.loc.end >= _sectionEnd ) ) {
         //invalid instance, so clear everything
         i.loc.end = i.loc.begin;
         delete i.name;
