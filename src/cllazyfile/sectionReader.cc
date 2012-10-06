@@ -78,14 +78,17 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
 std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     std::string * str = new std::string;
     char c;
-    str->reserve(10); //seems to be faster and require less memory than 0 or 20.
+    str->reserve(10); //seems to be faster and require less memory than no reserve or 20.
     _file >> ws;
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
             ( c == '!' && str->length() == 0 ) ) {
             str->append( 1, c );
-        } else if ( c == '\n' ) {
-            //skip
+        } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str->length() == 0 ) ) {
+            //push past comment
+            findNormalString( "*/" );
+            _file >> ws;
+            continue;
         } else {
             _file.putback( c );
             break;
