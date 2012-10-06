@@ -16,21 +16,20 @@ sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std
 }
 
 std::streampos sectionReader::findString( const std::string& str, bool semicolon, bool resetPos ) {
-    std::streampos found = -1, current = _file.tellg(), nextTry = current;
+    std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
     char c;
-//     std::string s;
-//     while( _file.get() != str[0] && _file.good() );
-    while( i < l && _file.good() ) {
+    while( i < l ) {
         c = _file.get();
-//         s.append( 1, c );
         if( str[i] == c ) {
             i++;
             if( i == 1 ) {
                 nextTry = _file.tellg();
             }
         } else {
-//             std::cout << " " << c;
+            if( !_file.good() ) {
+                break;
+            }
             if( i >= 1 ) {
                 _file.seekg( nextTry );
             }
@@ -48,7 +47,7 @@ std::streampos sectionReader::findString( const std::string& str, bool semicolon
         }
     }
     if( resetPos ) {
-        _file.seekg(current);
+        _file.seekg(startPos);
     }
     if( _file.is_open() && _file.good() ) {
         return found;
@@ -61,6 +60,7 @@ std::streampos sectionReader::findString( const std::string& str, bool semicolon
 std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     std::string * str = new std::string;
     char c;
+    str->reserve(10); //seems to be faster and require less memory than 0 or 20.
     _file >> ws;
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
@@ -103,26 +103,20 @@ instanceID sectionReader::readInstanceNumber() {
     std::streampos hash,eq;
     char c;
     instanceID id = -1;
-//     std::string s;
 
     hash = findString( "#" );
     eq = findString( "=" );
-//     std::cerr << "id from " << hash << " to " << eq << std::endl;
     _file.seekg( hash );
     do {
         //check chars in between
         _file.get( c );
-//         s.append(1,c);
-//         std::cout << c;
         if( !isdigit( c ) && ( c != ' ' ) && ( c != '\t' ) && ( c != '\n' ) ) {
             hash = findString( "#" );
             if( hash > eq ) {
                 eq = findString( "=" );
                 _file.seekg( hash );
             }
-//             std::cerr << "id from " << hash << " to " << eq << std::endl;
             _file >> ws;
-//             s.clear();
         }
     } while( _file.tellg() < ( eq - 1L ) && _file.good() );
     if( _file.good() ) {
@@ -131,40 +125,6 @@ instanceID sectionReader::readInstanceNumber() {
     }
     return id;
 }
-
-// // part of readdata1
-// const namedLazyInstance sectionReader::nextInstance( bool noNumber ) {
-//     namedLazyInstance i;
-//
-//     if( !noNumber ) {
-//         _file >> i.loc.instance;
-//         _file >> std::ws;
-//         char c = _file.get();
-//         assert( c == '=' );
-//         _file >> std::ws;
-//     }
-//
-//     i.loc.begin = _file.tellg();
-//     i.loc.section = _sectionID;
-//     i.loc.file = _fileID;
-//     _file >> std::ws;
-//     i.name = getDelimitedKeyword(";( /\\");
-//
-//     if( noNumber ) {
-//
-//     }
-//
-//     i.loc.end = seekInstanceEnd();
-//
-//     if( i.loc.end >= _sectionEnd ) {
-//         //invalid instance, so clear everything
-//         i.loc.end = i.loc.begin;
-//         delete i.name;
-//         i.name = 0;
-//     }
-//     return i;
-// }
-
 
 //TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
