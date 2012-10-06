@@ -82,7 +82,14 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
-    return findString( ");" );
+    char c = 0;
+    std::streampos closeparen;
+    while( c != ';' ) {
+        closeparen = findString( ")" );
+        _file >> ws;
+        c = _file.get();
+    }
+    return _file.tellg();
 }
 
 void sectionReader::locateAllInstances() {
