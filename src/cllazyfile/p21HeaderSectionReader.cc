@@ -14,7 +14,8 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
     findSectionEnd();
     _file.seekg( _sectionStart );
     namedLazyInstance nl;
-    while( nl = nextInstance(), ( nl.loc.end != nl.loc.begin ) ) {
+    std::cerr << "lazy instance size: " << sizeof( nl.loc ) << std::endl;
+    while( nl = nextInstance(), ( nl.loc.begin > 0 ) ) {
         _headerInstances.insert( instancesLoaded_pair( nl.loc.instance, getRealInstance( &nl.loc ) ) );
     }
     _file.seekg( _sectionEnd );
@@ -27,28 +28,31 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
 
     i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
-    i.loc.file = _fileID;
+//     i.loc.file = _fileID;
     _file >> std::ws;
-    i.name = getDelimitedKeyword(";( /\\");
-
-    //TODO figure out the instance number
-    if( 0 == i.name->compare( "FILE_DESCRIPTION" ) ) {
-        i.loc.instance = 1;
-    } else if( 0 == i.name->compare( "FILE_NAME" ) ) {
-        i.loc.instance = 2;
-    } else if( 0 == i.name->compare( "FILE_SCHEMA" ) ) {
-        i.loc.instance = 3;
-    } else {
-        i.loc.instance = nextFreeInstance++;
-    }
-
-    i.loc.end = seekInstanceEnd();
-
-    if( ( i.loc.end >= _sectionEnd ) || ( i.loc.end == -1 ) ) {
-        //invalid instance, so clear everything
-        i.loc.end = i.loc.begin;
-        delete i.name;
+    if( i.loc.begin <= 0 ) {
         i.name = 0;
+    } else {
+        i.name = getDelimitedKeyword(";( /\\");
+
+        if( 0 == i.name->compare( "FILE_DESCRIPTION" ) ) {
+            i.loc.instance = 1;
+        } else if( 0 == i.name->compare( "FILE_NAME" ) ) {
+            i.loc.instance = 2;
+        } else if( 0 == i.name->compare( "FILE_SCHEMA" ) ) {
+            i.loc.instance = 3;
+        } else {
+            i.loc.instance = nextFreeInstance++;
+        }
+
+        assert( i.name->length() > 0 );
+
+        if( seekInstanceEnd() >= _sectionEnd ) {
+            //invalid instance, so clear everything
+            i.loc.begin = -1;
+            delete i.name;
+            i.name = 0;
+        }
     }
     return i;
 }

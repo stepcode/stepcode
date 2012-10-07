@@ -13,7 +13,7 @@ class lazyFileReader;
 enum fileTypeEnum { Part21, Part28 };
 // enum loadingEnum { immediate, lazy };
 
-typedef long instanceID; ///< the number assigned to an instance in the file
+typedef int instanceID; ///< the number assigned to an instance in the file
 typedef int sectionID;   ///< the index of a sectionReader in a sectionReaderVec_t
 typedef int fileID;      ///< the index of a lazyFileReader in a lazyFileReaderVec_t
 
@@ -22,10 +22,10 @@ typedef int fileID;      ///< the index of a lazyFileReader in a lazyFileReaderV
  * situations, so the information should be kept up-to-date.
  */
 typedef struct {
-    std::streampos begin, end;
+    long begin/*, end*/;
     instanceID instance;
     sectionID section;
-    fileID file;
+//     fileID file;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is
     unmodified, simply copy it from the input file to the output file */
 } lazyInstanceLoc;

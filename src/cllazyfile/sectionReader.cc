@@ -108,11 +108,12 @@ std::streampos sectionReader::seekInstanceEnd() {
 
 void sectionReader::locateAllInstances() {
     namedLazyInstance inst;
-    while( inst = nextInstance(), ( _file.good() ) && ( inst.loc.end < _sectionEnd ) ) {
+    while( inst = nextInstance(), ( _file.good() ) && ( inst.loc.begin > 0 ) ) {
         _lazyFile->getInstMgr()->addLazyInstance( inst );
     }
 }
 
+//TODO rewrite this to be less forgiving and faster
 instanceID sectionReader::readInstanceNumber() {
     std::streampos hash,eq;
     char c;
@@ -155,10 +156,10 @@ SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* ins
  */
 int sectionReader::ReadData1( istream & in ) {
     int endsec = 0;
-    _entsNotCreated = 0;
+    int _entsNotCreated = 0;
 
-    _errorCount = 0;  // reset error count
-    _warningCount = 0;  // reset error count
+    int _errorCount = 0;  // reset error count
+    int _warningCount = 0;  // reset error count
 
     char c;
     int instance_count = 0;

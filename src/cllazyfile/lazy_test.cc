@@ -7,7 +7,11 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     for( ; range.first != range.second; range.first++ ) {
         count++;
     }
-    std::cerr << type <<" instances: " << count << std::endl;
+    std::cerr << type <<" instances: " << count;
+    if( count ) {
+        std::cerr << " example: #" << range.second->second; //this is the last based upon multimap hash value, not based on file order
+    }
+    std::cerr << std::endl;
     return;
 }
 

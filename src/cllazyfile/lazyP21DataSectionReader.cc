@@ -12,7 +12,7 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
     }
     _file.seekg( _sectionStart );
     namedLazyInstance nl;
-    while( nl = nextInstance(), ( nl.loc.end != nl.loc.begin ) ) {
+    while( nl = nextInstance(), ( ( nl.loc.begin > 0 ) && ( nl.name != 0 ) ) ) {
 //         _headerInstances.insert( instancesLoaded_pair( nl.loc.instance, getRealInstance( &nl.loc ) ) );
         parent->getInstMgr()->addLazyInstance( nl );
     }
@@ -22,14 +22,11 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
 const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     namedLazyInstance i;
 
-    //TODO detect and skip comments
+    //TODO detect comments
 
     i.loc.instance = readInstanceNumber();
-//     std::cerr << "inst id start: " << _file.tellg() << std::endl;
-//     _file >> i.loc.instance;
-//     std::cerr << "inst start: " << _file.tellg() << std::endl;
     if( !_file.good() ) {
-        i.loc.end = i.loc.begin;
+        i.loc.begin = -1;
         return i;
     }
     _file >> std::ws;
@@ -45,14 +42,13 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
 
     i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
-    i.loc.file = _fileID;
+//     i.loc.file = _fileID;
     _file >> std::ws;
     i.name = getDelimitedKeyword(";( /\\");
-    i.loc.end = seekInstanceEnd();
 
-    if( ( i.loc.end < 0 ) || ( i.loc.end >= _sectionEnd ) ) {
+    if( ( !_file.good() ) || ( seekInstanceEnd() >= _sectionEnd ) ) {
         //invalid instance, so clear everything
-        i.loc.end = i.loc.begin;
+        i.loc.begin = -1;
         delete i.name;
         i.name = 0;
     }
