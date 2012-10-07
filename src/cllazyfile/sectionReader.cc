@@ -179,20 +179,6 @@ int sectionReader::ReadData1( istream & in ) {
         ReadTokenSeparator( in ); // also skips white space
         in >> c;
 
-        if( _fileType == WORKING_SESSION ) {
-            if( strchr( "CIND", c ) ) { // if there is a valid char
-                inst_state = EntityWfState( c );
-                ReadTokenSeparator( in );
-                in >> c;    // read the ENTITY_NAME_DELIM
-            } else {
-                e.AppendToDetailMsg( "Invalid editing state character: " );
-                e.AppendToDetailMsg( c );
-                e.AppendToDetailMsg( "\nAssigning editing state to be INCOMPLETE\n" );
-                e.GreaterSeverity( SEVERITY_WARNING );
-                inst_state = incompleteSE;
-            }
-        }
-
         if( c != ENTITY_NAME_DELIM ) {
             in.putback( c );
             while( c != ENTITY_NAME_DELIM && in.good() &&
