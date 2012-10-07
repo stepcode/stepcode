@@ -14,6 +14,7 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
 int main (int argc, char ** argv ) {
     if( argc != 2 ) {
         std::cerr << "Expected one argument, given " << argc <<". Exiting." << std::endl;
+        exit( EXIT_FAILURE );
     }
     benchmark stats( "p21 lazy load test" );
 
