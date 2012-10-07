@@ -32,6 +32,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include <scl_trace_fprintf.h>
 
+#ifdef YYDEBUG
+extern int yydebug;
+#else
+const int yydebug = 0;
+#endif
+
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
