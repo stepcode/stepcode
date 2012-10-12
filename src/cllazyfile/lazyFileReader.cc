@@ -18,8 +18,12 @@ void lazyFileReader::initP21() {
 
 lazyFileReader::lazyFileReader( std::string fname, lazyInstMgr* i ): _fileName(fname), _parent(i) {
     _fileID = _parent->registerLazyFile( this );
+
     _file.open( _fileName.c_str() );
+    _file.imbue( std::locale::classic() );
+    _file.unsetf( std::ios_base::skipws );
     assert( _file.is_open() && _file.good() );
+
     detectType();
     switch( _fileType ) {
         case Part21:

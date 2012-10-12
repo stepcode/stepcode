@@ -33,10 +33,9 @@ protected:
     /** Find a string, ignoring occurrences in comments or Part 21 strings (i.e. 'string with \S\' control directive' )
      * \param str string to find
      * \param semicolon if true, 'str' must be followed by a semicolon, possibly preceded by whitespace.
-     * \param currentPos if true, seekg() to currentPos when done. Otherwise, file pos in the returned value.
      * \returns the position of the end of the found string
      */
-    std::streampos findNormalString( const std::string& str, bool semicolon = false, bool resetPos = false );
+    std::streampos findNormalString( const std::string& str, bool semicolon = false );
 
     /** Get a keyword ending with one of delimiters.
      */
@@ -44,6 +43,13 @@ protected:
 
     /** Seek to the end of the current instance */
     std::streampos seekInstanceEnd();
+
+    /// operator>> is very slow?!
+    inline void skipWS() {
+        while( isspace( _file.peek() ) && _file.good() ) {
+            _file.ignore( 1 );
+        }
+    }
 
 public:
     SDAI_Application_instance * getRealInstance( lazyInstanceLoc * inst );

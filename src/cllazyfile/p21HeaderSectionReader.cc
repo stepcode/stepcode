@@ -28,8 +28,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
 
     i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
-//     i.loc.file = _fileID;
-    _file >> std::ws;
+    skipWS();
     if( i.loc.begin <= 0 ) {
         i.name = 0;
     } else {

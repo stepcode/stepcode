@@ -17,14 +17,15 @@ sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std
     _fileID = _lazyFile->ID();
 }
 
-std::streampos sectionReader::findNormalString( const std::string& str, bool semicolon, bool resetPos ) {
+
+std::streampos sectionReader::findNormalString( const std::string& str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
     char c;
 
     //i is reset every time a character doesn't match; if i == l, this means that we've found the entire string
     while( i < l || semicolon ) {
-        _file >> std::ws;
+        skipWS();
         c = _file.get();
         _findStringBytes++;
 
@@ -64,9 +65,6 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
     if( i == l ) {
             found = _file.tellg();
     }
-    if( resetPos ) {
-        _file.seekg( startPos );
-    }
     if( _file.is_open() && _file.good() ) {
         return found;
     } else {
@@ -79,7 +77,7 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     std::string * str = new std::string;
     char c;
     str->reserve(10); //seems to be faster and require less memory than no reserve or 20.
-    _file >> ws;
+    skipWS();
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
             ( c == '!' && str->length() == 0 ) ) {
@@ -87,7 +85,7 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
         } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str->length() == 0 ) ) {
             //push past comment
             findNormalString( "*/" );
-            _file >> ws;
+            skipWS();
             continue;
         } else {
             _file.putback( c );
@@ -103,6 +101,9 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
+    //TODO do it without findNormalString(), counting parenthesis and looking for ");" outside of a comment/string
+    //should we use our own string parsing function? could be faster if it doesn't need to store the data...
+    //or modify the existing one?
     return findNormalString( ")", true );
 }
 
@@ -113,31 +114,43 @@ void sectionReader::locateAllInstances() {
     }
 }
 
-//TODO rewrite this to be less forgiving and faster
 instanceID sectionReader::readInstanceNumber() {
-    std::streampos hash,eq;
+    std::streampos start, end;
     char c;
+    int digits = 0;
     instanceID id = -1;
 
-    //find instance number boundaries, check chars in between
-    hash = findNormalString( "#" );
-    eq = findNormalString( "=" );
-    _file.seekg( hash );
+    //find instance number ("# nnnn ="), where ' ' is any whitespace found by isspace()
+    skipWS();
+    c = _file.get();
+    if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
+        findNormalString( "*/" );
+    } else {
+        _file.unget();
+    }
+    skipWS();
+    c = _file.get();
+    if( c != '#' ) {
+        return -1;
+    }
+    skipWS();
+    start = _file.tellg();
     do {
-        _file.get( c );
-        if( !isdigit( c ) && ( c != ' ' ) && ( c != '\t' ) && ( c != '\n' ) ) {
-            hash = findNormalString( "#" );
-            if( hash > eq ) {
-                eq = findNormalString( "=" );
-                _file.seekg( hash );
-            }
-            _file >> ws;
+        c = _file.get();
+        if( isdigit( c ) ) {
+            digits++;
+        } else {
+            _file.unget();
+            break;
         }
-    } while( _file.tellg() < ( eq - 1L ) && _file.good() );
-    if( _file.good() ) {
-        _file.seekg( hash );
-        _file >> ws;
+    } while( _file.good() );
+    skipWS();
+
+    if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
+        end = _file.tellg();
+        _file.seekg( start );
         _file >> id;
+        _file.seekg ( end );
     }
     return id;
 }
@@ -145,7 +158,7 @@ instanceID sectionReader::readInstanceNumber() {
 //TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
 //     assert( inst->instance == -1 );
-    std::cerr << __PRETTY_FUNCTION__ << ": unimplemented. Instance #" << inst->instance << "." << std::endl;
+std::cerr << "getRealInstance() isn't implemented. Instance #" << inst->instance << std::endl;
     return 0;
 }
 
