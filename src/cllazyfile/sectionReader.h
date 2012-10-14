@@ -63,10 +63,10 @@ public:
         _sectionEnd = findNormalString( "ENDSEC", true );
     }
 
-    std::streampos startPos() const {
+    std::streampos sectionStart() const {
         return _sectionStart;
     }
-    std::streampos endPos() const {
+    std::streampos sectionEnd() const {
         return _sectionEnd;
     }
     void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
