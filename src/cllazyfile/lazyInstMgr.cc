@@ -34,7 +34,7 @@ unsigned long lazyInstMgr::getNumTypes() /*const*/ {
     // http://www.daniweb.com/software-development/cpp/threads/384836/multimap-and-counting-number-of-keys#post1657899
     unsigned long n = 0 ;
     instanceTypeMMap_t::iterator iter;//( _instanceTypeMMap.begin() );
-    for( iter=_instanceTypeMMap.begin(); iter != _instanceTypeMMap.end(); iter = _instanceTypeMMap.upper_bound( iter->first )  ) {
+    for( iter=_instanceTypeMMap.begin(); iter != _instanceTypeMMap.end(); iter = _instanceTypeMMap.equal_range( iter->first ).second  ) {
         ++n;
     }
     return n ;

@@ -2,17 +2,14 @@
 #include <sc_benchmark.h>
 
 void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
-    instanceTypeMMap_range range = mgr.getInstances( type );
-    int count = 0;
-    instanceID ex = range.first->second;
-    for( ; range.first != range.second; range.first++ ) {
-        count++;
-    }
-    std::cerr << type <<" instances: " << count;
+    int count = mgr.countInstances( type );
+    std::cout << type <<" instances: " << count;
     if( count ) {
-        std::cerr << " example: #" << ex; //this is the last based upon multimap hash value, not based on file order
+        instanceTypeMMap_range range = mgr.getInstances( type );
+        instanceID ex = range.first->second;
+        std::cout << " example: #" << ex; //this is the last based upon multimap hash value, not based on file order
     }
-    std::cerr << std::endl;
+    std::cout << std::endl;
     return;
 }
 

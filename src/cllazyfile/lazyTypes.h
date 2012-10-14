@@ -2,6 +2,7 @@
 #define LAZYTYPES_H
 
 #include <map>
+#include <unordered_map>
 #include <iostream>
 #include <vector>
 // #include "sdaiApplication_instance.h"
@@ -41,9 +42,8 @@ typedef std::multimap< instanceID, instanceID > instanceRefMMap_t;
 typedef std::pair< instanceID, instanceID > instanceRefMMap_pair;
 typedef std::pair< instanceRefMMap_t::iterator, instanceRefMMap_t::iterator > instanceRefMMap_range;
 
-//TODO try unordered_multimap for this
 // instanceTypeMMap - multimap from instance type to instanceID's
-typedef std::multimap< std::string, instanceID > instanceTypeMMap_t;
+typedef std::unordered_multimap< std::string, instanceID > instanceTypeMMap_t;
 typedef std::pair< std::string, instanceID > instanceTypeMMap_pair;
 typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
 

@@ -61,7 +61,11 @@ public:
 
     /// FIXME don't return something that can be modified; also, template references will cause problems on windows
     instanceTypeMMap_range getInstances( std::string type ) {
-        return _instanceTypeMMap.equal_range( type );
+            return _instanceTypeMMap.equal_range( type );
+    }
+
+    int countInstances( std::string type ) {
+        return _instanceTypeMMap.count( type );
     }
 
     const Registry * getHeaderRegistry() const {
