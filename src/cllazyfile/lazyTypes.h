@@ -38,7 +38,7 @@ typedef struct {
 } namedLazyInstance;
 
 // instanceRefMMap - multimap between an instanceID and instances that refer to it
-typedef std::multimap< instanceID, instanceID > instanceRefMMap_t;
+typedef std::unordered_multimap< instanceID, instanceID > instanceRefMMap_t;
 typedef std::pair< instanceID, instanceID > instanceRefMMap_pair;
 typedef std::pair< instanceRefMMap_t::iterator, instanceRefMMap_t::iterator > instanceRefMMap_range;
 
@@ -53,7 +53,7 @@ typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pai
 
 // instanceStreamPosMMap - map instance id to a range in a particular data section
 // use multimap because there could be multiple instances with the same ID
-typedef std::multimap< instanceID, lazyInstanceLoc > instanceStreamPosMMap_t;
+typedef std::unordered_multimap< instanceID, lazyInstanceLoc > instanceStreamPosMMap_t;
 typedef std::pair< instanceID, lazyInstanceLoc > instanceStreamPosMMap_pair;
 typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
 
