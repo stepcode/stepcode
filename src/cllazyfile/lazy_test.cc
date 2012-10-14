@@ -26,18 +26,18 @@ int main (int argc, char ** argv ) {
     lazyInstMgr mgr;
     mgr.openFile( argv[1] );
 
-    std::cerr << "Total instances: " << mgr.getInstanceCount() << std::endl;
+    std::cout << "Total instances: " << mgr.getInstanceCount() << std::endl;
     countTypeInstances( mgr, "CARTESIAN_POINT" );
     countTypeInstances( mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( mgr, "VERTEX_POINT" );
 
     //complex instances
-    std::cerr << "Complex";
+    std::cout << "Complex";
     countTypeInstances( mgr, "" );
 
-    std::cerr << "Longest type name: " << mgr.getLongestTypeName() << std::endl;
-    std::cerr << "Total types: " << mgr.getNumTypes() << std::endl;
-    std::cerr << "Bytes read by sectionReader::findNormalString(): " << sectionReader::findStringByteCount() << std::endl;
+    std::cout << "Longest type name: " << mgr.getLongestTypeName() << std::endl;
+    std::cout << "Total types: " << mgr.getNumTypes() << std::endl;
+    std::cout << "Bytes read by sectionReader::findNormalString(): " << sectionReader::findStringByteCount() << std::endl;
 
     stats.stop();
     stats.out();
