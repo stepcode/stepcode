@@ -55,7 +55,7 @@ typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pai
 // use multimap because there could be multiple instances with the same ID
 typedef std::unordered_multimap< instanceID, lazyInstanceLoc > instanceStreamPosMMap_t;
 typedef std::pair< instanceID, lazyInstanceLoc > instanceStreamPosMMap_pair;
-typedef std::pair< instanceTypeMMap_t::iterator, instanceTypeMMap_t::iterator > instanceTypeMMap_range;
+typedef std::pair< instanceStreamPosMMap_t::iterator, instanceStreamPosMMap_t::iterator > instanceStreamPosMMap_range;
 
 
 // data sections
