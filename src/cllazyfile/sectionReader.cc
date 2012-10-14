@@ -73,11 +73,11 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
 }
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
-const std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
+const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
     char c;
-//     str->reserve(10); //seems to be faster and require less memory than no reserve or 20.
-    str.clear();
+    str.assign( 0, 0 ); //clear() frees the memory
+    str.reserve(100);
     skipWS();
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
@@ -98,12 +98,12 @@ const std::string * sectionReader::getDelimitedKeyword( const char * delimiters 
         std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
-    return &str;
+    return str.c_str();
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
     char c;
-    int parenDepth;
+    int parenDepth = 0;
     while( c = _file.get(), _file.good() ) {
         switch( c ) {
             case '(':

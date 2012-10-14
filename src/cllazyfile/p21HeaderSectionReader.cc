@@ -1,6 +1,7 @@
 #include <assert.h>
 
 #include "p21HeaderSectionReader.h"
+#include <string.h>
 
 
 void p21HeaderSectionReader::findSectionStart() {
@@ -34,17 +35,17 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     } else {
         i.name = getDelimitedKeyword(";( /\\");
 
-        if( 0 == i.name->compare( "FILE_DESCRIPTION" ) ) {
+        if( 0 == strcmp( "FILE_DESCRIPTION", i.name ) ) {
             i.loc.instance = 1;
-        } else if( 0 == i.name->compare( "FILE_NAME" ) ) {
+        } else if( 0 == strcmp( "FILE_NAME", i.name ) ) {
             i.loc.instance = 2;
-        } else if( 0 == i.name->compare( "FILE_SCHEMA" ) ) {
+        } else if( 0 == strcmp( "FILE_SCHEMA", i.name ) ) {
             i.loc.instance = 3;
         } else {
             i.loc.instance = nextFreeInstance++;
         }
 
-        assert( i.name->length() > 0 );
+        assert( strlen( i.name ) > 0 );
 
         std::streampos end = seekInstanceEnd();
         if( (end == -1 ) || ( end >= _sectionEnd ) ) {

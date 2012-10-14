@@ -39,7 +39,7 @@ protected:
 
     /** Get a keyword ending with one of delimiters.
      */
-    const std::string * getDelimitedKeyword( const char * delimiters );
+    const char * getDelimitedKeyword( const char * delimiters );
 
     /** Seek to the end of the current instance */
     std::streampos seekInstanceEnd();
