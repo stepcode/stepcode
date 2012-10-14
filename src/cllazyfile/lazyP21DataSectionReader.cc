@@ -34,6 +34,7 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
 // part of readdata1
 const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     namedLazyInstance i;
+    std::streampos end = -1;
 
     //TODO detect comments
 
@@ -50,9 +51,9 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     skipWS();
     i.name = getDelimitedKeyword(";( /\\");
     if( _file.good() ) {
-        seekInstanceEnd();
+        end = seekInstanceEnd();
     }
-    if( !_file.good() ) {
+    if( ( !_file.good() ) || ( end == -1 ) ) {
         //invalid instance, so clear everything
         i.loc.begin = -1;
         delete i.name;

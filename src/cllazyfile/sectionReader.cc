@@ -40,7 +40,7 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
         }
         if(  c == '\'' ) {
             //push past string
-            _file.putback( c );
+            _file.unget();
             ToExpressStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
@@ -101,10 +101,46 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 }
 
 std::streampos sectionReader::seekInstanceEnd() {
-    //TODO do it without findNormalString(), counting parenthesis and looking for ");" outside of a comment/string
-    //should we use our own string parsing function? could be faster if it doesn't need to store the data...
-    //or modify the existing one?
-    return findNormalString( ")", true );
+    char c;
+    int parenDepth;
+    while( c = _file.get(), _file.good() ) {
+        switch( c ) {
+            case '(':
+                parenDepth++;
+                break;
+            case '/':
+                if( _file.peek() == '*' ) {
+                    findNormalString( "*/" );
+                } else {
+                    return -1;
+                }
+                break;
+            case '\'':
+                _file.unget();
+                ToExpressStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+                break;
+            case '=':
+                return -1;
+            case '#':
+                //TODO record references
+                break;
+            case ')':
+                if( --parenDepth == 0 ) {
+                    skipWS();
+                    if( _file.get() == ';' ) {
+                        return _file.tellg();
+                    } else {
+                        _file.unget();
+                    }
+                }
+            default:
+                break;
+        }
+    }
+    return -1;
+    //NOTE - old way: return findNormalString( ")", true );
+    // old memory consumption: 673728kb; User CPU time: 35480ms; System CPU time: 17710ms (with 266MB catia-ferrari-sharknose.stp)
+    // new memory: 673340kb; User CPU time: 29890ms; System CPU time: 11650ms
 }
 
 void sectionReader::locateAllInstances() {
@@ -157,8 +193,8 @@ instanceID sectionReader::readInstanceNumber() {
 
 //TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
-//     assert( inst->instance == -1 );
-std::cerr << "getRealInstance() isn't implemented. Instance #" << inst->instance << std::endl;
+//     assert( inst->instance < 4 );
+    std::cerr << "getRealInstance() isn't implemented. Instance #" << inst->instance << std::endl;
     return 0;
 }
 

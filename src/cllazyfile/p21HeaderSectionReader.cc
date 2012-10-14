@@ -46,7 +46,8 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
 
         assert( i.name->length() > 0 );
 
-        if( seekInstanceEnd() >= _sectionEnd ) {
+        std::streampos end = seekInstanceEnd();
+        if( (end == -1 ) || ( end >= _sectionEnd ) ) {
             //invalid instance, so clear everything
             i.loc.begin = -1;
             delete i.name;
