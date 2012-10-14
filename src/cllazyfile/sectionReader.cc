@@ -73,16 +73,17 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
 }
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
-std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
-    std::string * str = new std::string;
+const std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
+    static std::string str;
     char c;
-    str->reserve(10); //seems to be faster and require less memory than no reserve or 20.
+//     str->reserve(10); //seems to be faster and require less memory than no reserve or 20.
+    str.clear();
     skipWS();
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
-            ( c == '!' && str->length() == 0 ) ) {
-            str->append( 1, c );
-        } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str->length() == 0 ) ) {
+            ( c == '!' && str.length() == 0 ) ) {
+            str.append( 1, c );
+        } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str.length() == 0 ) ) {
             //push past comment
             findNormalString( "*/" );
             skipWS();
@@ -94,10 +95,10 @@ std::string * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     }
     c = _file.peek();
     if( !strchr( delimiters, c ) ) {
-        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << *str << ". File offset: " << _file.tellg() << std::endl;
+        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
-    return str;
+    return &str;
 }
 
 std::streampos sectionReader::seekInstanceEnd() {

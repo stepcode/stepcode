@@ -50,7 +50,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
         if( (end == -1 ) || ( end >= _sectionEnd ) ) {
             //invalid instance, so clear everything
             i.loc.begin = -1;
-            delete i.name;
+//             delete i.name;
             i.name = 0;
         }
     }

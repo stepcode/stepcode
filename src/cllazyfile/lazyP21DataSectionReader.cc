@@ -56,7 +56,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     if( ( !_file.good() ) || ( end == -1 ) ) {
         //invalid instance, so clear everything
         i.loc.begin = -1;
-        delete i.name;
+//         delete i.name;
         i.name = 0;
     }
     return i;

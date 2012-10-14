@@ -34,7 +34,7 @@ typedef struct {
 /// used when populating the instance type map \sa lazyInstMgr::_instanceTypeMMap
 typedef struct {
     lazyInstanceLoc loc;
-    std::string * name;
+    const std::string * name;
 } namedLazyInstance;
 
 // instanceRefMMap - multimap between an instanceID and instances that refer to it

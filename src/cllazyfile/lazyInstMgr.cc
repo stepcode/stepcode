@@ -21,13 +21,14 @@ fileID lazyInstMgr::registerLazyFile( lazyFileReader * freader ) {
 
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
-    if( inst.name->length() > _longestTypeNameLen ) {
-        _longestTypeNameLen = inst.name->length();
+    int len = inst.name->length();
+    if( len > _longestTypeNameLen ) {
+        _longestTypeNameLen = len;
         _longestTypeName = *inst.name;
     }
     _instanceStreamPosMMap.insert( instanceStreamPosMMap_pair( inst.loc.instance, inst.loc ) );
     _instanceTypeMMap.insert( instanceTypeMMap_pair( *inst.name, inst.loc.instance ) );
-    delete inst.name;
+//     delete inst.name;
 }
 
 unsigned long lazyInstMgr::getNumTypes() /*const*/ {
