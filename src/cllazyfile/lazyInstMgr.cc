@@ -21,6 +21,7 @@ fileID lazyInstMgr::registerLazyFile( lazyFileReader * freader ) {
 
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
+    assert( inst.loc.begin > 0 && inst.loc.instance >= 0 && inst.loc.section >= 0 );
     int len = strlen( inst.name );
     if( len > _longestTypeNameLen ) {
         _longestTypeNameLen = len;
