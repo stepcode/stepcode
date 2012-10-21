@@ -6,19 +6,19 @@
 #include "lazyInstMgr.h"
 
 void lazyFileReader::initP21() {
-    _header = new p21HeaderSectionReader( this, _file, 0 );
+    _header = new p21HeaderSectionReader( this, _file, 0, -1 );
     lazyDataSectionReader * r;
 
     //FIXME rework this? check for EOF instead of "success()"?
-    while( r = new lazyP21DataSectionReader( this, _file, _file.tellg() ), r->success() ) {
-        _lazyDataReaders.push_back(r);
-    }
+    do {
+        r = new lazyP21DataSectionReader( this, _file, _file.tellg(), _parent->countDataSections() );
+        _parent->registerDataSection( r );
+    } while( r->success() );
+
     delete r; //last read attempt failed
 }
 
-lazyFileReader::lazyFileReader( std::string fname, lazyInstMgr* i ): _fileName(fname), _parent(i) {
-    _fileID = _parent->registerLazyFile( this );
-
+lazyFileReader::lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid ): _fileName(fname), _parent(i), _fileID( fid ) {
     _file.open( _fileName.c_str() );
     _file.imbue( std::locale::classic() );
     _file.unsetf( std::ios_base::skipws );

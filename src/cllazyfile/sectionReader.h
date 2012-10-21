@@ -18,17 +18,15 @@ protected:
 
     std::streampos _sectionStart,  ///< the start of this section as reported by tellg()
                    _sectionEnd;    ///< the end of this section as reported by tellg()
-    unsigned long /*loadedInstances,*/ _totalInstances;
+    unsigned long _totalInstances;
 
     ErrorDescriptor * _error;
     sectionID _sectionID;
     fileID _fileID;
 
-    static unsigned int _findStringBytes; // increment this every time a byte is read in findString()
-
     // protected member functions
 
-    sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start );
+    sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
 
     /** Find a string, ignoring occurrences in comments or Part 21 strings (i.e. 'string with \S\' control directive' )
      * \param str string to find
@@ -42,7 +40,7 @@ protected:
     const char * getDelimitedKeyword( const char * delimiters );
 
     /** Seek to the end of the current instance */
-    std::streampos seekInstanceEnd();
+    std::streampos seekInstanceEnd( std::set< instanceID > * refs );
 
     /// operator>> is very slow?!
     inline void skipWS() {
@@ -72,10 +70,6 @@ public:
     void locateAllInstances(); /**< find instances in section, and add lazyInstance's to lazyInstMgr */
     virtual const namedLazyInstance nextInstance() = 0;
     instanceID readInstanceNumber();
-
-    static unsigned int findStringByteCount() {
-        return _findStringBytes;
-    }
 };
 
 #endif //SECTIONREADER_H

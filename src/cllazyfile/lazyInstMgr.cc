@@ -1,3 +1,5 @@
+#include <unordered_map>
+#include "lazyTypes.h"
 #include "lazyInstMgr.h"
 #include "Registry.h"
 #include "SdaiSchemaInit.h"
@@ -14,11 +16,6 @@ sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
     return _dataSections.size() - 1;
 }
 
-fileID lazyInstMgr::registerLazyFile( lazyFileReader * freader ) {
-    _files.push_back( freader );
-    return _files.size() - 1;
-}
-
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
     assert( inst.loc.begin > 0 && inst.loc.instance >= 0 && inst.loc.section >= 0 );
@@ -29,20 +26,31 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     }
     _instanceStreamPosMMap.insert( instanceStreamPosMMap_pair( inst.loc.instance, inst.loc ) );
     _instanceTypeMMap.insert( instanceTypeMMap_pair( inst.name, inst.loc.instance ) );
-//     delete inst.name;
+
+    if( inst.refs->size() > 0 ) {
+        //forward refs
+        _fwdInstanceRefsMap.insert( instanceRefMap_pair( inst.loc.instance, inst.refs ) );
+        auto it = inst.refs->cbegin();
+        for( ; it != inst.refs->cend(); it++ ) {
+            //reverse refs
+            if( _revInstanceRefsMap.find( *it ) == _revInstanceRefsMap.end() ) {
+                _revInstanceRefsMap.insert( instanceRefMap_pair( *it, new std::set< instanceID > ) );
+            }
+            _revInstanceRefsMap[ *it ]->insert( inst.loc.instance );
+        }
+    }
 }
 
-unsigned long lazyInstMgr::getNumTypes() /*const*/ {
+unsigned long lazyInstMgr::getNumTypes() const {
     // http://www.daniweb.com/software-development/cpp/threads/384836/multimap-and-counting-number-of-keys#post1657899
     unsigned long n = 0 ;
-    instanceTypeMMap_t::iterator iter;//( _instanceTypeMMap.begin() );
-    for( iter=_instanceTypeMMap.begin(); iter != _instanceTypeMMap.end(); iter = _instanceTypeMMap.equal_range( iter->first ).second  ) {
+    auto iter = _instanceTypeMMap.cbegin();
+    for( ; iter != _instanceTypeMMap.cend(); iter = _instanceTypeMMap.equal_range( iter->first ).second  ) {
         ++n;
     }
     return n ;
 }
 
 void lazyInstMgr::openFile( std::string fname ) {
-    //  lazyFileReader adds itself to the file list - good idea or bad?
-    /*_files.push_back( */new lazyFileReader( fname, this ) /*)*/;
+    _files.push_back( new lazyFileReader( fname, this, _files.size() ) );
 }

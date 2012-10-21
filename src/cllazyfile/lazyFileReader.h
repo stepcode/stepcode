@@ -21,12 +21,9 @@ class headerSectionReader;
 ///read an exchange file of any supported type (currently only p21)
 ///for use only from within lazyInstMgr
 class lazyFileReader {
-//     friend class lazyInstMgr;
-//     friend class sectionReader;
 protected:
     std::string _fileName;
     lazyInstMgr * _parent;
-    std::vector< lazyDataSectionReader * > _lazyDataReaders;
     headerSectionReader * _header;
     std::ifstream _file;
     fileTypeEnum _fileType;
@@ -43,7 +40,7 @@ public:
         return _fileID;
     }
 
-    lazyFileReader( std::string fname, lazyInstMgr* i );
+    lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid );
 
     fileTypeEnum type() const {
         return _fileType;

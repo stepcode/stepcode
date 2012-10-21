@@ -7,22 +7,17 @@
 #include "sectionReader.h"
 #include "lazyTypes.h"
 
-// #include "SdaiSchemaInit.h"
-//differs from the lazyDataSectionReader in that all instances are always loaded
+///differs from the lazyDataSectionReader in that all instances are always loaded
 class headerSectionReader: public sectionReader {
 protected:
-//     std::ios::streampos headerEnd;
-//     lazyFileReader* parent;
     instancesLoaded_t _headerInstances;
 
     /// must derive from this class
-    headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ): sectionReader( parent, file, start ) {
+    headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
+                sectionReader( parent, file, start, sid ) {
     }
 public:
-//     void findSectionStart();
-    // what functions?
-    // one to get all contents, or to get next?
-    // callback... probably
+    //nothing public
 };
 
 #endif  //HEADERSECTIONREADER_H

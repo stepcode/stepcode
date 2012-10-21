@@ -2,6 +2,7 @@
 #define SCL_DAI_EXPORT
 
 #include <algorithm>
+#include <set>
 #include <assert.h>
 
 #include "sdaiApplication_instance.h"
@@ -10,10 +11,8 @@
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
 
-unsigned int sectionReader::_findStringBytes = 0; // incremented every time a byte is read in findNormalString()
-
-sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ):
-                                _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID(-1) {
+sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
+                                _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
     _fileID = _lazyFile->ID();
 }
 
@@ -27,8 +26,6 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
     while( i < l || semicolon ) {
         skipWS();
         c = _file.get();
-        _findStringBytes++;
-
         if( ( i == l ) && ( semicolon ) ) {
             if( c == ';' ) {
                 break;
@@ -101,7 +98,10 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     return str.c_str();
 }
 
-std::streampos sectionReader::seekInstanceEnd() {
+/// search forward in the file for the end of the instance. Start position should
+/// be the opening parenthesis; otherwise, it is likely to fail.
+///NOTE *must* check return value!
+std::streampos sectionReader::seekInstanceEnd( std::set< instanceID > * refs ) {
     char c;
     int parenDepth = 0;
     while( c = _file.get(), _file.good() ) {
@@ -123,7 +123,15 @@ std::streampos sectionReader::seekInstanceEnd() {
             case '=':
                 return -1;
             case '#':
-                //TODO record references
+                if( isdigit( _file.peek() ) ) {
+                    if( refs != 0 ) {
+                        instanceID n;
+                        _file >> n;
+                        refs->insert( n );
+                    }
+                } else {
+                    return -1;
+                }
                 break;
             case ')':
                 if( --parenDepth == 0 ) {

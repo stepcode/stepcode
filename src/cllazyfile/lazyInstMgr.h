@@ -3,21 +3,26 @@
 
 #include <map>
 #include <string>
-// #include "lazyInstance.h"
+#include <assert.h>
+
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
-// #include <ExpDict.h>
 #include "lazyTypes.h"
+
+#include "Registry.h"
 
 class Registry;
 
 class lazyInstMgr {
 protected:
-    /** multimap from instance number to instances that refer to it
-     * \sa instanceRefMMap_pair
-     * \sa instanceRefMMap_range
+    /** map from instance number to instances that it refers to
+     * \sa instanceRefMap_pair
      */
-    instanceRefMMap_t  _instanceRefMMap;
+    instanceRefMap_t  _fwdInstanceRefsMap;
+    /** map from instance number to instances that refer to it
+     * \sa instanceRefMap_pair
+     */
+    instanceRefMap_t _revInstanceRefsMap;
 
     /** multimap from instance type to instance number
      * \sa instanceTypeMMap_pair
@@ -54,28 +59,57 @@ public:
 
     void addLazyInstance( namedLazyInstance inst );
 
-    /// FIXME don't return something that can be modified; also, template references will cause problems on windows
-    instanceRefMMap_range getReferentInstances( instanceID id ) {
-        return _instanceRefMMap.equal_range(id);
+    instanceRefMap_range getFwdRefs() {
+        instanceRefMap_range r;
+        r.first = _fwdInstanceRefsMap.cbegin();
+        r.second = _fwdInstanceRefsMap.cend();
+        return r;
+    }
+    instanceRefMap_range getRevRefs() {
+        instanceRefMap_range r;
+        r.first = _revInstanceRefsMap.cbegin();
+        r.second = _revInstanceRefsMap.cend();
+        return r;
     }
 
-    /// FIXME don't return something that can be modified; also, template references will cause problems on windows
-    instanceTypeMMap_range getInstances( std::string type ) {
+    /// returns two iterators delimiting the instances that match `type`
+    instanceTypeMMap_range getInstances( std::string type ) const {
             return _instanceTypeMMap.equal_range( type );
     }
 
-    int countInstances( std::string type ) {
+    /// get the number of instances that have been found in the open files.
+    unsigned long countInstances() const {
+        return _lazyInstanceCount;
+    }
+
+    /// get the number of instances of a certain type
+    unsigned int countInstances( std::string type ) {
         return _instanceTypeMMap.count( type );
+    }
+
+    /// get the number of data sections that have been identified
+    unsigned int countDataSections() {
+        return _dataSections.size();
+    }
+
+    ///builds the registry using the given initFunct
+    const Registry * initRegistry( CF_init initFunct ) {
+        setRegistry( new Registry( initFunct ) );
+    }
+
+    /// set the registry to one already initialized
+    void setRegistry( Registry * reg ) {
+        assert( _mainRegistry == 0 );
+        _mainRegistry = reg;
     }
 
     const Registry * getHeaderRegistry() const {
         return _headerRegistry;
     }
-
-    /// get the number of instances that have been found in the open files.
-    unsigned long getInstanceCount() const {
-        return _lazyInstanceCount;
+    const Registry * getMainRegistry() const {
+        return _mainRegistry;
     }
+
 
     /// get the longest type name
     const std::string & getLongestTypeName() const {
@@ -83,7 +117,7 @@ public:
     }
 
     /// get the number of types of instances.
-    unsigned long getNumTypes();
+    unsigned long getNumTypes() const;
 
     sectionID registerDataSection( lazyDataSectionReader * sreader );
     fileID registerLazyFile( lazyFileReader * freader );
@@ -92,10 +126,13 @@ public:
         return _errors;
     }
 
-    /* TODO impliment these
+    /* TODO implement these
+     *    //renumber instances so that they are numbered 1..N where N is the total number of instances
      *    void normalizeInstanceIds();
+     *    //find data that is repeated and eliminate, if possible
      *    void eliminateDuplicates();
-     *    void useDataSection( sectionID id ); ///< tell instMgr to use instances from this section
+     *    //tell instMgr to use instances from this section
+     *    void useDataSection( sectionID id );
      */
     // TODO support references from one file to another
     // TODO registry

@@ -1,9 +1,11 @@
 #include "lazyP21DataSectionReader.h"
 #include "lazyInstMgr.h"
 #include <assert.h>
+#include <set>
 
-lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start ):
-                                                    lazyDataSectionReader( parent, file, start ) {
+lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file,
+                                                    std::streampos start, sectionID sid ):
+                                            lazyDataSectionReader( parent, file, start, sid ) {
     findSectionStart();
     namedLazyInstance nl;
     while( nl = nextInstance(), ( ( nl.loc.begin > 0 ) && ( nl.name != 0 ) ) ) {
@@ -23,7 +25,7 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
             _sectionEnd = _file.tellg();
         } else {
             _file.seekg( pos );
-            char found[26];
+            char found[26] = { '\0' };
             _file.read( found, 25 );
             std::cerr << "expected 'ENDSEC;', found " << found << std::endl;
             _error = true;
@@ -33,30 +35,29 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
 
 // part of readdata1
 const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
-    namedLazyInstance i;
     std::streampos end = -1;
+    namedLazyInstance i;
 
-    //TODO detect comments
-
+    i.refs = 0;
     i.loc.begin = _file.tellg();
     i.loc.instance = readInstanceNumber();
-    if( ( i.loc.instance < 0 ) || ( !_file.good() ) ) {
+    if( ( _file.good() ) && ( i.loc.instance >= 0 ) ) {
+        skipWS();
+        i.loc.section = _sectionID;
+        skipWS();
+        i.name = getDelimitedKeyword(";( /\\");
+        if( _file.good() ) {
+            i.refs = new std::set< instanceID >;
+            end = seekInstanceEnd( i.refs );
+        }
+    }
+    if( ( i.loc.instance < 0 ) || ( !_file.good() ) || ( end == -1 ) ) {
+        //invalid instance, so clear everything
         _file.seekg( i.loc.begin );
         i.loc.begin = -1;
-        return i;
-    }
-    skipWS();
-
-    i.loc.section = _sectionID;
-    skipWS();
-    i.name = getDelimitedKeyword(";( /\\");
-    if( _file.good() ) {
-        end = seekInstanceEnd();
-    }
-    if( ( !_file.good() ) || ( end == -1 ) ) {
-        //invalid instance, so clear everything
-        i.loc.begin = -1;
-//         delete i.name;
+        if( i.refs ) {
+            delete i.refs;
+        }
         i.name = 0;
     }
     return i;

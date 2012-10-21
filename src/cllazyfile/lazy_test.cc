@@ -3,7 +3,7 @@
 
 void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     int count = mgr.countInstances( type );
-    std::cout << type <<" instances: " << count;
+    std::cout << type << " instances: " << count;
     if( count ) {
         instanceTypeMMap_range range = mgr.getInstances( type );
         instanceID ex = range.first->second;
@@ -11,6 +11,32 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     }
     std::cout << std::endl;
     return;
+}
+
+void printRefs( lazyInstMgr & mgr ) {
+    instanceRefMap_range r = mgr.getFwdRefs();
+    instanceRefMap_t::const_iterator it = r.first;
+    for( ; it != r.second; it++ ) {
+        std::cout << "Example of forward references - Instance #" << it->first << " makes use of ";
+        auto frit = it->second->begin();
+        for( ; frit != it->second->end(); frit++ ) {
+            std::cout << *frit << " ";
+        }
+        std::cout << std::endl;
+        break;     //comment this out to loop through all
+    }
+
+    r = mgr.getRevRefs();
+    it = r.first;
+    for( ; it != r.second; it++ ) {
+        std::cout << "Example of reverse references - Instance #" << it->first << " is referred to by ";
+        auto rrit = it->second->begin();
+        for( ; rrit != it->second->end(); rrit++ ) {
+            std::cout << *rrit << " ";
+        }
+        std::cout << std::endl;
+        break;     //comment this out to loop through all
+    }
 }
 
 int main (int argc, char ** argv ) {
@@ -23,7 +49,7 @@ int main (int argc, char ** argv ) {
     lazyInstMgr mgr;
     mgr.openFile( argv[1] );
 
-    std::cout << "Total instances: " << mgr.getInstanceCount() << std::endl;
+    std::cout << "Total instances: " << mgr.countInstances() << std::endl;
     countTypeInstances( mgr, "CARTESIAN_POINT" );
     countTypeInstances( mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( mgr, "VERTEX_POINT" );
@@ -34,7 +60,9 @@ int main (int argc, char ** argv ) {
 
     std::cout << "Longest type name: " << mgr.getLongestTypeName() << std::endl;
     std::cout << "Total types: " << mgr.getNumTypes() << std::endl;
-    std::cout << "Bytes read by sectionReader::findNormalString(): " << sectionReader::findStringByteCount() << std::endl;
+
+    std::cout << "\nReferences\n==============" << std::endl;
+    printRefs( mgr );
 
     stats.stop();
     stats.out();
