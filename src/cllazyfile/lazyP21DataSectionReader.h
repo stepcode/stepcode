@@ -3,6 +3,7 @@
 
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
+#include "scl_memmgr.h"
 
 class lazyP21DataSectionReader: public lazyDataSectionReader {
 protected:

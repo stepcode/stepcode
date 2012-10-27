@@ -8,11 +8,13 @@
 // PART 21
 #include "lazyP21DataSectionReader.h"
 #include "p21HeaderSectionReader.h"
+#include "headerSectionReader.h"
 
 /* // PART 28
  * #include "lazyP28DataSectionReader.h"
  * #include "p28HeaderSectionReader.h"
  */
+#include "scl_memmgr.h"
 
 class lazyInstMgr;
 class Registry;
@@ -39,8 +41,10 @@ public:
     fileID ID() const {
         return _fileID;
     }
+    instancesLoaded_t getHeaderInstances();
 
     lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid );
+    ~lazyFileReader();
 
     fileTypeEnum type() const {
         return _fileType;

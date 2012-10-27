@@ -11,6 +11,26 @@ lazyInstMgr::lazyInstMgr() {
     _errors = new ErrorDescriptor();
 }
 
+lazyInstMgr::~lazyInstMgr() {
+    delete _headerRegistry;
+    delete _errors;
+    //loop over files, sections, instances; delete header instances
+    lazyFileReaderVec_t::iterator fit = _files.begin();
+    for( ; fit != _files.end(); fit++ ) {
+        delete *fit;
+    }
+    dataSectionReaderVec_t::iterator sit = _dataSections.begin();
+    for( ; sit != _dataSections.end(); sit++ ) {
+        delete *sit;
+    }
+    int i = 0;
+    instancesLoaded_t::iterator it = _instancesLoaded.begin();
+    for( ; it != _instancesLoaded.end(); it++ ) {
+        delete it->second;
+        i++;
+    }
+}
+
 sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
     _dataSections.push_back( sreader );
     return _dataSections.size() - 1;

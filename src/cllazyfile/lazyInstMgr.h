@@ -10,6 +10,7 @@
 #include "lazyTypes.h"
 
 #include "Registry.h"
+#include "scl_memmgr.h"
 
 class Registry;
 
@@ -54,6 +55,7 @@ protected:
 
 public:
     lazyInstMgr();
+    ~lazyInstMgr();
     void addSchema( void (*initFn) () ); //?
     void openFile( std::string fname );
 
@@ -76,6 +78,9 @@ public:
     instanceTypeMMap_range getInstances( std::string type ) const {
             return _instanceTypeMMap.equal_range( type );
     }
+    instancesLoaded_t getHeaderInstances( fileID file ) {
+        return _files[file]->getHeaderInstances();
+    }
 
     /// get the number of instances that have been found in the open files.
     unsigned long countInstances() const {
@@ -95,6 +100,7 @@ public:
     ///builds the registry using the given initFunct
     const Registry * initRegistry( CF_init initFunct ) {
         setRegistry( new Registry( initFunct ) );
+        return _mainRegistry;
     }
 
     /// set the registry to one already initialized

@@ -2,7 +2,7 @@
 #define P21HEADERSECTIONREADER_H
 
 #include "headerSectionReader.h"
-
+#include "scl_memmgr.h"
 
 class p21HeaderSectionReader: public headerSectionReader {
 public:

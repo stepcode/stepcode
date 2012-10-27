@@ -24,7 +24,7 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
         std::streampos pos = _file.tellg();
         _headerInstances.insert( instancesLoaded_pair( nl.loc.instance,
                     getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), &nl.loc, nl.name, "", true ) ) );
-        _file.seekg( pos );
+        _file.seekg( pos ); //reset stream position for next call to nextInstance()
     }
     _file.seekg( _sectionEnd );
 }

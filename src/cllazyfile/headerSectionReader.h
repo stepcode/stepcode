@@ -6,6 +6,8 @@
 #include "lazyFileReader.h"
 #include "sectionReader.h"
 #include "lazyTypes.h"
+#include "scl_memmgr.h"
+
 
 ///differs from the lazyDataSectionReader in that all instances are always loaded
 class headerSectionReader: public sectionReader {

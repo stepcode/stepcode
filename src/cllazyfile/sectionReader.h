@@ -1,10 +1,9 @@
 #ifndef SECTIONREADER_H
 #define SECTIONREADER_H
 
-// #include "lazyFileReader.h"
-// #include "sdaiApplication_instance.h"
 #include <fstream>
 #include "lazyTypes.h"
+#include "scl_memmgr.h"
 
 class SDAI_Application_instance;
 class lazyFileReader;

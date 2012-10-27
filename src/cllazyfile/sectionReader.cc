@@ -206,7 +206,8 @@ instanceID sectionReader::readInstanceNumber() {
 }
 
 //TODO: most of the rest of readdata1, all of readdata2
-SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, const lazyInstanceLoc* lazy, const std::string & typeName, const std::string & schName, bool header ) {
+SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, const lazyInstanceLoc* lazy,
+                                                            const std::string & typeName, const std::string & schName, bool header ) {
     char c;
     std::string comment;
     Severity sev;
