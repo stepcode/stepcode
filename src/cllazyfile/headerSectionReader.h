@@ -17,7 +17,19 @@ protected:
                 sectionReader( parent, file, start, sid ) {
     }
 public:
-    //nothing public
+    instancesLoaded_t getInstances() {
+        return _headerInstances;
+    }
+
+    ~headerSectionReader() {
+        int i = 0;
+        instancesLoaded_t::iterator it = _headerInstances.begin();
+        for( ; it != _headerInstances.end(); it++ ) {
+            delete it->second;
+            i++;
+        }
+        std::cerr << "deleted " << i << " header instances" << std::endl;
+    }
 };
 
 #endif  //HEADERSECTIONREADER_H

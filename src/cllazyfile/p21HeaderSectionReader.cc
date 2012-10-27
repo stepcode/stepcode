@@ -1,6 +1,9 @@
 #include <assert.h>
 
 #include "p21HeaderSectionReader.h"
+#include "headerSectionReader.h"
+#include "sectionReader.h"
+#include "lazyInstMgr.h"
 #include <string.h>
 
 
@@ -18,7 +21,10 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
     namedLazyInstance nl;
     std::cerr << "lazy instance size: " << sizeof( nl.loc ) << std::endl;
     while( nl = nextInstance(), ( nl.loc.begin > 0 ) ) {
-        _headerInstances.insert( instancesLoaded_pair( nl.loc.instance, getRealInstance( &nl.loc ) ) );
+        std::streampos pos = _file.tellg();
+        _headerInstances.insert( instancesLoaded_pair( nl.loc.instance,
+                    getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), &nl.loc, nl.name, "", true ) ) );
+        _file.seekg( pos );
     }
     _file.seekg( _sectionEnd );
 }

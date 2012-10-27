@@ -5,7 +5,10 @@
 #include <set>
 #include <assert.h>
 
+#include "Registry.h"
 #include "sdaiApplication_instance.h"
+#include "read_func.h"
+
 #include "sectionReader.h"
 #include "lazyFileReader.h"
 #include "lazyInstMgr.h"
@@ -69,6 +72,7 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
     }
 }
 
+
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
 const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
@@ -123,6 +127,7 @@ std::streampos sectionReader::seekInstanceEnd( std::set< instanceID > * refs ) {
             case '=':
                 return -1;
             case '#':
+                skipWS();
                 if( isdigit( _file.peek() ) ) {
                     if( refs != 0 ) {
                         instanceID n;
@@ -201,243 +206,42 @@ instanceID sectionReader::readInstanceNumber() {
 }
 
 //TODO: most of the rest of readdata1, all of readdata2
-SDAI_Application_instance * sectionReader::getRealInstance( lazyInstanceLoc* inst ) {
-//     assert( inst->instance < 4 );
-    std::cerr << "getRealInstance() isn't implemented. Instance #" << inst->instance << std::endl;
-    return 0;
-}
-
-#ifdef stepfile
-/**
- * PASS 1:  create instances
- * starts at the data section
- */
-int sectionReader::ReadData1( istream & in ) {
-    int endsec = 0;
-    int _entsNotCreated = 0;
-
-    int _errorCount = 0;  // reset error count
-    int _warningCount = 0;  // reset error count
-
+SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, const lazyInstanceLoc* lazy, const std::string & typeName, const std::string & schName, bool header ) {
     char c;
-    int instance_count = 0;
-    char buf[BUFSIZ];
-    buf[0] = '\0';
-    std::string tmpbuf;
+    std::string comment;
+    Severity sev;
+    SDAI_Application_instance * inst = 0;
 
-    SDAI_Application_instance * obj = ENTITY_NULL;
-    stateEnum inst_state = noStateSE; // used if reading working file
-
-    ErrorDescriptor e;
-
-    //  PASS 1:  create instances
-    endsec = FoundEndSecKywd( in, _error );
-    while( in.good() && !endsec ) {
-        e.ClearErrorMsg();
-        ReadTokenSeparator( in ); // also skips white space
-        in >> c;
-
-        if( c != ENTITY_NAME_DELIM ) {
-            in.putback( c );
-            while( c != ENTITY_NAME_DELIM && in.good() &&
-                !( endsec = FoundEndSecKywd( in, _error ) ) ) {
-                tmpbuf.clear();
-            FindStartOfInstance( in, tmpbuf );
-            cout << "ERROR: trying to recover from invalid data. skipping: "
-            << tmpbuf << endl;
-            in >> c;
-            ReadTokenSeparator( in );
-                }
-        }
-
-        if( !endsec ) {
-            obj = ENTITY_NULL;
-            if( ( _fileType == WORKING_SESSION ) && ( inst_state == deleteSE ) ) {
-                SkipInstance( in, tmpbuf );
-            } else {
-                obj =  CreateInstance( in, cout );
-                _iFileCurrentPosition = in.tellg();
-            }
-
-            if( obj != ENTITY_NULL ) {
-                if( obj->Error().severity() < SEVERITY_WARNING ) {
-                    ++_errorCount;
-                } else if( obj->Error().severity() < SEVERITY_NULL ) {
-                    ++_warningCount;
-                }
-                obj->Error().ClearErrorMsg();
-
-                if( _fileType == WORKING_SESSION ) {
-                    instances().Append( obj, inst_state );
-                } else {
-                    instances().Append( obj, newSE );
-                }
-
-                ++instance_count;
-            } else {
-                ++_entsNotCreated;
-                //old
-                ++_errorCount;
-            }
-
-            if( _entsNotCreated > _maxErrorCount ) {
-                _error.AppendToUserMsg( "Warning: Too Many Errors in File. Read function aborted.\n" );
-                cerr << Error().UserMsg();
-                cerr << Error().DetailMsg();
-                Error().ClearErrorMsg();
-                Error().severity( SEVERITY_EXIT );
-                return instance_count;
-            }
-
-            endsec = FoundEndSecKywd( in, _error );
-
-        }
-    } // end while loop
-
-    if( _entsNotCreated ) {
-        sprintf( buf,
-                 "sectionReader Reading File: Unable to create %d instances.\n\tIn first pass through DATA section. Check for invalid entity types.\n",
-                 _entsNotCreated );
-        _error.AppendToUserMsg( buf );
-        _error.GreaterSeverity( SEVERITY_WARNING );
+    _file.seekg( lazy->begin );
+    skipWS();
+    ReadTokenSeparator( _file, &comment );
+    if( !header ) {
+        findNormalString( "=" );
     }
-    if( !in.good() ) {
-        _error.AppendToUserMsg( "Error in input file.\n" );
+    skipWS();
+    c = _file.get();
+    switch( c ) {
+        case '&':
+            std::cerr << "Can't handle scope instances. Skipping #" << lazy->instance << std::endl;
+            // sev = CreateScopeInstances( in, &scopelist );
+            break;
+        case '(':
+            std::cerr << "Can't handle complex instances. Skipping #" << lazy->instance << std::endl;
+            //CreateSubSuperInstance( in, fileid, result );
+            break;
+        case '!':
+            std::cerr << "Can't handle user-defined instances. Skipping #" << lazy->instance << std::endl;
+        default:
+            inst = reg->ObjCreate( typeName.c_str(), schName.c_str() );
+            break;
     }
-
-    _iFileStage1Done = true;
-    return instance_count;
+    inst->StepFileId( lazy->instance );
+    if( !comment.empty() ) {
+        inst->AddP21Comment( comment );
+    }
+    findNormalString( "(" );
+    _file.unget();
+    sev = inst->STEPread( lazy->instance, 0, /*&instances()*/ 0, _file, schName.c_str(), true, false );
+    return inst;
 }
 
-/**
- * \returns number of valid instances read
- * reads in the data portion of the instances in an exchange file
- */
-int sectionReader::ReadData2( istream & in, bool useTechCor ) {
-    _entsInvalid = 0;
-    _entsIncomplete = 0;
-    _entsWarning = 0;
-
-    int total_instances = 0;
-    int valid_insts = 0;    // used for exchange file only
-    stateEnum inst_state = noStateSE; // used if reading working file
-
-    _errorCount = 0;  // reset error count
-    _warningCount = 0;  // reset error count
-
-    char c;
-    char buf[BUFSIZ];
-    buf[0] = '\0';
-    std::string tmpbuf;
-
-    SDAI_Application_instance * obj = ENTITY_NULL;
-    std::string cmtStr;
-
-    //    ReadTokenSeparator(in, &cmtStr);
-
-    int endsec = FoundEndSecKywd( in, _error );
-
-    //  PASS 2:  read instances
-    while( in.good() && !endsec ) {
-        ReadTokenSeparator( in, &cmtStr );
-        in >> c;
-
-        if( _fileType == WORKING_SESSION ) {
-            if( strchr( "CIND", c ) ) { // if there is a valid char
-                inst_state = EntityWfState( c );
-                ReadTokenSeparator( in, &cmtStr );
-                in >> c;    // read the ENTITY_NAME_DELIM
-            }
-            /*
-             *                    // don't need this error msg for the 2nd pass (it was done on 1st)
-             *                    else
-             *                    {
-             *                    cout << "Invalid editing state character: " << c << endl;
-             *                    cout << "Assigning editing state to be INCOMPLETE\n";
-             *                    inst_state = incompleteSE;
-             }
-             */
-             }
-
-             if( c != ENTITY_NAME_DELIM ) {
-                 in.putback( c );
-                 while( c != ENTITY_NAME_DELIM && in.good() &&
-                     !( endsec = FoundEndSecKywd( in, _error ) ) ) {
-
-                     tmpbuf.clear();
-                 FindStartOfInstance( in, tmpbuf );
-                 cout << "ERROR: trying to recover from invalid data. skipping: "
-                 << tmpbuf << endl;
-                 in >> c;
-                 ReadTokenSeparator( in, &cmtStr );
-                     }
-             }
-
-
-             if( !endsec ) {
-                 obj = ENTITY_NULL;
-                 if( ( _fileType == WORKING_SESSION ) && ( inst_state == deleteSE ) ) {
-                     SkipInstance( in, tmpbuf );
-                 } else {
-                     obj =  ReadInstance( in, cout, cmtStr, useTechCor );
-                     _iFileCurrentPosition = in.tellg();
-                 }
-
-                 cmtStr.clear();
-                 if( obj != ENTITY_NULL ) {
-                     if( obj->Error().severity() < SEVERITY_INCOMPLETE ) {
-                         ++_entsInvalid;
-                         // old
-                         ++_errorCount;
-                     } else if( obj->Error().severity() == SEVERITY_INCOMPLETE ) {
-                         ++_entsIncomplete;
-                         ++_entsInvalid;
-                     } else if( obj->Error().severity() == SEVERITY_USERMSG ) {
-                         ++_entsWarning;
-                     } else { // i.e. if severity == SEVERITY_NULL
-                    ++valid_insts;
-                 }
-
-                 obj->Error().ClearErrorMsg();
-
-                 ++total_instances;
-             } else {
-                 ++_entsInvalid;
-                 // old
-                 ++_errorCount;
-             }
-
-             if( _entsInvalid > _maxErrorCount ) {
-                 _error.AppendToUserMsg( "Warning: Too Many Errors in File. Read function aborted.\n" );
-                 cerr << Error().UserMsg();
-                 cerr << Error().DetailMsg();
-                 Error().ClearErrorMsg();
-                 Error().severity( SEVERITY_EXIT );
-                 return valid_insts;
-             }
-
-             endsec = FoundEndSecKywd( in, _error );
-        }
-    } // end while loop
-
-    if( _entsInvalid ) {
-        sprintf( buf,
-                 "%s \n\tTotal instances: %d \n\tInvalid instances: %d \n\tIncomplete instances (includes invalid instances): %d \n\t%s: %d.\n",
-                 "Second pass complete - instance summary:", total_instances,
-                 _entsInvalid, _entsIncomplete, "Warnings",
-                 _entsWarning );
-        cout << buf << endl;
-        _error.AppendToUserMsg( buf );
-        _error.AppendToDetailMsg( buf );
-        _error.GreaterSeverity( SEVERITY_WARNING );
-    }
-    if( !in.good() ) {
-        _error.AppendToUserMsg( "Error in input file.\n" );
-    }
-
-    //    if( in.good() )
-    //  in.putback(c);
-    return valid_insts;
-}
-
-#endif //stepfile

@@ -9,6 +9,7 @@
 class SDAI_Application_instance;
 class lazyFileReader;
 class ErrorDescriptor;
+class Registry;
 
 class sectionReader {
 protected:
@@ -50,7 +51,8 @@ protected:
     }
 
 public:
-    SDAI_Application_instance * getRealInstance( lazyInstanceLoc * inst );
+    SDAI_Application_instance * getRealInstance( const Registry * reg, const lazyInstanceLoc* inst,
+                                                 const std::string & typeName, const std::string & schName = "", bool header = false );
     sectionID ID() const {
         return _sectionID;
     }
