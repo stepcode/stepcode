@@ -58,6 +58,8 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
             }
             _revInstanceRefsMap[ *it ]->insert( inst.loc.instance );
         }
+    } else {
+        delete inst.refs;
     }
 }
 
