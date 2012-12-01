@@ -36,7 +36,7 @@ SCL_BASE_EXPORT benchVals getMemAndTime( );
  *
  * depends on getMemAndTime() above - may not work on all platforms.
  */
-SCL_BASE_EXPORT class benchmark {
+class SCL_BASE_EXPORT benchmark {
 protected:
     benchVals initialVals, laterVals;
     std::ostream& ostr;
