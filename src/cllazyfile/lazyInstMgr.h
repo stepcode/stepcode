@@ -12,24 +12,29 @@
 #include "Registry.h"
 #include "scl_memmgr.h"
 
+#include "judyLArray.h"
+#include "judySArray.h"
+#include "judyL2Array.h"
+#include "judyS2Array.h"
+
 class Registry;
 
 class lazyInstMgr {
 protected:
     /** map from instance number to instances that it refers to
-     * \sa instanceRefMap_pair
+     * \sa instanceRefs_pair
      */
-    instanceRefMap_t  _fwdInstanceRefsMap;
+    instanceRefs_t  _fwdInstanceRefs;
     /** map from instance number to instances that refer to it
-     * \sa instanceRefMap_pair
+     * \sa instanceRefs_pair
      */
-    instanceRefMap_t _revInstanceRefsMap;
+    instanceRefs_t _revInstanceRefs;
 
     /** multimap from instance type to instance number
-     * \sa instanceTypeMMap_pair
-     * \sa instanceTypeMMap_range
+     * \sa instanceType_pair
+     * \sa instanceType_range
      */
-    instanceTypeMMap_t _instanceTypeMMap;
+    instanceTypes_t * _instanceTypes;
 
     /** map from instance number to instance pointer (loaded instances only)
      * \sa instancesLoaded_pair
@@ -37,9 +42,9 @@ protected:
     instancesLoaded_t _instancesLoaded;
 
     /** map from instance number to beginning and end positions and the data section
-     * \sa instanceStreamPosMap_pair
+     * \sa instanceStreamPos_pair
      */
-    instanceStreamPosMMap_t _instanceStreamPosMMap;
+    instanceStreamPos_t _instanceStreamPos;
 
     dataSectionReaderVec_t _dataSections;
 
@@ -61,35 +66,56 @@ public:
 
     void addLazyInstance( namedLazyInstance inst );
 
-    instanceRefMap_range getFwdRefs() {
-        instanceRefMap_range r;
-        r.first = _fwdInstanceRefsMap.cbegin();
-        r.second = _fwdInstanceRefsMap.cend();
-        return r;
+#ifdef HAVE_JUDY
+    instanceRefs_t * getFwdRefs() {
+        return & _fwdInstanceRefs;
     }
-    instanceRefMap_range getRevRefs() {
-        instanceRefMap_range r;
-        r.first = _revInstanceRefsMap.cbegin();
-        r.second = _revInstanceRefsMap.cend();
+
+    instanceRefs_t * getRevRefs() {
+        return & _revInstanceRefs;
+    }
+    /// returns two iterators delimiting the instances that match `type`
+    instanceTypes_t::cvector * getInstances( std::string type ) /*const*/ {
+        return _instanceTypes->find( type.c_str() );
+    }
+    /// get the number of instances of a certain type
+    unsigned int countInstances( std::string type ) {
+        instanceTypes_t::cvector *v = _instanceTypes->find( type.c_str() );
+        if( !v ) {
+            return 0;
+        }
+        return v->size();
+    }
+#else //HAVE_JUDY
+    instanceRefs_range getFwdRefs() {
+        instanceRefs_range r;
+        r.first = _fwdInstanceRefs.cbegin();
+        r.second = _fwdInstanceRefs.cend();
         return r;
     }
 
-    /// returns two iterators delimiting the instances that match `type`
-    instanceTypeMMap_range getInstances( std::string type ) const {
-            return _instanceTypeMMap.equal_range( type );
+    instanceRefs_range getRevRefs() {
+        instanceRefs_range r;
+        r.first = _revInstanceRefs.cbegin();
+        r.second = _revInstanceRefs.cend();
+        return r;
     }
-    instancesLoaded_t getHeaderInstances( fileID file ) {
+    /// returns two iterators delimiting the instances that match `type`
+    instanceTypes_range getInstances( std::string type ) const {
+        return _instanceTypes->equal_range( type );
+    }
+    /// get the number of instances of a certain type
+    unsigned int countInstances( std::string type ) {
+        return _instanceTypes->count( type );
+    }
+    #endif //HAVE_JUDY
+    instancesLoaded_t * getHeaderInstances( fileID file ) {
         return _files[file]->getHeaderInstances();
     }
 
     /// get the number of instances that have been found in the open files.
     unsigned long countInstances() const {
         return _lazyInstanceCount;
-    }
-
-    /// get the number of instances of a certain type
-    unsigned int countInstances( std::string type ) {
-        return _instanceTypeMMap.count( type );
     }
 
     /// get the number of data sections that have been identified

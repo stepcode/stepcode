@@ -4,9 +4,14 @@
 #include "scl_memmgr.h"
 
 void fileInfo( lazyInstMgr& mgr, fileID id ) {
-    instancesLoaded_t headerInsts = mgr.getHeaderInstances( 0 );
+    instancesLoaded_t * headerInsts = mgr.getHeaderInstances( 0 );
+    SDAI_Application_instance * hdrInst;
+#ifdef HAVE_JUDY
+    hdrInst = headerInsts->find( 3 );
+#else //HAVE_JUDY
     instancesLoaded_t::iterator it =  headerInsts.find( 3 );
-    SDAI_Application_instance * hdrInst = it->second;
+    hdrInst = it->second;
+#endif //HAVE_JUDY
     if( ( hdrInst != 0 ) && ( hdrInst->STEPfile_id == 3 ) ) {
         SdaiFile_schema * fs = dynamic_cast< SdaiFile_schema * >( hdrInst );
         if( fs ) {
@@ -21,28 +26,47 @@ void fileInfo( lazyInstMgr& mgr, fileID id ) {
         }
     }
 }
+
 void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     int count = mgr.countInstances( type );
     std::cout << type << " instances: " << count;
     if( count ) {
+        instanceID ex;
+#ifdef HAVE_JUDY
+        ex = ( * mgr.getInstances( type ) )[ 0 ];
+#else //HAVE_JUDY
         instanceTypeMMap_range range = mgr.getInstances( type );
-        instanceID ex = range.first->second;
+        ex = range.first->second;
+#endif //HAVE_JUDY
         std::cout << " -- example: #" << ex; //this is the last based upon multimap hash value, not based on file order
     }
     std::cout << std::endl;
     return;
 }
 
-void printRefs( lazyInstMgr & mgr ) {
-    std::cout << "\nReferences\n==============\n";
-    instanceRefMap_range r = mgr.getFwdRefs();
+#ifdef HAVE_JUDY
+void printRefs1( instanceRefs_t * refs, const char * desc ) {
+    instanceRefs_t::cpair p = refs->begin();
+    instanceRefs_t::cvector * v = p.value;
+    if( !v ) {
+        std::cout << "No " << desc << " references" << std::endl;
+    } else {
+        instanceRefs_t::cvector::const_iterator it( v->begin() ), end( v->end() );
+        std::cout << "Example of " << desc << " references - Instance #" << p.key << " makes use of " << v->size() << ", ";
+        for( ; it != end; it++ ) {
+            std::cout << *it << " ";
+        }
+    }
+}
+#else //HAVE_JUDY
+void printRefs1( instanceRefMap_range r, const char * desc ) {
     instanceRefMap_t::const_iterator it;
     if( r.first == r.second ) {
-        std::cout << "No forward references" << std::endl;
+        std::cout << "No " << desc << " references" << std::endl;
     } else {
         it = r.first;
         for( ; it != r.second; it++ ) {
-            std::cout << "Example of forward references - Instance #" << it->first << " makes use of ";
+            std::cout << "Example of " << desc << " references - Instance #" << it->first << " makes use of ";
             auto frit = it->second->begin();
             for( ; frit != it->second->end(); frit++ ) {
                 std::cout << *frit << " ";
@@ -51,21 +75,13 @@ void printRefs( lazyInstMgr & mgr ) {
             break;     //comment this out to loop through all
         }
     }
-    r = mgr.getRevRefs();
-    if( r.first == r.second ) {
-        std::cout << "No reverse references" << std::endl;
-    } else {
-        it = r.first;
-        for( ; it != r.second; it++ ) {
-            std::cout << "Example of reverse references - Instance #" << it->first << " is referred to by ";
-            auto rrit = it->second->begin();
-            for( ; rrit != it->second->end(); rrit++ ) {
-                std::cout << *rrit << " ";
-            }
-            std::cout << std::endl;
-            break;     //comment this out to loop through all
-        }
-    }
+}
+#endif //HAVE_JUDY
+
+void printRefs( lazyInstMgr & mgr ) {
+    std::cout << "\nReferences\n==============\n";
+    printRefs1( mgr.getFwdRefs(), "forward" );
+    printRefs1( mgr.getRevRefs(), "reverse" );
 }
 
 int main (int argc, char ** argv ) {
@@ -91,7 +107,7 @@ int main (int argc, char ** argv ) {
     countTypeInstances( *mgr, "" );
 
     std::cout << "Longest type name: " << mgr->getLongestTypeName() << std::endl;
-    std::cout << "Total types: " << mgr->getNumTypes() << std::endl;
+//     std::cout << "Total types: " << mgr->getNumTypes() << std::endl;
 
     printRefs( *mgr );
     stats.out();

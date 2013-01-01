@@ -2,6 +2,7 @@
 #define SECTIONREADER_H
 
 #include <fstream>
+#include <set>
 #include "lazyTypes.h"
 #include "scl_memmgr.h"
 
@@ -40,7 +41,7 @@ protected:
     const char * getDelimitedKeyword( const char * delimiters );
 
     /** Seek to the end of the current instance */
-    std::streampos seekInstanceEnd( std::set< instanceID > * refs );
+    std::streampos seekInstanceEnd( instanceRefs * refs );
 
     /// operator>> is very slow?!
     inline void skipWS() {

@@ -41,7 +41,7 @@ public:
     fileID ID() const {
         return _fileID;
     }
-    instancesLoaded_t getHeaderInstances();
+    instancesLoaded_t * getHeaderInstances();
 
     lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid );
     ~lazyFileReader();

@@ -1,5 +1,5 @@
 
-set( clLazyFile_SRCS lazyDataSectionReader.cc lazyFileReader.cc lazyInstMgr.cc p21HeaderSectionReader.cc sectionReader.cc lazyP21DataSectionReader.cc )
+set( clLazyFile_SRCS lazyDataSectionReader.cc lazyFileReader.cc lazyInstMgr.cc p21HeaderSectionReader.cc sectionReader.cc lazyP21DataSectionReader.cc ../base/judy/src/judy.c ../base/judy/src/judyLArray.h ../base/judy/src/judySArray.h )
 
 set( clLazyFile_HDRS headerSectionReader.h lazyFileReader.h lazyP21DataSectionReader.h p21HeaderSectionReader.h
 lazyDataSectionReader.h lazyInstMgr.h lazyTypes.h sectionReader.h )
@@ -11,8 +11,10 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/clstepcore
     ${SCL_SOURCE_DIR}/src/clutils
     ${SCL_SOURCE_DIR}/src/base
+    ../base/judy/src
 )
 
+add_definitions( -DHAVE_JUDY )
 SCL_ADDLIB(steplazyfile "${clLazyFile_SRCS} ${clLazyFile_HDRS}" "stepcore stepdai steputils base")
 scl_addexec(lazy_test "lazy_test.cc" "steplazyfile stepeditor" )
 set_target_properties(steplazyfile lazy_test PROPERTIES COMPILE_FLAGS "-std=c++11" )

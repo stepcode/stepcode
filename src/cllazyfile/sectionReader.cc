@@ -105,7 +105,7 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 /// search forward in the file for the end of the instance. Start position should
 /// be the opening parenthesis; otherwise, it is likely to fail.
 ///NOTE *must* check return value!
-std::streampos sectionReader::seekInstanceEnd( std::set< instanceID > * refs ) {
+std::streampos sectionReader::seekInstanceEnd( instanceRefs * refs ) {
     char c;
     int parenDepth = 0;
     while( c = _file.get(), _file.good() ) {
@@ -130,9 +130,12 @@ std::streampos sectionReader::seekInstanceEnd( std::set< instanceID > * refs ) {
                 skipWS();
                 if( isdigit( _file.peek() ) ) {
                     if( refs != 0 ) {
+                        if(! * refs ) {
+                            *refs = new std::vector< instanceID >;
+                        }
                         instanceID n;
                         _file >> n;
-                        refs->insert( n );
+                        ( * refs )->push_back( n );
                     }
                 } else {
                     return -1;

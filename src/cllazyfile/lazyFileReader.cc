@@ -20,7 +20,7 @@ void lazyFileReader::initP21() {
     }
 }
 
-instancesLoaded_t lazyFileReader::getHeaderInstances() {
+instancesLoaded_t * lazyFileReader::getHeaderInstances() {
     return _header->getInstances();
 }
 

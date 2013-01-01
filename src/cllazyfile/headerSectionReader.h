@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+
+#include "judyL2Array.h"
 #include "lazyFileReader.h"
 #include "sectionReader.h"
 #include "lazyTypes.h"
@@ -12,18 +14,22 @@
 ///differs from the lazyDataSectionReader in that all instances are always loaded
 class headerSectionReader: public sectionReader {
 protected:
-    instancesLoaded_t _headerInstances;
+    instancesLoaded_t * _headerInstances;
 
     /// must derive from this class
     headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
                 sectionReader( parent, file, start, sid ) {
+        _headerInstances = new instancesLoaded_t;
     }
 public:
-    instancesLoaded_t getInstances() {
+    instancesLoaded_t * getInstances() const {
         return _headerInstances;
     }
 
     ~headerSectionReader() {
+#ifdef HAVE_JUDY
+        _headerInstances->clear();
+#else //HAVE_JUDY
         int i = 0;
         instancesLoaded_t::iterator it = _headerInstances.begin();
         for( ; it != _headerInstances.end(); it++ ) {
@@ -31,6 +37,7 @@ public:
             i++;
         }
         std::cerr << "deleted " << i << " header instances" << std::endl;
+#endif HAVE_JUDY
     }
 };
 

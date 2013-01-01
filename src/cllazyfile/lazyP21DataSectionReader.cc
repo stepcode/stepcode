@@ -47,8 +47,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
         skipWS();
         i.name = getDelimitedKeyword(";( /\\");
         if( _file.good() ) {
-            i.refs = new std::set< instanceID >;
-            end = seekInstanceEnd( i.refs );
+            end = seekInstanceEnd( & i.refs );
         }
     }
     if( ( i.loc.instance < 0 ) || ( !_file.good() ) || ( end == -1 ) ) {
