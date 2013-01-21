@@ -15,7 +15,7 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
         _error = true;
         return;
     }
-    if( nl.loc.instance == -1 ) {
+    if( nl.loc.instance == 0 ) {
         //check for ENDSEC;
         skipWS();
         std::streampos pos = _file.tellg();
@@ -41,7 +41,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     i.refs = 0;
     i.loc.begin = _file.tellg();
     i.loc.instance = readInstanceNumber();
-    if( ( _file.good() ) && ( i.loc.instance >= 0 ) ) {
+    if( ( _file.good() ) && ( i.loc.instance > 0 ) ) {
         skipWS();
         i.loc.section = _sectionID;
         skipWS();
@@ -50,7 +50,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
             end = seekInstanceEnd( & i.refs );
         }
     }
-    if( ( i.loc.instance < 0 ) || ( !_file.good() ) || ( end == -1 ) ) {
+    if( ( i.loc.instance == 0 ) || ( !_file.good() ) || ( end == -1 ) ) {
         //invalid instance, so clear everything
         _file.seekg( i.loc.begin );
         i.loc.begin = -1;

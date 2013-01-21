@@ -174,7 +174,7 @@ instanceID sectionReader::readInstanceNumber() {
     std::streampos start, end;
     char c;
     int digits = 0;
-    instanceID id = -1;
+    instanceID id = 0;
 
     //find instance number ("# nnnn ="), where ' ' is any whitespace found by isspace()
     skipWS();
@@ -187,7 +187,7 @@ instanceID sectionReader::readInstanceNumber() {
     skipWS();
     c = _file.get();
     if( c != '#' ) {
-        return -1;
+        return 0;
     }
     skipWS();
     start = _file.tellg();
@@ -207,6 +207,7 @@ instanceID sectionReader::readInstanceNumber() {
         _file.seekg( start );
         _file >> id;
         _file.seekg ( end );
+        assert( id > 0 );
     }
     return id;
 }
