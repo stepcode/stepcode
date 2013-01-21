@@ -40,15 +40,17 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     return;
 }
 
-instanceID printRefs1( instanceRefs_t * refs, const char * desc ) {
+instanceID printRefs1( instanceRefs_t * refs, bool forward ) {
+    const char * d1 = forward ? "forward" : "reverse";
+    const char * d2 = forward ? " refers to " : " is referred to by ";
     instanceID id = 0;
     instanceRefs_t::cpair p = refs->begin();
     instanceRefs_t::cvector * v = p.value;
     if( !v ) {
-        std::cout << "No " << desc << " references" << std::endl;
+        std::cout << "No " << d1 << " references" << std::endl;
     } else {
         instanceRefs_t::cvector::const_iterator it( v->begin() ), end( v->end() );
-        std::cout << "Example of " << desc << " references - Instance #" << p.key << " refers to " << v->size() << " other instances: ";
+        std::cout << "Example of " << d1 << " references - Instance #" << p.key << d2 << v->size() << " other instances: ";
         for( ; it != end; it++ ) {
             std::cout << *it << " ";
         }
@@ -61,8 +63,8 @@ instanceID printRefs1( instanceRefs_t * refs, const char * desc ) {
 instanceID printRefs( lazyInstMgr & mgr ) {
     instanceID id;
     std::cout << "\nReferences\n==============\n";
-    id = printRefs1( mgr.getFwdRefs(), "forward" );
-    printRefs1( mgr.getRevRefs(), "reverse" );
+    id = printRefs1( mgr.getFwdRefs(), true );
+    printRefs1( mgr.getRevRefs(), false );
     std::cout << std::endl;
     return id;
 }
@@ -103,7 +105,7 @@ int main (int argc, char ** argv ) {
 #ifndef NO_REGISTRY
     if( instWithRef ) {
         // std::cout << "Number of data section instances fully loaded: " << mgr->countInstances() << std::endl;
-        std::cout << "Loading #" << instWithRef << std::endl;
+        std::cout << "Loading #" << instWithRef;
         SDAI_Application_instance* inst = mgr->loadInstance( instWithRef );
         std::cout << " which is of type " << inst->EntityName() << std::endl;
         // std::cout << "Number of instances loaded now: " << mgr->countInstances() << std::endl;
