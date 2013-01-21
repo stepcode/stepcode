@@ -14,10 +14,35 @@ void lazyFileReader::initP21() {
         r = new lazyP21DataSectionReader( this, _file, _file.tellg(), _parent->countDataSections() );
         if( !r->success() ) {
             delete r; //last read attempt failed
+            std::cerr << "Corrupted data section" << std::endl;
             break;
         }
         _parent->registerDataSection( r );
+
+        //check for new data section (DATA) or end of file (END-ISO-10303-21;)
+        while( isspace( _file.peek() ) && _file.good() ) {
+            _file.ignore( 1 );
+        }
+        if( needKW("END-ISO-10303-21;") ) {
+            break;
+        } else if( !needKW("DATA") ) {
+            std::cerr << "Corrupted file - did not find new data section (\"DATA\") or end of file (\"END-ISO-10303-21;\") at offset " << _file.tellg() << std::endl;
+            break;
+        }
     }
+}
+
+bool lazyFileReader::needKW( const char * kw ) {
+    const char * c = kw;
+    bool found = true;
+    while( *c ) {
+        if( *c != _file.get() ) {
+            found = false;
+            break;
+        }
+        c++;
+    }
+    return found;
 }
 
 instancesLoaded_t * lazyFileReader::getHeaderInstances() {

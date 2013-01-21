@@ -53,7 +53,7 @@ public:
         return _parent;
     }
 
-
+    bool needKW( const char * kw );
 };
 
 #endif //LAZYFILEREADER_H
