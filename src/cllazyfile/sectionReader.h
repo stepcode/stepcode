@@ -51,8 +51,8 @@ protected:
     }
 
 public:
-    SDAI_Application_instance * getRealInstance( const Registry * reg, const lazyInstanceLoc* inst,
-                                                 const std::string & typeName, const std::string & schName = "", bool header = false );
+    SDAI_Application_instance * getRealInstance( const Registry * reg, long int begin, instanceID instance,
+                                                 const std::string & typeName = "", const std::string & schName = "", bool header = false );
     sectionID ID() const {
         return _sectionID;
     }

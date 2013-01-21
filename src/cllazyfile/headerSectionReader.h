@@ -37,7 +37,7 @@ public:
             i++;
         }
         std::cerr << "deleted " << i << " header instances" << std::endl;
-#endif HAVE_JUDY
+#endif //HAVE_JUDY
     }
 };
 

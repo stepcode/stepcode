@@ -18,6 +18,7 @@
 #include "judyS2Array.h"
 
 class Registry;
+class instMgrAdapter;
 
 class lazyInstMgr {
 protected:
@@ -57,6 +58,7 @@ protected:
     int _longestTypeNameLen;
     std::string _longestTypeName;
 
+    instMgrAdapter * _ima;
 
 public:
     lazyInstMgr();
@@ -65,6 +67,9 @@ public:
     void openFile( std::string fname );
 
     void addLazyInstance( namedLazyInstance inst );
+    instMgrAdapter * getAdapter() {
+        return _ima;
+    }
 
 #ifdef HAVE_JUDY
     instanceRefs_t * getFwdRefs() {
@@ -108,7 +113,7 @@ public:
     unsigned int countInstances( std::string type ) {
         return _instanceTypes->count( type );
     }
-    #endif //HAVE_JUDY
+#endif //HAVE_JUDY
     instancesLoaded_t * getHeaderInstances( fileID file ) {
         return _files[file]->getHeaderInstances();
     }
@@ -157,6 +162,7 @@ public:
     ErrorDescriptor * getErrorDesc() {
         return _errors;
     }
+    SDAI_Application_instance * loadInstance( instanceID id );
 
     /* TODO implement these
      *    //renumber instances so that they are numbered 1..N where N is the total number of instances

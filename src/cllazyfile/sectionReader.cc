@@ -3,16 +3,19 @@
 
 #include <algorithm>
 #include <set>
+#include <string>
 #include <assert.h>
 
 #include "Registry.h"
 #include "sdaiApplication_instance.h"
 #include "read_func.h"
+#include "SdaiSchemaInit.h"
 
 #include "sectionReader.h"
 #include "lazyFileReader.h"
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
+#include "instMgrHelper.h"
 
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
                                 _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
@@ -209,43 +212,66 @@ instanceID sectionReader::readInstanceNumber() {
 }
 
 //TODO: most of the rest of readdata1, all of readdata2
-SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, const lazyInstanceLoc* lazy,
+SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
                                                             const std::string & typeName, const std::string & schName, bool header ) {
     char c;
+    const char * tName = 0, * sName = 0;
     std::string comment;
     Severity sev;
     SDAI_Application_instance * inst = 0;
 
-    _file.seekg( lazy->begin );
+    tName = typeName.c_str();
+    if( schName.size() > 0 ) {
+        sName = schName.c_str();
+    } else if( !header ) {
+        SdaiFile_schema * fs = dynamic_cast< SdaiFile_schema * >( _lazyFile->getHeaderInstances()->find( 3 ) );
+        if( fs ) {
+            StringNode * sn = (StringNode *) fs->schema_identifiers_()->GetHead();
+            if( sn ) {
+                sName = sn->value.c_str();
+                if( sn->NextNode() ) {
+                    std::cerr << "Warning - multiple schema names found. Only searching with first one." << std::endl;
+                }
+            }
+        } else {
+            std::cerr << "Warning - no schema names found; the file is probably invalid. Looking for typeName in any loaded schema." << std::endl;
+        }
+    }
+
+    _file.seekg( begin );
     skipWS();
     ReadTokenSeparator( _file, &comment );
     if( !header ) {
         findNormalString( "=" );
     }
     skipWS();
-    c = _file.get();
+    c = _file.peek();
     switch( c ) {
         case '&':
-            std::cerr << "Can't handle scope instances. Skipping #" << lazy->instance << std::endl;
+            std::cerr << "Can't handle scope instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
             // sev = CreateScopeInstances( in, &scopelist );
             break;
         case '(':
-            std::cerr << "Can't handle complex instances. Skipping #" << lazy->instance << std::endl;
+            std::cerr << "Can't handle complex instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
             //CreateSubSuperInstance( in, fileid, result );
             break;
         case '!':
-            std::cerr << "Can't handle user-defined instances. Skipping #" << lazy->instance << std::endl;
+            std::cerr << "Can't handle user-defined instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
+            break;
         default:
-            inst = reg->ObjCreate( typeName.c_str(), schName.c_str() );
+            if( ( !header ) && ( typeName.size() == 0 ) ) {
+                tName = getDelimitedKeyword(";( /\\");
+            }
+            inst = reg->ObjCreate( tName, sName );
             break;
     }
-    inst->StepFileId( lazy->instance );
+    inst->StepFileId( instance );
     if( !comment.empty() ) {
         inst->AddP21Comment( comment );
     }
     findNormalString( "(" );
     _file.unget();
-    sev = inst->STEPread( lazy->instance, 0, /*&instances()*/ 0, _file, schName.c_str(), true, false );
+    //FIXME create instMgr class that can be passed here
+    sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, schName.c_str(), true, false );
     return inst;
 }
-

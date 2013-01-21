@@ -3,6 +3,7 @@
 #include "lazyInstMgr.h"
 #include "Registry.h"
 #include "SdaiSchemaInit.h"
+#include "instMgrHelper.h"
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
@@ -10,11 +11,13 @@ lazyInstMgr::lazyInstMgr() {
     _lazyInstanceCount = 0;
     _longestTypeNameLen = 0;
     _errors = new ErrorDescriptor();
+    _ima = new instMgrAdapter( this );
 }
 
 lazyInstMgr::~lazyInstMgr() {
     delete _headerRegistry;
     delete _errors;
+    delete _ima;
     //loop over files, sections, instances; delete header instances
     lazyFileReaderVec_t::iterator fit = _files.begin();
     for( ; fit != _files.end(); fit++ ) {
@@ -119,4 +122,34 @@ unsigned long lazyInstMgr::getNumTypes() const {
 
 void lazyInstMgr::openFile( std::string fname ) {
     _files.push_back( new lazyFileReader( fname, this, _files.size() ) );
+}
+
+SDAI_Application_instance* lazyInstMgr::loadInstance( instanceID id ) {
+    assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
+    SDAI_Application_instance* inst = 0;
+    positionAndSection ps;
+    long int off;
+    sectionID sid;
+    inst = _instancesLoaded.find( id );
+    if( !inst ) {
+        instanceStreamPos_t::cvector* cv = _instanceStreamPos.find( id );
+        switch( cv->size() ) {
+            case 0:
+                std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+                break;
+            case 1:
+                ps = cv->at( 0 );
+                off = ps & 0xFFFFFFFFFFFF;
+                sid = ps >> 48;
+                inst = _dataSections[sid]->getRealInstance( _mainRegistry, off, id );
+                break;
+            default:
+                std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
+                break;
+        }
+    }
+    if( inst ) {
+        _instancesLoaded.insert( id, inst );
+    }
+    return inst;
 }

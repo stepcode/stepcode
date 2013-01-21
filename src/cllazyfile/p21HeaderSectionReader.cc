@@ -24,7 +24,7 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
     while( nl = nextInstance(), ( nl.loc.begin > 0 ) ) {
         std::streampos pos = _file.tellg();
 #ifdef HAVE_JUDY
-        _headerInstances->insert( nl.loc.instance, getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), &nl.loc, nl.name, "", true ) );
+        _headerInstances->insert( nl.loc.instance, getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), nl.loc.begin, nl.loc.instance, nl.name, "", true ) );
 #else //HAVE_JUDY
         _headerInstances.insert( instancesLoaded_pair( nl.loc.instance,
                     getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), &nl.loc, nl.name, "", true ) ) );
