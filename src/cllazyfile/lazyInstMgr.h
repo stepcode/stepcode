@@ -164,6 +164,7 @@ public:
     ErrorDescriptor * getErrorDesc() {
         return _errors;
     }
+
     SDAI_Application_instance * loadInstance( instanceID id );
 
     /* TODO implement these

@@ -272,7 +272,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     }
     findNormalString( "(" );
     _file.unget();
-    //FIXME create instMgr class that can be passed here
+    //TODO do something with 'sev'
     sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, schName.c_str(), true, false );
     return inst;
 }

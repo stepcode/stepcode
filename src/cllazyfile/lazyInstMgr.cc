@@ -131,8 +131,9 @@ SDAI_Application_instance* lazyInstMgr::loadInstance( instanceID id ) {
     long int off;
     sectionID sid;
     inst = _instancesLoaded.find( id );
-    if( !inst ) {
-        instanceStreamPos_t::cvector* cv = _instanceStreamPos.find( id );
+    instanceStreamPos_t::cvector* cv;
+    if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
+        //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
         switch( cv->size() ) {
             case 0:
                 std::cerr << "Instance #" << id << " not found in any section." << std::endl;
@@ -141,12 +142,15 @@ SDAI_Application_instance* lazyInstMgr::loadInstance( instanceID id ) {
                 ps = cv->at( 0 );
                 off = ps & 0xFFFFFFFFFFFF;
                 sid = ps >> 48;
+                assert( _dataSections.size() > sid );
                 inst = _dataSections[sid]->getRealInstance( _mainRegistry, off, id );
                 break;
             default:
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
                 break;
         }
+    } else {
+        std::cerr << "Instance #" << id << " not found in any section." << std::endl;
     }
     if( inst ) {
         _instancesLoaded.insert( id, inst );
