@@ -88,9 +88,13 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
     SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME} base" "TESTABLE" )
+    SCL_ADDEXEC( lazy_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME} steplazyfile stepeditor" )
     add_dependencies( p21read_${PROJECT_NAME} version_string )
+    add_dependencies( lazy_${PROJECT_NAME} version_string )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -DHAVE_JUDY -I${SCL_SOURCE_DIR}/src/base/judy/src" )
+
 
     #add user-defined executables
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )

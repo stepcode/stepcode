@@ -2,6 +2,12 @@
 #include <sc_benchmark.h>
 #include "SdaiSchemaInit.h"
 #include "scl_memmgr.h"
+#include <scl_cf.h>
+
+#ifndef NO_REGISTRY
+# include "schema.h"
+#endif //NO_REGISTRY
+
 
 void fileInfo( lazyInstMgr& mgr, fileID id ) {
     instancesLoaded_t * headerInsts = mgr.getHeaderInstances( id );
@@ -92,17 +98,22 @@ instanceID printRefs( lazyInstMgr & mgr ) {
 }
 
 int main (int argc, char ** argv ) {
-    instanceID instWithRef;
     if( argc != 2 ) {
         std::cerr << "Expected one argument, given " << argc << ". Exiting." << std::endl;
         exit( EXIT_FAILURE );
     }
     lazyInstMgr * mgr = new lazyInstMgr;
-    benchmark stats( "p21 lazy load: scanning the file\n================================\n" );
+#ifndef NO_REGISTRY
+    //init schema
+    mgr->initRegistry( SchemaInit );
+#endif //NO_REGISTRY
+
+    instanceID instWithRef;
+    benchmark stats( "================ p21 lazy load: scanning the file ================\n" );
     mgr->openFile( argv[1] );
     stats.out();
 
-    stats.reset( "p21 lazy load: gathering statistics\n===================================\n" );
+    stats.reset( "================ p21 lazy load: gathering statistics ================\n" );
     fileInfo( *mgr, 0 );
 
     std::cout << "Total instances: " << mgr->countInstances() << std::endl;
@@ -119,14 +130,18 @@ int main (int argc, char ** argv ) {
 
     instWithRef = printRefs( *mgr );
 
-//     std::cout << "Number of data section instances fully loaded: " << mgr->countInstances() << std::endl;
-    std::cout << "Loading #" << instWithRef;
-    SDAI_Application_instance* inst = mgr->loadInstance( instWithRef );
-    std::cout << " which is of type " << inst->EntityName() << std::endl;
-//     std::cout << "Number of instances loaded now: " << mgr->countInstances() << std::endl;
+#ifndef NO_REGISTRY
+    if( instWithRef ) {
+        // std::cout << "Number of data section instances fully loaded: " << mgr->countInstances() << std::endl;
+        std::cout << "Loading #" << instWithRef << std::endl;
+        SDAI_Application_instance* inst = mgr->loadInstance( instWithRef );
+        std::cout << " which is of type " << inst->EntityName() << std::endl;
+        // std::cout << "Number of instances loaded now: " << mgr->countInstances() << std::endl;
+    }
+#endif //NO_REGISTRY
 
     stats.out();
-    stats.reset( "p21 lazy load: freeing memory\n=============================\n" );
+    stats.reset( "================ p21 lazy load: freeing memory ================\n" );
     delete mgr;
     //stats will print from its destructor
 }
