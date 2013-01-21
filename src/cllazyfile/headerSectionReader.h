@@ -28,6 +28,8 @@ public:
 
     ~headerSectionReader() {
 #ifdef HAVE_JUDY
+        //FIXME delete each instance?! maybe add to clear, since it iterates over everything already
+        //enum clearHow { rawData, deletePointers }
         _headerInstances->clear();
 #else //HAVE_JUDY
         int i = 0;

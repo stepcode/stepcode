@@ -44,6 +44,8 @@ protected:
 
     /** map from instance number to beginning and end positions and the data section
      * \sa instanceStreamPos_pair
+     * FIXME to save memory, modify judyL2Array to not use a vector until there are several
+     * instances with the same instanceID. This will help elsewhere as well.
      */
     instanceStreamPos_t _instanceStreamPos;
 
