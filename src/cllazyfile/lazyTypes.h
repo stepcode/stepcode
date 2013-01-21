@@ -5,16 +5,10 @@
 #include <vector>
 #include <stdint.h>
 
-#ifndef HAVE_JUDY
-#  include <set>
-#  include <map>
-#  include <unordered_map>
-#else // HAVE_JUDY
-#  include "judyLArray.h"
-#  include "judySArray.h"
-#  include "judyL2Array.h"
-#  include "judyS2Array.h"
-#endif // HAVE_JUDY
+#include "judyLArray.h"
+#include "judySArray.h"
+#include "judyL2Array.h"
+#include "judyS2Array.h"
 
 class SDAI_Application_instance;
 class lazyDataSectionReader;
@@ -39,7 +33,7 @@ typedef int16_t fileID;      ///< the index of a lazyFileReader in a lazyFileRea
  */
 typedef uint64_t positionAndSection;
 
-typedef std::vector< instanceID > * instanceRefs;
+typedef std::vector< instanceID > instanceRefs;
 
 //TODO: create a "unique instance id" from the sectionID and instanceID, and use it everywhere?
 
@@ -59,46 +53,21 @@ typedef struct {
 typedef struct {
     lazyInstanceLoc loc;
     const char * name;
-    instanceRefs refs;
+    instanceRefs * refs;
 } namedLazyInstance;
 
 // instanceRefs - map between an instanceID and instances that refer to it
-#ifdef HAVE_JUDY
 typedef judyL2Array< instanceID, instanceID > instanceRefs_t;
-#else // HAVE_JUDY
-typedef std::unordered_multimap< instanceID, instanceID > instanceRefs_t;
-typedef std::pair< instanceID, instanceID > instanceRefs_pair;
-typedef std::pair< instanceRefs_t::const_iterator, instanceRefs_t::const_iterator > instanceRefs_range;
-#endif // HAVE_JUDY
 
 // instanceType_t - multimap from instance type to instanceID's
-#ifdef HAVE_JUDY
 typedef judyS2Array< instanceID > instanceTypes_t;
-#else // HAVE_JUDY
-typedef std::unordered_multimap< std::string, instanceID > instanceTypes_t;
-typedef std::pair< std::string, instanceID > instanceTypes_pair;
-typedef std::pair< instanceTypes_t::const_iterator, instanceTypes_t::const_iterator > instanceTypes_range;
-#endif // HAVE_JUDY
 
 // instancesLoaded - fully created instances
-#ifdef HAVE_JUDY
 typedef judyLArray< instanceID, SDAI_Application_instance * > instancesLoaded_t;
-#else // HAVE_JUDY
-typedef std::map< instanceID, SDAI_Application_instance * > instancesLoaded_t;
-typedef std::pair< instanceID, SDAI_Application_instance * > instancesLoaded_pair;
-#endif // HAVE_JUDY
 
 // instanceStreamPos - map instance id to a streampos and data section
 // there could be multiple instances with the same ID, but in different files (or different sections of the same file?)
-#ifdef HAVE_JUDY
 typedef judyL2Array< instanceID, positionAndSection > instanceStreamPos_t;
-// typedef std::pair< instanceID, positionAndSection > instanceStreamPos_pair;
-// typedef std::pair< instanceStreamPos_t::cvector::const_iterator, instanceStreamPos_t::cvector::const_iterator > instanceStreamPos_range;
-#else // HAVE_JUDY
-typedef std::unordered_multimap< instanceID, positionAndSection > instanceStreamPos_t;
-typedef std::pair< instanceID, positionAndSection > instanceStreamPos_pair;
-typedef std::pair< instanceStreamPos_t::const_iterator, instanceStreamPos_t::const_iterator > instanceStreamPos_range;
-#endif // HAVE_JUDY
 
 
 // data sections

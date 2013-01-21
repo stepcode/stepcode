@@ -73,7 +73,6 @@ public:
         return _ima;
     }
 
-#ifdef HAVE_JUDY
     instanceRefs_t * getFwdRefs() {
         return & _fwdInstanceRefs;
     }
@@ -93,29 +92,6 @@ public:
         }
         return v->size();
     }
-#else //HAVE_JUDY
-    instanceRefs_range getFwdRefs() {
-        instanceRefs_range r;
-        r.first = _fwdInstanceRefs.cbegin();
-        r.second = _fwdInstanceRefs.cend();
-        return r;
-    }
-
-    instanceRefs_range getRevRefs() {
-        instanceRefs_range r;
-        r.first = _revInstanceRefs.cbegin();
-        r.second = _revInstanceRefs.cend();
-        return r;
-    }
-    /// returns two iterators delimiting the instances that match `type`
-    instanceTypes_range getInstances( std::string type ) const {
-        return _instanceTypes->equal_range( type );
-    }
-    /// get the number of instances of a certain type
-    unsigned int countInstances( std::string type ) {
-        return _instanceTypes->count( type );
-    }
-#endif //HAVE_JUDY
     instancesLoaded_t * getHeaderInstances( fileID file ) {
         return _files[file]->getHeaderInstances();
     }

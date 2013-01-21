@@ -27,19 +27,9 @@ public:
     }
 
     ~headerSectionReader() {
-#ifdef HAVE_JUDY
         //FIXME delete each instance?! maybe add to clear, since it iterates over everything already
         //enum clearHow { rawData, deletePointers }
         _headerInstances->clear();
-#else //HAVE_JUDY
-        int i = 0;
-        instancesLoaded_t::iterator it = _headerInstances.begin();
-        for( ; it != _headerInstances.end(); it++ ) {
-            delete it->second;
-            i++;
-        }
-        std::cerr << "deleted " << i << " header instances" << std::endl;
-#endif //HAVE_JUDY
     }
 };
 

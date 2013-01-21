@@ -93,7 +93,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     add_dependencies( lazy_${PROJECT_NAME} version_string )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -DHAVE_JUDY -I${SCL_SOURCE_DIR}/src/base/judy/src" )
+    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -I${SCL_SOURCE_DIR}/src/base/judy/src" )
 
 
     #add user-defined executables

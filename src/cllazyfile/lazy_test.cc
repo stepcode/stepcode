@@ -12,12 +12,7 @@
 void fileInfo( lazyInstMgr& mgr, fileID id ) {
     instancesLoaded_t * headerInsts = mgr.getHeaderInstances( id );
     SDAI_Application_instance * hdrInst;
-#ifdef HAVE_JUDY
     hdrInst = headerInsts->find( 3 );
-#else //HAVE_JUDY
-    instancesLoaded_t::iterator it =  headerInsts.find( 3 );
-    hdrInst = it->second;
-#endif //HAVE_JUDY
     if( ( hdrInst != 0 ) && ( hdrInst->STEPfile_id == 3 ) ) {
         SdaiFile_schema * fs = dynamic_cast< SdaiFile_schema * >( hdrInst );
         if( fs ) {
@@ -38,19 +33,13 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     std::cout << type << " instances: " << count;
     if( count ) {
         instanceID ex;
-#ifdef HAVE_JUDY
         ex = ( * mgr.getInstances( type ) )[ 0 ];
-#else //HAVE_JUDY
-        instanceTypeMMap_range range = mgr.getInstances( type );
-        ex = range.first->second; //this is the last based upon multimap hash value, not based on file order
-#endif //HAVE_JUDY
         std::cout << " -- example: #" << ex;
     }
     std::cout << std::endl;
     return;
 }
 
-#ifdef HAVE_JUDY
 instanceID printRefs1( instanceRefs_t * refs, const char * desc ) {
     instanceID id = 0;
     instanceRefs_t::cpair p = refs->begin();
@@ -68,25 +57,6 @@ instanceID printRefs1( instanceRefs_t * refs, const char * desc ) {
     }
     return id;
 }
-#else //HAVE_JUDY
-instanceID printRefs1( instanceRefMap_range r, const char * desc ) {
-    instanceRefMap_t::const_iterator it;
-    if( r.first == r.second ) {
-        std::cout << "No " << desc << " references" << std::endl;
-    } else {
-        it = r.first;
-        for( ; it != r.second; it++ ) {
-            std::cout << "Example of " << desc << " references - Instance #" << it->first << " makes use of ";
-            auto frit = it->second->begin();
-            for( ; frit != it->second->end(); frit++ ) {
-                std::cout << *frit << " ";
-            }
-            std::cout << std::endl;
-            break;     //comment this out to loop through all
-        }
-    }
-}
-#endif //HAVE_JUDY
 
 instanceID printRefs( lazyInstMgr & mgr ) {
     instanceID id;

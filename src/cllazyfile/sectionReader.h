@@ -41,7 +41,7 @@ protected:
     const char * getDelimitedKeyword( const char * delimiters );
 
     /** Seek to the end of the current instance */
-    std::streampos seekInstanceEnd( instanceRefs * refs );
+    std::streampos seekInstanceEnd( instanceRefs ** refs );
 
     /// operator>> is very slow?!
     inline void skipWS() {
