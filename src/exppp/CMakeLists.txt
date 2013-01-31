@@ -14,7 +14,7 @@ include_directories(
 )
 
 
-if(BORLAND)
+if( MSVC OR BORLAND)
     add_definitions( -D__STDC__ )
 endif()
 
