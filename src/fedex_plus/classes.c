@@ -1918,6 +1918,7 @@ bool TYPEis_builtin( const Type t ) {
  */
 void AGGRprint_init( FILES* files, const Type t, const char* var_name, const char* aggr_name ) {
     if( !TYPEget_head( t ) ) {
+        #ifdef YYDEBUG
         if( yydebug ) {
             if ( !t->superscope->symbol.resolved ) {
                 printf("%s:%d: unresolved type %s at %d\n",__FILE__,__LINE__, t->superscope->symbol.name, t->superscope->symbol.line);
@@ -1934,6 +1935,7 @@ void AGGRprint_init( FILES* files, const Type t, const char* var_name, const cha
                 }
             }
         }
+        #endif
         //the code for lower and upper is almost identical
         if( TYPEget_body( t )->lower ) {
             if (TYPEget_body( t )->lower->symbol.resolved ) {
