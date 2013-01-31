@@ -71,7 +71,7 @@ instanceID printRefs( lazyInstMgr & mgr ) {
 
 int main( int argc, char ** argv ) {
     if( argc != 2 ) {
-        std::cerr << "Expected one argument, given " << argc << ". Exiting." << std::endl;
+        std::cerr << "Expected one argument, given " << argc - 1 << ". Exiting." << std::endl;
         exit( EXIT_FAILURE );
     }
     lazyInstMgr * mgr = new lazyInstMgr;
