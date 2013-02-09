@@ -10,6 +10,7 @@
 #include "sdaiApplication_instance.h"
 #include "read_func.h"
 #include "SdaiSchemaInit.h"
+#include "STEPcomplex.h"
 
 #include "sectionReader.h"
 #include "lazyFileReader.h"
@@ -256,7 +257,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             break;
         case '(':
             std::cerr << "Can't handle complex instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
-            //CreateSubSuperInstance( in, fileid, result );
+            inst = CreateSubSuperInstance( reg, instance, sev );
             break;
         case '!':
             std::cerr << "Can't handle user-defined instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
@@ -277,4 +278,33 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     //TODO do something with 'sev'
     sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, schName.c_str(), true, false );
     return inst;
+}
+
+STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & sev ) {
+    std::string buf;
+    ErrorDescriptor err;
+    std::vector<std::string *> typeNames;
+    while( _file.good() && ( _file.peek() != ')' ) ) {
+        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
+        if( typeNames.back()->empty() ) {
+            delete typeNames.back();
+            typeNames.pop_back();
+        } else {
+            SkipSimpleRecord( _file, buf, &err ); //exactly what does this do? if it doesn't count parenthesis, it probably should
+            buf.clear();
+        }
+        skipWS();
+        if( _file.peek() != ')' ) {
+            // do something
+        }
+    }
+    // STEPComplex needs an array of strings or of char*. construct the latter using c_str() on all strings in the vector?
+    const int s = typeNames.size();
+    const char ** names = new const char * [ s + 1 ];
+    names[ s ] = 0;
+    for( int i = 0; i <= s; i++ ) {
+        names[ i ] = typeNames[i]->c_str();
+    }
+    //still need the schema name
+    return new STEPcomplex( ( const_cast<Registry *>( reg ) ), ( const char ** ) names, ( int ) fileid /*, schnm*/ );
 }
