@@ -1,6 +1,7 @@
 /// \file sc_benchmark.cc memory info, timers, etc for benchmarking
 
 #include "sc_benchmark.h"
+#include "scl_memmgr.h"
 
 #ifdef __WIN32__
   #include <Windows.h>
@@ -114,9 +115,19 @@ benchVals benchmark::get( ) {
     delta.virtMemKB = laterVals.virtMemKB - initialVals.virtMemKB;
     delta.sysMilliseconds = laterVals.sysMilliseconds - initialVals.sysMilliseconds;
     delta.userMilliseconds = laterVals.userMilliseconds - initialVals.userMilliseconds;
+
+    //If vm is negative, the memory had been requested before initialVals was set. Don't count it
+    if( delta.virtMemKB < 0 ) {
+        delta.physMemKB -= delta.virtMemKB;
+        delta.virtMemKB = 0;
+    }
     return delta;
 }
 
+void benchmark::reset( std::string description ) {
+    descr = description;
+    reset();
+}
 void benchmark::reset( ) {
     stopped = false;
     initialVals = getMemAndTime();

@@ -11,6 +11,8 @@
 * and is not subject to copyright.
 */
 
+#include <string>
+#include <errordesc.h>
 #include <scl_export.h>
 
 class SCL_DAI_EXPORT SDAI_String {
@@ -35,7 +37,7 @@ class SCL_DAI_EXPORT SDAI_String {
         const char * asStr( std::string & s ) const {
             return s.c_str();
         }
-        void STEPwrite( ostream & out = cout )  const;
+        void STEPwrite( std::ostream & out = cout )  const;
         void STEPwrite( std::string & s ) const;
 
         Severity StrToVal( const char * s );
