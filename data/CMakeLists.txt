@@ -82,15 +82,24 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
               COMMAND ${CMAKE_COMMAND} --build .
                                        --target p21read_${PROJECT_NAME}
                                        --config $<CONFIGURATION> )
+    add_test( NAME build_lazy_cpp_${PROJECT_NAME}
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target lazy_${PROJECT_NAME}
+                                       --config $<CONFIGURATION> )
 
     # label the tests and set dependencies
     set_tests_properties( generate_cpp_${SCHEMA_SHORT_NAME} PROPERTIES LABELS cpp_schema_gen )
-    set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
+    set_tests_properties( build_lazy_cpp_${PROJECT_NAME} build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
     SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME} base" "TESTABLE" )
+    SCL_ADDEXEC( lazy_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME} steplazyfile stepeditor" "TESTABLE" )
     add_dependencies( p21read_${PROJECT_NAME} version_string )
+    add_dependencies( lazy_${PROJECT_NAME} version_string )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -I${SCL_SOURCE_DIR}/src/base/judy/src" )
+
 
     #add user-defined executables
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
@@ -111,6 +120,10 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                   COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
         set_tests_properties( read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
+        add_test( NAME read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
+                  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                  COMMAND lazy_${PROJECT_NAME} ${TEST_FILE} )
+        set_tests_properties( read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_lazy_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)

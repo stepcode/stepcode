@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 
+#include "scl_memmgr.h"
 extern "C" {
 #endif
 
@@ -48,6 +49,7 @@ public:
     /// if 'stopped' is false, uses str(true) to print to ostream
     ~benchmark( );
     void reset( );
+    void reset( std::string description );
     benchVals get( );
     void stop( );
 
