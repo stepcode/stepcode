@@ -60,6 +60,7 @@ instanceID printRefs1( instanceRefs_t * refs, bool forward ) {
     return id;
 }
 
+///prints references; returns the instanceID for one instance that has a forward reference
 instanceID printRefs( lazyInstMgr & mgr ) {
     instanceID id;
     std::cout << "\nReferences\n==============\n";
@@ -88,7 +89,7 @@ int main( int argc, char ** argv ) {
     stats.reset( "================ p21 lazy load: gathering statistics ================\n" );
     fileInfo( *mgr, 0 );
 
-    std::cout << "Total instances: " << mgr->countInstances() << std::endl;
+    std::cout << "Total instances: " << mgr->totalInstanceCount() << std::endl;
     countTypeInstances( *mgr, "CARTESIAN_POINT" );
     countTypeInstances( *mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( *mgr, "VERTEX_POINT" );
@@ -104,11 +105,20 @@ int main( int argc, char ** argv ) {
 
 #ifndef NO_REGISTRY
     if( instWithRef ) {
-        // std::cout << "Number of data section instances fully loaded: " << mgr->countInstances() << std::endl;
+        std::cout << "Number of data section instances fully loaded: " << mgr->loadedInstanceCount() << std::endl;
         std::cout << "Loading #" << instWithRef;
         SDAI_Application_instance * inst = mgr->loadInstance( instWithRef );
         std::cout << " which is of type " << inst->EntityName() << std::endl;
-        // std::cout << "Number of instances loaded now: " << mgr->countInstances() << std::endl;
+        std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;
+    }
+
+    instanceTypes_t::cvector * complexInsts = mgr->getInstances( "" );
+    if( complexInsts && complexInsts->size() > 0 ) {
+        std::cout << "loading lazy instance #" << complexInsts->at( 0 ) << "." << std::endl;
+        STEPcomplex * c = dynamic_cast<STEPcomplex *>( mgr->loadInstance( complexInsts->at( 0 ) ) );
+        if( c ) {
+            std::cout << "complex: " << c->IsComplex() << ", attr list size: " << c->_attr_data_list.size() << std::endl;
+        }
     }
 #endif //NO_REGISTRY
 

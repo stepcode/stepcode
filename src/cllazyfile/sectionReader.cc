@@ -256,7 +256,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             // sev = CreateScopeInstances( in, &scopelist );
             break;
         case '(':
-            std::cerr << "Can't handle complex instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
+//             std::cerr << "Can't handle complex instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
             inst = CreateSubSuperInstance( reg, instance, sev );
             break;
         case '!':
@@ -269,10 +269,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             inst = reg->ObjCreate( tName, sName );
             break;
     }
-    inst->StepFileId( instance );
+//     inst->StepFileId( instance );// this is called in STEPread, so not necessary here
     if( !comment.empty() ) {
         inst->AddP21Comment( comment );
     }
+    _file.seekg( begin );
     findNormalString( "(" );
     _file.unget();
     //TODO do something with 'sev'
@@ -281,11 +282,18 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
 }
 
 STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & sev ) {
+    char c;
+    int pos;
     std::string buf;
     ErrorDescriptor err;
     std::vector<std::string *> typeNames;
+    _file.get(); //move past the first '('
     while( _file.good() && ( _file.peek() != ')' ) ) {
+        c = _file.peek();
+        pos = _file.tellg();
         typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
+        c = _file.peek();
+        pos = _file.tellg();
         if( typeNames.back()->empty() ) {
             delete typeNames.back();
             typeNames.pop_back();
@@ -302,9 +310,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     const int s = typeNames.size();
     const char ** names = new const char * [ s + 1 ];
     names[ s ] = 0;
-    for( int i = 0; i <= s; i++ ) {
+    for( int i = 0; i < s; i++ ) {
         names[ i ] = typeNames[i]->c_str();
     }
-    //still need the schema name
+    //TODO still need the schema name
     return new STEPcomplex( ( const_cast<Registry *>( reg ) ), ( const char ** ) names, ( int ) fileid /*, schnm*/ );
 }
