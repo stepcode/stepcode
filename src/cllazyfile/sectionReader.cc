@@ -289,11 +289,11 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     std::vector<std::string *> typeNames;
     _file.get(); //move past the first '('
     while( _file.good() && ( _file.peek() != ')' ) ) {
-        c = _file.peek();
-        pos = _file.tellg();
+        c = _file.peek(); //for debugging
+        pos = _file.tellg(); //for debugging
         typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
-        c = _file.peek();
-        pos = _file.tellg();
+        c = _file.peek(); //for debugging
+        pos = _file.tellg(); //for debugging
         if( typeNames.back()->empty() ) {
             delete typeNames.back();
             typeNames.pop_back();
@@ -306,7 +306,8 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
             // do something
         }
     }
-    // STEPComplex needs an array of strings or of char*. construct the latter using c_str() on all strings in the vector?
+    // STEPComplex needs an array of strings or of char*. construct the latter using c_str() on all strings in the vector
+    //FIXME: STEPComplex ctor should accept std::vector<std::string *> ?
     const int s = typeNames.size();
     const char ** names = new const char * [ s + 1 ];
     names[ s ] = 0;

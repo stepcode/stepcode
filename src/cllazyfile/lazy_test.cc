@@ -70,6 +70,25 @@ instanceID printRefs( lazyInstMgr & mgr ) {
     return id;
 }
 
+///prints info about a complex instance
+void dumpComplexInst( STEPcomplex * c, unsigned int depth ) {
+    if( c ) {
+        std::cout << "attr list size: " << c->_attr_data_list.size() << ", depth " << depth << std::endl;
+        STEPcomplex_attr_data_list::iterator it;
+        for( it = c->_attr_data_list.begin(); it != c->_attr_data_list.end(); it++ ) {
+            std::cout << "*** Not printing complex instance attribute info - many eDesc pointers are invalid. ***" << std::endl; //FIXME!
+//             SDAI_Application_instance * attr = ( SDAI_Application_instance * ) *it;
+//             if( attr->IsComplex() ) {
+//                 dumpComplexInst( dynamic_cast<STEPcomplex *>( attr ), depth + 1 );
+//             } else if( attr->eDesc > ( void * ) 0xFF ) { //arbitrary number - invalid ones are usually 0x51
+//                 std::cout << "attr " << attr->eDesc->Name() << std::endl;
+//             } else {
+//                 std::cout << "attr has eDesc with pointer " << attr->eDesc << std::endl;
+//             }
+        }
+    }
+}
+
 int main( int argc, char ** argv ) {
     if( argc != 2 ) {
         std::cerr << "Expected one argument, given " << argc - 1 << ". Exiting." << std::endl;
@@ -121,9 +140,8 @@ int main( int argc, char ** argv ) {
     if( complexInsts && complexInsts->size() > 0 ) {
         std::cout << "loading lazy instance #" << complexInsts->at( 0 ) << "." << std::endl;
         STEPcomplex * c = dynamic_cast<STEPcomplex *>( mgr->loadInstance( complexInsts->at( 0 ) ) );
-        if( c ) {
-            std::cout << "complex: " << c->IsComplex() << ", attr list size: " << c->_attr_data_list.size() << std::endl;
-        }
+        dumpComplexInst( c, 0 );
+        std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;
     }
 #endif //NO_REGISTRY
 
