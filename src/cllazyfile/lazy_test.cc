@@ -84,12 +84,17 @@ int main( int argc, char ** argv ) {
     instanceID instWithRef;
     benchmark stats( "================ p21 lazy load: scanning the file ================\n" );
     mgr->openFile( argv[1] );
+    stats.stop();
+    benchVals scanStats = stats.get();
     stats.out();
 
     stats.reset( "================ p21 lazy load: gathering statistics ================\n" );
-    fileInfo( *mgr, 0 );
 
-    std::cout << "Total instances: " << mgr->totalInstanceCount() << std::endl;
+    int instances = mgr->totalInstanceCount();
+    std::cout << "Total instances: " << instances << " (" << ( float )( scanStats.userMilliseconds * 1000 ) / instances << "us per instance, ";
+    std::cout << ( float )( scanStats.physMemKB * 1000 ) / instances << " bytes per instance)" << std::endl << std::endl;
+
+    fileInfo( *mgr, 0 );
     countTypeInstances( *mgr, "CARTESIAN_POINT" );
     countTypeInstances( *mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( *mgr, "VERTEX_POINT" );
