@@ -40,6 +40,7 @@ void countTypeInstances( lazyInstMgr & mgr, std::string type ) {
     return;
 }
 
+/// Called twice by printRefs. Returns the instanceID of one instance that has a reference.
 instanceID printRefs1( instanceRefs_t * refs, bool forward ) {
     const char * d1 = forward ? "forward" : "reverse";
     const char * d2 = forward ? " refers to " : " is referred to by ";
