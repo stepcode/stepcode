@@ -45,18 +45,17 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <scl_cf.h>
 #include <scl_memmgr.h>
-#define SCHEMA_C
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include "express/expbasic.h"
 #include "express/schema.h"
 #include "express/object.h"
 #include "express/resolve.h"
 
-extern void exp_pause(); //in fedex.c
+struct freelist_head REN_fl;
+struct freelist_head SCOPE_fl;
+struct freelist_head SCHEMA_fl;
+
+int __SCOPE_search_id = 0;
 
 Symbol * RENAME_get_symbol( Generic r ) {
     return( ( ( Rename * )r )->old );
@@ -225,7 +224,7 @@ Linked_List SCHEMAget_entities_use( Scope scope ) {
     return( result );
 }
 
-/**  return ref'd entities */
+/** return ref'd entities */
 static void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
     Rename * rename;
     DictionaryEntry de;
@@ -277,8 +276,7 @@ Variable VARfind( Scope scope, char * name, int strict ) {
             result = ENTITYfind_inherited_attribute( scope, name, 0 );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    printf( "schema.c: press ^C now to trap to debugger\n" );
-                    exp_pause();
+                    fprintf(stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n");
                 }
                 return result;
             }
@@ -289,8 +287,7 @@ Variable VARfind( Scope scope, char * name, int strict ) {
             result = ( Variable )DICTlookup( scope->symbol_table, name );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    printf( "schema.c: press ^C now to trap to debugger\n" );
-                    exp_pause();
+                    fprintf(stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n");
                 }
                 return result;
             }

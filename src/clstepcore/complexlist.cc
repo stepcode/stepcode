@@ -165,7 +165,7 @@ bool ComplexList::contains( EntNode * ents ) {
  */
 bool ComplexList::matches( EntNode * ents ) {
     MatchType retval, otherChoices = NEWCHOICE;
-    bool result = false;
+    int result = false;
 
     // First check if this ComplexList at least contains all the nodes of ents.
     // If it does, we'll search in detail.  If not, we're done.

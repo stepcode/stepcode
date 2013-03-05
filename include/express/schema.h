@@ -104,22 +104,11 @@ struct Schema_ {
 /* global variables */
 /********************/
 
-#ifdef SCHEMA_C
-# define GLOBAL
-# define INITIALLY(value) = value
-#else
-# define GLOBAL extern
-# define INITIALLY(value)
-#endif /* SCHEMA_C */
+extern SCL_EXPRESS_EXPORT struct freelist_head REN_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head SCOPE_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head SCHEMA_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head REN_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SCOPE_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SCHEMA_fl;
-
-GLOBAL SCL_EXPRESS_EXPORT int  __SCOPE_search_id       INITIALLY( 0 );
-
-#undef GLOBAL
-#undef INITIALLY
+extern SCL_EXPRESS_EXPORT int __SCOPE_search_id;
 
 /******************************/
 /* macro function definitions */
@@ -160,5 +149,4 @@ extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use PROTO( ( Scope ) );
 extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref PROTO( ( Scope ) );
 
 #endif /*  SCHEMA_H */
-
 

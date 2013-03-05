@@ -45,31 +45,17 @@
 /* global variables */
 /********************/
 
-#ifdef RESOLVE_C
-# define GLOBAL
-# define INITIALLY(value) = value
-#else
-# define GLOBAL extern
-# define INITIALLY(value)
-#endif /*RESOLVE_C*/
+extern SCL_EXPRESS_EXPORT int print_objects_while_running;
 
-GLOBAL SCL_EXPRESS_EXPORT int  print_objects_while_running INITIALLY( 0 );
-
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_undefined_attribute   INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_undefined_type        INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_undefined_schema      INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_unknown_attr_in_entity    INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_unknown_subtype       INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_unknown_supertype     INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_circular_reference    INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_attribute   INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambiguous_group       INITIALLY( ERROR_none );
-
-GLOBAL SCL_EXPRESS_EXPORT Error    WARNING_case_skip_label     INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    WARNING_fn_skip_branch      INITIALLY( ERROR_none );
-
-#undef GLOBAL
-#undef INITIALLY
+extern SCL_EXPRESS_EXPORT Error ERROR_undefined_attribute;
+extern SCL_EXPRESS_EXPORT Error ERROR_undefined_type;
+extern SCL_EXPRESS_EXPORT Error ERROR_undefined_schema;
+extern SCL_EXPRESS_EXPORT Error ERROR_unknown_attr_in_entity;
+extern SCL_EXPRESS_EXPORT Error ERROR_unknown_subtype;
+extern SCL_EXPRESS_EXPORT Error ERROR_unknown_supertype;
+extern SCL_EXPRESS_EXPORT Error ERROR_circular_reference;
+extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_attribute;
+extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_group;
 
 /* macros */
 

@@ -34,10 +34,12 @@
  */
 
 #include <scl_memmgr.h>
-#define DICTIONARY_C
 #include "express/dict.h"
 #include "express/object.h"
 #include "express/expbasic.h"
+
+char DICT_type; /* set as a side-effect of DICT lookup routines */
+/* to type of object found */
 
 static Error    ERROR_duplicate_decl;
 static Error    ERROR_duplicate_decl_diff_file;
@@ -68,12 +70,6 @@ void DICTcleanup( void ) {
     ERRORdestroy( ERROR_duplicate_decl );
     ERRORdestroy( ERROR_duplicate_decl_diff_file );
 }
-
-/** \def DICTcreate
-** \param size   - estimated (initial) max # of entries
-** \return  a new dictionary of the specified size
-** \note now a macro
-*/
 
 /**
  * Define anything in a dictionary.  Generates an

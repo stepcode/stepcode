@@ -84,11 +84,12 @@
  */
 
 #include <scl_memmgr.h>
-#define VARIABLE_C
 #include <stdlib.h>
 #include "express/variable.h"
 #include "express/object.h"
-char * opcode_print( Op_Code o );
+char * opcode_print(Op_Code o);
+
+struct freelist_head VAR_fl;
 
 Symbol * VAR_get_symbol( Generic v ) {
     return( &( ( Variable )v )->name->symbol );
@@ -97,6 +98,7 @@ Symbol * VAR_get_symbol( Generic v ) {
 /** Initialize the Variable module. */
 void VARinitialize() {
     MEMinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
+    /*  OBJcreate(OBJ_VARIABLE,VAR_get_symbol,"variable",OBJ_UNUSED_BITS);*/
     OBJcreate( OBJ_VARIABLE, VAR_get_symbol, "variable", OBJ_VARIABLE_BITS );
 }
 
@@ -105,7 +107,6 @@ void VARinitialize() {
  * for example, if var is named SELF\xxx.yyy, return yyy
  */
 extern char * VARget_simple_name( Variable v ) {
-
     Expression e = VARget_name( v );
 
     while( TYPEis_expression( EXPget_type( e ) ) ) {

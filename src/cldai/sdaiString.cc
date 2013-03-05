@@ -13,16 +13,25 @@
 #include <sstream>
 #include "scl_memmgr.h"
 
-SDAI_String::SDAI_String( const char * str, int max ) {
-    content = std::string( str, max );
+SDAI_String::SDAI_String( const char * str, size_t max )
+{
+  if (!str)
+    str = "";
+
+  if (max == std::string::npos)
+    content = std::string(str);
+  else
+    content = std::string(str, max);
 }
 
-SDAI_String::SDAI_String( const std::string & s ) {
-    content = std::string( s );
+SDAI_String::SDAI_String( const std::string & s )
+  : content(std::string( s ))
+{
 }
 
-SDAI_String::SDAI_String( const SDAI_String & s ) {
-    content = std::string( s.c_str() );
+SDAI_String::SDAI_String( const SDAI_String & s )
+  : content(std::string(s.c_str()))
+{
 }
 
 SDAI_String::~SDAI_String( void ) {
@@ -78,23 +87,20 @@ Severity SDAI_String::STEPread( istream & in, ErrorDescriptor * err ) {
     in.unsetf( ios::skipws );
 
     // extract the string from the inputstream
-    string s = ToExpressStr( in, err );
+    std::string s = GetLiteralStr( in, err );
     content += s;
 
     // retrieve current severity
     Severity sev = err -> severity();
 
-    // Not missing closing quote on string value
-    if( sev != SEVERITY_INPUT_ERROR && s.compare( "" ) != 0 ) {
-        sev = SEVERITY_NULL;
-    }
-
-    // There was no quote
-    if( !( sev == SEVERITY_INPUT_ERROR || sev == SEVERITY_NULL ) ) {
+    if ( s.empty() ) {
+        // no string was read
         in.flags( flags ); // set the format state back to previous settings
-        clear();
         err -> GreaterSeverity( SEVERITY_INCOMPLETE );
         sev = SEVERITY_INCOMPLETE;
+    } else if ( sev != SEVERITY_INPUT_ERROR ) {
+        // read valid string
+        sev = SEVERITY_NULL;
     }
     return sev;
 }

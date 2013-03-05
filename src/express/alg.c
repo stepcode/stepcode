@@ -39,10 +39,15 @@
  */
 
 #include <scl_memmgr.h>
-#define ALGORITHM_C
 #include "express/alg.h"
 #include "express/object.h"
 #include "express/schema.h"
+
+struct freelist_head ALG_fl;
+struct freelist_head FUNC_fl;
+struct freelist_head RULE_fl;
+struct freelist_head PROC_fl;
+struct freelist_head WHERE_fl;
 
 Scope ALGcreate( char type ) {
     Scope s = SCOPEcreate( type );
@@ -60,6 +65,13 @@ Scope ALGcreate( char type ) {
     }
     return s;
 }
+
+/*
+** Procedure:   ALGinitialize
+** Parameters:  -- none --
+** Returns: void
+** Description: Initialize the Algorithm module.
+*/
 
 Symbol * WHERE_get_symbol( Generic w ) {
     return( ( ( Where )w )->label );

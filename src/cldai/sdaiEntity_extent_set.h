@@ -27,6 +27,8 @@
  * UArray - dynamic array object.
  */
 
+#include <scl_export.h>
+
 #ifndef SDAIENTITY_EXTENT_SET_h
 #define SDAIENTITY_EXTENT_SET_h
 

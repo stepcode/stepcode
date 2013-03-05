@@ -106,10 +106,13 @@
  */
 
 #include <scl_memmgr.h>
-#define HASH_C
+#include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include "express/hash.h"
+
+struct freelist_head HASH_Table_fl;
+struct freelist_head HASH_Element_fl;
 
 /*
 ** Internal routines
@@ -311,35 +314,6 @@ HASHdestroy( Hash_Table table ) {
     }
 }
 
-// rok
-void *
-HASHfind( Hash_Table t, char * s ) {
-//    Element * ep;
-    struct Element_ *ep = NULL;
-    struct Element_ *e = scl_malloc( sizeof * e );
-    e -> key = s;
-    e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
-    ep = HASHsearch( t, e, HASH_FIND );
-    scl_free(e);
-    return( ep ? ep->data : 0 );
-}
-
-
-// rok
-void
-HASHinsert( Hash_Table t, char * s, void * data ) {
-    Element e2;
-//    memset(e, 0, sizeof(s) + sizeof(data));
-    struct Element_ *e = scl_malloc( sizeof * e );
-    e -> key = s;
-    e -> data = data;
-    e -> symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
-    e2 = HASHsearch( t, e, HASH_INSERT );
-    if( e2 ) {
-        printf( "Redeclaration of %s\n", s );
-    }
-}
-
 Element
 HASHsearch( Hash_Table table, Element item, Action action ) {
     Address h;
@@ -425,7 +399,7 @@ HASHsearch( Hash_Table table, Element item, Action action ) {
             ** table over-full?
             */
             if( ++table->KeyCount / MUL( table->SegmentCount, SEGMENT_SIZE_SHIFT ) > table->MaxLoadFactor ) {
-                HASHexpand_table( table );    /* doesn't affect q   */
+                HASHexpand_table( table );    /* doesn't affect q	*/
             }
     }
     return( ( Element )0 ); /* was return (Element)q */
@@ -453,7 +427,7 @@ HASHhash( char * Key, Hash_Table table ) {
     h %= PRIME2;
     address = MOD( h, table->maxp );
     if( address < table->p ) {
-        address = MOD( h, ( table->maxp << 1 ) );    /* h % (2*table->maxp) */
+        address = MOD( h, ( table->maxp << 1 ) );    /* h % (2*table->maxp)	*/
     }
     return( address );
 }
@@ -535,7 +509,7 @@ HASHcopy( Hash_Table oldtable ) {
     Segment s, s2;
     Element * pp;   /* old element */
     Element * qq;   /* new element */
-    unsigned int i, j;
+    int i, j;
 
     newtable = HASH_Table_new();
     for( i = 0; i < oldtable->SegmentCount; i++ ) {

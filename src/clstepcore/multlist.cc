@@ -1,6 +1,7 @@
-/*************************************************************************//**
+/*****************************************************************************
  * multlist.cc                                                               *
  * \class MultList                                                           *
+ *                                                                           *
  * Description: MultList is a class type derived from EntList which is the   *
  *              parent class to the compound list types, AND, OR and ANDOR.  *
  *              It supports the concepts and functionality which is shared   *
@@ -211,7 +212,7 @@ void JoinList::setViableVal( EntNode * ents ) {
  */
 bool JoinList::acceptChoice( EntNode * ents ) {
     EntList * child;
-    bool result = false;
+    int result = false;
 
     for( child = childList; child != NULL; child = child->next ) {
         if( child->viable >= MATCHSOME ) {

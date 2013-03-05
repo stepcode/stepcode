@@ -176,51 +176,43 @@ struct TypeBody_ {
 /* global variables */
 /********************/
 
-#ifdef TYPE_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif    /*  TYPE_C  */
-
 /* Very commonly-used read-only types */
 /* non-constant versions probably aren't necessary? */
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Bad;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Unknown;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Dont_Care;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Runtime;   /**< indicates that this object can't be
+extern SCL_EXPRESS_EXPORT Type Type_Bad;
+extern SCL_EXPRESS_EXPORT Type Type_Unknown;
+extern SCL_EXPRESS_EXPORT Type Type_Dont_Care;
+extern SCL_EXPRESS_EXPORT Type Type_Runtime;   /**< indicates that this object can't be
                                                     calculated now but must be deferred
                                                     until (the mythical) runtime */
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Binary;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Boolean;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Enumeration;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Expression;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Aggregate;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Integer;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Integer;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Number;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Real;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_String;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_String_Encoded;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Logical;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Set;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Attribute;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Entity;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Funcall;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Generic;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Identifier;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Oneof;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Query;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Self;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Set_Of_String;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Set_Of_Generic;
-GLOBAL SCL_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
+extern SCL_EXPRESS_EXPORT Type Type_Binary;
+extern SCL_EXPRESS_EXPORT Type Type_Boolean;
+extern SCL_EXPRESS_EXPORT Type Type_Enumeration;
+extern SCL_EXPRESS_EXPORT Type Type_Expression;
+extern SCL_EXPRESS_EXPORT Type Type_Aggregate;
+extern SCL_EXPRESS_EXPORT Type Type_Integer;
+extern SCL_EXPRESS_EXPORT Type Type_Integer;
+extern SCL_EXPRESS_EXPORT Type Type_Number;
+extern SCL_EXPRESS_EXPORT Type Type_Real;
+extern SCL_EXPRESS_EXPORT Type Type_String;
+extern SCL_EXPRESS_EXPORT Type Type_String_Encoded;
+extern SCL_EXPRESS_EXPORT Type Type_Logical;
+extern SCL_EXPRESS_EXPORT Type Type_Set;
+extern SCL_EXPRESS_EXPORT Type Type_Attribute;
+extern SCL_EXPRESS_EXPORT Type Type_Entity;
+extern SCL_EXPRESS_EXPORT Type Type_Funcall;
+extern SCL_EXPRESS_EXPORT Type Type_Generic;
+extern SCL_EXPRESS_EXPORT Type Type_Identifier;
+extern SCL_EXPRESS_EXPORT Type Type_Oneof;
+extern SCL_EXPRESS_EXPORT Type Type_Query;
+extern SCL_EXPRESS_EXPORT Type Type_Self;
+extern SCL_EXPRESS_EXPORT Type Type_Set_Of_String;
+extern SCL_EXPRESS_EXPORT Type Type_Set_Of_Generic;
+extern SCL_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
 
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT Error ERROR_corrupted_type   INITIALLY( ERROR_none );
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT Error ERROR_corrupted_type;
 
 /******************************/
 /* macro function definitions */

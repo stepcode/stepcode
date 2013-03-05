@@ -1,5 +1,5 @@
 #ifndef P23ENUM_H
-#define        P23ENUM_H
+#define P23ENUM_H
 
 /*
 * NIST STEP Core Class Library
@@ -14,7 +14,7 @@
 
 #include <scl_export.h>
 
-class SCL_DAI_EXPORT SDAI_Enum  {
+class SCL_DAI_EXPORT SDAI_Enum {
         friend     ostream & operator<< ( ostream &, const SDAI_Enum & );
     protected:
         int v;  //  integer value of enumeration instance
@@ -46,7 +46,7 @@ class SCL_DAI_EXPORT SDAI_Enum  {
                                  int optional, char * tokenList,
                                  int needDelims = 0, int clearError = 1 );
 
-        const int asInt() const {
+        int asInt() const {
             return v;
         }
 
@@ -86,12 +86,12 @@ class SDAI_BOOLEAN;
 enum Boolean { BFalse, BTrue, BUnset };
 enum Logical { LFalse, LTrue, LUnset, LUnknown };
 
-class SCL_DAI_EXPORT SDAI_LOGICAL  :
+class SCL_DAI_EXPORT SDAI_LOGICAL :
     public SDAI_Enum  {
     public:
         const char * Name() const;
 
-        SDAI_LOGICAL( char * val = 0 );
+        SDAI_LOGICAL( const char * val = 0 );
         SDAI_LOGICAL( Logical state );
         SDAI_LOGICAL( const SDAI_LOGICAL & source );
         SDAI_LOGICAL( int i );
@@ -118,7 +118,7 @@ class SCL_DAI_EXPORT SDAI_LOGICAL  :
 
 };
 
-class SCL_DAI_EXPORT SDAI_BOOLEAN  :
+class SCL_DAI_EXPORT SDAI_BOOLEAN :
     public SDAI_Enum  {
     public:
         const char * Name() const;

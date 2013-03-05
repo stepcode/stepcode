@@ -22,9 +22,10 @@
  */
 
 #include <scl_memmgr.h>
-#define OBJECT_C
 #include <stdlib.h>
 #include "express/object.h"
+
+struct Object * OBJ;
 
 Symbol * UNK_get_symbol( Generic x ) {
     fprintf( stderr, "OBJget_symbol called on object of unknown type\n" );
@@ -50,8 +51,8 @@ void OBJcleanup() {
 }
 
 void OBJcreate( char type, struct Symbol_ * ( *get_symbol )( Generic ), char * printable_type, int bits ) {
-    unsigned index = ( unsigned )type;
-    OBJ[index].get_symbol = get_symbol;
-    OBJ[index].type = printable_type;
-    OBJ[index].bits = bits;
+    int index = ( int )type;
+    OBJ[type].get_symbol = get_symbol;
+    OBJ[type].type = printable_type;
+    OBJ[type].bits = bits;
 }

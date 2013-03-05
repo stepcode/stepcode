@@ -33,8 +33,9 @@
  */
 
 #include <scl_memmgr.h>
-#define SYMBOL_C
 #include "express/symbol.h"
+
+struct freelist_head SYMBOL_fl;
 
 /** Initialize the Symbol module */
 void SYMBOLinitialize( void ) {

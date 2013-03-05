@@ -10,8 +10,6 @@
 * and is not subject to copyright.
 */
 
-/* $Id: errordesc.cc,v 3.0.1.2 1997/11/05 22:33:46 sauderd DP3.1 $  */
-
 #include <errordesc.h>
 #include <Str.h>
 #include <scl_memmgr.h>
@@ -21,9 +19,7 @@ ostream  * ErrorDescriptor::_out = 0;
 
 void
 ErrorDescriptor::PrintContents( ostream & out ) const {
-    std::string s;
-    severity( s );
-    out << "Severity: " << s << endl;
+    out << "Severity: " << severityString() << endl;
     if( !_userMsg.empty() ) {
         out << "User message in parens:" << endl << "(";
         out << UserMsg() << ")" << endl;
@@ -34,8 +30,8 @@ ErrorDescriptor::PrintContents( ostream & out ) const {
     }
 }
 
-void ErrorDescriptor::severity( std::string & s ) const {
-    s.clear();
+std::string ErrorDescriptor::severityString() const {
+    std::string s;
     switch( severity() ) {
         case SEVERITY_NULL : {
             s.assign( "SEVERITY_NULL" );
@@ -74,50 +70,40 @@ void ErrorDescriptor::severity( std::string & s ) const {
             break;
         }
     }
+    return s;
 }
 
 
 Severity
 ErrorDescriptor::GetCorrSeverity( const char * s ) {
-//    cout << "s is (" << s << ") \n";
     if( s && s[0] != 0 ) {
         std::string s2;
         StrToUpper( s, s2 );
-//  cout << "s after if is (" << s << ") \n" << "s2 is (" << s2 << ")\n";
         if( !s2.compare( "SEVERITY_NULL" ) ) {
-//      cout << "SEVERITY_NULL" << endl;
             return SEVERITY_NULL;
         }
         if( !s2.compare( "SEVERITY_USERMSG" ) ) {
-//      cout << "SEVERITY_USERMSG" << endl;
             return SEVERITY_USERMSG;
         }
         if( !s2.compare( "SEVERITY_INCOMPLETE" ) ) {
-//      cout << "SEVERITY_INCOMPLETE" << endl;
             return SEVERITY_INCOMPLETE;
         }
         if( !s2.compare( "SEVERITY_WARNING" ) ) {
-//      cout << "SEVERITY_WARNING" << endl;
             return SEVERITY_WARNING;
         }
         if( !s2.compare( "SEVERITY_INPUT_ERROR" ) ) {
-//      cout << "SEVERITY_INPUT_ERROR" << endl;
             return SEVERITY_INPUT_ERROR;
         }
         if( !s2.compare( "SEVERITY_BUG" ) ) {
-//      cout << "SEVERITY_BUG" << endl;
             return SEVERITY_BUG;
         }
         if( !s2.compare( "SEVERITY_EXIT" ) ) {
-//      cout << "SEVERITY_EXIT" << endl;
             return SEVERITY_EXIT;
         }
         if( !s2.compare( "SEVERITY_DUMP" ) ) {
-//      cout << "SEVERITY_DUMP" << endl;
             return SEVERITY_DUMP;
         }
         if( !s2.compare( "SEVERITY_MAX" ) ) {
-//      cout << "SEVERITY_MAX" << endl;
             return SEVERITY_MAX;
         }
     }

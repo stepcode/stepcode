@@ -27,8 +27,8 @@ SDAI_Entity_extent::~SDAI_Entity_extent() {
     delete _definition_name;
 }
 
-const Entity_ptr
-SDAI_Entity_extent::definition_() const {
+Entity_ptr
+SDAI_Entity_extent ::definition_() const {
     return _definition;
 }
 
@@ -56,9 +56,9 @@ SDAI_Entity_extent::owned_by_( SDAI_Model_contents__list_var & mclv ) {
 //    _owned_by = mcp;
 }
 
-const SDAI_Model_contents__list_var
-SDAI_Entity_extent::owned_by_() const {
-    return ( const SDAI_Model_contents__list_var ) &_owned_by;
+SDAI_Model_contents__list_var 
+SDAI_Entity_extent ::owned_by_() const {
+    return ( const SDAI_Model_contents__list_var  ) &_owned_by;
 }
 
 /*

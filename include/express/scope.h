@@ -99,17 +99,6 @@ struct Scope_ {
     Linked_List where;      /**< optional where clause */
 };
 
-/********************/
-/* global variables */
-/********************/
-
-#ifdef SCOPE_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /* SCOPE_C */
-#include "de_end.h"
-
 /******************************/
 /* macro function definitions */
 /******************************/

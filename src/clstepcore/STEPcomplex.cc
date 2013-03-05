@@ -7,27 +7,22 @@
 #include <sstream>
 #include "scl_memmgr.h"
 
-extern const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
+extern const char *
+ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
+    : SDAI_Application_instance ( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
     head = this;
-    _registry = registry;
-    visited = 0;
 }
 
 STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
                           int fileid, const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
-    head = this;
-    _registry = registry;
-    visited = 0;
-
+    : SDAI_Application_instance ( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
     char * nms[BUFSIZ];
     int j, k;
+
+    head = this;
 
     // Create a char ** list of names and call Initialize to build all:
     for( j = 0; names[j]; j++ ) {
@@ -43,12 +38,9 @@ STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
 
 STEPcomplex::STEPcomplex( Registry * registry, const char ** names, int fileid,
                           const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
-    head = this;
-    _registry = registry;
-    visited = 0;
+    : SDAI_Application_instance ( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
 
+    head = this;
     Initialize( names, schnm );
 }
 
@@ -69,7 +61,7 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
     *eptr = ents, *prev = NULL, *enext;
     const EntityDescriptor * enDesc;
     char nm[BUFSIZ];
-    bool invalid = false, outOfOrder = false;
+    int invalid = 0, outOfOrder = 0;
 
     // Splice out the invalid names from our list:
     while( eptr ) {
@@ -88,11 +80,11 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
                 // support structs only deal with the original names) and have
                 // ents re-ort eptr properly in the list:
                 eptr->Name( StrToLower( enDesc->Name(), nm ) );
-                outOfOrder = true;
+                outOfOrder = 1;
             }
             prev = eptr;
         } else {
-            invalid = true;
+            invalid = 1;
             cerr << "ERROR: Invalid entity \"" << eptr->Name()
                  << "\" found in complex entity.\n";
             if( !prev ) {
@@ -259,6 +251,7 @@ int STEPcomplex::EntityExists( const char * name, const char * currSch ) {
 */
 const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
     const EntityDescriptor * return_ed = eDesc->IsA( ed );
+
     if( !return_ed && sc ) {
         return sc->IsA( ed );
     } else {
@@ -534,8 +527,9 @@ void STEPcomplex::BuildAttrs( const char * s ) {
                         break;
                     }
                     default:
-                        cerr << "STEPcomplex::BuildAttrs: type " << ad->NonRefType() << " not handled by switch statement. " << __FILE__ << ":" <<  __LINE__ << endl;
-                        abort();
+                        _error.AppendToDetailMsg( "STEPcomplex::BuildAttrs: Found attribute of unknown type. Creating default attribute.\n" );
+                        _error.GreaterSeverity( SEVERITY_WARNING );
+                        a = new STEPattribute();
                 }
 
                 a -> set_null();

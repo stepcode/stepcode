@@ -225,6 +225,7 @@ MARK_AS_ADVANCED(SCL_BUILD_EXPRESS_ONLY)
 # scl_cf.h.in - scripts may need to append to the template, so
 # it is read into memory initially.
 SET(CONFIG_H_FILE ${SCL_BINARY_DIR}/include/scl_cf.h.in)
+set_source_files_properties(${CONFIG_H_FILE} PROPERTIES GENERATED TRUE)
 set(CMAKE_CURRENT_PROJECT SCL)
 define_property(GLOBAL PROPERTY SCL_CONFIG_H_CONTENTS BRIEF_DOCS "config.h.in contents" FULL_DOCS "config.h.in contents for SCL project")
 if(NOT COMMAND CONFIG_H_APPEND)
@@ -239,14 +240,71 @@ endif(NOT COMMAND CONFIG_H_APPEND)
 file(READ ${SCL_SOURCE_DIR}/include/scl_cf_cmake.h.in CONFIG_H_FILE_CONTENTS)
 CONFIG_H_APPEND(SCL "${CONFIG_H_FILE_CONTENTS}")
 
+# The Express parser uses the tools Perplex, RE2C and Lemon to generate code
+# from higher level inputs.  Depending on available tools and options, the
+# SCL build can either re-generate code as part of the build, or use cached
+# files that are ready for compilation.
+#
+# SCL_GENERATE_LEXER_PARSER is the "high level" control a user sets to determine
+# how the SCL build will interact (or not) with these tools.  AUTO (the
+# default) means it will search for the necessary tools, and use them only if
+# everything is found.  If not, it will fall back to the cached versions.  If
+# this option is set to ON and the necessary tools are not found, the
+# configure step will fail.  If it is set to OFF, SCL will not even try to use
+# the generators and will instead use the cached sources.
+if(NOT SCL_GENERATE_LEXER_PARSER)
+  set(SCL_GENERATE_LEXER_PARSER "AUTO" CACHE STRING "Use Perplex, RE2C and Lemon to generate C source code.")
+else(NOT SCL_GENERATE_LEXER_PARSER)
+  string(TOUPPER "${SCL_GENERATE_LEXER_PARSER}" SCL_GENERATE_LEXER_PARSER)
+endif(NOT SCL_GENERATE_LEXER_PARSER)
+set_property(CACHE SCL_GENERATE_LEXER_PARSER PROPERTY STRINGS AUTO ON OFF)
+if (NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "AUTO" AND NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "ON" AND NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+	message(WARNING "Unknown value ${SCL_GENERATE_LEXER_PARSER} supplied for BRLCAD_WORD_SIZE - defaulting to AUTO")
+	message(WARNING "Valid options are AUTO, ON and OFF")
+	set(SCL_GENERATE_LEXER_PARSER "AUTO" CACHE STRING "Use Perplex, RE2C and Lemon to generate C source code.")
+endif (NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "AUTO" AND NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "ON" AND NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+
+# If the generators have not been turned off, we need to check for them
+if(NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+	find_package(LEMON)
+	find_package(RE2C)
+	find_package(PERPLEX)
+	if(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
+		# Templates may be anywhere - make sure we have a stable path if a relative
+		# path was specified at CMake time
+		get_filename_component(lemon_template_fpath "${LEMON_TEMPLATE}" ABSOLUTE)
+		if(NOT "${lemon_template_fpath}" STREQUAL "${LEMON_TEMPLATE}")
+			get_filename_component(LEMON_TEMPLATE "${CMAKE_BINARY_DIR}/${LEMON_TEMPLATE}" ABSOLUTE)
+		endif(NOT "${lemon_template_fpath}" STREQUAL "${LEMON_TEMPLATE}")
+		get_filename_component(perplex_template_fpath "${PERPLEX_TEMPLATE}" ABSOLUTE)
+		if(NOT "${perplex_template_fpath}" STREQUAL "${PERPLEX_TEMPLATE}")
+			get_filename_component(PERPLEX_TEMPLATE "${CMAKE_BINARY_DIR}/${PERPLEX_TEMPLATE}" ABSOLUTE)
+		endif(NOT "${perplex_template_fpath}" STREQUAL "${PERPLEX_TEMPLATE}")
+
+		if(NOT COMMAND LEMON_TARGET)
+			include(${SCL_CMAKE_DIR}/LEMON_Util.cmake)
+		endif(NOT COMMAND LEMON_TARGET)
+		if(NOT COMMAND PERPLEX_TARGET)
+			include(${SCL_CMAKE_DIR}/PERPLEX_Util.cmake)
+		endif(NOT COMMAND PERPLEX_TARGET)
+		set(SCL_GENERATE_LP_SOURCES 1)
+	else(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
+		if("${SCL_GENERATE_LEXER_PARSER}" STREQUAL "ON")
+			message(FATAL_ERROR "\nSCL_GENERATE_LEXER_PARSER set to ON, but one or more components of the Perplex/RE2C/Lemon toolchain were not found.\n")
+		else("${SCL_GENERATE_LEXER_PARSER}" STREQUAL "ON")
+			set(SCL_GENERATE_LP_SOURCES 0)
+		endif("${SCL_GENERATE_LEXER_PARSER}" STREQUAL "ON")
+	endif(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
+else(NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+	set(SCL_GENERATE_LP_SOURCES 0)
+endif(NOT "${SCL_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+
 INCLUDE(CheckLibraryExists)
 INCLUDE(CheckIncludeFile)
 INCLUDE(CheckFunctionExists)
 INCLUDE(CheckTypeSize)
 INCLUDE(CMakePushCheckState)
 INCLUDE(CheckCXXSourceRuns)
-INCLUDE(${SCL_CMAKE_DIR}/FindLEX.cmake)
-INCLUDE(${SCL_CMAKE_DIR}/FindYACC.cmake)
 
 CHECK_INCLUDE_FILE(ndir.h HAVE_NDIR_H)
 CHECK_INCLUDE_FILE(stdarg.h HAVE_STDARG_H)

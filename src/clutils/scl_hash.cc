@@ -179,25 +179,17 @@ SCL_HASHlist( HashEntry * he ) {
                    setting it to he->e) and begin looking for a new value
                    for he->p
                  */
-                bool again = true;
-                do {
-                    if( he->p ) {
-                        if( ( he->type != '*' ) &&
-                                ( he->type != he->p->type ) ) {
-                            he->p = he->p->next;
-                        } else {
-                            if( he->e ) {
-                                return( he->e );
-                            }
-                            he->e = he->p;
-                            he->p = he->p->next;
-                            again = false;
-                        }
+                while( he->p && he->type != '*' && he->type != he->p->type ) {
+                    he->p = he->p->next;
+                }
+                if( he->p ) {
+                    if( he->e ) {
+                        return( he->e );
                     }
-                    else {
-                        again = false;
-                    }
-                } while( again );
+                    he->e = he->p;
+                    he->p = he->p->next;
+                }
+
                 /* avoid incrementing he->j by returning here */
                 if( he->p ) {
                     return( he->e );
@@ -315,7 +307,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
             ** table over-full?
             */
             if( ++table->KeyCount / MUL( table->SegmentCount, SEGMENT_SIZE ) > table->MaxLoadFactor ) {
-                SCL_HASHexpand_table( table );    /* doesn't affect q   */
+                SCL_HASHexpand_table( table );    /* doesn't affect q	*/
             }
     }
     return( ( struct Element * )0 ); /* was return (Element)q */
@@ -339,7 +331,7 @@ SCL_HASHhash( char * Key, Hash_TableP table ) {
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );
-    if( ( int )address < table->p ) {
+    if( address < table->p ) {
         address = MOD( h, ( table->maxp << 1 ) );    /* h % (2*table->maxp) */
     }
     return( address );
@@ -429,13 +421,13 @@ main() {
     e3.key = "herschel";
     e3.data = ( char * )3;
 
-    t = HASHcreate( 100 );
-    e = HASHsearch( t, &e1, HASH_INSERT );
-    e = HASHsearch( t, &e2, HASH_INSERT );
-    e = HASHsearch( t, &e3, HASH_INSERT );
-    HASHlistinit( t, &he );
+    t = SCL_HASHcreate( 100 );
+    e = SCL_HASHsearch( t, &e1, HASH_INSERT );
+    e = SCL_HASHsearch( t, &e2, HASH_INSERT );
+    e = SCL_HASHsearch( t, &e3, HASH_INSERT );
+    SCL_HASHlistinit( t, &he );
     for( ;; ) {
-        e = HASHlist( &he );
+        e = SCL_HASHlist( &he );
         if( !e ) {
             exit( 0 );
         }

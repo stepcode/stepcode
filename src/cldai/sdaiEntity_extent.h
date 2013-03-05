@@ -47,7 +47,7 @@ class SCL_DAI_EXPORT SDAI_Entity_extent : public SDAI_Session_instance {
             return _definition_name;
         }
 
-        const Entity_ptr definition_() const;
+        Entity_ptr definition_() const;
 #ifdef SDAI_CPP_LATE_BINDING
 //    const Entity_ptr definition_() const;
 #endif
@@ -60,7 +60,7 @@ class SCL_DAI_EXPORT SDAI_Entity_extent : public SDAI_Session_instance {
         }
 
 // need to implement Model_contents__list
-        const SDAI_Model_contents__list_var owned_by_() const;
+        SDAI_Model_contents__list_var owned_by_() const;
 
 //    static SDAI_Entity_extent_ptr
 //          _duplicate(SDAI_Entity_extent_ptr eep);

@@ -33,9 +33,9 @@ class SCL_CORE_EXPORT Registry {
 
         int entity_cnt,
             all_ents_cnt;
-        HashEntry    cur_entity;
-        HashEntry    cur_schema;
-        HashEntry    cur_type;
+        HashEntry   cur_entity;
+        HashEntry   cur_schema;
+        HashEntry   cur_type;
 
         // used by AddEntity() and RemoveEntity() to deal with renamings of an
         // entity done in a USE or REFERENCE clause - see header comments in

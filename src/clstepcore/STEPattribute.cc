@@ -9,6 +9,10 @@
 * and is not subject to copyright.
 */
 
+#include <iomanip>
+#include <sstream>
+#include <string>
+
 #include <read_func.h>
 #include <STEPattribute.h>
 #include <instmgr.h>
@@ -163,9 +167,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFi
             }
             break;
 
-        case UNKNOWN_TYPE: // should never have this case
-            std::cerr << "Error: unknown type in STEPattribute::StrToVal, " << __FILE__ << ":" << __LINE__ << std::endl;
-            abort();
+//      case UNKNOWN_TYPE: // should never have this case
         case GENERIC_TYPE:
         default:
             // other cases are the same for StrToVal and file
@@ -237,7 +239,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
             }
             if( Nullable() )  {
                 _error.severity( SEVERITY_NULL );
-            } else if( !strict ) {
+            } else if ( !strict ) {
                 std::string fillerValue;
                 // we aren't in strict mode, so find out the type of the missing attribute and insert a suitable value.
                 ErrorDescriptor err; //this will be discarded
@@ -259,7 +261,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
                     }
                     case STRING_TYPE: {
                         fillerValue = "'',";
-                        *( ptr.S ) = "''";
+                        *(ptr.S) = "''";
                         break;
                     }
                     default: { //do not know what a good value would be for other types
@@ -276,7 +278,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
                 //create a warning. SEVERITY_WARNING makes more sense to me, but is considered more severe than SEVERITY_INCOMPLETE
                 _error.severity( SEVERITY_USERMSG );
                 _error.AppendToDetailMsg( " missing and required. For compatibility, replacing with " );
-                _error.AppendToDetailMsg( fillerValue.substr( 0, fillerValue.length() - 1 ) );
+                _error.AppendToDetailMsg( fillerValue.substr( 0, fillerValue.length()-1 ) );
                 _error.AppendToDetailMsg( ".\n" );
             } else {
                 _error.severity( SEVERITY_INCOMPLETE );
@@ -417,19 +419,16 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
 
     switch( NonRefType() ) {
         case INTEGER_TYPE:
-            ss.clear();
             ss << *( ptr.i );
             str += ss.str();
-            // str += ( *( ptr.i ) );
             break;
 
         case NUMBER_TYPE:
         case REAL_TYPE:
-            ss.clear();
+
             ss.precision( ( int ) Real_Num_Precision );
             ss << *( ptr.r );
             str += ss.str();
-            // str.append( *( ptr.r ), ( int ) Real_Num_Precision );
             break;
 
         case ENTITY_TYPE:
@@ -826,10 +825,7 @@ int STEPattribute::is_null()  const {
 ** \return bool -- if false => not equal
 ******************************************************************/
 bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
-    if( a1.aDesc == a2.aDesc ) {
-        return true;
-    }
-    return false;
+    return a1.aDesc == a2.aDesc;
 }
 
 
@@ -840,8 +836,7 @@ bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
  * *note* for string values - (attrValue = 0) => string value does not exist,
  *       attrValue exists it is valid.
 ******************************************************************/
-Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error,
-                                    InstMgr * im, int clearError ) {
+Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, int clearError ) {
     if( clearError ) {
         ClearErrorMsg();
     }

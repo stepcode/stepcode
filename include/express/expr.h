@@ -64,6 +64,10 @@
 #include <math.h>
 #include "expbasic.h"   /* get basic definitions */
 
+#ifndef MAXINT
+#define MAXINT (~(1 << 31))
+#endif
+
 /************/
 /* typedefs */
 /************/
@@ -181,31 +185,23 @@ struct EXPop_entry {
 /* global variables */
 /********************/
 
-#ifdef EXPRESSION_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*EXPRESSION_C*/
+extern SCL_EXPRESS_EXPORT struct EXPop_entry EXPop_table[OP_LAST];
 
-GLOBAL SCL_EXPRESS_EXPORT struct EXPop_entry EXPop_table[OP_LAST];
+extern SCL_EXPRESS_EXPORT Expression  LITERAL_E;
+extern SCL_EXPRESS_EXPORT Expression  LITERAL_INFINITY;
+extern SCL_EXPRESS_EXPORT Expression  LITERAL_PI;
+extern SCL_EXPRESS_EXPORT Expression  LITERAL_ZERO;
+extern SCL_EXPRESS_EXPORT Expression  LITERAL_ONE;
 
-GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_E       INITIALLY( EXPRESSION_NULL );
-GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_INFINITY    INITIALLY( EXPRESSION_NULL );
-GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_PI      INITIALLY( EXPRESSION_NULL );
-GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_ZERO        INITIALLY( EXPRESSION_NULL );
-GLOBAL SCL_EXPRESS_EXPORT Expression   LITERAL_ONE;
+extern SCL_EXPRESS_EXPORT Error ERROR_bad_qualification;
+extern SCL_EXPRESS_EXPORT Error ERROR_integer_expression_expected;
+extern SCL_EXPRESS_EXPORT Error ERROR_implicit_downcast;
+extern SCL_EXPRESS_EXPORT Error ERROR_ambig_implicit_downcast;
 
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_bad_qualification         INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_integer_expression_expected   INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_implicit_downcast         INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_ambig_implicit_downcast       INITIALLY( ERROR_none );
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head EXP_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head OP_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head QUERY_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head EXP_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head OP_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head QUERY_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 
 /******************************/
 /* macro function definitions */
@@ -269,25 +265,5 @@ extern SCL_EXPRESS_EXPORT void     EXPinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void     EXPcleanup PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
 extern SCL_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
-
-/********************/
-/* inline functions */
-/********************/
-
-#if supports_inline_functions || defined(EXPRESSION_C)
-
-static_inline
-int
-OPget_number_of_operands( Op_Code op ) {
-    if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
-        return 1;
-    } else if( op == OP_SUBCOMPONENT ) {
-        return 3;
-    } else {
-        return 2;
-    }
-}
-
-#endif /* supports_inline_functions || defined(EXPRESSION_C) */
 
 #endif /*EXPRESSION_H*/

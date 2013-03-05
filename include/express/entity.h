@@ -102,17 +102,8 @@ struct Entity_ {
 /* global variables */
 /********************/
 
-#ifdef ENTITY_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif    /*  ENTITY_C  */
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ENTITY_fl;
-
-GLOBAL SCL_EXPRESS_EXPORT int  ENTITY_MARK INITIALLY( 0 );
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head ENTITY_fl;
+extern SCL_EXPRESS_EXPORT int ENTITY_MARK;
 
 /******************************/
 /* macro function definitions */
@@ -162,6 +153,6 @@ extern SCL_EXPRESS_EXPORT Linked_List  ENTITYget_all_attributes PROTO( ( Entity 
 extern SCL_EXPRESS_EXPORT bool      ENTITYhas_supertype PROTO( ( Entity, Entity ) );
 extern SCL_EXPRESS_EXPORT void     ENTITYadd_instance PROTO( ( Entity, Generic ) );
 extern SCL_EXPRESS_EXPORT int      ENTITYget_initial_offset PROTO( ( Entity ) );
-extern SCL_EXPRESS_EXPORT bool      ENTITYdeclares_variable PROTO( ( Entity, struct Variable_ * ) );
+extern SCL_EXPRESS_EXPORT int      ENTITYdeclares_variable PROTO( ( Entity, struct Variable_ * ) );
 
 #endif    /*  ENTITY_H  */

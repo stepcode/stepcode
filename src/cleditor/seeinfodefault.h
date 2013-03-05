@@ -28,7 +28,7 @@ class DisplayNodelist;
 class SCL_EDITOR_EXPORT seeInfo : public DisplayNode {
     public:
         seeInfo( MgrNode * node,
-                 SDAI_Application_instance * se,
+                 SDAI_Application_instance  *se,
                  DisplayNodeList * dnl, displayStateEnum displaySt = mappedWrite );
 
         void * GetSEE()      {
@@ -36,7 +36,7 @@ class SCL_EDITOR_EXPORT seeInfo : public DisplayNode {
         }
 };
 
-inline seeInfo::seeInfo( MgrNode * node, SDAI_Application_instance * se,
+inline seeInfo::seeInfo( MgrNode * node, SDAI_Application_instance  *se,
                          DisplayNodeList * dnl, displayStateEnum displaySt ) {
     mn = node;
     see = 0;

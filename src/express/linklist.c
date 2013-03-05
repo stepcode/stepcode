@@ -22,8 +22,12 @@
  */
 
 #include <scl_memmgr.h>
-#define LINKED_LIST_C
 #include "express/linklist.h"
+
+Error ERROR_empty_list = ERROR_none;
+struct freelist_head LINK_fl;
+struct freelist_head LIST_fl;
+Linked_List LINK__l;  /* for LISTcreate_with macro - ugh */
 
 void
 LISTinitialize( void ) {
@@ -226,7 +230,6 @@ LISTget_length( Linked_List list ) {
     return count;
 }
 
-#if defined(__BORLAND__)
 bool LISTempty( Linked_List list ) {
     if( !list ) {
         return true;
@@ -236,4 +239,3 @@ bool LISTempty( Linked_List list ) {
     }
     return false;
 }
-#endif

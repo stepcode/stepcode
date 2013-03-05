@@ -304,7 +304,7 @@ bool TypeDescriptor::AltName( const char * nm ) const {
     if( altNames ) {
         return ( altNames->choice( nm ) );
     }
-    return 0;
+    return false;
 }
 
 /**
@@ -403,10 +403,6 @@ Logical AttrDescriptor::Deriving() const {
     }
     return LFalse;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// Derived_attribute functions
-///////////////////////////////////////////////////////////////////////////////
 
 Derived_attribute::Derived_attribute( const char * name, const TypeDescriptor * domainType,
                                       Logical optional, Logical unique, AttrType_Enum at, const EntityDescriptor & owner )

@@ -26,7 +26,6 @@ extern int multiple_inheritance;
 
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
-char * FundamentalType( const Type t, int report_reftypes );
 void ATTRsign_access_methods( Variable a, FILE * file );
 char * generate_attribute_func_name( Variable a, char * out );
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file );

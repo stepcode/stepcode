@@ -11,7 +11,7 @@
 */
 
 
-# include <scl_cf.h>
+#include <scl_cf.h>
 
 #include <gennode.h>
 #include <gennodelist.h>
@@ -64,7 +64,7 @@ GenNodeArray::Check( int index ) {
         _bufsize = ( index + 1 ) * 2;
         newbuf = new GenericNode*[_bufsize];
 
-        memset( newbuf, 0, _bufsize );
+        memset( newbuf, 0, _bufsize * sizeof( GenericNode * ) );
         memmove( newbuf, _buf, _count * sizeof( GenericNode * ) );
         delete [] _buf;
         _buf = newbuf;

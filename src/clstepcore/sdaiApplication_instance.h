@@ -12,13 +12,12 @@
 * and is not subject to copyright.
 */
 
-#include <sdai.h>
 #include <scl_export.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // SDAI_Application_instance used to be STEPentity
 
-class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
+class SCL_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
     private:
         int _cur;        // provides a built-in way of accessing attributes in order.
 
@@ -45,9 +44,9 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
         int _complex;
 
     public:
-        SDAI_Application_instance();
-        SDAI_Application_instance( int fileid, int complex = 0 );
-        virtual ~SDAI_Application_instance();
+        SDAI_Application_instance ();
+        SDAI_Application_instance ( int fileid, int complex = 0 );
+        virtual ~SDAI_Application_instance ();
 
         int IsComplex() const {
             return _complex;
@@ -67,7 +66,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
             p21Comment = "";
         }
 
-        const std::string P21Comment() const {
+        std::string P21Comment() const {
             return p21Comment;
         }
 
@@ -77,7 +76,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
 
         virtual Severity ValidLevel( ErrorDescriptor * error, InstMgr * im,
                                      int clearError = 1 );
-        ErrorDescriptor & Error()        {
+        ErrorDescriptor & Error()    {
             return _error;
         }
         // clears entity's error and optionally all attr's errors
@@ -85,7 +84,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
         // clears all attr's errors
         void ClearAttrError();
 
-        virtual SDAI_Application_instance * Replicate();
+        virtual SDAI_Application_instance  * Replicate();
 
 // ACCESS attributes in order.
         int AttributeCount();
@@ -120,18 +119,18 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
             return !( headMiEntity == 0 );
         }
 
-        void HeadEntity( SDAI_Application_instance * se ) {
+        void HeadEntity( SDAI_Application_instance  *se ) {
             headMiEntity = se;
         }
-        SDAI_Application_instance * HeadEntity() {
+        SDAI_Application_instance  * HeadEntity() {
             return headMiEntity;
         }
 
-        SDAI_Application_instance * GetNextMiEntity() {
+        SDAI_Application_instance  * GetNextMiEntity() {
             return nextMiEntity;
         }
-        SDAI_Application_instance * GetMiEntity( char * EntityName );
-        void AppendMultInstance( SDAI_Application_instance * se );
+        SDAI_Application_instance  * GetMiEntity( char * EntityName );
+        void AppendMultInstance( SDAI_Application_instance  *se );
 
     protected:
         STEPattribute * GetSTEPattribute( const char * );
@@ -139,8 +138,23 @@ class SCL_CORE_EXPORT SDAI_Application_instance : public SDAI_DAObject_SDAI {
         STEPattribute * MakeRedefined( STEPattribute * redefiningAttr,
                                        const char * nm );
 
-        virtual void CopyAs( SDAI_Application_instance * );
+        virtual void CopyAs( SDAI_Application_instance  * );
         void PrependEntityErrMsg();
+    public:
+        // these functions are going to go away in the future.
+        int SetFileId( int fid ) {
+            return STEPfile_id = fid;
+        }
+        int GetFileId() const  {
+            return STEPfile_id;
+        }
+        int FileId( int fid ) {
+            return STEPfile_id = fid;
+        }
+        int FileId() const  {
+            return STEPfile_id;
+        }
+
 };
 
 // current style of CORBA handles for Part 23 - NOTE - used for more than CORBA

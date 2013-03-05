@@ -37,10 +37,6 @@
  *
  */
 
-/*************/
-/* constants */
-/*************/
-
 /*****************/
 /* packages used */
 /*****************/
@@ -58,10 +54,6 @@ typedef struct Scope_ * Procedure;
 typedef struct Scope_ * Function;
 typedef struct Scope_ * Rule;
 typedef struct Where_ * Where;
-
-/****************/
-/* modules used */
-/****************/
 
 /***************************/
 /* hidden type definitions */
@@ -117,19 +109,11 @@ struct Where_ {
 /* global variables */
 /********************/
 
-#ifdef ALGORITHM_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /* ALGORITHM_C */
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ALG_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head FUNC_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head RULE_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head PROC_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head ALG_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head FUNC_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head RULE_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head PROC_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 
 /******************************/
 /* macro function definitions */
@@ -180,6 +164,5 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 extern SCL_EXPRESS_EXPORT Scope    ALGcreate PROTO( ( char ) );
 extern SCL_EXPRESS_EXPORT void     ALGinitialize PROTO( ( void ) );
 extern SCL_EXPRESS_EXPORT void     ALGput_full_text PROTO( ( Scope, int, int ) );
-
 
 #endif /* ALGORITHM_H */

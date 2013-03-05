@@ -1,23 +1,26 @@
-
-set(fedex_plus_SOURCES
+set(FEDEX_COMMON_SRCS
     classes_misc.c
     ../express/fedex.c
-    fedex_main.c 
-    classes_wrapper.cc 
-    classes.c 
-    selects.c 
-    multpass.c 
-    collect.cc 
-    complexlist.cc 
-    entlist.cc 
-    multlist.cc 
-    orlist.cc 
-    entnode.cc 
-    expressbuild.cc 
-    non-ors.cc 
-    match-ors.cc 
-    trynext.cc 
-    write.cc 
+)
+
+set(fedex_plus_SOURCES
+    ${FEDEX_COMMON_SRCS}
+    fedex_main.c
+    classes_wrapper.cc
+    classes.c
+    selects.c
+    multpass.c
+    collect.cc
+    complexlist.cc
+    entlist.cc
+    multlist.cc
+    orlist.cc
+    entnode.cc
+    expressbuild.cc
+    non-ors.cc
+    match-ors.cc
+    trynext.cc
+    write.cc
     print.cc
 )
 
@@ -28,10 +31,6 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/base
 )
 
-IF ("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
-  add_definitions( -DYYDEBUG ) #-Ddebugging )
-ENDIF()
-
-SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES}" "libexppp express base")
+SCL_ADDEXEC(fedex_plus "${fedex_plus_SOURCES}" "libexppp;express;base")
 
 add_dependencies( fedex_plus version_string )

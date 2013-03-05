@@ -4,6 +4,7 @@
 #include <sdai.h>
 #include <read_func.h>
 #include <STEPattribute.h>
+#include "Str.h"
 #include "scl_memmgr.h"
 
 const int RealNumPrecision = REAL_NUM_PRECISION;
@@ -68,9 +69,9 @@ void IStreamState( istream & in ) {
 //   by any characters other than white space (i.e. EOF must happen)
 //
 ///////////////////////////////////////////////////////////////////////////////
-int ReadInteger( SDAI_Integer & val, istream & in, ErrorDescriptor * err,
-                 const char * tokenList ) {
-    SDAI_Integer i = 0;
+int ReadInteger( SDAI_Integer  &val, istream & in, ErrorDescriptor * err,
+             const char * tokenList ) {
+    SDAI_Integer  i = 0;
     in >> ws;
     in >> i;
 
@@ -85,8 +86,8 @@ int ReadInteger( SDAI_Integer & val, istream & in, ErrorDescriptor * err,
 }
 
 /// same as above but reads from a const char *
-int ReadInteger( SDAI_Integer & val, const char * s, ErrorDescriptor * err,
-                 const char * tokenList ) {
+int ReadInteger( SDAI_Integer  &val, const char * s, ErrorDescriptor * err,
+             const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadInteger( val, in, err, tokenList );
 }
@@ -111,7 +112,7 @@ int ReadInteger( SDAI_Integer & val, const char * s, ErrorDescriptor * err,
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
 Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
-                        int clearError, int optional, char * tokenList ) {
+               int clearError, int optional, const char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
@@ -131,7 +132,7 @@ Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
         CheckRemainingInput( in, err, "integer", tokenList );
         return err->severity();
     } else {
-        SDAI_Integer val = 0;
+        SDAI_Integer  val = 0;
         int valAssigned = ReadInteger( val, in, err, tokenList );
         if( !valAssigned && !optional ) {
             err->GreaterSeverity( SEVERITY_INCOMPLETE );
@@ -179,7 +180,7 @@ std::string WriteReal( SDAI_Real val ) {
     return s;
 }
 
-void WriteReal( SDAI_Real val, ostream & out ) {
+void WriteReal( SDAI_Real  val, ostream & out ) {
     out << WriteReal( val );
 }
 
@@ -208,9 +209,9 @@ void WriteReal( SDAI_Real val, ostream & out ) {
 //   an error), optional sign, at least one decimal digit if there is an E.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
-              const char * tokenList ) {
-    SDAI_Real d = 0;
+int ReadReal( SDAI_Real  &val, istream & in, ErrorDescriptor * err,
+          const char * tokenList ) {
+    SDAI_Real  d = 0;
 
     // Read the real's value into a string so we can make sure it is properly
     // formatted. e.g. a decimal point is present. If you use the stream to
@@ -310,8 +311,8 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
 }
 
 /// same as above but reads from a const char *
-int ReadReal( SDAI_Real & val, const char * s, ErrorDescriptor * err,
-              const char * tokenList ) {
+int ReadReal( SDAI_Real  &val, const char * s, ErrorDescriptor * err,
+          const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadReal( val, in, err, tokenList );
 }
@@ -336,7 +337,7 @@ int ReadReal( SDAI_Real & val, const char * s, ErrorDescriptor * err,
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
 Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
-                         int clearError, int optional, char * tokenList ) {
+                int clearError, int optional, const char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
@@ -356,7 +357,7 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
         CheckRemainingInput( in, err, "real", tokenList );
         return err->severity();
     } else {
-        SDAI_Real val = 0;
+        SDAI_Real  val = 0;
         int valAssigned = ReadReal( val, in, err, tokenList );
         if( !valAssigned && !optional ) {
             err->GreaterSeverity( SEVERITY_INCOMPLETE );
@@ -385,8 +386,8 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
  *   by any characters other than white space (i.e. EOF must happen)
  */
 int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
-                const char * tokenList ) {
-    SDAI_Real d = 0;
+            const char * tokenList ) {
+    SDAI_Real  d = 0;
     in >> ws;
     in >> d;
 
@@ -400,8 +401,8 @@ int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
 }
 
 /// same as above but reads from a const char *
-int ReadNumber( SDAI_Real & val, const char * s, ErrorDescriptor * err,
-                const char * tokenList ) {
+int ReadNumber( SDAI_Real  &val, const char * s, ErrorDescriptor * err,
+            const char * tokenList ) {
     istringstream in( ( char * )s );
     return ReadNumber( val, in, err, tokenList );
 }
@@ -427,7 +428,7 @@ int ReadNumber( SDAI_Real & val, const char * s, ErrorDescriptor * err,
 //   following.
 ///////////////////////////////////////////////////////////////////////////////
 Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
-                           int clearError, int optional, char * tokenList ) {
+                  int clearError, int optional, const char * tokenList ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
@@ -447,7 +448,7 @@ Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
         CheckRemainingInput( in, err, "number", tokenList );
         return err->severity();
     } else {
-        SDAI_Real val = 0;
+        SDAI_Real  val = 0;
         int valAssigned = ReadNumber( val, in, err, tokenList );
         if( !valAssigned && !optional ) {
             err->GreaterSeverity( SEVERITY_INCOMPLETE );
@@ -458,7 +459,7 @@ Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
 
 /// assign 's' so that it contains an exchange file format string read from 'in'.
 void PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
-    s = ToExpressStr( in, err );
+    s += GetLiteralStr( in, err );
 }
 
 /**
@@ -549,7 +550,7 @@ void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
 Severity FindStartOfInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
-    SDAI_String tmp;
+    SDAI_String  tmp;
 
     while( in.good() ) {
         in >> c;
@@ -581,7 +582,7 @@ Severity FindStartOfInstance( istream & in, std::string & inst ) {
 Severity SkipInstance( istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
-    SDAI_String tmp;
+    SDAI_String  tmp;
 
     while( in.good() ) {
         in >> c;
@@ -593,7 +594,6 @@ Severity SkipInstance( istream & in, std::string & inst ) {
                 in.putback( c );
                 tmp.STEPread( in, &errs );
                 inst.append( tmp.c_str() );
-
                 break;
 
             case '\0':  // problem in input ?
@@ -828,7 +828,7 @@ const char * ReadComment( std::string & ss, const char * s ) {
  * whether or not there was a comment.  If there is no comment
  * only the slash will be read from 'in'.
  * FIXME putback() doesn't work well on all platforms
- ***************************/
+***************************/
 const char * ReadComment( istream & in, std::string & s ) {
     char c = '\0';
     int commentLength = 0;
@@ -847,7 +847,7 @@ const char * ReadComment( istream & in, std::string & s ) {
                 if( c == '*' ) { // looks like start of end comment
                     in.get( c );
                     if( c == '/' ) { // it is end of comment
-                        return const_cast<char *>( s.c_str() );    // return comment as a string
+                        return s.c_str();    // return comment as a string
                     } else { // it is not end of comment
                         // so store the * and put back the other char
                         s.append( "*" );

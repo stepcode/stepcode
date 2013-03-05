@@ -41,10 +41,10 @@ STEPattribute & STEPattributeList::operator []( int n ) {
         return *( a->attr );
     }
 
+    // else
     cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
          << __LINE__ << "\n" << _POC_ << "\n\n";
-    abort();
-    return *( STEPattribute * ) 0; //will never get here, but gcc produces warning
+    return *( STEPattribute * ) 0;
 }
 
 int STEPattributeList::list_length() {
@@ -60,6 +60,7 @@ void STEPattributeList::push( STEPattribute * a ) {
     while( a2 && push ) {
         if( *a == *( a2 -> attr ) ) {
             push = false;
+            break;
         }
         a2 = ( AttrListNode * )( a2->next );
     }

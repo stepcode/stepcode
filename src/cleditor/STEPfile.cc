@@ -22,6 +22,7 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <vector>
 
 #include <STEPfile.h>
 #include <sdai.h>
@@ -45,7 +46,7 @@
  *
  * side effects: STEPfile::_fileName value may change.
  */
-const std::string STEPfile::SetFileName( const std::string newName ) {
+std::string STEPfile::SetFileName( const std::string newName ) {
     //  if a newName is not given or is the same as the old, use the old name
     if( ( newName.empty() ) || ( newName == _fileName ) ) {
         return FileName();
@@ -201,7 +202,7 @@ Severity STEPfile::ReadHeader( istream & in ) {
                 objsev = AppendEntityErrorMsg( &( obj->Error() ) );
 
                 //set file_id to reflect the appropriate Header Section Entity
-                fileid = HeaderId( keywd );
+                fileid = HeaderId( const_cast<char *>( keywd.c_str() ) );
 
                 //read the values from the istream
                 objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in, NULL, true, _strict );
@@ -375,7 +376,8 @@ void STEPfile::HeaderMergeInstances( InstMgr * im ) {
 
     //checking for _headerInstances::FILE_NAME
     idnum = HeaderId( "File_Name" );
-    if( ( se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) ) ) ) {
+    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    if( se ) {
         from = im->GetApplication_instance( im->FindFileId( idnum ) );
 
         // name:
@@ -392,7 +394,8 @@ void STEPfile::HeaderMergeInstances( InstMgr * im ) {
 
     //checking for _headerInstances::FILE_DESCRIPTION
     idnum = HeaderId( "File_Description" );
-    if( ( se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) ) ) ) {
+    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    if( se ) {
         from = im->GetApplication_instance( im->FindFileId( idnum ) );
 
         //description
@@ -404,7 +407,8 @@ void STEPfile::HeaderMergeInstances( InstMgr * im ) {
 
     //checking for _headerInstances::FILE_SCHEMA
     idnum = HeaderId( "File_Schema" );
-    if( ( se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) ) ) ) {
+    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    if( se ) {
         from = im->GetApplication_instance( im->FindFileId( idnum ) );
 
         //description
@@ -423,16 +427,12 @@ stateEnum STEPfile::EntityWfState( char c ) {
     switch( c ) {
         case wsSaveComplete:
             return completeSE;
-
         case wsSaveIncomplete:
             return incompleteSE;
-
         case wsDelete:
             return deleteSE;
-
         case wsNew:
             return newSE;
-
         default:
             return noStateSE;
     }
@@ -553,7 +553,6 @@ int STEPfile::ReadData1( istream & in ) {
     return instance_count;
 }
 
-
 int STEPfile::ReadWorkingData1( istream & in ) {
     return ReadData1( in );
 }
@@ -582,8 +581,6 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
     SDAI_Application_instance * obj = ENTITY_NULL;
     std::string cmtStr;
 
-//    ReadTokenSeparator(in, &cmtStr);
-
     int endsec = FoundEndSecKywd( in, _error );
 
     //  PASS 2:  read instances
@@ -597,15 +594,6 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
                 ReadTokenSeparator( in, &cmtStr );
                 in >> c;    // read the ENTITY_NAME_DELIM
             }
-            /*
-                    // don't need this error msg for the 2nd pass (it was done on 1st)
-                    else
-                    {
-                    cout << "Invalid editing state character: " << c << endl;
-                    cout << "Assigning editing state to be INCOMPLETE\n";
-                    inst_state = incompleteSE;
-                    }
-            */
         }
 
         if( c != ENTITY_NAME_DELIM ) {
@@ -684,8 +672,6 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
         _error.AppendToUserMsg( "Error in input file.\n" );
     }
 
-//    if( in.good() )
-//  in.putback(c);
     return valid_insts;
 }
 
@@ -841,7 +827,6 @@ SDAI_Application_instance * STEPfile::CreateInstance( istream & in, ostream & ou
     }
 
     //check for subtype/supertype record
-    //DAS todo
     if( c == '(' ) {
         //  TODO:  implement complex inheritance
 
@@ -935,8 +920,7 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
     std::string tmpbuf;
     char c;
     int exportid;
-    SDAI_Application_instance_ptr inscope [BUFSIZ];
-    int i = 0;
+    std::vector< SDAI_Application_instance_ptr > inscope;
     std::string keywd;
 
     keywd = GetKeyword( in, " \n\t/\\#;", _error );
@@ -958,10 +942,8 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
         if( se != ENTITY_NULL ) {
             //TODO:  apply scope information to se
             //  Add se to scopelist
-            if( i < BUFSIZ ) {
-                inscope [i] = se;
-                ++i;
-            }
+            inscope.push_back(se);
+
             //append the se to the instance manager
             instances().Append( se, newSE );
         } else {
@@ -977,10 +959,9 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
         in.get( c );
     }
     in.putback( c );
-    *scopelist = new SDAI_Application_instance_ptr [i];
-    while( i > 0 ) {
-        *scopelist [i - 1] = inscope [i];
-        i--;
+    *scopelist = new SDAI_Application_instance_ptr [inscope.size()];
+    for (size_t i = 0; i < inscope.size(); ++i) {
+        *scopelist[i] = inscope[i];
     }
 
     //check for "ENDSCOPE"
@@ -1166,7 +1147,6 @@ Severity STEPfile::ReadScopeInstances( istream & in ) {
     return rval;
 }
 
-
 /**
  This function populates a SDAI_Application_instance with the values read from
  the istream.
@@ -1288,7 +1268,7 @@ SDAI_Application_instance * STEPfile::ReadInstance( istream & in, ostream & out,
         if( !in.good() ) {
             out << "ERROR: instance #" << fileid
                 << " Unexpected file problem in "
-                << "STEPfile::ReadInstance." << endl;;
+                << "STEPfile::ReadInstance." << endl;
         }
         ReadTokenSeparator( in, &cmtStr );
 
@@ -1337,7 +1317,7 @@ SDAI_Application_instance * STEPfile::ReadInstance( istream & in, ostream & out,
         case SEVERITY_BUG:
 
         case SEVERITY_INCOMPLETE:
-            if( _fileType == VERSION_CURRENT ) {
+            if( ( _fileType == VERSION_CURRENT ) ) {
                 cerr << "ERROR in EXCHANGE FILE: incomplete instance #"
                      << obj -> STEPfile_id << ".\n";
                 if( _fileType != WORKING_SESSION ) {
@@ -1408,9 +1388,6 @@ void STEPfile::MakeBackupFile() {
     _error.AppendToDetailMsg( "\n" );
 }
 
-
-/***************************
-***************************/
 Severity STEPfile::WriteExchangeFile( ostream & out, int validate, int clearError,
                              int writeComments ) {
     Severity rval = SEVERITY_NULL;
@@ -1436,8 +1413,6 @@ Severity STEPfile::WriteExchangeFile( ostream & out, int validate, int clearErro
     return rval;
 }
 
-/***************************
-***************************/
 Severity STEPfile::WriteExchangeFile( const std::string filename, int validate, int clearError,
                              int writeComments ) {
     Severity rval = SEVERITY_NULL;
@@ -1465,9 +1440,6 @@ Severity STEPfile::WriteExchangeFile( const std::string filename, int validate, 
     return rval;
 }
 
-
-/***************************
-***************************/
 Severity STEPfile::WriteValuePairsFile( ostream & out, int validate, int clearError,
                                int writeComments, int mixedCase ) {
     Severity rval = SEVERITY_NULL;
@@ -1504,7 +1476,7 @@ The header section entities must be numbered in the following manner:
 #2=FILE_NAME
 #3=FILE_SCHEMA
 */
-int STEPfile::HeaderId( const std::string name ) {
+int STEPfile::HeaderId( const char * name ) {
     std::string tmp = name;
 
     std::transform( tmp.begin(), tmp.end(), tmp.begin(), ::toupper );
@@ -1598,26 +1570,24 @@ void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
     SDAI_Application_instance * se = 0;
     se = _headerInstances->GetApplication_instance( "File_Description" );
     if( se == ENTITY_NULL ) {
+        // ERROR: no File_Name instance in _headerInstances
+        // create a File_Name instance
         se = ( SDAI_Application_instance * )HeaderDefaultFileDescription();
     }
-
     WriteHeaderInstance( se, out );
 }
 
 void STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
+// Get the FileName instance from _headerInstances
     SDAI_Application_instance * se = 0;
-
-    // Get the FileName instance from _headerInstances
     se = _headerInstances->GetApplication_instance( "File_Schema" );
     if( se == ENTITY_NULL ) {
+        // ERROR: no File_Name instance in _headerInstances
+        // create a File_Name instance
         se = ( SDAI_Application_instance * ) HeaderDefaultFileSchema();
     }
     WriteHeaderInstance( se, out );
 }
-
-
-/***************************
-***************************/
 
 void STEPfile::WriteData( ostream & out, int writeComments ) {
     _oFileInstsWritten = 0;
@@ -1632,9 +1602,6 @@ void STEPfile::WriteData( ostream & out, int writeComments ) {
 
     out << "ENDSEC;\n";
 }
-
-/***************************
-***************************/
 
 void STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedCase ) {
     std::string currSch = schemaName();
@@ -1668,9 +1635,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
             _error.GreaterSeverity( SEVERITY_WARNING );
         }
         SetFileType( WORKING_SESSION );
-    }
-
-    else {
+    } else {
         sprintf( errbuf,
                  "Faulty input at beginning of file. \"ISO-10303-21;\" or"
                  " \"STEP_WORKING_SESSION;\" expected. File not read: %s\n",
@@ -1680,28 +1645,24 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         return SEVERITY_INPUT_ERROR;
     }
 
-    if( _verbose || _errorCount || _warningCount ) {
-        cout << "Reading Data from " << ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) << "...\n";
-    }
+    cout << "Reading Data from " << ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) << "...\n";
 
     //  Read header
     rval = ReadHeader( *in );
-    if( _verbose || _errorCount || _warningCount ) {
-        cout << "\nHEADER read:";
-        if( rval < SEVERITY_WARNING ) {
-            sprintf( errbuf,
-                    "Error: non-recoverable error in reading header section. "
-                    "There were %d errors encountered. Rest of file is ignored.\n",
-                    _errorCount );
-            _error.AppendToUserMsg( errbuf );
-            return rval;
-        } else if( rval != SEVERITY_NULL ) {
-            sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
-                    _errorCount, _warningCount );
-            cout << errbuf;
-        } else {
-            cout << endl;
-        }
+    cout << "\nHEADER read:";
+    if( rval < SEVERITY_WARNING ) {
+        sprintf( errbuf,
+                 "Error: non-recoverable error in reading header section. "
+                 "There were %d errors encountered. Rest of file is ignored.\n",
+                 _errorCount );
+        _error.AppendToUserMsg( errbuf );
+        return rval;
+    } else if( rval != SEVERITY_NULL ) {
+        sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
+                 _errorCount, _warningCount );
+        cout << errbuf;
+    } else {
+        cout << endl;
     }
 
     if( !FindDataSection( *in ) ) {
@@ -1713,14 +1674,12 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     _errorCount = 0;
     total_insts = ReadData1( *in );
 
-    if( _verbose || _errorCount || _warningCount ) {
-        cout << "\nFIRST PASS complete:  " << total_insts
+    cout << "\nFIRST PASS complete:  " << total_insts
          << " instances created.\n";
-        sprintf( errbuf,
-                "  %d  ERRORS\t  %d  WARNINGS\n\n",
-                _errorCount, _warningCount );
-        cout << errbuf;
-    }
+    sprintf( errbuf,
+             "  %d  ERRORS\t  %d  WARNINGS\n\n",
+             _errorCount, _warningCount );
+    cout << errbuf;
 
     //  PASS 2
     //  This would be nicer if you didn't actually have to close the
@@ -1753,9 +1712,9 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
             valid_insts = ReadData2( *in2, useTechCor );
             break;
         default:
-            cerr << "STEPfile::AppendFile: type " << _fileType << " not handled by switch statement. " << __FILE__ << ":" <<  __LINE__ << endl;
-            abort();
-
+            _error.AppendToUserMsg( "STEPfile::AppendFile: STEP file version set to unrecognized value.\n" );
+            CloseInputFile( in2 );
+            return  SEVERITY_BUG;
     }
 
     //check for "ENDSEC;"
@@ -1768,15 +1727,13 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         return _error.GreaterSeverity( SEVERITY_WARNING );
     }
 
-    if( _verbose || _errorCount || _warningCount ) {
-        cout << "\nSECOND PASS complete:  " << valid_insts
+    cout << "\nSECOND PASS complete:  " << valid_insts
          << " instances valid.\n";
-        sprintf( errbuf,
-                "  %d  ERRORS\t  %d  WARNINGS\n\n",
-                _errorCount, _warningCount );
-        _error.AppendToUserMsg( errbuf );
-        cout << errbuf;
-    }
+    sprintf( errbuf,
+             "  %d  ERRORS\t  %d  WARNINGS\n\n",
+             _errorCount, _warningCount );
+    _error.AppendToUserMsg( errbuf );
+    cout << errbuf;
 
 
     //check for "ENDSTEP;" || "END-ISO-10303-21;"
@@ -1796,24 +1753,18 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     }
 
     if( ( strncmp( const_cast<char *>( keywd.c_str() ),
-                   END_FILE_DELIM,
+                   END_FILE_DELIM.c_str(),
                    strlen( const_cast<char *>( keywd.c_str() ) ) ) || !( in2 -> good() ) ) ) {
-        _error.AppendToUserMsg( END_FILE_DELIM );
+        _error.AppendToUserMsg( END_FILE_DELIM.c_str() );
         _error.AppendToUserMsg( " missing at end of file.\n" );
         CloseInputFile( in2 );
         return _error.GreaterSeverity( SEVERITY_WARNING );
     }
     CloseInputFile( in2 );
-    if( _verbose || _errorCount || _warningCount ) {
-        cout << "Finished reading file.\n\n";
-    }
+    cout << "Finished reading file.\n\n";
     return SEVERITY_NULL;
 }
 
-
-
-
-/******************************************************/
 Severity STEPfile::WriteWorkingFile( ostream & out, int clearError, int writeComments ) {
     SetFileType( WORKING_SESSION );
     if( clearError ) {
@@ -1835,9 +1786,8 @@ Severity STEPfile::WriteWorkingFile( ostream & out, int clearError, int writeCom
     return _error.severity();
 }
 
-/******************************************************/
 Severity STEPfile::WriteWorkingFile( const std::string filename, int clearError,
-                                     int writeComments ) {
+                            int writeComments ) {
     if( clearError ) {
         _error.ClearErrorMsg();
     }
@@ -1851,9 +1801,6 @@ Severity STEPfile::WriteWorkingFile( const std::string filename, int clearError,
     return rval;
 }
 
-
-/***************************
-***************************/
 void STEPfile::WriteWorkingData( ostream & out, int writeComments ) {
     std::string currSch = schemaName();
     out << "DATA;\n";
@@ -1907,7 +1854,6 @@ Severity STEPfile::AppendEntityErrorMsg( ErrorDescriptor * e ) {
 
     if( ( sev < SEVERITY_MAX ) || ( sev > SEVERITY_NULL ) ) {
         //ERROR: something wrong with ErrorDescriptor
-        //_error.AppendToDetailMsg("Error: in AppendEntityErrorMsg(ErrorDesriptor& e). Incomplete ErrorDescriptor, unable to report error message in SDAI_Application_instance.\n");
         _error.GreaterSeverity( SEVERITY_WARNING );
         return SEVERITY_BUG;
     }

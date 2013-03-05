@@ -14,8 +14,6 @@
 
 class InstMgr;
 class STEPaggregate;
-class LOGICAL;
-class BOOLEAN;
 class TypeDescriptor;
 
 #include <scl_export.h>
@@ -26,7 +24,7 @@ class TypeDescriptor;
 #include <STEPundefined.h>
 #include <string>
 
-#define     AGGR_NULL    &NilSTEPaggregate
+#define     AGGR_NULL   &NilSTEPaggregate
 extern STEPaggregate NilSTEPaggregate;
 
 class SingleLinkNode;
@@ -34,6 +32,8 @@ class SingleLinkNode;
 
 typedef STEPaggregate * STEPaggregateH;
 typedef STEPaggregate * STEPaggregate_ptr;
+typedef const STEPaggregate * const_STEPaggregateH;
+typedef const STEPaggregate * const_STEPaggregate_ptr;
 typedef STEPaggregate_ptr STEPaggregate_var;
 
 class SCL_CORE_EXPORT STEPaggregate :  public SingleLinkList {
@@ -101,6 +101,8 @@ class SCL_CORE_EXPORT GenericAggregate  :  public STEPaggregate {
 };
 typedef  GenericAggregate * GenericAggregateH;
 typedef  GenericAggregate * GenericAggregate_ptr;
+typedef  const GenericAggregate * const_GenericAggregateH;
+typedef  const GenericAggregate * const_GenericAggregate_ptr;
 typedef  GenericAggregate_ptr GenericAggregate_var;
 
 /******************************************************************************
@@ -123,6 +125,8 @@ class SCL_CORE_EXPORT EntityAggregate  :  public  STEPaggregate {
 };
 typedef   EntityAggregate * EntityAggregateH;
 typedef   EntityAggregate * EntityAggregate_ptr;
+typedef   const EntityAggregate * const_EntityAggregateH;
+typedef   const EntityAggregate * const_EntityAggregate_ptr;
 typedef   EntityAggregate_ptr EntityAggregate_var;
 
 /****************************************************************//**
@@ -145,6 +149,8 @@ class SCL_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
 };
 typedef  SelectAggregate  * SelectAggregateH;
 typedef  SelectAggregate  * SelectAggregate_ptr;
+typedef  const SelectAggregate  * const_SelectAggregateH;
+typedef  const SelectAggregate  * const_SelectAggregate_ptr;
 typedef  SelectAggregate_ptr SelectAggregate_var;
 
 /****************************************************************//**
@@ -161,6 +167,8 @@ class SCL_CORE_EXPORT StringAggregate  :  public STEPaggregate {
 };
 typedef  StringAggregate * StringAggregateH;
 typedef  StringAggregate * StringAggregate_ptr;
+typedef  const StringAggregate * const_StringAggregateH;
+typedef  const StringAggregate * const_StringAggregate_ptr;
 typedef  StringAggregate_ptr StringAggregate_var;
 
 
@@ -175,10 +183,11 @@ class SCL_CORE_EXPORT BinaryAggregate  :  public STEPaggregate {
 
         BinaryAggregate();
         virtual ~BinaryAggregate();
-
 };
 typedef  BinaryAggregate * BinaryAggregateH;
 typedef  BinaryAggregate * BinaryAggregate_ptr;
+typedef  const BinaryAggregate * const_BinaryAggregateH;
+typedef  const BinaryAggregate * const_BinaryAggregate_ptr;
 typedef  BinaryAggregate_ptr BinaryAggregate_var;
 
 /**************************************************************//**
@@ -195,6 +204,8 @@ class SCL_CORE_EXPORT EnumAggregate  :  public STEPaggregate {
 };
 typedef  EnumAggregate  * EnumAggregateH;
 typedef  EnumAggregate  * EnumAggregate_ptr;
+typedef  const EnumAggregate  * const_EnumAggregateH;
+typedef  const EnumAggregate  * const_EnumAggregate_ptr;
 typedef  EnumAggregate_ptr EnumAggregate_var;
 
 class SCL_CORE_EXPORT LOGICALS  : public EnumAggregate {
@@ -206,6 +217,8 @@ class SCL_CORE_EXPORT LOGICALS  : public EnumAggregate {
 };
 typedef  LOGICALS  * LogicalsH;
 typedef  LOGICALS  * LOGICALS_ptr;
+typedef  const LOGICALS  * const_LogicalsH;
+typedef  const LOGICALS  * const_LOGICALS_ptr;
 typedef  LOGICALS_ptr LOGICALS_var;
 SCL_CORE_EXPORT LOGICALS * create_LOGICALS();
 
@@ -219,6 +232,7 @@ class SCL_CORE_EXPORT BOOLEANS  : public EnumAggregate {
 };
 
 typedef  BOOLEANS  * BOOLEANS_ptr;
+typedef  const BOOLEANS  * const_BOOLEANS_ptr;
 typedef  BOOLEANS_ptr BOOLEANS_var;
 
 SCL_CORE_EXPORT BOOLEANS * create_BOOLEANS();
@@ -234,6 +248,8 @@ class SCL_CORE_EXPORT RealAggregate  : public STEPaggregate  {
 };
 typedef  RealAggregate  * RealAggregateH;
 typedef  RealAggregate  * RealAggregate_ptr;
+typedef  const RealAggregate  * const_RealAggregateH;
+typedef  const RealAggregate  * const_RealAggregate_ptr;
 typedef  RealAggregate_ptr RealAggregate_var;
 
 class SCL_CORE_EXPORT IntAggregate  : public STEPaggregate  {
@@ -247,6 +263,8 @@ class SCL_CORE_EXPORT IntAggregate  : public STEPaggregate  {
 };
 typedef  IntAggregate  * IntAggregateH;
 typedef  IntAggregate  * IntAggregate_ptr;
+typedef  const IntAggregate  * const_IntAggregateH;
+typedef  const IntAggregate  * const_IntAggregate_ptr;
 typedef  IntAggregate_ptr IntAggregate_var;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -263,41 +281,41 @@ class SCL_CORE_EXPORT STEPnode :  public SingleLinkNode  {
             _null = 1;
         }
 
-//    INPUT
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
         virtual void STEPwrite( ostream & out = cout );
 };
-typedef  STEPnode  * STEPnodeH;
 
 /**************************************************************//**
 ** \class GenericAggregate
 ** This class is for the Nodes of GenericAggregates
 ******************************************************************/
+typedef  STEPnode  * STEPnodeH;
+typedef  const STEPnode  * const_STEPnodeH;
 class SCL_CORE_EXPORT GenericAggrNode  : public STEPnode {
     public:
         SCLundefined value;
-
-//    INPUT
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
+//  CONSTRUCTORS
         GenericAggrNode( const char * str );
         GenericAggrNode( GenericAggrNode & gan );
         GenericAggrNode();
@@ -310,7 +328,7 @@ class SCL_CORE_EXPORT GenericAggrNode  : public STEPnode {
 
 class SCL_CORE_EXPORT EntityNode  : public STEPnode {
     public:
-        SDAI_Application_instance * node;
+        SDAI_Application_instance  * node;
 
 // INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
@@ -326,13 +344,13 @@ class SCL_CORE_EXPORT EntityNode  : public STEPnode {
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
                                    InstMgr * insts, int addFileId = 0 );
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
-        EntityNode( SDAI_Application_instance * e );
+//  CONSTRUCTORS
+        EntityNode( SDAI_Application_instance  * e );
         EntityNode();
         ~EntityNode();
 
@@ -370,8 +388,8 @@ class SCL_CORE_EXPORT EntityNode  : public STEPnode {
 ******************************************************************/
 class SCL_CORE_EXPORT SelectNode  : public STEPnode {
     public:
-        SDAI_Select * node;
-//    INPUT
+        SDAI_Select  * node;
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
                                    InstMgr * insts, int addFileId = 0 );
@@ -387,13 +405,13 @@ class SCL_CORE_EXPORT SelectNode  : public STEPnode {
                                    const TypeDescriptor * elem_type,
                                    InstMgr * insts, int addFileId = 0,
                                    const char * currSch = 0 );
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
-        SelectNode( SDAI_Select * s );
+//  CONSTRUCTORS
+        SelectNode( SDAI_Select  * s );
         SelectNode();
         ~SelectNode();
 
@@ -429,20 +447,20 @@ class SCL_CORE_EXPORT SelectNode  : public STEPnode {
 ******************************************************************/
 class SCL_CORE_EXPORT StringNode  : public STEPnode {
     public:
-        SDAI_String value;
-//    INPUT
+        SDAI_String  value;
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
+//  CONSTRUCTORS
         StringNode( StringNode & sn );
         StringNode( const char * sStr );
         StringNode();
@@ -459,20 +477,20 @@ class SCL_CORE_EXPORT StringNode  : public STEPnode {
 ******************************************************************/
 class SCL_CORE_EXPORT BinaryNode  : public STEPnode {
     public:
-        SDAI_Binary value;
-//    INPUT
+        SDAI_Binary  value;
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
+//  CONSTRUCTORS
         BinaryNode( BinaryNode & bn );
         BinaryNode( const char * sStr );
         BinaryNode();
@@ -487,21 +505,21 @@ class SCL_CORE_EXPORT BinaryNode  : public STEPnode {
 ******************************************************************/
 class SCL_CORE_EXPORT EnumNode  : public STEPnode {
     public:
-        SDAI_Enum * node;
-//    INPUT
+        SDAI_Enum  * node;
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
-        EnumNode( SDAI_Enum * e );
+//  CONSTRUCTORS
+        EnumNode( SDAI_Enum  * e );
         EnumNode();
         ~EnumNode();
 
@@ -510,20 +528,20 @@ class SCL_CORE_EXPORT EnumNode  : public STEPnode {
 
 class SCL_CORE_EXPORT RealNode  : public STEPnode {
     public:
-        SDAI_Real value; // double
-//    INPUT
+        SDAI_Real  value; // double
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
+//  CONSTRUCTORS
         RealNode();
         ~RealNode();
 
@@ -532,20 +550,20 @@ class SCL_CORE_EXPORT RealNode  : public STEPnode {
 
 class SCL_CORE_EXPORT IntNode  : public STEPnode {
     public:
-        SDAI_Integer value; // long int
-//    INPUT
+        SDAI_Integer  value; // long int
+//  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err );
 
-//    OUTPUT
+//  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void     STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( ostream & out = cout );
 
-//    CONSTRUCTORS
+//  CONSTRUCTORS
         IntNode();
         ~IntNode();
 

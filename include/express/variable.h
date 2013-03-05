@@ -99,15 +99,7 @@ struct Variable_ {
 /* global variables */
 /********************/
 
-#ifdef VARIABLE_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif    /*  VARIABLE_C  */
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
 
 /******************************/
 /* macro function definitions */

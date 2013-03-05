@@ -60,7 +60,7 @@ typedef struct Symbol_ Symbol;
 struct Symbol_ {
     char * name;
     char * filename;
-    unsigned int line;
+    int line;
     char resolved;
 };
 
@@ -72,15 +72,7 @@ struct Symbol_ {
 /* global variables */
 /********************/
 
-#ifdef SYMBOL_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif    /*  SYMBOL_C  */
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 
 /******************************/
 /* macro function definitions */
@@ -96,8 +88,7 @@ GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void SYMBOLinitialize( void );
+extern SCL_EXPRESS_EXPORT void SYMBOLinitialize PROTO( ( void ) );
 SCL_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int line, char * filename );
-
 
 #endif    /*  SYMBOL_H  */

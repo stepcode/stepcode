@@ -4,7 +4,7 @@
 
 /*
 * NIST STEP Core Class Library
-* clstepcore/sdaiEnum.cc
+* cldai/sdaiEnum.cc
 * April 1997
 * K. C. Morris
 * David Sauder
@@ -19,7 +19,7 @@
 // class Logical
 ///////////////////////////////////////////////////////////////////////////////
 
-SDAI_LOGICAL::SDAI_LOGICAL( char * val ) {
+SDAI_LOGICAL::SDAI_LOGICAL ( const char * val ) {
     set_value( val );
 }
 
@@ -85,8 +85,6 @@ SDAI_LOGICAL::operator  Logical() const  {
     }
 }
 
-
-
 SDAI_LOGICAL & SDAI_LOGICAL::operator= ( const SDAI_LOGICAL & t ) {
     set_value( t.asInt() );
     return *this;
@@ -135,7 +133,6 @@ int SDAI_LOGICAL::set_value( const char * n )  {
     v = i;
     return v;
 }
-
 
 Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
                                  int needDelims ) {
@@ -645,8 +642,6 @@ Severity SDAI_Enum::EnumValidLevel( const char * value, ErrorDescriptor * err,
 ** \returns:  value set
 ******************************************************************/
 int SDAI_Enum::set_value( const char * n )  {
-    //  assigns the appropriate value based on n
-//    if  ( !n || (!strcmp (n, "")) )  return set_value (ENUM_NULL);
     if( !n || ( !strcmp( n, "" ) ) ) {
         nullify();
         return asInt();
@@ -683,7 +678,6 @@ int SDAI_Enum::set_value( const int i )  {
          << " for " <<  Name() << "\n";
     DebugDisplay();
     return  no_elements() + 1 ;
-
 }
 
 SDAI_Enum & SDAI_Enum::operator= ( const int i ) {

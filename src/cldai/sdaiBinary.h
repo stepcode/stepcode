@@ -1,7 +1,6 @@
 #ifndef SDAIBINARY_H
 #define SDAIBINARY_H 1
 
-#include <scl_export.h>
 #include <string>
 
 /*

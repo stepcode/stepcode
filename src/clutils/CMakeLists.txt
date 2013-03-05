@@ -10,16 +10,13 @@ set(LIBSTEPUTILS_SRCS
 )
 
 SET(LIBSTEPUTILS_PRIVATE_HDRS
-    dirobj.h 
-    errordesc.h 
-    gennodearray.h 
-    gennode.h 
-    gennodelist.h 
-    scldir.h 
-    scl_hash.h 
-    stat.h 
-    Str.h 
-    str_list.h
+    dirobj.h
+    errordesc.h
+    gennodearray.h
+    gennode.h
+    gennodelist.h
+    scl_hash.h
+    Str.h
 )
 
 include_directories(

@@ -12,7 +12,7 @@
  *
  */
 
-#include "../tests.h"
+#include "tests.h"
 
 /* STEPentity* Iterator class definition */
 #include "../SEarritr.h"

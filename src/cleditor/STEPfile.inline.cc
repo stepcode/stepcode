@@ -25,13 +25,14 @@ extern void HeaderSchemaInit( Registry & reg );
 
 //constructor & destructor
 
-STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool strict, bool verbose ) :
+STEPfile::STEPfile( Registry & r, InstMgr & i, const std::string filename, bool strict ) :
     _instances( i ), _reg( r ), _fileIdIncr( 0 ), _headerId( 0 ),
     _entsNotCreated( 0 ), _entsInvalid( 0 ), _entsIncomplete( 0 ),
     _entsWarning( 0 ), _errorCount( 0 ), _warningCount( 0 ),
-    _maxErrorCount( 5000 ), _strict( strict ), _verbose( verbose ),
-    _iFileSize( 0 ), _iFileCurrentPosition( 0 ),
-    _oFileInstsWritten( 0 ), _iFileStage1Done( false ) {
+    _maxErrorCount( 100000 ), _strict( strict ),_iFileSize( 0 ),
+    _iFileCurrentPosition( 0 ), _oFileInstsWritten( 0 ),
+    _iFileStage1Done( false )
+{
     SetFileType( VERSION_CURRENT );
     SetFileIdIncrement();
     _currentDir = new DirObj( "" );
@@ -57,19 +58,19 @@ int STEPfile::SetFileType( FileTypeCode ft ) {
     switch( _fileType ) {
         case( VERSION_OLD ):
             ENTITY_NAME_DELIM = '@';
-            FILE_DELIM = ( char * )"STEP;";
-            END_FILE_DELIM = ( char * )"ENDSTEP;";
+            FILE_DELIM = "STEP;";
+            END_FILE_DELIM = "ENDSTEP;";
             break;
         case( VERSION_UNKNOWN ):
         case( VERSION_CURRENT ):
             ENTITY_NAME_DELIM = '#';
-            FILE_DELIM = ( char * )"ISO-10303-21;";
-            END_FILE_DELIM = ( char * )"END-ISO-10303-21;";
+            FILE_DELIM = "ISO-10303-21;";
+            END_FILE_DELIM = "END-ISO-10303-21;";
             break;
         case( WORKING_SESSION ):
             ENTITY_NAME_DELIM = '#';
-            FILE_DELIM = ( char * )"STEP_WORKING_SESSION;";
-            END_FILE_DELIM = ( char * )"END-STEP_WORKING_SESSION;";
+            FILE_DELIM = "STEP_WORKING_SESSION;";
+            END_FILE_DELIM = "END-STEP_WORKING_SESSION;";
             break;
 
         default:
@@ -86,7 +87,7 @@ int STEPfile::SetFileType( FileTypeCode ft ) {
 ** remove any slashes, and anything before the slash,
 ** from filename
 */
-const std::string STEPfile::TruncFileName( const std::string filename ) const {
+std::string STEPfile::TruncFileName( const std::string filename ) const {
 #if defined(__WIN32__) && !defined(__mingw32__)
     char slash = '\\';
 #else
@@ -170,8 +171,6 @@ Severity STEPfile::AppendWorkingFile( const std::string filename, bool useTechCo
     return rval;
 }
 
-
-
 /******************************************************/
 istream * STEPfile::OpenInputFile( const std::string filename ) {
     _iFileCurrentPosition = 0;
@@ -227,7 +226,7 @@ void STEPfile::CloseInputFile( istream * in ) {
 
 
 /******************************************************/
-ofstream * STEPfile::OpenOutputFile( const std::string filename ) {
+ofstream * STEPfile::OpenOutputFile( std::string filename ) {
     if( filename.empty() ) {
         if( FileName().empty() ) {
             _error.AppendToUserMsg( "No current file name.\n" );
@@ -259,20 +258,19 @@ void STEPfile::CloseOutputFile( ostream * out ) {
     delete out;
 }
 
-
-
 /******************************************************/
 int STEPfile::IncrementFileId( int fileid ) {
     return ( fileid + FileIdIncr() );
 }
 
+
 void STEPfile::SetFileIdIncrement() {
     if( instances().MaxFileId() < 0 ) {
         _fileIdIncr = 0;
-    } else _fileIdIncr =
-            ( int )( ( ceil( ( ( instances().MaxFileId() + 99.0 ) / 1000.0 ) ) + 1.0 ) * 1000.0 );
+    } else {
+        _fileIdIncr = ( int )( ( ceil( ( instances().MaxFileId() + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 );
+    }
 }
-
 
 /**
  * Returns the schema name from the file schema header section (or the 1st
@@ -280,7 +278,7 @@ void STEPfile::SetFileIdIncrement() {
  * is no header section or no value for file schema, NULL is returned and
  * schName is unset.
  */
-const std::string STEPfile::schemaName() {
+std::string STEPfile::schemaName() {
     SdaiFile_schema * fs;
     std::string schName;
     STEPnode * n;

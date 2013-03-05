@@ -53,7 +53,7 @@ class SCL_UTILS_EXPORT DirObj {
         virtual ~DirObj();
 
         bool LoadDirectory( const std::string & name );
-        static const std::string Normalize( const std::string & s );
+        static std::string Normalize( const std::string & s );
 
         const char * ValidDirectories( const char * );
 
@@ -61,7 +61,7 @@ class SCL_UTILS_EXPORT DirObj {
         const char * File( int index );
         // check for file in the currently loaded directory
         bool FileExists( const char * file ) {
-            return Index( file ) ? true : false;
+            return Index( file ) ? 1 : 0;
         };
         bool FileExists( const std::string & file ) {
             return Index( file.c_str() ) ? true : false;

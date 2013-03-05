@@ -30,50 +30,50 @@
 #define NUM_CMD_COLUMNS 3
 
 // **** each of CMD_CHAR must be a unique char.
-#define SAVE_COMPLETE_CMD_CHAR                's'
-#define SAVE_COMPLETE_CMD_COL                 0
-#define SAVE_COMPLETE_STATE_CHAR        ' '
-#define SAVE_COMPLETE_STATE_COL                 4
+#define SAVE_COMPLETE_CMD_CHAR      's'
+#define SAVE_COMPLETE_CMD_COL        0
+#define SAVE_COMPLETE_STATE_CHAR    ' '
+#define SAVE_COMPLETE_STATE_COL      4
 
-#define SAVE_INCOMPLETE_CMD_CHAR        'i'
-#define SAVE_INCOMPLETE_CMD_COL                 0
-#define SAVE_INCOMPLETE_STATE_CHAR        'I'
-#define SAVE_INCOMPLETE_STATE_COL         4
+#define SAVE_INCOMPLETE_CMD_CHAR    'i'
+#define SAVE_INCOMPLETE_CMD_COL      0
+#define SAVE_INCOMPLETE_STATE_CHAR  'I'
+#define SAVE_INCOMPLETE_STATE_COL    4
 
 // backup to last save
-//#define CANCEL_CMD_CHAR                        'c'
-//#define CANCEL_CMD_COL                         0
+//#define CANCEL_CMD_CHAR           'c'
+//#define CANCEL_CMD_COL             0
 
-#define NEW_STATE_CHAR                        'N'
-#define NEW_STATE_COL                         4
+#define NEW_STATE_CHAR          'N'
+#define NEW_STATE_COL            4
 
-#define DELETE_CMD_CHAR                        'd'
-#define DELETE_CMD_COL                         0
-#define DELETE_STATE_CHAR                'D'
-#define DELETE_STATE_COL                 4
+#define DELETE_CMD_CHAR         'd'
+#define DELETE_CMD_COL           0
+#define DELETE_STATE_CHAR       'D'
+#define DELETE_STATE_COL         4
 
 // close will try to save it to its previous status
-#define CLOSE_CMD_CHAR                        'c'
-#define CLOSE_CMD_COL                         2
+#define CLOSE_CMD_CHAR          'c'
+#define CLOSE_CMD_COL            2
 
-#define MODIFY_CMD_CHAR                        'm'
-#define MODIFY_CMD_COL                         2
-#define MODIFY_STATE_CHAR                 'M'
-#define MODIFY_STATE_COL                 3
+#define MODIFY_CMD_CHAR         'm'
+#define MODIFY_CMD_COL           2
+#define MODIFY_STATE_CHAR       'M'
+#define MODIFY_STATE_COL         3
 
-#define VIEW_CMD_CHAR                         'v'
-#define VIEW_CMD_COL                         2
-#define VIEW_STATE_CHAR                        'V'
-#define VIEW_STATE_COL                         3
+#define VIEW_CMD_CHAR           'v'
+#define VIEW_CMD_COL             2
+#define VIEW_STATE_CHAR         'V'
+#define VIEW_STATE_COL           3
 
-#define REPLICATE_CMD_CHAR                 'r'
-#define REPLICATE_CMD_COL                 1
+#define REPLICATE_CMD_CHAR      'r'
+#define REPLICATE_CMD_COL        1
 
-#define EXECUTE_CMD_CHAR                'x'
-#define EXECUTE_CMD_COL                         5
+#define EXECUTE_CMD_CHAR        'x'
+#define EXECUTE_CMD_COL          5
 
-#define UNMARK_CMD_CHAR                        'u'
-#define UNMARK_CMD_COL                         5
+#define UNMARK_CMD_CHAR         'u'
+#define UNMARK_CMD_COL           5
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +149,7 @@ class SCL_EDITOR_EXPORT CmdMgr {
 // STATE LIST OPERATIONS
         MgrNode   *  GetHead( stateEnum listType );
         DisplayNode * GetHead( displayStateEnum listType );
-        ReplicateLinkNode    *    GetReplicateHead() {
+        ReplicateLinkNode  * GetReplicateHead() {
             return ( ReplicateLinkNode * )( replicateList->GetHead() );
         }
 

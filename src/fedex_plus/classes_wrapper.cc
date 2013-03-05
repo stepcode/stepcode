@@ -5,8 +5,6 @@
 #include "complexSupport.h"
 #include <scl_memmgr.h>
 
-#include <scl_trace_fprintf.h>
-
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
 ** December  5, 1989
@@ -152,7 +150,7 @@ void print_file_trailer( Express express, FILES * files ) {
  ** organization of the schemas in the input Express
  ******************************************************************/
 void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
-                 ComplexCollect * col, int cnt ) {
+            ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     DictionaryEntry de;
     Type i;
@@ -245,7 +243,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         fprintf( files->inc, "//    ***** Redefined Enumerations:\n" );
         /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
         * Modified Jan 2012 by MAP - moving enums to own dictionary */
-        HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);{
+        HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);
+        {
             Type t;
             while ( 0 != ( t = (Type) DICTdo( &de ) ) ) {
                 if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {
@@ -265,11 +264,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     if( t->search_id == CANPROCESS ) {
         // Only selects haven't been processed yet and may still be set to
         // CANPROCESS.
-        if ( TYPEis_select( t ) )
-            TYPEselect_print( t, files, schema );
-        if ( TYPEis_enumeration( t ) )
-            TYPEprint_descriptions( t, files, schema );
-
+        TYPEselect_print( t, files, schema );
         t->search_id = PROCESSED;
     }
     SCOPEod;
@@ -300,7 +295,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
 
         fprintf( files->inc, "\n};\n" );
 
-        fprintf( files->inc, "\n\ntypedef SdaiModel_contents_%s * SdaiModel_contents_%s_ptr;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "\n\ntypedef       SdaiModel_contents_%s *       SdaiModel_contents_%s_ptr;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "\n\ntypedef const SdaiModel_contents_%s * const_SdaiModel_contents_%s_ptr;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
         fprintf( files->inc, "typedef SdaiModel_contents_%s_ptr SdaiModel_contents_%s_var;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
 
         fprintf( files -> inc,
@@ -415,8 +411,6 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
              "#define SCLLOGFILE \"scl.log\"\n"
              "#endif \n" );
 
-    fprintf( libfile, "\n/* static int debug_access_hooks = 0; */\n" );
-
     fprintf( libfile, "\n#include \"%s.h\"\n", schnm );
 
     // 3. header for namespace to contain all formerly-global variables
@@ -499,6 +493,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, PROCto_string( p ) );
             fprintf( createall, "    %s::schema->AddProcedure( str );\n", SCHEMAget_name( schema ) );
+            fprintf( createall, "/*\n%s\n*/\n", PROCto_string( p ) );
         }
 
         fprintf( files->classes, "\n// Schema:  %s", schnm );
@@ -736,5 +731,5 @@ void print_file( Express express ) {
         print_schemas_combined( express, col, &files );
     }
     print_file_trailer( express, &files );
-    print_complex( col, ( const char * )"compstructs.cc" );
+    print_complex( col, "compstructs.cc" );
 }

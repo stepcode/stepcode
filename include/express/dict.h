@@ -72,15 +72,7 @@ typedef HashEntry       DictionaryEntry;
 /* global variables */
 /********************/
 
-#ifdef DICTIONARY_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*DICTIONARY_C*/
-
-GLOBAL SCL_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
 
 /*******************************/
 /* macro function definitions */

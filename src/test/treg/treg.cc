@@ -20,10 +20,8 @@
 
 /* A switch for tests.h, because we don't need to schema header file */
 #define DONT_NEED_HEADER
-#include "../tests.h"
+#include "tests.h"
 
-/* STEPentity* Iterator class definition */
-#include "../SEarritr.h"
 
 // This function, given a pointer to an entity, will populate it, that is,
 // put data values in its attributes.  PopulateEntity doesn't care what
