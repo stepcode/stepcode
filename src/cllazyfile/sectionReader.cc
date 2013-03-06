@@ -44,7 +44,7 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
         if(  c == '\'' ) {
             //push past string
             _file.unget();
-            ToExpressStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+            GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
             //push past comment
@@ -125,7 +125,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 break;
             case '\'':
                 _file.unget();
-                ToExpressStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+                GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
                 break;
             case '=':
                 return -1;

@@ -63,7 +63,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     endif( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
 
     # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
-    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai stepcore express stepeditor steputils base" "TESTABLE" )
+    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai;stepcore;express;stepeditor;steputils;base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
@@ -92,8 +92,8 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_tests_properties( generate_cpp_${SCHEMA_SHORT_NAME} PROPERTIES LABELS cpp_schema_gen )
     set_tests_properties( build_lazy_cpp_${PROJECT_NAME} build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 
-    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME} base" "TESTABLE" )
-    SCL_ADDEXEC( lazy_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME} steplazyfile stepeditor" "TESTABLE" )
+    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME};base" "TESTABLE" )
+    SCL_ADDEXEC( lazy_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepeditor" "TESTABLE" )
     add_dependencies( p21read_${PROJECT_NAME} version_string )
     add_dependencies( lazy_${PROJECT_NAME} version_string )
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
@@ -105,7 +105,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
         get_filename_component( name ${src} NAME_WE )
         get_filename_component( path ${src} ABSOLUTE )
-        SCL_ADDEXEC( ${name}_${PROJECT_NAME} "${src}" "${PROJECT_NAME} base" "TESTABLE" )
+        SCL_ADDEXEC( ${name}_${PROJECT_NAME} "${src}" "${PROJECT_NAME};base" "TESTABLE" )
         add_dependencies( ${name}_${PROJECT_NAME} version_string )
         set_target_properties( ${name}_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                                "${${PROJECT_NAME}_COMPILE_FLAGS} -I${path}" )
