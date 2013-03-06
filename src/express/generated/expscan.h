@@ -56,33 +56,33 @@
 #define YYEOF -1
 
 struct Buf {
-    void  * elts;   /* elements. */
-    int     nelts;  /* number of elements. */
-    size_t  elt_size;   /* in bytes. */
-    int     nmax;   /* max capacity of elements. */
+    void   *elts;	/* elements. */
+    int     nelts;	/* number of elements. */
+    size_t  elt_size;	/* in bytes. */
+    int     nmax;	/* max capacity of elements. */
 };
 
 /* scanner data */
 typedef struct perplex {
-    void * extra;       /* application data */
-    FILE * inFile;
-    struct Buf * buffer;
-    char * tokenText;
-    char * tokenStart;
-    char * cursor;
-    char * marker;
-    char * null;
+    void *extra;        /* application data */
+    FILE *inFile;
+    struct Buf *buffer;
+    char *tokenText;
+    char *tokenStart;
+    char *cursor;
+    char *marker;
+    char *null;
     int atEOI;
     int condition;
-} * perplex_t;
+} *perplex_t;
 
-perplex_t perplexFileScanner( FILE * input );
-perplex_t perplexStringScanner( char * firstChar, size_t numChars );
-void perplexFree( perplex_t scanner );
+perplex_t perplexFileScanner(FILE *input);
+perplex_t perplexStringScanner(char *firstChar, size_t numChars);
+void perplexFree(perplex_t scanner);
 
-void perplexUnput( perplex_t scanner, char c );
-void perplexSetExtra( perplex_t scanner, void * extra );
-void * perplexGetExtra( perplex_t scanner );
+void perplexUnput(perplex_t scanner, char c);
+void perplexSetExtra(perplex_t scanner, void *extra);
+void* perplexGetExtra(perplex_t scanner);
 
 #ifndef PERPLEX_LEXER
 #define PERPLEX_LEXER yylex
