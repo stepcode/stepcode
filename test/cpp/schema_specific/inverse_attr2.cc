@@ -21,12 +21,12 @@ extern void SchemaInit( class Registry & );
 #include "schema.h"
 
 ///second way of finding inverse attrs - FAILS
-bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg) {
+bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
     const Inverse_attribute * ia;
     int j = 0;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
         cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
-        << ", from entity: " << ia->inverted_entity_id_() << endl;
+             << ", from entity: " << ia->inverted_entity_id_() << endl;
 
         //now find the entity containing the attribute in question
         const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
@@ -38,18 +38,18 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg) {
                 cout << "attribute '" << attrDesc->Name() << "' is attribute #" << k
                      << " of '" << inv_ed->Name() << "'." << endl;
 
-                 // now go through the instList looking at each instance of
-                 // entity type 'inv_ed', looking for references to 'ed' in the
-                 // attribute described by 'attrDesc'
+                // now go through the instList looking at each instance of
+                // entity type 'inv_ed', looking for references to 'ed' in the
+                // attribute described by 'attrDesc'
                 int l = 0;
                 SdaiReldefinesbytype * inst;
-                while( 0 != ( inst = (SdaiReldefinesbytype *) instList.GetApplication_instance( inv_ed->Name(), l ) ) ) {
+                while( 0 != ( inst = ( SdaiReldefinesbytype * ) instList.GetApplication_instance( inv_ed->Name(), l ) ) ) {
                     int i = inst->StepFileId();
                     if( i < l ) {
                         break;
                     }
                     STEPattributeList attrlist = inst->attributes;
-                    if( attrlist.list_length() < k+1 ) {
+                    if( attrlist.list_length() < k + 1 ) {
                         return false;
                     }
                     STEPattribute sa = attrlist[k];
@@ -85,15 +85,15 @@ int main( int argc, char * argv[] ) {
     }
     sfile.ReadExchangeFile( argv[1] );
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         sfile.Error().PrintContents( cout );
         exit( EXIT_FAILURE );
     }
 //find inverse attribute descriptors
     //first, find inverse attrs unique to this entity (i.e. not inherited)
-    const EntityDescriptor * ed = registry.FindEntity("window");
+    const EntityDescriptor * ed = registry.FindEntity( "window" );
     InverseAItr iaIter( ed->InverseAttr() ); //iterator for inverse attributes
-    if( findInverseAttrs2(iaIter, instance_list, registry ) ) {
+    if( findInverseAttrs2( iaIter, instance_list, registry ) ) {
         inverseAttrsFound = true;
     }
     //now, find inherited inverse attrs

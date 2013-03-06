@@ -1102,7 +1102,7 @@ int Where_rule__list::Count() {
 }
 
 void Where_rule__list::Clear() {
-    for ( int i = 0; i < _count ; i ++ ) {
+    for( int i = 0; i < _count ; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1211,7 +1211,7 @@ int Uniqueness_rule__set::Count() {
 }
 
 void Uniqueness_rule__set::Clear() {
-    for ( int i = 0; i < _count; i ++ ) {
+    for( int i = 0; i < _count; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1332,7 +1332,7 @@ int Global_rule__set::Count() {
 }
 
 void Global_rule__set::Clear() {
-    for ( int i = 0; i < _count; i ++ ) {
+    for( int i = 0; i < _count; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1764,7 +1764,7 @@ STEPaggregate * AggrTypeDescriptor::CreateAggregate() {
     }
 }
 
-void AggrTypeDescriptor::AssignAggrCreator(AggregateCreator f) {
+void AggrTypeDescriptor::AssignAggrCreator( AggregateCreator f ) {
     CreateNewAggr = f;
 }
 

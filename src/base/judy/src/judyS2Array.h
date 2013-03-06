@@ -40,7 +40,7 @@ class judyS2Array {
         unsigned char * _buff;
         bool _success;
     public:
-        judyS2Array( unsigned int maxKeyLen ): _maxKeyLen( maxKeyLen ), _lastSlot(0), _success( true ) {
+        judyS2Array( unsigned int maxKeyLen ): _maxKeyLen( maxKeyLen ), _lastSlot( 0 ), _success( true ) {
             _judyarray = judy_open( _maxKeyLen, 0 );
             _buff = new unsigned char[_maxKeyLen];
             assert( sizeof( JudyValue ) == sizeof( this ) && "JudyValue *must* be the same size as a pointer!" );
@@ -104,7 +104,7 @@ class judyS2Array {
             assert( keyLen <= _maxKeyLen );
             _lastSlot = ( vector ** ) judy_cell( _judyarray, ( const unsigned char * )key, keyLen );
             if( _lastSlot ) {
-                if( ! ( * _lastSlot ) ) {
+                if( !( * _lastSlot ) ) {
                     * _lastSlot = new vector;
                     /* TODO store vectors inside judy with placement new
                     * vector * n = judy_data( _judyarray, sizeof( std::vector < JudyValue > ) );
@@ -135,7 +135,7 @@ class judyS2Array {
             assert( keyLen <= _maxKeyLen );
             _lastSlot = ( vector ** ) judy_cell( _judyarray, ( const unsigned char * )key, keyLen );
             if( _lastSlot ) {
-                if( ! ( * _lastSlot ) ) {
+                if( !( * _lastSlot ) ) {
                     * _lastSlot = new vector;
                     /* TODO store vectors inside judy with placement new
                      * (see other insert(), above)
@@ -199,7 +199,7 @@ class judyS2Array {
 
         /// retrieve the first key-value pair in the array
         const cpair & begin() {
-            _buff[0]='\0';
+            _buff[0] = '\0';
             _lastSlot = ( vector ** ) judy_strt( _judyarray, ( const unsigned char * ) _buff, 0 );
             return mostRecentPair();
         }

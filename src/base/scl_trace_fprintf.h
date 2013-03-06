@@ -20,7 +20,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    SCL_BASE_EXPORT void trace_fprintf (char const *sourcefile, int line, FILE* file, const char *format, ...);
+    SCL_BASE_EXPORT void trace_fprintf( char const * sourcefile, int line, FILE * file, const char * format, ... );
 #ifdef __cplusplus
 }
 #endif

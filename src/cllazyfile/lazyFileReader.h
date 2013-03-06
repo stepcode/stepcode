@@ -23,37 +23,37 @@ class headerSectionReader;
 ///read an exchange file of any supported type (currently only p21)
 ///for use only from within lazyInstMgr
 class lazyFileReader {
-protected:
-    std::string _fileName;
-    lazyInstMgr * _parent;
-    headerSectionReader * _header;
-    std::ifstream _file;
-    fileTypeEnum _fileType;
-    fileID _fileID;
+    protected:
+        std::string _fileName;
+        lazyInstMgr * _parent;
+        headerSectionReader * _header;
+        std::ifstream _file;
+        fileTypeEnum _fileType;
+        fileID _fileID;
 
-    void initP21();
+        void initP21();
 
-    ///TODO detect file type; for now, assume all are Part 21
-    void detectType() {
-        _fileType = Part21;
-    }
-public:
-    fileID ID() const {
-        return _fileID;
-    }
-    instancesLoaded_t * getHeaderInstances();
+        ///TODO detect file type; for now, assume all are Part 21
+        void detectType() {
+            _fileType = Part21;
+        }
+    public:
+        fileID ID() const {
+            return _fileID;
+        }
+        instancesLoaded_t * getHeaderInstances();
 
-    lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid );
-    ~lazyFileReader();
+        lazyFileReader( std::string fname, lazyInstMgr * i, fileID fid );
+        ~lazyFileReader();
 
-    fileTypeEnum type() const {
-        return _fileType;
-    }
-    lazyInstMgr * getInstMgr() const {
-        return _parent;
-    }
+        fileTypeEnum type() const {
+            return _fileType;
+        }
+        lazyInstMgr * getInstMgr() const {
+            return _parent;
+        }
 
-    bool needKW( const char * kw );
+        bool needKW( const char * kw );
 };
 
 #endif //LAZYFILEREADER_H

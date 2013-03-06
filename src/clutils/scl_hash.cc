@@ -307,7 +307,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
             ** table over-full?
             */
             if( ++table->KeyCount / MUL( table->SegmentCount, SEGMENT_SIZE ) > table->MaxLoadFactor ) {
-                SCL_HASHexpand_table( table );    /* doesn't affect q	*/
+                SCL_HASHexpand_table( table );    /* doesn't affect q   */
             }
     }
     return( ( struct Element * )0 ); /* was return (Element)q */
@@ -327,7 +327,7 @@ SCL_HASHhash( char * Key, Hash_TableP table ) {
     ** Convert string to integer
     */
     while( *k ) {
-        h = h * PRIME1 ^ ( *k++ - ' ' );
+        h = h * PRIME1 ^( *k++ - ' ' );
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );

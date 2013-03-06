@@ -33,37 +33,36 @@ SDAI_Application_instance NilSTEPentity;
 SDAI_Application_instance::SDAI_Application_instance()
     :  _cur( 0 ),
        STEPfile_id( 0 ),
-       p21Comment(std::string("")),
-       eDesc(NULL),
+       p21Comment( std::string( "" ) ),
+       eDesc( NULL ),
        headMiEntity( 0 ),
        nextMiEntity( 0 ),
-       _complex( 0 )
-{
+       _complex( 0 ) {
 }
 
 SDAI_Application_instance::SDAI_Application_instance( int fileid, int complex )
     :  _cur( 0 ),
        STEPfile_id( fileid ),
-       p21Comment(std::string("")),
-       eDesc(NULL),
+       p21Comment( std::string( "" ) ),
+       eDesc( NULL ),
        headMiEntity( 0 ),
        nextMiEntity( 0 ),
-       _complex( complex )
-{
+       _complex( complex ) {
 }
 
 SDAI_Application_instance::~SDAI_Application_instance() {
-    STEPattribute *attr;
+    STEPattribute * attr;
 
     ResetAttributes();
     do {
         attr = NextAttribute();
-        if (attr) {
+        if( attr ) {
             attr->refCount --;
-            if (attr->refCount <= 0)
+            if( attr->refCount <= 0 ) {
                 delete attr;
+            }
         }
-    } while (attr);
+    } while( attr );
 
 
     if( MultipleInheritance() ) {
@@ -85,8 +84,9 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
         _error.GreaterSeverity( SEVERITY_BUG );
         return S_ENTITY_NULL;
     } else {
-        if (!eDesc)
+        if( !eDesc ) {
             return S_ENTITY_NULL;
+        }
 
         SDAI_Application_instance * seNew = eDesc->NewSTEPentity();
         seNew -> CopyAs( this );
@@ -98,7 +98,7 @@ void SDAI_Application_instance::AddP21Comment( const char * s, bool replace ) {
     if( replace ) {
         p21Comment.clear();
     }
-    if (s) {
+    if( s ) {
         p21Comment += s;
     }
 }
@@ -218,8 +218,9 @@ void SDAI_Application_instance::CopyAs( SDAI_Application_instance * other ) {
 
 
 const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
-    if (!eDesc)
+    if( !eDesc ) {
         return NULL;
+    }
     return eDesc->Name( schnm );
 }
 
@@ -228,8 +229,9 @@ const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
  * type as this one
  */
 const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor * ed ) const {
-    if (!eDesc)
+    if( !eDesc ) {
         return NULL;
+    }
     return ( eDesc->IsA( ed ) );
 }
 
@@ -334,8 +336,8 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         out << p21Comment;
     }
 
-    if (eDesc) {
-        if( mixedCase) {
+    if( eDesc ) {
+        if( mixedCase ) {
             out << "#" << STEPfile_id << " "
                 << eDesc->QualifiedName( s ) << endl;
         } else {
@@ -729,7 +731,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
         err->GreaterSeverity( SEVERITY_BUG );
         sprintf( messageBuf,
                  " BUG: EntityValidLevel() called with null pointer %s\n",
-                 "for SDAI_Application_instance argument.");
+                 "for SDAI_Application_instance argument." );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
         cerr << "Internal error:  " << __FILE__ <<  __LINE__

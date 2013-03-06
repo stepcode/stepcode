@@ -4,15 +4,15 @@
 
 /////////    SDAI_Model_contents_instances
 
-SDAI_Model_contents_instances::SDAI_Model_contents_instances ( ) {
+SDAI_Model_contents_instances::SDAI_Model_contents_instances( ) {
 }
 
-SDAI_Model_contents_instances ::~SDAI_Model_contents_instances () {
+SDAI_Model_contents_instances ::~SDAI_Model_contents_instances() {
 }
 
 /////////    SDAI_Model_contents
 
-SDAI_Model_contents::SDAI_Model_contents ( ) {
+SDAI_Model_contents::SDAI_Model_contents( ) {
 }
 
 SDAI_Model_contents ::~SDAI_Model_contents() {
@@ -27,7 +27,7 @@ SDAI_Model_contents::instances_() {
 
 SDAI_Model_contents_instances_ptr
 SDAI_Model_contents::instances_() const {
-    return ( const SDAI_Model_contents_instances_ptr  ) &_instances;
+    return ( const SDAI_Model_contents_instances_ptr ) &_instances;
 }
 
 SDAI_Entity_extent__set_var

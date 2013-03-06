@@ -31,12 +31,12 @@ SCL_UTILS_EXPORT char    *    StrToLower( const char *, char * );
 SCL_UTILS_EXPORT const char * StrToLower( const char * word, std::string & s );
 SCL_UTILS_EXPORT const char * StrToUpper( const char * word, std::string & s );
 SCL_UTILS_EXPORT const char * StrToConstant( const char * word, std::string & s );
-SCL_UTILS_EXPORT int          StrCmpIns( const char *str1, const char *str2 );
+SCL_UTILS_EXPORT int          StrCmpIns( const char * str1, const char * str2 );
 SCL_UTILS_EXPORT const char * PrettyTmpName( const char * oldname );
 SCL_UTILS_EXPORT char    *    PrettyNewName( const char * oldname );
 SCL_UTILS_EXPORT char    *    EntityClassName( char * oldname );
 
-SCL_UTILS_EXPORT bool StrEndsWith( const std::string &s, const char * suffix );
+SCL_UTILS_EXPORT bool StrEndsWith( const std::string & s, const char * suffix );
 SCL_UTILS_EXPORT std::string  GetLiteralStr( istream & in, ErrorDescriptor * err );
 
 extern SCL_UTILS_EXPORT Severity CheckRemainingInput

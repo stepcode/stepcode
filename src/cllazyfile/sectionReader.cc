@@ -18,12 +18,12 @@
 #include "instMgrHelper.h"
 
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
-                                _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
+    _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
     _fileID = _lazyFile->ID();
 }
 
 
-std::streampos sectionReader::findNormalString( const std::string& str, bool semicolon ) {
+std::streampos sectionReader::findNormalString( const std::string & str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
     char c;
@@ -41,7 +41,7 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
                 continue;
             }
         }
-        if(  c == '\'' ) {
+        if( c == '\'' ) {
             //push past string
             _file.unget();
             GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
@@ -66,7 +66,7 @@ std::streampos sectionReader::findNormalString( const std::string& str, bool sem
         }
     }
     if( i == l ) {
-            found = _file.tellg();
+        found = _file.tellg();
     }
     if( _file.is_open() && _file.good() ) {
         return found;
@@ -81,11 +81,11 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
     char c;
     str.assign( 0, 0 ); //clear() frees the memory
-    str.reserve(100);
+    str.reserve( 100 );
     skipWS();
     while( c = _file.get(), _file.good() ) {
         if( c == '-' || c == '_' || isupper( c ) || isdigit( c ) ||
-            ( c == '!' && str.length() == 0 ) ) {
+                ( c == '!' && str.length() == 0 ) ) {
             str.append( 1, c );
         } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str.length() == 0 ) ) {
             //push past comment
@@ -133,7 +133,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 skipWS();
                 if( isdigit( _file.peek() ) ) {
                     if( refs != 0 ) {
-                        if(! * refs ) {
+                        if( ! * refs ) {
                             *refs = new std::vector< instanceID >;
                         }
                         instanceID n;
@@ -206,7 +206,7 @@ instanceID sectionReader::readInstanceNumber() {
         end = _file.tellg();
         _file.seekg( start );
         _file >> id;
-        _file.seekg ( end );
+        _file.seekg( end );
         assert( id > 0 );
     }
     return id;
@@ -214,7 +214,7 @@ instanceID sectionReader::readInstanceNumber() {
 
 //TODO: most of the rest of readdata1, all of readdata2
 SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
-                                                            const std::string & typeName, const std::string & schName, bool header ) {
+        const std::string & typeName, const std::string & schName, bool header ) {
     char c;
     const char * tName = 0, * sName = 0;
     std::string comment;
@@ -227,7 +227,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     } else if( !header ) {
         SdaiFile_schema * fs = dynamic_cast< SdaiFile_schema * >( _lazyFile->getHeaderInstances()->find( 3 ) );
         if( fs ) {
-            StringNode * sn = (StringNode *) fs->schema_identifiers_()->GetHead();
+            StringNode * sn = ( StringNode * ) fs->schema_identifiers_()->GetHead();
             if( sn ) {
                 sName = sn->value.c_str();
                 if( sn->NextNode() ) {
@@ -261,7 +261,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             break;
         default:
             if( ( !header ) && ( typeName.size() == 0 ) ) {
-                tName = getDelimitedKeyword(";( /\\");
+                tName = getDelimitedKeyword( ";( /\\" );
             }
             inst = reg->ObjCreate( tName, sName );
             break;

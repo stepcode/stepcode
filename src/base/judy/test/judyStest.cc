@@ -6,7 +6,7 @@
 
 int main() {
     bool pass = true;
-    std::cout.setf(std::ios::boolalpha);
+    std::cout.setf( std::ios::boolalpha );
 
     judySArray< uint64_t > js( 255 );
     js.insert( "blah", 1234 );
@@ -14,7 +14,7 @@ int main() {
     js.insert( "blh",   123 );
     js.insert( "bla",   134 );
     js.insert( "bh",    234 );
-    
+
 
     judySArray< uint64_t >::pair kv = js.atOrAfter( "ab" );
     //TODO if()...

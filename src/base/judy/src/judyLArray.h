@@ -114,7 +114,7 @@ class judyLArray {
         /// retrieve the key-value pair for the most recent judy query.
         inline const pair mostRecentPair() {
             pair kv;
-            judy_key( _judyarray, (unsigned char *) _buff, _depth * JUDY_key_size );
+            judy_key( _judyarray, ( unsigned char * ) _buff, _depth * JUDY_key_size );
             if( _lastSlot ) {
                 kv.value = *_lastSlot;
                 _success = true;

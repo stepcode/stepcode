@@ -97,7 +97,7 @@ class judyL2Array {
         bool insert( JudyKey key, JudyValue value ) {
             _lastSlot = ( vector ** ) judy_cell( _judyarray, ( const unsigned char * ) &key, _depth * JUDY_key_size );
             if( _lastSlot ) {
-                if( ! ( * _lastSlot ) ) {
+                if( !( * _lastSlot ) ) {
                     * _lastSlot = new vector;
                     /* TODO store vectors inside judy with placement new
                     * vector * n = judy_data( _judyarray, sizeof( std::vector < JudyValue > ) );
@@ -122,7 +122,7 @@ class judyL2Array {
         bool insert( JudyKey key, const vector & values, bool overwrite = false ) {
             _lastSlot = ( vector ** ) judy_cell( _judyarray, ( const unsigned char * ) &key, _depth * JUDY_key_size );
             if( _lastSlot ) {
-                if( ! ( * _lastSlot ) ) {
+                if( !( * _lastSlot ) ) {
                     * _lastSlot = new vector;
                     /* TODO store vectors inside judy with placement new
                      * (see other insert(), above)
@@ -160,7 +160,7 @@ class judyL2Array {
         /// retrieve the key-value pair for the most recent judy query.
         inline const cpair mostRecentPair() {
             cpair kv;
-            judy_key( _judyarray, (unsigned char *) _buff, _depth * JUDY_key_size );
+            judy_key( _judyarray, ( unsigned char * ) _buff, _depth * JUDY_key_size );
             if( _lastSlot ) {
                 kv.value = *_lastSlot;
                 _success = true;

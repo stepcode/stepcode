@@ -172,21 +172,21 @@ class SCL_CORE_EXPORT STEPattribute {
         ~STEPattribute() {};
 
         //  INTEGER
-        STEPattribute( const class AttrDescriptor & d, SDAI_Integer *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p );
         //  BINARY
-        STEPattribute( const class AttrDescriptor & d, SDAI_Binary *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Binary * p );
         //  STRING
-        STEPattribute( const class AttrDescriptor & d, SDAI_String *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_String * p );
         //  REAL & NUMBER
-        STEPattribute( const class AttrDescriptor & d, SDAI_Real *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Real * p );
         //  ENTITY
         STEPattribute( const class AttrDescriptor & d, SDAI_Application_instance* *p );
         //  AGGREGATE
         STEPattribute( const class AttrDescriptor & d, STEPaggregate * p );
         //  ENUMERATION  and Logical
-        STEPattribute( const class AttrDescriptor & d, SDAI_Enum *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Enum * p );
         //  SELECT
-        STEPattribute( const class AttrDescriptor & d, SDAI_Select *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Select * p );
         //  UNDEFINED
         STEPattribute( const class AttrDescriptor & d, SCLundefined * p );
 

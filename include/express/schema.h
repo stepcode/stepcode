@@ -88,7 +88,7 @@ struct Schema_ {
     Linked_List reflist;
     Linked_List uselist;
     /** \var refdict, usedict
-     * dictionarys into which are entered renames for each specific 
+     * dictionarys into which are entered renames for each specific
      * object specified in a rename clause (even if it uses the same
      * name */
     Dictionary refdict;
@@ -96,7 +96,7 @@ struct Schema_ {
 
     Linked_List use_schemas; /**< lists of schemas that are fully use'd
                               * entries can be 0 if schemas weren't found during RENAMEresolve */
-     Linked_List ref_schemas; /**< lists of schemas that are fully ref'd
+    Linked_List ref_schemas; /**< lists of schemas that are fully ref'd
                                * entries can be 0 if schemas weren't found during RENAMEresolve */
 };
 

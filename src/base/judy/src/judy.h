@@ -42,30 +42,30 @@
     defined(__arch64__)    || \
     defined(__powerpc64__) || \
     defined (__s390x__)
-    //    defines for 64 bit
-    typedef unsigned long long judyvalue;
-    typedef unsigned long long JudySlot;
-    #define JUDY_key_mask (0x07)
-    #define JUDY_key_size 8
-    #define JUDY_slot_size 8
-    #define JUDY_span_bytes (3 * JUDY_key_size)
-    #define JUDY_span_equiv JUDY_2
-    #define JUDY_radix_equiv JUDY_8
+//    defines for 64 bit
+typedef unsigned long long judyvalue;
+typedef unsigned long long JudySlot;
+#define JUDY_key_mask (0x07)
+#define JUDY_key_size 8
+#define JUDY_slot_size 8
+#define JUDY_span_bytes (3 * JUDY_key_size)
+#define JUDY_span_equiv JUDY_2
+#define JUDY_radix_equiv JUDY_8
 
-    #define PRIjudyvalue    "llu"
+#define PRIjudyvalue    "llu"
 
 #else
-    //    defines for 32 bit
-    typedef unsigned int judyvalue;
-    typedef unsigned int JudySlot;
-    #define JUDY_key_mask (0x03)
-    #define JUDY_key_size 4
-    #define JUDY_slot_size 4
-    #define JUDY_span_bytes (7 * JUDY_key_size)
-    #define JUDY_span_equiv JUDY_4
-    #define JUDY_radix_equiv JUDY_8
+//    defines for 32 bit
+typedef unsigned int judyvalue;
+typedef unsigned int JudySlot;
+#define JUDY_key_mask (0x03)
+#define JUDY_key_size 4
+#define JUDY_slot_size 4
+#define JUDY_span_bytes (7 * JUDY_key_size)
+#define JUDY_span_equiv JUDY_4
+#define JUDY_radix_equiv JUDY_8
 
-    #define PRIjudyvalue    "u"
+#define PRIjudyvalue    "u"
 
 #endif
 
@@ -75,8 +75,8 @@
 //    to enable this feature, set to 64
 
 #define JUDY_cache_line 64     // minimum size is 8 bytes
-    // can be calculated using http://stackoverflow.com/a/4049562/382458 - but that would limit optimization!
-    // 10x 1M key hexsort, line size 64: 9.949s; size 8: 10.018s --> 1% improvement for 64; however, this may be dwarfed by the sort code
+// can be calculated using http://stackoverflow.com/a/4049562/382458 - but that would limit optimization!
+// 10x 1M key hexsort, line size 64: 9.949s; size 8: 10.018s --> 1% improvement for 64; however, this may be dwarfed by the sort code
 
 #define JUDY_seg    65536
 
@@ -117,9 +117,9 @@ typedef struct {
 } Judy;
 
 #ifdef ASKITIS
-   int Words = 0;
-   int Inserts = 0;
-   int Found = 0;
+int Words = 0;
+int Inserts = 0;
+int Found = 0;
 #  if JUDY_key_size < 8
 #    define JUDY_max    JUDY_16
 #  else

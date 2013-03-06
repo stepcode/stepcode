@@ -59,13 +59,13 @@ class SCL_CORE_EXPORT MgrNode : public GenericNode {
     public:
         // used for sentinel node on lists of MgrNodes
         MgrNode();
-        MgrNode( SDAI_Application_instance  *se );
+        MgrNode( SDAI_Application_instance * se );
         // 'listState' ==
         //  completeSE - if reading valid exchange file
         //  incompleteSE or completeSE - if reading working session file
         //  newSE - if instance is created by user using editor (probe)
-        MgrNode( SDAI_Application_instance  *se, stateEnum listState );
-        MgrNode( SDAI_Application_instance  *se, stateEnum listState, MgrNodeList * list );
+        MgrNode( SDAI_Application_instance * se, stateEnum listState );
+        MgrNode( SDAI_Application_instance * se, stateEnum listState, MgrNodeList * list );
         virtual ~MgrNode();
 
 // STATE LIST OPERATIONS
@@ -117,7 +117,7 @@ class SCL_CORE_EXPORT MgrNode : public GenericNode {
         SDAI_Application_instance  * GetApplication_instance() {
             return se;
         }
-        DisplayNode *& displayNode() {
+        DisplayNode * & displayNode() {
             return di;
         }
         int ArrayIndex()        {
@@ -134,7 +134,7 @@ class SCL_CORE_EXPORT MgrNode : public GenericNode {
     protected:
 
     private:
-        void Init( SDAI_Application_instance  *s, stateEnum listState, MgrNodeList * list );
+        void Init( SDAI_Application_instance * s, stateEnum listState, MgrNodeList * list );
 };
 
 //////////////////////////////////////////////////////////////////////////////

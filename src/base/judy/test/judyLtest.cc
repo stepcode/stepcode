@@ -5,14 +5,14 @@
 #include "judyLArray.h"
 
 int main() {
-    std::cout.setf(std::ios::boolalpha);
+    std::cout.setf( std::ios::boolalpha );
     judyLArray< uint64_t, uint64_t > jl;
     std::cout << "size of judyLArray: " << sizeof( jl ) << std::endl;
-    jl.insert(5, 12);
-    jl.insert(6, 2);
-    jl.insert(7, 312);
-    jl.insert(8, 412);
-    judyLArray< uint64_t, uint64_t >::pair kv = jl.atOrAfter(4);
+    jl.insert( 5, 12 );
+    jl.insert( 6, 2 );
+    jl.insert( 7, 312 );
+    jl.insert( 8, 412 );
+    judyLArray< uint64_t, uint64_t >::pair kv = jl.atOrAfter( 4 );
     std::cout << "k " << kv.key << " v " << kv.value << std::endl;
 
     long v = jl.find( 11 );

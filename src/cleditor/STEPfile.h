@@ -196,7 +196,7 @@ class SCL_EDITOR_EXPORT STEPfile {
         void ReadRestOfFile( istream & in );
 
         /// create instance - used by ReadData1()
-        SDAI_Application_instance   * CreateInstance( istream & in, ostream & out );
+        SDAI_Application_instance  *  CreateInstance( istream & in, ostream & out );
         /// create complex instance - used by CreateInstance()
         SDAI_Application_instance  * CreateSubSuperInstance( istream & in, int fileid,
                 ErrorDescriptor & );
@@ -221,7 +221,7 @@ class SCL_EDITOR_EXPORT STEPfile {
         void CloseOutputFile( ostream * out );
 
         void WriteHeader( ostream & out );
-        void WriteHeaderInstance( SDAI_Application_instance  *obj, ostream & out );
+        void WriteHeaderInstance( SDAI_Application_instance * obj, ostream & out );
         void WriteHeaderInstanceFileName( ostream & out );
         void WriteHeaderInstanceFileDescription( ostream & out );
         void WriteHeaderInstanceFileSchema( ostream & out );

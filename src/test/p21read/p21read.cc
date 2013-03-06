@@ -166,8 +166,8 @@ int main( int argc, char * argv[] ) {
         stats.out( );
     }
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        exit(1);
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+        exit( 1 );
     }
 
     checkSchemaName( registry, sfile, ignoreErr );

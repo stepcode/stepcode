@@ -43,15 +43,14 @@ void MultList::setLevel( int l )
     }
 }
 
-int MultList::getMaxLevel()
-{
+int MultList::getMaxLevel() {
     EntList * child = childList;
     int maxLevel, childLevel;
 
     maxLevel = level;
     while( child ) {
         childLevel = child->getMaxLevel();
-        if (childLevel > maxLevel) {
+        if( childLevel > maxLevel ) {
             maxLevel = childLevel;
         }
         child = child->next;

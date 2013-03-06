@@ -19,7 +19,7 @@
 // class Logical
 ///////////////////////////////////////////////////////////////////////////////
 
-SDAI_LOGICAL::SDAI_LOGICAL ( const char * val ) {
+SDAI_LOGICAL::SDAI_LOGICAL( const char * val ) {
     set_value( val );
 }
 

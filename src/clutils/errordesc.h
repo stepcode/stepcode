@@ -1,6 +1,6 @@
 
 #ifndef ERRORDESC_H
-#define	ERRORDESC_H
+#define ERRORDESC_H
 
 /*
 * NIST Utils Class Library
@@ -83,7 +83,7 @@ class SCL_UTILS_EXPORT ErrorDescriptor {
         Severity severity( Severity s ) {
             return ( _severity = s );
         }
-	std::string severityString() const;
+        std::string severityString() const;
         Severity GetCorrSeverity( const char * s );
         Severity GreaterSeverity( Severity s ) {
             return ( ( s < _severity ) ?  _severity = s : _severity );

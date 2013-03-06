@@ -23,9 +23,9 @@ void lazyFileReader::initP21() {
         while( isspace( _file.peek() ) && _file.good() ) {
             _file.ignore( 1 );
         }
-        if( needKW("END-ISO-10303-21;") ) {
+        if( needKW( "END-ISO-10303-21;" ) ) {
             break;
-        } else if( !needKW("DATA") ) {
+        } else if( !needKW( "DATA" ) ) {
             std::cerr << "Corrupted file - did not find new data section (\"DATA\") or end of file (\"END-ISO-10303-21;\") at offset " << _file.tellg() << std::endl;
             break;
         }
@@ -49,7 +49,7 @@ instancesLoaded_t * lazyFileReader::getHeaderInstances() {
     return _header->getInstances();
 }
 
-lazyFileReader::lazyFileReader( std::string fname, lazyInstMgr* i, fileID fid ): _fileName(fname), _parent(i), _fileID( fid ) {
+lazyFileReader::lazyFileReader( std::string fname, lazyInstMgr * i, fileID fid ): _fileName( fname ), _parent( i ), _fileID( fid ) {
     _file.open( _fileName.c_str() );
     _file.imbue( std::locale::classic() );
     _file.unsetf( std::ios_base::skipws );

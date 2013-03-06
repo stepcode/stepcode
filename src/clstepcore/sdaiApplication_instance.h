@@ -44,9 +44,9 @@ class SCL_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         int _complex;
 
     public:
-        SDAI_Application_instance ();
-        SDAI_Application_instance ( int fileid, int complex = 0 );
-        virtual ~SDAI_Application_instance ();
+        SDAI_Application_instance();
+        SDAI_Application_instance( int fileid, int complex = 0 );
+        virtual ~SDAI_Application_instance();
 
         int IsComplex() const {
             return _complex;
@@ -119,7 +119,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
             return !( headMiEntity == 0 );
         }
 
-        void HeadEntity( SDAI_Application_instance  *se ) {
+        void HeadEntity( SDAI_Application_instance * se ) {
             headMiEntity = se;
         }
         SDAI_Application_instance  * HeadEntity() {
@@ -130,7 +130,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
             return nextMiEntity;
         }
         SDAI_Application_instance  * GetMiEntity( char * EntityName );
-        void AppendMultInstance( SDAI_Application_instance  *se );
+        void AppendMultInstance( SDAI_Application_instance * se );
 
     protected:
         STEPattribute * GetSTEPattribute( const char * );
@@ -138,7 +138,7 @@ class SCL_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         STEPattribute * MakeRedefined( STEPattribute * redefiningAttr,
                                        const char * nm );
 
-        virtual void CopyAs( SDAI_Application_instance  * );
+        virtual void CopyAs( SDAI_Application_instance * );
         void PrependEntityErrMsg();
     public:
         // these functions are going to go away in the future.

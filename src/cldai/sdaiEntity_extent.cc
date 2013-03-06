@@ -56,9 +56,9 @@ SDAI_Entity_extent::owned_by_( SDAI_Model_contents__list_var & mclv ) {
 //    _owned_by = mcp;
 }
 
-SDAI_Model_contents__list_var 
+SDAI_Model_contents__list_var
 SDAI_Entity_extent ::owned_by_() const {
-    return ( const SDAI_Model_contents__list_var  ) &_owned_by;
+    return ( const SDAI_Model_contents__list_var ) &_owned_by;
 }
 
 /*

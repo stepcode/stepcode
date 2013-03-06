@@ -30,38 +30,38 @@ Registry::Registry( CF_init initFunct )
     active_schemas = SCL_HASHcreate( 10 );
     active_types = SCL_HASHcreate( 100 );
 
-    if ( !t_sdaiINTEGER ) {
+    if( !t_sdaiINTEGER ) {
         t_sdaiINTEGER = new TypeDescriptor( "INTEGER",    // Name
                                             sdaiINTEGER, // FundamentalType
                                             0, // Originating Schema
                                             "INTEGER" );  // Description;
     }
-    if ( !t_sdaiREAL ) {
+    if( !t_sdaiREAL ) {
         t_sdaiREAL = new TypeDescriptor( "REAL", sdaiREAL,
                                          0, // Originating Schema
                                          "Real" );
     }
-    if ( !t_sdaiSTRING) {
+    if( !t_sdaiSTRING ) {
         t_sdaiSTRING = new TypeDescriptor( "STRING", sdaiSTRING,
                                            0, // Originating Schema
                                            "String" );
     }
-    if ( !t_sdaiBINARY) {
+    if( !t_sdaiBINARY ) {
         t_sdaiBINARY = new TypeDescriptor( "BINARY", sdaiBINARY,
                                            0, // Originating Schema
                                            "Binary" );
     }
-    if ( !t_sdaiBOOLEAN ) {
+    if( !t_sdaiBOOLEAN ) {
         t_sdaiBOOLEAN = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN,
                                             0, // Originating Schema
                                             "Boolean" );
     }
-    if ( !t_sdaiLOGICAL ) {
+    if( !t_sdaiLOGICAL ) {
         t_sdaiLOGICAL = new TypeDescriptor( "LOGICAL", sdaiLOGICAL,
                                             0, // Originating Schema
                                             "Logical" );
     }
-    if ( !t_sdaiNUMBER ) {
+    if( !t_sdaiNUMBER ) {
         t_sdaiNUMBER = new TypeDescriptor( "NUMBER", sdaiNUMBER,
                                            0, // Originating Schema
                                            "Number" );
@@ -81,31 +81,31 @@ Registry::~Registry() {
     SCL_HASHdestroy( active_types );
     delete col;
 
-    if ( t_sdaiINTEGER ) {
+    if( t_sdaiINTEGER ) {
         delete t_sdaiINTEGER;
         t_sdaiINTEGER = NULL;
     }
-    if ( t_sdaiREAL ) {
+    if( t_sdaiREAL ) {
         delete t_sdaiREAL;
         t_sdaiREAL = NULL;
     }
-    if ( t_sdaiSTRING ) {
+    if( t_sdaiSTRING ) {
         delete t_sdaiSTRING;
         t_sdaiSTRING = NULL;
     }
-    if ( t_sdaiBINARY ) {
+    if( t_sdaiBINARY ) {
         delete t_sdaiBINARY;
         t_sdaiBINARY = NULL;
     }
-    if ( t_sdaiBOOLEAN ) {
+    if( t_sdaiBOOLEAN ) {
         delete t_sdaiBOOLEAN;
         t_sdaiBOOLEAN = NULL;
     }
-    if ( t_sdaiLOGICAL ) {
+    if( t_sdaiLOGICAL ) {
         delete t_sdaiLOGICAL;
         t_sdaiLOGICAL = NULL;
     }
-    if ( t_sdaiNUMBER ) {
+    if( t_sdaiNUMBER ) {
         delete t_sdaiNUMBER;
         t_sdaiNUMBER = NULL;
     }
@@ -126,7 +126,7 @@ void Registry::DeleteContents() {
 
     // types
     SCL_HASHlistinit( active_types, &cur_type );
-    while ( SCL_HASHlist( &cur_type ) ) {
+    while( SCL_HASHlist( &cur_type ) ) {
         delete( TypeDescriptor * ) cur_type.e->data;
     }
 }
@@ -149,7 +149,7 @@ const EntityDescriptor * Registry::FindEntity( const char * e, const char * schN
         entd = ( EntityDescriptor * )SCL_HASHfind( primordialSwamp, ( char * )e );
     } else {
         entd = ( EntityDescriptor * )SCL_HASHfind( primordialSwamp,
-                                               ( char * )PrettyTmpName( e ) );
+                ( char * )PrettyTmpName( e ) );
     }
     if( entd && schNm ) {
         // We've now found an entity.  If schNm has a value, we must ensure we
@@ -186,7 +186,7 @@ const Schema * Registry::FindSchema( const char * n, int check_case ) const {
     }
 
     return ( const Schema * ) SCL_HASHfind( active_schemas,
-                                        ( char * )PrettyTmpName( n ) );
+                                            ( char * )PrettyTmpName( n ) );
 }
 
 const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
@@ -236,7 +236,7 @@ void Registry::AddClones( const EntityDescriptor & e ) {
 
     while( alts ) {
         SCL_HASHinsert( primordialSwamp, ( char * )alts->objName(),
-                    ( EntityDescriptor * )&e );
+                        ( EntityDescriptor * )&e );
         alts = alts->next;
     }
     all_ents_cnt += uniqueNames( e.Name(), e.AltNameList() );

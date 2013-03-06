@@ -73,8 +73,8 @@ class SCL_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
            Constructor declarations
          */
     public: // for now at least
-        SDAI_Model_contents ();
-        ~SDAI_Model_contents ();
+        SDAI_Model_contents();
+        ~SDAI_Model_contents();
         /*
            Access function declarations
            */

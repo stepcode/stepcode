@@ -77,7 +77,7 @@ void ComplexCollect::write( const char * fname )
     clist = clists;
     while( clist ) {
         listmax = clist->getEntListMaxLevel();
-        if (listmax > maxlevel) {
+        if( listmax > maxlevel ) {
             maxlevel = listmax;
         }
         clist = clist->next;

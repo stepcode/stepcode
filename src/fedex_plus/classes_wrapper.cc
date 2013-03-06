@@ -150,7 +150,7 @@ void print_file_trailer( Express express, FILES * files ) {
  ** organization of the schemas in the input Express
  ******************************************************************/
 void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
-            ComplexCollect * col, int cnt ) {
+                 ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     DictionaryEntry de;
     Type i;
@@ -196,7 +196,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         //    Do the types:
         SCOPEdo_types( scope, t, de ) {
             TYPEprint_init( t, files, schema );
-        } SCOPEod;
+        }
+        SCOPEod;
         //    (The entities are done as a part of ENTITYPrint() below.)
     }
 
@@ -207,9 +208,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
      * Modified Jan 2012 by MAP - moving enums to own dictionary */
     if( scope->enum_table ) {
-        HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);
+        HASHlistinit_by_type( scope->enum_table, &de, OBJ_TYPE );
         Type t;
-        while( 0 != ( t = (Type) DICTdo( &de ) ) ) {
+        while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
             // First check for one exception:  Say enumeration type B is defined
             // to be a rename of enum A.  If A is in this schema but has not been
             // processed yet, we must wait till it's processed first.  The reason
@@ -226,8 +227,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     }
 
     SCOPEdo_types( scope, t, de )
-     /* NOTE the following comment seems to contradict the logic below it (... && !( TYPEis_enumeration( t ) && ...)
-     // Do the non-redefined enumerations:*/
+    /* NOTE the following comment seems to contradict the logic below it (... && !( TYPEis_enumeration( t ) && ...)
+    // Do the non-redefined enumerations:*/
     if( ( t->search_id == CANPROCESS )
             && !( TYPEis_enumeration( t ) && TYPEget_head( t ) ) ) {
         TYPEprint_descriptions( t, files, schema );
@@ -243,10 +244,10 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         fprintf( files->inc, "//    ***** Redefined Enumerations:\n" );
         /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
         * Modified Jan 2012 by MAP - moving enums to own dictionary */
-        HASHlistinit_by_type(scope->enum_table,&de,OBJ_TYPE);
+        HASHlistinit_by_type( scope->enum_table, &de, OBJ_TYPE );
         {
             Type t;
-            while ( 0 != ( t = (Type) DICTdo( &de ) ) ) {
+            while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
                 if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {
                     TYPEprint_descriptions( t, files, schema );
                     t->search_id = PROCESSED;
@@ -358,9 +359,9 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     FILE * libfile,
          * incfile,
          * schemafile = files->incall,
-         * schemainit = files->initall,
-         * initfile,
-         * createall = files->create;
+           * schemainit = files->initall,
+             * initfile,
+             * createall = files->create;
     Rule r;
     Function f;
     Procedure p;
@@ -468,7 +469,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
         /* add global RULEs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
-            char *tmp;
+            char * tmp;
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, RULEto_string( r ) );
             fprintf( createall, "    gr = new Global_rule(\"%s\",%s::schema, str );\n",

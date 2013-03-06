@@ -6,7 +6,7 @@
 
 typedef judyS2Array< uint64_t > js2a;
 
-bool testFind( js2a & j, const char * key, unsigned int count ){
+bool testFind( js2a & j, const char * key, unsigned int count ) {
     js2a::cvector * v = j.find( key );
     std::cout << "find: key " << key << " ..." << std::endl;
     if( count > 0 ) {
@@ -21,7 +21,7 @@ bool testFind( js2a & j, const char * key, unsigned int count ){
             // note - this doesn't verify that the right keys are returned, just the right number!
             js2a::vector::const_iterator it = v->begin();
             std::cout << "    correct number of values -";
-            for(; it != v->end(); it++ ) {
+            for( ; it != v->end(); it++ ) {
                 std::cout << " " << *it;
             }
             std::cout << std::endl;
@@ -39,7 +39,7 @@ bool testFind( js2a & j, const char * key, unsigned int count ){
 
 int main() {
     bool pass = true;
-    std::cout.setf(std::ios::boolalpha);
+    std::cout.setf( std::ios::boolalpha );
 
     js2a js( 255 );
     js.insert( "blah", 1234 );

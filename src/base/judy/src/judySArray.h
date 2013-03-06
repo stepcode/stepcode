@@ -140,7 +140,7 @@ class judySArray {
 
         /// retrieve the first key-value pair in the array
         const pair & begin() {
-            _buff[0]='\0';
+            _buff[0] = '\0';
             _lastSlot = ( JudyValue * ) judy_strt( _judyarray, ( const unsigned char * ) _buff, 0 );
             return mostRecentPair();
         }

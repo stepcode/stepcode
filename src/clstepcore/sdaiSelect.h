@@ -41,7 +41,7 @@ class SCL_CORE_EXPORT SDAI_Select {
     public:
         Severity severity() const;
         Severity severity( Severity );
-	std::string Error();
+        std::string Error();
         void Error( const char * );
         // clears select's error
         void ClearError();
