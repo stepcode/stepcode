@@ -55,6 +55,8 @@ InstMgr::InstMgr( int ownsInstances )
 InstMgr::~InstMgr() {
     if( _ownsInstances ) {
         master->DeleteEntries();
+    } else {
+        master->ClearEntries();
     }
     delete master;
     delete sortedMaster;
