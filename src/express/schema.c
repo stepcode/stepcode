@@ -259,7 +259,6 @@ Linked_List SCHEMAget_entities_ref( Scope scope ) {
     __SCOPE_search_id++;
     ENTITY_MARK++;
 
-    result = LISTcreate();
     SCHEMA_get_entities_ref( scope, result );
     return( result );
 }
