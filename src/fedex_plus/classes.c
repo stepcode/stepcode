@@ -1552,6 +1552,10 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
+	    if( LISTget_length( list ) > 1) {
+                fprintf( file, "    int attrFlags[3];\n" );
+	    }
+
             LISTdo( list, e, Entity )
             /*  if there\'s no super class yet,
                 or the super class doesn\'t have any attributes
@@ -1576,7 +1580,6 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                          "           diamond shaped hierarchies for each additional parent at this\n" );
                 fprintf( file,
                          "           level. You currently must hand edit this for it to work. */\n" );
-                fprintf( file, "    int attrFlags[3]; // e.g.\n" );
                 fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
                 fprintf( file,
                          "    attrFlags[1] = 0; // add parent of parents attrs\n" );
@@ -1768,6 +1771,10 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
+	    if( LISTget_length( list ) > 1) {
+                fprintf( file, "    int attrFlags[3];\n" );
+	    }
+
             LISTdo( list, e, Entity )
             /*  if there\'s no super class yet,
                 or the super class doesn\'t have any attributes
@@ -1790,7 +1797,6 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                          "           diamond shaped hierarchies for each additional parent at this\n" );
                 fprintf( file,
                          "           level. You currently must hand edit this for it to work. */\n" );
-                fprintf( file, "    int attrFlags[3]; // e.g.\n" );
                 fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
                 fprintf( file,
                          "    attrFlags[1] = 1; // add parent of parents attrs\n" );

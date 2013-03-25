@@ -875,7 +875,7 @@ enumeration_type ::= TOK_ENUMERATION TOK_OF nested_id_list(A).
         /* 1st visibility */
         DICT_define(CURRENT_SCOPE->symbol_table, x->symbol.name,
             (Generic)x, &x->symbol, OBJ_EXPRESSION);
-        DICTdefine(PREVIOUS_SCOPE->symbol_table, x->symbol.name,
+        DICTdefine(PREVIOUS_SCOPE->enum_table, x->symbol.name,
             (Generic)x, &x->symbol, OBJ_EXPRESSION);
         SYMBOL_destroy(tmp);
     } LISTod;
@@ -2465,6 +2465,8 @@ while_control(A) ::= TOK_WHILE expression(B).
     fprintf(stderr, "Express parser experienced syntax error at line %d.\n", yylineno);
     fprintf(stderr, "Last token (type %d) had value %x\n", yymajor, yyminor.yy0.val);
 }
+
+%stack_size 200
 
 %stack_overflow {
     fprintf(stderr, "Express parser experienced stack overflow.\n");
