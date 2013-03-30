@@ -474,15 +474,11 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
         /* add global RULEs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
-            char * tmp;
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, RULEto_string( r ) );
             fprintf( createall, "    gr = new Global_rule(\"%s\",%s::schema, str );\n",
                      r->symbol.name, SCHEMAget_name( schema ) );
             fprintf( createall, "    %s::schema->AddGlobal_rule(gr);\n", SCHEMAget_name( schema ) );
-            tmp = RULEto_string( r );
-            fprintf( createall, "/*\n%s\n*/\n", tmp );
-            scl_free( tmp );
         }
         /**************/
         /* add FUNCTIONs to Schema dictionary entry */
