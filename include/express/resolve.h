@@ -57,6 +57,9 @@ extern SCL_EXPRESS_EXPORT Error ERROR_circular_reference;
 extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_attribute;
 extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_group;
 
+extern SCL_EXPRESS_EXPORT Error WARNING_case_skip_label;
+extern SCL_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
+
 /* macros */
 
 /* cheaper doing the check here, then inside the function call.  Return */
