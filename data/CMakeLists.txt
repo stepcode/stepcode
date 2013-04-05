@@ -46,7 +46,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
 
     add_custom_target( generate_cpp_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
     add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
-                        COMMAND cmake ARGS -E make_directory ${SCHEMA_OUTPUT_DIR}
+                        COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${SCHEMA_OUTPUT_DIR}
                         COMMENT "Creating ${SCHEMA_OUTPUT_DIR} for schema ${SCHEMA_SHORT_NAME}")
     add_custom_command( OUTPUT ${FEDEX_OUT}
                         COMMAND fedex_plus ARGS ${SCHEMA_FILE}
