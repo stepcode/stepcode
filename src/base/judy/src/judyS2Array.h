@@ -14,6 +14,7 @@
 #include "judy.h"
 #include "assert.h"
 #include <string.h>
+#include <iterator>
 #include <vector>
 
 template< typename JudyValue >

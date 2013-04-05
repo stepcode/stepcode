@@ -13,6 +13,7 @@
 
 #include "judy.h"
 #include "assert.h"
+#include <iterator>
 #include <vector>
 
 template< typename JudyKey, typename vec >
