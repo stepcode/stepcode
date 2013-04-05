@@ -52,7 +52,7 @@ class judyL2Array {
             _depth( other._depth ), _success( other._success ) {
             _judyarray = judy_clone( other._judyarray );
             _buff[0] = other._buff[0];
-            find( _buff ); //set _lastSlot
+            find( *_buff ); //set _lastSlot
         }
 
         /// calls clear, so should be safe to call at any point
