@@ -3,8 +3,9 @@
 
 #include "headerSectionReader.h"
 #include "scl_memmgr.h"
+#include "scl_export.h"
 
-class p21HeaderSectionReader: public headerSectionReader {
+class SCL_LAZYFILE_EXPORT p21HeaderSectionReader: public headerSectionReader {
     public:
         p21HeaderSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
         void findSectionStart();

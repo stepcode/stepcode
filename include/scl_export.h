@@ -92,4 +92,17 @@
 #  endif
 #endif
 
+/* Import/Export flags for lazyfile. */
+#ifndef SCL_LAZYFILE_EXPORT
+#  if defined(SCL_LAZYFILE_DLL_EXPORTS) && defined(SCL_LAZYFILE_DLL_IMPORTS)
+#    error "Only SCL_LAZYFILE_DLL_EXPORTS or SCL_LAZYFILE_DLL_IMPORTS can be defined, not both."
+#  elif defined(SCL_LAZYFILE_DLL_EXPORTS)
+#    define SCL_LAZYFILE_EXPORT __declspec(dllexport)
+#  elif defined(SCL_LAZYFILE_DLL_IMPORTS)
+#    define SCL_LAZYFILE_EXPORT __declspec(dllimport)
+#  else
+#    define SCL_LAZYFILE_EXPORT
+#  endif
+#endif
+
 #endif /* SCL_EXPORT_H */

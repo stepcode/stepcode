@@ -4,8 +4,9 @@
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
 #include "scl_memmgr.h"
+#include "scl_export.h"
 
-class lazyP21DataSectionReader: public lazyDataSectionReader {
+class SCL_LAZYFILE_EXPORT lazyP21DataSectionReader: public lazyDataSectionReader {
     protected:
     public:
         lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );

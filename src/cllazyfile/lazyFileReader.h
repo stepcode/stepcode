@@ -5,6 +5,8 @@
 #include <string>
 #include <cstdlib>
 
+#include "scl_export.h"
+
 // PART 21
 #include "lazyP21DataSectionReader.h"
 #include "p21HeaderSectionReader.h"
@@ -22,7 +24,7 @@ class headerSectionReader;
 
 ///read an exchange file of any supported type (currently only p21)
 ///for use only from within lazyInstMgr
-class lazyFileReader {
+class SCL_LAZYFILE_EXPORT lazyFileReader {
     protected:
         std::string _fileName;
         lazyInstMgr * _parent;

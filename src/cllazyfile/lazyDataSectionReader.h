@@ -7,6 +7,8 @@
 #include "lazyTypes.h"
 #include "scl_memmgr.h"
 
+#include "scl_export.h"
+
 /** base class for data section readers
  * \sa lazyP21DataSectionReader
  * \sa lazyP28DataSectionReader

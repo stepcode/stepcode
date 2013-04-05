@@ -10,9 +10,10 @@
 #include "lazyTypes.h"
 #include "scl_memmgr.h"
 
+#include "scl_export.h"
 
 ///differs from the lazyDataSectionReader in that all instances are always loaded
-class headerSectionReader: public sectionReader {
+class SCL_LAZYFILE_EXPORT headerSectionReader: public sectionReader {
     protected:
         instancesLoaded_t * _headerInstances;
 
