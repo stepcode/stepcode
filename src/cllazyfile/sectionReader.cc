@@ -17,6 +17,8 @@
 #include "lazyTypes.h"
 #include "instMgrHelper.h"
 
+#include "current_function.hpp"
+
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
     _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
     _fileID = _lazyFile->ID();
@@ -99,7 +101,7 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     }
     c = _file.peek();
     if( !strchr( delimiters, c ) ) {
-        std::cerr << __PRETTY_FUNCTION__ << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
+        std::cerr << SCL_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
     return str.c_str();
