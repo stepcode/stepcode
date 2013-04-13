@@ -7,27 +7,22 @@
 #include <sstream>
 #include "scl_memmgr.h"
 
-extern const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
+extern const char *
+ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
     head = this;
-    _registry = registry;
-    visited = 0;
 }
 
 STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
                           int fileid, const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
-    head = this;
-    _registry = registry;
-    visited = 0;
-
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
     char * nms[BUFSIZ];
     int j, k;
+
+    head = this;
 
     // Create a char ** list of names and call Initialize to build all:
     for( j = 0; names[j]; j++ ) {
@@ -43,12 +38,9 @@ STEPcomplex::STEPcomplex( Registry * registry, const std::string ** names,
 
 STEPcomplex::STEPcomplex( Registry * registry, const char ** names, int fileid,
                           const char * schnm )
-    : SDAI_Application_instance( fileid, 1 ) {
-    sc = 0;
-    head = this;
-    _registry = registry;
-    visited = 0;
+    : SDAI_Application_instance( fileid, 1 ),  sc( 0 ), _registry( registry ), visited( 0 ) {
 
+    head = this;
     Initialize( names, schnm );
 }
 
@@ -161,9 +153,9 @@ STEPcomplex::~STEPcomplex() {
     if( sc ) {
         delete sc;
     }
-    for ( attr_data = _attr_data_list.begin();
-          attr_data != _attr_data_list.end();
-          attr_data ++ ) {
+    for( attr_data = _attr_data_list.begin();
+            attr_data != _attr_data_list.end();
+            attr_data ++ ) {
         delete *attr_data;
     }
     _attr_data_list.clear();
@@ -259,6 +251,7 @@ int STEPcomplex::EntityExists( const char * name, const char * currSch ) {
 */
 const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
     const EntityDescriptor * return_ed = eDesc->IsA( ed );
+
     if( !return_ed && sc ) {
         return sc->IsA( ed );
     } else {
@@ -436,16 +429,16 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 
     if( eDesc ) {
         const AttrDescriptorList * attrList;
-        SDAI_Integer *integer_data;
-        SDAI_String *string_data;
-        SDAI_Binary *binary_data;
-        SDAI_Real *real_data;
-        SDAI_BOOLEAN *boolean_data;
-        SDAI_LOGICAL *logical_data;
-        SDAI_Application_instance **entity_data;
-        SDAI_Enum *enum_data;
-        SDAI_Select *select_data;
-        STEPaggregate *aggr_data;
+        SDAI_Integer * integer_data;
+        SDAI_String * string_data;
+        SDAI_Binary * binary_data;
+        SDAI_Real * real_data;
+        SDAI_BOOLEAN * boolean_data;
+        SDAI_LOGICAL * logical_data;
+        SDAI_Application_instance ** entity_data;
+        SDAI_Enum * enum_data;
+        SDAI_Select * select_data;
+        STEPaggregate * aggr_data;
         attrList = &( eDesc->ExplicitAttr() );
 
         //////////////////////////////////////////////
@@ -499,7 +492,7 @@ void STEPcomplex::BuildAttrs( const char * s ) {
                         break;
 
                     case ENTITY_TYPE:
-                        entity_data = new ( SDAI_Application_instance * );
+                        entity_data = new( SDAI_Application_instance * );
                         _attr_data_list.push_back( ( void * ) entity_data );
                         a = new STEPattribute( *ad, entity_data );
                         break;
@@ -534,8 +527,9 @@ void STEPcomplex::BuildAttrs( const char * s ) {
                         break;
                     }
                     default:
-                        cerr << "STEPcomplex::BuildAttrs: type " << ad->NonRefType() << " not handled by switch statement. " << __FILE__ << ":" <<  __LINE__ << endl;
-                        abort();
+                        _error.AppendToDetailMsg( "STEPcomplex::BuildAttrs: Found attribute of unknown type. Creating default attribute.\n" );
+                        _error.GreaterSeverity( SEVERITY_WARNING );
+                        a = new STEPattribute();
                 }
 
                 a -> set_null();

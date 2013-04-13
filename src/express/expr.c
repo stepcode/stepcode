@@ -70,26 +70,30 @@
  *
  */
 
-#include <scl_cf.h>
 #include <scl_memmgr.h>
-#define EXPRESSION_C
-
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include "express/expr.h"
 #include "express/resolve.h"
 
 #include <assert.h>
 #include <limits.h>
 
-#ifdef YYDEBUG
-extern int yydebug;
-#else
-const int yydebug = 0;
-#endif
+struct EXPop_entry EXPop_table[OP_LAST];
 
-extern void exp_pause(); //in fedex.c
+Expression  LITERAL_E = EXPRESSION_NULL;
+Expression  LITERAL_INFINITY = EXPRESSION_NULL;
+Expression  LITERAL_PI = EXPRESSION_NULL;
+Expression  LITERAL_ZERO = EXPRESSION_NULL;
+Expression  LITERAL_ONE;
+
+Error ERROR_bad_qualification = ERROR_none;
+Error ERROR_integer_expression_expected = ERROR_none;
+Error ERROR_implicit_downcast = ERROR_none;
+Error ERROR_ambig_implicit_downcast = ERROR_none;
+
+struct freelist_head EXP_fl;
+struct freelist_head OP_fl;
+struct freelist_head QUERY_fl;
+struct freelist_head QUAL_ATTR_fl;
 
 void EXPop_init();
 static Error ERROR_internal_unrecognized_op_in_EXPresolve;
@@ -101,6 +105,16 @@ static Error ERROR_warn_indexing_mixed;
 static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
+
+static_inline int OPget_number_of_operands( Op_Code op ) {
+    if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
+        return 1;
+    } else if( op == OP_SUBCOMPONENT ) {
+        return 3;
+    } else {
+        return 2;
+    }
+}
 
 Expression EXPcreate( Type type ) {
     Expression e;
@@ -157,14 +171,14 @@ void EXPinitialize( void ) {
 #ifndef M_E
 #define M_E     2.7182818284590452354
 #endif
-    LITERAL_E->u.real = ( float ) M_E;
+    LITERAL_E->u.real = M_E;
     resolved_all( LITERAL_E );
 
     LITERAL_PI = EXPcreate_simple( Type_Real );
 #ifndef M_PI
 #define M_PI    3.14159265358979323846
 #endif
-    LITERAL_PI->u.real = ( float ) M_PI;
+    LITERAL_PI->u.real = M_PI;
     resolved_all( LITERAL_PI );
 
     LITERAL_INFINITY = EXPcreate_simple( Type_Integer );
@@ -239,14 +253,14 @@ void EXPcleanup( void ) {
  * \param e set to the Expression found, when an enum is found
  * \param v set to the Variable found, when a variable is found
  * \param dt set to DICT_type when a match is found (use to determine whether to use e or v)
- * \param where used by ENTITYfind_inherited_attribute, not sure of purpose
+ * \param where used by ENTITYfind_inherited_attribute, not sure of purpose 
  * \param s_id the search id, a parameter to avoid colliding with ENTITYfind...
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
 static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
                       Variable * v, char * dt, struct Symbol_ ** where, int s_id ) {
-    Expression item;
+    Expression item; 
     Variable tmp;
     int options = 0;
     struct Symbol_ *w = NULL;
@@ -288,15 +302,15 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
                     /* found more than one, so ambiguous */
                     *v = VARIABLE_NULL;
                     return 1;
-            }
-        case enumeration_:
-            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), ref.name );
-            if( item ) {
-                *e = item;
-                *dt = DICT_type;
-                return 1;
-            }
-        default:
+	    }
+	case enumeration_:
+	    item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), ref.name );
+	    if( item ) {
+		*e = item;
+		*dt = DICT_type;
+		return 1;
+	    }
+	default:
             return 0;
     }
 }
@@ -339,7 +353,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                                                 __SCOPE_search_id ) ) {
                     ++options;
                 }
-            } LISTod;
+            } LISTod; 
             switch( options ) {
                 case 0:
                     LISTdo( op1type->u.type->body->list, t, Type ) {
@@ -354,7 +368,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                         /* no possible resolutions */
                         ERRORreport_with_symbol( ERROR_undefined_attribute,
                                                 &op2->symbol, op2->symbol.name );
-                    }
+                    } 
                     resolve_failed( expr );
                     return( Type_Bad );
                 case 1:
@@ -374,10 +388,11 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                         op2->return_type = item->type;
                         resolved_all( expr );
                         return( item->type );
-                    } else {
+                    } else { 
                         printf( "EXPresolved_op_dot: attribute not an attribute?\n" );
                         ERRORabort( 0 );
                     }
+
                 default:
                     /* compile-time ambiguous */
                     if( where ) {
@@ -417,8 +432,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                 return( Type_Bad );
             }
             if( DICT_type != OBJ_VARIABLE ) {
-                printf( "EXPresolved_op_dot: attribute not an attribute? - press ^C now to trap to debugger\n" );
-                exp_pause();
+                fprintf( stderr, "ERROR: EXPresolved_op_dot: attribute not an attribute?\n" );
             }
 
             op2->u.variable = v;
@@ -428,7 +442,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             return( op2->return_type );
         case enumeration_:
             /* enumerations within a select will be handled by `case select_` above,
-             * which calls EXP_resolve_op_dot_fuzzy(). */
+             * which calls EXP_resolve_op_dot_fuzzy(). */ 
             item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
             if( !item ) {
                 ERRORreport_with_symbol( ERROR_enum_no_such_item, &op2->symbol,
@@ -466,7 +480,8 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e, int s_id ) {
+static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
+                            int s_id ) {
     Entity tmp;
     int options = 0;
 
@@ -550,9 +565,6 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             ent_ref =
                 ( Entity )ENTITYfind_inherited_entity( tmp, op2->symbol.name, 1 );
             if( !ent_ref ) {
-                if( yydebug ) {
-                    fprintf( stderr, "\ngroup ref no such entity (entity_). op1->symbol.name: %s, line %d, op1->return_type->symbol.name %s, op1->return_type->u.type->body->type %d. op2->symbol.name: %s, line %d, op2->return_type->symbol.name %s, op2->return_type->u.type->body->type %d.\n", op1->symbol.name, op1->symbol.line, op1->return_type->symbol.name, op1->return_type->u.type->body->type, op2->symbol.name, op2->symbol.line, op2->return_type->symbol.name, op2->return_type->u.type->body->type );
-                }
                 ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
                                          &op2->symbol, op2->symbol.name );
                 resolve_failed( expr );
@@ -581,9 +593,6 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             switch( options ) {
                 case 0:
                     /* no possible resolutions */
-                    if( yydebug ) {
-                        fprintf( stderr, "\ngroup ref no such entity (select_). op1->symbol.name: %s, line %d, op1->return_type->symbol.name %s, op1->return_type->u.type->body->type %d. op2->symbol.name: %s, line %d, op2->return_type->symbol.name %s, op2->return_type->u.type->body->type %d.\n", op1->symbol.name, op1->symbol.line, op1->return_type->symbol.name, op1->return_type->u.type->body->type, op2->symbol.name, op2->symbol.line, op2->return_type->symbol.name, op2->return_type->u.type->body->type );
-                    }
                     ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
                                              &op2->symbol, op2->symbol.name );
                     resolve_failed( expr );
@@ -602,9 +611,6 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             }
         case array_:
             if( op1->type->u.type->body->type == self_ ) {
-                if( yydebug ) {
-                    printf("%s:%d: Array with 'SELF' in upper or lower bound, setting type as Type_Runtime\n",__FILE__,__LINE__);
-                }
                 return( Type_Runtime ); //not sure if there are other cases where Type_Runtime should be returned, or not
             } // else fallthrough
         case unknown_:  /* unable to resolve operand */
@@ -696,7 +702,6 @@ Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     return( Type_Logical );
 }
-
 Type EXPresolve_op_array_like( Expression e, Scope s ) {
 
     Type op1type;
@@ -731,9 +736,6 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
         //count aggregates and non-aggregates, check aggregate types
         LISTdo( op1type->u.type->body->list, item, Type ) {
             if( TYPEis_aggregate( item ) ) {
-                if( yydebug ) {
-                    fprintf( stdout, "aggregate %s\n", item->symbol.name );
-                }
                 numAggr++;
                 if( lasttype == TYPE_NULL ) {
                     lasttype = item;
@@ -743,9 +745,6 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
                     }
                 }
             } else {
-                if( yydebug ) {
-                    fprintf( stdout, "non-aggregate %s\n", item->symbol.name );
-                }
                 numNonAggr++;
             }
         }
@@ -821,7 +820,7 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
  * \sa EXPop_init()
  *
  * \param token_number operator value, usually in macro form
- * \param string human-readable description
+ * \param string human-readable description 
  * \param resolve_func   resolves an expression of this type
  */
 void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_func ) {

@@ -71,7 +71,8 @@ class EntNode {
         friend class ComplexList;
 
     public:
-        EntNode( char * nm = "" ) : next( 0 ), mark( NOMARK ), multSupers( 0 ) {
+        EntNode( const char * nm = "" ) : next( 0 ), mark( NOMARK ),
+            multSupers( 0 ) {
             strcpy( name, nm );
         }
         EntNode( char *[] );  // given a list, create a linked list of EntNodes
@@ -129,14 +130,16 @@ class EntList {
         friend ostream & operator<< ( ostream &, MultList & );
 
     public:
-        EntList( JoinType j ) : join( j ), next( 0 ), prev( 0 ), viable( UNKNOWN ),
+        EntList( JoinType j ) : join( j ), prev( 0 ), next( 0 ), viable( UNKNOWN ),
             level( 0 ) {}
         virtual ~EntList() {}
         MatchType viableVal() {
             return viable;
         }
-        virtual int setLevel( int l ) {
+        virtual void setLevel( int l ) {
             level = l;
+        }
+        virtual int getMaxLevel() {
             return level;
         }
         virtual int contains( const char * ) = 0;
@@ -237,7 +240,8 @@ class MultList : public EntList {
     public:
         MultList( JoinType j ) : EntList( j ), numchildren( 0 ), childList( 0 ) {}
         ~MultList();
-        int setLevel( int );
+        void setLevel( int );
+        int getMaxLevel();
         int contains( const char * );
         int hit( const char * );
         int isDependent( const char * );
@@ -343,7 +347,7 @@ class ComplexList {
     public:
         ComplexList( AndList * alist = NULL ) : list( 0 ), head( alist ), next( 0 ),
             abstract( 0 ), dependent( 0 ),
-            multSupers( 0 ), maxlevel( 0 ) {}
+            multSupers( 0 ) {}
         ComplexList( Entity, ComplexCollect * );
         ~ComplexList();
         void buildList();
@@ -359,9 +363,6 @@ class ComplexList {
         }
         const char * supertype() {
             return ( ( SimpleList * )head->childList )->name;
-        }
-        int getMaxlevel( void ) {
-            return maxlevel;
         }
         // Based on knowledge that ComplexList always created by ANDing supertype
         // with subtypes.
@@ -379,6 +380,9 @@ class ComplexList {
             return dependent;
         }
         void write( ostream & );
+        int getEntListMaxLevel() {
+            return head->getMaxLevel();
+        }
 
     private:
         void addSuper( Entity );
@@ -389,9 +393,8 @@ class ComplexList {
         int abstract;   // is our supertype abstract?
         int dependent;  // is our supertype also a subtype of other supertype(s)?
         int multSupers; // am I a combo-CList created to test a subtype which has
-        // >1 supertypes?
         int maxlevel;
-};
+};                  // >1 supertypes?
 
 class ComplexCollect {
         // The collection of all the ComplexLists defined by the current schema.

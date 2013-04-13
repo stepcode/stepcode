@@ -1,4 +1,3 @@
-
 /*
  * This software was developed by U.S. Government employees as part of
  * their official duties and is not subject to copyright.
@@ -127,8 +126,8 @@ typedef char * Binary;
 #define OBJ_EXPRESSION  'x' /**< so far only enums get looked up by name & */
 #define OBJ_ENUM    'x'     /**< appear this way, perhaps they should be variables? */
 #define OBJ_AMBIG_ENUM  'z' /**< enumerations of the same name which are
-                             * visible in the same scope when qualified
-                             * z is of no mnemonic significance (so far) */
+* visible in the same scope when qualified
+* z is of no mnemonic significance (so far) */
 #define IS_ENUM(x)  (((x) == OBJ_ENUM) || ((x) == OBJ_AMBIG_ENUM))
 
 /** these represent a different way of selecting classes of objects

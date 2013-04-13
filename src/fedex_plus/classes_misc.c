@@ -282,7 +282,7 @@ TYPEget_ctype( const Type t ) {
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
     if( ( class == number_ ) || ( class == real_ ) ) {
-        return ( "SDAI_Real" )      ;
+        return ( "SDAI_Real" );
     }
 
     /*      case TYPE_STRING:   */
@@ -467,8 +467,8 @@ EnumName( const char * oldname ) {
         return ( "" );
     }
 
-    strcpy( newname, ENUM_PREFIX )    ;
-    j = strlen( ENUM_PREFIX )    ;
+    strcpy( newname, ENUM_PREFIX );
+    j = strlen( ENUM_PREFIX );
     newname [j] = ToUpper( oldname [0] );
     strncpy( newname + j + 1, StrToLower( oldname + 1 ), MAX_LEN - j - 1 );
     j = strlen( newname );
@@ -506,7 +506,7 @@ FirstToUpper( const char * word ) {
 /* return fundamental type but as the string which corresponds to */
 /* the appropriate type descriptor */
 /* if report_reftypes is true, report REFERENCE_TYPE when appropriate */
-char *
+const char *
 FundamentalType( const Type t, int report_reftypes ) {
     if( report_reftypes && TYPEget_head( t ) ) {
         return( "REFERENCE_TYPE" );
@@ -616,6 +616,7 @@ GetTypeDescriptorName( Type t ) {
             printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( t )->type );
             abort();
     }
+    /* NOTREACHED */
     return "";
 }
 

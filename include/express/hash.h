@@ -101,10 +101,6 @@
 /*****************/
 
 #include <scl_export.h>
-#ifdef HASH_C
-#include <assert.h>
-#endif /*HASH_C*/
-
 #include "memory.h"
 
 /************/
@@ -135,7 +131,7 @@ typedef struct Hash_Table_ {
 #endif
     unsigned int    p;      /**< Next bucket to be split  */
     unsigned int    maxp;   /**< upper bound on p during expansion    */
-    long    KeyCount;       /**< current # keys   */
+    unsigned int    KeyCount;       /**< current # keys   */
     unsigned int    SegmentCount;   /**< current # segments   */
     unsigned int    MinLoadFactor;
     unsigned int    MaxLoadFactor;
@@ -160,19 +156,8 @@ typedef struct {
 /* global variables */
 /********************/
 
-#ifdef HASH_C
-# define GLOBAL
-# define INITIALLY(value) = value
-#else
-# define GLOBAL extern
-# define INITIALLY(value)
-#endif /*HASH_C*/
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
-
-#undef GLOBAL
-#undef INITIALLY
+extern SCL_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
 
 /******************************/
 /* macro function definitions */

@@ -10,6 +10,10 @@ if(MINGW OR MSVC OR BORLAND)
 add_definitions( -DSCL_BASE_DLL_EXPORTS )
 endif()
 
+if (${SCL_MEMMGR_ENABLE_CHECKS})
+	add_definitions( -DSCL_MEMMGR_ENABLE_CHECKS )
+endif()
+
 SCL_ADDLIB(base "${SCL_BASE_SOURCES}" "")
 
 if(MINGW OR MSVC OR BORLAND)

@@ -1,5 +1,5 @@
 #ifndef READ_FUNC_H
-#define        READ_FUNC_H
+#define READ_FUNC_H
 
 #include <scl_export.h>
 #include <sdai.h>
@@ -20,7 +20,7 @@ extern SCL_CORE_EXPORT int ReadInteger( SDAI_Integer & val, const char * s, Erro
                                         const char * tokenList );
 
 extern SCL_CORE_EXPORT Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
-        int clearError, int optional, char * tokenList );
+        int clearError, int optional, const char * tokenList );
 
 extern SCL_CORE_EXPORT std::string WriteReal( SDAI_Real val );
 
@@ -33,7 +33,7 @@ extern SCL_CORE_EXPORT int ReadReal( SDAI_Real & val, const char * s, ErrorDescr
                                      const char * tokenList );
 
 extern SCL_CORE_EXPORT Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
-        int clearError, int optional, char * tokenList );
+        int clearError, int optional, const char * tokenList );
 
 extern SCL_CORE_EXPORT int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
                                        const char * tokenList );
@@ -42,7 +42,7 @@ extern SCL_CORE_EXPORT int ReadNumber( SDAI_Real & val, const char * s, ErrorDes
                                        const char * tokenList );
 
 extern SCL_CORE_EXPORT Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
-        int clearError, int optional, char * tokenList );
+        int clearError, int optional, const char * tokenList );
 
 
 ////////////////////

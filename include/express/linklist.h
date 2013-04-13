@@ -70,18 +70,10 @@ struct Linked_List_ {
 /* global variables */
 /********************/
 
-#ifdef LINKED_LIST_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*LINKED_LIST_C*/
-
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_empty_list    INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head LINK_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head LIST_fl;
-GLOBAL SCL_EXPRESS_EXPORT Linked_List LINK__l;     /* for LISTcreate_with macro - ugh */
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT Error ERROR_empty_list;
+extern SCL_EXPRESS_EXPORT struct freelist_head LINK_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head LIST_fl;
+extern SCL_EXPRESS_EXPORT Linked_List LINK__l;  /* for LISTcreate_with macro - ugh */
 
 /******************************/
 /* macro function definitions */
@@ -149,33 +141,6 @@ extern SCL_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
 extern SCL_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );
 extern SCL_EXPRESS_EXPORT void LISTfree PROTO( ( Linked_List ) );
 extern SCL_EXPRESS_EXPORT int  LISTget_length PROTO( ( Linked_List ) );
-
-/*******************************/
-/* inline function definitions */
-/*******************************/
-
-#if !defined(__BORLAND__)
-
-#if supports_inline_functions || defined(LINKED_LIST_C)
-
-static_inline
-bool
-LISTempty( Linked_List list ) {
-    if( !list ) {
-        return true;
-    }
-    if( list->mark->next == list->mark ) {
-        return true;
-    }
-    return false;
-}
-
-#endif /* supports_inline_functions || defined(LINKED_LIST_C) */
-
-#else
-
 extern SCL_EXPRESS_EXPORT bool LISTempty( Linked_List list );
-
-#endif
 
 #endif /*LINKED_LIST_H*/

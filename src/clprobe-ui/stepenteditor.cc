@@ -388,22 +388,6 @@ void seeAttrRow::UndoChanges() {
     if( stepAttr->NonRefType() == STRING_TYPE ) {
         std::string tmp( attrVal );
         attrVal = StrEditorVal( tmp );
-        /*
-            if(stepAttr->ptr.S->is_undefined())
-                attrVal = "$";
-            else
-            {
-                char *str = attrVal.chars();
-                while(isspace(*str)) str++;
-                if( (str[0] == '\\') && (str[1] == '$') )
-                {
-                str = str + 2;
-                while( isspace(*str) ) str++;
-                if(*str == '\0')
-                    attrVal = "\\$"; // call value \$ a string with a single $
-                }
-            }
-        */
     }
     // need to do the above assignment to save return val from asStr
     editField->Message( attrVal );
@@ -443,7 +427,7 @@ char * seeAttrRow::StrEditorVal( std::string & s ) {
     if( stepAttr->ptr.S->is_undefined() ) {
         s = "$";
     } else {
-        char * str = ( char * )s.chars();
+        char * str = ( char * )s.c_str();
         while( isspace( *str ) ) {
             str++;
         }
@@ -457,7 +441,7 @@ char * seeAttrRow::StrEditorVal( std::string & s ) {
             }
         }
     }
-    return ( char * )s.chars();
+    return ( char * )s.c_str();
 }
 
 // it was decided that attributes in the Data Probe of type string with value
@@ -487,15 +471,12 @@ char * seeAttrRow::StrAttrAssignVal( const char * s ) {
             }
             if( *str == '\0' ) { // we will call value $ a string with nothing in it
                 return 0;
-            } else // a string value starting with a $ with following chars.
-//      stepAttr->StrToVal(QuotedString(s), dp->GetInstMgr(), 0);
-            {
+            } else { // a string value starting with a $ with following chars.
                 return ( char * )s;
             }
 //      return QuotedString(s);
         } else if( *str == '\0' ) {
             // no value will be absence of a string
-//      stepAttr->ptr.S->set_undefined();
             return "";
         } else {
             if( ( str[0] == '\\' ) && ( str[1] == '$' ) ) {
@@ -1226,7 +1207,7 @@ void StepEntityEditor::CreateInsertAttributeEditors() {
             }
             s++;
         }
-        label = new seeStringEditor( editorsButSt, ss.chars(), EDIT_WIDTH );
+        label = new seeStringEditor( editorsButSt, ss, EDIT_WIDTH );
     } else {
         label = new seeStringEditor( editorsButSt, " ", EDIT_WIDTH );
     }
@@ -1622,7 +1603,7 @@ boolean StepEntityEditor::SaveComplete() {
             sTmp = ReadComment( ss, sTmp );
         }
         if( ss.rep() ) {
-            stepEnt->AddP21Comment( ss.chars() );
+            stepEnt->AddP21Comment( ss );
         }
     }
 
@@ -1691,7 +1672,7 @@ boolean StepEntityEditor::SaveIncomplete() {
             sTmp = ReadComment( ss, sTmp );
         }
         if( ss.rep() ) {
-            stepEnt->AddP21Comment( ss.chars() );
+            stepEnt->AddP21Comment( ss );
         }
     }
 
@@ -1993,7 +1974,6 @@ void StepEntityEditor::Update() {
         CheckButtons();
     }
 #ifdef firstWaySEEUpdate
-//    int buttonValue;
     seeAttrRow * ptr;
     SubordinateInfo * si = 0;
 
@@ -2039,7 +2019,6 @@ void StepEntityEditor::Update() {
     }
 #endif
 #ifdef secondWaySEEUpdate
-//    int buttonValue;
     seeAttrRow * ptr;
     Event e;
 

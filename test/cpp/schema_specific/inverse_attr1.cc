@@ -27,13 +27,13 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
     int j = 0;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
         cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
-        << ", from entity: " << ia->inverted_entity_id_() << endl;
+             << ", from entity: " << ia->inverted_entity_id_() << endl;
 
         //now find the entity containing the attribute in question
 
         SdaiReldefinesbytype * rdbt;
         int ent_id = 0;
-        while( 0 != ( rdbt = (SdaiReldefinesbytype *) instList.GetApplication_instance( "reldefinesbytype", ent_id ) ) ) {
+        while( 0 != ( rdbt = ( SdaiReldefinesbytype * ) instList.GetApplication_instance( "reldefinesbytype", ent_id ) ) ) {
             int i =  rdbt->StepFileId();
             if( i < ent_id ) {
                 break;
@@ -42,10 +42,10 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
             if( !( relObj && ( relObj->is_null() == 0 ) ) ) {
                 return false;
             } else {
-                EntityNode * en = (EntityNode *) relObj->GetHead();
-                SdaiObject * obj = (SdaiObject *) en->node;
+                EntityNode * en = ( EntityNode * ) relObj->GetHead();
+                SdaiObject * obj = ( SdaiObject * ) en->node;
                 cout << "file id " << obj->StepFileId() << "; name "
-                << instList.GetApplication_instance( obj->StepFileId() - 1 )->eDesc->Name() << endl;
+                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->eDesc->Name() << endl;
             }
             ent_id = i;
         }
@@ -65,16 +65,16 @@ int main( int argc, char * argv[] ) {
     }
     sfile.ReadExchangeFile( argv[1] );
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         sfile.Error().PrintContents( cout );
         exit( EXIT_FAILURE );
     }
 
 //find inverse attribute descriptors
     //first, find inverse attrs unique to this entity (i.e. not inherited)
-    const EntityDescriptor * ed = registry.FindEntity("window");
+    const EntityDescriptor * ed = registry.FindEntity( "window" );
     InverseAItr iaIter( ed->InverseAttr() ); //iterator for inverse attributes
-    if( findInverseAttrs1(iaIter, instance_list) ) {
+    if( findInverseAttrs1( iaIter, instance_list ) ) {
         inverseAttrsFound = true;
     }
 

@@ -1,3 +1,5 @@
+#ifndef CLASSES_H
+#define CLASSES_H
 /*
 ** Fed-x parser output module for generating C++  class definitions
 ** December  5, 1989
@@ -68,7 +70,6 @@ typedef  struct file_holder  {
                                      helper functions to find runtime aggregate bounds */
 }  File_holder, FILES;
 
-
 /**  these fields are used so that ENTITY types are processed in order
  *   when appearing in differnt schemas
  */
@@ -86,13 +87,13 @@ void            ENTITYget_first_attribs( Entity entity, Linked_List result );
 
 ///these fields are used so that SELECT types are processed in order
 typedef struct SelectTag_ * SelectTag;
-struct  SelectTag_ {
+struct SelectTag_ {
     unsigned int started : 1;   ///<  marks the beginning of processing
     unsigned int complete : 1;  ///<  marks the end of processing
 };
 
 const char   *  GetTypeDescriptorName( Type t );
-char         *  format_for_stringout( char * orig_buf, char * return_buf );
+char      *     format_for_stringout( char * orig_buf, char * return_buf );
 void            format_for_std_stringout( FILE * f, const char * orig_buf );
 const char   *  CheckWord( const char * );
 const char   *  StrToLower( const char * );
@@ -114,8 +115,8 @@ void            TYPEprint_new( const Type, FILE *, Schema );
 void            TYPEprint_typedefs( Type, FILE * );
 void            TYPEprint_descriptions( const Type, FILES *, Schema );
 void            TYPEprint_init( const Type type, FILES * files, Schema schema );
-void            AGGRprint_init( FILES* files, const Type t,
-                                const char* var_name, const char* aggr_name );
+void            AGGRprint_init( FILES * files, const Type t,
+                                const char * var_name, const char * aggr_name );
 void            TYPEselect_init_print( const Type, FILE *, Schema );
 void            MODELPrint( Entity, FILES *, Schema, int );
 void            MODELprint_new( Entity, FILES *, Schema );
@@ -131,6 +132,7 @@ void            print_file( Express );
 void            resolution_success( void );
 void            SCHEMAprint( Schema, FILES *, Express, void *, int );
 Type            TYPEget_ancestor( Type );
+const char   *  FundamentalType( const Type t, int report_reftypes );
 
 /*Variable*/
 #define VARis_simple_explicit(a)  (!VARis_type_shifter(a))
@@ -146,4 +148,6 @@ void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
 
 void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file );
+
+#endif
 

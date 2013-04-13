@@ -29,7 +29,7 @@ void * MgrNode::SEE() {
 }
 
 int MgrNode::GetFileId() {
-    return ( se ? se->StepFileId() : -1 );
+    return ( se ? se->GetFileId() : -1 );
 }
 
 void MgrNode::Remove() {

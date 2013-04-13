@@ -164,28 +164,20 @@ struct Return_Statement_ {
 /* global variables */
 /********************/
 
-#ifdef STATEMENT_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*STATEMENT_C*/
+extern SCL_EXPRESS_EXPORT struct freelist_head STMT_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head STMT_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head ALIAS_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head ASSIGN_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head CASE_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head COMP_STMT_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head COND_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head LOOP_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head PCALL_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head RET_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head INCR_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ALIAS_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ASSIGN_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head CASE_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head COMP_STMT_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head COND_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head LOOP_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head PCALL_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head RET_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head INCR_fl;
-
-GLOBAL SCL_EXPRESS_EXPORT Statement    STATEMENT_ESCAPE    INITIALLY( STATEMENT_NULL );
-GLOBAL SCL_EXPRESS_EXPORT Statement    STATEMENT_SKIP      INITIALLY( STATEMENT_NULL );
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT Statement STATEMENT_ESCAPE;
+extern SCL_EXPRESS_EXPORT Statement STATEMENT_SKIP;
 
 /******************************/
 /* macro function definitions */

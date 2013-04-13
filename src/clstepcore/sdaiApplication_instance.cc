@@ -31,26 +31,38 @@ SDAI_Application_instance NilSTEPentity;
 */
 
 SDAI_Application_instance::SDAI_Application_instance()
-    :  _cur( 0 ), STEPfile_id( 0 ), headMiEntity( 0 ), nextMiEntity( 0 ),
+    :  _cur( 0 ),
+       STEPfile_id( 0 ),
+       p21Comment( std::string( "" ) ),
+       eDesc( NULL ),
+       headMiEntity( 0 ),
+       nextMiEntity( 0 ),
        _complex( 0 ) {
 }
 
 SDAI_Application_instance::SDAI_Application_instance( int fileid, int complex )
-    :  _cur( 0 ), STEPfile_id( fileid ), headMiEntity( 0 ), nextMiEntity( 0 ), _complex( complex ) {
+    :  _cur( 0 ),
+       STEPfile_id( fileid ),
+       p21Comment( std::string( "" ) ),
+       eDesc( NULL ),
+       headMiEntity( 0 ),
+       nextMiEntity( 0 ),
+       _complex( complex ) {
 }
 
 SDAI_Application_instance::~SDAI_Application_instance() {
-    STEPattribute *attr;
+    STEPattribute * attr;
 
     ResetAttributes();
     do {
         attr = NextAttribute();
-        if (attr) {
+        if( attr ) {
             attr->refCount --;
-            if (attr->refCount <= 0)
+            if( attr->refCount <= 0 ) {
                 delete attr;
-        }   
-    } while (attr);
+            }
+        }
+    } while( attr );
 
 
     if( MultipleInheritance() ) {
@@ -72,6 +84,10 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
         _error.GreaterSeverity( SEVERITY_BUG );
         return S_ENTITY_NULL;
     } else {
+        if( !eDesc ) {
+            return S_ENTITY_NULL;
+        }
+
         SDAI_Application_instance * seNew = eDesc->NewSTEPentity();
         seNew -> CopyAs( this );
         return seNew;
@@ -83,10 +99,7 @@ void SDAI_Application_instance::AddP21Comment( const char * s, bool replace ) {
         p21Comment.clear();
     }
     if( s ) {
-        //NOTE MAP Sept 2011 - originally, this cleared and then appended -
-        // I don't think that's right, since it makes 'replace' useless
-        //Also, function name contains 'Add', not 'Set'
-        p21Comment.append( s );
+        p21Comment += s;
     }
 }
 
@@ -94,10 +107,7 @@ void SDAI_Application_instance::AddP21Comment( const std::string & s, bool repla
     if( replace ) {
         p21Comment.clear();
     }
-    //NOTE MAP Sept 2011 - originally, this cleared and then appended -
-    // I don't think that's right, since it makes 'replace' useless
-    //Also, function name contains 'Add', not 'Set'
-    p21Comment.append( s );
+    p21Comment += s;
 }
 
 void SDAI_Application_instance::PrependP21Comment( const std::string & s ) {
@@ -208,6 +218,9 @@ void SDAI_Application_instance::CopyAs( SDAI_Application_instance * other ) {
 
 
 const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
+    if( !eDesc ) {
+        return NULL;
+    }
     return eDesc->Name( schnm );
 }
 
@@ -216,6 +229,9 @@ const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
  * type as this one
  */
 const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor * ed ) const {
+    if( !eDesc ) {
+        return NULL;
+    }
     return ( eDesc->IsA( ed ) );
 }
 
@@ -319,13 +335,17 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
     if( writeComments && !p21Comment.empty() ) {
         out << p21Comment;
     }
-    if( mixedCase ) {
-        out << "#" << STEPfile_id << " "
-            << eDesc->QualifiedName( s ) << endl;
-    } else {
-        out << "#" << STEPfile_id << " "
-            << StrToUpper( eDesc->QualifiedName( s ), tmp ) << endl;
+
+    if( eDesc ) {
+        if( mixedCase ) {
+            out << "#" << STEPfile_id << " "
+                << eDesc->QualifiedName( s ) << endl;
+        } else {
+            out << "#" << STEPfile_id << " "
+                << StrToUpper( eDesc->QualifiedName( s ), tmp ) << endl;
+        }
     }
+
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -347,7 +367,8 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
 }
 
 
-/**************************************************************//**
+/******************************************************************
+ ** Procedure:  STEPwrite
  ** Problems:  does not print out the SCOPE section of an entity
  ******************************************************************/
 const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char * currSch ) {
@@ -381,7 +402,8 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
+                 EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 }
@@ -400,7 +422,8 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in ) {
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", StepFileId(), EntityName() );
+        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
+                 EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 
@@ -421,7 +444,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in ) {
              tmp.c_str() );
     _error.AppendToDetailMsg( errStr );
 
-    sprintf( errStr, "\nfinished reading #%d\n", StepFileId() );
+    sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
     return;
 }
@@ -563,7 +586,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     }
     STEPread_error( c, i, in );
 //  code fragment imported from STEPread_error
-//  for some unknown reason it was commented out of STEPread_error
+//  for some currently unknown reason it was commented out of STEPread_error
     errStr[0] = '\0';
     in.clear();
     int foundEnd = 0;

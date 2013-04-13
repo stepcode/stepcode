@@ -1,5 +1,5 @@
 #ifndef _STEPFILE_H
-#define        _STEPFILE_H
+#define _STEPFILE_H
 
 /*
 * NIST STEP Core Class Library
@@ -14,6 +14,7 @@
 */
 
 #include <scl_export.h>
+#include <string>
 #include <instmgr.h>
 #include <Registry.h>
 #include <fstream>
@@ -28,12 +29,10 @@
 #define READ_INCOMPLETE  20
 
 enum  FileTypeCode {
-    TYPE_UNKNOWN        = -2,
-    VERSION_OLD                = -1,
-    VERSION_UNKNOWN        =  0,
-    VERSION_CURRENT        =  1,
-    WORKING_SESSION        =  2,
-    OLD_WORKING_SESSION =  3
+    VERSION_OLD     = -1,
+    VERSION_UNKNOWN =  0,
+    VERSION_CURRENT =  1,
+    WORKING_SESSION =  2
 };
 
 class SCL_EDITOR_EXPORT STEPfile {
@@ -93,8 +92,8 @@ class SCL_EDITOR_EXPORT STEPfile {
 //file type information
         FileTypeCode _fileType;
         char ENTITY_NAME_DELIM;
-        char * FILE_DELIM;
-        char * END_FILE_DELIM;
+        std::string FILE_DELIM;
+        std::string END_FILE_DELIM;
 
 //public member functions
     public:
@@ -113,11 +112,11 @@ class SCL_EDITOR_EXPORT STEPfile {
         SDAI_Application_instance * HeaderDefaultFileSchema();
 
 //file information
-        const std::string FileName() const {
+        std::string FileName() const {
             return _fileName;
         }
-        const std::string SetFileName( const std::string name = "" );
-        const std::string TruncFileName( const std::string name ) const;
+        std::string SetFileName( const std::string name = "" );
+        std::string TruncFileName( const std::string name ) const;
         float GetReadProgress() const;
         float GetWriteProgress() const;
 
@@ -143,13 +142,13 @@ class SCL_EDITOR_EXPORT STEPfile {
         int SetFileType( FileTypeCode ft = VERSION_CURRENT );
 
 //Reading and Writing
-        Severity ReadExchangeFile( const std::string filename = "", bool useTechCor = true );
-        Severity AppendExchangeFile( const std::string filename = "", bool useTechCor = true );
+        Severity ReadExchangeFile( const std::string filename = "", bool useTechCor = 1 );
+        Severity AppendExchangeFile( const std::string filename = "", bool useTechCor = 1 );
 
-        Severity ReadWorkingFile( const std::string filename = "", bool useTechCor = true );
-        Severity AppendWorkingFile( const std::string filename = "", bool useTechCor = true );
+        Severity ReadWorkingFile( const std::string filename = "", bool useTechCor = 1 );
+        Severity AppendWorkingFile( const std::string filename = "", bool useTechCor = 1 );
 
-        Severity AppendFile( istream * in, bool useTechCor = true ) ;
+        Severity AppendFile( istream * in, bool useTechCor = 1 ) ;
 
         Severity WriteExchangeFile( ostream & out, int validate = 1,
                                     int clearError = 1, int writeComments = 1 );
@@ -169,12 +168,12 @@ class SCL_EDITOR_EXPORT STEPfile {
         void Renumber();
 
 //constructors
-        STEPfile( Registry & r, InstMgr & i, const std::string filename = "", bool strict = true, bool verbose = false );
+        STEPfile( Registry & r, InstMgr & i, const std::string filename = "", bool strict = true );
         virtual ~STEPfile();
 
     protected:
 //member functions
-        const std::string schemaName(); /**< Returns and copies out schema name from header instances.
+        std::string schemaName(); /**< Returns and copies out schema name from header instances.
                                              Called by ReadExchangeFile */
         istream * OpenInputFile( const std::string filename = "" );
         void CloseInputFile( istream * in );
@@ -185,7 +184,7 @@ class SCL_EDITOR_EXPORT STEPfile {
         void HeaderMergeInstances( InstMgr * im );
 
         int HeaderId( int increment = 1 );
-        int HeaderId( const std::string name );
+        int HeaderId( const char * nm = "\0" );
 
         int ReadData1( istream & in ); /**< First pass, to create instances */
         int ReadData2( istream & in, bool useTechCor = true ); /**< Second pass, to read instances */
@@ -197,17 +196,17 @@ class SCL_EDITOR_EXPORT STEPfile {
         void ReadRestOfFile( istream & in );
 
         /// create instance - used by ReadData1()
-        SDAI_Application_instance  * CreateInstance( istream & in, ostream & out );
+        SDAI_Application_instance  *  CreateInstance( istream & in, ostream & out );
         /// create complex instance - used by CreateInstance()
-        SDAI_Application_instance * CreateSubSuperInstance( istream & in, int fileid,
+        SDAI_Application_instance  * CreateSubSuperInstance( istream & in, int fileid,
                 ErrorDescriptor & );
 
-        /// read the instance - used by ReadData2()
-        SDAI_Application_instance * ReadInstance( istream & in, ostream & out,
+        // read the instance - used by ReadData2()
+        SDAI_Application_instance  * ReadInstance( istream & in, ostream & out,
                 std::string & cmtStr, bool useTechCor = true );
 
         ///  reading scopes are still incomplete, CreateScopeInstances and ReadScopeInstances are stubs
-        Severity CreateScopeInstances( istream & in, SDAI_Application_instance_ptr ** scopelist );
+        Severity CreateScopeInstances( istream & in, SDAI_Application_instance_ptr  ** scopelist );
         Severity ReadScopeInstances( istream & in );
 //    Severity ReadSubSuperInstance(istream& in);
 

@@ -39,7 +39,7 @@ class SCL_DAI_EXPORT SDAI_Model_contents_instances : public SDAI_DAObject {
         SDAI_DAObject__set_var contents_() {
             return &_instances;
         }
-        const SDAI_DAObject__set_var contents_() const {
+        SDAI_DAObject__set_var contents_() const {
             return ( const SDAI_DAObject__set_var ) &_instances;
         };
 
@@ -51,8 +51,6 @@ typedef SDAI_Model_contents_instances_ptr
 SDAI_Model_contents_instances_var;
 
 // Model_contents_ptr def pushed ahead of #include for Entity_extent
-//class SDAI_Model_contents;
-//typedef SDAI_Model_contents SDAI_Model_contents_ptr;
 
 class SCL_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
 
@@ -65,46 +63,30 @@ class SCL_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
            DATA MEMBERS
          */
     public:
-//  protected: // for now
-// contains Application_instances (i.e. STEPentities)
         SDAI_Model_contents_instances _instances;
 
-        SDAI_Entity_extent__set _folders;     // of entity_extent
+        SDAI_Entity_extent__set _folders;   // of entity_extent
 
-        SDAI_Entity_extent__set _populated_folders;  // of entity_extent
-
-//  EntityAggregate _instances;   // of Entity_instance
-//  EntityAggregate _folders;     // of entity_extent
-//  EntityAggregate _populated_folders;  // of entity_extent
+        SDAI_Entity_extent__set _populated_folders; // of entity_extent
 
         /*
            Constructor declarations
          */
     public: // for now at least
-//  private:
         SDAI_Model_contents();
-//    SDAI_Model_contents(const SDAI_Model_contents& mc);
         ~SDAI_Model_contents();
         /*
            Access function declarations
            */
     public:
         SDAI_Model_contents_instances_ptr instances_();
-        const SDAI_Model_contents_instances_ptr instances_() const;
+        SDAI_Model_contents_instances_ptr instances_() const;
 
         SDAI_Entity_extent__set_var folders_();
-        const SDAI_Entity_extent__set_var folders_() const;
+        SDAI_Entity_extent__set_var folders_() const;
 
-        //Boolean TestFolders() const;
-
-        const SDAI_Entity_extent__set_var populated_folders_() const;
+        SDAI_Entity_extent__set_var populated_folders_() const;
         SDAI_Entity_extent__set_var populated_folders_();
-        //Boolean TestPopulated_folders() const;
-
-//    static SDAI_Model_contents_ptr
-//              _duplicate(SDAI_Model_contents_ptr);
-//    static SDAI_Model_contents_ptr _narrow(Object_ptr);
-//    static SDAI_Model_contents_ptr _nil();
 
         SDAI_PID_DA_ptr
         get_object_pid( const SDAI_DAObject_ptr & d ) const;
@@ -210,10 +192,6 @@ class SCL_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
            */
 
 #endif
-
-//    void instances (SDAI_Model_contents_instances_ptr x);
-//    void folders (Entity_extent__set x);
-//    void populated_folders (Entity_extent__set x);
 
 };
 

@@ -11,7 +11,7 @@
 ** name of the file to be output may also be provided, if no name is
 ** provided the file written out is called file.out
 */
-#include <scl_cf.h>
+
 extern void SchemaInit( class Registry & );
 #include "scl_version_string.h"
 #include <STEPfile.h>
@@ -166,8 +166,8 @@ int main( int argc, char * argv[] ) {
         stats.out( );
     }
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        exit(1);
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+        exit( 1 );
     }
 
     checkSchemaName( registry, sfile, ignoreErr );

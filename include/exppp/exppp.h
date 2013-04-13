@@ -1,3 +1,5 @@
+#ifndef EXPPP_H
+#define EXPPP_H
 #include <scl_export.h>
 
 extern SCL_EXPPP_EXPORT int exppp_nesting_indent;    /* default nesting indent */
@@ -14,6 +16,7 @@ extern SCL_EXPPP_EXPORT bool exppp_reference_info;    /* if true, add commentary
 extern SCL_EXPPP_EXPORT bool exppp_preserve_comments; /* if true, preserve comments where */
 /* possible */
 extern SCL_EXPPP_EXPORT char * exppp_output_filename; /* force output filename */
+extern SCL_EXPPP_EXPORT bool exppp_output_filename_reset; /* if true, force output filename */
 
 SCL_EXPPP_EXPORT void EXPRESSout( Express e );
 
@@ -58,5 +61,6 @@ SCL_EXPPP_EXPORT int TYPEbody_to_buffer( Type t, char * buffer, int length );
 SCL_EXPPP_EXPORT int WHEREto_buffer( Linked_List w, char * buffer, int length );
 
 SCL_EXPPP_EXPORT int EXPRlength( Expression e );
-SCL_EXPPP_EXPORT int count_newlines( char *s );
+SCL_EXPPP_EXPORT int count_newlines( char * s );
 
+#endif

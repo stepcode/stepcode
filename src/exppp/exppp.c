@@ -1,30 +1,9 @@
-#include <scl_cf.h>
 #include <scl_memmgr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
 #include <errno.h>
-#include <sys/stat.h>
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_STDBOOL_H
-# include <stdbool.h>
-#else
-# include <scl_stdbool.h>
-#endif
-#ifdef HAVE_IO_H
-# include <io.h>
-#endif
-
-#ifdef __STDC__
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
-bool exppp_output_filename_reset;    /* if true, force output filename */
-/* DAR - moved this from .h file - not sure why was there. */
 
 #include "../express/expbasic.h"
 #include "../express/express.h"
@@ -68,10 +47,10 @@ static Error ERROR_select_empty;
 int exppp_nesting_indent = 2;       /* default nesting indent */
 int exppp_continuation_indent = 4;  /* default nesting indent for */
 /* continuation lines */
-int exppp_linelength = 75;      /* leave some slop for closing
-                     parens.  \n is not included in */
-/* this count either */
-
+int exppp_linelength = 75;          /* leave some room for closing
+                                     * parens. '\n' is not included in this
+                                     * count either
+                                     */
 int indent2;        /* where continuation lines start */
 int curpos;     /* current line position (1 is first position) */
 
@@ -92,6 +71,8 @@ char * expheader[] = {
     "the next time exppp processes this schema. *)"             ,
     0
 };
+
+bool exppp_output_filename_reset;    /* if true, force output filename */
 
 bool exppp_alphabetize = false;
 
@@ -161,25 +142,17 @@ exp_output( char * buf, int len ) {
 }
 
 void
-#ifdef __STDC__
+
 wrap( char * fmt, ... ) {
-#else
-wrap( va_alist )
-va_dcl {
-    char * fmt;
-#endif
     char * p;
     char buf[10000];
     int len;
     va_list args;
-#ifdef __STDC__
-    va_start( args, fmt );
-#else
-    va_start( args );
-    fmt = va_arg( args, char * );
-#endif
 
+    va_start( args, fmt );
     vsprintf( buf, fmt, args );
+    va_end( args );
+
     len = strlen( buf );
 
     /* 1st condition checks if string cant fit into current line */
@@ -209,25 +182,16 @@ va_dcl {
 }
 
 void
-#ifdef __STDC__
 raw( char * fmt, ... ) {
-#else
-raw( va_alist )
-va_dcl {
-    char * fmt;
-#endif
     char * p;
     char buf[10000];
     int len;
     va_list args;
-#ifdef __STDC__
-    va_start( args, fmt );
-#else
-    va_start( args );
-    fmt = va_arg( args, char * );
-#endif
 
+    va_start( args, fmt );
     vsprintf( buf, fmt, args );
+    va_end( args );
+
     len = strlen( buf );
 
     exp_output( buf, len );
@@ -441,7 +405,7 @@ REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
     indent2 = level + exppp_continuation_indent;
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
-        int first_time = true;
+        bool first_time = true;
         LISTdo( list, r, struct Rename * )
         if( first_time ) {
             raw( "%s FROM %s\n", type, r->schema->symbol.name );
@@ -595,8 +559,7 @@ minimum( int a, int b, int c ) {
     }
 }
 
-static void
-copy_file_chunk( char * filename, int start, int end, int level ) {
+static void copy_file_chunk( char * filename, int start, int end, int level ) {
     FILE * infile;
     char buff[256];
     int i, indent, undent = 0, fix;
@@ -752,7 +715,7 @@ void
 SCOPEconsts_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
-    unsigned int max_indent = 0;
+    size_t max_indent = 0;
     Dictionary d = s->symbol_table;
 
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
@@ -806,7 +769,7 @@ void
 SCOPElocals_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
-    unsigned int max_indent = 0;
+    size_t max_indent = 0;
     Dictionary d = s->symbol_table;
 
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
@@ -861,8 +824,7 @@ SCOPElocals_out( Scope s, int level ) {
     raw( "%*sEND_LOCAL;\n", level, "" );
 }
 
-void
-LOOPout( struct Loop_ *loop, int level ) {
+void LOOPout( struct Loop_ *loop, int level ) {
     Variable v;
 
     raw( "%*sREPEAT", level, "" );
@@ -1302,7 +1264,7 @@ ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
 
 void
 WHERE_out( Linked_List wheres, int level ) {
-    unsigned int max_indent;
+    size_t max_indent;
     if( !wheres ) {
         return;
     }
@@ -1481,9 +1443,6 @@ TYPE_body_out( Type t, int level ) {
                     wrap( " OF" );
                     TYPEunique_or_optional_out( tb );
                     break;
-                default:
-                    printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, tb->type );
-                    abort();
             }
 
             TYPE_head_out( tb->base, level );
@@ -1541,7 +1500,7 @@ TYPE_body_out( Type t, int level ) {
                 /* start new enum item */
                 if( first_time ) {
                     raw( "%*s(", level, "" );
-                    first_time = False;
+                    first_time = false;
                 } else {
                     raw( "%*s ", level, "" );
                 }
@@ -1943,7 +1902,7 @@ EXPRstring( char * buffer, Expression e ) {
             strcat( buffer, ")" );
             break;
         default:
-            sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ) );
+            sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ));
             fprintf( stderr, "%s", buffer );
     }
 }
@@ -1983,13 +1942,13 @@ static int old_lineno;
 static bool string_func_in_use = false;
 static bool file_func_in_use = false;
 
-/* return false if successful */
-static bool
+/* return 0 if successful */
+static int
 prep_buffer( char * buf, int len ) {
     /* this should never happen */
     if( string_func_in_use ) {
         fprintf( stderr, "cannot generate EXPRESS string representations recursively!\n" );
-        return true;
+        return 1;
     }
     string_func_in_use = true;
 
@@ -2003,7 +1962,7 @@ prep_buffer( char * buf, int len ) {
 
     first_line = true;
 
-    return false;
+    return 0;
 }
 
 /* return length of string */
@@ -2016,20 +1975,20 @@ finish_buffer() {
     return 1 + exppp_maxbuflen - exppp_buflen;
 }
 
-/* return false if successful */
-static bool
+/* return 0 if successful */
+static int
 prep_string() {
     /* this should never happen */
     if( string_func_in_use ) {
         fprintf( stderr, "cannot generate EXPRESS string representations recursively!\n" );
-        return true;
+        return 1;
     }
     string_func_in_use = true;
 
     exppp_buf = exppp_bufp = ( char * )scl_malloc( BIGBUFSIZ );
     if( !exppp_buf ) {
         fprintf( stderr, "failed to allocate exppp buffer\n" );
-        return false;
+        return 1;
     }
     exppp_buflen = exppp_maxbuflen = BIGBUFSIZ;
 
@@ -2040,7 +1999,7 @@ prep_string() {
 
     first_line = true;
 
-    return false;
+    return 0;
 }
 
 static char *

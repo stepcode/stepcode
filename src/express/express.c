@@ -68,24 +68,172 @@
  *
  */
 
-#include <scl_cf.h>
-#include <scl_memmgr.h>
-#define EXPRESS_C
+#include "scl_memmgr.h"
 #include "express/basic.h"
 #include <ctype.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 
 #include "express/express.h"
 #include "express/resolve.h"
 #include "stack.h"
 #include "express/scope.h"
+#include "token_type.h"
+#include "expparse.h"
+#include "expscan.h"
+#include "parse_data.h"
 
-extern FILE * yyin;
+void * ParseAlloc( void * ( *mallocProc )( size_t ) );
+void ParseFree( void * parser, void ( *freeProc )( void * ) );
+void Parse( void * parser, int tokenID, YYSTYPE data, parse_data_t parseData );
+
+Linked_List EXPRESS_path;
+int EXPRESSpass;
+
+void ( *EXPRESSinit_args ) PROTO( ( int, char ** ) )   = 0;
+void ( *EXPRESSinit_parse ) PROTO( ( void ) )     = 0;
+int ( *EXPRESSfail ) PROTO( ( Express ) )        = 0;
+int ( *EXPRESSsucceed ) PROTO( ( Express ) )     = 0;
+void ( *EXPRESSbackend ) PROTO( ( Express ) )     = 0;
+char * EXPRESSprogram_name;
+extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
+int ( *EXPRESSgetopt ) PROTO( ( int, char * ) )   = 0;
+bool    EXPRESSignore_duplicate_schemas      = false;
+
+Dictionary EXPRESSbuiltins; /* procedures/functions */
+
+Error ERROR_bail_out        = ERROR_none;
+Error ERROR_syntax      = ERROR_none;
+Error ERROR_unlabelled_param_type = ERROR_none;
+Error ERROR_file_unreadable;
+Error ERROR_file_unwriteable;
+Error ERROR_warn_unsupported_lang_feat;
+
+struct Scope_ * FUNC_NVL;
+struct Scope_ * FUNC_USEDIN;
+
+char * KW_ABS        = "ABS";
+char * KW_ABSTRACT   = "ABSTRACT";
+char * KW_ACOS       = "ACOS";
+char * KW_AGGREGATE  = "AGGREGATE";
+char * KW_ALIAS      = "ALIAS";
+char * KW_AND        = "AND";
+char * KW_ANDOR      = "ANDOR";
+char * KW_ARRAY      = "ARRAY";
+char * KW_AS     = "AS";
+char * KW_ASIN       = "ASIN";
+char * KW_ATAN       = "ATAN";
+char * KW_BAG        = "BAG";
+char * KW_BEGIN      = "BEGIN";
+char * KW_BINARY     = "BINARY";
+char * KW_BLENGTH    = "BLENGTH";
+char * KW_BOOLEAN    = "BOOLEAN";
+char * KW_BY     = "BY";
+char * KW_CASE       = "CASE";
+char * KW_CONST_E    = "CONST_E";
+char * KW_CONSTANT   = "CONSTANT";
+char * KW_CONTEXT    = "CONTEXT";
+char * KW_COS        = "COS";
+char * KW_DERIVE     = "DERIVE";
+char * KW_DIV        = "DIV";
+char * KW_ELSE       = "ELSE";
+char * KW_END        = "END";
+char * KW_END_ALIAS  = "END_ALIAS";
+char * KW_END_CASE   = "END_CASE";
+char * KW_END_CONSTANT   = "END_CONSTANT";
+char * KW_END_CONTEXT    = "END_CONTEXT";
+char * KW_END_ENTITY = "END_ENTITY";
+char * KW_END_FUNCTION   = "END_FUNCTION";
+char * KW_END_IF     = "END_IF";
+char * KW_END_LOCAL  = "END_LOCAL";
+char * KW_END_MODEL  = "END_MODEL";
+char * KW_END_PROCEDURE  = "END_PROCEDURE";
+char * KW_END_REPEAT = "END_REPEAT";
+char * KW_END_RULE   = "END_RULE";
+char * KW_END_SCHEMA = "END_SCHEMA";
+char * KW_END_TYPE   = "END_TYPE";
+char * KW_ENTITY     = "ENTITY";
+char * KW_ENUMERATION    = "ENUMERATION";
+char * KW_ESCAPE     = "ESCAPE";
+char * KW_EXISTS     = "EXISTS";
+char * KW_EXP        = "EXP";
+char * KW_FALSE      = "FALSE";
+char * KW_FIXED      = "FIXED";
+char * KW_FOR        = "FOR";
+char * KW_FORMAT     = "FORMAT";
+char * KW_FROM       = "FROM";
+char * KW_FUNCTION   = "FUNCTION";
+char * KW_GENERIC    = "GENERIC";
+char * KW_HIBOUND    = "HIBOUND";
+char * KW_HIINDEX    = "HIINDEX";
+char * KW_IF     = "IF";
+char * KW_IN     = "IN";
+char * KW_INCLUDE    = "INCLUDE";
+char * KW_INSERT     = "INSERT";
+char * KW_INTEGER    = "INTEGER";
+char * KW_INVERSE    = "INVERSE";
+char * KW_LENGTH     = "LENGTH";
+char * KW_LIKE       = "LIKE";
+char * KW_LIST       = "LIST";
+char * KW_LOBOUND    = "LOBOUND";
+char * KW_LOCAL      = "LOCAL";
+char * KW_LOG        = "LOG";
+char * KW_LOG10      = "LOG10";
+char * KW_LOG2       = "LOG2";
+char * KW_LOGICAL    = "LOGICAL";
+char * KW_LOINDEX    = "LOINDEX";
+char * KW_MOD        = "MOD";
+char * KW_MODEL      = "MODEL";
+char * KW_NOT        = "NOT";
+char * KW_NUMBER     = "NUMBER";
+char * KW_NVL        = "NVL";
+char * KW_ODD        = "ODD";
+char * KW_OF     = "OF";
+char * KW_ONEOF      = "ONEOF";
+char * KW_OPTIONAL   = "OPTIONAL";
+char * KW_OR     = "OR";
+char * KW_OTHERWISE  = "OTHERWISE";
+char * KW_PI     = "PI";
+char * KW_PROCEDURE  = "PROCEDURE";
+char * KW_QUERY      = "QUERY";
+char * KW_REAL       = "REAL";
+char * KW_REFERENCE  = "REFERENCE";
+char * KW_REMOVE     = "REMOVE";
+char * KW_REPEAT     = "REPEAT";
+char * KW_RETURN     = "RETURN";
+char * KW_ROLESOF    = "ROLESOF";
+char * KW_RULE       = "RULE";
+char * KW_SCHEMA     = "SCHEMA";
+char * KW_SELECT     = "SELECT";
+char * KW_SELF       = "SELF";
+char * KW_SET        = "SET";
+char * KW_SIN        = "SIN";
+char * KW_SIZEOF     = "SIZEOF";
+char * KW_SKIP       = "SKIP";
+char * KW_SQRT       = "SQRT";
+char * KW_STRING     = "STRING";
+char * KW_SUBTYPE    = "SUBTYPE";
+char * KW_SUPERTYPE  = "SUPERTYPE";
+char * KW_TAN        = "TAN";
+char * KW_THEN       = "THEN";
+char * KW_TO     = "TO";
+char * KW_TRUE       = "TRUE";
+char * KW_TYPE       = "TYPE";
+char * KW_TYPEOF     = "TYPEOF";
+char * KW_UNIQUE     = "UNIQUE";
+char * KW_UNKNOWN    = "UNKNOWN";
+char * KW_UNTIL      = "UNTIL";
+char * KW_USE        = "USE";
+char * KW_USEDIN     = "USEDIN";
+char * KW_VALUE      = "VALUE";
+char * KW_VALUE_IN   = "VALUE_IN";
+char * KW_VALUE_UNIQUE   = "VALUE_UNIQUE";
+char * KW_VAR        = "VAR";
+char * KW_WHERE      = "WHERE";
+char * KW_WHILE      = "WHILE";
+char * KW_XOR        = "XOR";
+
 extern Express yyexpresult;
 
 static Error ERROR_ref_nonexistent;
@@ -93,24 +241,12 @@ static Error ERROR_tilde_expansion_failed;
 static Error ERROR_schema_not_in_own_schema_file;
 
 extern Linked_List PARSEnew_schemas;
-void SCOPEinitialize( void );
+void SCOPEinitialize(void);
 
 static Express PARSERrun PROTO( ( char *, FILE * ) );
 
 char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );
-}
-
-SCL_EXPRESS_EXPORT int skip_exp_pause = false;
-void exp_pause() {
-    if( !skip_exp_pause ) {
-#ifdef __WIN32__
-        getchar();
-        abort();
-#else
-        pause();
-#endif
-    }
 }
 
 int EXPRESS_fail( Express model ) {
@@ -211,7 +347,6 @@ static void EXPRESS_PATHinit() {
                 continue;
             }
 
-            //removed tilde logic; below line is all that's left
             length = ( p - 1 ) - start;
 
             /* if slash present at end, don't add another */
@@ -445,8 +580,15 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
 
 /** start parsing a new schema file */
 static Express PARSERrun( char * filename, FILE * fp ) {
-    extern int yyparse();
     extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
+    extern YYSTYPE yylval;
+    extern int yyerrstatus;
+    int tokenID;
+    parse_data_t parseData;
+
+    void * parser = ParseAlloc( malloc );
+    perplex_t scanner = perplexFileScanner( fp );
+    parseData.scanner = scanner;
 
     if( print_objects_while_running & OBJ_PASS_BITS ) {
         fprintf( stdout, "parse (pass %d)\n", EXPRESSpass );
@@ -456,14 +598,27 @@ static Express PARSERrun( char * filename, FILE * fp ) {
         fprintf( stdout, "parse: %s (schema file)\n", filename );
     }
 
-    yyin = fp;
     SCAN_lex_init( filename, fp );
-    if( yyparse() != 0 ) {
+    parserInitState();
+
+    yyerrstatus = 0;
+    while( ( tokenID = yylex( scanner ) ) > 0 ) {
+        Parse( parser, tokenID, yylval, parseData );
+    }
+    Parse( parser, 0, yylval, parseData );
+
+    /* want 0 on success, 1 on invalid input, 2 on memory exhaustion */
+    if( yyerrstatus != 0 ) {
+        fprintf( stderr, ">> Bailing! (yyerrstatus = %d)\n", yyerrstatus );
         ERRORreport( ERROR_bail_out );
         /* free model and model->u.express */
         return 0;
     }
     EXPRESSpass = 1;
+
+    perplexFree( scanner );
+    ParseFree( parser, free );
+
     return yyexpresult;
 }
 
@@ -514,30 +669,6 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name, enum rename_type
     /* we are searching for an object to be interfaced from this schema. */
     /* therefore, we *never* want to look at things which are REFERENCE'd */
     /* *into* the current schema.  -snc */
-#if 0
-    if( type == ref ) {
-        return( 0 );
-    }
-
-    /*NOTREACHED*/
-    /* Occurs in a fully REF'd schema? */
-    LISTdo( schema->u.schema->ref_schemas, schema, Schema )
-    result = SCOPEfind_for_rename( schema, name, ref );
-    if( result ) {
-        return result;
-    } else {
-        continue;    /* try another schema */
-    }
-    LISTod;
-
-    /* Occurs in a partially REF'd schema? */
-    rename = ( Rename * )DICTlookup( schema->u.schema->refdict, name );
-    if( rename ) {
-        RENAMEresolve( rename );
-        DICT_type = rename->type;
-        return( rename->object );
-    }
-#endif
 
     return 0;
 }
@@ -610,11 +741,6 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
 
     s = ( Schema )DICTlookup( modeldict, name );
     if( s ) {
-#if 0
-        if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: (found schema %s in model already)\n" );
-        }
-#endif
         return s;
     }
 
@@ -714,7 +840,7 @@ void EXPRESSresolve( Express model ) {
     /* comes first - DEL */
 
     Schema schema;
-    DictionaryEntry de; /* imaginative, eh? */
+    DictionaryEntry de;
 
     jmp_buf env;
     if( setjmp( env ) ) {

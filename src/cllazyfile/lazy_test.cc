@@ -9,7 +9,7 @@
 #endif //NO_REGISTRY
 
 
-void fileInfo( lazyInstMgr& mgr, fileID id ) {
+void fileInfo( lazyInstMgr & mgr, fileID id ) {
     instancesLoaded_t * headerInsts = mgr.getHeaderInstances( id );
     SDAI_Application_instance * hdrInst;
     hdrInst = headerInsts->find( 3 );
@@ -17,11 +17,11 @@ void fileInfo( lazyInstMgr& mgr, fileID id ) {
         SdaiFile_schema * fs = dynamic_cast< SdaiFile_schema * >( hdrInst );
         if( fs ) {
             StringAggregate_ptr p = fs->schema_identifiers_();
-            StringNode * sn = (StringNode *) p->GetHead();
+            StringNode * sn = ( StringNode * ) p->GetHead();
             std::cout << "Schema(s): ";
             while( sn ) {
                 std::cout << sn->value.c_str() << " ";
-                sn = (StringNode *) sn->NextNode();
+                sn = ( StringNode * ) sn->NextNode();
             }
             std::cout << std::endl;
         }
@@ -69,7 +69,7 @@ instanceID printRefs( lazyInstMgr & mgr ) {
     return id;
 }
 
-int main (int argc, char ** argv ) {
+int main( int argc, char ** argv ) {
     if( argc != 2 ) {
         std::cerr << "Expected one argument, given " << argc << ". Exiting." << std::endl;
         exit( EXIT_FAILURE );
@@ -106,7 +106,7 @@ int main (int argc, char ** argv ) {
     if( instWithRef ) {
         // std::cout << "Number of data section instances fully loaded: " << mgr->countInstances() << std::endl;
         std::cout << "Loading #" << instWithRef;
-        SDAI_Application_instance* inst = mgr->loadInstance( instWithRef );
+        SDAI_Application_instance * inst = mgr->loadInstance( instWithRef );
         std::cout << " which is of type " << inst->EntityName() << std::endl;
         // std::cout << "Number of instances loaded now: " << mgr->countInstances() << std::endl;
     }

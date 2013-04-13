@@ -1,15 +1,8 @@
 
 set(LIBSTEPEDITOR_SRCS
-    STEPfile.cc 
-    STEPfile.inline.cc 
-    cmdmgr.cc 
-    dispnode.cc 
-    dispnodelist.cc 
-    instmgr.cc 
-    mgrnode.cc 
-    mgrnodearray.cc 
-    mgrnodelist.cc 
-    needFunc.cc 
+    STEPfile.cc
+    STEPfile.inline.cc
+    cmdmgr.cc
     SdaiHeaderSchema.cc
     SdaiHeaderSchemaAll.cc
     SdaiHeaderSchemaInit.cc
@@ -17,16 +10,9 @@ set(LIBSTEPEDITOR_SRCS
 )
 
 SET(LIBSTEPEDITOR_PRIVATE_HDRS
-    STEPfile.h 
-    cmdmgr.h 
-    dispnode.h 
-    dispnodelist.h 
-    editordefines.h 
-    instmgr.h 
-    mgrnode.h 
-    mgrnodearray.h 
-    mgrnodelist.h 
-    needFunc.h 
+    STEPfile.h
+    cmdmgr.h
+    editordefines.h
     SdaiHeaderSchema.h
     SdaiHeaderSchemaClasses.h
     SdaiSchemaInit.h
@@ -41,4 +27,4 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/clutils
 )
 
-SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" "stepcore stepdai steputils base")
+SCL_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" "stepcore;stepdai;steputils;base")

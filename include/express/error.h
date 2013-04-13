@@ -81,37 +81,29 @@ typedef struct Error_Warning_ {
 /* global variables */
 /********************/
 
-#ifdef ERROR_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /* ERROR_C */
-
-GLOBAL SCL_EXPRESS_EXPORT bool  __ERROR_buffer_errors       INITIALLY( false );
-GLOBAL SCL_EXPRESS_EXPORT char * current_filename           INITIALLY( "stdin" );
+extern SCL_EXPRESS_EXPORT bool __ERROR_buffer_errors;
+extern SCL_EXPRESS_EXPORT char * current_filename;
 
 /* flag to remember whether non-warning errors have occurred */
-GLOBAL SCL_EXPRESS_EXPORT bool  ERRORoccurred           INITIALLY( false );
+extern SCL_EXPRESS_EXPORT bool ERRORoccurred;
 
 
-GLOBAL SCL_EXPRESS_EXPORT Error    experrc             INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_subordinate_failed    INITIALLY( ERROR_none );
-GLOBAL SCL_EXPRESS_EXPORT Error    ERROR_syntax_expecting      INITIALLY( ERROR_none );
+extern SCL_EXPRESS_EXPORT Error experrc;
+extern SCL_EXPRESS_EXPORT Error ERROR_subordinate_failed;
+extern SCL_EXPRESS_EXPORT Error ERROR_syntax_expecting;
 
 /* all of these are 1 if true, 0 if false switches */
 /* for debugging fedex */
-GLOBAL SCL_EXPRESS_EXPORT int  ERRORdebugging          INITIALLY( 0 );
+extern SCL_EXPRESS_EXPORT int ERRORdebugging;
 /* for debugging malloc during resolution */
-GLOBAL SCL_EXPRESS_EXPORT int  malloc_debug_resolve        INITIALLY( 0 );
+extern SCL_EXPRESS_EXPORT int malloc_debug_resolve;
 /* for debugging yacc/lex */
-GLOBAL SCL_EXPRESS_EXPORT int  debug               INITIALLY( 0 );
+extern SCL_EXPRESS_EXPORT int debug;
 
-GLOBAL SCL_EXPRESS_EXPORT struct Linked_List_ * ERRORwarnings;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head ERROR_OPT_fl;
+extern SCL_EXPRESS_EXPORT struct Linked_List_ * ERRORwarnings;
+extern SCL_EXPRESS_EXPORT struct freelist_head ERROR_OPT_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT void ( *ERRORusage_function ) PROTO( ( void ) );
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
 
 /******************************/
 /* macro function definitions */
@@ -132,8 +124,6 @@ extern SCL_EXPRESS_EXPORT void ERROR_flush_message_buffer PROTO( ( void ) );
 /********************/
 /* Inline functions */
 /********************/
-
-#if supports_inline_functions || defined(ERROR_C)
 
 static_inline void ERRORdisable( Error error ) {
     if( error != ERROR_none ) {
@@ -176,8 +166,6 @@ static_inline void ERRORflush_messages( void ) {
     }
 }
 
-#endif /*supports_inline_functions || defined(ERROR_C)*/
-
 /***********************/
 /* function prototypes */
 /***********************/
@@ -194,10 +182,6 @@ extern SCL_EXPRESS_EXPORT void ERRORdestroy PROTO( ( Error ) );
 struct Symbol_; /* mention Symbol to avoid warning on following line */
 extern SCL_EXPRESS_EXPORT void ERRORreport_with_symbol PROTO( ( Error, struct Symbol_ *, ... ) );
 extern SCL_EXPRESS_EXPORT void ERRORreport_with_line PROTO( ( Error, int, ... ) );
-#if !supports_inline_functions
-extern SCL_EXPRESS_EXPORT void ERRORbuffer_messages PROTO( ( bool ) );
-extern SCL_EXPRESS_EXPORT void ERRORflush_messages PROTO( ( void ) );
-#endif
 
 #if !defined(__MSVC__) && !defined(__BORLAND__)
 extern SCL_EXPRESS_EXPORT void ERROR_start_message_buffer PROTO( ( void ) );

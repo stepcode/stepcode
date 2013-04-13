@@ -30,10 +30,10 @@ enum PrimitiveType {
     sdaiNUMBER      = 0x0400,
 // The elements defined below are not part of part 23
 // (IMS: these should not be used as bitmask fields)
-    ARRAY_TYPE,              // DAS
-    BAG_TYPE,                // DAS
-    SET_TYPE,                // DAS
-    LIST_TYPE,               // DAS
+    ARRAY_TYPE,     // DAS
+    BAG_TYPE,       // DAS
+    SET_TYPE,       // DAS
+    LIST_TYPE,      // DAS
     GENERIC_TYPE,
     REFERENCE_TYPE,
     UNKNOWN_TYPE
@@ -56,13 +56,13 @@ typedef PrimitiveType BASE_TYPE;
 #define NUMBER_TYPE sdaiNUMBER
 
 /* not defined in part 23
-        ARRAY_TYPE,              // DAS
-        BAG_TYPE,                // DAS
-        SET_TYPE,                // DAS
-        LIST_TYPE,               // DAS
-        GENERIC_TYPE,
-        REFERENCE_TYPE,
-        UNKNOWN_TYPE
+    ARRAY_TYPE,     // DAS
+    BAG_TYPE,       // DAS
+    SET_TYPE,       // DAS
+    LIST_TYPE,      // DAS
+    GENERIC_TYPE,
+    REFERENCE_TYPE,
+    UNKNOWN_TYPE
 */
 
 #endif

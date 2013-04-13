@@ -44,7 +44,7 @@ Severity  SDAI_Select::severity( Severity s ) {
     return _error.severity( s );
 }
 
-const std::string SDAI_Select::Error() {
+std::string SDAI_Select::Error() {
     return _error.DetailMsg();
 }
 
@@ -93,7 +93,7 @@ SDAI_Select::CanBeSet( const char * n, const char * schnm ) const {
     return _type -> CanBeSet( n, schnm );
 }
 
-const int
+int
 SDAI_Select::IsUnique( const BASE_TYPE bt ) const {
     if( bt == ARRAY_TYPE ||
             bt == LIST_TYPE ||

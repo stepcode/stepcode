@@ -1,4 +1,3 @@
-
 /*
 * NIST Utils Class Library
 * clutils/Str.cc
@@ -10,11 +9,10 @@
 * and is not subject to copyright.
 */
 
-#include <Str.h>
-#include <scl_memmgr.h>
-#ifndef STRING_DELIM
-#define STRING_DELIM '\''
-#endif
+#include "Str.h"
+#include <sstream>
+#include <string>
+
 /******************************************************************
  ** Procedure:  string functions
  ** Description:  These functions take a character or a string and return
@@ -107,11 +105,70 @@ const char * StrToConstant( const char * word, std::string & s ) {
  ******************************************************************/
 int StrCmpIns( const char * str1, const char * str2 ) {
     char c1, c2;
-    while ((c1 = tolower(*str1)) == (c2 = tolower(*str2)) && c1 != '\0') {
+    while( ( c1 = tolower( *str1 ) ) == ( c2 = tolower( *str2 ) ) && c1 != '\0' ) {
         str1++;
         str2++;
     }
     return c1 - c2;
+}
+
+/**
+ * Test if a string ends with the given suffix.
+ */
+bool StrEndsWith( const std::string & s, const char * suf ) {
+    if( suf == NULL ) {
+        return false;
+    }
+    std::string suffix = suf;
+    size_t sLen = s.length();
+    size_t suffixLen = suffix.length();
+    if( sLen < suffixLen ) {
+        return false;
+    }
+    if( s.substr( sLen - suffixLen ).compare( suffix ) == 0 ) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ *  Extract the next delimited string from the istream.
+ */
+std::string GetLiteralStr( istream & in, ErrorDescriptor * err ) {
+    std::string s;
+    in >> std::ws; // skip whitespace
+
+    if( in.good() && in.peek() == STRING_DELIM ) {
+        s += in.get();
+        bool allDelimsEscaped = true;
+        while( in.good() ) {
+            if( in.peek() == STRING_DELIM ) {
+                // A delimiter closes the string unless it's followed by another
+                // delimiter, in which case it's escaped. \S\ starts an ISO
+                // 8859 character escape sequence, so we ignore delimiters
+                // prefixed with \S\.
+                if( !StrEndsWith( s, "\\S\\" ) ) {
+                    allDelimsEscaped = !allDelimsEscaped;
+                }
+            } else if( !allDelimsEscaped ) {
+                // Found normal char after unescaped delim, so last delim
+                // that was appended terminated the string.
+                break;
+            }
+            if( !in.eof() ) {
+                s += in.get();
+            }
+        }
+        if( allDelimsEscaped ) {
+            // Any delimiters found after the opening delimiter were escaped,
+            // so the string is unclosed.
+            // non-recoverable error
+            err->AppendToDetailMsg( "Missing closing quote on string value.\n" );
+            err->AppendToUserMsg( "Missing closing quote on string value.\n" );
+            err->GreaterSeverity( SEVERITY_INPUT_ERROR );
+        }
+    }
+    return s;
 }
 
 /**************************************************************//**
@@ -153,52 +210,6 @@ char * PrettyNewName( const char * oldname ) {
 }
 
 /**
- *  Extract the string conforming to P21 from the istream
- */
-std::string ToExpressStr( istream & in, ErrorDescriptor * err ) {
-    char c;
-    in >> ws; // skip white space
-    in >> c;
-    int i_quote = 0;
-    size_t found;
-    string s = "";
-    if( c == STRING_DELIM ) {
-        s += c;
-        while( i_quote != -1 && in.get( c ) ) {
-            s += c;
-            // to handle a string like 'hi'''
-            if( c == STRING_DELIM ) {
-                // to handle \S\'
-                found = s.rfind( "\\S\\" );
-                if( !( found != string::npos && ( s.size() == found + 2 ) ) ) {
-                    i_quote++;
-                }
-            } else {
-                // # of quotes is odd
-                if( i_quote % 2 != 0 ) {
-                    i_quote = -1;
-                    // put back last char, take it off from s and update c
-                    in.putback( c );
-                    s = s.substr( 0, s.size() - 1 );
-                    c = *s.rbegin();
-                }
-            }
-        }
-
-        if( c != STRING_DELIM ) {
-            // non-recoverable error
-            err->AppendToDetailMsg( "Missing closing quote on string value.\n" );
-            err->AppendToUserMsg( "Missing closing quote on string value.\n" );
-            err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-        }
-    } else {
-        in.putback( c );
-    }
-
-    return s;
-}
-
-/**
 *** This function is used to check an input stream following a read.  It writes
 *** error messages in the 'ErrorDescriptor &err' argument as appropriate.
 *** 'const char *tokenList' argument contains a string made up of delimiters
@@ -236,107 +247,74 @@ std::string ToExpressStr( istream & in, ErrorDescriptor * err ) {
 **/
 Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
                               const char * typeName, // used in error message
-                              const char * tokenList ) { // e.g. ",)"
-    std::string skipBuf;
-    char name[64];
-    name[0] = 0;
+                              const char * delimiterList ) { // e.g. ",)"
+    string skipBuf;
+    ostringstream errMsg;
 
-    // 1. CHECK to see if there is invalid input following what you read.
-    //    good or fail means you can still read from the input stream.
+    if( in.eof() ) {
+        // no error
+        return err->severity();
+    } else if( in.bad() ) {
+        // Bad bit must have been set during read. Recovery is impossible.
+        err->GreaterSeverity( SEVERITY_INPUT_ERROR );
+        errMsg << "Invalid " << typeName << " value.\n";
+        err->AppendToUserMsg( errMsg.str().c_str() );
+        err->AppendToDetailMsg( errMsg.str().c_str() );
+    } else {
+        // At most the fail bit is set, so stream can still be read.
+        // Clear errors and skip whitespace.
+        in.clear();
+        in >> ws;
 
-    if( in.good() || in.fail() )
-        // fail means that the input did not match the expected input.
-    {
-        // check for bad input following what you read (or tried to read) but
-        // preceding a delimiter if you are expecting one.
-
-        in.clear(); // clear the istreams error
-        in >> ws; // skip whitespace
-        if( in.eof() ) { // no input following the desired input (or following the
-            // missing desired input)
+        if( in.eof() ) {
+            // no error
             return err->severity();
         }
-        char c;
-        c = in.peek();
 
-        if( tokenList ) { // are expecting a delim so read till you find it
-
-            // 3. FIND a delimiter
-
-            if( strchr( tokenList, c ) ) {
-                // next char peeked at was delim expected => success
-                return err->severity();
-            } else { // next character was not a delim and thus is garbage
-                // read bad input until you find the delim
-                in.get( c );
-                while( in && !strchr( tokenList, c ) ) {
-                    // this could chew up the remainder of the input unless you
-                    // give it the delim to end an entity value and it knows
-                    // about strings
+        if( delimiterList != NULL ) {
+            // If the next char is a delimiter then there's no error.
+            char c = in.peek();
+            if( strchr( delimiterList, c ) == NULL ) {
+                // Error. Extra input is more than just a delimiter and is
+                // now considered invalid. We'll try to recover by skipping
+                // to the next delimiter.
+                for( in.get( c ); in && !strchr( delimiterList, c ); in.get( c ) ) {
                     skipBuf += c;
-                    in.get( c );
                 }
-                // ENHANCEMENT may want to add the bad data to the err msg.
 
-                if( strchr( tokenList, c ) ) {
-                    // congratulations you recovered
-                    err->GreaterSeverity( SEVERITY_WARNING );
-                    sprintf( name,
-                             "\tFound invalid %s value...\n",
-                             typeName );
-                    err->AppendToUserMsg( name );
-                    err->AppendToDetailMsg( name );
-                    err->AppendToDetailMsg(
-                        "\tdata lost looking for end of attribute: " );
+                if( strchr( delimiterList, c ) != NULL ) {
+                    // Delimiter found. Recovery succeeded.
+                    in.putback( c );
+
+                    errMsg << "\tFound invalid " << typeName << " value...\n";
+                    err->AppendToUserMsg( errMsg.str().c_str() );
+                    err->AppendToDetailMsg( errMsg.str().c_str() );
+                    err->AppendToDetailMsg( "\tdata lost looking for end of "
+                                            "attribute: " );
                     err->AppendToDetailMsg( skipBuf.c_str() );
                     err->AppendToDetailMsg( "\n" );
-                    in.putback( c );
-                    // invalid input
-                    // (though a valid value may have been assigned)
-                    return err->severity();
+
+                    err->GreaterSeverity( SEVERITY_WARNING );
                 } else {
-                    // could not recover (of course)
+                    // No delimiter found. Recovery failed.
+                    errMsg << "Unable to recover from input error while "
+                           << "reading " << typeName << " value.\n";
+                    err->AppendToUserMsg( errMsg.str().c_str() );
+                    err->AppendToDetailMsg( errMsg.str().c_str() );
+
                     err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-                    sprintf( name,
-                             "Unable to recover from input error while reading %s %s",
-                             typeName, "value.\n" );
-                    err->AppendToUserMsg( name );
-                    err->AppendToDetailMsg( name );
-                    // invalid input
-                    // (though a valid value may have been assigned)
-                    return err->severity();
                 }
             }
-        } else if( in.good() ) // found a char => error
-            // i.e. skipping whitespace did not cause EOF so must have hit a char
-        {
-            // remember we are not expecting more input since no tokenList
-
-            // or 3. since not expecting a delimiter and there is input there
-            //       is an error
-
+        } else if( in.good() ) {
+            // Error. Have more input, but lack of delimiter list means we
+            // don't know where we can safely resume. Recovery is impossible.
             err->GreaterSeverity( SEVERITY_WARNING );
-            sprintf( name, "Invalid %s value.\n", typeName );
-            err->AppendToUserMsg( name );
-            err->AppendToDetailMsg( name );
-            // invalid input
-            // (though a valid value may have been assigned)
-            return err->severity();
+
+            errMsg << "Invalid " << typeName << " value.\n";
+
+            err->AppendToUserMsg( errMsg.str().c_str() );
+            err->AppendToDetailMsg( errMsg.str().c_str() );
         }
-    } else if( in.eof() ) {
-        // hit EOF when reading for a value
-        // don\'t set any error
-        return err->severity();
-    } else {
-        // badbit set (in.bad()) means there was a problem when reading istream
-        // this is bad news... it means the input stream is hopelessly messed up
-        err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-        sprintf( name, "Invalid %s value.\n", typeName );
-        err->AppendToUserMsg( name );
-        err->AppendToDetailMsg( name );
-        // invalid input
-        // (though a valid value may have been assigned)
-        return err->severity();
     }
     return err->severity();
 }

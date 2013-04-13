@@ -8,33 +8,33 @@
 #include "ExpDict.h"
 #include <iomanip>
 
-int main(int /*argc*/, char** /*argv*/) {
+int main( int /*argc*/, char ** /*argv*/ ) {
     Schema * a = 0;
-    Logical b(LFalse);
+    Logical b( LFalse );
     char buf[20][2]  = { { '\0' } };
-    int i,d;
+    int i, d;
     EntityDescriptor * descriptors[20], ed( "ed", a, b, b );
     bool failed = false;
 
     //create 20 more ed's
     for( i = 0; i < 20; i++ ) {
         buf[i][0] = 'a' + i; //ed names are 1st 20 lowercase chars
-        descriptors[i] = new EntityDescriptor(buf[i], a, b, b );
+        descriptors[i] = new EntityDescriptor( buf[i], a, b, b );
     }
     //link the ed's together
-    ed.AddSupertype(descriptors[0]);
+    ed.AddSupertype( descriptors[0] );
     for( i = 0; i < 10; i++ ) {
-        descriptors[i]->AddSupertype(descriptors[i+1]);
+        descriptors[i]->AddSupertype( descriptors[i + 1] );
     }
     for( i = 11; i < 20; i++ ) {
-        descriptors[5]->AddSupertype(descriptors[i]);
+        descriptors[5]->AddSupertype( descriptors[i] );
     }
 
     //print the ed's
     i = 0;
     d = 0;
     std::cout << "head, name " << ed.Name() << std::endl;
-    supertypesIterator iter(&ed);
+    supertypesIterator iter( &ed );
     for( ; !iter.empty(); iter++ ) {
         if( !iter.hasNext() ) { //hasNext should be false once and once only
             i++;
@@ -59,7 +59,7 @@ int main(int /*argc*/, char** /*argv*/) {
         failed = true;
     }
 
-    supertypesIterator it2(&ed), it3, uninitializedIter;
+    supertypesIterator it2( &ed ), it3, uninitializedIter;
     it3 = it2;
 
     //test operator==, operator!=
@@ -169,7 +169,7 @@ int main(int /*argc*/, char** /*argv*/) {
     /// still need operator* >=
 
     it3.reset();
-    const EntityDescriptor* e = *it3;
+    const EntityDescriptor * e = *it3;
     const char * n = "a";
     if( strcmp( e->Name(), n ) ) {
         std::cout << "problem with operator*" << std::endl;

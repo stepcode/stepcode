@@ -52,28 +52,38 @@
  */
 
 #include <scl_memmgr.h>
-#define LEX_ACTIONS_C
 #include <stdlib.h>
 #include <ctype.h>
 #include "express/lexact.h"
-
 #include "string.h"
 #include "express/linklist.h"
 #include "stack.h"
 #include "express/hash.h"
 #include "express/express.h"
-#include "expparse.h"
 #include "express/dict.h"
 #include "express/memory.h"
+#include "token_type.h"
+#include "expparse.h"
+#include "expscan.h"
+
+extern YYSTYPE yylval;
+
+Scan_Buffer SCAN_buffers[SCAN_NESTING_DEPTH];
+int     SCAN_current_buffer = 0;
+char    *   SCANcurrent;
+
+Error       ERROR_include_file      = ERROR_none;
+Error       ERROR_unmatched_close_comment   = ERROR_none;
+Error       ERROR_unmatched_open_comment    = ERROR_none;
+Error       ERROR_unterminated_string   = ERROR_none;
+Error       ERROR_encoded_string_bad_digit  = ERROR_none;
+Error       ERROR_encoded_string_bad_count  = ERROR_none;
+Error       ERROR_bad_identifier        = ERROR_none;
+Error       ERROR_unexpected_character  = ERROR_none;
+Error       ERROR_nonascii_char;
+
 
 extern int      yylineno;
-extern FILE    *    yyin;
-
-#ifdef FLEX
-extern char    *    yytext;
-#else /* LEX */
-extern char     yytext[];
-#endif /*FLEX*/
 
 #define SCAN_COMMENT_LENGTH 256
 static char     last_comment_[256] = "";
@@ -107,7 +117,6 @@ static struct keyword_entry {
     { "CASE",       TOK_CASE },
     { "CONST_E",        TOK_E },
     { "CONSTANT",       TOK_CONSTANT },
-    /*    { "CONTEXT",        TOK_CONTEXT },*/
     { "COS",        TOK_BUILTIN_FUNCTION },
     { "DERIVE",     TOK_DERIVE },
     { "DIV",        TOK_DIV },
@@ -116,12 +125,10 @@ static struct keyword_entry {
     { "END_ALIAS",      TOK_END_ALIAS },
     { "END_CASE",       TOK_END_CASE },
     { "END_CONSTANT",   TOK_END_CONSTANT },
-    /*    { "END_CONTEXT",    TOK_END_CONTEXT },*/
     { "END_ENTITY",     TOK_END_ENTITY },
     { "END_FUNCTION",   TOK_END_FUNCTION },
     { "END_IF",     TOK_END_IF },
     { "END_LOCAL",      TOK_END_LOCAL },
-    /*    { "END_MODEL",      TOK_END_MODEL },*/
     { "END_PROCEDURE",  TOK_END_PROCEDURE },
     { "END_REPEAT",     TOK_END_REPEAT },
     { "END_RULE",       TOK_END_RULE },
@@ -158,7 +165,6 @@ static struct keyword_entry {
     { "LOGICAL",        TOK_LOGICAL },
     { "LOINDEX",        TOK_BUILTIN_FUNCTION },
     { "MOD",        TOK_MOD },
-    /*    { "MODEL",      TOK_MODEL },*/
     { "NOT",        TOK_NOT },
     { "NUMBER",     TOK_NUMBER },
     { "NVL",        TOK_BUILTIN_FUNCTION },
@@ -291,19 +297,19 @@ void SCANcleanup( void ) {
 }
 
 int
-SCANprocess_real_literal( void ) {
+SCANprocess_real_literal( const char * yytext ) {
     sscanf( yytext, "%lf", &( yylval.rVal ) );
     return TOK_REAL_LITERAL;
 }
 
 int
-SCANprocess_integer_literal( void ) {
+SCANprocess_integer_literal( const char * yytext ) {
     sscanf( yytext, "%d", &( yylval.iVal ) );
     return TOK_INTEGER_LITERAL;
 }
 
 int
-SCANprocess_binary_literal( void ) {
+SCANprocess_binary_literal( const char * yytext ) {
     yylval.binary = SCANstrdup( yytext + 1 ); /* drop '%' prefix */
     return TOK_BINARY_LITERAL;
 }
@@ -327,7 +333,7 @@ SCANprocess_logical_literal( char * string ) {
 }
 
 int
-SCANprocess_identifier_or_keyword( void ) {
+SCANprocess_identifier_or_keyword( const char * yytext ) {
     char * test_string;
     struct keyword_entry * k;
 
@@ -370,7 +376,7 @@ SCANprocess_identifier_or_keyword( void ) {
 }
 
 int
-SCANprocess_string( void ) {
+SCANprocess_string( const char * yytext ) {
     char * s, *d;   /* source, destination */
 
     /* strip off quotes */
@@ -397,8 +403,8 @@ SCANprocess_string( void ) {
 }
 
 int
-SCANprocess_encoded_string( void ) {
-    char * s;   /* source */
+SCANprocess_encoded_string( const char * yytext ) {
+    char * s, *d;   /* source, destination */
     int count;
 
     /* strip off quotes */
@@ -426,7 +432,8 @@ SCANprocess_encoded_string( void ) {
 }
 
 int
-SCANprocess_semicolon( int commentp ) {
+SCANprocess_semicolon( const char * yytext, int commentp ) {
+
     if( commentp ) {
         strcpy( last_comment_, strchr( yytext, '-' ) );
         yylval.string = last_comment_;
@@ -442,8 +449,8 @@ SCANprocess_semicolon( int commentp ) {
 }
 
 void
-SCANsave_comment( void ) {
-    strncpy( last_comment_ , yytext, 255 );
+SCANsave_comment( const char * yytext ) {
+    strncpy( last_comment_ , yytext, SCAN_COMMENT_LENGTH - 1 );
     last_comment = last_comment_;
 }
 
@@ -486,7 +493,8 @@ SCANread( void ) {
         if( !( done = SCANtext_ready ) ) {
             if( SCAN_current_buffer == 0 ) {
                 done = true;
-                fclose( SCANbuffer.file ); /* close yyin (I think) */
+                fclose( SCANbuffer.file ); /* close yyin */
+                SCANbuffer.file = NULL;
             } else {
                 SCANpop_buffer();
             }

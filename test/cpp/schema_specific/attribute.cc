@@ -26,13 +26,13 @@ int main( int argc, char * argv[] ) {
     InstMgr   instance_list;
     STEPfile  sfile( registry, instance_list, "", false );
     bool foundMatch = false;
-    const char* attrname = "description";
+    const char * attrname = "description";
     if( argc != 2 ) {
         exit( EXIT_FAILURE );
     }
     sfile.ReadExchangeFile( argv[1] );
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         sfile.Error().PrintContents( cout );
         exit( EXIT_FAILURE );
     }
@@ -44,7 +44,7 @@ int main( int argc, char * argv[] ) {
             cout << "attr " << i << ": " << attrlist[i].Name() << endl;
             if( 0 == strcmp( attrname, attrlist[i].Name() ) ) {
                 foundMatch = true;
-                cout << "attribute " << '"' << attrname << '"' <<" found at " << i << endl;
+                cout << "attribute " << '"' << attrname << '"' << " found at " << i << endl;
             }
         }
     }
@@ -53,7 +53,7 @@ int main( int argc, char * argv[] ) {
         exit( EXIT_FAILURE );
     }
     if( !foundMatch ) {
-        cout << "attribute " << '"' << attrname << '"' <<" not found" << endl;
+        cout << "attribute " << '"' << attrname << '"' << " not found" << endl;
         exit( EXIT_FAILURE );
     } else {
         exit( EXIT_SUCCESS );

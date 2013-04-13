@@ -6,7 +6,7 @@
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
-    _instanceTypes = new instanceTypes_t(255); //NOTE arbitrary max of 255 chars for a type name
+    _instanceTypes = new instanceTypes_t( 255 ); //NOTE arbitrary max of 255 chars for a type name
     _lazyInstanceCount = 0;
     _longestTypeNameLen = 0;
     _errors = new ErrorDescriptor();
@@ -87,14 +87,14 @@ void lazyInstMgr::openFile( std::string fname ) {
     _files.push_back( new lazyFileReader( fname, this, _files.size() ) );
 }
 
-SDAI_Application_instance* lazyInstMgr::loadInstance( instanceID id ) {
+SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
-    SDAI_Application_instance* inst = 0;
+    SDAI_Application_instance * inst = 0;
     positionAndSection ps;
     long int off;
     sectionID sid;
     inst = _instancesLoaded.find( id );
-    instanceStreamPos_t::cvector* cv;
+    instanceStreamPos_t::cvector * cv;
     if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
         switch( cv->size() ) {

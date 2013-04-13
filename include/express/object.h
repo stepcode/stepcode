@@ -81,15 +81,7 @@ struct Object {
 /* global variables */
 /********************/
 
-#ifdef OBJECT_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*OBJECT_C */
-
-GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct Object * OBJ;
 
 /******************************/
 /* macro function definitions */
@@ -100,8 +92,6 @@ GLOBAL SCL_EXPRESS_EXPORT struct Object * OBJ;
 #define OBJget_bits(_type_)     (OBJ[(int)_type_].bits)
 #define OBJtype_is_oneof(_type_,class)  (OBJ[(int)_type_].bits & (class))
 #define OBJget_name(obj,type)       (OBJget_symbol(obj,type)->name)
-
-/* removed #define statements for obsolete fn macros OBJequal OBJfree OBJreference OBJget_data */
 
 /***********************/
 /* function prototypes */

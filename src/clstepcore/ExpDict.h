@@ -15,12 +15,11 @@
 #include <scl_export.h>
 #include <sdai.h>
 
-#include <deque>
+#include <vector>
 #include <string>
 #include <assert.h>
 
-class SDAI_Application_instance;
-typedef  SDAI_Application_instance * ( * Creator )() ;
+typedef  SDAI_Application_instance * ( * Creator )();
 
 enum AttrType_Enum {
     AttrType_Explicit = 0,
@@ -478,7 +477,7 @@ class SCL_CORE_EXPORT Where_rule : public Dictionary_instance {
         Express_id label_() const {
             return _label;
         }
-        const Type_or_rule_var parent_item() const {
+        Type_or_rule_var parent_item() const {
             return _type_or_rule;
         }
         std::string comment_() const {
@@ -538,17 +537,17 @@ class SCL_CORE_EXPORT Global_rule : public Dictionary_instance {
         Express_id name_() const {
             return _name;
         }
-        const Entity__set_var entities_() const {
+        Entity__set_var entities_() const {
             return _entities;
         }
-        const Where_rule__list_var where_rules_() const {
+        Where_rule__list_var where_rules_() const {
             return _where_rules;
         }
-        const Schema_ptr parent_schema_() const {
+        Schema_ptr parent_schema_() const {
             return _parent_schema;
         }
         const char * rule_text_() {
-            return const_cast<char *>( _rule_text.c_str() );
+            return _rule_text.c_str();
         }
 
         void name_( Express_id & n ) {
@@ -655,7 +654,7 @@ class SCL_CORE_EXPORT Uniqueness_rule__set {
 typedef Uniqueness_rule__set * Uniqueness_rule__set_ptr;
 typedef Uniqueness_rule__set_ptr Uniqueness_rule__set_var;
 
-typedef  SDAI_Model_contents_ptr( * ModelContentsCreator )() ;
+typedef  SDAI_Model_contents_ptr( * ModelContentsCreator )();
 
 /**
  * \class Schema (was SchemaDescriptor) - a class of this type is generated and contains schema info.
@@ -663,7 +662,7 @@ typedef  SDAI_Model_contents_ptr( * ModelContentsCreator )() ;
 class SCL_CORE_EXPORT Schema : public Dictionary_instance {
 
     protected:
-        const char  * _name ;
+        const char  * _name;
         EntityDescriptorList _entList; // list of entities in the schema
         TypeDescriptorList _typeList; // list of types in the schema
         TypeDescriptorList _unnamed_typeList; // list of unnamed types in the schema (for cleanup)
@@ -672,8 +671,8 @@ class SCL_CORE_EXPORT Schema : public Dictionary_instance {
         // non-SDAI lists
         Interface_spec__set_var _use_interface_list; // list of USE interfaces
         Interface_spec__set_var _ref_interface_list; // list of REFERENCE interfaces
-        std::deque< std::string > _function_list; // of EXPRESS functions
-        std::deque< std::string > _procedure_list; // of EXPRESS procedures
+        std::vector< std::string > _function_list; // of EXPRESS functions
+        std::vector< std::string > _procedure_list; // of EXPRESS procedures
 
         Global_rule__set_var _global_rules;
 
@@ -687,7 +686,7 @@ class SCL_CORE_EXPORT Schema : public Dictionary_instance {
             CreateNewModelContents = f;
         }
 
-        const char * Name() const        {
+        const char * Name() const   {
             return _name;
         }
         void Name( const char  * n )  {
@@ -707,7 +706,7 @@ class SCL_CORE_EXPORT Schema : public Dictionary_instance {
             return _ref_interface_list;
         }
 
-        std::deque< std::string > function_list_() {
+        std::vector< std::string > function_list_() {
             return _function_list;
         }
 
@@ -721,7 +720,7 @@ class SCL_CORE_EXPORT Schema : public Dictionary_instance {
 
         void global_rules_( Global_rule__set_var & grs ); // not implemented
 
-        std::deque< std::string > procedure_list_() {
+        std::vector< std::string > procedure_list_() {
             return _procedure_list;
         }
 
@@ -857,20 +856,20 @@ class SCL_CORE_EXPORT InverseAItr {
 class SCL_CORE_EXPORT AttrDescriptor {
 
     protected:
-        const char  * _name ;        // the attributes name
+        const char  * _name;   // the attributes name
         // this defines the domain of the attribute
-        const TypeDescriptor * _domainType ;
+        const TypeDescriptor * _domainType;
         SDAI_LOGICAL _optional;
         SDAI_LOGICAL _unique;
         AttrType_Enum _attrType; // former attribute _derived
-        const EntityDescriptor & _owner ;  // the owning entityDescriptor
+        const EntityDescriptor & _owner;  // the owning entityDescriptor
     public:
 
         AttrDescriptor(
-            const char * name,                // i.e. char *
+            const char * name,       // i.e. char *
             const TypeDescriptor * domainType,
-            Logical optional,        // i.e. F U or T
-            Logical unique,        // i.e. F U or T
+            Logical optional,    // i.e. F U or T
+            Logical unique,  // i.e. F U or T
             AttrType_Enum at,// AttrType_Explicit, AttrType_Inverse,
             // AttrType_Deriving,AttrType_Redefining
             const EntityDescriptor & owner
@@ -883,7 +882,7 @@ class SCL_CORE_EXPORT AttrDescriptor {
         virtual const char * AttrExprDefStr( std::string & s ) const;
 
         // left side of attr def
-        const char * Name()        const           {
+        const char * Name() const      {
             return _name;
         }
         void     Name( const char  * n ) {
@@ -905,7 +904,7 @@ class SCL_CORE_EXPORT AttrDescriptor {
         //     for the first two and a TypeDescriptor for an
         //     aggregate for the last.
 
-        const PrimitiveType BaseType() const;
+        PrimitiveType BaseType() const;
         const TypeDescriptor * BaseTypeDescriptor() const;
 
         // the first PrimitiveType that is not REFERENCE_TYPE (the first
@@ -916,21 +915,21 @@ class SCL_CORE_EXPORT AttrDescriptor {
         // an element by calling AggrElemType().  Select types
         // would work the same?
 
-        const PrimitiveType NonRefType() const;
+        PrimitiveType NonRefType() const;
         const TypeDescriptor * NonRefTypeDescriptor() const;
 
         int   IsAggrType() const;
-        const PrimitiveType        AggrElemType() const;
+        PrimitiveType   AggrElemType() const;
         const TypeDescriptor * AggrElemTypeDescriptor() const;
 
         // The type of the attributes TypeDescriptor
-        const PrimitiveType Type() const;
-        const char * TypeName() const;        // right side of attr def
+        PrimitiveType Type() const;
+        const char * TypeName() const;  // right side of attr def
 
         // an expanded right side of attr def
         const char * ExpandedTypeName( std::string & s ) const;
 
-        int RefersToType() const        {
+        int RefersToType() const    {
             return !( _domainType == 0 );
         }
 
@@ -950,11 +949,11 @@ class SCL_CORE_EXPORT AttrDescriptor {
         const SDAI_LOGICAL & Optional() const {
             return _optional;
         }
-        void Optional( SDAI_LOGICAL & opt )        {
+        void Optional( SDAI_LOGICAL & opt ) {
             _optional.put( opt.asInt() );
         }
 
-        void Optional( Logical opt )        {
+        void Optional( Logical opt ) {
             _optional.put( opt );
         }
         void Optional( const char * opt ) {
@@ -964,13 +963,13 @@ class SCL_CORE_EXPORT AttrDescriptor {
         const SDAI_LOGICAL & Unique() const {
             return _unique;
         }
-        void Unique( SDAI_LOGICAL uniq )        {
+        void Unique( SDAI_LOGICAL uniq ) {
             _unique.put( uniq.asInt() );
         }
-        void Unique( Logical uniq )        {
+        void Unique( Logical uniq ) {
             _unique.put( uniq );
         }
-        void Unique( const char * uniq )        {
+        void Unique( const char * uniq )  {
             _unique.put( uniq );
         }
 
@@ -1000,27 +999,27 @@ class SCL_CORE_EXPORT AttrDescriptor {
         void Optionality( SDAI_LOGICAL & opt ) {
             _optional.put( opt.asInt() );
         }
-        void Optionality( Logical opt )           {
+        void Optionality( Logical opt ) {
             _optional.put( opt );
         }
         void Optionality( const char * opt ) {
             _optional.put( opt );
         }
 
-        const SDAI_LOGICAL & Uniqueness() const        {
+        const SDAI_LOGICAL & Uniqueness() const {
             return _unique;
         }
-        void Uniqueness( SDAI_LOGICAL uniq )        {
+        void Uniqueness( SDAI_LOGICAL uniq ) {
             _unique.put( uniq.asInt() );
         }
-        void Uniqueness( Logical uniq )                {
+        void Uniqueness( Logical uniq ) {
             _unique.put( uniq );
         }
-        void Uniqueness( const char * uniq )        {
+        void Uniqueness( const char * uniq ) {
             _unique.put( uniq );
         }
 
-        const EntityDescriptor  & Owner() const        {
+        const EntityDescriptor & Owner() const {
             return _owner;
         }
 };
@@ -1064,7 +1063,7 @@ class SCL_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
         const char * _inverted_attr_id;
         const char * _inverted_entity_id;
     protected:
-        AttrDescriptor * _inverted_attr ; // not implemented
+        AttrDescriptor * _inverted_attr; // not implemented
     public:
 
         Inverse_attribute(
@@ -1109,7 +1108,7 @@ class SCL_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
         }
 
         // below are obsolete (and not implemented anyway)
-        class AttrDescriptor * InverseAttribute() const {
+        class AttrDescriptor * InverseAttribute() {
                 return _inverted_attr;
         }
         void InverseOf( AttrDescriptor * invAttr ) {
@@ -1266,18 +1265,18 @@ class SCL_CORE_EXPORT TypeDescriptor {
 
         // the type of the type (see above).
         // it is an enum see file clstepcore/baseType.h
-        PrimitiveType _fundamentalType ;
+        PrimitiveType _fundamentalType;
 
         const Schema * _originatingSchema;
 
         // further describes the type (see above)
         // most often (or always) points at a subtype.
-        const TypeDescriptor * _referentType ;
+        const TypeDescriptor * _referentType;
 
         // Express file description (see above)
         // e.g. the right side of an Express TYPE stmt
         // (See note above by _name regarding memory allocation.)
-        const char  * _description ;
+        const char  * _description;
 
     public:
         // a Where_rule may contain only a comment
@@ -1336,10 +1335,10 @@ class SCL_CORE_EXPORT TypeDescriptor {
         const char * TypeString( std::string & s ) const;
 
         // This TypeDescriptor's type
-        const PrimitiveType Type() const        {
+        PrimitiveType Type() const {
             return _fundamentalType;
         }
-        void  Type( const PrimitiveType type )         {
+        void Type( const PrimitiveType type ) {
             _fundamentalType = type;
         }
 
@@ -1353,7 +1352,7 @@ class SCL_CORE_EXPORT TypeDescriptor {
         //  each one, PrimitiveType BaseType() will return INTEGER_TYPE.
         //  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor
         //  for Integer.
-        const PrimitiveType       BaseType() const;
+        PrimitiveType       BaseType() const;
         const TypeDescriptor * BaseTypeDescriptor() const;
         const char * BaseTypeName() const;
 
@@ -1365,14 +1364,14 @@ class SCL_CORE_EXPORT TypeDescriptor {
         // an element by calling AggrElemType().  Select types
         // would work the same?
 
-        const PrimitiveType        NonRefType() const;
+        PrimitiveType   NonRefType() const;
         const TypeDescriptor * NonRefTypeDescriptor() const;
 
         int   IsAggrType() const;
-        const PrimitiveType        AggrElemType() const;
+        PrimitiveType   AggrElemType() const;
         const TypeDescriptor * AggrElemTypeDescriptor() const;
 
-        const PrimitiveType FundamentalType() const {
+        PrimitiveType FundamentalType() const {
             return _fundamentalType;
         }
         void FundamentalType( PrimitiveType ftype ) {
@@ -1405,7 +1404,7 @@ class SCL_CORE_EXPORT TypeDescriptor {
         // A description of this type's type. Basically you
         // get the right side of a TYPE statement minus END_TYPE.
         // For base type TypeDescriptors it is the same as _name.
-        const char * Description() const        {
+        const char * Description() const    {
             return _description;
         }
         void Description( const char * desc ) {
@@ -1432,7 +1431,7 @@ class SCL_CORE_EXPORT TypeDescriptor {
         // is USE/REFERENCE'ing us (added to altNames).
 };
 
-typedef  SDAI_Enum * ( * EnumCreator )() ;
+typedef SDAI_Enum * ( * EnumCreator )();
 
 class SCL_CORE_EXPORT EnumTypeDescriptor  :    public TypeDescriptor  {
     public:
@@ -1475,7 +1474,7 @@ class SCL_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 
         EntityDescriptorList _subtypes;   // OPTIONAL
         EntityDescriptorList _supertypes; // OPTIONAL
-        AttrDescriptorList          _explicitAttr; // OPTIONAL
+        AttrDescriptorList _explicitAttr; // OPTIONAL
         Inverse_attributeList _inverseAttr;  // OPTIONAL
         std::string _supertype_stmt;
     public:
@@ -1595,7 +1594,7 @@ class SCL_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 class SCL_CORE_EXPORT EnumerationTypeDescriptor  :    public TypeDescriptor  {
 
     protected:
-        StringAggregate * _elements ;          //  of  (null)
+        StringAggregate * _elements;     //  of  (null)
 
     public:
         EnumerationTypeDescriptor( );
@@ -1619,15 +1618,15 @@ class BinaryAggregate;
 class RealAggregate;
 class IntAggregate;
 
-typedef  STEPaggregate * ( * AggregateCreator )() ;
-typedef  EnumAggregate * ( * EnumAggregateCreator )() ;
-typedef  GenericAggregate * ( * GenericAggregateCreator )() ;
-typedef  EntityAggregate * ( * EntityAggregateCreator )() ;
-typedef  SelectAggregate * ( * SelectAggregateCreator )() ;
-typedef  StringAggregate * ( * StringAggregateCreator )() ;
-typedef  BinaryAggregate * ( * BinaryAggregateCreator )() ;
-typedef  RealAggregate * ( * RealAggregateCreator )() ;
-typedef  IntAggregate * ( * IntAggregateCreator )() ;
+typedef STEPaggregate * ( * AggregateCreator )();
+typedef EnumAggregate * ( * EnumAggregateCreator )();
+typedef GenericAggregate * ( * GenericAggregateCreator )();
+typedef EntityAggregate * ( * EntityAggregateCreator )();
+typedef SelectAggregate * ( * SelectAggregateCreator )();
+typedef StringAggregate * ( * StringAggregateCreator )();
+typedef BinaryAggregate * ( * BinaryAggregateCreator )();
+typedef RealAggregate * ( * RealAggregateCreator )();
+typedef IntAggregate * ( * IntAggregateCreator )();
 
 SCL_CORE_EXPORT EnumAggregate * create_EnumAggregate();
 
@@ -1645,7 +1644,7 @@ SCL_CORE_EXPORT RealAggregate * create_RealAggregate();
 
 SCL_CORE_EXPORT IntAggregate * create_IntAggregate();
 
-typedef SDAI_Integer (*boundCallbackFn)(SDAI_Application_instance *);
+typedef SDAI_Integer( *boundCallbackFn )( SDAI_Application_instance * );
 
 /**
  * \class AggrTypeDescriptor
@@ -1663,8 +1662,8 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
     protected:
 
         SDAI_Integer  _bound1, _bound2;
-        SDAI_LOGICAL _uniqueElements ;
-        TypeDescriptor * _aggrDomainType ;
+        SDAI_LOGICAL _uniqueElements;
+        TypeDescriptor * _aggrDomainType;
         AggregateCreator CreateNewAggr;
 
         AggrBoundTypeEnum _bound1_type, _bound2_type;
@@ -1673,9 +1672,7 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
 
     public:
 
-        void AssignAggrCreator( AggregateCreator f = 0 ) {
-            CreateNewAggr = f;
-        }
+        void AssignAggrCreator( AggregateCreator f = 0 );
 
         STEPaggregate * CreateAggregate();
 
@@ -1686,21 +1683,23 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
         AggrTypeDescriptor( const char * nm, PrimitiveType ft,
                             Schema * origSchema, const char * d,
                             AggregateCreator f = 0 )
-                : TypeDescriptor( nm, ft, origSchema, d ), CreateNewAggr( f ) { }
+            : TypeDescriptor( nm, ft, origSchema, d ), _bound1( 0 ), _bound2( 0 ), _uniqueElements( 0 ), _aggrDomainType( NULL ), CreateNewAggr( f ) { }
         virtual ~AggrTypeDescriptor();
 
 
         /// find bound type
-        AggrBoundTypeEnum Bound1Type() const { return _bound1_type; };
+        AggrBoundTypeEnum Bound1Type() const {
+            return _bound1_type;
+        };
         /// get a constant bound
         SDAI_Integer Bound1( ) const {
             assert( _bound1_type == bound_constant );
             return _bound1;
         }
         /// get a runtime bound using an object's 'this' pointer
-        SDAI_Integer Bound1Runtime( SDAI_Application_instance* this_ptr) const {
+        SDAI_Integer Bound1Runtime( SDAI_Application_instance * this_ptr ) const {
             assert( this_ptr && ( _bound1_type == bound_runtime ) );
-            return _bound1_callback(this_ptr) ;
+            return _bound1_callback( this_ptr ) ;
         }
         /// get a bound's EXPRESS function call string
         std::string Bound1Funcall() const {
@@ -1723,16 +1722,18 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
         }
 
         /// find bound type
-        AggrBoundTypeEnum Bound2Type() const { return _bound2_type; };
+        AggrBoundTypeEnum Bound2Type() const {
+            return _bound2_type;
+        };
         /// get a constant bound
         SDAI_Integer Bound2( ) const {
             assert( _bound2_type == bound_constant );
             return _bound2;
         }
         /// get a runtime bound using an object's 'this' pointer
-        SDAI_Integer Bound2Runtime( SDAI_Application_instance* this_ptr) const {
+        SDAI_Integer Bound2Runtime( SDAI_Application_instance * this_ptr ) const {
             assert( this_ptr && ( _bound2_type == bound_runtime ) );
-            return _bound2_callback(this_ptr) ;
+            return _bound2_callback( this_ptr ) ;
         }
         /// get a bound's EXPRESS function call string
         std::string Bound2Funcall() const {
@@ -1744,7 +1745,7 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
             _bound2_type = bound_constant;
         }
         ///set bound's callback fn
-        void SetBound2FromMemberAccessor( boundCallbackFn callback ){
+        void SetBound2FromMemberAccessor( boundCallbackFn callback ) {
             _bound2_callback = callback;
             _bound2_type = bound_runtime;
         }
@@ -1754,7 +1755,7 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
             _bound2_type = bound_funcall;
         }
 
-        SDAI_LOGICAL & UniqueElements()        {
+        SDAI_LOGICAL & UniqueElements() {
             return _uniqueElements;
         }
         void UniqueElements( SDAI_LOGICAL & ue ) {
@@ -1781,23 +1782,23 @@ class SCL_CORE_EXPORT AggrTypeDescriptor  :    public TypeDescriptor  {
 class SCL_CORE_EXPORT ArrayTypeDescriptor  :    public AggrTypeDescriptor  {
 
     protected:
-        SDAI_LOGICAL _optionalElements ;
+        SDAI_LOGICAL  _optionalElements;
     public:
 
-        ArrayTypeDescriptor( ) : _optionalElements( ( char * )"UNKNOWN_TYPE" ) { }
+        ArrayTypeDescriptor( ) : _optionalElements( "UNKNOWN_TYPE" ) { }
         ArrayTypeDescriptor( Logical optElem ) : _optionalElements( optElem )
         { }
         ArrayTypeDescriptor( const char * nm, PrimitiveType ft,
                              Schema * origSchema, const char * d,
                              AggregateCreator f = 0 )
             : AggrTypeDescriptor( nm, ft, origSchema, d, f ),
-              _optionalElements( ( char * )"UNKNOWN_TYPE" )
+              _optionalElements( "UNKNOWN_TYPE" )
         { }
 
         virtual ~ArrayTypeDescriptor() {}
 
 
-        SDAI_LOGICAL & OptionalElements()       {
+        SDAI_LOGICAL & OptionalElements() {
             return _optionalElements;
         }
         void OptionalElements( SDAI_LOGICAL & oe ) {
@@ -1852,12 +1853,12 @@ class SCL_CORE_EXPORT BagTypeDescriptor  :    public AggrTypeDescriptor  {
 
 };
 
-typedef  SDAI_Select * ( * SelectCreator )() ;
+typedef SDAI_Select * ( * SelectCreator )();
 
 class SCL_CORE_EXPORT SelectTypeDescriptor  :    public TypeDescriptor  {
 
     protected:
-        TypeDescriptorList _elements ;          //  of  TYPE_DESCRIPTOR
+        TypeDescriptorList _elements;    //  of  TYPE_DESCRIPTOR
         int _unique_elements;
 
     public:
@@ -1900,30 +1901,30 @@ class SCL_CORE_EXPORT SelectTypeDescriptor  :    public TypeDescriptor  {
 class SCL_CORE_EXPORT StringTypeDescriptor  :    public TypeDescriptor  {
 
     protected:
-        SDAI_Integer  _width ;    //  OPTIONAL
-        SDAI_LOGICAL _fixedSize ;
+        SDAI_Integer   _width;  //  OPTIONAL
+        SDAI_LOGICAL  _fixedSize;
     public:
 
-        StringTypeDescriptor( ) : _fixedSize( ( char * )"UNKNOWN_TYPE" ) {
+        StringTypeDescriptor( ) : _fixedSize( "UNKNOWN_TYPE" ) {
             _width = 0;
         }
         virtual ~StringTypeDescriptor() { }
 
 
-        SDAI_Integer Width()                {
+        SDAI_Integer Width() {
             return _width;
         }
-        void Width( SDAI_Integer  w )        {
+        void Width( SDAI_Integer w ) {
             _width = w;
         }
 
-        SDAI_LOGICAL & FixedSize()                {
+        SDAI_LOGICAL & FixedSize() {
             return _fixedSize;
         }
-        void FixedSize( SDAI_LOGICAL fs )        {
+        void FixedSize( SDAI_LOGICAL fs ) {
             _fixedSize.put( fs.asInt() );
         }
-        void FixedSize( Logical fs )        {
+        void FixedSize( Logical fs ) {
             _fixedSize.put( fs );
         }
 };
@@ -1931,7 +1932,7 @@ class SCL_CORE_EXPORT StringTypeDescriptor  :    public TypeDescriptor  {
 class SCL_CORE_EXPORT RealTypeDescriptor  :    public TypeDescriptor  {
 
     protected:
-        SDAI_Integer  _precisionSpec ;    //  OPTIONAL
+        SDAI_Integer _precisionSpec;  //  OPTIONAL
     public:
 
         RealTypeDescriptor( ) {
@@ -1939,10 +1940,10 @@ class SCL_CORE_EXPORT RealTypeDescriptor  :    public TypeDescriptor  {
         }
         virtual ~RealTypeDescriptor() { }
 
-        SDAI_Integer PrecisionSpec()                 {
+        SDAI_Integer PrecisionSpec() {
             return _precisionSpec;
         }
-        void PrecisionSpec( SDAI_Integer  ps ) {
+        void PrecisionSpec( SDAI_Integer ps ) {
             _precisionSpec = ps;
         }
 };

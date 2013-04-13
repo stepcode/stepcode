@@ -10,27 +10,28 @@
 #include "lazyTypes.h"
 #include "scl_memmgr.h"
 
+#include "scl_export.h"
 
 ///differs from the lazyDataSectionReader in that all instances are always loaded
-class headerSectionReader: public sectionReader {
-protected:
-    instancesLoaded_t * _headerInstances;
+class SCL_LAZYFILE_EXPORT headerSectionReader: public sectionReader {
+    protected:
+        instancesLoaded_t * _headerInstances;
 
-    /// must derive from this class
-    headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
-                sectionReader( parent, file, start, sid ) {
-        _headerInstances = new instancesLoaded_t;
-    }
-public:
-    instancesLoaded_t * getInstances() const {
-        return _headerInstances;
-    }
+        /// must derive from this class
+        headerSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
+            sectionReader( parent, file, start, sid ) {
+            _headerInstances = new instancesLoaded_t;
+        }
+    public:
+        instancesLoaded_t * getInstances() const {
+            return _headerInstances;
+        }
 
-    ~headerSectionReader() {
-        //FIXME delete each instance?! maybe add to clear, since it iterates over everything already
-        //enum clearHow { rawData, deletePointers }
-        _headerInstances->clear();
-    }
+        ~headerSectionReader() {
+            //FIXME delete each instance?! maybe add to clear, since it iterates over everything already
+            //enum clearHow { rawData, deletePointers }
+            _headerInstances->clear();
+        }
 };
 
 #endif  //HEADERSECTIONREADER_H

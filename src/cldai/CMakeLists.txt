@@ -1,31 +1,31 @@
 
 set(LIBSTEPDAI_SRCS
-    sdaiApplication_instance_set.cc 
-    sdaiSession_instance.cc 
-    sdaiObject.cc 
-    sdaiDaObject.cc 
-    sdaiEntity_extent.cc 
-    sdaiEntity_extent_set.cc 
-    sdaiModel_contents.cc 
-    sdaiModel_contents_list.cc
-    sdaiEnum.cc
-    sdaiString.cc
+    sdaiApplication_instance_set.cc
     sdaiBinary.cc
+    sdaiDaObject.cc
+    sdaiEntity_extent.cc
+    sdaiEntity_extent_set.cc
+    sdaiEnum.cc
+    sdaiModel_contents.cc
+    sdaiModel_contents_list.cc
+    sdaiObject.cc
+    sdaiSession_instance.cc
+    sdaiString.cc
 )
 
 SET(LIBSTEPDAI_PRIVATE_HDRS
-    sdaiApplication_instance_set.h 
-    sdaiDaObject.h 
-    sdaiEntity_extent.h 
-    sdaiEntity_extent_set.h 
-    sdaiModel_contents.h 
-    sdaiModel_contents_list.h 
-    sdaiObject.h 
-    sdaiSession_instance.h 
-    StrUtil.hh
-    sdaiEnum.h
-    sdaiString.h
+    sdaiApplication_instance_set.h
     sdaiBinary.h
+    sdaiDaObject.h
+    sdaiEntity_extent.h
+    sdaiEntity_extent_set.h
+    sdaiEnum.h
+    sdaiModel_contents.h
+    sdaiModel_contents_list.h
+    sdaiObject.h
+    sdaiSession_instance.h
+    sdaiString.h
+    StrUtil.hh
 )
 
 include_directories(
@@ -35,4 +35,4 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/clutils
 )
 
-SCL_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils base")
+SCL_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")

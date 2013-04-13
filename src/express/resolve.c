@@ -55,25 +55,27 @@
  *
  */
 
-#include <scl_cf.h>
 #include <scl_memmgr.h>
-#define RESOLVE_C
 #include <stdlib.h>
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
 #include "express/resolve.h"
 #include "stack.h"
 #include "express/schema.h"
 #include "express/express.h"
 
-extern void exp_pause(); //in fedex.c
+int print_objects_while_running = 0;
 
-#ifdef YYDEBUG
-extern int yydebug;
-#else
-const int yydebug = 0;
-#endif
+Error ERROR_undefined_attribute = ERROR_none;
+Error ERROR_undefined_type = ERROR_none;
+Error ERROR_undefined_schema = ERROR_none;
+Error ERROR_unknown_attr_in_entity = ERROR_none;
+Error ERROR_unknown_subtype = ERROR_none;
+Error ERROR_unknown_supertype = ERROR_none;
+Error ERROR_circular_reference = ERROR_none;
+Error ERROR_ambiguous_attribute = ERROR_none;
+Error ERROR_ambiguous_group = ERROR_none;
+Error WARNING_fn_skip_branch = ERROR_none;
+Error WARNING_case_skip_label = ERROR_none;
+
 
 static void ENTITYresolve_subtypes PROTO( ( Schema ) );
 static void ENTITYresolve_supertypes PROTO( ( Entity ) );
@@ -217,6 +219,7 @@ void RESOLVEinitialize( void ) {
         "IF statement condition is always %s. Ignoring branch that is never taken.", SEVERITY_WARNING );
 
     WARNING_case_skip_label = ERRORcreate("CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING);
+ 
 
     ERRORcreate_warning( "circular_subtype", ERROR_subsuper_loop );
     ERRORcreate_warning( "circular_select", ERROR_select_loop );
@@ -260,7 +263,7 @@ void RESOLVEcleanup( void ) {
     ERRORdestroy( ERROR_redecl_no_such_supertype );
     ERRORdestroy( ERROR_missing_self );
     ERRORdestroy( WARNING_case_skip_label );
-    ERRORdestroy( WARNING_fn_skip_branch );
+    ERRORdestroy( WARNING_fn_skip_branch ); 
 }
 
 /**
@@ -511,8 +514,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     expr->symbol.resolved = expr->type->symbol.resolved;
                     break;
                 default:
-                    printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-                    exp_pause();
+                    fprintf( stderr, "ERROR: unexpected type in EXPresolve.\n" );
                     break;
             }
             break;
@@ -556,12 +558,6 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             } else if( TYPEis_runtime( expr->return_type ) ) {
                 t = Type_Runtime;
             } else {
-                if( yydebug ) {
-                    fprintf( stderr, "\nquery requires aggregate. expr->return_type->symbol.name: %s at line %d. expr->return_type->u.type->body->type %d,  scope->symbol.name %s at line %d, expr->u.query->aggregate->symbol.name %s at line %d\n",
-                             expr->return_type->symbol.name, expr->return_type->symbol.line,
-                             expr->return_type->u.type->body->type, scope->symbol.name, scope->symbol.line,
-                             expr->u.query->aggregate->symbol.name, expr->u.query->aggregate->symbol.line );
-                }
                 ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
                 break;
@@ -586,12 +582,11 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             resolved_all( expr );
             break;
         default:
-            printf( "unexpected type in EXPresolve.  Press ^C now to trap to debugger\n" );
-            exp_pause();
+            fprintf( stderr, "ERROR: unexpected type in EXPresolve.\n" );
     }
 }
 
-int ENTITYresolve_subtype_expression( Expression expr, Entity ent, Linked_List * flat ) {
+int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, Linked_List * flat ) {
     Entity ent_ref;
     int i = UNRESOLVED;
 
@@ -669,7 +664,7 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent, Linked_List *
 **
 ** Resolve all references in a type.
 */
-void TYPE_resolve( Type * typeaddr ) {
+void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
     Type type = *typeaddr;
     Type ref_type;
     TypeBody body = type->u.type->body;
@@ -757,7 +752,7 @@ void TYPE_resolve( Type * typeaddr ) {
 **
 ** Resolve all references in a variable definition.
 */
-void VAR_resolve_expressions( Variable v, Entity entity ) {
+void VAR_resolve_expressions( Variable v, Entity entity /* was scope */ ) {
     EXPresolve( v->name, entity, Type_Dont_Care ); /* new!! */
 
     if( v->initializer ) {
@@ -775,7 +770,7 @@ void VAR_resolve_expressions( Variable v, Entity entity ) {
 **
 ** Resolve all references in a variable definition.
 */
-void VAR_resolve_types( Variable v, Entity entity ) {
+void VAR_resolve_types( Variable v, Entity entity /* was scope */ ) {
     int failed = 0;
 
     TYPEresolve( &v->type, entity );
@@ -852,14 +847,14 @@ void CASE_ITresolve( Case_Item item, Scope scope, Statement statement ) {
     } LISTod;
     if( validLabels ) {
         STMTresolve( item->action, scope );
-    }
+    } 
 }
 
 void STMTresolve( Statement statement, Scope scope ) {
-    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements();
+    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements(); 
     Scope proc;
     Logical eval;
-    bool skipped = false;
+    bool skipped = false; 
 
     if( !statement ) {
         return;    /* could be null statement */
@@ -882,7 +877,7 @@ void STMTresolve( Statement statement, Scope scope ) {
             EXPresolve( statement->u.Case->selector, scope, Type_Dont_Care );
             LISTdo( statement->u.Case->cases, c, Case_Item ) {
                 CASE_ITresolve( c, scope, statement );
-            } LISTod;
+            } LISTod; 
             break;
         case STMT_COMPOUND:
             STMTlist_resolve( statement->u.compound->statements, scope );
@@ -1052,7 +1047,7 @@ void ENTITYresolve_expressions( Entity e ) {
 
 
 void ENTITYcheck_missing_supertypes( Entity ent ) {
-    bool found;
+    int found;
 
     /* Make sure each of my subtypes lists me as a supertype */
     LISTdo( ent->u.entity->subtypes, sub, Entity )
@@ -1079,7 +1074,7 @@ void ENTITYcalculate_inheritance( Entity e ) {
             ENTITYcalculate_inheritance( super );
         }
         e->u.entity->inheritance += ENTITYget_size( super );
-    } LISTod
+    } LISTod 
 }
 
 /** returns 1 if entity is involved in circularity, else 0 */
@@ -1204,7 +1199,6 @@ void SCOPEresolve_types( Scope s ) {
 
 
 
-
 /********************************new****************************************/
 
 void SCOPEresolve_subsupers( Scope scope ) {
@@ -1217,7 +1211,7 @@ void SCOPEresolve_subsupers( Scope scope ) {
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( scope->type ) ) {
         fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
-                    scope->symbol.name, OBJget_type( scope->type ) );
+                 scope->symbol.name, OBJget_type( scope->type ) );
     }
 
     DICTdo_init( scope->symbol_table, &de );
@@ -1253,7 +1247,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
         fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
-                    e->symbol.name );
+                 e->symbol.name );
     }
 
     if( e->u.entity->supertype_symbols ) {
@@ -1310,7 +1304,7 @@ static void ENTITYresolve_subtypes( Entity e ) {
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
         fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
-                    e->symbol.name );
+                 e->symbol.name );
     }
 
     i = ENTITYresolve_subtype_expression( e->u.entity->subtype_expression, e, &e->u.entity->subtypes );
@@ -1321,13 +1315,13 @@ static void ENTITYresolve_subtypes( Entity e ) {
 
 void ENTITYresolve_types( Entity e ) {
     int i;
-    Qualified_Attr * reference;
+    Qualified_Attr * ref;
     Variable attr;
-    bool failed = false;
+    int failed = 0;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
         fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
-                    e->symbol.name );
+                 e->symbol.name );
     }
 
     LISTdo( e->u.entity->attributes, attr, Variable )
@@ -1337,8 +1331,8 @@ void ENTITYresolve_types( Entity e ) {
     LISTod;
 
     /*
-        * resolve the 'unique' list
-        */
+     * resolve the 'unique' list
+     */
 
     /* these are lists of lists */
     /* the sublists are: label, ref'd_attr, ref'd attr, ref'd attr, etc. */
@@ -1353,9 +1347,9 @@ void ENTITYresolve_types( Entity e ) {
     if( i == 1 ) {
         continue;
     }
-    reference = ( Qualified_Attr * )reflink->data;
+    ref = ( Qualified_Attr * )reflink->data;
 
-    attr = ENTITYresolve_attr_ref( e, reference->entity, reference->attribute );
+    attr = ENTITYresolve_attr_ref( e, ref->entity, ref->attribute );
     if( !attr ) {
         /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
         /*                  ref->attribute, ref->attribute->name,*/
@@ -1364,7 +1358,7 @@ void ENTITYresolve_types( Entity e ) {
         continue;
     }
 
-    QUAL_ATTR_destroy( reference );
+    QUAL_ATTR_destroy( ref );
     reflink->data = ( Generic )attr;
 
     if( ENTITYdeclares_variable( e, attr ) ) {
@@ -1425,7 +1419,7 @@ void SCOPEresolve_expressions_statements( Scope s ) {
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
         fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
-                    s->symbol.name, OBJget_type( s->type ) );
+                 s->symbol.name, OBJget_type( s->type ) );
     }
 
     DICTdo_init( s->symbol_table, &de );
@@ -1483,8 +1477,8 @@ static int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     EXPresolve( w->expr, scope, Type_Dont_Care );
     if( need_self && ! found_self ) {
         ERRORreport_with_symbol( ERROR_missing_self,
-                                    w->label,
-                                    w->label->name );
+                                 w->label,
+                                 w->label->name );
         w->label->resolved = RESOLVE_FAILED;
     } else {
         w->label->resolved = RESOLVED;
@@ -1498,7 +1492,16 @@ static int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     }
 }
 
-
+/* should only be called on types known to be tagged! */
+static char * TYPEget_tagname( Type type ) {
+    for( ; type; type = type->u.type->body->base ) {
+        if( type->u.type->body->tag ) {
+            return type->u.type->body->tag->symbol.name;
+        }
+    }
+    /* can't happen */
+    return 0;
+}
 
 struct tag * TAGcreate_tags() {
     extern int tag_count;

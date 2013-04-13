@@ -22,14 +22,14 @@ using namespace std;
 
 typedef enum Severity {
     SEVERITY_MAX    = -5,
-    SEVERITY_DUMP    = -4,
-    SEVERITY_EXIT    = -3,    // fatal
-    SEVERITY_BUG    = -2,    // non-recoverable error -- probably bug
-    SEVERITY_INPUT_ERROR = -1,    // non-recoverable error
+    SEVERITY_DUMP   = -4,
+    SEVERITY_EXIT   = -3,   // fatal
+    SEVERITY_BUG    = -2,   // non-recoverable error -- probably bug
+    SEVERITY_INPUT_ERROR = -1,  // non-recoverable error
     SEVERITY_WARNING    = 0,    // recoverable error
-    SEVERITY_INCOMPLETE    = 1,    // incomplete data
+    SEVERITY_INCOMPLETE = 1,    // incomplete data
     SEVERITY_USERMSG    = 2,    // possibly an error
-    SEVERITY_NULL    = 3    // no error or message
+    SEVERITY_NULL   = 3 // no error or message
 } Severity;
 
 
@@ -37,7 +37,6 @@ enum  DebugLevel  {
     DEBUG_OFF    = 0,
     DEBUG_USR    = 1,
     DEBUG_ALL    = 2
-
 };
 
 /******************************************************************
@@ -62,7 +61,7 @@ class SCL_UTILS_EXPORT ErrorDescriptor {
     protected:
         Severity    _severity;
 
-        static DebugLevel    _debug_level;
+        static DebugLevel   _debug_level;
         static ostream * _out; // note this will not be persistent
     public:
         ErrorDescriptor( Severity s    = SEVERITY_NULL,
@@ -81,18 +80,16 @@ class SCL_UTILS_EXPORT ErrorDescriptor {
         Severity severity() const {
             return _severity;
         }
-        // return _severity as a const char * in the std::string provided
-        void severity( std::string & s ) const;
         Severity severity( Severity s ) {
             return ( _severity = s );
         }
+        std::string severityString() const;
         Severity GetCorrSeverity( const char * s );
         Severity GreaterSeverity( Severity s ) {
             return ( ( s < _severity ) ?  _severity = s : _severity );
         }
 
-//     inline const char * UserMsg() const { return _userMsg.c_str(); }
-        inline const std::string UserMsg() const {
+        std::string UserMsg() const {
             return _userMsg;
         }
         void UserMsg( const char * );
@@ -101,17 +98,16 @@ class SCL_UTILS_EXPORT ErrorDescriptor {
         }
 
         void AppendToUserMsg( const char * );
+        void AppendToUserMsg( const char c );
         void AppendToUserMsg( const std::string & msg ) {
             _userMsg.append( msg );
         }
         void PrependToUserMsg( const char * );
-        void AppendToUserMsg( const char c );
 
-//     const char * DetailMsg() const { return _detailMsg.c_str(); }
-        const std::string DetailMsg() const {
+        std::string DetailMsg() const {
             return _detailMsg;
         }
-        inline void DetailMsg( const std::string msg ) {
+        void DetailMsg( const std::string msg ) {
             _detailMsg.assign( msg );
         }
         void DetailMsg( const char * );

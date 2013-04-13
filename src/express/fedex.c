@@ -77,28 +77,17 @@
 #include "scl_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_PROCESS_H
-/* process.h defines getpid() function on WIN32 systems */
-# include <process.h>
-#endif
 #include "sc_getopt.h"
 #include "express/error.h"
 #include "express/express.h"
 #include "express/resolve.h"
 
 #ifdef YYDEBUG
-extern SCL_EXPRESS_EXPORT int yydebug;
-extern SCL_EXPRESS_EXPORT int yydbg_upper_limit;
-extern SCL_EXPRESS_EXPORT int yydbg_lower_limit;
-extern SCL_EXPRESS_EXPORT int yydbg_verbose;
+extern int exp_yydebug;
 #endif /*YYDEBUG*/
 
-extern SCL_EXPRESS_EXPORT int skip_exp_pause;
-char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:u:l:nrvz";
-int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
+char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz";
+static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
 void print_fedex_version( void ) {
     fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, scl_version() );
@@ -106,12 +95,11 @@ void print_fedex_version( void ) {
 }
 
 static void usage( void ) {
-    fprintf( stderr, "usage: %s [-v] [-d # | -d 9 [-l nnn | -u nnn]] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-v produces the following version description:\n" );
     print_fedex_version();
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
-    fprintf( stderr, "\t-n do not pause for internal errors (useful with delta script)\n" );
     fprintf( stderr, "\t-w warning enable\n" );
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
@@ -145,9 +133,7 @@ int main( int argc, char ** argv ) {
 
     EXPRESSprogram_name = argv[0];
     ERRORusage_function = usage;
-#ifdef YYDEBUG
-    yydebug = 0;
-#endif
+
     EXPRESSinit_init();
 
     EXPRESSinitialize();
@@ -172,10 +158,7 @@ int main( int argc, char ** argv ) {
                         fprintf( stderr, "  6 - heavy malloc debugging while resolving\n" );
 #endif /* debugging*/
 #ifdef YYDEBUG
-                        fprintf( stderr, "  8 - set yydebug\n" );
-                        fprintf( stderr, "  9 - set yydebug selectively, must use -u and/or -l. Also increases verbosity for some errors\n" );
-                        fprintf( stderr, "-u nnn: upper line limit\n" );
-                        fprintf( stderr, "-l nnn: lower line limit\n" );
+                        fprintf( stderr, "  8 - set YYDEBUG\n" );
 #endif /*YYDEBUG*/
                         break;
                     case 1:
@@ -194,23 +177,11 @@ int main( int argc, char ** argv ) {
 #endif /*debugging*/
 #ifdef YYDEBUG
                     case 8:
-                        yydebug = 1;
-                        break;
-                    case 9:
-                        yydbg_verbose = true;
-                        //yydebug gets set in expscan.l when in the line range set by -l and -u
+                        exp_yydebug = 1;
                         break;
 #endif /* YYDEBUG */
                 }
                 break;
-#ifdef YYDEBUG
-            case 'u':
-                yydbg_upper_limit = atoi( optarg );
-                break;
-            case 'l':
-                yydbg_lower_limit = atoi( optarg );
-                break;
-#endif /* YYDEBUG */
             case 'B':
                 buffer_messages = true;
                 break;
@@ -219,9 +190,6 @@ int main( int argc, char ** argv ) {
                 break;
             case 'e':
                 filename = optarg;
-                break;
-            case 'n':
-                skip_exp_pause = true;
                 break;
             case 'r':
                 resolve = 0;
@@ -244,15 +212,7 @@ int main( int argc, char ** argv ) {
                 break;
             case 'v':
                 print_fedex_version();
-                break;
-            case 'z': /* to allow user to attach debugger and continue */
-                printf( "pid = %d\n", getpid() );
-#ifndef __WIN32__
-                pause();
-#else     //windows
-                getchar();
-                abort();
-#endif
+                no_need_to_work = 1;
                 break;
             default:
                 rc = 1;

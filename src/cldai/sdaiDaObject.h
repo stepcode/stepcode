@@ -39,8 +39,8 @@ class SCL_DAI_EXPORT SDAI_PID : public SDAI_sdaiObject {
 //    static PID_ptr _narrow(SDAI_sdaiObject_ptr);
 //    static PID_ptr _nil();
 
-        SDAI_String _datastore_type ;
-        SDAI_String _pidstring ;
+        SDAI_String _datastore_type;
+        SDAI_String _pidstring;
 
         // constructor/destructor
         SDAI_PID();
@@ -50,7 +50,7 @@ class SCL_DAI_EXPORT SDAI_PID : public SDAI_sdaiObject {
            The Datestore_type attribute shall identify the type of the underlying
            datastore.
          */
-        char * Datastore_type() const  {
+        char * Datastore_type() const {
             return const_cast<char *>( _datastore_type.c_str() );
         }
         void Datastore_type( char * x ) {
@@ -92,7 +92,7 @@ typedef SDAI_PID_ptr SDAI_PID_var;
 class SCL_DAI_EXPORT SDAI_PID_DA: public SDAI_PID {
     public:
 
-        SDAI_String _oid ;
+        SDAI_String _oid;
         // oid (ISO/DIS 10303-23:1996(E) 5.3.10.3)
         //
         //   This attribute shall set and return the string representation of the
@@ -127,7 +127,7 @@ typedef SDAI_PID_DA_ptr SDAI_PID_DA_var;
 //
 class SCL_DAI_EXPORT SDAI_PID_SDAI : public SDAI_PID {
     public:
-        SDAI_String _modelid ;
+        SDAI_String _modelid;
 
         // constructor/destructor
         SDAI_PID_SDAI();
@@ -142,7 +142,7 @@ class SCL_DAI_EXPORT SDAI_PID_SDAI : public SDAI_PID {
         virtual void Modelid( const char * x ) {
             _modelid = x;
         }
-        virtual char * Modelid() const   {
+        virtual char * Modelid() const {
             return const_cast<char *>( _modelid.c_str() );
         }
 };
@@ -442,8 +442,8 @@ class SCL_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject {
          */
 
 #ifdef SDAI_CPP_LATE_BINDING
-        Boolean TestAttr( const Attribute_ptr & attDef );
-        Boolean TestAttr( const char * attName ) const;
+        ::Boolean TestAttr( const Attribute_ptr & attDef );
+        ::Boolean TestAttr( const char * attName ) const;
 #endif
 
         /*

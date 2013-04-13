@@ -118,12 +118,12 @@ class SCL_CORE_EXPORT EntNode {
         bool  marked( MarkType base = ORMARK ) {
             return ( mark >= base );
         }
-        bool allMarked();  ///< returns true if all nodes in list are marked
+        bool  allMarked();  ///< returns true if all nodes in list are marked
         int  unmarkedCount();
         bool  multSuprs() {
             return multSupers;
         }
-        void multSuprs( bool j ) {
+        void multSuprs( int j ) {
             multSupers = j;
         }
         void sort( EntNode ** );
@@ -212,7 +212,8 @@ class SCL_CORE_EXPORT SimpleList : public EntList {
 
     public:
         SimpleList( const char * n ) : EntList( SIMPLE ), I_marked( NOMARK ) {
-            strcpy( name, n );
+            strncpy( name, n, sizeof( name ) - 1 );
+            name[sizeof( name ) - 1] = '\0'; /* sanity */
         }
         ~SimpleList() {}
         int operator== ( const char * nm ) {
@@ -222,16 +223,10 @@ class SCL_CORE_EXPORT SimpleList : public EntList {
             return name;
         }
         bool contains( char * nm ) {
-            if( *this == nm ) {
-                return true;
-            }
-            return false;
+            return *this == nm;
         }
         bool hit( char * nm ) {
-            if( *this == nm ) {
-                return true;
-            }
-            return false;
+            return *this == nm;
         }
         MatchType matchNonORs( EntNode * );
         bool acceptChoice( EntNode * );
@@ -271,12 +266,13 @@ class SCL_CORE_EXPORT MultList : public EntList {
         int childCount() {
             return numchildren;
         }
+//  EntList *operator[]( int );
         EntList * getChild( int );
         EntList * getLast() {
             return ( getChild( numchildren - 1 ) );
         }
         void unmarkAll( EntNode * );
-        bool prevKnown( EntList * desc );
+        bool prevKnown( EntList * );
         void reset();
 
     protected:
@@ -300,7 +296,7 @@ class SCL_CORE_EXPORT JoinList : public MultList {
         JoinList( JoinType j ) : MultList( j ) {}
         ~JoinList() {}
         void setViableVal( EntNode * );
-        bool acceptChoice( EntNode * ents );
+        bool acceptChoice( EntNode * );
 };
 
 class SCL_CORE_EXPORT AndOrList : public JoinList {
@@ -326,9 +322,9 @@ class SCL_CORE_EXPORT AndList : public JoinList {
 
 class SCL_CORE_EXPORT OrList : public MultList {
     public:
-        OrList() : MultList( OR ), choice( -1 ), choice1( -2 ), choiceCount( 0 ) {}
+        OrList() : MultList( OR ), choice( -1 ), choice1( -1 ), choiceCount( 0 ) {}
         ~OrList() {}
-        bool hit( char * nm );
+        bool hit( char * );
         MatchType matchORs( EntNode * );
         MatchType tryNext( EntNode * );
         void unmarkAll( EntNode * );
@@ -382,8 +378,8 @@ class SCL_CORE_EXPORT ComplexList {
          * Based on knowledge that ComplexList always created by ANDing supertype
          * with subtypes.
          */
-        bool toplevel( const char * name );
-        bool contains( EntNode * ents );
+        bool toplevel( const char * );
+        bool contains( EntNode * );
         bool matches( EntNode * );
 
         EntNode * list; /**< List of all entities contained in this complex type,
@@ -398,7 +394,7 @@ class SCL_CORE_EXPORT ComplexList {
 
     private:
         void addChildren( EntList * );
-        bool hitMultNodes( EntNode * ents );
+        bool hitMultNodes( EntNode * );
         int abstract;   ///< is our supertype abstract?
         int dependent;  ///< is our supertype also a subtype of other supertype(s)?
         bool multSupers; ///< am I a combo-CList created to test a subtype which has >1 supertypes?

@@ -7,22 +7,24 @@
 #include "lazyTypes.h"
 #include "scl_memmgr.h"
 
+#include "scl_export.h"
+
 /** base class for data section readers
  * \sa lazyP21DataSectionReader
  * \sa lazyP28DataSectionReader
  */
 class lazyDataSectionReader: public sectionReader {
-protected:
-    bool _error, _completelyLoaded;
-    std::string _sectionIdentifier;
+    protected:
+        bool _error, _completelyLoaded;
+        std::string _sectionIdentifier;
 
-    /// only makes sense to call the ctor from derived class ctors
-    lazyDataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
-public:
-    virtual ~lazyDataSectionReader() {}
-    bool success() {
-        return !_error;
-    }
+        /// only makes sense to call the ctor from derived class ctors
+        lazyDataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
+    public:
+        virtual ~lazyDataSectionReader() {}
+        bool success() {
+            return !_error;
+        }
 };
 
 #endif //LAZYDATASECTIONREADER_H

@@ -37,8 +37,8 @@ void readProgressParallel( STEPfile & f, float & maxProgress ) {
         if( p > maxProgress ) {
             maxProgress = p;
         }
-        DELAY(50);
-    }    
+        DELAY( 50 );
+    }
 }
 
 void writeProgressParallel( STEPfile & f, float & maxProgress ) {
@@ -47,16 +47,16 @@ void writeProgressParallel( STEPfile & f, float & maxProgress ) {
         if( p > maxProgress ) {
             maxProgress = p;
         }
-        DELAY(50);
+        DELAY( 50 );
     }
 }
 
 int main( int argc, char * argv[] ) {
     float progress = 0.0;
 
-    if ( argc != 2 ) {
+    if( argc != 2 ) {
         cerr << "Wrong number of args. Use: " << argv[0] << " file.stp" << endl;
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     }
 
     Registry  registry( SchemaInit );
@@ -69,34 +69,34 @@ int main( int argc, char * argv[] ) {
     r.detach();
     Severity readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
-        sfile.Error().PrintContents(cout);
-        exit(EXIT_FAILURE);
+        sfile.Error().PrintContents( cout );
+        exit( EXIT_FAILURE );
     }
     if( progress < 55 ) { //55 is arbitrary. should be >50 due to how GetReadProgress() works.
         cerr << "Error: Read progress (" << progress << ") never exceeded the threshold (55). Exiting." << endl;
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     } else {
         cout << "Read progress reached " << progress << "% - success." << endl;
     }
     progress = 0;
 
     // write the file
-    std::thread w( writeProgressParallel, std::ref(sfile), std::ref( progress ) );
+    std::thread w( writeProgressParallel, std::ref( sfile ), std::ref( progress ) );
     sfile.WriteExchangeFile( "out.stp" );
     w.detach();
     readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
-        sfile.Error().PrintContents(cout);
-        exit(EXIT_FAILURE);
+        sfile.Error().PrintContents( cout );
+        exit( EXIT_FAILURE );
     }
     if( progress < 55 ) {
         cerr << "Error: Write progress (" << progress << ") never exceeded the threshold (55). Exiting." << endl;
-        exit(EXIT_FAILURE);
+        exit( EXIT_FAILURE );
     } else {
         cout << "Write progress reached " << progress << "% - success." << endl;
     }
 
-    exit(EXIT_SUCCESS);
+    exit( EXIT_SUCCESS );
 }
 
 

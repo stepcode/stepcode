@@ -138,7 +138,7 @@ int DirObj::Index( const char * name ) {
 //
 // Clears existing fileList and fills it again with the names of entries in
 // the directory at the supplied 'path'.
-// for type 'DIR' and 'direct' see /usr/include/sys/dirent.h
+// for type 'DIR' and 'direct' see dirent.h
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -177,7 +177,7 @@ bool DirObj::Reset( const std::string & path ) {
 //
 // Return 1 if file named by 'path' is a directory; otherwise 0.
 // 'path' must not have tildes -- can send path to Normalize() first
-// /usr/include/sys/stat.h
+// See stat.h
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -214,7 +214,7 @@ bool DirObj::IsADirectory( const char * path ) {
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-const std::string DirObj::Normalize( const std::string & path ) {
+std::string DirObj::Normalize( const std::string & path ) {
     std::string buf;
     const char * slash;
 #if defined(__WIN32__)

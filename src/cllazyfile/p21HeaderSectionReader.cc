@@ -14,8 +14,8 @@ void p21HeaderSectionReader::findSectionStart() {
 }
 
 p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::ifstream & file,
-                                                std::streampos start, sectionID sid ):
-                                            headerSectionReader( parent, file, start, sid ) {
+        std::streampos start, sectionID sid ):
+    headerSectionReader( parent, file, start, sid ) {
     findSectionStart();
     findSectionEnd();
     _file.seekg( _sectionStart );
@@ -40,7 +40,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     if( i.loc.begin <= 0 ) {
         i.name = 0;
     } else {
-        i.name = getDelimitedKeyword(";( /\\");
+        i.name = getDelimitedKeyword( ";( /\\" );
 
         if( 0 == strcmp( "FILE_DESCRIPTION", i.name ) ) {
             i.loc.instance = 1;
@@ -55,7 +55,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
         assert( strlen( i.name ) > 0 );
 
         std::streampos end = seekInstanceEnd( 0 ); //no references in file header
-        if( (end == -1 ) || ( end >= _sectionEnd ) ) {
+        if( ( end == -1 ) || ( end >= _sectionEnd ) ) {
             //invalid instance, so clear everything
             i.loc.begin = -1;
             i.name = 0;

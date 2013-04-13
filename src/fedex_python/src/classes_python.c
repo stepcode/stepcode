@@ -52,8 +52,6 @@ Variable VARis_type_shifter( Variable a );
 const char * ENTITYget_CORBAname( Entity ent );
 const char * GetTypeDescriptorName( Type t );
 
-char * FundamentalType( const Type t, int report_reftypes );
-
 int multiple_inheritance = 1;
 int print_logging = 0;
 int corba_binding = 0;

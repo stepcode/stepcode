@@ -29,25 +29,34 @@ MultList::~MultList()
     }
 }
 
-int MultList::setLevel( int l )
+void MultList::setLevel( int l )
 /*
  * Sets this's level, and tells all its children to set their level to our
  * level +1.
- * Returns the maxlevel of children.
  */
 {
     EntList * child = childList;
-    int maxlevel, childlevel;
 
     level = l;
-    maxlevel = l;
     for( ; child != NULL; child = child->next ) {
-        childlevel = child->setLevel( l + 1 );
-        if( childlevel > maxlevel ) {
-            maxlevel = childlevel;
-        }
+        child->setLevel( l + 1 );
     }
-    return maxlevel;
+}
+
+int MultList::getMaxLevel() {
+    EntList * child = childList;
+    int maxLevel, childLevel;
+
+    maxLevel = level;
+    while( child ) {
+        childLevel = child->getMaxLevel();
+        if( childLevel > maxLevel ) {
+            maxLevel = childLevel;
+        }
+        child = child->next;
+    }
+
+    return maxLevel;
 }
 
 int MultList::contains( const char * nm )

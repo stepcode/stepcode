@@ -4,20 +4,21 @@
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
 #include "scl_memmgr.h"
+#include "scl_export.h"
 
-class lazyP21DataSectionReader: public lazyDataSectionReader {
-protected:
-public:
-    lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
+class SCL_LAZYFILE_EXPORT lazyP21DataSectionReader: public lazyDataSectionReader {
+    protected:
+    public:
+        lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
 
-    void findSectionStart() {
-        _sectionStart = findNormalString( "DATA", true );
-    }
-    /** gets information (start, end, name, etc) about the next
-     * instance in the file and returns it in a namedLazyInstance
-     * \sa p21HeaderSectionReader::nextInstance()
-     */
-    const namedLazyInstance nextInstance();
+        void findSectionStart() {
+            _sectionStart = findNormalString( "DATA", true );
+        }
+        /** gets information (start, end, name, etc) about the next
+         * instance in the file and returns it in a namedLazyInstance
+         * \sa p21HeaderSectionReader::nextInstance()
+         */
+        const namedLazyInstance nextInstance();
 
 };
 

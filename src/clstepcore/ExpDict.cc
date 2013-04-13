@@ -321,7 +321,6 @@ Interface_spec::~Interface_spec() {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-
 void Schema::AddFunction( const std::string & f ) {
     _function_list.push_back( f );
 }
@@ -584,7 +583,7 @@ const char * AttrDescriptor::AttrExprDefStr( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-const PrimitiveType AttrDescriptor::BaseType() const {
+PrimitiveType AttrDescriptor::BaseType() const {
     if( _domainType ) {
         return _domainType->BaseType();
     }
@@ -595,7 +594,7 @@ int AttrDescriptor::IsAggrType() const {
     return ReferentType()->IsAggrType();
 }
 
-const PrimitiveType AttrDescriptor::AggrElemType() const {
+PrimitiveType AttrDescriptor::AggrElemType() const {
     if( IsAggrType() ) {
         return ReferentType()->AggrElemType();
     }
@@ -616,14 +615,16 @@ const TypeDescriptor * AttrDescriptor::NonRefTypeDescriptor() const {
     return 0;
 }
 
-const PrimitiveType AttrDescriptor::NonRefType() const {
+PrimitiveType
+AttrDescriptor::NonRefType() const {
     if( _domainType ) {
         return _domainType->NonRefType();
     }
     return UNKNOWN_TYPE;
 }
 
-const PrimitiveType AttrDescriptor::Type() const {
+PrimitiveType
+AttrDescriptor::Type() const {
     if( _domainType ) {
         return _domainType->Type();
     }
@@ -645,7 +646,8 @@ const char * AttrDescriptor::TypeName() const {
 }
 
 /// an expanded right side of attr def
-const char * AttrDescriptor::ExpandedTypeName( std::string & s ) const {
+const char *
+AttrDescriptor::ExpandedTypeName( std::string & s ) const {
     s.clear();
     if( Derived() == LTrue ) {
         s = "DERIVE  ";
@@ -814,7 +816,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     if( strlen( _supertype_stmt.c_str() ) > 0 ) {
         buf.append( "\n  " );
     }
-    buf.append( _supertype_stmt.c_str() );
+    buf.append( _supertype_stmt );
 
     const EntityDescriptor * ed = 0;
 
@@ -952,13 +954,14 @@ const char * EntityDescriptor::QualifiedName( std::string & s ) const {
     EntityDescItr edi( _supertypes );
 
     int count = 1;
-    const EntityDescriptor * ed = 0;
-    while( ( ed = edi.NextEntityDesc() ) ) {
+    const EntityDescriptor * ed = edi.NextEntityDesc();
+    while( ed ) {
         if( count > 1 ) {
             s.append( "&" );
         }
         s.append( ed->Name() );
         count++;
+        ed = edi.NextEntityDesc();
     }
     if( count > 1 ) {
         s.append( "&" );
@@ -990,8 +993,6 @@ const EntityDescriptor * EntityDescriptor::IsA( const EntityDescriptor * other )
     return found;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 Type_or_rule::Type_or_rule() {
 }
 
@@ -1001,12 +1002,9 @@ Type_or_rule::Type_or_rule( const Type_or_rule & tor ) {
 Type_or_rule::~Type_or_rule() {
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
 Where_rule::Where_rule() {
     _type_or_rule = 0;
 }
-
 
 Where_rule::Where_rule( const Where_rule & wr ) {
     _label = wr._label;
@@ -1104,7 +1102,7 @@ int Where_rule__list::Count() {
 }
 
 void Where_rule__list::Clear() {
-    for ( int i = 0; i < _count ; i ++ ) {
+    for( int i = 0; i < _count ; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1115,7 +1113,6 @@ void Where_rule__list::Clear() {
 Uniqueness_rule::Uniqueness_rule()
     : _parent_entity( 0 ) {
 }
-
 
 Uniqueness_rule::Uniqueness_rule( const Uniqueness_rule & ur ) {
     _label = ur._label;
@@ -1214,7 +1211,7 @@ int Uniqueness_rule__set::Count() {
 }
 
 void Uniqueness_rule__set::Clear() {
-    for ( int i = 0; i < _count; i ++ ) {
+    for( int i = 0; i < _count; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1335,7 +1332,7 @@ int Global_rule__set::Count() {
 }
 
 void Global_rule__set::Clear() {
-    for ( int i = 0; i < _count; i ++ ) {
+    for( int i = 0; i < _count; i ++ ) {
         delete _buf[i];
     }
     _count = 0;
@@ -1565,7 +1562,7 @@ const TypeDescriptor * TypeDescriptor::IsA( const char * other ) const  {
  * an element by calling AggrElemType().  Select types
  * would work the same?
  */
-const PrimitiveType TypeDescriptor::NonRefType() const {
+PrimitiveType TypeDescriptor::NonRefType() const {
     const TypeDescriptor * td = NonRefTypeDescriptor();
     if( td ) {
         return td->FundamentalType();
@@ -1602,7 +1599,7 @@ int TypeDescriptor::IsAggrType() const {
     }
 }
 
-const PrimitiveType TypeDescriptor::AggrElemType() const {
+PrimitiveType TypeDescriptor::AggrElemType() const {
     const TypeDescriptor * aggrElemTD = AggrElemTypeDescriptor();
     if( aggrElemTD ) {
         return aggrElemTD->Type();
@@ -1629,7 +1626,7 @@ const TypeDescriptor * TypeDescriptor::AggrElemTypeDescriptor() const {
  *  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor
  *  for Integer
  */
-const PrimitiveType TypeDescriptor::BaseType() const {
+PrimitiveType TypeDescriptor::BaseType() const {
     const TypeDescriptor * td = BaseTypeDescriptor();
     if( td ) {
         return td->FundamentalType();
@@ -1680,16 +1677,17 @@ const TypeDescriptor * SelectTypeDescriptor::IsA( const TypeDescriptor * other )
  * type may be an element of a td for a select that is returned.
  */
 const TypeDescriptor * SelectTypeDescriptor::CanBe( const TypeDescriptor * other ) const {
-    TypeDescItr elements( GetElements() ) ;
-    const TypeDescriptor * td = 0;
-
     if( this == other ) {
         return other;
     }
-    while( ( td = elements.NextTypeDesc() ) ) {
+
+    TypeDescItr elements( GetElements() ) ;
+    const TypeDescriptor * td = elements.NextTypeDesc();
+    while( td )  {
         if( td -> CanBe( other ) ) {
             return td;
         }
+        td = elements.NextTypeDesc();
     }
     return 0;
 }
@@ -1709,7 +1707,7 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const char * other ) const {
     }
 
     // see if other is one of the elements
-    while( ( td = elements.NextTypeDesc() ) ) {
+    while( td = elements.NextTypeDesc() )  {
         if( td -> CanBe( other ) ) {
             return td;
         }
@@ -1738,9 +1736,9 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const char * other ) const {
  */
 const TypeDescriptor * SelectTypeDescriptor::CanBeSet( const char * other, const char * schNm ) const {
     TypeDescItr elements( GetElements() ) ;
-    const TypeDescriptor * td = 0;
+    const TypeDescriptor * td = elements.NextTypeDesc();
 
-    while( ( td = elements.NextTypeDesc() ) ) {
+    while( td ) {
         if( td->Type() == REFERENCE_TYPE && td->NonRefType() == sdaiSELECT ) {
             // Just look at this level, don't look at my items (see intro).
             if( td->CurrName( other, schNm ) ) {
@@ -1749,6 +1747,7 @@ const TypeDescriptor * SelectTypeDescriptor::CanBeSet( const char * other, const
         } else if( td->CanBeSet( other, schNm ) ) {
             return td;
         }
+        td = elements.NextTypeDesc();
     }
     return 0;
 }
@@ -1765,16 +1764,19 @@ STEPaggregate * AggrTypeDescriptor::CreateAggregate() {
     }
 }
 
+void AggrTypeDescriptor::AssignAggrCreator( AggregateCreator f ) {
+    CreateNewAggr = f;
+}
 
 AggrTypeDescriptor::AggrTypeDescriptor( ) :
-    _uniqueElements( ( char * )"UNKNOWN_TYPE" ) {
+    _uniqueElements( "UNKNOWN_TYPE" ) {
     _bound1 = -1;
     _bound2 = -1;
     _aggrDomainType = 0;
 }
 
-AggrTypeDescriptor::AggrTypeDescriptor( SDAI_Integer b1,
-                                        SDAI_Integer b2,
+AggrTypeDescriptor::AggrTypeDescriptor( SDAI_Integer  b1,
+                                        SDAI_Integer  b2,
                                         Logical uniqElem,
                                         TypeDescriptor * aggrDomType )
     : _bound1( b1 ), _bound2( b2 ), _uniqueElements( uniqElem ) {

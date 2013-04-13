@@ -12,17 +12,17 @@
 extern "C" {
 #endif
 
-typedef struct {
-    long virtMemKB, physMemKB, userMilliseconds, sysMilliseconds;
-} benchVals;
+    typedef struct {
+        long virtMemKB, physMemKB, userMilliseconds, sysMilliseconds;
+    } benchVals;
 
-/** return a benchVals struct with four current statistics for this process:
- * virtual and physical memory use in kb,
- * user and system cpu time in ms
- *
- * not yet implemented for OSX or Windows.
- */
-SCL_BASE_EXPORT benchVals getMemAndTime( );
+    /** return a benchVals struct with four current statistics for this process:
+     * virtual and physical memory use in kb,
+     * user and system cpu time in ms
+     *
+     * not yet implemented for OSX or Windows.
+     */
+    SCL_BASE_EXPORT benchVals getMemAndTime( );
 
 #ifdef __cplusplus
 }
@@ -38,29 +38,29 @@ SCL_BASE_EXPORT benchVals getMemAndTime( );
  * depends on getMemAndTime() above - may not work on all platforms.
  */
 class SCL_BASE_EXPORT benchmark {
-protected:
-    benchVals initialVals, laterVals;
-    std::ostream& ostr;
-    std::string descr;
-    bool debug, stopped;
-public:
-    benchmark( std::string description = "", bool debugMessages = true, std::ostream& o_stream = std::cout );
+    protected:
+        benchVals initialVals, laterVals;
+        std::ostream & ostr;
+        std::string descr;
+        bool debug, stopped;
+    public:
+        benchmark( std::string description = "", bool debugMessages = true, std::ostream & o_stream = std::cout );
 
-    /// if 'stopped' is false, uses str(true) to print to ostream
-    ~benchmark( );
-    void reset( );
-    void reset( std::string description );
-    benchVals get( );
-    void stop( );
+        /// if 'stopped' is false, uses str(true) to print to ostream
+        ~benchmark( );
+        void reset( );
+        void reset( std::string description );
+        benchVals get( );
+        void stop( );
 
-    /// converts data member 'laterVals' into a string and returns it
-    std::string str( );
+        /// converts data member 'laterVals' into a string and returns it
+        std::string str( );
 
-    /// outputs result of str() on ostream 'ostr'
-    void out( );
+        /// outputs result of str() on ostream 'ostr'
+        void out( );
 
-    /// converts 'bv' into a string, prefixed by data member 'descr'
-    std::string str( const benchVals& bv );
+        /// converts 'bv' into a string, prefixed by data member 'descr'
+        std::string str( const benchVals & bv );
 };
 
 

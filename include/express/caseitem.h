@@ -70,15 +70,7 @@ struct Case_Item_ {
 /* global variables */
 /********************/
 
-#ifdef CASE_ITEM_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /*CASE_ITEM_C*/
-
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head CASE_IT_fl;
-
-#include "de_end.h"
+extern SCL_EXPRESS_EXPORT struct freelist_head CASE_IT_fl;
 
 /******************************/
 /* macro function definitions */

@@ -88,7 +88,7 @@ struct Schema_ {
     Linked_List reflist;
     Linked_List uselist;
     /** \var refdict, usedict
-     * dictionarys into which are entered renames for each specific 
+     * dictionarys into which are entered renames for each specific
      * object specified in a rename clause (even if it uses the same
      * name */
     Dictionary refdict;
@@ -96,7 +96,7 @@ struct Schema_ {
 
     Linked_List use_schemas; /**< lists of schemas that are fully use'd
                               * entries can be 0 if schemas weren't found during RENAMEresolve */
-     Linked_List ref_schemas; /**< lists of schemas that are fully ref'd
+    Linked_List ref_schemas; /**< lists of schemas that are fully ref'd
                                * entries can be 0 if schemas weren't found during RENAMEresolve */
 };
 
@@ -104,22 +104,11 @@ struct Schema_ {
 /* global variables */
 /********************/
 
-#ifdef SCHEMA_C
-# define GLOBAL
-# define INITIALLY(value) = value
-#else
-# define GLOBAL extern
-# define INITIALLY(value)
-#endif /* SCHEMA_C */
+extern SCL_EXPRESS_EXPORT struct freelist_head REN_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head SCOPE_fl;
+extern SCL_EXPRESS_EXPORT struct freelist_head SCHEMA_fl;
 
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head REN_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SCOPE_fl;
-GLOBAL SCL_EXPRESS_EXPORT struct freelist_head SCHEMA_fl;
-
-GLOBAL SCL_EXPRESS_EXPORT int  __SCOPE_search_id       INITIALLY( 0 );
-
-#undef GLOBAL
-#undef INITIALLY
+extern SCL_EXPRESS_EXPORT int __SCOPE_search_id;
 
 /******************************/
 /* macro function definitions */
@@ -160,5 +149,4 @@ extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use PROTO( ( Scope ) );
 extern SCL_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref PROTO( ( Scope ) );
 
 #endif /*  SCHEMA_H */
-
 

@@ -30,28 +30,28 @@ int main( int argc, char * argv[] ) {
     }
     sfile.ReadExchangeFile( argv[1] );
 
-    if ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
+    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
         sfile.Error().PrintContents( cout );
         exit( EXIT_FAILURE );
     }
 //find attributes
-    SdaiWindow* instance = (SdaiWindow*) instance_list.GetApplication_instance("window");
-    if ( !instance ) {
+    SdaiWindow * instance = ( SdaiWindow * ) instance_list.GetApplication_instance( "window" );
+    if( !instance ) {
         cout << "NULL" << endl;
         exit( EXIT_FAILURE );
     }
     cout << "instance #" << instance->StepFileId() << endl;
 
-/* The inverse could be set with
- *    const Inverse_attribute * ia =...;
- *    const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
- *    instance->isdefinedby_(inv_ed);
- */
-    EntityAggregate* aggr = instance->isdefinedby_();
-    if(aggr) {
-            cout << aggr->EntryCount() << endl;
+    /* The inverse could be set with
+     *    const Inverse_attribute * ia =...;
+     *    const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
+     *    instance->isdefinedby_(inv_ed);
+     */
+    EntityAggregate * aggr = instance->isdefinedby_();
+    if( aggr ) {
+        cout << aggr->EntryCount() << endl;
     } else {
-            cout << "inverse attr is not defined" << endl;
+        cout << "inverse attr is not defined" << endl;
         exit( EXIT_FAILURE );
     }
     exit( EXIT_SUCCESS );

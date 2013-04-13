@@ -82,7 +82,7 @@ struct Scope_ {
     char            type;       /* see above */
     ClientData      clientData; /**< user may use this for any purpose */
     int             search_id;  /**< key to avoid searching this scope twice */
-    Dictionary      symbol_table,enum_table;
+    Dictionary      symbol_table, enum_table;
     struct Scope_ * superscope;
     union {
         struct Procedure_ * proc;
@@ -98,17 +98,6 @@ struct Scope_ {
     } u;
     Linked_List where;      /**< optional where clause */
 };
-
-/********************/
-/* global variables */
-/********************/
-
-#ifdef SCOPE_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /* SCOPE_C */
-#include "de_end.h"
 
 /******************************/
 /* macro function definitions */

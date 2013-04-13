@@ -37,7 +37,7 @@
 
 #include <mgrnodearray.h>
 
-class SCL_EDITOR_EXPORT InstMgr {
+class SCL_CORE_EXPORT InstMgr {
     protected:
         int maxFileId;
         int _ownsInstances; // if true will delete instances inside destructor
@@ -100,11 +100,11 @@ class SCL_EDITOR_EXPORT InstMgr {
         }
         int EntityKeywordCount( const char * name );
 
-        SDAI_Application_instance * GetApplication_instance( int index );
+        SDAI_Application_instance  * GetApplication_instance( int index );
         SDAI_Application_instance *
         GetApplication_instance( const char * entityKeyword,
                                  int starting_index = 0 );
-        SDAI_Application_instance * GetApplication_instance( MgrNode * node ) {
+        SDAI_Application_instance  * GetApplication_instance( MgrNode * node ) {
             return node->GetApplication_instance();
         };
 
@@ -116,10 +116,10 @@ class SCL_EDITOR_EXPORT InstMgr {
         void PrintSortedFileIds();
 
         // OBSOLETE
-        SDAI_Application_instance * GetSTEPentity( int index );
-        SDAI_Application_instance * GetSTEPentity( const char * entityKeyword,
+        SDAI_Application_instance  * GetSTEPentity( int index );
+        SDAI_Application_instance  * GetSTEPentity( const char * entityKeyword,
                 int starting_index = 0 );
-        SDAI_Application_instance * GetSTEPentity( MgrNode * node ) {
+        SDAI_Application_instance  * GetSTEPentity( MgrNode * node ) {
             return node->GetApplication_instance();
         };
 

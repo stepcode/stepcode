@@ -14,12 +14,9 @@
 
 #include <scl_export.h>
 
-class TypeDescriptor;
-class SDAI_Application_instance;
-
 /**
-** \file sdaiSelect.h class definition for the select superclass SDAI_Select.
-**/
+ ** \file sdaiSelect.h class definition for the select superclass SDAI_Select.
+ **/
 class SCL_CORE_EXPORT SDAI_Select {
     protected:
         const SelectTypeDescriptor * _type;
@@ -37,14 +34,14 @@ class SCL_CORE_EXPORT SDAI_Select {
         const TypeDescriptor * CanBe( const TypeDescriptor * td ) const;
         const TypeDescriptor * CanBeSet( const char *, const char * ) const;
 
-        const int IsUnique( const BASE_TYPE bt ) const;
+        int IsUnique( const BASE_TYPE bt ) const;
 
         virtual const TypeDescriptor * AssignEntity( SDAI_Application_instance * se ) = 0;
         virtual SDAI_Select * NewSelect() = 0;
     public:
         Severity severity() const;
         Severity severity( Severity );
-        const std::string Error();
+        std::string Error();
         void Error( const char * );
         // clears select's error
         void ClearError();
@@ -75,7 +72,6 @@ class SCL_CORE_EXPORT SDAI_Select {
         const;
 
         virtual void STEPwrite_content( ostream & out, const char * = 0 ) const = 0;
-//        char * asStr() const;
 
 
         Severity StrToVal( const char * val, const char * selectType,
@@ -101,7 +97,7 @@ class SCL_CORE_EXPORT SDAI_Select {
 
 };        /** end class  **/
 
-typedef SDAI_Select * SDAI_Select_ptr ;
-typedef SDAI_Select_ptr SDAI_Select_var ;
+typedef SDAI_Select * SDAI_Select_ptr;
+typedef SDAI_Select_ptr SDAI_Select_var;
 
 #endif

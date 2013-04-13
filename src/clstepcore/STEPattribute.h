@@ -1,5 +1,5 @@
 #ifndef STEPATTRIBUTE_H
-#define        STEPATTRIBUTE_H        1
+#define STEPATTRIBUTE_H 1
 
 /*
 * NIST STEP Core Class Library
@@ -77,12 +77,13 @@ extern SCL_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, Err
 class SCL_CORE_EXPORT STEPattribute {
         friend ostream & operator<< ( ostream &, STEPattribute & );
         friend class SDAI_Application_instance;
-    protected:
+    public:
         ErrorDescriptor _error;
         unsigned int _derive : 1;
         int Derive( unsigned int n = 1 )  {
             return _derive = n;
         }
+
         STEPattribute * _redefAttr;
         void RedefiningAttr( STEPattribute * a ) {
             _redefAttr = a;
@@ -136,27 +137,27 @@ class SCL_CORE_EXPORT STEPattribute {
 
 ////////////// Return info on attr
 
-        int        Nullable() const; // may this attribute be null?
-        int        is_null() const;  // is this attribute null?
-        int         IsDerived() const  {
+        int Nullable() const; // may this attribute be null?
+        int is_null() const;  // is this attribute null?
+        int     IsDerived() const  {
             return _derive;
         }
         STEPattribute * RedefiningAttr() {
             return _redefAttr;
         }
 
-        const char     *     Name() const;
-        const char     *    TypeName() const;
-        const BASE_TYPE        Type() const;
-        const BASE_TYPE        NonRefType() const;
-        const BASE_TYPE        BaseType() const;
+        const char  *  Name() const;
+        const char  *  TypeName() const;
+        BASE_TYPE   Type() const;
+        BASE_TYPE   NonRefType() const;
+        BASE_TYPE   BaseType() const;
 
-        const TypeDescriptor  * ReferentType() const;
+        const TypeDescriptor * ReferentType() const;
 
-        ErrorDescriptor & Error()        {
+        ErrorDescriptor & Error()    {
             return _error;
         }
-        void ClearErrorMsg()        {
+        void ClearErrorMsg()    {
             _error.ClearErrorMsg();
         }
 

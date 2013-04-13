@@ -112,13 +112,15 @@
  */
 
 #include <scl_memmgr.h>
-#define ENTITY_C
 #include "express/entity.h"
 #include "express/express.h"
 #include "express/object.h"
 
+struct freelist_head ENTITY_fl;
+int ENTITY_MARK = 0;
+
 /** returns true if variable is declared (or redeclared) directly by entity */
-bool ENTITYdeclares_variable( Entity e, Variable v ) {
+int ENTITYdeclares_variable( Entity e, Variable v ) {
     LISTdo( e->u.entity->attributes, attr, Variable )
     if( attr == v ) {
         return true;
@@ -227,9 +229,6 @@ Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down
     return 0;
 }
 
-/** find a (possibly inherited) attribute
- * \sa ENTITY_find_inherited_attribute
- */
 Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
                                 struct Symbol_ ** down_sym ) {
     extern int __SCOPE_search_id;
@@ -371,9 +370,9 @@ bool ENTITYhas_supertype( Entity child, Entity parent ) {
     if( entity == parent ) {
         return true;
     }
-    if( ENTITYhas_supertype( entity, parent ) ) {
-        return true;
-    }
+        if( ENTITYhas_supertype( entity, parent ) ) {
+            return true;
+        }
     LISTod;
     return false;
 }
@@ -494,7 +493,6 @@ int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
     LISTdo( entity->u.entity->attributes, attr, Variable )
     if( streq( VARget_simple_name( attr ), name ) )
         return entity->u.entity->inheritance +
-               /*         VARget_offset(SCOPElookup(entity, name, False));*/
                VARget_offset( ENTITY_find_inherited_attribute( entity, name, 0, 0 ) );
     LISTod;
     offset = 0;
@@ -517,13 +515,3 @@ int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
 int ENTITYget_initial_offset( Entity entity ) {
     return entity->u.entity->inheritance;
 }
-
-/** \def ENTITYget_size
-** \param entity entity to examine
-** \return storage size of instantiated entity
-** Compute the storage size of an entity instance.
-**
-** \note The size is computed in units of Object.
-** \note macroized in entity.h
-*/
-

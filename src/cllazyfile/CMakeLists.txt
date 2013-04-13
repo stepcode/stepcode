@@ -11,9 +11,9 @@ include_directories(
     ${SCL_SOURCE_DIR}/src/clstepcore
     ${SCL_SOURCE_DIR}/src/clutils
     ${SCL_SOURCE_DIR}/src/base
-    ../base/judy/src
+    ${SCL_SOURCE_DIR}/src/base/judy/src
 )
 
-SCL_ADDLIB(steplazyfile "${clLazyFile_SRCS} ${clLazyFile_HDRS}" "stepcore stepdai steputils base")
-scl_addexec(lazy_test "lazy_test.cc" "steplazyfile stepeditor" )
+SCL_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base")
+SCL_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
 set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )

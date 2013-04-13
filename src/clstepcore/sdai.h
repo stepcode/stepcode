@@ -1,5 +1,5 @@
 #ifndef P23SDAI_H
-#define        P23SDAI_H
+#define P23SDAI_H
 
 /*
 * NIST STEP Core Class Library
@@ -18,7 +18,7 @@
 * values for the EXPRESS base types.
 */
 
-#include <scl_cf.h>
+#include "scl_cf.h"
 #include <scl_export.h>
 
 extern const char * SCLversion;
@@ -27,11 +27,11 @@ extern const char * SCLversion;
 #include <string>
 
 
-#include <dictdefs.h>
+#include "dictdefs.h"
 
-#include <baseType.h>
-#include <Str.h>
-#include <errordesc.h>
+#include "baseType.h"
+#include "Str.h"
+#include "errordesc.h"
 
 typedef std::string Express_id;
 
@@ -40,17 +40,13 @@ class EntityDescriptor;
 class SelectTypeDescriptor;
 class InstMgr;
 
-#include <STEPattributeList.h>
+#include "STEPattributeList.h"
 
 class STEPattributeList;
 class STEPattribute;
 
 #ifndef BINARY_DELIM
 #define BINARY_DELIM '\"'
-#endif
-
-#ifndef STRING_DELIM
-#define STRING_DELIM '\''
 #endif
 
 //  STRING

@@ -35,7 +35,7 @@ class InstMgr;
 // the DisplayNode, and removes itself from any list it is in.
 //////////////////////////////////////////////////////////////////////////////
 
-class SCL_EDITOR_EXPORT MgrNode : public GenericNode {
+class SCL_CORE_EXPORT MgrNode : public GenericNode {
         friend class GenNodeList;
         friend class MgrNodeList;
         friend class InstMgr;
@@ -48,7 +48,7 @@ class SCL_EDITOR_EXPORT MgrNode : public GenericNode {
         stateEnum currState;
 
         // SDAI_Application_instance this node is representing info for
-        SDAI_Application_instance * se;
+        SDAI_Application_instance  * se;
         // this is the index (in the InstMgr master array) of the ptr to
         //   this node.
         int arrayIndex;
@@ -114,10 +114,10 @@ class SCL_EDITOR_EXPORT MgrNode : public GenericNode {
 
 // ACCESS FUNCTIONS
         int GetFileId();
-        SDAI_Application_instance * GetApplication_instance() {
+        SDAI_Application_instance  * GetApplication_instance() {
             return se;
         }
-        DisplayNode *& displayNode() {
+        DisplayNode * & displayNode() {
             return di;
         }
         int ArrayIndex()        {
@@ -128,7 +128,7 @@ class SCL_EDITOR_EXPORT MgrNode : public GenericNode {
         }
 
         // OBSOLETE
-        SDAI_Application_instance * GetSTEPentity()  {
+        SDAI_Application_instance  * GetSTEPentity()   {
             return se;
         }
     protected:

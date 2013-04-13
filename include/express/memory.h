@@ -62,18 +62,11 @@ char * nnew();
 
 #include "error.h"
 
-/* should be MEMORY_C but there is none, so we'll tie it to express.c */
-#ifdef EXPRESS_C
-#include "defstart.h"
-#else
-#include "decstart.h"
-#endif /* EXPRESS_C */
-
 /***********************************************/
 /* space allocation macros with error package: */
 /***********************************************/
 
-extern int yylineno;
+extern SCL_EXPRESS_EXPORT int yylineno;
 
 /** CALLOC grabs and initializes to all 0s space for the indicated
  * number of instances of the indicated type */
@@ -86,8 +79,6 @@ SCL_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
 SCL_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
 SCL_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
 SCL_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
-
-#include "de_end.h"
 
 #endif /* MEMORY_H */
 

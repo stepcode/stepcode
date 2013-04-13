@@ -21,10 +21,8 @@
 
 const int Real_Num_Precision = REAL_NUM_PRECISION; // from STEPattribute.h
 
-#define STRING_DELIM '\''
 
-
-/******************************************************************//**
+/******************************************************************************
 **    \file STEPaggregate.cc Functions for manipulating aggregate attributes
 **  FIXME KNOWN BUGs:
 **     -- treatment of aggregates of reals or ints is inconsistent with
@@ -40,13 +38,13 @@ STEPaggregate::STEPaggregate() {
 }
 
 STEPaggregate::~STEPaggregate() {
-    STEPnode *node;
+    STEPnode * node;
 
-    node = (STEPnode*) head;
-    while ( node ) {
+    node = ( STEPnode * ) head;
+    while( node ) {
         head = node->NextNode();
         delete node;
-        node = (STEPnode*) head;
+        node = ( STEPnode * ) head;
     }
 }
 
@@ -224,7 +222,8 @@ const char * STEPaggregate::asStr( std::string & s ) const {
         std::string tmp;
         while( n ) {
             s.append( n->STEPwrite( tmp ) );
-            if( ( n = ( STEPnode * ) n -> NextNode() ) ) {
+            n = ( STEPnode * ) n -> NextNode();
+            if( n ) {
                 s.append( "," );
             }
         }
@@ -240,7 +239,8 @@ void STEPaggregate::STEPwrite( ostream & out, const char * currSch ) const {
         std::string s;
         while( n ) {
             out << n->STEPwrite( s, currSch );
-            if( ( n = ( STEPnode * )( n -> NextNode() ) ) ) {
+            n = ( STEPnode * ) n -> NextNode();
+            if( n ) {
                 out <<  ',';
             }
         }
@@ -414,8 +414,7 @@ GenericAggrNode::GenericAggrNode() {
 GenericAggrNode::~GenericAggrNode() {
 }
 
-SingleLinkNode *
-GenericAggrNode::NewNode() {
+SingleLinkNode * GenericAggrNode::NewNode() {
     return new GenericAggrNode();
 }
 
@@ -447,8 +446,7 @@ const char * GenericAggrNode::STEPwrite( std::string & s, const char * currSch )
     return value.STEPwrite( s );
 }
 
-void
-GenericAggrNode::STEPwrite( ostream & out ) {
+void GenericAggrNode::STEPwrite( ostream & out ) {
     value.STEPwrite( out );
 }
 
@@ -478,6 +476,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
+    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -491,6 +490,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
+        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
@@ -597,7 +597,7 @@ EntityNode::EntityNode() {
 EntityNode::~EntityNode() {
 }
 
-EntityNode::EntityNode( SDAI_Application_instance * e ) : node( e ) {
+EntityNode::EntityNode( SDAI_Application_instance  * e ) : node( e ) {
 }
 
 SingleLinkNode * EntityNode::NewNode() {
@@ -716,6 +716,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
+    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -729,6 +730,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
+        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
@@ -830,7 +832,7 @@ SingleLinkNode * SelectAggregate::NewNode() {
 // SelectNode
 ///////////////////////////////////////////////////////////////////////////////
 
-SelectNode::SelectNode( SDAI_Select * s ) :  node( s ) {
+SelectNode::SelectNode( SDAI_Select  * s ) :  node( s ) {
 }
 
 SelectNode::SelectNode() {
@@ -968,11 +970,10 @@ SingleLinkNode * StringNode::NewNode() {
     return new StringNode();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// non-whitespace chars following s are considered garbage and is an error.
-// a valid value will still be assigned if it exists before the garbage.
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * non-whitespace chars following s are considered garbage and is an error.
+ * a valid value will still be assigned if it exists before the garbage.
+ */
 Severity StringNode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return STEPread( s, err );
 }
@@ -985,9 +986,9 @@ Severity StringNode::StrToVal( istream & in, ErrorDescriptor * err ) {
 }
 
 /**
-** non-whitespace chars following s are considered garbage and is an error.
-** a valid value will still be assigned if it exists before the garbage.
-*/
+ * non-whitespace chars following s are considered garbage and is an error.
+ * a valid value will still be assigned if it exists before the garbage.
+ */
 Severity StringNode::STEPread( const char * s, ErrorDescriptor * err ) {
     istringstream in( ( char * )s );
 
@@ -1005,7 +1006,7 @@ Severity StringNode::STEPread( istream & in, ErrorDescriptor * err ) {
 
 const char * StringNode::asStr( std::string & s ) {
     value.asStr( s );
-    return s.c_str();
+    return const_cast<char *>( s.c_str() );
 }
 
 const char * StringNode::STEPwrite( std::string & s, const char * ) {
@@ -1070,15 +1071,15 @@ BinaryNode::BinaryNode( const char * sStr ) {
     value = sStr;
 }
 
-SingleLinkNode * BinaryNode::NewNode() {
+SingleLinkNode *
+BinaryNode::NewNode() {
     return new BinaryNode();
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// non-whitespace chars following s are considered garbage and is an error.
-// a valid value will still be assigned if it exists before the garbage.
-///////////////////////////////////////////////////////////////////////////////
-
+/**
+ * non-whitespace chars following s are considered garbage and is an error.
+ * a valid value will still be assigned if it exists before the garbage.
+ */
 Severity BinaryNode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return STEPread( s, err );
 }
@@ -1155,7 +1156,7 @@ EnumAggregate::~EnumAggregate() {
 
 }
 
-/****************************************************************//**
+/******************************************************************
  ** \returns a new EnumNode which is of the correct derived type
  ** \details  creates a node to put in an list of enumerated values
  **           function is virtual so that the right node will be
@@ -1174,7 +1175,7 @@ SingleLinkNode * EnumAggregate::NewNode() {
 // EnumNode
 ///////////////////////////////////////////////////////////////////////////////
 
-EnumNode::EnumNode( SDAI_Enum * e ) :  node( e ) {
+EnumNode::EnumNode( SDAI_Enum  * e ) :  node( e ) {
 }
 
 EnumNode::EnumNode() {

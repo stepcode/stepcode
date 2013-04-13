@@ -7,13 +7,7 @@
 SDAI_Model_contents_instances::SDAI_Model_contents_instances( ) {
 }
 
-/*
-SDAI_Model_contents_instances::SDAI_Model_contents_instances (const SDAI_Model_contents_instances& e )
-{
-}
-*/
-
-SDAI_Model_contents_instances::~SDAI_Model_contents_instances() {
+SDAI_Model_contents_instances ::~SDAI_Model_contents_instances() {
 }
 
 /////////    SDAI_Model_contents
@@ -21,14 +15,7 @@ SDAI_Model_contents_instances::~SDAI_Model_contents_instances() {
 SDAI_Model_contents::SDAI_Model_contents( ) {
 }
 
-/*
-SDAI_Model_contents::SDAI_Model_contents (const SDAI_Model_contents& e )
-{
-//    CopyAs((STEPentityH) &e);
-}
-*/
-
-SDAI_Model_contents::~SDAI_Model_contents() {
+SDAI_Model_contents ::~SDAI_Model_contents() {
 }
 
 //    const Entity_instance__set_var instances() const;
@@ -38,7 +25,7 @@ SDAI_Model_contents::instances_() {
     return &_instances;
 }
 
-const SDAI_Model_contents_instances_ptr
+SDAI_Model_contents_instances_ptr
 SDAI_Model_contents::instances_() const {
     return ( const SDAI_Model_contents_instances_ptr ) &_instances;
 }
@@ -48,7 +35,7 @@ SDAI_Model_contents::folders_() {
     return &_folders;
 }
 
-const SDAI_Entity_extent__set_var
+SDAI_Entity_extent__set_var
 SDAI_Model_contents::folders_() const {
     return ( const SDAI_Entity_extent__set_var )&_folders;
 }
@@ -58,7 +45,7 @@ SDAI_Model_contents::populated_folders_() {
     return &_populated_folders;
 }
 
-const SDAI_Entity_extent__set_var
+SDAI_Entity_extent__set_var
 SDAI_Model_contents::populated_folders_() const {
     return ( const SDAI_Entity_extent__set_var )&_populated_folders;
 }

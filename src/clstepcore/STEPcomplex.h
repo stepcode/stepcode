@@ -10,8 +10,8 @@
 
 #include <list>
 
-typedef std::list<void*>            STEPcomplex_attr_data_list;
-typedef std::list<void*>::iterator  STEPcomplex_attr_data;
+typedef std::list<void *>            STEPcomplex_attr_data_list;
+typedef std::list<void *>::iterator  STEPcomplex_attr_data;
 
 class SCL_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
     public:

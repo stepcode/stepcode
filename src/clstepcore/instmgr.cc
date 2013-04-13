@@ -58,6 +58,8 @@ InstMgr::~InstMgr() {
     } else {
         master->ClearEntries();
     }
+    sortedMaster->ClearEntries();
+
     delete master;
     delete sortedMaster;
 }
@@ -215,7 +217,8 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
         se->StepFileId( NextFileId() );    // assign a file id
     }
 
-    if( ( mn = FindFileId( se->StepFileId() ) ) ) { // if id already in list
+    mn = FindFileId( se->StepFileId() );
+    if( mn ) { // if id already in list
         // and it's because instance is already in list
         if( GetApplication_instance( mn ) == se ) {
             return 0;    // return 0 or mn?
