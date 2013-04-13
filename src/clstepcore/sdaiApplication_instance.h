@@ -27,7 +27,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         ErrorDescriptor   _error;
         std::string       p21Comment;
         // registry additions
-        EntityDescriptor * eDesc;
+        const EntityDescriptor * eDesc;
 
         /**
         ** head entity for multiple inheritance.  If it is null then this
