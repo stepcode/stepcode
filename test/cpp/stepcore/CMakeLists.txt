@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor 
          ${SCL_SOURCE_DIR}/src/clstepcore ${SCL_SOURCE_DIR}/src/base )
 
 function(add_stepcore_test name libs)
-    SCL_ADDEXEC( tst_${name} test_${name}.cc "${libs}" )
+    SCL_ADDEXEC( tst_${name} test_${name}.cc "${libs}" "TESTABLE" )
     add_test( NAME build_cpp_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
@@ -18,4 +18,4 @@ function(add_stepcore_test name libs)
     set_tests_properties( test_${name} PROPERTIES LABELS cpp_unit_stepcore DEPENDS build_cpp_${name} )
 endfunction(add_stepcore_test name libs)
 
-add_stepcore_test( "SupertypesIterator" "stepcore steputils stepeditor stepdai base" )
+add_stepcore_test( "SupertypesIterator" "stepcore;steputils;stepeditor;stepdai;base" )
