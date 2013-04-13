@@ -109,6 +109,10 @@ void format_for_std_stringout( FILE * f, const char * orig_buf ) {
     fprintf(f, "%s", s_begin );
     while( *optr ) {
         if( *optr == '\n' ) {
+            if( * ( optr + 1 ) == '\n' ) { // skip blank lines
+                optr++;
+                continue;
+            }
             fprintf( f, "%s", s_end );
             fprintf( f, "%s", s_begin );
         } else if( *optr == '\\' ) {
