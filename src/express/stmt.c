@@ -40,7 +40,7 @@
  *
  */
 
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include "express/stmt.h"
 
 struct freelist_head STMT_fl;
@@ -200,7 +200,7 @@ Statement ALIAScreate( Scope scope, Variable variable, Linked_List statements ) 
 ** Create and return an increment control as specified.
 */
 Scope INCR_CTLcreate( Symbol * control, Expression start,
-                Expression end, Expression increment ) {
+                      Expression end, Expression increment ) {
     Scope s = SCOPEcreate_tiny( OBJ_INCREMENT );
     Expression e = EXPcreate_from_symbol( Type_Attribute, control );
     Variable v = VARcreate( e, Type_Number );

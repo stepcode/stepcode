@@ -13,7 +13,7 @@
 */
 
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <stdio.h>
 #include <errordesc.h>
 #include <baseType.h>
@@ -39,19 +39,19 @@ class EntityDescriptor;
 
 #include <sstream>
 
-extern SCL_CORE_EXPORT int SetErrOnNull( const char * attrValue, ErrorDescriptor * error );
+extern SC_CORE_EXPORT int SetErrOnNull( const char * attrValue, ErrorDescriptor * error );
 
-extern SCL_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
+extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
         InstMgr * instances, int addFileId );
 
-extern SCL_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
+extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
         InstMgr * instances, int addFileId );
 
-extern SCL_CORE_EXPORT Severity EntityValidLevel( SDAI_Application_instance * se,
+extern SC_CORE_EXPORT Severity EntityValidLevel( SDAI_Application_instance * se,
         const TypeDescriptor * ed, ///< entity type that entity se needs to match. (this must be an EntityDescriptor)
         ErrorDescriptor * err );
 
-extern SCL_CORE_EXPORT Severity EntityValidLevel( const char * attrValue, ///< string containing entity ref
+extern SC_CORE_EXPORT Severity EntityValidLevel( const char * attrValue, ///< string containing entity ref
         const TypeDescriptor * ed, /**< entity type that entity in attrValue (if it exists) needs
                                              *  to match. (this must be an EntityDescriptor)
                                              */
@@ -60,21 +60,21 @@ extern SCL_CORE_EXPORT Severity EntityValidLevel( const char * attrValue, ///< s
 ////////////////////
 ////////////////////
 
-extern SCL_CORE_EXPORT SDAI_Application_instance * STEPread_reference( const char * s, ErrorDescriptor * err,
+extern SC_CORE_EXPORT SDAI_Application_instance * STEPread_reference( const char * s, ErrorDescriptor * err,
         InstMgr * instances, int addFileId );
 ////////////////////
 
-extern SCL_CORE_EXPORT int QuoteInString( istream & in );
+extern SC_CORE_EXPORT int QuoteInString( istream & in );
 
-extern SCL_CORE_EXPORT void AppendChar( char c, int & index, char *& s, int & sSize );
+extern SC_CORE_EXPORT void AppendChar( char c, int & index, char *& s, int & sSize );
 
-extern SCL_CORE_EXPORT void PushPastString( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastString( istream & in, std::string & s, ErrorDescriptor * err );
 
-extern SCL_CORE_EXPORT void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err );
 
-extern SCL_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err );
 
-class SCL_CORE_EXPORT STEPattribute {
+class SC_CORE_EXPORT STEPattribute {
         friend ostream & operator<< ( ostream &, STEPattribute & );
         friend class SDAI_Application_instance;
     public:

@@ -5,7 +5,7 @@
 #include <complexSupport.h>
 #include <STEPattribute.h>
 #include <sstream>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 extern const char *
 ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );

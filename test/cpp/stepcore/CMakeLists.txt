@@ -1,11 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #c++ tests for clstepcore
 
-INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor ${SCL_SOURCE_DIR}/src/clutils
-         ${SCL_SOURCE_DIR}/src/clstepcore ${SCL_SOURCE_DIR}/src/base )
+INCLUDE_DIRECTORIES( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
+         ${SC_SOURCE_DIR}/src/clstepcore ${SC_SOURCE_DIR}/src/base )
 
 function(add_stepcore_test name libs)
-    SCL_ADDEXEC( tst_${name} test_${name}.cc "${libs}" "TESTABLE" )
+    SC_ADDEXEC( tst_${name} test_${name}.cc "${libs}" "TESTABLE" )
     add_test( NAME build_cpp_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .

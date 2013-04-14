@@ -39,7 +39,7 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <scl_cf.h>
+#include <sc_cf.h>
 #include <dirobj.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
@@ -57,7 +57,7 @@
 #include <shlwapi.h>
 #endif
 
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //

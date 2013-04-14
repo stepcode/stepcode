@@ -109,11 +109,11 @@ struct Where_ {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT struct freelist_head ALG_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head FUNC_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head RULE_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head PROC_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head ALG_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head FUNC_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head RULE_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head PROC_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 
 /******************************/
 /* macro function definitions */
@@ -161,8 +161,8 @@ extern SCL_EXPRESS_EXPORT struct freelist_head WHERE_fl;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT Scope    ALGcreate PROTO( ( char ) );
-extern SCL_EXPRESS_EXPORT void     ALGinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void     ALGput_full_text PROTO( ( Scope, int, int ) );
+extern SC_EXPRESS_EXPORT Scope    ALGcreate PROTO( ( char ) );
+extern SC_EXPRESS_EXPORT void     ALGinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void     ALGput_full_text PROTO( ( Scope, int, int ) );
 
 #endif /* ALGORITHM_H */

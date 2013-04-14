@@ -17,7 +17,7 @@
 #include <STEPattribute.h>
 #include <instmgr.h>
 #include <ExpDict.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 const int Real_Num_Precision = REAL_NUM_PRECISION; // from STEPattribute.h
 

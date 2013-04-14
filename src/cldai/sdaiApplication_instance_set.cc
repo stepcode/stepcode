@@ -29,7 +29,7 @@
 
 #include <memory.h>
 #include <math.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

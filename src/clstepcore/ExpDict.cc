@@ -10,7 +10,7 @@
 * and is not subject to copyright.
 */
 
-#include <scl_cf.h>
+#include <sc_cf.h>
 
 #include <memory.h>
 #include <math.h>
@@ -18,7 +18,7 @@
 
 #include <ExpDict.h>
 #include <STEPaggregate.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 
 Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) {

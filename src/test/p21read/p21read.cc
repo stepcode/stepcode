@@ -13,7 +13,7 @@
 */
 
 extern void SchemaInit( class Registry & );
-#include "scl_version_string.h"
+#include "sc_version_string.h"
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>
@@ -91,7 +91,7 @@ void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
 }
 
 void printVersion( const char * exe ) {
-    std::cout << exe << " build info: " << scl_version() << std::endl;
+    std::cout << exe << " build info: " << sc_version() << std::endl;
 }
 
 void printUse( const char * exe ) {

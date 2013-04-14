@@ -60,7 +60,7 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <math.h>
 #include "expbasic.h"   /* get basic definitions */
 
@@ -185,23 +185,23 @@ struct EXPop_entry {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT struct EXPop_entry EXPop_table[OP_LAST];
+extern SC_EXPRESS_EXPORT struct EXPop_entry EXPop_table[OP_LAST];
 
-extern SCL_EXPRESS_EXPORT Expression  LITERAL_E;
-extern SCL_EXPRESS_EXPORT Expression  LITERAL_INFINITY;
-extern SCL_EXPRESS_EXPORT Expression  LITERAL_PI;
-extern SCL_EXPRESS_EXPORT Expression  LITERAL_ZERO;
-extern SCL_EXPRESS_EXPORT Expression  LITERAL_ONE;
+extern SC_EXPRESS_EXPORT Expression  LITERAL_E;
+extern SC_EXPRESS_EXPORT Expression  LITERAL_INFINITY;
+extern SC_EXPRESS_EXPORT Expression  LITERAL_PI;
+extern SC_EXPRESS_EXPORT Expression  LITERAL_ZERO;
+extern SC_EXPRESS_EXPORT Expression  LITERAL_ONE;
 
-extern SCL_EXPRESS_EXPORT Error ERROR_bad_qualification;
-extern SCL_EXPRESS_EXPORT Error ERROR_integer_expression_expected;
-extern SCL_EXPRESS_EXPORT Error ERROR_implicit_downcast;
-extern SCL_EXPRESS_EXPORT Error ERROR_ambig_implicit_downcast;
+extern SC_EXPRESS_EXPORT Error ERROR_bad_qualification;
+extern SC_EXPRESS_EXPORT Error ERROR_integer_expression_expected;
+extern SC_EXPRESS_EXPORT Error ERROR_implicit_downcast;
+extern SC_EXPRESS_EXPORT Error ERROR_ambig_implicit_downcast;
 
-extern SCL_EXPRESS_EXPORT struct freelist_head EXP_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head OP_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head QUERY_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head EXP_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head OP_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head QUERY_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 
 /******************************/
 /* macro function definitions */
@@ -254,16 +254,16 @@ extern SCL_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT Expression   EXPcreate PROTO( ( Type ) );
-extern SCL_EXPRESS_EXPORT Expression   EXPcreate_simple PROTO( ( Type ) );
-extern SCL_EXPRESS_EXPORT Expression   EXPcreate_from_symbol PROTO( ( Type, Symbol * ) );
-extern SCL_EXPRESS_EXPORT Expression   UN_EXPcreate PROTO( ( Op_Code, Expression ) );
-extern SCL_EXPRESS_EXPORT Expression   BIN_EXPcreate PROTO( ( Op_Code, Expression, Expression ) );
-extern SCL_EXPRESS_EXPORT Expression   TERN_EXPcreate PROTO( ( Op_Code, Expression, Expression, Expression ) );
-extern SCL_EXPRESS_EXPORT Expression   QUERYcreate PROTO( ( Symbol *, Expression ) );
-extern SCL_EXPRESS_EXPORT void     EXPinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void     EXPcleanup PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
-extern SCL_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate PROTO( ( Type ) );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate_simple PROTO( ( Type ) );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate_from_symbol PROTO( ( Type, Symbol * ) );
+extern SC_EXPRESS_EXPORT Expression   UN_EXPcreate PROTO( ( Op_Code, Expression ) );
+extern SC_EXPRESS_EXPORT Expression   BIN_EXPcreate PROTO( ( Op_Code, Expression, Expression ) );
+extern SC_EXPRESS_EXPORT Expression   TERN_EXPcreate PROTO( ( Op_Code, Expression, Expression, Expression ) );
+extern SC_EXPRESS_EXPORT Expression   QUERYcreate PROTO( ( Symbol *, Expression ) );
+extern SC_EXPRESS_EXPORT void     EXPinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void     EXPcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
+extern SC_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
 
 #endif /*EXPRESSION_H*/

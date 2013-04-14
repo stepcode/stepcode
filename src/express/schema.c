@@ -45,7 +45,7 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include "express/expbasic.h"
 #include "express/schema.h"
 #include "express/object.h"
@@ -275,7 +275,7 @@ Variable VARfind( Scope scope, char * name, int strict ) {
             result = ENTITYfind_inherited_attribute( scope, name, 0 );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    fprintf(stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n");
+                    fprintf( stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n" );
                 }
                 return result;
             }
@@ -286,7 +286,7 @@ Variable VARfind( Scope scope, char * name, int strict ) {
             result = ( Variable )DICTlookup( scope->symbol_table, name );
             if( result ) {
                 if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    fprintf(stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n");
+                    fprintf( stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n" );
                 }
                 return result;
             }

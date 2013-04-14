@@ -1,5 +1,5 @@
 # To build one or more schemas, configure with
-# 'cmake -DSCL_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
+# 'cmake -DSC_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
 # This function runs fedex on one express file. The generated source goes in a dir
 # in the build dir, and it is compiled into a library. A p21read executable is
@@ -7,10 +7,10 @@
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #is it a path relative to build dir?
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
-    elseif( EXISTS "${SCL_SOURCE_DIR}/data/${SCHEMA_FILE}" )  # path relative to STEPcode/data?
-        set( SCHEMA_FILE "${SCL_SOURCE_DIR}/data/${SCHEMA_FILE}" )
+    elseif( EXISTS "${SC_SOURCE_DIR}/data/${SCHEMA_FILE}" )  # path relative to STEPcode/data?
+        set( SCHEMA_FILE "${SC_SOURCE_DIR}/data/${SCHEMA_FILE}" )
     elseif( NOT EXISTS ${SCHEMA_FILE} ) # absolute path
-        message( FATAL_ERROR "Cannot find ${CMAKE_BINARY_DIR}/${SCHEMA_FILE} or ${SCL_SOURCE_DIR}/data/${SCHEMA_FILE} or ${SCHEMA_FILE}" )
+        message( FATAL_ERROR "Cannot find ${CMAKE_BINARY_DIR}/${SCHEMA_FILE} or ${SC_SOURCE_DIR}/data/${SCHEMA_FILE} or ${SCHEMA_FILE}" )
     endif()
 
     if( IS_DIRECTORY ${SCHEMA_FILE} ) #if it is a dir, look for one .exp file inside
@@ -42,7 +42,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
     # one header (schema.h) is always named the same, this will not work. only workaround
     # seems to be set_target_properties( <target> PROPERTIES COMPILE_FLAGS <flags> )
-    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SCL_SOURCE_DIR}/src/cldai -I${SCL_SOURCE_DIR}/src/cleditor -I${SCL_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SCL_SOURCE_DIR}/src/clstepcore -I${SCL_SOURCE_DIR}/src/base" )
+    set( ${PROJECT_NAME}_COMPILE_FLAGS "-I${CMAKE_CURRENT_SOURCE_DIR} -I${SC_SOURCE_DIR}/src/cldai -I${SC_SOURCE_DIR}/src/cleditor -I${SC_SOURCE_DIR}/src/clutils -I${SCHEMA_OUTPUT_DIR} -I${SC_SOURCE_DIR}/src/clstepcore -I${SC_SOURCE_DIR}/src/base" )
 
     add_custom_target( generate_cpp_${SCHEMA_SHORT_NAME} SOURCES ${FEDEX_OUT} )
     add_custom_command( OUTPUT ${SCHEMA_OUTPUT_DIR}
@@ -55,22 +55,22 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                         COMMENT "Running fedex_plus for ${SCHEMA_SHORT_NAME}..."
                         VERBATIM )
 
-    if( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+    if( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
       # Coverage will always be sparse on schema libs. Compiling the libs with the -fprofile-arcs and
       # -ftest-coverage is extremely slow. We can avoid that by temporarily changing build type to release.
       set( PREV_BUILD_TYPE ${CMAKE_BUILD_TYPE} )
       set( CMAKE_BUILD_TYPE "Release" )
-    endif( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+    endif( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
 
     # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
-    SCL_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai;stepcore;express;stepeditor;steputils;base" "TESTABLE" )
+    SC_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai;stepcore;express;stepeditor;steputils;base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
 
-    if( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+    if( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
       set( CMAKE_BUILD_TYPE ${PREV_BUILD_TYPE} )
-    endif( SCL_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
+    endif( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
 
     add_test( NAME generate_cpp_${SCHEMA_SHORT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -96,10 +96,10 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_tests_properties( build_lazy_cpp_${PROJECT_NAME} build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
 	 endif(NOT WIN32)
 
-    SCL_ADDEXEC( p21read_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME};base" "TESTABLE" )
-	 if(NOT WIN32)
-    SCL_ADDEXEC( lazy_${PROJECT_NAME} "${SCL_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepeditor" "TESTABLE" )
-	 endif(NOT WIN32)
+    SC_ADDEXEC( p21read_${PROJECT_NAME} "${SC_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME};base" "TESTABLE" )
+   if(NOT WIN32)
+    SC_ADDEXEC( lazy_${PROJECT_NAME} "${SC_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepeditor" "TESTABLE" )
+   endif(NOT WIN32)
     add_dependencies( p21read_${PROJECT_NAME} version_string )
 	 if(NOT WIN32)
     add_dependencies( lazy_${PROJECT_NAME} version_string )
@@ -107,7 +107,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
 	 if(NOT WIN32)
-    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -I${SCL_SOURCE_DIR}/src/base/judy/src" )
+    set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -I${SC_SOURCE_DIR}/src/base/judy/src" )
 	 endif(NOT WIN32)
 
 
@@ -115,7 +115,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
         get_filename_component( name ${src} NAME_WE )
         get_filename_component( path ${src} ABSOLUTE )
-        SCL_ADDEXEC( ${name}_${PROJECT_NAME} "${src}" "${PROJECT_NAME};base" "TESTABLE" )
+        SC_ADDEXEC( ${name}_${PROJECT_NAME} "${src}" "${PROJECT_NAME};base" "TESTABLE" )
         add_dependencies( ${name}_${PROJECT_NAME} version_string )
         set_target_properties( ${name}_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                                "${${PROJECT_NAME}_COMPILE_FLAGS} -I${path}" )
@@ -142,16 +142,16 @@ ENDFUNCTION(BUILD_A_SCHEMA)
 
 #----------------------------------------------------------------------------------------------------
 
-if( DEFINED SCL_BUILD_SCHEMAS )
+if( DEFINED SC_BUILD_SCHEMAS )
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
         get_filename_component( name ${src} NAME_WE )
         message( STATUS "Additional SDAI executable: ${name}" )
     endforeach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
 
-    if( SCL_BUILD_SCHEMAS STREQUAL "ALL" )
-        file( GLOB_RECURSE SCL_BUILD_SCHEMAS ${SCL_SOURCE_DIR}/data/*.exp )
+    if( SC_BUILD_SCHEMAS STREQUAL "ALL" )
+        file( GLOB_RECURSE SC_BUILD_SCHEMAS ${SC_SOURCE_DIR}/data/*.exp )
     endif()
-    foreach( ap ${SCL_BUILD_SCHEMAS} )
+    foreach( ap ${SC_BUILD_SCHEMAS} )
         BUILD_A_SCHEMA( ${ap} )
     endforeach()
 endif()

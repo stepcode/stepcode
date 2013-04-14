@@ -5,9 +5,9 @@
 #include <iostream>
 #include "sectionReader.h"
 #include "lazyTypes.h"
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
-#include "scl_export.h"
+#include "sc_export.h"
 
 /** base class for data section readers
  * \sa lazyP21DataSectionReader
