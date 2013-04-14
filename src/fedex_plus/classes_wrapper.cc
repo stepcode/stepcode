@@ -267,10 +267,12 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     if( t->search_id == CANPROCESS ) {
         // Only selects haven't been processed yet and may still be set to
         // CANPROCESS.
-        if ( TYPEis_select( t ) )
+        if( TYPEis_select( t ) ) {
             TYPEselect_print( t, files, schema );
-        if ( TYPEis_enumeration( t ) )
+        }
+        if( TYPEis_enumeration( t ) ) {
             TYPEprint_descriptions( t, files, schema );
+        }
 
         t->search_id = PROCESSED;
     }

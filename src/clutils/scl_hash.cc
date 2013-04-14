@@ -327,7 +327,7 @@ SCL_HASHhash( char * Key, Hash_TableP table ) {
     ** Convert string to integer
     */
     while( *k ) {
-        h = h * PRIME1 ^( *k++ - ' ' );
+        h = h * PRIME1 ^ ( *k++ - ' ' );
     }
     h %= PRIME2;
     address = MOD( h, table->maxp );
