@@ -44,7 +44,7 @@ class SC_UTILS_EXPORT GenNodeArray {
         GenNodeArray( int defaultSize = ARRAY_DEFAULT_SIZE );
         virtual ~GenNodeArray();
 
-        GenericNode * & operator[]( int index );
+        GenericNode *& operator[]( int index );
         virtual int Index( GenericNode * gn );
         virtual int Index( GenericNode ** gn );
 
@@ -69,7 +69,7 @@ class SC_UTILS_EXPORT GenNodeArray {
 // class GenNodeArray inline public functions
 //////////////////////////////////////////////////////////////////////////////
 
-inline GenericNode * & GenNodeArray::operator[]( int index ) {
+inline GenericNode *& GenNodeArray::operator[]( int index ) {
     Check( index );
     return _buf[index];
 }

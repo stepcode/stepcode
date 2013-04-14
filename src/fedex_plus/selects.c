@@ -258,8 +258,7 @@ of the list.
     RETURNS 1 if true, else 0.
 *******************/
 int
-duplicate_in_express_list( const Linked_List list, const Type check )
-{
+duplicate_in_express_list( const Linked_List list, const Type check ) {
     if( TYPEis_entity( check ) ) {
         return FALSE;
     }
@@ -448,8 +447,8 @@ non_unique_types_vector( const Type type, int * tvec ) {
             tvec[tnumber]++;
             break;
         default:
-            fprintf(stderr, "non_unique_types_vector: can't handle unknow type %d\n",
-                    TYPEget_body( t )->type);
+            fprintf( stderr, "non_unique_types_vector: can't handle unknow type %d\n",
+                     TYPEget_body( t )->type );
             abort();
     }
     LISTod;
@@ -597,12 +596,14 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     fprintf( f, "    //  types in SELECT \n" );
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         fprintf( f, "    //   %s    --  %s\n", SEL_ITEMget_enumtype( t ), FundamentalType( t, 0 ) );
-    } LISTod;
+    }
+    LISTod;
 
     LISTdo( data_members, t, Type ) {
         strncpy( dmname, SEL_ITEMget_dmname( t ), BUFSIZ );
         fprintf( f, "       %s%s _%s;\n", TYPEget_utype( t ), TYPEis_aggregate( t ) ? "_ptr" : "", dmname );
-    } LISTod;
+    }
+    LISTod;
 
 
     fprintf( f, "\n  public:\n" );
@@ -746,7 +747,7 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
         /**  if there are duplicate underlying types  **/
         fprintf( f, "\n    //  part 7\n" );
         fprintf( f, "    const TypeDescriptor *"
-                 "SetUnderlyingType ( const TypeDescriptor * td );\n");
+                 "SetUnderlyingType ( const TypeDescriptor * td );\n" );
     } else {
         fprintf( f, "\n    //  part 7 ... NONE    only for complex selects...\n" );
     }
@@ -820,7 +821,8 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
         if( isAggregateType( t ) && t->u.type->body->base ) {
             fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
         }
-    } LISTod;
+    }
+    LISTod;
     fprintf( f, "   nullify();\n" );
     fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "//    *logStream << \"DAVE ERR exiting %s constructor.\" << std::endl;\n", n );
@@ -861,7 +863,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
                 fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
             }
             fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
-                ( ( t->u.type->body->base ) ? "->" : "." ) );
+                     ( ( t->u.type->body->base ) ? "->" : "." ) );
         } else {
             fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
         }
@@ -931,7 +933,8 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
             fprintf( f, "       delete _%s;\n", SEL_ITEMget_dmname( t ) );
             fprintf( f, "       _%s = 0;\n    }\n", SEL_ITEMget_dmname( t ) );
         }
-    } LISTod;
+    }
+    LISTod;
     fprintf( f, "}\n\n" );
 
     fprintf( f, "%s_agg::%s_agg( SelectTypeDescriptor *s)\n"
@@ -1243,7 +1246,7 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
 
         if( isAggregateType( t ) ) {
             fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
-                ( ( t->u.type->body->base ) ? "->" : "." ) );
+                     ( ( t->u.type->body->base ) ? "->" : "." ) );
         } else {
             fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
         }
@@ -1443,7 +1446,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
             // schema which USEs "DATA" and renames it to "VAL"), we pass currSch. */
             break;
 
-        // aggregate, array, bag, set, and list were above with string, binary, etc. moved them because they will be pointers
+            // aggregate, array, bag, set, and list were above with string, binary, etc. moved them because they will be pointers
         case aggregate_:
         case array_:
         case bag_:
@@ -1456,7 +1459,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
     }
 
     fprintf( f, "        return;\n" );
-    fprintf( f, "    }\n");
+    fprintf( f, "    }\n" );
 
     LISTod;
 
@@ -1555,8 +1558,8 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
             break;
     }
 
-    fprintf( f, "        return;\n");
-    fprintf( f, "    }\n");
+    fprintf( f, "        return;\n" );
+    fprintf( f, "    }\n" );
 
     LISTod;
 
@@ -1583,14 +1586,14 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case number_:
             /*  since REAL and NUMBER are handled the same they both need
             to be included in the case stmt  */
-            fprintf( f, 
+            fprintf( f,
                      "        ReadReal (_%s, in, &_error, \"),\");\n"
                      "        return severity ();\n",
                      dm );
             break;
 
         case integer_:
-            fprintf( f, 
+            fprintf( f,
                      "        ReadInteger (_%s, in, &_error, \"),\");\n"
                      "        return severity ();\n",
                      dm );
@@ -1600,14 +1603,14 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
             /*  if it's an entity, use Assign - done in Select class  */
             fprintf( f,
                      "        // set Underlying Type in Select class\n"
-                     "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n", 
+                     "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n",
                      dm );
-            fprintf( f, 
+            fprintf( f,
                      "        if (_%s && (_%s != S_ENTITY_NULL)\n "
                      "          && (CurrentUnderlyingType () -> CanBe (_%s -> eDesc )) )\n"
                      "            return severity ();\n",
                      dm, dm, dm );
-            fprintf( f, 
+            fprintf( f,
                      "        else {\n "
                      "            Error (\"Reference to instance that is not indicated type\\n\");\n"
                      "            _%s = 0;\n"
@@ -1639,12 +1642,12 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case bag_:
         case set_:
         case list_:
-            fprintf( f, 
+            fprintf( f,
                      "        _%s%sSTEPread (in, &_error, %s -> AggrElemTypeDescriptor (),\n"
-                     "          instances, addFileId, currSch);\n", 
+                     "          instances, addFileId, currSch);\n",
                      dm, ( ( t->u.type->body->base ) ? "->" : "." ),
                      TYPEtd_name( t ) );
-            fprintf( f, 
+            fprintf( f,
                      "        return severity ();\n" );
             break;
 
@@ -1910,7 +1913,7 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     LISTdo( SEL_TYPEget_items( type ), t, Type )
     z = FirstToUpper( TYPEget_name( t ) );
     fprintf( f, "Logical %s::Is%s() const\n{\n", n, z );
-    fprintf( f, "   if( !exists() )\n");
+    fprintf( f, "   if( !exists() )\n" );
     fprintf( f, "      return LUnknown;\n" );
     fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
     fprintf( f, "      return LTrue;\n" );

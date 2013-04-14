@@ -42,7 +42,7 @@ class SC_DAI_EXPORT SDAI_Application_instance__set {
         SDAI_Application_instance__set( int = 16 );
         ~SDAI_Application_instance__set();
 
-        SDAI_Application_instance * & operator[]( int index );
+        SDAI_Application_instance *& operator[]( int index );
         void Insert( SDAI_Application_instance *, int index );
         void Append( SDAI_Application_instance * );
         void Remove( int index );

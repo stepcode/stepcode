@@ -186,7 +186,7 @@ const Schema * Registry::FindSchema( const char * n, int check_case ) const {
     }
 
     return ( const Schema * ) SC_HASHfind( active_schemas,
-                                            ( char * )PrettyTmpName( n ) );
+                                           ( char * )PrettyTmpName( n ) );
 }
 
 const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
@@ -236,7 +236,7 @@ void Registry::AddClones( const EntityDescriptor & e ) {
 
     while( alts ) {
         SC_HASHinsert( primordialSwamp, ( char * )alts->objName(),
-                        ( EntityDescriptor * )&e );
+                       ( EntityDescriptor * )&e );
         alts = alts->next;
     }
     all_ents_cnt += uniqueNames( e.Name(), e.AltNameList() );

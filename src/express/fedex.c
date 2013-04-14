@@ -265,7 +265,7 @@ int main( int argc, char ** argv ) {
     if( resolve ) {
         EXPRESSresolve( model );
         if( ERRORoccurred ) {
-            result = EXPRESS_fail( model ); 
+            result = EXPRESS_fail( model );
             EXPRESScleanup();
             EXPRESSdestroy( model );
             return result;
@@ -283,7 +283,7 @@ int main( int argc, char ** argv ) {
         return result;
     }
 
-    result = EXPRESS_succeed( model ); 
+    result = EXPRESS_succeed( model );
     EXPRESScleanup();
     EXPRESSdestroy( model );
     return result;

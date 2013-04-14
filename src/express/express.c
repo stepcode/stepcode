@@ -241,7 +241,7 @@ static Error ERROR_tilde_expansion_failed;
 static Error ERROR_schema_not_in_own_schema_file;
 
 extern Linked_List PARSEnew_schemas;
-void SCOPEinitialize(void);
+void SCOPEinitialize( void );
 
 static Express PARSERrun PROTO( ( char *, FILE * ) );
 
@@ -280,10 +280,12 @@ Express EXPRESScreate() {
 }
 
 void EXPRESSdestroy( Express model ) {
-    if ( model->u.express->basename )
+    if( model->u.express->basename ) {
         sc_free( model->u.express->basename );
-    if ( model->u.express->filename )
+    }
+    if( model->u.express->filename ) {
         sc_free( model->u.express->filename );
+    }
     sc_free( model->u.express );
     SCOPEdestroy( model );
 }
@@ -367,7 +369,7 @@ static void EXPRESS_PATHinit() {
 
 static void EXPRESS_PATHfree( void ) {
     LISTdo( EXPRESS_path, dir, Dir * )
-        sc_free( dir );
+    sc_free( dir );
     LISTod
     LISTfree( EXPRESS_path );
 }
@@ -489,7 +491,7 @@ void EXPRESSinitialize( void ) {
                                       "Return type or local variable requires type label in `%s'", SEVERITY_ERROR );
     ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
     ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
-    ERROR_warn_unsupported_lang_feat = ERRORcreate("Unsupported language feature (%s) at %s:%d",SEVERITY_WARNING);
+    ERROR_warn_unsupported_lang_feat = ERRORcreate( "Unsupported language feature (%s) at %s:%d", SEVERITY_WARNING );
 
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 

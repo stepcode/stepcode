@@ -63,7 +63,7 @@ static void printEnumCreateBody( FILE *, const Type );
 static void printEnumAggrCrHdr( FILE *, const Type );
 static void printEnumAggrCrBody( FILE *, const Type );
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema );
-void TypeBody_Description(TypeBody body, char *buf);
+void TypeBody_Description( TypeBody body, char * buf );
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -106,7 +106,7 @@ void format_for_std_stringout( FILE * f, const char * orig_buf ) {
     const char * optr  = orig_buf;
     char * s_end = "\\n\" );\n";
     char * s_begin = "    str.append( \"";
-    fprintf(f, "%s", s_begin );
+    fprintf( f, "%s", s_begin );
     while( *optr ) {
         if( *optr == '\n' ) {
             if( * ( optr + 1 ) == '\n' ) { // skip blank lines
@@ -650,7 +650,7 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
  ** Status:  complete 7/15/93       by DDH
  ******************************************************************/
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
-                                   FILE * file ) {
+                                        FILE * file ) {
     Type t = VARget_type( a );
     char ctype [BUFSIZ];   /*  return type of the get function  */
     char funcnm [BUFSIZ];  /*  name of member function  */
@@ -695,12 +695,12 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
 }
 
 void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
-                          char * ctype, char * attrnm ) {
+                               char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
-    fprintf( file, "    return (%s) %s_%s;\n}\n", ctype,( ( a->type->u.type->body->base ) ? "" : "&"), attrnm );
+    fprintf( file, "    return (%s) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "&" ), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
-    fprintf( file, "{\n    _%s%sShallowCopy (*x);\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : ".") );
+    fprintf( file, "{\n    _%s%sShallowCopy (*x);\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : "." ) );
     return;
 }
 
@@ -769,7 +769,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
         }
-	fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+        fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
@@ -779,14 +779,14 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        logStream->open(SCLLOGFILE,ios::app);\n" );
 
-	    fprintf( file, "        if(! (x == S_ENTITY_NULL) )\n        {\n" );
+            fprintf( file, "        if(! (x == S_ENTITY_NULL) )\n        {\n" );
 
             fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
                      entnm, funcnm );
 
-	    fprintf( file,
-		     "            *logStream << \"reference to Sdai%s entity #\" << x->STEPfile_id << std::endl;\n",
-		     nm );
+            fprintf( file,
+                     "            *logStream << \"reference to Sdai%s entity #\" << x->STEPfile_id << std::endl;\n",
+                     nm );
 
             fprintf( file, "        }\n        else\n        {\n" );
             fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
@@ -797,7 +797,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
         }
-	fprintf( file, "    _%s = x;\n}\n", attrnm );
+        fprintf( file, "    _%s = x;\n}\n", attrnm );
 
         return;
     }
@@ -824,7 +824,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "    }\n" );
             fprintf( file, "#endif\n" );
         }
-	fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+        fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
@@ -909,7 +909,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
             fprintf( file, "#endif\n" );
 
         }
-	fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+        fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
         if( print_logging ) {
@@ -1181,7 +1181,7 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
         if( collect != FIRST_ONLY ) {
             // collect attributes from parents and their supertypes
             LISTdo( parent_list, e, Entity ) {
-                if ( collect == ALL_BUT_FIRST ) {
+                if( collect == ALL_BUT_FIRST ) {
                     // skip first and collect from the rest
                     collect = ALL;
                 } else {
@@ -1529,11 +1529,11 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
-	    if( LISTget_length( list ) > 1) {
+            if( LISTget_length( list ) > 1 ) {
                 fprintf( file, "#if 1\n" );
                 fprintf( file, "    int attrFlags[3];\n" );
                 fprintf( file, "#endif\n" );
-	    }
+            }
 
             LISTdo( list, e, Entity )
             /*  if there\'s no super class yet,
@@ -1611,7 +1611,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
             // if type is aggregate, the variable is a pointer and needs initialized
             if( TYPEis_aggregate( t ) ) {
-                fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+                fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
             }
             fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                      ( first ? "STEPattribute *" : "" ), //  first time through, declare 'a'
@@ -1750,11 +1750,11 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
-	    if( LISTget_length( list ) > 1) {
+            if( LISTget_length( list ) > 1 ) {
                 fprintf( file, "#if 0\n" );
                 fprintf( file, "    int attrFlags[3];\n" );
                 fprintf( file, "#endif\n" );
-	    }
+            }
 
             LISTdo( list, e, Entity )
             /*  if there\'s no super class yet,
@@ -1817,7 +1817,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
                 // if type is aggregate, the variable is a pointer and needs initialized
                 if( TYPEis_aggregate( t ) ) {
-                    fprintf( file, "    _%s = new %s;\n",attrnm,TYPEget_ctype( t ) );
+                    fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
                 }
                 fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
                          ( first ? "STEPattribute *" : "" ), //  first time through, declare a
@@ -1921,14 +1921,14 @@ bool TYPEis_builtin( const Type t ) {
  * \param t the Type
  * \param var_name the name of the C++ variable, such as t_1 or schema::t_name
  */
-void AGGRprint_init( FILES* files, const Type t, const char* var_name, const char* aggr_name ) {
+void AGGRprint_init( FILES * files, const Type t, const char * var_name, const char * aggr_name ) {
     if( !TYPEget_head( t ) ) {
         //the code for lower and upper is almost identical
         if( TYPEget_body( t )->lower ) {
-            if (TYPEget_body( t )->lower->symbol.resolved ) {
+            if( TYPEget_body( t )->lower->symbol.resolved ) {
                 if( TYPEget_body( t )->lower->type == Type_Funcall ) {
                     fprintf( files->init, "        %s->SetBound1FromExpressFuncall(\"%s\");\n", var_name,
-                             EXPRto_string( TYPEget_body( t )->lower) );
+                             EXPRto_string( TYPEget_body( t )->lower ) );
                 } else {
                     fprintf( files->init, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
                 }
@@ -1936,7 +1936,7 @@ void AGGRprint_init( FILES* files, const Type t, const char* var_name, const cha
                 assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->lower->e.op2 ) &&
                         ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
                 fprintf( files->init, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
-                        ClassName( t->superscope->symbol.name ), aggr_name );
+                         ClassName( t->superscope->symbol.name ), aggr_name );
                 fprintf( files->helpers, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
                          ClassName( t->superscope->symbol.name ), aggr_name );
                 fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n}\n",
@@ -1944,7 +1944,7 @@ void AGGRprint_init( FILES* files, const Type t, const char* var_name, const cha
             }
         }
         if( TYPEget_body( t )->upper ) {
-            if (TYPEget_body( t )->upper->symbol.resolved ) {
+            if( TYPEget_body( t )->upper->symbol.resolved ) {
                 if( TYPEget_body( t )->upper->type == Type_Funcall ) {
                     fprintf( files->init, "        %s->SetBound2FromExpressFuncall(\"%s\");\n", var_name,
                              EXPRto_string( TYPEget_body( t )->upper ) );
@@ -1998,7 +1998,7 @@ void AGGRprint_init( FILES* files, const Type t, const char* var_name, const cha
         that can be referenced to refer to the type that was created for
     Type t.
 */
-void print_typechain( FILES * files, const Type t, char * buf, Schema schema, const char* type_name ) {
+void print_typechain( FILES * files, const Type t, char * buf, Schema schema, const char * type_name ) {
     /* if we've been called, current type has no name */
     /* nor is it a built-in type */
     /* the type_count variable is there for debugging purposes  */
@@ -2101,7 +2101,7 @@ void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
             fprintf( files->init, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         } else {
             fprintf( files->init, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
-                                                                schema_name, ENT_PREFIX, entity_name );
+                     schema_name, ENT_PREFIX, entity_name );
         }
     } else {
         if( entity->u.entity->subtype_expression ) {
@@ -2326,11 +2326,11 @@ void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
 }
 
 static bool listContainsVar( Linked_List l, Variable v ) {
-    const char *vName = VARget_simple_name( v );
+    const char * vName = VARget_simple_name( v );
     LISTdo( l, curr, Variable ) {
-	if ( streq( vName, VARget_simple_name( curr ) ) ) {
-	    return true;
-	}
+        if( streq( vName, VARget_simple_name( curr ) ) ) {
+            return true;
+        }
     }
     LISTod;
     return false;
@@ -2367,8 +2367,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
         // inherited
         LISTdo( required, attr, Variable ) {
             if( !listContainsVar( existing, attr ) &&
-                !listContainsVar( remaining, attr ) )
-            {
+                    !listContainsVar( remaining, attr ) ) {
                 LISTadd_first( remaining, ( Generic ) attr );
             }
         }
@@ -3281,16 +3280,14 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
  * ate_SdaiEnum1()").  Since this is done both for an enum and for "copies"
  * of it (when "TYPE enum2 = enum1"), I placed this code in a separate fn.
  */
-static void printEnumCreateHdr( FILE * inc, const Type type )
-{
+static void printEnumCreateHdr( FILE * inc, const Type type ) {
     const char * nm = TYPEget_ctype( type );
 
     fprintf( inc, "  SDAI_Enum * create_%s ();\n", nm );
 }
 
 /// See header comment above by printEnumCreateHdr.
-static void printEnumCreateBody( FILE * lib, const Type type )
-{
+static void printEnumCreateBody( FILE * lib, const Type type ) {
     const char * nm = TYPEget_ctype( type );
     char tdnm[BUFSIZ];
 
@@ -3301,8 +3298,7 @@ static void printEnumCreateBody( FILE * lib, const Type type )
 }
 
 /// Similar to printEnumCreateHdr above for the enum aggregate.
-static void printEnumAggrCrHdr( FILE * inc, const Type type )
-{
+static void printEnumAggrCrHdr( FILE * inc, const Type type ) {
     const char * n = TYPEget_ctype( type );
     /*    const char *n = ClassName( TYPEget_name(type) ));*/
     fprintf( inc, "  STEPaggregate * create_%s_agg ();\n", n );

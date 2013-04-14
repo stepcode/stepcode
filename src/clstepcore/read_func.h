@@ -14,10 +14,10 @@ extern SC_CORE_EXPORT void PrintErrorState( ErrorDescriptor & err );
 extern SC_CORE_EXPORT void IStreamState( istream & in );
 
 extern SC_CORE_EXPORT int ReadInteger( SDAI_Integer & val, istream & in, ErrorDescriptor * err,
-                                        const char * tokenList );
+                                       const char * tokenList );
 
 extern SC_CORE_EXPORT int ReadInteger( SDAI_Integer & val, const char * s, ErrorDescriptor * err,
-                                        const char * tokenList );
+                                       const char * tokenList );
 
 extern SC_CORE_EXPORT Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
         int clearError, int optional, const char * tokenList );
@@ -27,19 +27,19 @@ extern SC_CORE_EXPORT std::string WriteReal( SDAI_Real val );
 extern SC_CORE_EXPORT void WriteReal( SDAI_Real val, ostream & out );
 
 extern SC_CORE_EXPORT int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
-                                     const char * tokenList );
+                                    const char * tokenList );
 
 extern SC_CORE_EXPORT int ReadReal( SDAI_Real & val, const char * s, ErrorDescriptor * err,
-                                     const char * tokenList );
+                                    const char * tokenList );
 
 extern SC_CORE_EXPORT Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
         int clearError, int optional, const char * tokenList );
 
 extern SC_CORE_EXPORT int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
-                                       const char * tokenList );
+                                      const char * tokenList );
 
 extern SC_CORE_EXPORT int ReadNumber( SDAI_Real & val, const char * s, ErrorDescriptor * err,
-                                       const char * tokenList );
+                                      const char * tokenList );
 
 extern SC_CORE_EXPORT Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
         int clearError, int optional, const char * tokenList );
