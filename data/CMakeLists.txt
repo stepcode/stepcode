@@ -1,6 +1,22 @@
 # To build one or more schemas, configure with
 # 'cmake -DSC_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
+MACRO(RELATIVE_PATH_TO_TOPLEVEL current_dir rel_path)
+       string(REPLACE "${SC_SOURCE_DIR}" "" subpath "${current_dir}")
+       string(REGEX REPLACE "^/" "" subpath "${subpath}")
+       string(LENGTH "${subpath}" PATH_LENGTH)
+       if(PATH_LENGTH GREATER 0)
+               set(${rel_path} "..")
+               get_filename_component(subpath "${subpath}" PATH)
+               string(LENGTH "${subpath}" PATH_LENGTH)
+               while(PATH_LENGTH GREATER 0)
+                       set(${rel_path} "${${rel_path}}/..")
+                       get_filename_component(subpath "${subpath}" PATH)
+                       string(LENGTH "${subpath}" PATH_LENGTH)
+               endwhile(PATH_LENGTH GREATER 0)
+       endif(PATH_LENGTH GREATER 0)
+ENDMACRO(RELATIVE_PATH_TO_TOPLEVEL current_dir rel_path)
+
 # This function runs fedex on one express file. The generated source goes in a dir
 # in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
@@ -82,33 +98,34 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
               COMMAND ${CMAKE_COMMAND} --build .
                                        --target p21read_${PROJECT_NAME}
                                        --config $<CONFIGURATION> )
-	 if(NOT WIN32)
+   if(NOT WIN32)
     add_test( NAME build_lazy_cpp_${PROJECT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
                                        --target lazy_${PROJECT_NAME}
                                        --config $<CONFIGURATION> )
-	 endif(NOT WIN32)
+   endif(NOT WIN32)
 
     # label the tests and set dependencies
     set_tests_properties( generate_cpp_${SCHEMA_SHORT_NAME} PROPERTIES LABELS cpp_schema_gen )
-	 if(NOT WIN32)
-    set_tests_properties( build_lazy_cpp_${PROJECT_NAME} build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
-	 endif(NOT WIN32)
-
-    SC_ADDEXEC( p21read_${PROJECT_NAME} "${SC_SOURCE_DIR}/src/test/p21read/p21read.cc" "${PROJECT_NAME};base" "TESTABLE" )
    if(NOT WIN32)
-    SC_ADDEXEC( lazy_${PROJECT_NAME} "${SC_SOURCE_DIR}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepeditor" "TESTABLE" )
+    set_tests_properties( build_lazy_cpp_${PROJECT_NAME} build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${SCHEMA_SHORT_NAME} LABELS cpp_schema_build )
+   endif(NOT WIN32)
+
+   RELATIVE_PATH_TO_TOPLEVEL(${CMAKE_CURRENT_SOURCE_DIR} RELATIVE_PATH_COMPONENT)
+   SC_ADDEXEC( p21read_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/test/p21read/p21read.cc" "${PROJECT_NAME};base" "TESTABLE" )
+   if(NOT WIN32)
+    SC_ADDEXEC( lazy_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepeditor" "TESTABLE" )
    endif(NOT WIN32)
     add_dependencies( p21read_${PROJECT_NAME} version_string )
-	 if(NOT WIN32)
+   if(NOT WIN32)
     add_dependencies( lazy_${PROJECT_NAME} version_string )
-	 endif(NOT WIN32)
+   endif(NOT WIN32)
     set_target_properties( p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
-	 if(NOT WIN32)
+   if(NOT WIN32)
     set_target_properties( lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "${${PROJECT_NAME}_COMPILE_FLAGS} -I${SC_SOURCE_DIR}/src/base/judy/src" )
-	 endif(NOT WIN32)
+   endif(NOT WIN32)
 
 
     #add user-defined executables
@@ -130,12 +147,12 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                   COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
         set_tests_properties( read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
-	     if(NOT WIN32)
+       if(NOT WIN32)
         add_test( NAME read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
                   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                   COMMAND lazy_${PROJECT_NAME} ${TEST_FILE} )
         set_tests_properties( read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_lazy_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
-	     endif(NOT WIN32)
+       endif(NOT WIN32)
     endforeach()
 
 ENDFUNCTION(BUILD_A_SCHEMA)
