@@ -40,7 +40,7 @@
 #define FALSE 0
 #define TRUE  1
 
-int isAggregateType (const Type t);
+int isAggregateType( const Type t );
 
 /* Local function prototypes: */
 static void initializeMarks( Express );
@@ -75,8 +75,8 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /* First set all marks we'll be using to UNPROCESSED/NOTKNOWN: */
     initializeMarks( express );
 
-    fprintf( files->create, "    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" 
-                            "    std::string str; //for large strings such as functions or global rules\n");
+    fprintf( files->create, "    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n"
+             "    std::string str; //for large strings such as functions or global rules\n" );
     while( !complete ) {
         complete = TRUE;
         DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
@@ -205,7 +205,7 @@ static void cleanupMarks( Express express ) {
 
     DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
-        if ( schema->clientData ) {
+        if( schema->clientData ) {
             scl_free( schema->clientData );
             schema->clientData = NULL;
         }

@@ -50,7 +50,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
             end = seekInstanceEnd( & i.refs );
         }
     }
-    if( ( i.loc.instance == 0 ) || ( !_file.good() ) || ( end == (std::streampos)-1 ) ) {
+    if( ( i.loc.instance == 0 ) || ( !_file.good() ) || ( end == ( std::streampos ) - 1 ) ) {
         //invalid instance, so clear everything
         _file.seekg( i.loc.begin );
         i.loc.begin = -1;

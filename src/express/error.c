@@ -95,9 +95,9 @@ void ( *ERRORusage_function )( void );
 #define ERROR_MAX_ERRORS    100 /**< max line-numbered errors */
 #define ERROR_MAX_SPACE     4000 /**< max space for line-numbered errors */
 #define ERROR_MAX_STRLEN    200 /**< assuming all error messages are less than this,
-                                  * if we have less than this much space remaining
-                                  * in the error string buffer, call it a day and
-                                  * dump the buffer */
+* if we have less than this much space remaining
+* in the error string buffer, call it a day and
+* dump the buffer */
 
 static struct heap_element {
     unsigned int line;

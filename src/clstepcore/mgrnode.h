@@ -117,7 +117,7 @@ class SCL_CORE_EXPORT MgrNode : public GenericNode {
         SDAI_Application_instance  * GetApplication_instance() {
             return se;
         }
-        DisplayNode * & displayNode() {
+        DisplayNode *& displayNode() {
             return di;
         }
         int ArrayIndex()        {

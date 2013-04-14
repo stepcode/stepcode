@@ -160,7 +160,7 @@ wrap( char * fmt, ... ) {
     /* I.e., if we still can't fit after indenting, don't bother to */
     /* go to newline, just print a long line */
     if( ( ( curpos + len ) > exppp_linelength ) &&
-    ( ( indent2 + len ) < exppp_linelength ) ) {
+            ( ( indent2 + len ) < exppp_linelength ) ) {
         /* move to new continuation line */
         char line[1000];
         sprintf( line, "\n%*s", indent2, "" );
@@ -1902,7 +1902,7 @@ EXPRstring( char * buffer, Expression e ) {
             strcat( buffer, ")" );
             break;
         default:
-            sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ));
+            sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ) );
             fprintf( stderr, "%s", buffer );
     }
 }
