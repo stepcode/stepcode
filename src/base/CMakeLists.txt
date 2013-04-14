@@ -1,20 +1,20 @@
 
-set(SCL_BASE_SOURCES
-    scl_memmgr.cc
-    scl_trace_fprintf.c
+set(SC_BASE_SOURCES
+    sc_memmgr.cc
+    sc_trace_fprintf.c
     sc_getopt.cc
     sc_benchmark.cc
 )
 
 if(MINGW OR MSVC OR BORLAND)
-add_definitions( -DSCL_BASE_DLL_EXPORTS )
+add_definitions( -DSC_BASE_DLL_EXPORTS )
 endif()
 
-if (${SCL_MEMMGR_ENABLE_CHECKS})
-	add_definitions( -DSCL_MEMMGR_ENABLE_CHECKS )
+if (${SC_MEMMGR_ENABLE_CHECKS})
+	add_definitions( -DSC_MEMMGR_ENABLE_CHECKS )
 endif()
 
-SCL_ADDLIB(base "${SCL_BASE_SOURCES}" "")
+SC_ADDLIB(base "${SC_BASE_SOURCES}" "")
 
 if(MINGW OR MSVC OR BORLAND)
     target_link_libraries(base psapi.lib)

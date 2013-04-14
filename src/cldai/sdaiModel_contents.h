@@ -1,7 +1,7 @@
 #ifndef SDAIMODEL_CONTENTS_H
 #define SDAIMODEL_CONTENTS_H 1
 
-#include <scl_export.h>
+#include <sc_export.h>
 //SDAI_Model_contents
 
 /*
@@ -26,7 +26,7 @@
 // The class SDAI_Model_contents_instances shall implement convenience functions by
 // SDAI_Model_contents in this part of ISO 10303
 
-class SCL_DAI_EXPORT SDAI_Model_contents_instances : public SDAI_DAObject {
+class SC_DAI_EXPORT SDAI_Model_contents_instances : public SDAI_DAObject {
     public:
 
         SDAI_DAObject__set _instances;
@@ -52,7 +52,7 @@ SDAI_Model_contents_instances_var;
 
 // Model_contents_ptr def pushed ahead of #include for Entity_extent
 
-class SCL_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
+class SC_DAI_EXPORT SDAI_Model_contents : public SDAI_Session_instance {
 
 //friend class SDAI_Model;
 

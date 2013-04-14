@@ -2,7 +2,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "scl_trace_fprintf.h"
+#include "sc_trace_fprintf.h"
 
 void trace_fprintf (char const *sourcefile, int line, FILE* file, const char *format, ...) {
     va_list args;

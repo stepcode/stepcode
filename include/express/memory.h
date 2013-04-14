@@ -28,7 +28,7 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 
 /** \file memory.h - defs for fixed size block memory allocator */
 
@@ -66,7 +66,7 @@ char * nnew();
 /* space allocation macros with error package: */
 /***********************************************/
 
-extern SCL_EXPRESS_EXPORT int yylineno;
+extern SC_EXPRESS_EXPORT int yylineno;
 
 /** CALLOC grabs and initializes to all 0s space for the indicated
  * number of instances of the indicated type */
@@ -75,10 +75,10 @@ extern SCL_EXPRESS_EXPORT int yylineno;
         fprintf(stderr,"fedex: out of space");\
     } else {}
 
-SCL_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
-SCL_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
-SCL_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
-SCL_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
+SC_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
+SC_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
+SC_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
+SC_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
 
 #endif /* MEMORY_H */
 

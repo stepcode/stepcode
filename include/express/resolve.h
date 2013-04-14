@@ -28,7 +28,7 @@
  * Initial revision
  */
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "type.h"
 #include "variable.h"
@@ -45,20 +45,20 @@
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT int print_objects_while_running;
+extern SC_EXPRESS_EXPORT int print_objects_while_running;
 
-extern SCL_EXPRESS_EXPORT Error ERROR_undefined_attribute;
-extern SCL_EXPRESS_EXPORT Error ERROR_undefined_type;
-extern SCL_EXPRESS_EXPORT Error ERROR_undefined_schema;
-extern SCL_EXPRESS_EXPORT Error ERROR_unknown_attr_in_entity;
-extern SCL_EXPRESS_EXPORT Error ERROR_unknown_subtype;
-extern SCL_EXPRESS_EXPORT Error ERROR_unknown_supertype;
-extern SCL_EXPRESS_EXPORT Error ERROR_circular_reference;
-extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_attribute;
-extern SCL_EXPRESS_EXPORT Error ERROR_ambiguous_group;
+extern SC_EXPRESS_EXPORT Error ERROR_undefined_attribute;
+extern SC_EXPRESS_EXPORT Error ERROR_undefined_type;
+extern SC_EXPRESS_EXPORT Error ERROR_undefined_schema;
+extern SC_EXPRESS_EXPORT Error ERROR_unknown_attr_in_entity;
+extern SC_EXPRESS_EXPORT Error ERROR_unknown_subtype;
+extern SC_EXPRESS_EXPORT Error ERROR_unknown_supertype;
+extern SC_EXPRESS_EXPORT Error ERROR_circular_reference;
+extern SC_EXPRESS_EXPORT Error ERROR_ambiguous_attribute;
+extern SC_EXPRESS_EXPORT Error ERROR_ambiguous_group;
 
-extern SCL_EXPRESS_EXPORT Error WARNING_case_skip_label;
-extern SCL_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
+extern SC_EXPRESS_EXPORT Error WARNING_case_skip_label;
+extern SC_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
 
 /* macros */
 
@@ -73,14 +73,14 @@ extern SCL_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void RESOLVEinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void RESOLVEcleanup PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void SCOPEresolve_expressions_statements PROTO( ( Scope ) );
-extern SCL_EXPRESS_EXPORT void SCOPEresolve_subsupers PROTO( ( Scope ) );
-extern SCL_EXPRESS_EXPORT void SCOPEresolve_types PROTO( ( Scope ) );
-extern SCL_EXPRESS_EXPORT void TYPE_resolve PROTO( ( Type * ) );
-extern SCL_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
-extern SCL_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );
-extern SCL_EXPRESS_EXPORT void SCHEMAresolve PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void RESOLVEinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void RESOLVEcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_expressions_statements PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_subsupers PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_types PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void TYPE_resolve PROTO( ( Type * ) );
+extern SC_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
+extern SC_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void SCHEMAresolve PROTO( ( Scope ) );
 
 #endif /*RESOLVE_H*/

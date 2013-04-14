@@ -1,4 +1,4 @@
-/*  "$Id: scl_hash.cc,v 3.0.1.2 1997/11/05 22:33:50 sauderd DP3.1 $"; */
+/*  "$Id: sc_hash.cc,v 3.0.1.2 1997/11/05 22:33:50 sauderd DP3.1 $"; */
 
 /*
  * Dynamic hashing, after CACM April 1988 pp 446-457, by Per-Ake Larson.
@@ -7,11 +7,11 @@
  * also, hcreate/hdestroy routines added to simulate hsearch(3).
  */
 
-#include <scl_hash.h>
+#include <sc_hash.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 
 /*************/
 /* constants */
@@ -43,10 +43,10 @@ typedef unsigned long Address;
 #define DIV(x,y)        ((x) >> (y##_SHIFT))
 #define MOD(x,y)        ((x) & ((y)-1))
 
-#define SCL_HASH_Table_new()        new Hash_Table
-#define SCL_HASH_Table_destroy(x)   delete x
-#define SCL_HASH_Element_new()      new Element
-#define SCL_HASH_Element_destroy(x) delete x
+#define SC_HASH_Table_new()        new Hash_Table
+#define SC_HASH_Table_destroy(x)   delete x
+#define SC_HASH_Element_new()      new Element
+#define SC_HASH_Element_destroy(x) delete x
 
 typedef struct Element * ElementP;
 typedef struct Hash_Table * Hash_TableP;
@@ -55,39 +55,39 @@ typedef struct Hash_Table * Hash_TableP;
 ** Internal routines
 */
 
-Address     SCL_HASHhash( char *, Hash_TableP );
-static void SCL_HASHexpand_table( Hash_TableP );
+Address     SC_HASHhash( char *, Hash_TableP );
+static void SC_HASHexpand_table( Hash_TableP );
 
 # if HASH_STATISTICS
 static long     HashAccesses, HashCollisions;
 # endif
 
 void *
-SCL_HASHfind( Hash_TableP t, char * s ) {
+SC_HASHfind( Hash_TableP t, char * s ) {
     struct Element e;
     struct Element * ep;
 
     e.key = s;
     e.symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
-    ep = SCL_HASHsearch( t, &e, HASH_FIND );
+    ep = SC_HASHsearch( t, &e, HASH_FIND );
     return( ep ? ep->data : 0 );
 }
 
 void
-SCL_HASHinsert( Hash_TableP t, char * s, void * data ) {
+SC_HASHinsert( Hash_TableP t, char * s, void * data ) {
     struct Element e, *e2;
 
     e.key = s;
     e.data = data;
     e.symbol = 0;
-    e2 = SCL_HASHsearch( t, &e, HASH_INSERT );
+    e2 = SC_HASHsearch( t, &e, HASH_INSERT );
     if( e2 ) {
         printf( "Redeclaration of %s\n", s );
     }
 }
 
 Hash_TableP
-SCL_HASHcreate( unsigned count ) {
+SC_HASHcreate( unsigned count ) {
     unsigned int i;
     Hash_TableP table;
 
@@ -101,7 +101,7 @@ SCL_HASHcreate( unsigned count ) {
     }
     count = DIV( i, SEGMENT_SIZE );
 
-    table = ( Hash_TableP ) SCL_HASH_Table_new();
+    table = ( Hash_TableP ) SC_HASH_Table_new();
     table->SegmentCount = table->p = table->KeyCount = 0;
     /*
     ** First initialize directory to 0\'s
@@ -141,7 +141,7 @@ SCL_HASHcreate( unsigned count ) {
 /* initialize pointer to beginning of hash table so we can step through it */
 /* on repeated calls to HASHlist - DEL */
 void
-SCL_HASHlistinit( Hash_TableP table, HashEntry * he ) {
+SC_HASHlistinit( Hash_TableP table, HashEntry * he ) {
     he->i = he->j = 0;
     he->p = 0;
     he->table = table;
@@ -150,7 +150,7 @@ SCL_HASHlistinit( Hash_TableP table, HashEntry * he ) {
 }
 
 void
-SCL_HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
+SC_HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
     he->i = he->j = 0;
     he->p = 0;
     he->table = table;
@@ -160,7 +160,7 @@ SCL_HASHlistinit_by_type( Hash_TableP table, HashEntry * he, char type ) {
 
 /* provide a way to step through the hash */
 struct Element *
-SCL_HASHlist( HashEntry * he ) {
+SC_HASHlist( HashEntry * he ) {
     int i2 = he->i;
     int j2 = he->j;
     struct Element ** s;
@@ -203,7 +203,7 @@ SCL_HASHlist( HashEntry * he ) {
 }
 
 void
-SCL_HASHdestroy( Hash_TableP table ) {
+SC_HASHdestroy( Hash_TableP table ) {
     unsigned int i, j;
     struct Element ** s;
     struct Element * p, *q;
@@ -216,7 +216,7 @@ SCL_HASHdestroy( Hash_TableP table ) {
                     p = s[j];
                     while( p != NULL ) {
                         q = p->next;
-                        SCL_HASH_Element_destroy( p );
+                        SC_HASH_Element_destroy( p );
                         p = q;
                     }
                 }
@@ -224,7 +224,7 @@ SCL_HASHdestroy( Hash_TableP table ) {
                 delete [] table->Directory[i];
             }
         }
-        SCL_HASH_Table_destroy( table );
+        SC_HASH_Table_destroy( table );
 # if HASH_STATISTICS && DEBUG
         fprintf( stderr,
                  "[hdestroy] Accesses %ld Collisions %ld\n",
@@ -235,7 +235,7 @@ SCL_HASHdestroy( Hash_TableP table ) {
 }
 
 struct Element *
-SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
+SC_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) {
     Address h;
     struct Element ** CurrentSegment;
     int     SegmentIndex;
@@ -247,7 +247,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
 # if HASH_STATISTICS
     HashAccesses++;
 # endif
-    h = SCL_HASHhash( item->key, table );
+    h = SC_HASHhash( item->key, table );
     SegmentDir = ( int ) DIV( h, SEGMENT_SIZE );
     SegmentIndex = ( int ) MOD( h, SEGMENT_SIZE );
     /*
@@ -281,7 +281,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
             deleteme = q;
             *p = q->next;
             /*STRINGfree(deleteme->key);*/
-            SCL_HASH_Element_destroy( deleteme );
+            SC_HASH_Element_destroy( deleteme );
             --table->KeyCount;
             return( deleteme ); /* of course, user shouldn't deref this! */
         case HASH_INSERT:
@@ -291,7 +291,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
             }
 
             /* at this point, element does not exist and action == INSERT */
-            q = ( ElementP ) SCL_HASH_Element_new();
+            q = ( ElementP ) SC_HASH_Element_new();
             *p = q;             /* link into chain  */
             /*
             ** Initialize new element
@@ -307,7 +307,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
             ** table over-full?
             */
             if( ++table->KeyCount / MUL( table->SegmentCount, SEGMENT_SIZE ) > table->MaxLoadFactor ) {
-                SCL_HASHexpand_table( table );    /* doesn't affect q   */
+                SC_HASHexpand_table( table );    /* doesn't affect q   */
             }
     }
     return( ( struct Element * )0 ); /* was return (Element)q */
@@ -318,7 +318,7 @@ SCL_HASHsearch( Hash_TableP table, const struct Element * item, Action action ) 
 */
 
 Address
-SCL_HASHhash( char * Key, Hash_TableP table ) {
+SC_HASHhash( char * Key, Hash_TableP table ) {
     Address     h, address;
     register unsigned char * k = ( unsigned char * )Key;
 
@@ -339,7 +339,7 @@ SCL_HASHhash( char * Key, Hash_TableP table ) {
 
 static
 void
-SCL_HASHexpand_table( Hash_TableP table ) {
+SC_HASHexpand_table( Hash_TableP table ) {
     Address NewAddress;
     int     OldSegmentIndex, NewSegmentIndex;
     int     OldSegmentDir, NewSegmentDir;
@@ -384,7 +384,7 @@ SCL_HASHexpand_table( Hash_TableP table ) {
         LastOfNew = &NewSegment[NewSegmentIndex];
         *LastOfNew = NULL;
         while( Current != NULL ) {
-            if( SCL_HASHhash( Current->key, table ) == NewAddress ) {
+            if( SC_HASHhash( Current->key, table ) == NewAddress ) {
                 /*
                 ** Attach it to the end of the new chain
                 */
@@ -421,13 +421,13 @@ main() {
     e3.key = "herschel";
     e3.data = ( char * )3;
 
-    t = SCL_HASHcreate( 100 );
-    e = SCL_HASHsearch( t, &e1, HASH_INSERT );
-    e = SCL_HASHsearch( t, &e2, HASH_INSERT );
-    e = SCL_HASHsearch( t, &e3, HASH_INSERT );
-    SCL_HASHlistinit( t, &he );
+    t = SC_HASHcreate( 100 );
+    e = SC_HASHsearch( t, &e1, HASH_INSERT );
+    e = SC_HASHsearch( t, &e2, HASH_INSERT );
+    e = SC_HASHsearch( t, &e3, HASH_INSERT );
+    SC_HASHlistinit( t, &he );
     for( ;; ) {
-        e = SCL_HASHlist( &he );
+        e = SC_HASHlist( &he );
         if( !e ) {
             exit( 0 );
         }

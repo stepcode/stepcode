@@ -30,14 +30,14 @@
 #ifndef SDAI_APPLICATION_INSTANCE_SET_h
 #define SDAI_APPLICATION_INSTANCE_SET_h
 
-#include <scl_export.h>
+#include <sc_export.h>
 
 class SDAI_Application_instance;
 class SDAI_Application_instance__set;
 typedef SDAI_Application_instance__set * SDAI_Application_instance__set_ptr;
 typedef SDAI_Application_instance__set_ptr SDAI_Application_instance__set_var;
 
-class SCL_DAI_EXPORT SDAI_Application_instance__set {
+class SC_DAI_EXPORT SDAI_Application_instance__set {
     public:
         SDAI_Application_instance__set( int = 16 );
         ~SDAI_Application_instance__set();

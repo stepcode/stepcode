@@ -1,9 +1,9 @@
 #ifndef SDAIMODEL_CONTENTS_LIST_H
 #define SDAIMODEL_CONTENTS_LIST_H 1
 
-#include <scl_export.h>
+#include <sc_export.h>
 
-class SCL_DAI_EXPORT SDAI_Model_contents__list {
+class SC_DAI_EXPORT SDAI_Model_contents__list {
     public:
         SDAI_Model_contents__list( int = 16 );
         ~SDAI_Model_contents__list();

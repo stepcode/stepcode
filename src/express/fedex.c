@@ -71,10 +71,10 @@
  *
  */
 
-#include <scl_cf.h>
-#include <scl_memmgr.h>
-#include <scl_export.h>
-#include "scl_version_string.h"
+#include <sc_cf.h>
+#include <sc_memmgr.h>
+#include <sc_export.h>
+#include "sc_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "sc_getopt.h"
@@ -90,7 +90,7 @@ char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz";
 static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
 void print_fedex_version( void ) {
-    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, scl_version() );
+    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, sc_version() );
     no_need_to_work = 1;
 }
 

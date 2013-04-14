@@ -1,8 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #c++ tests that depend on a particular schema
 
-INCLUDE_DIRECTORIES( ${SCL_SOURCE_DIR}/src/cldai ${SCL_SOURCE_DIR}/src/cleditor ${SCL_SOURCE_DIR}/src/clutils
-         ${SCL_SOURCE_DIR}/src/clstepcore ${SCL_SOURCE_DIR}/src/base )
+INCLUDE_DIRECTORIES( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
+         ${SC_SOURCE_DIR}/src/clstepcore ${SC_SOURCE_DIR}/src/base )
 
 # ${name} is used for the C++ file name (${name}.cc), and as the suffix for the target and test names
 # ${sdai_lib} is the name of the schema lib that is used
@@ -31,31 +31,31 @@ FUNCTION( add_schema_dependent_test name sdai_lib exe_args )
                           LABELS cpp_schema_specific )
 ENDFUNCTION( add_schema_dependent_test name sdai_lib exe_args )
 
-#if you need a schema that won't be built automatically (i.e. not in scl/data), put it in here
+#if you need a schema that won't be built automatically (i.e. not in sc/data), put it in here
 #temporarily disabling testing ensures that the schema will be built before these tests run
-SET(SCL_ENABLE_TESTING OFF)
-  BUILD_A_SCHEMA( ${SCL_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp )
-  BUILD_A_SCHEMA( ${SCL_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp )
-SET(SCL_ENABLE_TESTING ON)
+SET(SC_ENABLE_TESTING OFF)
+  BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp )
+  BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp )
+SET(SC_ENABLE_TESTING ON)
 
 add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"
-                           "${SCL_SOURCE_DIR}/test/p21/test_array_bounds.p21" )
+                           "${SC_SOURCE_DIR}/test/p21/test_array_bounds.p21" )
 
 #can't use the macro for this one because it depends on the test above and needs WILL_FAIL
 add_test( NAME test_aggregate_bound_runtime_FAIL1
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-          COMMAND $<TARGET_FILE:tst_aggregate_bound_runtime> "${SCL_SOURCE_DIR}/test/p21/test_array_bounds_FAIL1.p21" )
+          COMMAND $<TARGET_FILE:tst_aggregate_bound_runtime> "${SC_SOURCE_DIR}/test/p21/test_array_bounds_FAIL1.p21" )
 set_tests_properties( test_aggregate_bound_runtime_FAIL1 PROPERTIES
                       DEPENDS test_aggregate_bound_runtime WILL_FAIL true
                       LABELS cpp_schema_specific )
 
-add_schema_dependent_test( "inverse_attr1" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
-add_schema_dependent_test( "inverse_attr2" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
-add_schema_dependent_test( "inverse_attr3" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
-add_schema_dependent_test( "attribute" "inverse_attr" "${SCL_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
+add_schema_dependent_test( "inverse_attr1" "inverse_attr" "${SC_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
+add_schema_dependent_test( "inverse_attr2" "inverse_attr" "${SC_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
+add_schema_dependent_test( "inverse_attr3" "inverse_attr" "${SC_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
+add_schema_dependent_test( "attribute" "inverse_attr" "${SC_SOURCE_DIR}/test/p21/test_inverse_attr.p21" )
 
 if(HAVE_STD_THREAD)
-# for best results, use a large file. as1-oc-214.stp is currently the largest file in the repo that scl works with.
+# for best results, use a large file. as1-oc-214.stp is currently the largest file in the repo that sc works with.
 add_schema_dependent_test( "stepfile_rw_progress" "AP214E3_2010"
-                           "${SCL_SOURCE_DIR}/data/ap214e3/as1-oc-214.stp" "-pthread -std=c++0x" "pthread" )
+                           "${SC_SOURCE_DIR}/data/ap214e3/as1-oc-214.stp" "-pthread -std=c++0x" "pthread" )
 endif(HAVE_STD_THREAD)

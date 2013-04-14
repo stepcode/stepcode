@@ -22,11 +22,11 @@ extern int multiple_inheritance;
 ********    The functions in this file generate C++ code for representing
 ********    EXPRESS SELECT types.
 **************************************************************************/
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
 
-#include <scl_trace_fprintf.h>
+#include <sc_trace_fprintf.h>
 
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
@@ -470,7 +470,7 @@ non_unique_types_string( const Type type ) {
     non_unique_types_vector( type, tvec );
 
     /* build type string from vector */
-    typestr = ( char * )scl_malloc( BUFSIZ );
+    typestr = ( char * )sc_malloc( BUFSIZ );
     typestr[0] = '\0';
     strcat( typestr, ( char * )"(" );
     for( i = 0; i <= tnumber; i++ ) {
@@ -811,7 +811,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     /* Initialize the select members with their correct typedescriptors: */
     initSelItems( type, f );
     fprintf( f, "\n{\n" );
-    fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+    fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "    *logStream << \"DAVE ERR entering %s constructor.\" << std::endl;\n", n );
     fprintf( f, "    }\n#endif\n" );
 
@@ -822,7 +822,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
         }
     } LISTod;
     fprintf( f, "   nullify();\n" );
-    fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+    fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "//    *logStream << \"DAVE ERR exiting %s constructor.\" << std::endl;\n", n );
     fprintf( f, "    }\n#endif\n" );
     fprintf( f, "}\n" );
@@ -850,7 +850,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
                  TYPEtd_name( t ) );
         initSelItems( type, f );
         fprintf( f, "\n{\n" );
-        fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
         fprintf( f,
                  "    *logStream << \"DAVE ERR entering %s constructor.\""
                  " << std::endl;\n", n );
@@ -865,7 +865,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
         } else {
             fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
         }
-        fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
         fprintf( f,
                  "//    *logStream << \"DAVE ERR exiting %s constructor.\""
                  " << std::endl;\n", n );
@@ -889,7 +889,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
                      TYPEtd_name( t ) );
             initSelItems( type, f );
             fprintf( f, "\n{\n" );
-            fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+            fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
             fprintf( f,
                      "    *logStream << \"DAVE ERR entering %s constructor.\""
                      " << std::endl;\n", n );
@@ -913,7 +913,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
         fprintf( f,
                  "//  NOTE:  Underlying type defaults to %s instead of NULL\n",
                  TYPEtd_name( t ) );
-        fprintf( f, "#ifdef SCL_LOGGING\n    if( *logStream )\n    {\n" );
+        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
         fprintf( f,
                  "//    *logStream << \"DAVE ERR exiting %s constructor.\""
                  " << std::endl;\n", n );
@@ -1982,7 +1982,7 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
     }
 
     /*  mark the type as being processed  */
-    tag = ( SelectTag ) scl_malloc( sizeof( struct SelectTag_ ) );
+    tag = ( SelectTag ) sc_malloc( sizeof( struct SelectTag_ ) );
     tag -> started = 1;
     tag -> complete = 0;
     TYPEput_clientData( t, ( ClientData ) tag );
@@ -2061,7 +2061,7 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;
 
-    scl_free( tag );
+    sc_free( tag );
 }
 #undef BASE_SELECT
 

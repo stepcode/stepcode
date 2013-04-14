@@ -1,8 +1,8 @@
 #include "lazyInstMgr.h"
 #include <sc_benchmark.h>
 #include "SdaiSchemaInit.h"
-#include "scl_memmgr.h"
-#include <scl_cf.h>
+#include "sc_memmgr.h"
+#include <sc_cf.h>
 
 #ifndef NO_REGISTRY
 # include "schema.h"

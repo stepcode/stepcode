@@ -8,23 +8,23 @@ set( CTEST_MEMORYCHECK_COMMAND /usr/bin/valgrind )
 set( CTEST_INITIAL_CACHE "
 SITE:STRING=${CTEST_SITE}
 BUILDNAME:STRING=${CTEST_BUILD_NAME}
-SCL_ENABLE_TESTING:BOOL=ON
-SCL_BUILD_TYPE:STRING=Debug
+SC_ENABLE_TESTING:BOOL=ON
+SC_BUILD_TYPE:STRING=Debug
 ")
 
 
 
-if( EXISTS "../.SCL_CTEST_PREFS.cmake" )
-    include( "../.SCL_CTEST_PREFS.cmake" )
+if( EXISTS "../.SC_CTEST_PREFS.cmake" )
+    include( "../.SC_CTEST_PREFS.cmake" )
 else()
-    message( WARNING "Did not find ../.SCL_CTEST_PREFS.cmake, containing config variables - result submission disabled" )
+    message( WARNING "Did not find ../.SC_CTEST_PREFS.cmake, containing config variables - result submission disabled" )
     set( SKIP_SUBMISSION TRUE )
 endif()
 
 ######################################################
 ######################################################
 # use config variables such as these in
-#   ../.SCL_CTEST_PREFS.cmake
+#   ../.SC_CTEST_PREFS.cmake
 #
 #set( CTEST_SITE "username")
 #set( CTEST_BUILD_NAME "build type, os, arch")
@@ -66,7 +66,7 @@ file(WRITE "${CTEST_BINARY_DIRECTORY}/CTestCustom.cmake" "
 set( CTEST_CUSTOM_ERROR_EXCEPTION \"{standard input}:[0-9][0-9]*: WARNING: \")
 ")
 
-ctest_configure( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND OPTIONS -DSCL_ENABLE_TESTING=ON )
+ctest_configure( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND OPTIONS -DSC_ENABLE_TESTING=ON )
 SUBMIT_TEST( Configure )
 ctest_build( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND )
 SUBMIT_TEST( Build )

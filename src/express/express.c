@@ -68,7 +68,7 @@
  *
  */
 
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 #include "express/basic.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -275,16 +275,16 @@ Symbol * EXPRESS_get_symbol( Generic e ) {
 
 Express EXPRESScreate() {
     Express model = SCOPEcreate( OBJ_EXPRESS );
-    model->u.express = ( struct Express_ * )scl_calloc( 1, sizeof( struct Express_ ) );
+    model->u.express = ( struct Express_ * )sc_calloc( 1, sizeof( struct Express_ ) );
     return model;
 }
 
 void EXPRESSdestroy( Express model ) {
     if ( model->u.express->basename )
-        scl_free( model->u.express->basename );
+        sc_free( model->u.express->basename );
     if ( model->u.express->filename )
-        scl_free( model->u.express->filename );
-    scl_free( model->u.express );
+        sc_free( model->u.express->filename );
+    sc_free( model->u.express );
     SCOPEdestroy( model );
 }
 
@@ -303,7 +303,7 @@ static void EXPRESS_PATHinit() {
     p = getenv( "EXPRESS_PATH" );
     if( !p ) {
         /* if no EXPRESS_PATH, search current directory anyway */
-        dir = ( Dir * )scl_malloc( sizeof( Dir ) );
+        dir = ( Dir * )sc_malloc( sizeof( Dir ) );
         dir->leaf = dir->full;
         LISTadd( EXPRESS_path, ( Generic )dir );
     } else {
@@ -335,7 +335,7 @@ static void EXPRESS_PATHinit() {
             }
             p++;    /* leave p after terminating null */
 
-            dir = ( Dir * )scl_malloc( sizeof( Dir ) );
+            dir = ( Dir * )sc_malloc( sizeof( Dir ) );
 
             /* if it's just ".", make it as if it was */
             /* just "" to make error messages cleaner */
@@ -367,7 +367,7 @@ static void EXPRESS_PATHinit() {
 
 static void EXPRESS_PATHfree( void ) {
     LISTdo( EXPRESS_path, dir, Dir * )
-        scl_free( dir );
+        sc_free( dir );
     LISTod
     LISTfree( EXPRESS_path );
 }
@@ -564,7 +564,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
             length -= 4;
         }
 
-        model->u.express->basename = ( char * )scl_malloc( length + 1 );
+        model->u.express->basename = ( char * )sc_malloc( length + 1 );
         memcpy( model->u.express->basename, filename, length );
         model->u.express->basename[length] = '\0';
 

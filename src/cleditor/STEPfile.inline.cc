@@ -17,7 +17,7 @@
 #include <cmath>
 
 #include <cstring>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 extern void HeaderSchemaInit( Registry & reg );
 

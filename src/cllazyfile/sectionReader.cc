@@ -1,5 +1,5 @@
-#define SCL_CORE_EXPORT
-#define SCL_DAI_EXPORT
+#define SC_CORE_EXPORT
+#define SC_DAI_EXPORT
 
 #include <algorithm>
 #include <set>
@@ -101,7 +101,7 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     }
     c = _file.peek();
     if( !strchr( delimiters, c ) ) {
-        std::cerr << SCL_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
+        std::cerr << SC_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
     return str.c_str();

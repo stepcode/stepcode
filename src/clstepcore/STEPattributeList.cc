@@ -12,7 +12,7 @@
 
 #include <STEPattributeList.h>
 #include <STEPattribute.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 AttrListNode::AttrListNode( STEPattribute * a ) {
     attr = a;

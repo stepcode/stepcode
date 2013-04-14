@@ -1,4 +1,4 @@
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
@@ -1461,7 +1461,7 @@ TYPE_body_out( Type t, int level ) {
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 count++;
             }
-            names = ( char ** )scl_malloc( count * sizeof( char * ) );
+            names = ( char ** )sc_malloc( count * sizeof( char * ) );
             DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 names[expr->u.integer - 1] = expr->symbol.name;
@@ -1485,7 +1485,7 @@ TYPE_body_out( Type t, int level ) {
                 raw( names[i] );
             }
             raw( ")" );
-            scl_free( ( char * )names );
+            sc_free( ( char * )names );
         }
 #else
             wrap( " ENUMERATION OF\n" );
@@ -1985,7 +1985,7 @@ prep_string() {
     }
     string_func_in_use = true;
 
-    exppp_buf = exppp_bufp = ( char * )scl_malloc( BIGBUFSIZ );
+    exppp_buf = exppp_bufp = ( char * )sc_malloc( BIGBUFSIZ );
     if( !exppp_buf ) {
         fprintf( stderr, "failed to allocate exppp buffer\n" );
         return 1;
@@ -2004,7 +2004,7 @@ prep_string() {
 
 static char *
 finish_string() {
-    char * b = ( char * )scl_realloc( exppp_buf, 1 + exppp_maxbuflen - exppp_buflen );
+    char * b = ( char * )sc_realloc( exppp_buf, 1 + exppp_maxbuflen - exppp_buflen );
 
     if( b == 0 ) {
         fprintf( stderr, "failed to reallocate exppp buffer\n" );

@@ -24,7 +24,7 @@
  * UArray implementation.
  */
 #include <sdai.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

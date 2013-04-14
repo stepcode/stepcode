@@ -72,7 +72,7 @@ typedef HashEntry       DictionaryEntry;
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
+extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
 
 /*******************************/
 /* macro function definitions */
@@ -97,14 +97,14 @@ extern SCL_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT loo
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void     DICTinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void     DICTcleanup PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT int      DICTdefine PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
-extern SCL_EXPRESS_EXPORT int      DICT_define PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
-extern SCL_EXPRESS_EXPORT void     DICTundefine PROTO( ( Dictionary, char * ) );
-extern SCL_EXPRESS_EXPORT Generic      DICTlookup PROTO( ( Dictionary, char * ) );
-extern SCL_EXPRESS_EXPORT Generic      DICTlookup_symbol PROTO( ( Dictionary, char *, Symbol ** ) );
-extern SCL_EXPRESS_EXPORT Generic      DICTdo PROTO( ( DictionaryEntry * ) );
-extern SCL_EXPRESS_EXPORT void     DICTprint PROTO( ( Dictionary ) );
+extern SC_EXPRESS_EXPORT void     DICTinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void     DICTcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT int      DICTdefine PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
+extern SC_EXPRESS_EXPORT int      DICT_define PROTO( ( Dictionary, char *, Generic, Symbol *, char ) );
+extern SC_EXPRESS_EXPORT void     DICTundefine PROTO( ( Dictionary, char * ) );
+extern SC_EXPRESS_EXPORT Generic      DICTlookup PROTO( ( Dictionary, char * ) );
+extern SC_EXPRESS_EXPORT Generic      DICTlookup_symbol PROTO( ( Dictionary, char *, Symbol ** ) );
+extern SC_EXPRESS_EXPORT Generic      DICTdo PROTO( ( DictionaryEntry * ) );
+extern SC_EXPRESS_EXPORT void     DICTprint PROTO( ( Dictionary ) );
 
 #endif /*DICTIONARY_H*/

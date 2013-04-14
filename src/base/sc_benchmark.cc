@@ -1,7 +1,7 @@
 /// \file sc_benchmark.cc memory info, timers, etc for benchmarking
 
 #include "sc_benchmark.h"
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 #ifdef __WIN32__
 #include <Windows.h>

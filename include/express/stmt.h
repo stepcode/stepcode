@@ -48,7 +48,7 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "scope.h"
 
@@ -164,20 +164,20 @@ struct Return_Statement_ {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT struct freelist_head STMT_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head STMT_fl;
 
-extern SCL_EXPRESS_EXPORT struct freelist_head ALIAS_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head ASSIGN_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head CASE_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head COMP_STMT_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head COND_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head LOOP_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head PCALL_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head RET_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head INCR_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head ALIAS_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head ASSIGN_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head CASE_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head COMP_STMT_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head COND_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head LOOP_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head PCALL_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head RET_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head INCR_fl;
 
-extern SCL_EXPRESS_EXPORT Statement STATEMENT_ESCAPE;
-extern SCL_EXPRESS_EXPORT Statement STATEMENT_SKIP;
+extern SC_EXPRESS_EXPORT Statement STATEMENT_ESCAPE;
+extern SC_EXPRESS_EXPORT Statement STATEMENT_SKIP;
 
 /******************************/
 /* macro function definitions */
@@ -225,17 +225,17 @@ extern SCL_EXPRESS_EXPORT Statement STATEMENT_SKIP;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT Statement    STMTcreate PROTO( ( int ) );
-extern SCL_EXPRESS_EXPORT Statement    ALIAScreate PROTO( ( struct Scope_ *, Variable, Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    CASEcreate PROTO( ( Expression , Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    ASSIGNcreate PROTO( ( Expression , Expression ) );
-extern SCL_EXPRESS_EXPORT Statement    COMP_STMTcreate PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    CONDcreate PROTO( ( Expression, Linked_List, Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    LOOPcreate PROTO( ( struct Scope_ *, Expression, Expression, Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    PCALLcreate PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
-extern SCL_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
+extern SC_EXPRESS_EXPORT Statement    STMTcreate PROTO( ( int ) );
+extern SC_EXPRESS_EXPORT Statement    ALIAScreate PROTO( ( struct Scope_ *, Variable, Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    CASEcreate PROTO( ( Expression , Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    ASSIGNcreate PROTO( ( Expression , Expression ) );
+extern SC_EXPRESS_EXPORT Statement    COMP_STMTcreate PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    CONDcreate PROTO( ( Expression, Linked_List, Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    LOOPcreate PROTO( ( struct Scope_ *, Expression, Expression, Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    PCALLcreate PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
+extern SC_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
         Expression end, Expression increment ) );
 
 #endif /*STATEMENT_H*/
