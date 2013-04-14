@@ -4,15 +4,15 @@
 #include <fstream>
 #include <set>
 #include "lazyTypes.h"
-#include "scl_memmgr.h"
-#include "scl_export.h"
+#include "sc_memmgr.h"
+#include "sc_export.h"
 
 class SDAI_Application_instance;
 class lazyFileReader;
 class ErrorDescriptor;
 class Registry;
 
-class SCL_LAZYFILE_EXPORT sectionReader {
+class SC_LAZYFILE_EXPORT sectionReader {
     protected:
         //protected data members
         lazyFileReader * _lazyFile;

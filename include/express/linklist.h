@@ -36,7 +36,7 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include "basic.h"
 #include "memory.h"
 
@@ -70,10 +70,10 @@ struct Linked_List_ {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT Error ERROR_empty_list;
-extern SCL_EXPRESS_EXPORT struct freelist_head LINK_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head LIST_fl;
-extern SCL_EXPRESS_EXPORT Linked_List LINK__l;  /* for LISTcreate_with macro - ugh */
+extern SC_EXPRESS_EXPORT Error ERROR_empty_list;
+extern SC_EXPRESS_EXPORT struct freelist_head LINK_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
+extern SC_EXPRESS_EXPORT Linked_List LINK__l;  /* for LISTcreate_with macro - ugh */
 
 /******************************/
 /* macro function definitions */
@@ -126,21 +126,21 @@ extern SCL_EXPRESS_EXPORT Linked_List LINK__l;  /* for LISTcreate_with macro - u
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void LISTinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void LISTcleanup PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT Linked_List LISTcreate PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT Linked_List LISTcopy PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTadd_first PROTO( ( Linked_List, Generic ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTadd_before PROTO( ( Linked_List, Link, Generic ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTremove_first PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTremove PROTO( ( Linked_List, Link ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTget_first PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );
-extern SCL_EXPRESS_EXPORT void LISTfree PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT int  LISTget_length PROTO( ( Linked_List ) );
-extern SCL_EXPRESS_EXPORT bool LISTempty( Linked_List list );
+extern SC_EXPRESS_EXPORT void LISTinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void LISTcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Linked_List LISTcreate PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Linked_List LISTcopy PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_first PROTO( ( Linked_List, Generic ) );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_before PROTO( ( Linked_List, Link, Generic ) );
+extern SC_EXPRESS_EXPORT Generic  LISTremove_first PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Generic  LISTremove PROTO( ( Linked_List, Link ) );
+extern SC_EXPRESS_EXPORT Generic  LISTget_first PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );
+extern SC_EXPRESS_EXPORT void LISTfree PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT int  LISTget_length PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT bool LISTempty( Linked_List list );
 
 #endif /*LINKED_LIST_H*/

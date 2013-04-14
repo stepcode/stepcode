@@ -6,14 +6,14 @@ lazyDataSectionReader.h lazyInstMgr.h lazyTypes.h sectionReader.h )
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${SCL_SOURCE_DIR}/src/cleditor
-    ${SCL_SOURCE_DIR}/src/cldai
-    ${SCL_SOURCE_DIR}/src/clstepcore
-    ${SCL_SOURCE_DIR}/src/clutils
-    ${SCL_SOURCE_DIR}/src/base
-    ${SCL_SOURCE_DIR}/src/base/judy/src
+    ${SC_SOURCE_DIR}/src/cleditor
+    ${SC_SOURCE_DIR}/src/cldai
+    ${SC_SOURCE_DIR}/src/clstepcore
+    ${SC_SOURCE_DIR}/src/clutils
+    ${SC_SOURCE_DIR}/src/base
+    ${SC_SOURCE_DIR}/src/base/judy/src
 )
 
-SCL_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base")
-SCL_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
+SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base")
+SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
 set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )

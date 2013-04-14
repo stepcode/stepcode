@@ -55,7 +55,7 @@
  *
  */
 
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include <stdlib.h>
 #include "express/resolve.h"
 #include "stack.h"
@@ -216,10 +216,10 @@ void RESOLVEinitialize( void ) {
                              "Domain rule %s must refer to SELF or attribute.", SEVERITY_ERROR );
 
     WARNING_fn_skip_branch = ERRORcreate(
-        "IF statement condition is always %s. Ignoring branch that is never taken.", SEVERITY_WARNING );
+                                 "IF statement condition is always %s. Ignoring branch that is never taken.", SEVERITY_WARNING );
 
-    WARNING_case_skip_label = ERRORcreate("CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING);
- 
+    WARNING_case_skip_label = ERRORcreate( "CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING );
+
 
     ERRORcreate_warning( "circular_subtype", ERROR_subsuper_loop );
     ERRORcreate_warning( "circular_select", ERROR_select_loop );
@@ -263,7 +263,7 @@ void RESOLVEcleanup( void ) {
     ERRORdestroy( ERROR_redecl_no_such_supertype );
     ERRORdestroy( ERROR_missing_self );
     ERRORdestroy( WARNING_case_skip_label );
-    ERRORdestroy( WARNING_fn_skip_branch ); 
+    ERRORdestroy( WARNING_fn_skip_branch );
 }
 
 /**
@@ -428,7 +428,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             /* if not found as a variable, try as function, etc ... */
             if( !x ) {
                 x = SCOPEfind( scope, expr->symbol.name,
-                                           SCOPE_FIND_ANYTHING );
+                               SCOPE_FIND_ANYTHING );
             }
             /* Not all enums have `typecheck->u.type->body->type` == `enumeration_` - ?! */
             if( !x ) {
@@ -841,20 +841,21 @@ void CASE_ITresolve( Case_Item item, Scope scope, Statement statement ) {
     int validLabels = 0;
     LISTdo( item->labels, e, Expression ) {
         EXPresolve( e, scope, statement->u.Case->selector->return_type );
-        if ( e->return_type != Type_Bad ) {
+        if( e->return_type != Type_Bad ) {
             validLabels++;
         }
-    } LISTod;
+    }
+    LISTod;
     if( validLabels ) {
         STMTresolve( item->action, scope );
-    } 
+    }
 }
 
 void STMTresolve( Statement statement, Scope scope ) {
-    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements(); 
+    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements();
     Scope proc;
     Logical eval;
-    bool skipped = false; 
+    bool skipped = false;
 
     if( !statement ) {
         return;    /* could be null statement */
@@ -877,7 +878,8 @@ void STMTresolve( Statement statement, Scope scope ) {
             EXPresolve( statement->u.Case->selector, scope, Type_Dont_Care );
             LISTdo( statement->u.Case->cases, c, Case_Item ) {
                 CASE_ITresolve( c, scope, statement );
-            } LISTod; 
+            }
+            LISTod;
             break;
         case STMT_COMPOUND:
             STMTlist_resolve( statement->u.compound->statements, scope );
@@ -1074,7 +1076,8 @@ void ENTITYcalculate_inheritance( Entity e ) {
             ENTITYcalculate_inheritance( super );
         }
         e->u.entity->inheritance += ENTITYget_size( super );
-    } LISTod 
+    }
+    LISTod
 }
 
 /** returns 1 if entity is involved in circularity, else 0 */

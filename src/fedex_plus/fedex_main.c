@@ -72,13 +72,13 @@
  * Added * to typedefs.  Replaced warning kludges with ERRORoption.
  */
 
-#include <scl_memmgr.h>
+#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "../express/express.h"
 #include "../express/resolve.h"
 
-#include <scl_trace_fprintf.h>
+#include <sc_trace_fprintf.h>
 
 extern void print_fedex_version( void );
 

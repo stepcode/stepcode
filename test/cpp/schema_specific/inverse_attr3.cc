@@ -3,9 +3,9 @@
 ** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
 **
 */
-#include <scl_cf.h>
+#include <sc_cf.h>
 extern void SchemaInit( class Registry & );
-#include "scl_version_string.h"
+#include "sc_version_string.h"
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>

@@ -100,7 +100,7 @@
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include "memory.h"
 
 /************/
@@ -156,8 +156,8 @@ typedef struct {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
 
 /******************************/
 /* macro function definitions */
@@ -193,13 +193,13 @@ This change only seems to have affected hash.h and hash.c
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT void HASHinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT Hash_Table   HASHcreate PROTO( ( unsigned ) );
-extern SCL_EXPRESS_EXPORT Hash_Table   HASHcopy PROTO( ( Hash_Table ) );
-extern SCL_EXPRESS_EXPORT void HASHdestroy PROTO( ( Hash_Table ) );
-extern SCL_EXPRESS_EXPORT Element  HASHsearch PROTO( ( Hash_Table, Element, Action ) );
-extern SCL_EXPRESS_EXPORT void HASHlistinit PROTO( ( Hash_Table, HashEntry * ) );
-extern SCL_EXPRESS_EXPORT void HASHlistinit_by_type PROTO( ( Hash_Table, HashEntry *, char ) );
-extern SCL_EXPRESS_EXPORT Element  HASHlist PROTO( ( HashEntry * ) );
+extern SC_EXPRESS_EXPORT void HASHinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Hash_Table   HASHcreate PROTO( ( unsigned ) );
+extern SC_EXPRESS_EXPORT Hash_Table   HASHcopy PROTO( ( Hash_Table ) );
+extern SC_EXPRESS_EXPORT void HASHdestroy PROTO( ( Hash_Table ) );
+extern SC_EXPRESS_EXPORT Element  HASHsearch PROTO( ( Hash_Table, Element, Action ) );
+extern SC_EXPRESS_EXPORT void HASHlistinit PROTO( ( Hash_Table, HashEntry * ) );
+extern SC_EXPRESS_EXPORT void HASHlistinit_by_type PROTO( ( Hash_Table, HashEntry *, char ) );
+extern SC_EXPRESS_EXPORT Element  HASHlist PROTO( ( HashEntry * ) );
 
 #endif /*HASH_H*/

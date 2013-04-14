@@ -14,7 +14,7 @@
 #include <STEPattribute.h>
 #include <sdai.h>
 #include <ExpDict.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 ///  This is needed so that STEPattribute's can be passed as references to inline functions
 STEPattribute::STEPattribute( const STEPattribute & a )

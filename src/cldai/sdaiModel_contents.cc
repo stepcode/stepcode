@@ -1,6 +1,6 @@
 
 #include <sdai.h>
-#include "scl_memmgr.h"
+#include "sc_memmgr.h"
 
 /////////    SDAI_Model_contents_instances
 

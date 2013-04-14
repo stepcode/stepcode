@@ -21,7 +21,7 @@
  * Copyright (c) 1990 Stanford University
  */
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h> // to get bcopy for CenterLine
@@ -38,13 +38,13 @@
 // DeleteEntries().
 //////////////////////////////////////////////////////////////////////////////
 
-class SCL_UTILS_EXPORT GenNodeArray {
+class SC_UTILS_EXPORT GenNodeArray {
     public:
 
         GenNodeArray( int defaultSize = ARRAY_DEFAULT_SIZE );
         virtual ~GenNodeArray();
 
-        GenericNode * & operator[]( int index );
+        GenericNode *& operator[]( int index );
         virtual int Index( GenericNode * gn );
         virtual int Index( GenericNode ** gn );
 
@@ -69,7 +69,7 @@ class SCL_UTILS_EXPORT GenNodeArray {
 // class GenNodeArray inline public functions
 //////////////////////////////////////////////////////////////////////////////
 
-inline GenericNode * & GenNodeArray::operator[]( int index ) {
+inline GenericNode *& GenNodeArray::operator[]( int index ) {
     Check( index );
     return _buf[index];
 }

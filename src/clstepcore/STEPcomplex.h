@@ -1,7 +1,7 @@
 #ifndef STEPCOMPLEX_H
 #define STEPCOMPLEX_H
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <errordesc.h>
 #include <sdai.h>
 #include <baseType.h>
@@ -13,7 +13,7 @@
 typedef std::list<void *>            STEPcomplex_attr_data_list;
 typedef std::list<void *>::iterator  STEPcomplex_attr_data;
 
-class SCL_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
+class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
     public:
         STEPcomplex * sc;
         STEPcomplex * head;

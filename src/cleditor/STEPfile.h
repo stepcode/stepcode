@@ -13,7 +13,7 @@
 * and is not subject to copyright.
 */
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <string>
 #include <instmgr.h>
 #include <Registry.h>
@@ -35,7 +35,7 @@ enum  FileTypeCode {
     WORKING_SESSION =  2
 };
 
-class SCL_EDITOR_EXPORT STEPfile {
+class SC_EDITOR_EXPORT STEPfile {
     protected:
         //data members
 

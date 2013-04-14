@@ -20,7 +20,7 @@
 //  start a new undo list and delete the old undo list.
 /////////////////////
 
-#include <scl_export.h>
+#include <sc_export.h>
 
 // IT IS VERY IMPORTANT THAT THE ORDER OF THE FOLLOWING INCLUDE FILES
 // BE PRESERVED
@@ -37,7 +37,7 @@
 
 #include <mgrnodearray.h>
 
-class SCL_CORE_EXPORT InstMgr {
+class SC_CORE_EXPORT InstMgr {
     protected:
         int maxFileId;
         int _ownsInstances; // if true will delete instances inside destructor

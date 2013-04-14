@@ -13,7 +13,7 @@
 * and is not subject to copyright.
 */
 
-class SCL_DAI_EXPORT SDAI_Binary {
+class SC_DAI_EXPORT SDAI_Binary {
     private:
         std::string content;
     public:

@@ -30,9 +30,9 @@ SET(LIBSTEPDAI_PRIVATE_HDRS
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${SCL_SOURCE_DIR}/src/base
-    ${SCL_SOURCE_DIR}/src/clstepcore
-    ${SCL_SOURCE_DIR}/src/clutils
+    ${SC_SOURCE_DIR}/src/base
+    ${SC_SOURCE_DIR}/src/clstepcore
+    ${SC_SOURCE_DIR}/src/clutils
 )
 
-SCL_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")
+SC_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")

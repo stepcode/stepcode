@@ -106,7 +106,7 @@ enum type_enum {
 /* packages used */
 /*****************/
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include "expbasic.h"   /* get basic definitions */
 #include "symbol.h"
 #include "object.h"
@@ -178,41 +178,41 @@ struct TypeBody_ {
 
 /* Very commonly-used read-only types */
 /* non-constant versions probably aren't necessary? */
-extern SCL_EXPRESS_EXPORT Type Type_Bad;
-extern SCL_EXPRESS_EXPORT Type Type_Unknown;
-extern SCL_EXPRESS_EXPORT Type Type_Dont_Care;
-extern SCL_EXPRESS_EXPORT Type Type_Runtime;   /**< indicates that this object can't be
+extern SC_EXPRESS_EXPORT Type Type_Bad;
+extern SC_EXPRESS_EXPORT Type Type_Unknown;
+extern SC_EXPRESS_EXPORT Type Type_Dont_Care;
+extern SC_EXPRESS_EXPORT Type Type_Runtime;   /**< indicates that this object can't be
                                                     calculated now but must be deferred
                                                     until (the mythical) runtime */
-extern SCL_EXPRESS_EXPORT Type Type_Binary;
-extern SCL_EXPRESS_EXPORT Type Type_Boolean;
-extern SCL_EXPRESS_EXPORT Type Type_Enumeration;
-extern SCL_EXPRESS_EXPORT Type Type_Expression;
-extern SCL_EXPRESS_EXPORT Type Type_Aggregate;
-extern SCL_EXPRESS_EXPORT Type Type_Integer;
-extern SCL_EXPRESS_EXPORT Type Type_Integer;
-extern SCL_EXPRESS_EXPORT Type Type_Number;
-extern SCL_EXPRESS_EXPORT Type Type_Real;
-extern SCL_EXPRESS_EXPORT Type Type_String;
-extern SCL_EXPRESS_EXPORT Type Type_String_Encoded;
-extern SCL_EXPRESS_EXPORT Type Type_Logical;
-extern SCL_EXPRESS_EXPORT Type Type_Set;
-extern SCL_EXPRESS_EXPORT Type Type_Attribute;
-extern SCL_EXPRESS_EXPORT Type Type_Entity;
-extern SCL_EXPRESS_EXPORT Type Type_Funcall;
-extern SCL_EXPRESS_EXPORT Type Type_Generic;
-extern SCL_EXPRESS_EXPORT Type Type_Identifier;
-extern SCL_EXPRESS_EXPORT Type Type_Oneof;
-extern SCL_EXPRESS_EXPORT Type Type_Query;
-extern SCL_EXPRESS_EXPORT Type Type_Self;
-extern SCL_EXPRESS_EXPORT Type Type_Set_Of_String;
-extern SCL_EXPRESS_EXPORT Type Type_Set_Of_Generic;
-extern SCL_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
+extern SC_EXPRESS_EXPORT Type Type_Binary;
+extern SC_EXPRESS_EXPORT Type Type_Boolean;
+extern SC_EXPRESS_EXPORT Type Type_Enumeration;
+extern SC_EXPRESS_EXPORT Type Type_Expression;
+extern SC_EXPRESS_EXPORT Type Type_Aggregate;
+extern SC_EXPRESS_EXPORT Type Type_Integer;
+extern SC_EXPRESS_EXPORT Type Type_Integer;
+extern SC_EXPRESS_EXPORT Type Type_Number;
+extern SC_EXPRESS_EXPORT Type Type_Real;
+extern SC_EXPRESS_EXPORT Type Type_String;
+extern SC_EXPRESS_EXPORT Type Type_String_Encoded;
+extern SC_EXPRESS_EXPORT Type Type_Logical;
+extern SC_EXPRESS_EXPORT Type Type_Set;
+extern SC_EXPRESS_EXPORT Type Type_Attribute;
+extern SC_EXPRESS_EXPORT Type Type_Entity;
+extern SC_EXPRESS_EXPORT Type Type_Funcall;
+extern SC_EXPRESS_EXPORT Type Type_Generic;
+extern SC_EXPRESS_EXPORT Type Type_Identifier;
+extern SC_EXPRESS_EXPORT Type Type_Oneof;
+extern SC_EXPRESS_EXPORT Type Type_Query;
+extern SC_EXPRESS_EXPORT Type Type_Self;
+extern SC_EXPRESS_EXPORT Type Type_Set_Of_String;
+extern SC_EXPRESS_EXPORT Type Type_Set_Of_Generic;
+extern SC_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
 
-extern SCL_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
-extern SCL_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
 
-extern SCL_EXPRESS_EXPORT Error ERROR_corrupted_type;
+extern SC_EXPRESS_EXPORT Error ERROR_corrupted_type;
 
 /******************************/
 /* macro function definitions */
@@ -288,20 +288,20 @@ extern SCL_EXPRESS_EXPORT Error ERROR_corrupted_type;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_partial PROTO( ( struct Symbol_ *, Scope ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_partial PROTO( ( struct Symbol_ *, Scope ) );
 
-extern SCL_EXPRESS_EXPORT Type TYPEcreate PROTO( ( enum type_enum ) );
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_from_body_anonymously PROTO( ( TypeBody ) );
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_name PROTO( ( struct Symbol_ * ) );
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_nostab PROTO( ( struct Symbol_ *, Scope, char ) );
-extern SCL_EXPRESS_EXPORT TypeBody TYPEBODYcreate PROTO( ( enum type_enum ) );
-extern SCL_EXPRESS_EXPORT void TYPEinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT void TYPEcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate PROTO( ( enum type_enum ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_from_body_anonymously PROTO( ( TypeBody ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_name PROTO( ( struct Symbol_ * ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_nostab PROTO( ( struct Symbol_ *, Scope, char ) );
+extern SC_EXPRESS_EXPORT TypeBody TYPEBODYcreate PROTO( ( enum type_enum ) );
+extern SC_EXPRESS_EXPORT void TYPEinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void TYPEcleanup PROTO( ( void ) );
 
-extern SCL_EXPRESS_EXPORT bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
-extern SCL_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
+extern SC_EXPRESS_EXPORT bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
+extern SC_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
 
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
-extern SCL_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * ) );
 
 #endif    /*  TYPE_H  */

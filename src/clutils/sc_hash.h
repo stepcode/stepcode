@@ -1,9 +1,9 @@
-#ifndef SCL_HASH_H
-#define SCL_HASH_H
+#ifndef SC_HASH_H
+#define SC_HASH_H
 
 /*
 * NIST Utils Class Library
-* clutils/scl_hash.h
+* clutils/sc_hash.h
 * April 1997
 * David Sauder
 * K. C. Morris
@@ -27,7 +27,7 @@
  * This work was supported by the United States Government, and is
  * not subject to copyright.
  *
- * $Log: scl_hash.h,v $
+ * $Log: sc_hash.h,v $
  * Revision 3.0.1.2  1997/11/05 22:33:49  sauderd
  * Adding a new state DP3.1 and associated revision
  *
@@ -91,7 +91,7 @@
  *
  */
 
-#include <scl_export.h>
+#include <sc_export.h>
 
 typedef enum { HASH_FIND, HASH_INSERT, HASH_DELETE } Action;
 
@@ -132,18 +132,18 @@ typedef struct {
 extern "C" {
 #endif
 
-    SCL_UTILS_EXPORT struct Hash_Table * SCL_HASHcreate( unsigned );
-    SCL_UTILS_EXPORT void               SCL_HASHinitialize( void );
-    SCL_UTILS_EXPORT void       *       SCL_HASHfind( struct Hash_Table *,  char * );
-    SCL_UTILS_EXPORT void               SCL_HASHinsert( struct Hash_Table *, char *, void * );
-    SCL_UTILS_EXPORT void               SCL_HASHdestroy( struct Hash_Table * );
-    SCL_UTILS_EXPORT struct Element  *  SCL_HASHsearch( struct Hash_Table *, const struct Element *, Action );
-    SCL_UTILS_EXPORT void               SCL_HASHlistinit( struct Hash_Table *, HashEntry * );
-    SCL_UTILS_EXPORT void               SCL_HASHlistinit_by_type( struct Hash_Table *, HashEntry *, char );
-    SCL_UTILS_EXPORT struct Element  *  SCL_HASHlist( HashEntry * );
+    SC_UTILS_EXPORT struct Hash_Table * SC_HASHcreate( unsigned );
+    SC_UTILS_EXPORT void               SC_HASHinitialize( void );
+    SC_UTILS_EXPORT void       *       SC_HASHfind( struct Hash_Table *,  char * );
+    SC_UTILS_EXPORT void               SC_HASHinsert( struct Hash_Table *, char *, void * );
+    SC_UTILS_EXPORT void               SC_HASHdestroy( struct Hash_Table * );
+    SC_UTILS_EXPORT struct Element  *  SC_HASHsearch( struct Hash_Table *, const struct Element *, Action );
+    SC_UTILS_EXPORT void               SC_HASHlistinit( struct Hash_Table *, HashEntry * );
+    SC_UTILS_EXPORT void               SC_HASHlistinit_by_type( struct Hash_Table *, HashEntry *, char );
+    SC_UTILS_EXPORT struct Element  *  SC_HASHlist( HashEntry * );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* SCL_HASH_H */
+#endif /* SC_HASH_H */

@@ -11,11 +11,11 @@
 * and is not subject to copyright.
 */
 
-#include <scl_export.h>
+#include <sc_export.h>
 #include <limits>
 
 
-class SCL_DAI_EXPORT SDAI_String {
+class SC_DAI_EXPORT SDAI_String {
     private:
         std::string content;
     public:

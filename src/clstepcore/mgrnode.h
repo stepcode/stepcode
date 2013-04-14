@@ -14,7 +14,7 @@
 
 /* $Id: mgrnode.h,v 3.0.1.4 1997/11/05 22:11:37 sauderd DP3.1 $ */
 
-#include <scl_export.h>
+#include <sc_export.h>
 
 class GenericNode;
 class DisplayNode;
@@ -35,7 +35,7 @@ class InstMgr;
 // the DisplayNode, and removes itself from any list it is in.
 //////////////////////////////////////////////////////////////////////////////
 
-class SCL_CORE_EXPORT MgrNode : public GenericNode {
+class SC_CORE_EXPORT MgrNode : public GenericNode {
         friend class GenNodeList;
         friend class MgrNodeList;
         friend class InstMgr;
@@ -117,7 +117,7 @@ class SCL_CORE_EXPORT MgrNode : public GenericNode {
         SDAI_Application_instance  * GetApplication_instance() {
             return se;
         }
-        DisplayNode * & displayNode() {
+        DisplayNode *& displayNode() {
             return di;
         }
         int ArrayIndex()        {

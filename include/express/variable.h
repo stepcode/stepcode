@@ -99,7 +99,7 @@ struct Variable_ {
 /* global variables */
 /********************/
 
-extern SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head VAR_fl;
 
 /******************************/
 /* macro function definitions */
@@ -125,8 +125,8 @@ extern SCL_EXPRESS_EXPORT struct freelist_head VAR_fl;
 /* function prototypes */
 /***********************/
 
-extern SCL_EXPRESS_EXPORT Variable VARcreate PROTO( ( Expression, Type ) );
-extern SCL_EXPRESS_EXPORT void VARinitialize PROTO( ( void ) );
-extern SCL_EXPRESS_EXPORT char * VARget_simple_name PROTO( ( Variable ) );
+extern SC_EXPRESS_EXPORT Variable VARcreate PROTO( ( Expression, Type ) );
+extern SC_EXPRESS_EXPORT void VARinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT char * VARget_simple_name PROTO( ( Variable ) );
 
 #endif    /*  VARIABLE_H  */
