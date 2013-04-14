@@ -1,4 +1,23 @@
-STEPcode   ------  http://github.com/stepcode/stepcode
+STEPcode -- http://github.com/stepcode/stepcode -- http://stepcode.org
+************************************************************************
+Release 0.7 (April, 2013)
+
+New since v0.6:
+* Requires CMake 2.8.7 or later
+* Replace *ALL* references to SCL with SC - CMake, source, filenames.
+* Lazy loading code (src/cllazyfile)
+  * greatly reduces memory requirements and loading time when not all
+  instances are needed
+  * doesn't work with complex instances yet
+  * doesn't work on windows or 32-bit platforms yet
+* Merged all BRL-CAD changes; now, we can work on the same repo.
+  * Eliminate compile-time dependency on a lexer and parser
+  * When lexer/parser changes, use LEMON/RE2C/Perplex (in BRL-CAD repo)
+* Fixed several bugs in the class libraries that cause segfaults
+* update AP209, 210e3, 242, IFC2
+* Fixes for MSVC, Embarcadero (there are still problems with both:
+  see comments on #178 & #190, also import/export macros)
+* Fixed NIST test executables
 ************************************************************************
 Release 0.6 (May, 2012)
 
@@ -22,7 +41,7 @@ New since v0.4:
 * Now handles most features of EXPRESS - all included schemas,
   with the exception of AP209 CD, are parsed without error. Enums are
   now in their own dictionary. Allow indexing on aggregates, generics,
-  and binaries. 
+  and binaries.
 * Changes to fedex_plus that improve the generated c++ - use a
   namespace, break up large static strings, make EXPRESS multiple
   inheritance work by not printing multiple copies of inherited members.
