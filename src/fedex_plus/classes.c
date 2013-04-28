@@ -29,8 +29,10 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include <assert.h>
 #include "classes.h"
+#include <ordered_attrs.h>
 
 #include <sc_trace_fprintf.h>
+
 
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
@@ -1493,6 +1495,18 @@ int get_attribute_number( Entity entity ) {
     return -1;
 }
 
+/// initialize attributes in the constructor; used for two different constructors
+void initializeAttrs( Entity e, FILE* file ) {
+    const orderedAttr * oa;
+    orderedAttrsInit( e );
+    while( 0 != ( oa = nextAttr() ) ) {
+        if( oa->deriver ) {
+            fprintf( file, "    MakeDerived( \"%s\", \"%s\" );\n", oa->attr->name->symbol.name, oa->creator->symbol.name );
+        }
+    }
+    orderedAttrsCleanup();
+}
+
 /**************************************************************//**
  ** Procedure:  LIBstructor_print
  ** Parameters:  Entity *entity --  entity being processed
@@ -1647,14 +1661,8 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     LISTod;
 
-    attr_list = ENTITYget_all_attributes( entity );
+    initializeAttrs( entity, file );
 
-    LISTdo( attr_list, a, Variable )
-    if( VARis_derived( a ) ) {
-        fprintf( file, "    MakeDerived (\"%s\");\n",
-                 VARget_simple_name( a ) );
-    }
-    LISTod;
     fprintf( file, "}\n" );
 
     /*  copy constructor  */
@@ -1865,14 +1873,8 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
         LISTod;
 
-        attr_list = ENTITYget_all_attributes( entity );
+        initializeAttrs( entity, file );
 
-        LISTdo( attr_list, a, Variable )
-        if( VARis_derived( a ) ) {
-            fprintf( file, "    MakeDerived (\"%s\");\n",
-                     VARget_simple_name( a ) );
-        }
-        LISTod;
         fprintf( file, "}\n" );
     } /* end if(multiple_inheritance) */
 
