@@ -10,7 +10,7 @@
 #include "express/express.h"
 
 void
-create_links( Express model ) {
+print_schemas( Express model ) {
     DictionaryEntry de;
     Schema s;
 
@@ -25,6 +25,6 @@ create_links( Express model ) {
 }
 
 void EXPRESSinit_init() {
-    EXPRESSbackend = create_links;
+    EXPRESSbackend = print_schemas;
 }
 
