@@ -117,6 +117,8 @@ add_dependencies(express express_verify)
 add_dependencies(express version_string)
 SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base" )
 
+add_subdirectory(test)
+
 # Local Variables:
 # tab-width: 8
 # mode: cmake
