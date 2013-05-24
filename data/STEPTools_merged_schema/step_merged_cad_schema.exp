@@ -16223,7 +16223,7 @@ END_ENTITY;
 -- DIFF IN AP214
 -- IN AP214/AP242
 ENTITY resulting_path
-   SUBTYPE OF (link_motion_representation_along_path);
+   SUBTYPE OF (motion_link_relationship, link_motion_representation_along_path);
       controlling_joints : SET [1:?] OF kinematic_joint;
 END_ENTITY;
 
