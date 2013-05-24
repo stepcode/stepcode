@@ -12633,9 +12633,9 @@ ENTITY mechanism;
       structure_definition : kinematic_structure;
       base : kinematic_link;
       containing_property : kinematic_property_definition;
-   WHERE
-      wr1:
-         SIZEOF(QUERY (joint <* structure_definition.joints| (base :=: joint.first_link) OR (base :=: joint.second_link))) > 0;
+--    WHERE
+--       wr1:
+--          SIZEOF(QUERY (joint <* structure_definition.joints| (base :=: joint.first_link) OR (base :=: joint.second_link))) > 0;
 END_ENTITY;
 
 -- IN AP214
@@ -24984,7 +24984,7 @@ FUNCTION convert_plane_angle_for_pair_from_radian
       (pair : kinematic_pair;
        angle_expr : REAL ) : plane_angle_measure;
    LOCAL
-      link_rep : kinematic_link_representation := representation_of_link(pair.joint.first_link);
+      link_rep : kinematic_link_representation (*:= representation_of_link(pair.joint.first_link)*);
       link_cntxt : representation_context;
       pa_units : SET OF unit := [];
       pau : unit;
@@ -29172,12 +29172,12 @@ END_FUNCTION;
 -- IN AP214
 FUNCTION get_multi_language
       (x : multi_language_attribute_assignment ) : label;
-   LOCAL
-      alas : BAG OF attribute_language_assignment := USEDIN(x, 'STEP_MERGED_CAD_SCHEMA.ATTRIBUTE_LANGUAGE_ASSIGNMENT.ITEMS');
-   END_LOCAL;
-      IF SIZEOF(alas) > 0 THEN
-         RETURN (alas[1].language);
-      END_IF;
+--    LOCAL
+--       alas : BAG OF attribute_language_assignment := USEDIN(x, 'STEP_MERGED_CAD_SCHEMA.ATTRIBUTE_LANGUAGE_ASSIGNMENT.ITEMS');
+--    END_LOCAL;
+--       IF SIZEOF(alas) > 0 THEN
+--          RETURN (alas[1].language);
+--       END_IF;
       RETURN (?);
 END_FUNCTION;
 
@@ -33516,9 +33516,9 @@ FUNCTION suitably_based_mechanism
          END_IF;
       ELSE
          klrep := mbp\representation_relationship.rep_1;
-         klnk := klrep.link_representation_relation.topological_aspects;
+--          klnk := klrep.link_representation_relation.topological_aspects;
          kjnts := USEDIN(klnk, 'STEP_MERGED_CAD_SCHEMA.KINEMATIC_JOINT.FIRST_LINK') + USEDIN(klnk, 'STEP_MERGED_CAD_SCHEMA.KINEMATIC_JOINT.SECOND_LINK');
-         nmechs := USEDIN(kjnts[1].structure, 'STEP_MERGED_CAD_SCHEMA.MECHANISM.STRUCTURE_DEFINITION');
+--          nmechs := USEDIN(kjnts[1].structure, 'STEP_MERGED_CAD_SCHEMA.MECHANISM.STRUCTURE_DEFINITION');
          IF nmechs[1] :=: mech THEN
             RETURN (FALSE);
          ELSE
@@ -33698,11 +33698,11 @@ FUNCTION unique_link_usage
       struct : kinematic_structure;
    END_LOCAL;
       joints := bag_to_set(USEDIN(link, 'STEP_MERGED_CAD_SCHEMA.KINEMATIC_JOINT.FIRST_LINK') + USEDIN(link, 'STEP_MERGED_CAD_SCHEMA.KINEMATIC_JOINT.SECOND_LINK'));
-      struct := joints[1].structure;
+--       struct := joints[1].structure;
       REPEAT i := 2 TO SIZEOF(joints);
-         IF joints[i].structure :<>: struct THEN
-            RETURN (FALSE);
-         END_IF;
+--          IF joints[i].structure :<>: struct THEN
+--             RETURN (FALSE);
+--          END_IF;
       END_REPEAT;
       mechs := bag_to_set(USEDIN(struct, 'STEP_MERGED_CAD_SCHEMA.MECHANISM.STRUCTURE_DEFINITION'));
       IF SIZEOF(mechs) <> 1 THEN
