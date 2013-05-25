@@ -1,5 +1,14 @@
 SCHEMA step_merged_cad_schema;
 
+(* this is a MODIFIED version of the merged schema
+ * original is at http://www.steptools.com/support/stdev_docs/stpcad/step_merged_cad_schema.exp
+ *
+ * modified to eliminate fedex_plus errors. To view changes, use one of
+ * - `git log -p data/STEPTools_merged_schema/step_merged_cad_schema.exp`
+ * - http://github.com/stepcode/stepcode/commits/master/data/STEPTools_merged_schema
+ *)
+
+
 (* Constructed by merging:
  *  - AP242 (wg12n8324_ap242dis.exp)
  *  - AP214 (wg3n2628_ap214e3.exp)
