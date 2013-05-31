@@ -141,7 +141,7 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
 
 // BUG implement this -- FIXME function is never used
 
-SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * EntityName ) {
+SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entName ) {
     std::string s1, s2;
 
     const EntityDescLinkNode * edln = 0;
@@ -149,7 +149,7 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * Entit
 
     // compare up the *leftmost* parent path
     while( ed ) {
-        if( !strcmp( StrToLower( ed->Name(), s1 ), StrToLower( EntityName, s2 ) ) ) {
+        if( !strcmp( StrToLower( ed->Name(), s1 ), StrToLower( entName, s2 ) ) ) {
             return this;    // return this parent path
         }
         edln = ( EntityDescLinkNode * )( ed->Supertypes().GetHead() );
@@ -161,7 +161,7 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * Entit
     }
     // search alternate parent path since didn't find it in this one.
     if( nextMiEntity ) {
-        return nextMiEntity->GetMiEntity( EntityName );
+        return nextMiEntity->GetMiEntity( entName );
     }
     return 0;
 }
@@ -377,8 +377,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
     char instanceInfo[BUFSIZ];
 
     std::string tmp;
-    sprintf( instanceInfo, "#%d=%s(", STEPfile_id,
-             ( char * )StrToUpper( EntityName( currSch ), tmp ) );
+    sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
     buf.append( instanceInfo );
 
     int n = attributes.list_length();
