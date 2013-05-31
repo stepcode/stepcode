@@ -219,7 +219,7 @@ instanceID sectionReader::readInstanceNumber() {
 SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
         const std::string & typeName, const std::string & schName, bool header ) {
     char c;
-    const char * tName = 0, * sName = 0;
+    const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
     std::string comment;
     Severity sev;
     SDAI_Application_instance * inst = 0;
@@ -277,7 +277,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     findNormalString( "(" );
     _file.unget();
     //TODO do something with 'sev'
-    sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, schName.c_str(), true, false );
+    sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
     return inst;
 }
 

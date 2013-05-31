@@ -98,7 +98,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
                                    class InstMgr * instance_set,
                                    istream & in = cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
-        virtual void STEPread_error( char c, int index, istream & in );
+        virtual void STEPread_error( char c, int i, std::istream& in, const char * schnm );
 
 // WRITE
         virtual void STEPwrite( ostream & out = cout, const char * currSch = NULL,
