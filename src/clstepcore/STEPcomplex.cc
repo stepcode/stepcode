@@ -305,7 +305,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                     "Missing open paren before entity attr values.\n" );
                 cout << "ERROR: missing open paren\n";
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-                STEPread_error( c, 0, in );
+                STEPread_error( c, 0, in, currSch );
                 return _error.severity();
             }
 
@@ -320,7 +320,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                 _error.AppendToDetailMsg(
                     "Complex entity part of instance does not exist.\n" );
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-                STEPread_error( c, 0, in );
+                STEPread_error( c, 0, in, currSch );
                 return _error.severity();
             }
             in >> ws;
@@ -371,7 +371,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                 "Missing open paren before entity attr values.\n" );
             cout << "ERROR: missing open paren\n";
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-            STEPread_error( c, 0, in );
+            STEPread_error( c, 0, in, currSch );
             return _error.severity();
         } else { // c == '('
             in.putback( c );
@@ -399,7 +399,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
                     "Missing open paren before entity attr values.\n" );
                 cout << "ERROR: missing open paren\n";
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-                STEPread_error( c, 0, in );
+                STEPread_error( c, 0, in, currSch );
                 return _error.severity();
             } else { // c == '('
                 in.putback( c );
@@ -543,7 +543,8 @@ void STEPcomplex::BuildAttrs( const char * s ) {
     }
 }
 
-void STEPcomplex::STEPread_error( char c, int index, istream & in ) {
+void STEPcomplex::STEPread_error( char c, int index, istream & in, const char * schnm ) {
+    (void) schnm; //unused
     cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << endl;
     streampos p = in.tellg();
     std::string q, r;
