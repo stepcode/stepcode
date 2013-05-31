@@ -249,6 +249,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         findNormalString( "=" );
     }
     skipWS();
+    ReadTokenSeparator( _file, &comment );
     c = _file.peek();
     switch( c ) {
         case '&':
@@ -269,14 +270,17 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             break;
     }
 
-    if( !comment.empty() ) {
-        inst->AddP21Comment( comment );
+    if( inst != & NilSTEPentity ) {
+        if( !comment.empty() ) {
+            inst->AddP21Comment( comment );
+        }
+        assert( inst->eDesc );
+        _file.seekg( begin );
+        findNormalString( "(" );
+        _file.unget();
+        //TODO do something with 'sev'
+        sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
     }
-    _file.seekg( begin );
-    findNormalString( "(" );
-    _file.unget();
-    //TODO do something with 'sev'
-    sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
     return inst;
 }
 

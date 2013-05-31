@@ -113,9 +113,11 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
                 break;
         }
-        if( inst ) {
+        if( ( inst ) && ( inst != & NilSTEPentity ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
+        } else {
+            std::cerr << "Error loading instance #" << id << "." << std::endl;
         }
     } else {
         std::cerr << "Instance #" << id << " not found in any section." << std::endl;
