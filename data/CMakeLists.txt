@@ -79,7 +79,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     endif( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
 
     # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
-    SC_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai;stepcore;express;stepeditor;steputils;base" "TESTABLE" )
+    SC_ADDLIB( ${PROJECT_NAME} "${FEDEX_OUT}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE" )
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
