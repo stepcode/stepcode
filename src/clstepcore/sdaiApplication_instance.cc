@@ -141,7 +141,7 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
 
 // BUG implement this -- FIXME function is never used
 
-SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * EntityName ) {
+SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entName ) {
     std::string s1, s2;
 
     const EntityDescLinkNode * edln = 0;
@@ -149,7 +149,7 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * Entit
 
     // compare up the *leftmost* parent path
     while( ed ) {
-        if( !strcmp( StrToLower( ed->Name(), s1 ), StrToLower( EntityName, s2 ) ) ) {
+        if( !strcmp( StrToLower( ed->Name(), s1 ), StrToLower( entName, s2 ) ) ) {
             return this;    // return this parent path
         }
         edln = ( EntityDescLinkNode * )( ed->Supertypes().GetHead() );
@@ -161,7 +161,7 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * Entit
     }
     // search alternate parent path since didn't find it in this one.
     if( nextMiEntity ) {
-        return nextMiEntity->GetMiEntity( EntityName );
+        return nextMiEntity->GetMiEntity( entName );
     }
     return 0;
 }
@@ -377,8 +377,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
     char instanceInfo[BUFSIZ];
 
     std::string tmp;
-    sprintf( instanceInfo, "#%d=%s(", STEPfile_id,
-             ( char * )StrToUpper( EntityName( currSch ), tmp ) );
+    sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
     buf.append( instanceInfo );
 
     int n = attributes.list_length();
@@ -411,12 +410,13 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
 /**************************************************************//**
  ** \param c --  character which caused error
  ** \param i --  index of attribute which caused error
- ** \param in  --  input stream for recovery
- ** \details  reports the error found, reads until it finds the end of an
- **     instance. i.e. a close quote followed by a semicolon optionally having
- **     whitespace between them.
+ ** \param in -- (used in STEPcomplex) input stream for recovery
+ ** Reports the error found, reads until it finds the end of an
+ ** instance. i.e. a close quote followed by a semicolon optionally
+ ** having whitespace between them.
  ******************************************************************/
-void SDAI_Application_instance::STEPread_error( char c, int i, istream & in ) {
+void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, const char * schnm ) {
+    (void) in;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
@@ -438,11 +438,12 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in ) {
     }
 
     std::string tmp;
-    STEPwrite( tmp ); // STEPwrite writes to a static buffer inside function
-    sprintf( errStr,
-             "  The invalid instance to this point looks like :\n%s\n",
-             tmp.c_str() );
-    _error.AppendToDetailMsg( errStr );
+    STEPwrite( tmp, schnm ); // STEPwrite writes to a static buffer inside function
+    _error.AppendToDetailMsg( "  The invalid instance to this point looks like :\n" );
+    _error.AppendToDetailMsg( tmp );
+    _error.AppendToDetailMsg( "\nUnexpected character: " );
+    _error.AppendToDetailMsg( c );
+    _error.AppendToDetailMsg( '\n' );
 
     sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
@@ -584,7 +585,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             return _error.severity();
         }
     }
-    STEPread_error( c, i, in );
+    STEPread_error( c, i, in, currSch );
 //  code fragment imported from STEPread_error
 //  for some currently unknown reason it was commented out of STEPread_error
     errStr[0] = '\0';

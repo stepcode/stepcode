@@ -8,6 +8,7 @@ lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
     _instanceTypes = new instanceTypes_t( 255 ); //NOTE arbitrary max of 255 chars for a type name
     _lazyInstanceCount = 0;
+    _loadedInstanceCount = 0;
     _longestTypeNameLen = 0;
     _errors = new ErrorDescriptor();
     _ima = new instMgrAdapter( this );
@@ -112,11 +113,14 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
                 break;
         }
+        if( ( inst ) && ( inst != & NilSTEPentity ) ) {
+            _instancesLoaded.insert( id, inst );
+            _loadedInstanceCount++;
+        } else {
+            std::cerr << "Error loading instance #" << id << "." << std::endl;
+        }
     } else {
         std::cerr << "Instance #" << id << " not found in any section." << std::endl;
-    }
-    if( inst ) {
-        _instancesLoaded.insert( id, inst );
     }
     return inst;
 }
