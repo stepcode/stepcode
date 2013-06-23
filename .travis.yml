@@ -3,7 +3,7 @@ compiler:
   - gcc
   - clang
 # Change this to your needs
-script: cmake .. -DSC_ENABLE_TESTING=ON && make && make test
+script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make && make test
 branches:
   only:
     - master
