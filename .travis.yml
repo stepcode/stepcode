@@ -1,16 +1,14 @@
 language: cpp
 compiler:
-  - gcc
   - clang
-# Change this to your needs
-script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make && make test
+  - gcc
+script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j3 && make -j3 test
 branches:
   only:
     - master
     - /^review\/.*$/
 notifications:
   irc: "chat.freenode.net#stepcode"
-  recipients:
-    - scl-dev@groups.google.com
+  email: scl-dev@groups.google.com
   on_success: change
   on_failure: always
