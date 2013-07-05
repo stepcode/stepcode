@@ -60,10 +60,7 @@ LISTcopy( Linked_List src ) {
 }
 
 
-void
-LISTfree( list )
-Linked_List list;
-{
+void LISTfree( Linked_List list ) {
     Link p, q = list->mark->next;
 
     for( p = q->next; p != list->mark; q = p, p = p->next ) {
