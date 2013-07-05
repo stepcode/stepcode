@@ -27,7 +27,6 @@
 Error ERROR_empty_list = ERROR_none;
 struct freelist_head LINK_fl;
 struct freelist_head LIST_fl;
-Linked_List LINK__l;  /* for LISTcreate_with macro - ugh */
 
 void
 LISTinitialize( void ) {
@@ -50,16 +49,6 @@ LISTcreate() {
     list->mark->next = list->mark->prev = list->mark;
     return( list );
 }
-
-#if 0
-/* could optimize this function! */
-Linked_List
-LISTcreate_with( Generic g ) {
-    Linked_List dst = LISTcreate();
-    LISTadd( dst, g );
-    return( dst );
-}
-#endif
 
 Linked_List
 LISTcopy( Linked_List src ) {
