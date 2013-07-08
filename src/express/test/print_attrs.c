@@ -10,61 +10,70 @@
 #include "express/express.h"
 #include <express/scope.h>
 #include <express/variable.h>
+#include "ordered_attrs.h"
 #include <assert.h>
 
 char * entityName, _buf[512] = { 0 };
 
+///print usage info specific to print_attrs
 void my_usage() {
     EXPRESSusage( 0 );
-    printf( "\t----\n\t-a <entity>: print attrs for <entity>\n" );
+    printf( "   ----\n\t-a <entity>: print attrs for <entity>\n" );
     exit( 2 );
 }
 
-void print_attrs( Express model ) {
+///prints info about one attr
+void describeAttr( const orderedAttr * oa ) {
+    const char * visible_p21 = "    Y    ", * hidden_p21 = "    N    ", * explicit_derived = "    *    ";
+    const char * visibility, * descrip1="", * descrip2="", * descrip3=0;
+    if( oa->deriver ) {
+        assert( 0 == oa->attr->inverse_attribute && "Can't be derived *and* an inverse attribute" );
+        descrip1 = "derived in ";
+        descrip2 = oa->deriver->symbol.name;
+        if( oa->deriver == oa->creator ) {
+            visibility = hidden_p21;
+        } else {
+            visibility = explicit_derived;
+        }
+    } else if( oa->attr->inverse_attribute ) {
+        visibility = hidden_p21;
+        descrip1 = "inverse of ";
+        descrip2 = oa->attr->inverse_attribute->name->symbol.name;
+        descrip3 = oa->attr->inverse_attribute->type->superscope->symbol.name;
+    } else {
+        visibility = visible_p21;
+    }
+    printf("%s|%22s |%22s | %s%s%s%s\n", visibility, oa->attr->name->symbol.name,
+           oa->creator->symbol.name, descrip1, descrip2, ( ( descrip3 ) ? " in " : "" ), ( ( descrip3 ) ? descrip3 : "" ) );
+}
+
+void print_attrs( Entity ent ) {
+    const orderedAttr * oa;
+    const char * dashes="--------------------------------------------------------------------------";
+    printf( "Entity %s\n%s\n%s\n%s\n", ent->symbol.name, dashes,
+            " In P21? |       attr name       |        creator        |     detail", dashes );
+    orderedAttrsInit( ent );
+    while( 0 != ( oa = nextAttr() ) ) {
+        describeAttr( oa );
+    }
+    orderedAttrsCleanup();
+}
+
+void find_and_print( Express model ) {
     DictionaryEntry de;
     Schema s;
     Entity e;
-    Linked_List attrs;
-
-    if( !entityName ) {
-        my_usage();
-    }
-
-    printf( "File: %s\n  ", model->u.express->filename );
-
     DICTdo_init( model->symbol_table, &de );
     while( 0 != ( s = DICTdo( &de ) ) ) {
         printf( "Schema %s\n", s->symbol.name );
         e = DICTlookup( s->symbol_table, entityName );
         if( e ) {
-            printf( "    Entity %s\n", e->symbol.name );
-            attrs = ENTITYget_all_attributes( e ); // FIXME write this out, avoid using schema name for types. what happens with entities? same?
-            LISTdo( attrs, attr, Variable ) {
-                const char * source, * scope;
-                //there doesn't seem to be a way to get the owning entity of an attr that is a type/entity itself
-                //set attr.name.type.superscope???
-                if( ( attr->type->superscope->type == 's' ) || ( attr->type->superscope->type == '!' )) { //schema or file
-                    source = attr->type->symbol.name;
-                    scope = "  TYPE/ENTITY  ";
-                } else {
-                    source = attr->type->superscope->symbol.name;
-                    scope = "    attr of    ";
-                }
-                printf( "     %s%s, * %p is %s %s\n", ( attr->initializer ? "*" : " " ), attr->name->symbol.name, ( void * ) attr, scope, source );
-                if( attr->initializer ) {
-                    assert( attr->initializer->e.op1 );
-                    printf( "%s", attr->initializer->e.op1->symbol.name );
-                }
-            } LISTod
-        } else {
-            printf( "\tnot found.\n" );
+            print_attrs( e );
         }
-        LISTfree( attrs );
     }
-    printf( "\n" );
-    exit( 0 );
 }
 
+///reads arg setting entity name
 int attr_arg( int i, char * arg ) {
     const char * src = arg;
     int count = 0;
@@ -88,9 +97,10 @@ int attr_arg( int i, char * arg ) {
     return 0;
 }
 
+///set the functions to be called by main() in libexpress
 void EXPRESSinit_init() {
     entityName = 0;
-    EXPRESSbackend = print_attrs;
+    EXPRESSbackend = find_and_print;
     ERRORusage_function = my_usage;
     strcat( EXPRESSgetopt_options, "a:" );
     EXPRESSgetopt = attr_arg;

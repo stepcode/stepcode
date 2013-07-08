@@ -91,6 +91,7 @@ set(EXPRESS_SOURCES
   memory.c
   object.c
   express.c
+  ordered_attrs.cc
   )
 
 # TODO
