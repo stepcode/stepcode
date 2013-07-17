@@ -321,7 +321,9 @@ SCHEMAout( Schema s ) {
                 described = true;
             }
         }
-        fclose( f );
+        if( f ) {
+            fclose( f );
+        }
     }
     error_sym.filename = filename;
 
