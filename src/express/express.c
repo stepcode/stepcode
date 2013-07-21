@@ -87,6 +87,7 @@
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
 void Parse( void * parser, int tokenID, YYSTYPE data, parse_data_t parseData );
+void ParseTrace(FILE *TraceFILE, char *zTracePrompt);
 
 Linked_List EXPRESS_path;
 int EXPRESSpass;
@@ -604,6 +605,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     parserInitState();
 
     yyerrstatus = 0;
+//     ParseTrace( stderr, "- expparse - " ); //NOTE uncomment this to enable parser tracing
     while( ( tokenID = yylex( scanner ) ) > 0 ) {
         Parse( parser, tokenID, yylval, parseData );
     }

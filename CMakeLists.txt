@@ -89,8 +89,9 @@ if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
   set( SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs" )
 endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 
-#this makes SC_BUILD_SCHEMAS show up in cmake-gui
 if( NOT DEFINED SC_BUILD_SCHEMAS )
+    message( "** CMake variable SC_BUILD_SCHEMAS not set. Defaults to building ALL schemas. This will take a while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
+    #this makes SC_BUILD_SCHEMAS show up in cmake-gui
     SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )
 
