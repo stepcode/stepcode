@@ -706,7 +706,7 @@ void ENTITYget_first_attribs( Entity entity, Linked_List result ) {
     }
 }
 
-/* Attributes are divided into four categories:
+/** Attributes are divided into four categories:
 ** these are not exclusive as far as I can tell! I added defs below DAS
 **
 **  . simple explicit
