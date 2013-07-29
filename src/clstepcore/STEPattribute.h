@@ -77,11 +77,12 @@ extern SC_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, Erro
 class SC_CORE_EXPORT STEPattribute {
         friend ostream & operator<< ( ostream &, STEPattribute & );
         friend class SDAI_Application_instance;
+    protected:
+        bool _derive;
     public:
         ErrorDescriptor _error;
-        unsigned int _derive : 1;
-        int Derive( unsigned int n = 1 )  {
-            return _derive = n;
+        void Derive( bool n = true )  {
+            _derive = n;
         }
 
         STEPattribute * _redefAttr;
@@ -139,7 +140,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         int Nullable() const; // may this attribute be null?
         int is_null() const;  // is this attribute null?
-        int     IsDerived() const  {
+        bool IsDerived() const  {
             return _derive;
         }
         STEPattribute * RedefiningAttr() {
