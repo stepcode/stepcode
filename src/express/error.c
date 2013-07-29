@@ -199,6 +199,8 @@ void ERRORset_warning( char * name, int set ) {
         fprintf( stderr, "unknown warning: %s\n", name );
         if( ERRORusage_function ) {
             ( *ERRORusage_function )();
+        } else {
+            EXPRESSusage(1);
         }
     }
 }
