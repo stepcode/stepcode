@@ -71,4 +71,8 @@ include_directories(
 SC_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "steputils;stepdai;base")
 
 install(FILES ${SC_CLSTEPCORE_HDRS}
-	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)
+    DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)
+
+IF(SC_ENABLE_TESTING)
+  ADD_SUBDIRECTORY( test )
+ENDIF(SC_ENABLE_TESTING)
