@@ -642,8 +642,9 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 
 
 int STEPattribute::ShallowCopy( STEPattribute * sa ) {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->ShallowCopy( sa );
+    _redefAttr = sa->_redefAttr;
+    if( _redefAttr )  {
+        return _redefAttr->ShallowCopy( sa );
     }
     switch( sa->NonRefType() ) {
         case INTEGER_TYPE:
