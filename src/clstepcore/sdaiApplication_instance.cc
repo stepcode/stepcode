@@ -786,7 +786,12 @@ int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
     char scanBuf[BUFSIZ];
     scanBuf[0] = '\0';
 
-    int numFound = sscanf( ( char * )attrValue, " %s", scanBuf );
+    std::stringstream fmtstr;
+    fmtstr << " %" << BUFSIZ -1 << "s ";
+    //fmtstr contains " %ns " where n is BUFSIZ -1
+
+    int numFound = sscanf( ( char * )attrValue , fmtstr.str().c_str() , scanBuf );
+
     if( numFound == EOF ) {
         error->GreaterSeverity( SEVERITY_INCOMPLETE );
         return 1;
@@ -810,6 +815,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
     tmp[0] = '\0';
     char messageBuf [BUFSIZ];
     messageBuf[0] = '\0';
+    std::stringstream fmtstr1, fmtstr2;
 
     if( clearError ) {
         err->ClearErrorMsg();
@@ -818,9 +824,15 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
     int fileId;
     MgrNode * mn = 0;
 
+    // fmtstr1 contains "#%d %ns" where n is BUFSIZ-1
+    fmtstr1 << " #%d %" << BUFSIZ - 1 << "s ";
+
+    // fmtstr2 contains "%d %ns" where n is BUFSIZ-1
+    fmtstr2 << " %d %" << BUFSIZ - 1 << "s ";
+ 
     // check for both forms:  #id or id
-    int found1 = sscanf( ( char * )attrValue, " #%d %s", &fileId, tmp );
-    int found2 = sscanf( ( char * )attrValue, " %d %s", &fileId, tmp );
+    int found1 = sscanf( ( char * )attrValue, fmtstr1.str().c_str() , &fileId, tmp );
+    int found2 = sscanf( ( char * )attrValue, fmtstr2.str().c_str() , &fileId, tmp );
 
     if( ( found1 > 0 ) || ( found2 > 0 ) ) {
         if( ( found1 == 2 ) || ( found2 == 2 ) ) {
