@@ -587,7 +587,9 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
          tdnm [BUFSIZ];
 
     strncpy( classnm, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    classnm[BUFSIZ-1] = '\0';
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
+    tdnm[BUFSIZ-1] = '\0';
     size = strlen( classnm ) + 2; /* for formatting output */
 
     fprintf( f, "\n//////////  SELECT TYPE %s\n", SelectName( TYPEget_name( type ) ) );
@@ -1317,6 +1319,7 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
     firsttime = 1;
     LISTdo( SEL_TYPEget_items( type ), t, Type )
     strncpy( x, TYPEget_name( t ), BUFSIZ );
+    x[BUFSIZ-1] = '\0';
     fprintf( f, "    if ( o.CurrentUnderlyingType () == %s ) {\n",
              TYPEtd_name( t ) );
     if( TYPEis_select( t ) ) {
@@ -1400,6 +1403,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
     Linked_List data_members = SELgetnew_dmlist( type );
 
     strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    n[BUFSIZ-1] = '\0';
 
     fprintf( f, "\n\n// STEP Part 21\n" );
     /*  write part 21   */
@@ -1677,6 +1681,7 @@ TYPEselect_lib_StrToVal( const Type type, FILE * f, Schema schema ) {
     int enum_cnt = 0;
 
     strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    n[BUFSIZ-1] = '\0';
 
     /*  read StrToVal_content   */
     fprintf( f, "\nSeverity\n%s::StrToVal_content "

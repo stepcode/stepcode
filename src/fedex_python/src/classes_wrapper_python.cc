@@ -267,6 +267,7 @@ PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
     if( TYPEis_select( t ) ) {
         /*   do the select aggregates here  */
         strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
+        nm[BUFSIZ-1] = '\0';
         fprintf( files->inc, "class %s;\ntypedef %s * %sH;\n", nm, nm, nm );
         fprintf( files->inc,
                  "typedef %s * %s_ptr;\ntypedef %s_ptr %s_var;\n\n",
