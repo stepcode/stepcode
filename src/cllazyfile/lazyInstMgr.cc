@@ -20,11 +20,11 @@ lazyInstMgr::~lazyInstMgr() {
     delete _ima;
     //loop over files, sections, instances; delete header instances
     lazyFileReaderVec_t::iterator fit = _files.begin();
-    for( ; fit != _files.end(); fit++ ) {
+    for( ; fit != _files.end(); ++fit ) {
         delete *fit;
     }
     dataSectionReaderVec_t::iterator sit = _dataSections.begin();
-    for( ; sit != _dataSections.end(); sit++ ) {
+    for( ; sit != _dataSections.end(); ++sit ) {
         delete *sit;
     }
     _instancesLoaded.clear();
@@ -59,7 +59,7 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
             //forward refs
             _fwdInstanceRefs.insert( inst.loc.instance, *inst.refs );
             instanceRefs::iterator it = inst.refs->begin();
-            for( ; it != inst.refs->end(); it++ ) {
+            for( ; it != inst.refs->end(); ++it ) {
                 //reverse refs
                 _revInstanceRefs.insert( *it, inst.loc.instance );
             }
