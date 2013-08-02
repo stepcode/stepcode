@@ -34,7 +34,7 @@ MatchType MultList::tryNext( EntNode * ents ) {
 
     child = firstCandidate( child );
     while( child != NULL ) {
-        if( ( retval = ( ( MultList * )child )->tryNext( ents ) ) == MATCHALL ) {
+        if( ( retval = ( dynamic_cast< MultList * >(child) )->tryNext( ents ) ) == MATCHALL ) {
             // We're done - a good solution was found.
             return MATCHALL;
         }
