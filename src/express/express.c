@@ -720,7 +720,6 @@ static void RENAMEresolve( Rename * r, Schema s ) {
 
 #ifdef using_enum_items_is_a_pain
 static void RENAMEresolve_enum( Type t, Schema s ) {
-    Dictionary      d = TYPEget_enum_tags( t );
     DictionaryEntry de;
     Expression      x;
 

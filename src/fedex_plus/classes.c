@@ -721,7 +721,6 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     Type t = VARget_type( a );
     Class_Of_Type class;
     char ctype [BUFSIZ];  /*  type of data member  */
-    char return_type [BUFSIZ];
     char attrnm [BUFSIZ];
     char membernm[BUFSIZ];
     char funcnm [BUFSIZ];  /*  name of member function  */
@@ -1062,7 +1061,6 @@ void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
 void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
     char entnm [BUFSIZ];
     Linked_List list;
-    int attr_count_tmp = attr_count;
     Entity super = 0;
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
@@ -2077,7 +2075,6 @@ void print_typechain( FILES * files, const Type t, char * buf, Schema schema, co
 void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
 #define entity_name ENTITYget_name(entity)
 #define schema_name SCHEMAget_name(schema)
-    const char * cn = ENTITYget_classname( entity );
     char attrnm [BUFSIZ];
     char dict_attrnm [BUFSIZ];
     const char * super_schema;
@@ -3336,8 +3333,6 @@ void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
             case bag_:
             case set_:
             case list_: {
-                const char * ctype = TYPEget_ctype( type );
-
                 if( isMultiDimAggregateType( type ) ) {
                     print_typechain( files, TYPEget_body( type )->base,
                                      typename_buf, schema, type->symbol.name );

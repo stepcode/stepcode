@@ -319,19 +319,11 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
              int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
-    FILE * libfile,
-         //*incfile,
-         //*schemafile = files->incall,
-         // *schemainit = files->initall,
-         *initfile
-         //   *createall = files->create
-         ;
+    FILE * libfile;
     Rule r;
     Function f;
     Procedure p;
     DictionaryEntry de;
-    char * tmpstr = 0;
-    unsigned int tmpstr_size = 0;
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
@@ -447,13 +439,9 @@ getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ******************************************************************/
 void
 EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
-    char fnm [MAX_LEN], *np;
+    char fnm [MAX_LEN];
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
-    //FILE * incfile;
-    //FILE * schemafile = files -> incall;
-    //FILE * schemainit = files -> initall;
-    FILE * initfile;
     /* new */
     Schema schema;
     DictionaryEntry de;

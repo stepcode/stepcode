@@ -1005,7 +1005,6 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
 }
 
 SDAI_Application_instance * STEPfile::CreateSubSuperInstance( istream & in, int fileid, ErrorDescriptor & e ) {
-    std::string tmpstr;
     SDAI_Application_instance * obj = ENTITY_NULL;
 
     char c;
