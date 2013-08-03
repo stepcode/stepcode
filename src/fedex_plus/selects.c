@@ -967,7 +967,6 @@ initSelItems( const Type type, FILE * f )
 Linked_List
 ENTITYget_expanded_entities( Entity e, Linked_List l ) {
     Linked_List supers;
-    int super_cnt = 0;
     Entity super;
 
     if( ! LISTmember( l, ( Generic ) e ) ) {
@@ -975,6 +974,7 @@ ENTITYget_expanded_entities( Entity e, Linked_List l ) {
     }
 
     if( multiple_inheritance ) {
+        int super_cnt = 0;
         supers = ENTITYget_supertypes( e );
         LISTdo( supers, s, Entity )
         /* ignore the more than one supertype

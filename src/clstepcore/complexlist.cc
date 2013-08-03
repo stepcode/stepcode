@@ -163,7 +163,7 @@ bool ComplexList::contains( EntNode * ents ) {
  * when the schema was read; false otherwise.
  */
 bool ComplexList::matches( EntNode * ents ) {
-    MatchType retval, otherChoices = NEWCHOICE;
+    MatchType retval;
     int result = false;
 
     // First check if this ComplexList at least contains all the nodes of ents.
@@ -189,6 +189,7 @@ bool ComplexList::matches( EntNode * ents ) {
         } else if( retval >= MATCHSOME ) {
             // We have a partial answer.  Check if other solutions exist (i.e.,
             // if there are OR's with other choices):
+            MatchType otherChoices = NEWCHOICE;
             while( otherChoices == NEWCHOICE ) {
                 otherChoices = head->tryNext( ents );
                 if( otherChoices == MATCHALL ) {

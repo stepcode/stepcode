@@ -300,7 +300,6 @@ typedef struct Dir {
 static void EXPRESS_PATHinit() {
     char * p;
     Dir * dir;
-    int done = 0;
 
     EXPRESS_path = LISTcreate();
     p = getenv( "EXPRESS_PATH" );
@@ -310,6 +309,7 @@ static void EXPRESS_PATHinit() {
         dir->leaf = dir->full;
         LISTadd( EXPRESS_path, ( Generic )dir );
     } else {
+        int done = 0;
         while( !done ) {
             char * start;   /* start of current dir */
             int length; /* length of dir */

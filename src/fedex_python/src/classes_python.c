@@ -606,7 +606,6 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     Linked_List list;
     int num_parent = 0;
     int num_derived_inverse_attr = 0;
-    int index_attribute = 0;
 
     /* class name
      need to use new-style classes for properties to work correctly
@@ -703,7 +702,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         // if inheritance, first write the inherited parameters
         list = ENTITYget_supertypes( entity );
         num_parent = 0;
-        index_attribute = 0;
+        int index_attribute = 0;
         if( ! LISTempty( list ) ) {
             LISTdo( list, e, Entity )
             /*  search attribute names for superclass */
@@ -2177,8 +2176,8 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
          base [BUFSIZ],
          nm [BUFSIZ];
     Type i;
-    int where_rule_number = 0;
 
+    int where_rule_number = 0;
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     tdnm[BUFSIZ-1] = '\0';
 

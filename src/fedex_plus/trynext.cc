@@ -104,7 +104,6 @@ MatchType OrList::tryNext( EntNode * ents )
  * and then to try our next choice.
  */
 {
-    MatchType retval;
     EntList * child;
 
 
@@ -116,6 +115,7 @@ MatchType OrList::tryNext( EntNode * ents )
     // First try other choices of descendants of current choice:
     child = getChild( choice );
     if( child->multiple() ) {
+    	MatchType retval;
         // I.e., if there are (or may be) more choices within the current
         // choice, try those first.  We must be sure to exhaust all choices in
         // our descendants before moving on.

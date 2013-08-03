@@ -92,7 +92,6 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
     SDAI_Application_instance * inst = 0;
     positionAndSection ps;
-    long int off;
     sectionID sid;
     inst = _instancesLoaded.find( id );
     instanceStreamPos_t::cvector * cv;
@@ -103,6 +102,7 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
                 std::cerr << "Instance #" << id << " not found in any section." << std::endl;
                 break;
             case 1:
+                long int off;
                 ps = cv->at( 0 );
                 off = ps & 0xFFFFFFFFFFFF;
                 sid = ps >> 48;
