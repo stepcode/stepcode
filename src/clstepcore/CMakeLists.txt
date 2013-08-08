@@ -57,6 +57,7 @@ SET(LIBSTEPCORE_PRIVATE_HDRS
     dispnode.h
     dispnodelist.h
     needFunc.h
+    SubSuperIterators.h
 )
 
 include_directories(
@@ -68,3 +69,6 @@ include_directories(
 )
 
 SC_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "steputils;stepdai;base")
+
+install(FILES ${LIBSTEPCORE_PRIVATE_HDRS}
+	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)
