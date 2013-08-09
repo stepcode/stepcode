@@ -1234,7 +1234,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     /*  put in member functions which belong to all entities    */
     /*  constructors:    */
     fprintf( file, "        %s();\n", entnm );
-    fprintf( file, "        %s( SDAI_Application_instance *se, int addAttrs = 0 );\n", entnm );
+    fprintf( file, "        %s( SDAI_Application_instance *se, bool addAttrs = true );\n", entnm );
     /*  copy constructor */
     fprintf( file, "        %s( %s & e );\n", entnm, entnm );
     /*  destructor: */
@@ -1533,21 +1533,16 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
     int first = 1;
 
     /*  constructor definition  */
-    fprintf( file, "%s::%s( )\n", entnm, entnm );
-    fprintf( file, "{\n" );
+
+    //parent class initializer (if any) and '{' printed below
+    fprintf( file, "%s::%s()", entnm, entnm );
 
     /* ////MULTIPLE INHERITANCE//////// */
 
     if( multiple_inheritance ) {
         int super_cnt = 0;
-        fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
-            if( LISTget_length( list ) > 1 ) {
-                fprintf( file, "#if 1\n" );
-                fprintf( file, "    int attrFlags[3];\n" );
-                fprintf( file, "#endif\n" );
-            }
             LISTdo( list, e, Entity ) {
                 /*  if there's no super class yet,
                     or the super class doesn't have any attributes
@@ -1556,38 +1551,19 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                 super_cnt++;
                 if( super_cnt == 1 ) {
                     /* ignore the 1st parent */
-                    fprintf( file,
-                        "        /* Ignore the first parent since it is */\n %s\n",
-                        "        /* part of the main inheritance hierarchy */" );
+                    const char * parent = ENTITYget_classname( e );
+
+                    //parent class initializer
+                    fprintf( file, ": %s() {\n", parent );
+                    fprintf( file, "        /*  parent: %s  */\n%s\n%s\n", parent,
+                            "        /* Ignore the first parent since it is */",
+                            "        /* part of the main inheritance hierarchy */"  );
+                    principalSuper = e; /* principal SUPERTYPE */
                 } else {
                     fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
                     fprintf( file, "    HeadEntity(this);\n" );
-                    fprintf( file, "#if 1\n" );
-                    fprintf( file,
-                            "        /* Optionally use the following to replace the line following\n" );
-                    fprintf( file,
-                            "           the endif. Use this to turn off adding attributes in\n" );
-                    fprintf( file,
-                            "           diamond shaped hierarchies for each additional parent at this\n" );
-                    fprintf( file,
-                            "           level. You currently must hand edit this for it to work. */\n" );
-                    fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
-                    fprintf( file,
-                            "    attrFlags[1] = 0; // add parent of parents attrs\n" );
-                    fprintf( file,
-                            "    attrFlags[2] = 0; // do not add parent of parent of parents attrs\n" );
-                    fprintf( file,
-                            "      // In *imaginary* hierarchy turn off attrFlags[2] since it\n" );
-                    fprintf( file,
-                            "      // would be the parent that has more than one path to it.\n" );
-                    fprintf( file,
-                            "    AppendMultInstance(new %s(this, attrFlags));\n",
-                            ENTITYget_classname( e ) );
-                    fprintf( file, "#else\n" );
-
                     fprintf( file, "    AppendMultInstance(new %s(this));\n",
                             ENTITYget_classname( e ) );
-                    fprintf( file, "#endif\n" );
 
                     if( super_cnt == 2 ) {
                         printf( "\nMULTIPLE INHERITANCE for entity: %s\n",
@@ -1600,6 +1576,8 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             } LISTod;
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
+            // no parent class constructor has been printed, so still need an opening brace
+            fprintf( file, " {\n" );
             fprintf( file, "        /*  no SuperTypes */\n" );
         }
     }
@@ -1741,9 +1719,9 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         entnm = ENTITYget_classname( entity );
         /*  constructor definition  */
         if( parent )
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, int * addAttrs ) : %s( se, ( addAttrs ? &addAttrs[1] : 0 ) ) {\n", entnm, entnm, parentnm );
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) : %s( se, addAttrs ) {\n", entnm, entnm, parentnm );
         else {
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, int * addAttrs ) {\n", entnm, entnm );
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) {\n", entnm, entnm );
         }
 
         fprintf( file, "    /* Set this to point to the head entity. */\n" );
@@ -1754,12 +1732,6 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
-            if( LISTget_length( list ) > 1 ) {
-                fprintf( file, "#if 0\n" );
-                fprintf( file, "    int attrFlags[3];\n" );
-                fprintf( file, "#endif\n" );
-            }
-
             LISTdo( list, e, Entity )
             /*  if there's no super class yet,
                 or the super class doesn't have any attributes
@@ -1773,29 +1745,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                          "        /* Ignore the first parent since it is */\n %s\n",
                          "        /* part of the main inheritance hierarchy */" );
             }  else {
-                fprintf( file, "#if 0\n" );
-                fprintf( file,
-                         "        /* Optionally use the following to replace the line following\n" );
-                fprintf( file,
-                         "           the endif. Use this to turn off adding attributes in\n" );
-                fprintf( file,
-                         "           diamond shaped hierarchies for each additional parent at this\n" );
-                fprintf( file,
-                         "           level. You currently must hand edit this for it to work. */\n" );
-                fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
-                fprintf( file,
-                         "    attrFlags[1] = 1; // add parent of parents attrs\n" );
-                fprintf( file,
-                         "    attrFlags[2] = 0; // do not add parent of parent of parents attrs\n" );
-                fprintf( file,
-                         "      // In *imaginary* hierarchy turn off attrFlags[2] since it\n" );
-                fprintf( file,
-                         "      // would be the parent that has more than one path to it.\n" );
-                fprintf( file,
-                         "    se->AppendMultInstance(new %s(se, attrFlags));\n",
-                         ENTITYget_classname( e ) );
-                fprintf( file, "#endif\n" );
-                fprintf( file, "    se->AppendMultInstance(new %s(se, 0));\n",
+                fprintf( file, "    se->AppendMultInstance( new %s( se, addAttrs ) );\n",
                          ENTITYget_classname( e ) );
             }
             LISTod;
@@ -1845,7 +1795,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
                 fprintf( file, "    /* Put attribute on the attributes list for the main inheritance heirarchy.  **\n" );
                 fprintf( file, "    ** The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
-                fprintf( file, "    if(!addAttrs || addAttrs[0]) {\n" );
+                fprintf( file, "    if( addAttrs ) {\n" );
                 fprintf( file, "        se->attributes.push( a );\n    }\n" );
 
                 /* if it is redefining another attribute make connection of redefined attribute to redefining attribute */
