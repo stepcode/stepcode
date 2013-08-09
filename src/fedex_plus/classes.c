@@ -1551,58 +1551,56 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                 fprintf( file, "    int attrFlags[3];\n" );
                 fprintf( file, "#endif\n" );
             }
+            LISTdo( list, e, Entity ) {
+                /*  if there's no super class yet,
+                    or the super class doesn't have any attributes
+                */
 
-            LISTdo( list, e, Entity )
-            /*  if there\'s no super class yet,
-                or the super class doesn\'t have any attributes
-            */
-            fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
+                super_cnt++;
+                if( super_cnt == 1 ) {
+                    /* ignore the 1st parent */
+                    fprintf( file,
+                        "        /* Ignore the first parent since it is */\n %s\n",
+                        "        /* part of the main inheritance hierarchy */" );
+                } else {
+                    fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
+                    fprintf( file, "    HeadEntity(this);\n" );
+                    fprintf( file, "#if 1\n" );
+                    fprintf( file,
+                            "        /* Optionally use the following to replace the line following\n" );
+                    fprintf( file,
+                            "           the endif. Use this to turn off adding attributes in\n" );
+                    fprintf( file,
+                            "           diamond shaped hierarchies for each additional parent at this\n" );
+                    fprintf( file,
+                            "           level. You currently must hand edit this for it to work. */\n" );
+                    fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
+                    fprintf( file,
+                            "    attrFlags[1] = 0; // add parent of parents attrs\n" );
+                    fprintf( file,
+                            "    attrFlags[2] = 0; // do not add parent of parent of parents attrs\n" );
+                    fprintf( file,
+                            "      // In *imaginary* hierarchy turn off attrFlags[2] since it\n" );
+                    fprintf( file,
+                            "      // would be the parent that has more than one path to it.\n" );
+                    fprintf( file,
+                            "    AppendMultInstance(new %s(this, attrFlags));\n",
+                            ENTITYget_classname( e ) );
+                    fprintf( file, "#else\n" );
 
-            super_cnt++;
-            if( super_cnt == 1 ) {
-                /* ignore the 1st parent */
-                fprintf( file,
-                         "        /* Ignore the first parent since it is */\n %s\n",
-                         "        /* part of the main inheritance hierarchy */" );
-                principalSuper = e; /* principal SUPERTYPE */
-            } else {
-                fprintf( file, "    HeadEntity(this);\n" );
-                fprintf( file, "#if 1\n" );
-                fprintf( file,
-                         "        /* Optionally use the following to replace the line following\n" );
-                fprintf( file,
-                         "           the endif. Use this to turn off adding attributes in\n" );
-                fprintf( file,
-                         "           diamond shaped hierarchies for each additional parent at this\n" );
-                fprintf( file,
-                         "           level. You currently must hand edit this for it to work. */\n" );
-                fprintf( file, "    attrFlags[0] = 1; // add parents attrs\n" );
-                fprintf( file,
-                         "    attrFlags[1] = 0; // add parent of parents attrs\n" );
-                fprintf( file,
-                         "    attrFlags[2] = 0; // do not add parent of parent of parents attrs\n" );
-                fprintf( file,
-                         "      // In *imaginary* hierarchy turn off attrFlags[2] since it\n" );
-                fprintf( file,
-                         "      // would be the parent that has more than one path to it.\n" );
-                fprintf( file,
-                         "    AppendMultInstance(new %s(this, attrFlags));\n",
-                         ENTITYget_classname( e ) );
-                fprintf( file, "#else\n" );
+                    fprintf( file, "    AppendMultInstance(new %s(this));\n",
+                            ENTITYget_classname( e ) );
+                    fprintf( file, "#endif\n" );
 
-                fprintf( file, "    AppendMultInstance(new %s(this));\n",
-                         ENTITYget_classname( e ) );
-                fprintf( file, "#endif\n" );
-
-                if( super_cnt == 2 ) {
-                    printf( "\nMULTIPLE INHERITANCE for entity: %s\n",
-                            ENTITYget_name( entity ) );
-                    printf( "        SUPERTYPE 1: %s (principal supertype)\n",
-                            ENTITYget_name( principalSuper ) );
+                    if( super_cnt == 2 ) {
+                        printf( "\nMULTIPLE INHERITANCE for entity: %s\n",
+                                ENTITYget_name( entity ) );
+                        printf( "        SUPERTYPE 1: %s (principal supertype)\n",
+                                ENTITYget_name( principalSuper ) );
+                    }
+                    printf( "        SUPERTYPE %d: %s\n", super_cnt, ENTITYget_name( e ) );
                 }
-                printf( "        SUPERTYPE %d: %s\n", super_cnt, ENTITYget_name( e ) );
-            }
-            LISTod;
+            } LISTod;
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
             fprintf( file, "        /*  no SuperTypes */\n" );
@@ -1768,8 +1766,8 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             }
 
             LISTdo( list, e, Entity )
-            /*  if there\'s no super class yet,
-                or the super class doesn\'t have any attributes
+            /*  if there's no super class yet,
+                or the super class doesn't have any attributes
                 */
             fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
 
@@ -2201,7 +2199,7 @@ void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
                    );
         }
     } else if( TYPEis_builtin( v->type ) ) {
-        /*  the type wasn\'t named -- it must be built in or aggregate  */
+        /*  the type wasn't named -- it must be built in or aggregate  */
 
         fprintf( files->init, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
@@ -2808,7 +2806,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
         fprintf( f, "        case %s        :  ", c_enum_ele );
         fprintf( f, "return %s;\n", c_enum_ele );
     }
-    /*  print the last case with the default so sun c++ doesn\'t complain */
+    /*  print the last case with the default so sun c++ doesn't complain */
     fprintf( f, "        case %s_unset        :\n", EnumName( TYPEget_name( type ) ) );
     fprintf( f, "        default                :  return %s_unset;\n  }\n}\n", EnumName( TYPEget_name( type ) ) );
 
