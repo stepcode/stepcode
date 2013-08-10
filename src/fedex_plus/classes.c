@@ -1530,7 +1530,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     const char * entnm = ENTITYget_classname( entity );
     int count = attr_count;
-    int first = 1;
+    bool first = true;
 
     /*  constructor definition  */
 
@@ -1613,7 +1613,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                      ( TYPEis_aggregate( t ) ? "" : "&" ),
                      attrnm );
             if( first ) {
-                first = 0 ;
+                first = false;
             }
             /*  2. initialize everything to NULL (even if not optional)  */
 
@@ -1696,7 +1696,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
 
     const char * entnm;
     int count = attr_count;
-    int first = 1;
+    bool first = true;
 
     if( multiple_inheritance ) {
         Entity parentEntity = 0;
@@ -1784,7 +1784,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                          attrnm );
 
                 if( first ) {
-                    first = 0 ;
+                    first = false;
                 }
 
                 fprintf( file, "    /* initialize everything to NULL (even if not optional)  */\n" );
