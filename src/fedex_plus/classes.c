@@ -1108,11 +1108,11 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
         ctype = TYPEget_ctype( VARget_type( a ) );
         generate_attribute_name( a, attrnm );
         if( !strcmp( ctype, "SCLundefined" ) ) {
-            printf( "WARNING:  in entity %s:\n", ENTITYget_name( entity ) );
-            printf( "        the type for attribute  %s is not fully implemented\n", attrnm );
+            printf( "WARNING:  in entity %s, ", ENTITYget_name( entity ) );
+            printf( " the type for attribute  %s is not fully implemented\n", attrnm );
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
-            fprintf( file, "        SDAI_Application_instance_ptr _%s ;", attrnm );
+            fprintf( file, "        SDAI_Application_instance_ptr _%s;", attrnm );
         } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
             fprintf( file, "        %s_ptr _%s ;", ctype, attrnm );
         } else {
@@ -1149,7 +1149,7 @@ void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
 
     /*  print list of attributes in the protected access area   */
-    fprintf( file, "  protected:\n" );
+    fprintf( file, "   protected:\n" );
 
     attr_list = ENTITYget_attributes( entity );
     LISTdo( attr_list, attr, Variable ) {
@@ -1229,20 +1229,18 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
     entnm[BUFSIZ-1] = '\0';
 
-    fprintf( file, "  public: \n" );
+    fprintf( file, "    public: \n" );
 
     /*  put in member functions which belong to all entities    */
-    /*  constructor:    */
-    fprintf( file, "\n        %s ( );\n", entnm );
-
-    fprintf( file, "        %s (SDAI_Application_instance *se, int *addAttrs = 0);\n", entnm );
-    /*  copy constructor*/
-    fprintf( file, "        %s (%s& e );\n", entnm, entnm );
+    /*  constructors:    */
+    fprintf( file, "        %s();\n", entnm );
+    fprintf( file, "        %s( SDAI_Application_instance *se, int addAttrs = 0 );\n", entnm );
+    /*  copy constructor */
+    fprintf( file, "        %s( %s & e );\n", entnm, entnm );
     /*  destructor: */
-    fprintf( file, "        ~%s ();\n", entnm );
+    fprintf( file, "        ~%s();\n", entnm );
 
-    fprintf( file, "        int opcode ()  { return %d ; }\n",
-             entcode++ );
+    fprintf( file, "        int opcode() {\n            return %d;\n        }\n", entcode++ );
 
     /*  print signature of access functions for attributes      */
     attr_list = ENTITYget_attributes( entity );
@@ -1271,8 +1269,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     fprintf( file, "};\n" );
 
     /*  print creation function for class   */
-    fprintf( file, "inline %s *\ncreate_%s () {  return  new %s ;  }\n",
-             entnm, entnm, entnm );
+    fprintf( file, "inline %s * create_%s() {\n    return  new %s;\n}\n", entnm, entnm, entnm );
 }
 
 /**************************************************************//**
@@ -1744,19 +1741,17 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
         entnm = ENTITYget_classname( entity );
         /*  constructor definition  */
         if( parent )
-            fprintf( file, "%s::%s (SDAI_Application_instance *se, int *addAttrs) : %s(se, (addAttrs ? &addAttrs[1] : 0))\n", entnm, entnm,
-                     parentnm );
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, int * addAttrs ) : %s( se, ( addAttrs ? &addAttrs[1] : 0 ) ) {\n", entnm, entnm, parentnm );
         else {
-            fprintf( file, "%s::%s( SDAI_Application_instance *se, int *addAttrs)\n", entnm, entnm );
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, int * addAttrs ) {\n", entnm, entnm );
         }
 
-        fprintf( file, "{\n" );
-
-        fprintf( file, "        /* Set this to point to the head entity. */\n" );
+        fprintf( file, "    /* Set this to point to the head entity. */\n" );
         fprintf( file, "    HeadEntity(se);\n" );
-        fprintf( file, "    (void)addAttrs; /* quell potentially unused var */\n" );
+        if( !parent ) {
+            fprintf( file, "    ( void ) addAttrs; /* quell potentially unused var */\n\n" );
+        }
 
-        fprintf( file, "\n" );
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
             if( LISTget_length( list ) > 1 ) {
@@ -1828,41 +1823,34 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
                 if( TYPEis_aggregate( t ) ) {
                     fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
                 }
-                fprintf( file, "    %sa = new STEPattribute(*%s::%s%d%s%s, %s %s_%s);\n",
-                         ( first ? "STEPattribute *" : "" ), //  first time through, declare a
+                fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
+                         ( first ? "STEPattribute * " : "" ), //  first time through, declare a
                          SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
                          ( VARis_type_shifter( a ) ? "R" : "" ),
                          attrnm,
-                         ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
+                         ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
                          ( TYPEis_aggregate( t ) ? "" : "&" ),
                          attrnm );
 
                 if( first ) {
                     first = 0 ;
                 }
-                /*  2. initialize everything to NULL (even if not optional)  */
 
-                fprintf( file, "    a -> set_null ();\n" );
+                fprintf( file, "    /* initialize everything to NULL (even if not optional)  */\n" );
+                fprintf( file, "    a -> set_null();\n" );
 
-                fprintf( file,
-                         "        /* Put attribute on this class' %s\n",
-                         "attributes list so the */\n        /*access functions still work. */" );
-                /*  3.  put attribute on this class' attributes list so the
-                access functions still work */
-                fprintf( file, "    attributes.push (a);\n" );
-                fprintf( file,
-                         "        /* Put attribute on the attributes list %s\n",
-                         "for the */\n        /* main inheritance heirarchy. */" );
-                /*  4.  put attribute on attributes list for the main
-                inheritance heirarchy */
-                fprintf( file, "    if(!addAttrs || addAttrs[0])\n" );
-                fprintf( file, "        se->attributes.push (a);\n" );
+                fprintf( file, "    /* Put attribute on this class' attributes list so the access functions still work. */\n" );
+                fprintf( file, "    attributes.push( a );\n" );
 
-                /* if it is redefining another attribute make connection of
-                   redefined attribute to redefining attribute */
+                fprintf( file, "    /* Put attribute on the attributes list for the main inheritance heirarchy.  **\n" );
+                fprintf( file, "    ** The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
+                fprintf( file, "    if(!addAttrs || addAttrs[0]) {\n" );
+                fprintf( file, "        se->attributes.push( a );\n    }\n" );
+
+                /* if it is redefining another attribute make connection of redefined attribute to redefining attribute */
                 if( VARis_type_shifter( a ) ) {
-                    fprintf( file, "    MakeRedefined(a, \"%s\");\n",
+                    fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
                              VARget_simple_name( a ) );
                 }
             }
