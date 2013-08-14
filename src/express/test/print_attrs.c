@@ -1,6 +1,10 @@
-/* derived from symlink.c */
-/* prints names of attrs for an entity defined in an EXPRESS file */
-/* symlink.c author: Don Libes, NIST, 20-Mar-1993 */
+/*
+ * derived from symlink.c, written by Don Libes, NIST, 20-Mar-1993
+ *
+ * print_attrs: late-bound implementation of an attribute printer
+ * attrs are ordered as they would be in a p21 file
+ * print_attrs -a <entity> <schema>
+ */
 
 #include <stdlib.h>
 #include <sys/param.h>

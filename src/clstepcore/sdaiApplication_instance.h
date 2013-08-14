@@ -133,8 +133,8 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         void AppendMultInstance( SDAI_Application_instance * se );
 
     protected:
-        STEPattribute * GetSTEPattribute( const char * );
-        STEPattribute * MakeDerived( const char * );
+        STEPattribute * GetSTEPattribute( const char * nm, const char * entity = NULL );
+        STEPattribute * MakeDerived( const char * nm, const char * entity = NULL );
         STEPattribute * MakeRedefined( STEPattribute * redefiningAttr,
                                        const char * nm );
 
