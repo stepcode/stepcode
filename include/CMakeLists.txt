@@ -29,3 +29,8 @@ SET(exppp_HDRS
 )
 install(FILES ${exppp_HDRS} 
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/exppp)
+
+install(FILES ordered_attrs.h
+              sc_export.h
+              sc_stdbool.h
+  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
