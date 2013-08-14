@@ -167,17 +167,25 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entNa
 }
 
 
-
-STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm ) {
+/**
+ * Returns a STEPattribute or NULL
+ * \param nm The name to search for.
+ * \param entity If not null, check that the attribute comes from this entity. When MakeDerived is called from generated code, this is used to ensure that the correct attr is marked as derived. Issue #232
+ */
+STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm, const char * entity ) {
     if( !nm ) {
         return 0;
     }
     STEPattribute * a = 0;
 
     ResetAttributes();
-    while( ( a = NextAttribute() )
-            && strcmp( nm, a ->Name() ) ) {
-        ;    // keep going until no more attributes or attribute is found
+    // keep going until no more attributes, or attribute is found
+    while( a = NextAttribute() ) {
+        if( 0 == strcmp( nm, a ->Name() ) &&
+            //if entity isn't null, check for a match. NOTE: should we use IsA(), CanBe(), or Name()?
+            ( entity ? ( 0 != a->aDesc->Owner().IsA( entity ) ) : true ) ) {
+            break;
+        }
     }
 
     return a;
@@ -194,8 +202,13 @@ STEPattribute * SDAI_Application_instance::MakeRedefined( STEPattribute * redefi
     return a;
 }
 
-STEPattribute * SDAI_Application_instance::MakeDerived( const char * nm ) {
-    STEPattribute * a = GetSTEPattribute( nm );
+/**
+ * Returns a STEPattribute or NULL. If found, marks as derived.
+ * \param nm The name to search for.
+ * \param entity If not null, check that the attribute comes from this entity. When called from generated code, this is used to ensure that the correct attr is marked as derived. Issue #232
+ */
+STEPattribute * SDAI_Application_instance::MakeDerived( const char * nm, const char * entity ) {
+    STEPattribute * a = GetSTEPattribute( nm, entity );
     if( a ) {
         a ->Derive();
     }
