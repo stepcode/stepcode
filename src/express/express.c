@@ -300,7 +300,6 @@ typedef struct Dir {
 static void EXPRESS_PATHinit() {
     char * p;
     Dir * dir;
-    int done = 0;
 
     EXPRESS_path = LISTcreate();
     p = getenv( "EXPRESS_PATH" );
@@ -310,6 +309,7 @@ static void EXPRESS_PATHinit() {
         dir->leaf = dir->full;
         LISTadd( EXPRESS_path, ( Generic )dir );
     } else {
+        int done = 0;
         while( !done ) {
             char * start;   /* start of current dir */
             int length; /* length of dir */
@@ -720,7 +720,6 @@ static void RENAMEresolve( Rename * r, Schema s ) {
 
 #ifdef using_enum_items_is_a_pain
 static void RENAMEresolve_enum( Type t, Schema s ) {
-    Dictionary      d = TYPEget_enum_tags( t );
     DictionaryEntry de;
     Expression      x;
 

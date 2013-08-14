@@ -226,7 +226,6 @@ void STEPcomplex::AddEntityPart( const char * name ) {
 
 STEPcomplex * STEPcomplex::EntityPart( const char * name, const char * currSch ) {
     STEPcomplex * scomp = head;
-    std::string s1, s2;
     while( scomp ) {
         if( scomp->eDesc ) {
             if( scomp->eDesc->CurrName( name, currSch ) ) {
