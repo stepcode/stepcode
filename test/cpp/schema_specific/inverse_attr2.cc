@@ -20,7 +20,7 @@ extern void SchemaInit( class Registry & );
 #include <sc_getopt.h>
 #include "schema.h"
 
-///second way of finding inverse attrs - FAILS
+///second way of finding inverse attrs
 bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
     const Inverse_attribute * ia;
     int j = 0;
@@ -59,7 +59,6 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
                             cout << "findInverseAttrs2 FAILED" << endl;
                             return false;
                         }
-
                     } else {
                         //something is wrong - it should be an aggregate (specifically, a SET)
                         return false;
@@ -89,7 +88,7 @@ int main( int argc, char * argv[] ) {
         sfile.Error().PrintContents( cout );
         exit( EXIT_FAILURE );
     }
-//find inverse attribute descriptors
+    //find inverse attribute descriptors
     //first, find inverse attrs unique to this entity (i.e. not inherited)
     const EntityDescriptor * ed = registry.FindEntity( "window" );
     InverseAItr iaIter( ed->InverseAttr() ); //iterator for inverse attributes
