@@ -186,6 +186,7 @@ class SC_DAI_EXPORT SDAI_DAObject : public SDAI_sdaiObject {
         virtual ~SDAI_DAObject();
 
         Logical dado_same( SDAI_DAObject_ptr obj ) {
+            if (obj == this) return LTrue;
             return LUnknown;
         }
 
