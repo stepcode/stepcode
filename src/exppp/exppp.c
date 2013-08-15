@@ -44,13 +44,9 @@ void WHERE_out( Linked_List wheres, int level );
 
 static Error ERROR_select_empty;
 
-int exppp_nesting_indent = 2;       /* default nesting indent */
-int exppp_continuation_indent = 4;  /* default nesting indent for */
-/* continuation lines */
-int exppp_linelength = 75;          /* leave some room for closing
-                                     * parens. '\n' is not included in this
-                                     * count either
-                                     */
+const int exppp_nesting_indent = 2;       /* default nesting indent */
+const int exppp_continuation_indent = 4;  /* default nesting indent for continuation lines */
+const int exppp_linelength = 75;          /* leave some room for closing parens. '\n' is not included in this count either */
 int indent2;        /* where continuation lines start */
 int curpos;     /* current line position (1 is first position) */
 

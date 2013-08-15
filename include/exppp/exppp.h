@@ -2,10 +2,10 @@
 #define EXPPP_H
 #include <sc_export.h>
 
-extern SC_EXPPP_EXPORT int exppp_nesting_indent;    /* default nesting indent */
-extern SC_EXPPP_EXPORT int exppp_continuation_indent;   /* default nesting indent for */
+extern SC_EXPPP_EXPORT const int exppp_nesting_indent;    /* default nesting indent */
+extern SC_EXPPP_EXPORT const int exppp_continuation_indent;   /* default nesting indent for */
 /* continuation lines */
-extern SC_EXPPP_EXPORT int exppp_linelength;        /* leave some slop for closing */
+extern SC_EXPPP_EXPORT const int exppp_linelength;        /* leave some slop for closing */
 /* parens.  \n is not included in */
 /* this count either */
 extern SC_EXPPP_EXPORT bool exppp_rmpp;          /* if true, create rmpp */
