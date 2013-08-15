@@ -1714,7 +1714,7 @@ EXPRop__out( struct Op_Subexpression * oe, int paren, int previous_op ) {
             break;
         case OP_REAL_DIV:
         case OP_DIV:
-            EXPRop2_out( oe, "/", paren, PAD );
+            EXPRop2_out( oe, "DIV", paren, PAD );
             break;
         case OP_MINUS:
             EXPRop2_out( oe, "-", paren, PAD );
