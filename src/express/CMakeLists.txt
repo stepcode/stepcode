@@ -109,7 +109,6 @@ SET(CHECK_EXPRESS_SOURCES
   )
 
 SET(EXPRESS_PRIVATE_HDRS
-  exptoks.h
   stack.h
   )
 
