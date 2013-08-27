@@ -6,11 +6,16 @@
  * print_attrs -a <entity> <schema>
  */
 
+#include "sc_cf.h"
 #include <stdlib.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+#  include <sys/param.h>
+#endif
 #include <stdio.h>
 #include <errno.h>
-#include <unistd.h>
+#ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+#endif
 #include "express/express.h"
 #include <express/scope.h>
 #include <express/variable.h>
