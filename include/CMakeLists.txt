@@ -27,4 +27,5 @@ install(FILES ${express_HDRS}
 SET(exppp_HDRS
   exppp/exppp.h
 )
-install(FILES ${exppp_HDRS} DESTINATION include/exppp)
+install(FILES ${exppp_HDRS}
+	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/exppp)
