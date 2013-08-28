@@ -34,3 +34,7 @@ install(FILES ordered_attrs.h
               sc_export.h
               sc_stdbool.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
+
+install(FILES ${CMAKE_BINARY_DIR}/include/sc_cf.h
+              ${CMAKE_BINARY_DIR}/include/sc_version_string.h
+	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
