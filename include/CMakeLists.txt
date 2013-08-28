@@ -21,7 +21,8 @@ SET(express_HDRS
   express/type.h
   express/variable.h
 )
-install(FILES ${express_HDRS} DESTINATION include/express)
+install(FILES ${express_HDRS}
+	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/express)
 
 SET(exppp_HDRS
   exppp/exppp.h
