@@ -2490,7 +2490,6 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     uniqs = entity->u.entity->unique;
 
     if( uniqs ) {
-        int i;
         fprintf( files->create,
                  "        %s::%s%s->_uniqueness_rules = new Uniqueness_rule__set;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
@@ -2508,29 +2507,29 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
          * add parent entity to the uniqueness rule
          * change EntityDescriptor::generate_express() to generate the UNIQUE clause
         */
-        LISTdo( uniqs, list, Linked_List )
-        i = 0;
-        fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
-        LISTdo( list, v, Variable )
-        i++;
-        if( i == 1 ) {
-            /* print label if present */
-            if( v ) {
-                fprintf( files->create, "%s : ", StrToUpper( ( ( Symbol * )v )->name ) );
-            }
-        } else {
-            if( i > 2 ) {
-                fprintf( files->create, ", " );
-            }
-            uniqRule = EXPRto_string( v->name );
-            fprintf( files->create, "%s", uniqRule );
-            sc_free( uniqRule );
-        }
-        LISTod
-        fprintf( files->create, ";\\n\");\n" );
-        fprintf( files->create, "        %s::%s%s->_uniqueness_rules->Append(ur);\n",
-                 SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-        LISTod
+        LISTdo( uniqs, list, Linked_List ) {
+            int i = 0;
+            fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
+            LISTdo( list, v, Variable ) {
+                i++;
+                if( i == 1 ) {
+                    /* print label if present */
+                    if( v ) {
+                        fprintf( files->create, "%s : ", StrToUpper( ( ( Symbol * )v )->name ) );
+                    }
+                } else {
+                    if( i > 2 ) {
+                        fprintf( files->create, ", " );
+                    }
+                    uniqRule = EXPRto_string( v->name );
+                    fprintf( files->create, "%s", uniqRule );
+                    sc_free( uniqRule );
+                }
+            } LISTod
+            fprintf( files->create, ";\\n\");\n" );
+            fprintf( files->create, "        %s::%s%s->_uniqueness_rules->Append(ur);\n",
+                    SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+        } LISTod
     }
 
     if( whereRule_formatted_size > 0 ) {
