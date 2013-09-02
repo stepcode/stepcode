@@ -314,8 +314,7 @@ void parserInitState()
 %type type			{ struct type_either }
 
 %type cardinality_op		{ struct upper_lower }
-%type index_spec		{ struct upper_lower }
-%type limit_spec		{ struct upper_lower }
+%type bound_spec		{ struct upper_lower }
 
 %type inverse_attr		{ Variable }
 %type derived_attribute		{ Variable }
@@ -524,7 +523,7 @@ alias_push_scope ::= /* subroutine */.
     PUSH_SCOPE(s, (Symbol *)0, OBJ_ALIAS);
 }
 
-array_type(A) ::= TOK_ARRAY index_spec(B) TOK_OF optional_or_unique(C)
+array_type(A) ::= TOK_ARRAY bound_spec(B) TOK_OF optional_or_unique(C)
 		   attribute_type(D).
 {
     A = TYPEBODYcreate(array_);
@@ -578,7 +577,7 @@ explicit_attr_list(A) ::= explicit_attr_list(B) explicit_attribute(C).
     LISTadd_last(A, (Generic)C); 
 }
 
-bag_type(A) ::= TOK_BAG limit_spec(B) TOK_OF attribute_type(C).
+bag_type(A) ::= TOK_BAG bound_spec(B) TOK_OF attribute_type(C).
 {
     A = TYPEBODYcreate(bag_);
     A->base = C;
@@ -1253,7 +1252,7 @@ conformant_aggregation(A) ::= TOK_ARRAY TOK_OF optional_or_unique(B)
     A->flags.unique = B.unique;
     A->base = C;
 }
-conformant_aggregation(A) ::= TOK_ARRAY index_spec(B) TOK_OF
+conformant_aggregation(A) ::= TOK_ARRAY bound_spec(B) TOK_OF
     optional_or_unique(C) parameter_type(D).
 {
     A = TYPEBODYcreate(array_);
@@ -1269,7 +1268,7 @@ conformant_aggregation(A) ::= TOK_BAG TOK_OF parameter_type(B).
     A->base = B;
 
 }
-conformant_aggregation(A) ::= TOK_BAG index_spec(B) TOK_OF parameter_type(C).
+conformant_aggregation(A) ::= TOK_BAG bound_spec(B) TOK_OF parameter_type(C).
 {
     A = TYPEBODYcreate(bag_);
     A->base = C;
@@ -1283,7 +1282,7 @@ conformant_aggregation(A) ::= TOK_LIST TOK_OF unique(B) parameter_type(C).
     A->base = C;
 
 }
-conformant_aggregation(A) ::= TOK_LIST index_spec(B) TOK_OF unique(C)
+conformant_aggregation(A) ::= TOK_LIST bound_spec(B) TOK_OF unique(C)
 			      parameter_type(D).
 {
     A = TYPEBODYcreate(list_);
@@ -1297,7 +1296,7 @@ conformant_aggregation(A) ::= TOK_SET TOK_OF parameter_type(B).
     A = TYPEBODYcreate(set_);
     A->base = B;
 }
-conformant_aggregation(A) ::= TOK_SET index_spec(B) TOK_OF parameter_type(C).
+conformant_aggregation(A) ::= TOK_SET bound_spec(B) TOK_OF parameter_type(C).
 {
     A = TYPEBODYcreate(set_);
     A->base = C;
@@ -1384,13 +1383,6 @@ increment_control ::= TOK_IDENTIFIER(A) TOK_ASSIGNMENT expression(B) TOK_TO
     /* naming it by the iterator variable is fine */
 
     PUSH_SCOPE(i, (Symbol *)0, OBJ_INCREMENT);
-}
-
-index_spec(A) ::= TOK_LEFT_BRACKET expression(B) TOK_COLON expression(C)
-		  TOK_RIGHT_BRACKET.
-{
-    A.lower_limit = B;
-    A.upper_limit = C;
 }
 
 initializer(A) ::= TOK_ASSIGNMENT expression(B).
@@ -1497,7 +1489,7 @@ set_or_bag_of_entity(A) ::= TOK_SET TOK_OF defined_type(B).
     A.body->base = B;
 
 }
-set_or_bag_of_entity(A) ::= TOK_SET limit_spec(B) TOK_OF defined_type(C).
+set_or_bag_of_entity(A) ::= TOK_SET bound_spec(B) TOK_OF defined_type(C).
 {
     A.type = 0; 
     A.body = TYPEBODYcreate(set_);
@@ -1505,7 +1497,7 @@ set_or_bag_of_entity(A) ::= TOK_SET limit_spec(B) TOK_OF defined_type(C).
     A.body->upper = B.upper_limit;
     A.body->lower = B.lower_limit;
 }
-set_or_bag_of_entity(A) ::= TOK_BAG limit_spec(B) TOK_OF defined_type(C).
+set_or_bag_of_entity(A) ::= TOK_BAG bound_spec(B) TOK_OF defined_type(C).
 {
     A.type = 0;
     A.body = TYPEBODYcreate(bag_);
@@ -1560,14 +1552,15 @@ inverse_clause(A) ::= TOK_INVERSE inverse_attr_list(B).
     A = B;
 }
 
-limit_spec(A) ::= TOK_LEFT_BRACKET expression(B) TOK_COLON expression(C)
+/* 10303-11:2004 production 185 bound_spec = '[' bound_1 ':' bound_2 ']' . */
+bound_spec(A) ::= TOK_LEFT_BRACKET expression(B) TOK_COLON expression(C)
 		  TOK_RIGHT_BRACKET.
 {
     A.lower_limit = B;
     A.upper_limit = C;
 }
 
-list_type(A) ::= TOK_LIST limit_spec(B) TOK_OF unique(C) attribute_type(D).
+list_type(A) ::= TOK_LIST bound_spec(B) TOK_OF unique(C) attribute_type(D).
 {
     A = TYPEBODYcreate(list_);
     A->base = D;
@@ -1845,12 +1838,16 @@ qualifier(A) ::= TOK_BACKSLASH TOK_IDENTIFIER(B). [TOK_NOT]
     A.expr->e.op2->symbol = *B.symbol;
     SYMBOL_destroy(B.symbol);
 }
+
+/* 10303-11:2004 production 239   index_qualifier = '[' index_1 [ ':' index_2 ] ']' . */
 qualifier(A) ::= TOK_LEFT_BRACKET simple_expression(B) TOK_RIGHT_BRACKET.
 {
     A.expr = A.first = BIN_EXPcreate(OP_ARRAY_ELEMENT, (Expression)0,
 	(Expression)0);
     A.expr->e.op2 = B;
 }
+
+/* 10303-11:2004 production 239   index_qualifier = '[' index_1 [ ':' index_2 ] ']' . */
 qualifier(A) ::= TOK_LEFT_BRACKET simple_expression(B) TOK_COLON
 		 simple_expression(C) TOK_RIGHT_BRACKET.
 {
@@ -2056,7 +2053,7 @@ semicolon ::= TOK_SEMICOLON.
     yyerrok;
 }
 
-set_type(A) ::= TOK_SET limit_spec(B) TOK_OF attribute_type(C).
+set_type(A) ::= TOK_SET bound_spec(B) TOK_OF attribute_type(C).
 {
     A = TYPEBODYcreate(set_);
     A->base = C;
