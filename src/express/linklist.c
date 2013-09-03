@@ -48,7 +48,7 @@ Linked_List LISTcreate() {
 Linked_List LISTcopy( Linked_List src ) {
     Linked_List dst = LISTcreate();
     LISTdo( src, x, Generic )
-    LISTadd( dst, x );
+    LISTadd_last( dst, x );
     LISTod
     return dst;
 }

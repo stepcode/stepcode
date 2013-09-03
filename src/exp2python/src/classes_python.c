@@ -168,7 +168,7 @@ USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, 
             DICTdefine( dict, r->schema->symbol.name, list,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd( list, r );
+        LISTadd_last( list, r );
     }
 
     /* step 2: for each list, print out the renames */

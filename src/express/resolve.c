@@ -492,7 +492,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     /* functions with no args end up here because the */
                     /* parser doesn't know any better */
                     expr->u.list = LISTcreate();
-                    LISTadd( expr->u.list, x );
+                    LISTadd_last( expr->u.list, x );
                     expr->type = Type_Funcall;
                     expr->return_type = ( ( Function )x )->u.func->return_type;
                     /* function may not actually be resolved by now */
@@ -1274,7 +1274,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
     } else {
         bool found = false;
 
-        LISTadd( e->u.entity->supertypes, ( Generic )ref_entity );
+        LISTadd_last( e->u.entity->supertypes, ( Generic )ref_entity );
         if( is_resolve_failed( ref_entity ) ) {
             resolve_failed( e );
         }

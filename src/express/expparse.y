@@ -428,14 +428,14 @@ aggregate_init_element(A) ::= expression(B).
 aggregate_init_body(A) ::= aggregate_init_element(B).
 {
     A = LISTcreate();
-    LISTadd(A, (Generic)B);
+    LISTadd_last(A, (Generic)B);
 }
 aggregate_init_body(A) ::= aggregate_init_element(B) TOK_COLON expression(C).
 {
     A = LISTcreate();
-    LISTadd(A, (Generic)B);
+    LISTadd_last(A, (Generic)B);
 
-    LISTadd(A, (Generic)C);
+    LISTadd_last(A, (Generic)C);
 
     B->type->u.type->body->flags.repeat = 1;
 }
@@ -1416,7 +1416,7 @@ reference_clause ::= TOK_REFERENCE TOK_FROM TOK_IDENTIFIER(A) semicolon.
         CURRENT_SCHEMA->ref_schemas = LISTcreate();
     }
 
-    LISTadd(CURRENT_SCHEMA->ref_schemas, (Generic)A.symbol);
+    LISTadd_last(CURRENT_SCHEMA->ref_schemas, (Generic)A.symbol);
 }
 reference_clause(A) ::= reference_head(B) parened_rename_list semicolon.
 {
@@ -1435,7 +1435,7 @@ use_clause ::= TOK_USE TOK_FROM TOK_IDENTIFIER(A) semicolon.
         CURRENT_SCHEMA->use_schemas = LISTcreate();
     }
 
-    LISTadd(CURRENT_SCHEMA->use_schemas, (Generic)A.symbol);
+    LISTadd_last(CURRENT_SCHEMA->use_schemas, (Generic)A.symbol);
 }
 use_clause(A) ::= use_head(B) parened_rename_list semicolon.
 {
@@ -1691,7 +1691,7 @@ defined_type(A) ::= TOK_IDENTIFIER(B).
 defined_type_list(A) ::= defined_type(B).
 {
     A = LISTcreate();
-    LISTadd(A, (Generic)B);
+    LISTadd_last(A, (Generic)B);
 
 }
 defined_type_list(A) ::= defined_type_list(B) TOK_COMMA defined_type(C).
@@ -1969,7 +1969,7 @@ rule_formal_parameter(A) ::= TOK_IDENTIFIER(B).
 rule_formal_parameter_list(A) ::= rule_formal_parameter(B).
 {
     A = LISTcreate();
-    LISTadd(A, (Generic)B); 
+    LISTadd_last(A, (Generic)B); 
 }
 rule_formal_parameter_list(A) ::= rule_formal_parameter_list(B) TOK_COMMA
 				  rule_formal_parameter(C).
@@ -2426,7 +2426,7 @@ where_clause(A) ::= TOK_IDENTIFIER(B) TOK_COLON expression(C) semicolon.
 where_clause_list(A) ::= where_clause(B).
 {
     A = LISTcreate();
-    LISTadd(A, (Generic)B);
+    LISTadd_last(A, (Generic)B);
 }
 where_clause_list(A) ::= where_clause_list(B) where_clause(C).
 {

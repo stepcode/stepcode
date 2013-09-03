@@ -163,7 +163,7 @@ void ERRORcreate_warning( char * name, Error error ) {
     /* first check if we know about this type of error */
     LISTdo( ERRORwarnings, opt, Error_Warning )
     if( streq( name, opt->name ) ) {
-        LISTadd( opt->errors, ( Generic )error );
+        LISTadd_last( opt->errors, ( Generic )error );
         return;
     }
     LISTod
@@ -172,8 +172,8 @@ void ERRORcreate_warning( char * name, Error error ) {
     o = ERROR_OPT_new();
     o->name = name;
     o->errors = LISTcreate();
-    LISTadd( o->errors, ( Generic )error );
-    LISTadd( ERRORwarnings, ( Generic )o );
+    LISTadd_last( o->errors, ( Generic )error );
+    LISTadd_last( ERRORwarnings, ( Generic )o );
 }
 
 void ERRORset_warning( char * name, int set ) {

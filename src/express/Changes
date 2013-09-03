@@ -345,8 +345,8 @@ returned as a list or a dictionary.  In fact, it is possible to hide
 this as well - I don't know why Steve didn't bother, except that he
 was tired.
 
-For example, instead of a single LISTadd routine, there would have to
-different LISTadd routines for every class.  This would have improved
+For example, instead of a single LISTadd_last routine, there would have to
+different LISTadd_last routines for every class.  This would have improved
 typechecking.
 
 The new code is more efficient for a variety of reasons.  The original

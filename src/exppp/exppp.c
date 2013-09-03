@@ -395,7 +395,7 @@ REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
             DICTdefine( dict, r->schema->symbol.name, ( Generic ) list,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd( list, ( Generic ) r );
+        LISTadd_last( list, ( Generic ) r );
     }
 
     /* step 2: for each list, print out the renames */

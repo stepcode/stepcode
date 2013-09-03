@@ -335,7 +335,7 @@ static void EXPRESS_PATHinit() {
         /* if no EXPRESS_PATH, search current directory anyway */
         dir = ( Dir * )sc_malloc( sizeof( Dir ) );
         dir->leaf = dir->full;
-        LISTadd( EXPRESS_path, ( Generic )dir );
+        LISTadd_last( EXPRESS_path, ( Generic )dir );
     } else {
         int done = 0;
         while( !done ) {
@@ -372,7 +372,7 @@ static void EXPRESS_PATHinit() {
             /* just "" to make error messages cleaner */
             if( streq( ".", start ) ) {
                 dir->leaf = dir->full;
-                LISTadd( EXPRESS_path, ( Generic )dir );
+                LISTadd_last( EXPRESS_path, ( Generic )dir );
                 *( p - 1 ) = save; /* put char back where */
                 /* temp null was */
                 continue;
@@ -389,7 +389,7 @@ static void EXPRESS_PATHinit() {
                 sprintf( dir->full, "%s/", start );
                 dir->leaf = dir->full + length + 1;
             }
-            LISTadd( EXPRESS_path, ( Generic )dir );
+            LISTadd_last( EXPRESS_path, ( Generic )dir );
 
             *( p - 1 ) = save; /* put char back where temp null was */
         }
