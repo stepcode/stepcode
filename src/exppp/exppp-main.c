@@ -30,7 +30,7 @@ exppp_usage() {
 }
 
 int Handle_Exppp_Args( int i, char * arg ) {
-    ( void ) arg; //quell unused param warning
+    ( void ) arg; /* quell unused param warning */
 
     if( ( ( char )i == 'a' ) || ( ( char )i == 'A' ) ) {
         exppp_alphabetize = true;

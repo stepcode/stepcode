@@ -219,7 +219,6 @@ void
 EXPRESSout( Express e ) {
     Schema s;
     DictionaryEntry de;
-    char ** hp;
 
     exppp_init();
 
