@@ -825,11 +825,11 @@ entity_decl ::= entity_header subsuper_decl(A) semicolon entity_body(B)
 {
     CURRENT_SCOPE->u.entity->subtype_expression = A.subtypes;
     CURRENT_SCOPE->u.entity->supertype_symbols = A.supertypes;
-    LISTdo (B.attributes, l, Linked_List)
-	LISTdo (l, a, Variable)
-	    ENTITYadd_attribute(CURRENT_SCOPE, a);
-	LISTod;
-    LISTod;
+    LISTdo (B.attributes, l, Linked_List) {
+        LISTdo (l, a, Variable) {
+            ENTITYadd_attribute(CURRENT_SCOPE, a);
+        } LISTod;
+    } LISTod;
     CURRENT_SCOPE->u.entity->abstract = A.abstract;
     CURRENT_SCOPE->u.entity->unique = B.unique;
     CURRENT_SCOPE->where = B.where;
