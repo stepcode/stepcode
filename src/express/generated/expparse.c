@@ -2378,7 +2378,7 @@ static void yy_reduce(
 
     LISTadd_last(yygotominor.yy371, (Generic)yymsp[0].minor.yy401);
 
-    yymsp[-2].minor.yy401->type->u.type->body->flags.repeat = 1;
+    yymsp[0].minor.yy401->type->u.type->body->flags.repeat = 1;
 }
 #line 2384 "expparse.c"
         break;
@@ -2400,7 +2400,7 @@ static void yy_reduce(
     LISTadd_last(yygotominor.yy371, (Generic)yymsp[-2].minor.yy401);
     LISTadd_last(yygotominor.yy371, (Generic)yymsp[0].minor.yy401);
 
-    yymsp[-2].minor.yy401->type->u.type->body->flags.repeat = 1;
+    yymsp[0].minor.yy401->type->u.type->body->flags.repeat = 1;
 }
 #line 2406 "expparse.c"
         break;

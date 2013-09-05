@@ -437,7 +437,7 @@ aggregate_init_body(A) ::= aggregate_init_element(B) TOK_COLON expression(C).
 
     LISTadd_last(A, (Generic)C);
 
-    B->type->u.type->body->flags.repeat = 1;
+    C->type->u.type->body->flags.repeat = 1;
 }
 aggregate_init_body(A) ::= aggregate_init_body(B) TOK_COMMA
 			    aggregate_init_element(C).
@@ -455,7 +455,7 @@ aggregate_init_body(A) ::= aggregate_init_body(B) TOK_COMMA
     LISTadd_last(A, (Generic)C);
     LISTadd_last(A, (Generic)D);
 
-    C->type->u.type->body->flags.repeat = 1;
+    D->type->u.type->body->flags.repeat = 1;
 }
 
 aggregate_type(A) ::= TOK_AGGREGATE TOK_OF parameter_type(B).
