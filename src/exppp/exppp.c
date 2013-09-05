@@ -1646,13 +1646,19 @@ EXPR__out( Expression e, int paren, int previous_op ) {
         case aggregate_:
             wrap( "[" );
             i = 0;
-            LISTdo( e->u.list, arg, Expression )
-            i++;
-            if( i != 1 ) {
-                raw( "," );
-            }
-            EXPR_out( arg, 0 );
-            LISTod
+            LISTdo( e->u.list, arg, Expression ) {
+                bool repeat = arg->type->u.type->body->flags.repeat;
+                /* if repeat is true, the previous Expression repeats and this one is the count */
+                i++;
+                if( i != 1 ) {
+                    if( repeat ) {
+                        raw( ":" );
+                    } else {
+                        raw( "," );
+                    }
+                }
+                EXPR_out( arg, 0 );
+            } LISTod
             raw( "]" );
             break;
         case oneof_:
@@ -1872,13 +1878,19 @@ EXPRstring( char * buffer, Expression e ) {
         case aggregate_:
             strcpy( buffer, "[" );
             i = 0;
-            LISTdo( e->u.list, arg, Expression )
-            i++;
-            if( i != 1 ) {
-                strcat( buffer, "," );
-            }
-            EXPRstring( buffer + strlen( buffer ), arg );
-            LISTod
+            LISTdo( e->u.list, arg, Expression ) {
+                bool repeat = arg->type->u.type->body->flags.repeat;
+                /* if repeat is true, the previous Expression repeats and this one is the count */
+                i++;
+                if( i != 1 ) {
+                    if( repeat ) {
+                        strcat( buffer, ":" );
+                    } else {
+                        strcat( buffer, "," );
+                    }
+                }
+                EXPRstring( buffer + strlen( buffer ), arg );
+            } LISTod
             strcat( buffer, "]" );
             break;
         case oneof_:
