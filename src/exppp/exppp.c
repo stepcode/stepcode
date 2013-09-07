@@ -20,11 +20,11 @@ void ENTITYattrs_out( Linked_List attributes, int derived, int level );
 void ENTITY_out( Entity e, int level );
 void ENTITYinverse_out( Linked_List attrs, int level );
 void ENTITYunique_out( Linked_List u, int level );
-void EXPRop__out( struct Op_Subexpression * oe, int paren, int previous_op );
+void EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous_op );
 void EXPRop_string( char * buffer, struct Op_Subexpression * oe );
 void EXPRop1_out( struct Op_Subexpression * eo, char * opcode, int paren );
-void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op );
-void EXPR__out( Expression expr, int paren, int previous_op );
+void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, unsigned int previous_op );
+void EXPR__out( Expression e, int paren, unsigned int previous_op );
 void EXPRbounds_out( TypeBody tb );
 int EXPRlength( Expression e );
 void FUNC_out( Function fn, int level );
@@ -1588,7 +1588,7 @@ void real2exp( char * outstr, double r ) {
  if paren == 0, then parens may be omitted without consequence
 */
 void
-EXPR__out( Expression e, int paren, int previous_op ) {
+EXPR__out( Expression e, int paren, unsigned int previous_op ) {
     int i;  /* trusty temporary */
 
     switch( TYPEis( e->type ) ) {
@@ -1707,7 +1707,7 @@ EXPR__out( Expression e, int paren, int previous_op ) {
 
 /* print expression that has op and operands */
 void
-EXPRop__out( struct Op_Subexpression * oe, int paren, int previous_op ) {
+EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous_op ) {
     switch( oe->op_code ) {
         case OP_AND:
         case OP_ANDOR:
@@ -1771,7 +1771,7 @@ EXPRop__out( struct Op_Subexpression * oe, int paren, int previous_op ) {
 }
 
 void
-EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op ) {
+EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, unsigned int previous_op ) {
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         wrap( "(" );
     }
