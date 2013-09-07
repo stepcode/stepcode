@@ -4,6 +4,7 @@
 #include <memory.h>
 #include <errno.h>
 #include <stdarg.h>
+#include <float.h>
 
 #include "../express/expbasic.h"
 #include "../express/express.h"
@@ -1561,6 +1562,22 @@ EXPRbounds_out( TypeBody tb ) {
     raw( "]" );
 }
 
+/** convert a real into our preferred form compatible with 10303-11
+ * (i.e. decimal point is required; no trailing zeros)
+ * \param r the real to convert
+ * \param outstr where the result will go; must point to a char array of length DBL_DIG+2 or greater
+ */
+void real2exp( char * outstr, double r ) {
+    char * pos = outstr + DBL_DIG;
+    sprintf( outstr, "%#.*g", DBL_DIG, r );
+
+    /* eliminate trailing zeros by replacing with NULL */
+    while( ( *pos == '0' ) && ( pos > outstr ) ) {
+        *pos = '\0';
+        pos--;
+    }
+}
+
 /*
  if paren == 1, parens are usually added to prevent possible rebind by
     higher-level context.  If op is similar to previous op (and
@@ -1585,7 +1602,9 @@ EXPR__out( Expression e, int paren, int previous_op ) {
             } else if( e == LITERAL_E ) {
                 wrap( "E" );
             } else {
-                wrap( "%g", e->u.real );
+                char str[DBL_DIG+2];
+                real2exp( str, e->u.real );
+                wrap( str );
             }
             break;
         case binary_:
@@ -1816,7 +1835,9 @@ EXPRstring( char * buffer, Expression e ) {
             } else if( e == LITERAL_E ) {
                 strcpy( buffer, "E" );
             } else {
-                sprintf( buffer, "%g", e->u.real );
+                char str[DBL_DIG+2];
+                real2exp( str, e->u.real );
+                sprintf( buffer, "%s", str );
             }
             break;
         case binary_:
