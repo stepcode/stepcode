@@ -1438,6 +1438,9 @@ TYPE_body_out( Type t, int level ) {
                     wrap( " OF" );
                     TYPEunique_or_optional_out( tb );
                     break;
+                default:
+                    fprintf( stderr, "exppp: Reached default case, %s:%d", __FILE__, __LINE__ );
+                    abort();
             }
 
             TYPE_head_out( tb->base, level );
