@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <float.h>
+#include <unistd.h>
 
 #include "../express/expbasic.h"
 #include "../express/express.h"
@@ -14,6 +15,10 @@
 #define EXPRop2_out(oe,string,paren,pad) \
         EXPRop2__out(oe,string,paren,pad,OP_UNKNOWN)
 #define EXPRop_out(oe,paren) EXPRop__out(oe,paren,OP_UNKNOWN)
+
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define unlink _unlink
+#endif
 
 void ALGscope_out( Scope s, int level );
 void ENTITYattrs_out( Linked_List attributes, int derived, int level );
