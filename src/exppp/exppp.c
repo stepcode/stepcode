@@ -344,7 +344,7 @@ void
 REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
     Dictionary dict;
     DictionaryEntry de;
-    struct Rename * r;
+    struct Rename * ren;
     Linked_List list;
 
     LISTdo( reflist, s, Schema )
@@ -360,16 +360,16 @@ REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
 
     /* step 1: for each entry, store it in a schema-specific list */
     DICTdo_init( refdict, &de );
-    while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
-        Linked_List list;
+    while( 0 != ( ren = ( struct Rename * )DICTdo( &de ) ) ) {
+        Linked_List nameList;
 
-        list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
-        if( !list ) {
-            list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, ( Generic ) list,
+        nameList = ( Linked_List )DICTlookup( dict, ren->schema->symbol.name );
+        if( !nameList ) {
+            nameList = LISTcreate();
+            DICTdefine( dict, ren->schema->symbol.name, ( Generic ) nameList,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd_last( list, ( Generic ) r );
+        LISTadd_last( nameList, ( Generic ) ren );
     }
 
     /* step 2: for each list, print out the renames */
@@ -378,25 +378,25 @@ REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
-        LISTdo( list, r, struct Rename * )
-        if( first_time ) {
-            raw( "%s FROM %s\n", type, r->schema->symbol.name );
-        } else {
-            /* finish previous line */
-            raw( ",\n" );
-        }
+        LISTdo( list, r, struct Rename * ) {
+            if( first_time ) {
+                raw( "%s FROM %s\n", type, r->schema->symbol.name );
+            } else {
+                /* finish previous line */
+                raw( ",\n" );
+            }
 
-        if( first_time ) {
-            raw( "%*s(", level, "" );
-            first_time = false;
-        } else {
-            raw( "%*s ", level, "" );
-        }
-        raw( r->old->name );
-        if( r->old != r->nnew ) {
-            wrap( " AS %s", r->nnew->name );
-        }
-        LISTod
+            if( first_time ) {
+                raw( "%*s(", level, "" );
+                first_time = false;
+            } else {
+                raw( "%*s ", level, "" );
+            }
+            raw( r->old->name );
+            if( r->old != r->nnew ) {
+                wrap( " AS %s", r->nnew->name );
+            }
+        } LISTod
         raw( ");\n" );
     }
     HASHdestroy( dict );
@@ -447,9 +447,9 @@ SCOPErules_out( Scope s, int level ) {
             SCOPEadd_inorder( alpha, r );
         }
 
-        LISTdo( alpha, r, Rule )
-        RULE_out( r, level );
-        LISTod
+        LISTdo( alpha, ru, Rule ) {
+            RULE_out( ru, level );
+        } LISTod
 
         LISTfree( alpha );
     }
@@ -475,9 +475,9 @@ SCOPEfuncs_out( Scope s, int level ) {
             SCOPEadd_inorder( alpha, f );
         }
 
-        LISTdo( alpha, f, Function )
-        FUNC_out( f, level );
-        LISTod
+        LISTdo( alpha, fun, Function ) {
+            FUNC_out( fun, level );
+        } LISTod
 
         LISTfree( alpha );
     }
@@ -503,9 +503,9 @@ SCOPEprocs_out( Scope s, int level ) {
             SCOPEadd_inorder( alpha, p );
         }
 
-        LISTdo( alpha, p, Procedure )
-        PROC_out( p, level );
-        LISTod
+        LISTdo( alpha, pr, Procedure ) {
+            PROC_out( pr, level );
+        } LISTod
 
         LISTfree( alpha );
     }
@@ -531,13 +531,13 @@ minimum( int a, int b, int c ) {
     }
 }
 
-static void copy_file_chunk( char * filename, int start, int end, int level ) {
+static void copy_file_chunk( char * fname, int start, int end, int level ) {
     FILE * infile;
     char buff[256];
     int i, indent, undent = 0, fix;
 
-    if( !( infile = fopen( filename, "r" ) ) ) {
-        ERRORreport( ERROR_file_unreadable, filename, strerror( errno ) );
+    if( !( infile = fopen( fname, "r" ) ) ) {
+        ERRORreport( ERROR_file_unreadable, fname, strerror( errno ) );
     }
 
     /* skip to start of chunk */
@@ -845,18 +845,18 @@ CASEout( struct Case_Statement_ *c, int level ) {
 
     /* pass 1: calculate length of longest label */
     max_indent = 0;
-    LISTdo( c->cases, ci, Case_Item )
-    if( ci->labels ) {
-        LISTdo( ci->labels, label, Expression )
-        len = EXPRlength( label );
-        LISTod
-    } else {
-        len = strlen( "OTHERWISE" );
-    }
-    if( len > max_indent ) {
-        max_indent = len;
-    }
-    LISTod
+    LISTdo( c->cases, ci, Case_Item ) {
+        if( ci->labels ) {
+            LISTdo( ci->labels, label, Expression ) {
+                len = EXPRlength( label );
+            } LISTod
+        } else {
+            len = strlen( "OTHERWISE" );
+        }
+        if( len > max_indent ) {
+            max_indent = len;
+        }
+    } LISTod
 
     level += exppp_nesting_indent;
 
@@ -992,9 +992,9 @@ SCOPEentities_out( Scope s, int level ) {
             SCOPEadd_inorder( alpha, e );
         }
 
-        LISTdo( alpha, e, Entity )
-        ENTITY_out( e, level );
-        LISTod
+        LISTdo( alpha, en, Entity ) {
+            ENTITY_out( en, level );
+        } LISTod
 
         LISTfree( alpha );
     }
@@ -1290,9 +1290,9 @@ SCOPEtypes_out( Scope s, int level ) {
             SCOPEadd_inorder( alpha, t );
         }
 
-        LISTdo( alpha, t, Type )
-        TYPE_out( t, level );
-        LISTod
+        LISTdo( alpha, ty, Type ) {
+            TYPE_out( ty, level );
+        } LISTod
 
         LISTfree( alpha );
     }
