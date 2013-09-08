@@ -139,9 +139,7 @@ exp_output( char * buf, int len ) {
     }
 }
 
-void
-
-wrap( char * fmt, ... ) {
+void wrap( const char * fmt, ... ) {
     char * p;
     char buf[10000];
     int len;
@@ -179,8 +177,7 @@ wrap( char * fmt, ... ) {
     }
 }
 
-void
-raw( char * fmt, ... ) {
+void raw( const char * fmt, ... ) {
     char * p;
     char buf[10000];
     int len;
@@ -1541,10 +1538,12 @@ EXPRbounds_out( TypeBody tb ) {
 
 /** convert a real into our preferred form compatible with 10303-11
  * (i.e. decimal point is required; no trailing zeros)
+ * this is NOT thread safe
  * \param r the real to convert
- * \param outstr where the result will go; must point to a char array of length DBL_DIG+2 or greater
+ * \returns const char pointer to static buffer containing ascii representation of real
  */
-void real2exp( char * outstr, double r ) {
+const char * real2exp( double r ) {
+    static char outstr[DBL_DIG + 2] = { 0 };
     char * pos = outstr + DBL_DIG;
     sprintf( outstr, "%#.*g", DBL_DIG, r );
 
@@ -1553,6 +1552,7 @@ void real2exp( char * outstr, double r ) {
         *pos = '\0';
         pos--;
     }
+    return outstr;
 }
 
 /*
@@ -1579,9 +1579,7 @@ EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             } else if( e == LITERAL_E ) {
                 wrap( "E" );
             } else {
-                char str[DBL_DIG+2];
-                real2exp( str, e->u.real );
-                wrap( str );
+                wrap( real2exp( e->u.real ) );
             }
             break;
         case binary_:
@@ -1812,9 +1810,7 @@ EXPRstring( char * buffer, Expression e ) {
             } else if( e == LITERAL_E ) {
                 strcpy( buffer, "E" );
             } else {
-                char str[DBL_DIG+2];
-                real2exp( str, e->u.real );
-                sprintf( buffer, "%s", str );
+                sprintf( buffer, "%s", real2exp( e->u.real ) );
             }
             break;
         case binary_:
