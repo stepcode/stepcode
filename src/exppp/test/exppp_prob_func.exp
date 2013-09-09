@@ -5,11 +5,11 @@ SCHEMA exppp_prob_func;
       ): ARRAY [1:5] OF GENERIC:t;
 
     LOCAL
+      re  : ARRAY [1:5] OF GENERIC:t;
       res : ARRAY [1:5] OF GENERIC:t;
     END_LOCAL;
-    res := [lis[1]:5]; -- libexpress parser will accept this with the comma that exppp wants to use!
-                       -- need to verify that it is not valid express with a comma (and if it is,
-                       -- how does the meaning change?)
+    re := [lis[1],5];  --the comma becomes a colon
+    res := [lis[1]:5];
     RETURN(res);
 
   END_FUNCTION; -- exppp_colon_to_comma
