@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <float.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "../express/expbasic.h"
 #include "../express/express.h"
@@ -18,6 +19,17 @@
 
 #if defined( _WIN32 ) || defined ( __WIN32__ )
 #  define unlink _unlink
+#endif
+
+/* PP_SMALL_BUF_SZ is a macro used in a few places where const int causes
+ * "warning: ISO C90 forbids variable length array 'buf' [-Wvla]"
+ *
+ * The name was chosen to be unique to exppp, so it should not be defined
+ * already. Define it, use it, and undefine it so it can be set to another
+ * value elsewhere.
+ */
+#ifdef PP_SMALL_BUF_SZ
+#  error "PP_SMALL_BUF_SZ already defined"
 #endif
 
 void ALGscope_out( Scope s, int level );
@@ -232,8 +244,8 @@ static void first_newline() {
 
 /** returns name of file written to in static storage */
 char * SCHEMAout( Schema s ) {
-#define BUF_SIZE 80
-    char buf[BUF_SIZE];
+#define PP_SMALL_BUF_SZ 80
+    char buf[PP_SMALL_BUF_SZ];
     char * p;
     FILE * f;
     int level = 0;
@@ -258,7 +270,7 @@ char * SCHEMAout( Schema s ) {
         sprintf( filename, "%s.exp", s->symbol.name );
 
         if( 0 != ( f = fopen( filename, "r" ) ) ) {
-            fgets( buf, BUF_SIZE, f );
+            fgets( buf, PP_SMALL_BUF_SZ, f );
             if( 0 != ( p = strchr( buf, '\n' ) ) ) {
                 *p = '\0';
             }
@@ -317,7 +329,7 @@ char * SCHEMAout( Schema s ) {
     fclose( exppp_fp );
 
     return filename;
-#undef BUF_SIZE
+#undef PP_SMALL_BUF_SZ
 }
 
 void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
@@ -1491,21 +1503,44 @@ void EXPRbounds_out( TypeBody tb ) {
 
 /** convert a real into our preferred form compatible with 10303-11
  * (i.e. decimal point is required; no trailing zeros)
- * this is NOT thread safe
+ * uses a static buffer, so NOT thread safe
  * \param r the real to convert
  * \returns const char pointer to static buffer containing ascii representation of real
  */
 const char * real2exp( double r ) {
-    static char outstr[DBL_DIG + 2] = { 0 };
-    char * pos = outstr + DBL_DIG;
-    sprintf( outstr, "%#.*g", DBL_DIG, r );
+    #define PP_SMALL_BUF_SZ 80
+    static char result[PP_SMALL_BUF_SZ] = { 0 };
+    char * pos = result + PP_SMALL_BUF_SZ - 1;
+
+    /* ensure that PP_SMALL_BUF_SZ is at least as big as the
+     * largest possible string:
+     *   max number of decimal digits a double can represent
+     *   + max number of exponent digits + '.' + 'E' + NULL
+     * start at 2 to include '-' and last digit
+     *
+     * the number of digits in the mantissa is DBL_DIG
+     * exponent_digits must be calculated from DBL_MAX_10_EXP
+     */
+    unsigned int exponent_digits = 2, t = DBL_MAX_10_EXP;
+    while( t >= 10 ) {
+        exponent_digits++;
+        t /= 10;
+    }
+    if( !( ( DBL_DIG + exponent_digits + 3 ) < PP_SMALL_BUF_SZ ) ) {
+        fprintf( stderr, "Error: buffer undersized at %s:%d\n", __FILE__, __LINE__ );
+        abort();
+    }
+
+    sprintf( result, "%#.*g", PP_SMALL_BUF_SZ, r );
 
     /* eliminate trailing zeros by replacing with NULL */
-    while( ( *pos == '0' ) && ( pos > outstr ) ) {
+    while( ( *pos == '0' ) && ( pos > result ) ) {
         *pos = '\0';
         pos--;
     }
-    return outstr;
+    assert( strlen( result ) < PP_SMALL_BUF_SZ - 1 );
+    return result;
+    #undef PP_SMALL_BUF_SZ
 }
 
 /**
