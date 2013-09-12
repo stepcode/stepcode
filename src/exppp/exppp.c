@@ -1574,6 +1574,103 @@ const char * real2exp( double r ) {
     #undef PP_SMALL_BUF_SZ
 }
 
+/** write delimiter, newline, indent spaces, '+', and delimiter to str
+ * \param str pointer to pointer to char
+ * \param indent number of spaces for indentation
+ * \param first true if first call - skips delimiter before newline
+ * \return count of chars added to str
+ *
+ * *str is assumed to have enough space
+ *
+ * Will not work with encoded strings
+ */
+unsigned int insertStrBrk( char * * const str, unsigned int indent, bool first ) {
+    unsigned int i = 0;
+    if( !first ) {
+        **str = '\'';
+        (*str)++;
+    }
+    **str = '\n';
+    (*str)++;
+    while( i < indent ) {
+        **str = ' ';
+        (*str)++;
+        i++;
+    }
+    if( !first ) {
+        **str = '+';
+        (*str)++;
+        **str = ' ';
+        (*str)++;
+    }
+    **str = '\'';
+    (*str)++;
+    return 2 + indent + ( first ? 3 : 0 ); /* 2 for \n' , +3 if first */
+}
+
+/**
+ * Break a long un-encoded string up for output and enclose in ''
+ * if it is too long, error
+ * if too short, enclose in '' but don't insert line breaks
+ * \param in the input string
+ */
+const char * breakLongStr( const char * in ) {
+    const unsigned int indentLevel = 15; /* would pass indent as a param if it was accessible when this func was called */
+    const unsigned int minbreak = 50;  /* if line is longer than this, try to break it */
+    static char buf[8192] = { 0 }, * optr;
+    const char * iptr = in;
+    /* error message to print when we can't return `in` because it is too long and needs wrapped in '' */
+    const char * errmsg = "ERROR: Cannot break long string of len %d:\n%s\n";
+    unsigned int inlen = strlen( in ), linelen = 0;
+    int extrachars = 8191 - inlen;
+    optr = buf;
+
+    if( inlen < minbreak ) {
+        *optr = '\'';
+        optr++;
+        strcpy( optr, in );
+        optr += inlen;
+        *optr = '\'';
+        optr++;
+        *optr = '\0';
+        return buf;
+    }
+    if( inlen > 8000 ) {
+        /* 8000 gives us 191 extra chars for     '\n + '       */
+        fprintf( stderr, errmsg, inlen, in );
+        abort();
+    }
+
+    /* start with a newline, indent, and delimiter */
+    extrachars -= insertStrBrk( &optr, indentLevel, true );
+    if( extrachars <= (int) indentLevel + 7 ) {
+        fprintf( stderr, errmsg, inlen, in );
+        abort();
+    }
+
+    /* copy */
+    while( *iptr ) {
+        *optr = *iptr;
+        optr++;
+        iptr++;
+        linelen++;
+        /* look for '.' to break after, as long as line is longer than minbreak */
+        if( * ( optr - 1 ) == '.' ) {
+            extrachars -= insertStrBrk( &optr, indentLevel, false );
+            if( extrachars <= (int) indentLevel + 7 ) {
+                fprintf( stderr, errmsg, inlen, in );
+                abort();
+            }
+            linelen = 0;
+        }
+    }
+    *optr = '\'';
+    optr++;
+    *optr = '\0';
+    optr++;
+    return buf;
+}
+
 /**
  if paren == 1, parens are usually added to prevent possible rebind by
     higher-level context.  If op is similar to previous op (and
@@ -1621,7 +1718,7 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             if( TYPEis_encoded( e->type ) ) {
                 wrap( "\"%s\"", e->symbol.name );
             } else {
-                wrap( "'%s'", e->symbol.name );
+                wrap( "%s", breakLongStr( e->symbol.name ) );
             }
             break;
         case entity_:
@@ -1846,7 +1943,7 @@ void EXPRstring( char * buffer, Expression e ) {
             if( TYPEis_encoded( e->type ) ) {
                 sprintf( buffer, "\"%s\"", e->symbol.name );
             } else {
-                sprintf( buffer, "'%s'", e->symbol.name );
+                sprintf( buffer, "%s", breakLongStr( e->symbol.name ) );
             }
             break;
         case entity_:
