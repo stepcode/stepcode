@@ -7,6 +7,7 @@
 #include <float.h>
 #include <unistd.h>
 #include <assert.h>
+#include <locale.h>
 
 #include "../express/expbasic.h"
 #include "../express/express.h"
@@ -1510,33 +1511,63 @@ void EXPRbounds_out( TypeBody tb ) {
 const char * real2exp( double r ) {
     #define PP_SMALL_BUF_SZ 80
     static char result[PP_SMALL_BUF_SZ] = { 0 };
-    char * pos = result + PP_SMALL_BUF_SZ - 1;
+    char * pos = result, * lcNumeric = setlocale( LC_NUMERIC, NULL );
 
-    /* ensure that PP_SMALL_BUF_SZ is at least as big as the
-     * largest possible string:
+    /* the following ensures that PP_SMALL_BUF_SZ is at least
+     * as big as the largest possible string:
      *   max number of decimal digits a double can represent
      *   + max number of exponent digits + '.' + 'E' + NULL
      * start at 2 to include '-' and last digit
      *
      * the number of digits in the mantissa is DBL_DIG
-     * exponent_digits must be calculated from DBL_MAX_10_EXP
+     * exponentDigits must be calculated from DBL_MAX_10_EXP
+     *
+     * I (MP) expect this check to always succeed on
+     * non-exotic platforms.
      */
-    unsigned int exponent_digits = 2, t = DBL_MAX_10_EXP;
-    while( t >= 10 ) {
-        exponent_digits++;
-        t /= 10;
+    unsigned int exponentDigits = 2, expMax = DBL_MAX_10_EXP;
+    while( expMax >= 10 ) {
+        exponentDigits++;
+        expMax /= 10;
     }
-    if( !( ( DBL_DIG + exponent_digits + 3 ) < PP_SMALL_BUF_SZ ) ) {
-        fprintf( stderr, "Error: buffer undersized at %s:%d\n", __FILE__, __LINE__ );
+    if( !( ( DBL_DIG + exponentDigits + 3 ) < PP_SMALL_BUF_SZ ) ) {
+        fprintf( stderr, "ERROR: buffer undersized at %s:%d\n", __FILE__, __LINE__ );
         abort();
     }
 
-    sprintf( result, "%#.*g", PP_SMALL_BUF_SZ, r );
+    if( strcmp( "C", lcNumeric ) ) {
+        fprintf( stderr, "WARNING: locale has been set to \"%s\", not \"C\" %s", lcNumeric,
+                 "(are you calling exppp from Qt?). Incorrect formatting is possible.\n" );
+        setlocale( LC_NUMERIC, "C" );
+    }
+    snprintf( result, PP_SMALL_BUF_SZ, "%#.*g", DBL_DIG, r );
 
-    /* eliminate trailing zeros by replacing with NULL */
-    while( ( *pos == '0' ) && ( pos > result ) ) {
-        *pos = '\0';
-        pos--;
+    /* eliminate trailing zeros in the mantissa */
+    assert( strlen( result ) < PP_SMALL_BUF_SZ - 1 );
+    while( ( *pos != '.' ) && ( *pos != '\0' ) ) {
+        /* search for '.' */
+        pos++;
+    }
+    if( *pos != '\0' ) {
+        char * firstUnnecessaryDigit = NULL; /* this will be the first zero of the trailing zeros in the mantissa */
+        pos++;
+        while( isdigit( *pos ) ) {
+            if( ( *pos == '0' ) && ( firstUnnecessaryDigit == NULL ) ) {
+                firstUnnecessaryDigit = pos;
+            } else if( *pos != '0' ) {
+                firstUnnecessaryDigit = NULL;
+            }
+            pos++;
+        }
+        if( ( firstUnnecessaryDigit != NULL ) && ( firstUnnecessaryDigit < pos ) ) {
+            if( ( *( firstUnnecessaryDigit - 1 ) == '.' ) && ( *pos == '\0' ) ) {
+                /* no exponent, nothing after decimal point - remove decimal point */
+                *( firstUnnecessaryDigit - 1 ) = '\0';
+            } else {
+                /* copy exponent (or \0) immediately after the decimal point */
+                memmove( firstUnnecessaryDigit, pos, strlen( pos ) + 1 );
+            }
+        }
     }
     assert( strlen( result ) < PP_SMALL_BUF_SZ - 1 );
     return result;
