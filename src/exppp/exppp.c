@@ -1210,32 +1210,32 @@ void WHERE_out( Linked_List wheres, int level ) {
 
     /* pass 1: calculate length of longest label */
     max_indent = 0;
-    LISTdo( wheres, w, Where )
-    if( w->label ) {
-        if( strlen( w->label->name ) > max_indent ) {
-            max_indent = strlen( w->label->name );
+    LISTdo( wheres, w, Where ) {
+        if( w->label ) {
+            if( strlen( w->label->name ) > max_indent ) {
+                max_indent = strlen( w->label->name );
+            }
         }
-    }
-    LISTod
+    } LISTod
 
     if( max_indent > 10 ) {
-        /* don't bother indenting completely for labels that are */
-        /* ridiculously long */
+        /* don't bother indenting completely for
+         * labels that are ridiculously long */
         max_indent = 4;
     }
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
     /* pass 2: now print labels and exprs */
-    LISTdo( wheres, w, Where )
-    if( w->label ) {
-        raw( "%*s%-*s: ", level, "", max_indent, w->label->name );
-    } else {
-        /* no label */
-        raw( "%*s%-*s  ", level, "", max_indent, "" );
-    }
-    EXPR_out( w->expr, max_indent );
-    raw( ";\n" );
-    LISTod
+    LISTdo( wheres, w, Where ) {
+        if( w->label ) {
+            raw( "%*s%-*s: ", level, "", max_indent, w->label->name );
+        } else {
+            /* no label */
+            raw( "%*s%-*s  ", level, "", max_indent, "" );
+        }
+        EXPR_out( w->expr, max_indent );
+        raw( ";\n" );
+    } LISTod
 }
 
 /** print all types in a scope */
