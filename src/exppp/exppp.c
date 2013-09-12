@@ -5,7 +5,6 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <float.h>
-#include <unistd.h>
 #include <assert.h>
 #include <locale.h>
 
@@ -20,6 +19,9 @@
 
 #if defined( _WIN32 ) || defined ( __WIN32__ )
 #  define unlink _unlink
+#  define snprintf _snprintf
+#else
+#  include <unistd.h> /* for unlink */
 #endif
 
 /* PP_SMALL_BUF_SZ is a macro used in a few places where const int causes
