@@ -379,7 +379,7 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
             }
 
             if( first_time ) {
-                raw( "%*s(", level, "" );
+                raw( "%*s( ", level, "" );
                 first_time = false;
             } else {
                 raw( "%*s ", level, "" );
@@ -389,7 +389,7 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
                 wrap( " AS %s", r->nnew->name );
             }
         } LISTod
-        raw( ");\n" );
+        raw( " );\n" );
     }
     HASHdestroy( dict );
 }
@@ -556,7 +556,7 @@ void RULE_out( Rule r, int level ) {
 
     if( exppp_preserve_comments == false ) {
         int i = 0;
-        raw( "%*sRULE %s FOR (", level, "", r->symbol.name );
+        raw( "%*sRULE %s FOR ( ", level, "", r->symbol.name );
 
         LISTdo( r->u.rule->parameters, p, Variable )
         i++;
@@ -565,7 +565,7 @@ void RULE_out( Rule r, int level ) {
         }
         wrap( p->name->symbol.name );
         LISTod;
-        raw( ");\n" );
+        raw( " );\n" );
 
         ALGscope_out( r, level + exppp_nesting_indent );
         STMTlist_out( r->u.rule->body, level + exppp_nesting_indent );
@@ -907,23 +907,23 @@ void STMT_out( Statement s, int level ) {
             LOOPout( s->u.loop, level );
             break;
         case STMT_PCALL:
-            raw( "%*s%s(", level, "", s->symbol.name );
+            raw( "%*s%s( ", level, "", s->symbol.name );
             LISTdo( s->u.proc->parameters, p, Expression )
             if( first_time ) {
                 first_time = false;
             } else {
-                raw( "," );
+                raw( ", " );
             }
             EXPR_out( p, 0 );
             LISTod
-            raw( ");\n" );
+            raw( " );\n" );
             break;
         case STMT_RETURN:
             raw( "%*sRETURN", level, "" );
             if( s->u.ret->value ) {
-                wrap( "(" );
+                wrap( "( " );
                 EXPR_out( s->u.ret->value, 0 );
-                raw( ")" );
+                raw( " )" );
             }
             raw( ";\n" );
             break;
@@ -980,13 +980,13 @@ void SUBTYPEout( Expression e ) {
     /* even if there is only one, but if the expression is */
     /* complex, EXPRout will add on its own parens */
     /*  if (TYPEis_expression(e->type)) {*/
-    raw( "(" );
+    raw( "( " );
     /*  }*/
 
     EXPR_out( e, 0 );
 
     /*  if (TYPEis_expression(e->type)) {*/
-    raw( ")" );
+    raw( " )" );
     /*  }*/
 }
 
@@ -1017,7 +1017,7 @@ void ENTITY_out( Entity e, int level ) {
     }
 
     if( e->u.entity->supertype_symbols ) {
-        raw( "\n%*sSUBTYPE OF (", level, "" );
+        raw( "\n%*sSUBTYPE OF ( ", level, "" );
 
         LISTdo( e->u.entity->supertype_symbols, s, Symbol * )
         if( first_time ) {
@@ -1027,7 +1027,7 @@ void ENTITY_out( Entity e, int level ) {
         }
         wrap( s->name );
         LISTod
-        raw( ")" );
+        raw( " )" );
     }
 
     raw( ";\n" );
@@ -1413,14 +1413,14 @@ void TYPE_body_out( Type t, int level ) {
 
                 /* start new enum item */
                 if( first_time ) {
-                    raw( "%*s(", level, "" );
+                    raw( "%*s( ", level, "" );
                     first_time = false;
                 } else {
                     raw( "%*s ", level, "" );
                 }
                 raw( names[i] );
             }
-            raw( ")" );
+            raw( " )" );
             sc_free( ( char * )names );
         }
 #else
@@ -1435,14 +1435,14 @@ void TYPE_body_out( Type t, int level ) {
 
                 /* start new enum item */
                 if( first_time ) {
-                    raw( "%*s(", level, "" );
+                    raw( "%*s( ", level, "" );
                     first_time = false;
                 } else {
                     raw( "%*s ", level, "" );
                 }
                 raw( expr->symbol.name );
             }
-            raw( ")" );
+            raw( " )" );
 #endif
         break;
         case select_:
@@ -1455,7 +1455,7 @@ void TYPE_body_out( Type t, int level ) {
 
             /* start new entity */
             if( first_time ) {
-                raw( "%*s(", level, "" );
+                raw( "%*s( ", level, "" );
                 first_time = false;
             } else {
                 raw( "%*s ", level, "" );
@@ -1466,9 +1466,9 @@ void TYPE_body_out( Type t, int level ) {
             /* if empty, force a left paren */
             if( first_time ) {
                 ERRORreport_with_symbol( ERROR_select_empty, &error_sym, t->symbol.name );
-                raw( "%*s(", level, "" );
+                raw( "%*s( ", level, "" );
             }
-            raw( ")" );
+            raw( " )" );
             break;
         case generic_:
             wrap( " GENERIC" );
@@ -1481,9 +1481,9 @@ void TYPE_body_out( Type t, int level ) {
     }
 
     if( tb->precision ) {
-        wrap( " (" );
+        wrap( " ( " );
         EXPR_out( tb->precision, 0 );
-        raw( ")" );
+        raw( " )" );
     }
     if( tb->flags.fixed ) {
         wrap( " FIXED" );
@@ -1738,16 +1738,16 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             wrap( "SELF" );
             break;
         case funcall_:
-            wrap( "%s(", e->symbol.name );
+            wrap( "%s( ", e->symbol.name );
             i = 0;
             LISTdo( e->u.funcall.list, arg, Expression )
             i++;
             if( i != 1 ) {
-                raw( "," );
+                raw( ", " );
             }
             EXPR_out( arg, 0 );
             LISTod
-            raw( ")" );
+            raw( " )" );
             break;
         case op_:
             EXPRop__out( &e->e, paren, previous_op );
@@ -1763,7 +1763,7 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
                     if( repeat ) {
                         raw( ":" );
                     } else {
-                        raw( "," );
+                        raw( ", " );
                     }
                 }
                 EXPR_out( arg, 0 );
@@ -1771,18 +1771,18 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             raw( "]" );
             break;
         case oneof_:
-            wrap( "ONEOF (" );
+            wrap( "ONEOF ( " );
 
             i = 0;
             LISTdo( e->u.list, arg, Expression )
             i++;
             if( i != 1 ) {
-                raw( "," );
+                raw( ", " );
             }
             EXPR_out( arg, 0 );
             LISTod
 
-            raw( ")" );
+            raw( " )" );
             break;
         default:
             wrap( "unknown expression, type %d", TYPEis( e->type ) );
@@ -1856,7 +1856,7 @@ void EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous
 
 void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, unsigned int previous_op ) {
     if( pad && paren && ( eo->op_code != previous_op ) ) {
-        wrap( "(" );
+        wrap( "( " );
     }
     EXPR__out( eo->op1, 1, eo->op_code );
     if( pad ) {
@@ -1868,7 +1868,7 @@ void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int p
     }
     EXPR__out( eo->op2, 1, eo->op_code );
     if( pad && paren && ( eo->op_code != previous_op ) ) {
-        raw( ")" );
+        raw( " )" );
     }
 }
 
@@ -1877,12 +1877,12 @@ void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int p
  */
 void EXPRop1_out( struct Op_Subexpression * eo, char * opcode, int paren ) {
     if( paren ) {
-        wrap( "(" );
+        wrap( "( " );
     }
     wrap( "%s", opcode );
     EXPR_out( eo->op1, 1 );
     if( paren ) {
-        raw( ")" );
+        raw( " )" );
     }
 }
 
@@ -1963,16 +1963,16 @@ void EXPRstring( char * buffer, Expression e ) {
             strcpy( buffer, "SELF" );
             break;
         case funcall_:
-            sprintf( buffer, "%s(", e->symbol.name );
+            sprintf( buffer, "%s( ", e->symbol.name );
             i = 0;
             LISTdo( e->u.funcall.list, arg, Expression )
             i++;
             if( i != 1 ) {
-                strcat( buffer, "," );
+                strcat( buffer, ", " );
             }
             EXPRstring( buffer + strlen( buffer ), arg );
             LISTod
-            strcat( buffer, ")" );
+            strcat( buffer, " )" );
             break;
 
         case op_:
@@ -1989,7 +1989,7 @@ void EXPRstring( char * buffer, Expression e ) {
                     if( repeat ) {
                         strcat( buffer, ":" );
                     } else {
-                        strcat( buffer, "," );
+                        strcat( buffer, ", " );
                     }
                 }
                 EXPRstring( buffer + strlen( buffer ), arg );
@@ -1997,18 +1997,18 @@ void EXPRstring( char * buffer, Expression e ) {
             strcat( buffer, "]" );
             break;
         case oneof_:
-            strcpy( buffer, "ONEOF (" );
+            strcpy( buffer, "ONEOF ( " );
 
             i = 0;
             LISTdo( e->u.list, arg, Expression )
             i++;
             if( i != 1 ) {
-                strcat( buffer, "," );
+                strcat( buffer, ", " );
             }
             EXPRstring( buffer + strlen( buffer ), arg );
             LISTod
 
-            strcat( buffer, ")" );
+            strcat( buffer, " )" );
             break;
         default:
             sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ) );
