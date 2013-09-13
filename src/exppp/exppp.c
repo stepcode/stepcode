@@ -1656,8 +1656,8 @@ const char * breakLongStr( const char * in ) {
         optr++;
         iptr++;
         linelen++;
-        /* look for '.' to break after, as long as line is longer than minbreak */
-        if( * ( optr - 1 ) == '.' ) {
+        /* look for '.' to break after, as long as there is something after it and the line is reasonably long */
+        if( ( *( iptr - 1 ) == '.' ) && ( *iptr != '\0' ) && ( linelen >= minbreak ) ) {
             extrachars -= insertStrBrk( &optr, indentLevel, false );
             if( extrachars <= (int) indentLevel + 7 ) {
                 fprintf( stderr, errmsg, inlen, in );
