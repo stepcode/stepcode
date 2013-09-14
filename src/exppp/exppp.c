@@ -591,7 +591,7 @@ void ALGargs_out( Linked_List args, int level ) {
     LISTdo( args, v, Variable )
     if( previoustype != v->type ) {
         if( previoustype ) {
-            wrap( ":" );
+            wrap( " : " );
             TYPE_head_out( previoustype, NOLEVEL );
             raw( ";\n" );
         }
@@ -604,7 +604,7 @@ void ALGargs_out( Linked_List args, int level ) {
     previoustype = v->type;
     LISTod
 
-    wrap( ":" );
+    wrap( " : " );
     TYPE_head_out( previoustype, NOLEVEL );
 }
 
@@ -625,7 +625,7 @@ void FUNC_out( Function fn, int level ) {
                          level + strlen( "FUNCTION     " ) );
             raw( "\n%*s)", level + exppp_continuation_indent, "" );
         }
-        raw( ":" );
+        raw( " : " );
 
         indent2 = curpos + exppp_continuation_indent;
         TYPE_head_out( fn->u.func->return_type, NOLEVEL );
@@ -1499,7 +1499,7 @@ void EXPRbounds_out( TypeBody tb ) {
 
     wrap( " [" );
     EXPR_out( tb->lower, 0 );
-    wrap( ":" );
+    wrap( " : " );
     EXPR_out( tb->upper, 0 );
     raw( "]" );
 }
@@ -1763,7 +1763,7 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
                 i++;
                 if( i != 1 ) {
                     if( repeat ) {
-                        raw( ":" );
+                        raw( " : " );
                     } else {
                         raw( ", " );
                     }
@@ -1847,7 +1847,7 @@ void EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous
             EXPR_out( oe->op1, 1 );
             wrap( "[" );
             EXPR_out( oe->op2, 0 );
-            wrap( ":" );
+            wrap( " : " );
             EXPR_out( oe->op3, 0 );
             raw( "]" );
             break;
@@ -1989,7 +1989,7 @@ void EXPRstring( char * buffer, Expression e ) {
                 i++;
                 if( i != 1 ) {
                     if( repeat ) {
-                        strcat( buffer, ":" );
+                        strcat( buffer, " : " );
                     } else {
                         strcat( buffer, ", " );
                     }
