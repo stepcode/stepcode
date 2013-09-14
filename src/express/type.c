@@ -138,7 +138,7 @@ Type Type_Boolean;
 Type Type_Enumeration;
 Type Type_Expression;
 Type Type_Aggregate;
-Type Type_Integer;
+Type Type_Repeat;
 Type Type_Integer;
 Type Type_Number;
 Type Type_Real;
@@ -405,6 +405,10 @@ void TYPEinitialize() {
 
     Type_Identifier = TYPEcreate( identifier_ );
     Type_Identifier->u.type->body->flags.shared = 1;
+
+    Type_Repeat = TYPEcreate( integer_ );
+    Type_Repeat->u.type->body->flags.shared = 1;
+    Type_Repeat->u.type->body->flags.repeat = 1;
 
     Type_Oneof = TYPEcreate( oneof_ );
     Type_Oneof->u.type->body->flags.shared = 1;

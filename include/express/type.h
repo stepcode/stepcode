@@ -193,7 +193,7 @@ extern SC_EXPRESS_EXPORT Type Type_Boolean;
 extern SC_EXPRESS_EXPORT Type Type_Enumeration;
 extern SC_EXPRESS_EXPORT Type Type_Expression;
 extern SC_EXPRESS_EXPORT Type Type_Aggregate;
-extern SC_EXPRESS_EXPORT Type Type_Integer;
+extern SC_EXPRESS_EXPORT Type Type_Repeat;
 extern SC_EXPRESS_EXPORT Type Type_Integer;
 extern SC_EXPRESS_EXPORT Type Type_Number;
 extern SC_EXPRESS_EXPORT Type Type_Real;
