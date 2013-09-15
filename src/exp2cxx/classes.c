@@ -2250,6 +2250,9 @@ void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
                              TYPEget_body( v->type )->base->symbol.name );
                     fprintf( files->init, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
                     break;
+                default:
+                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    abort();
             }
         }
     }
@@ -2884,6 +2887,9 @@ void TypeBody_Description( TypeBody body, char * buf ) {
                         strcat( buf, " UNIQUE" );
                     }
                     break;
+                default:
+                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    abort();
             }
 
             Type_Description( body->base, buf );
