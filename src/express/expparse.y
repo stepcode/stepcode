@@ -1586,12 +1586,12 @@ literal(A) ::= TOK_INTEGER_LITERAL(B).
 }
 literal(A) ::= TOK_REAL_LITERAL(B).
 {
-    if (B.rVal == 0.0) {
-    A = LITERAL_ZERO;
+    if( abs( B.rVal ) < DBL_EPSILON ) {
+        A = LITERAL_ZERO;
     } else {
-    A = EXPcreate_simple(Type_Real);
-    A->u.real = B.rVal;
-    resolved_all(A);
+        A = EXPcreate_simple(Type_Real);
+        A->u.real = B.rVal;
+        resolved_all(A);
     }
 }
 literal(A) ::= TOK_STRING_LITERAL(B).
