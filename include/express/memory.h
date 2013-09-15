@@ -76,7 +76,7 @@ extern SC_EXPRESS_EXPORT int yylineno;
     } else {}
 
 SC_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
-SC_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head *, int, int, int ) );
+SC_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) );
 SC_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
 SC_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
 
