@@ -78,7 +78,7 @@ Freelist * create_freelist( struct freelist_head * flh, int bytes ) {
 
 void
 _MEMinitialize() {
-#if DEBUG_MALLOC
+#ifdef DEBUG_MALLOC
     malloc_debug( 2 );
 #endif
 }
@@ -108,7 +108,7 @@ void MEMinitialize( struct freelist_head * flh, int size, int alloc1, int alloc2
         ERRORnospace();
     }
 
-#if SPACE_PROFILE
+#ifdef SPACE_PROFILE
     flh->count = 0;
 #endif /*SPACE_PROFILE*/
 
@@ -139,7 +139,7 @@ Generic MEM_new( struct freelist_head * flh ) {
     }
 #endif
 
-#if SPACE_PROFILE
+#ifdef SPACE_PROFILE
     flh->count++;
 #endif /*SPACE_PROFILE*/
 

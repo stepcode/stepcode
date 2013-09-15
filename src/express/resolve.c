@@ -368,7 +368,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                                              f->u.func->pcount );
                 }
 
-#if future_work
+#ifdef future_work
                 if( EXPRESS_lint ) {
                     /* verify parameters match function call */
                 }

@@ -125,7 +125,7 @@ static void     HASHexpand_table( Hash_Table );
 ** Local data
 */
 
-# if HASH_STATISTICS
+# ifdef HASH_STATISTICS
 static long     HashAccesses, HashCollisions;
 # endif
 
@@ -174,7 +174,7 @@ HASHcreate( unsigned count ) {
     table->maxp = MUL( count, SEGMENT_SIZE_SHIFT );
     table->MinLoadFactor = 1;
     table->MaxLoadFactor = MAX_LOAD_FACTOR;
-# if HASH_DEBUG
+# ifdef HASH_DEBUG
     fprintf( stderr,
              "[HASHcreate] table %x count %d maxp %d SegmentCount %d\n",
              table,
@@ -182,7 +182,7 @@ HASHcreate( unsigned count ) {
              table->maxp,
              table->SegmentCount );
 # endif
-# if HASH_STATISTICS
+# ifdef HASH_STATISTICS
     HashAccesses = HashCollisions = 0;
 # endif
     return( table );
@@ -305,7 +305,7 @@ HASHdestroy( Hash_Table table ) {
             }
         }
         HASH_Table_destroy( table );
-# if HASH_STATISTICS && HASH_DEBUG
+# if defined(HASH_STATISTICS) && defined(HASH_DEBUG)
         fprintf( stderr,
                  "[hdestroy] Accesses %ld Collisions %ld\n",
                  HashAccesses,
@@ -325,7 +325,7 @@ HASHsearch( Hash_Table table, Element item, Action action ) {
     Element deleteme;
 
     assert( table != HASH_NULL ); /* Kinder really than return(NULL); */
-# if HASH_STATISTICS
+# ifdef HASH_STATISTICS
     HashAccesses++;
 # endif
     h = HASHhash( item->key, table );
@@ -347,7 +347,7 @@ HASHsearch( Hash_Table table, Element item, Action action ) {
     while( q != NULL && strcmp( q->key, item->key ) ) {
         p = &q->next;
         q = *p;
-# if HASH_STATISTICS
+# ifdef HASH_STATISTICS
         HashCollisions++;
 # endif
     }
