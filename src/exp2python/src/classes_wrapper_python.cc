@@ -140,7 +140,7 @@ print_file_trailer( Express express, FILES * files ) {
  ******************************************************************/
 
 void
-SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
+SCOPEPrint( Scope scope, FILES * files, Schema schema,
             ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     Linked_List function_list = SCOPEget_functions( scope );
@@ -251,7 +251,6 @@ PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
     fprintf( files->inc, "\n//\t***** Describe the Entities  \t\n" );
     LISTdo( list, e, Entity );
     ENTITYput_superclass( e ); /*  find supertype to use for single  */
-    ENTITYprint_new( e, files, schema, 0 );         /*  inheritance  */
     LISTod;
 
     // Print Entity Classes
@@ -316,7 +315,7 @@ PrintModelContentsSchema( Scope scope, FILES * files, Schema schema,
  ******************************************************************/
 
 void
-SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
+SCHEMAprint( Schema schema, FILES * files, void * complexCol,
              int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
@@ -366,7 +365,7 @@ SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
     /**********  do the schemas ***********/
 
     /* really, create calls for entity constructors */
-    SCOPEPrint( schema, files, schema, model, ( ComplexCollect * )complexCol,
+    SCOPEPrint( schema, files, schema, ( ComplexCollect * )complexCol,
                 suffix );
 
     /**********  close the files    ***********/
@@ -452,51 +451,17 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     /*  return if failure           */
     /*  1.  header file             */
     sprintf( fnm, "%s.h", schnm = ClassName( EXPRESSget_basename( express ) ) );
-    //if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
-    //    return;
-    //}
-    //fprintf( incfile, "/* %cId$ */\n", '$' );
-
-    //fprintf( incfile, "#ifdef __O3DB__\n" );
-    //fprintf( incfile, "#include <OpenOODB.h>\n" );
-    //fprintf( incfile, "#endif\n\n" );
-    //fprintf( incfile, "#include <sdai.h> \n" );
-    /*    fprintf (incfile, "#include <schema.h> \n");*/
-    /*    fprintf (incfile, "extern void %sInit (Registry & r);\n", schnm);*/
-
-    //np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
     /*  2.  class source file            */
     //sprintf( np, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }
-    //fprintf( libfile, "/* %cId$ */\n", '$' );
-    //fprintf( libfile, "#include <%s.h> n", schnm );
-
-    /*  3.  source code to initialize entity registry   */
-    /*  prints header of file for input function    */
-
-    //sprintf( np, "init.cc" );
-    //if( !( initfile = ( files -> init ) = FILEcreate( fnm ) ) ) {
-    //    return;
-    //}
-    //fprintf( initfile, "/* $Id%d */\n", '$' );
-    //fprintf( initfile, "#include <%s.h>\n\n", schnm );
-    //fprintf( initfile, "void \n%sInit (Registry& reg)\n{\n", schnm );
-
-    /**********  record in files relating to entire input   ***********/
-
-    /*  add to schema's include and initialization file */
-    //fprintf( schemafile, "#include <%s.h>\n\n", schnm );
-    //fprintf( schemafile, "extern void %sInit (Registry & r);\n", schnm );
-    //fprintf( schemainit, "\t extern void %sInit (Registry & r);\n", schnm );
-    //fprintf( schemainit, "\t %sInit (reg);\n", schnm );
 
     /**********  do all schemas ***********/
     DICTdo_init( express->symbol_table, &de );
     while( 0 != ( schema = ( Scope )DICTdo( &de ) ) ) {
-        SCOPEPrint( schema, files, schema, express, &col, 0 );
+        SCOPEPrint( schema, files, schema, &col, 0 );
     }
 
 

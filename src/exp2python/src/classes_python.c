@@ -1860,22 +1860,6 @@ ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     DEBUG( "DONE ENTITYPrint\n" )    ;
 }
 
-void
-MODELPrintConstructorBody( Entity entity, FILES * files, Schema schema
-                           /*, int index*/ ) {
-}
-
-void
-MODELPrint( Entity entity, FILES * files, Schema schema, int index ) {
-}
-
-void
-ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
-}
-
-void
-MODELprint_new( Entity entity, FILES * files, Schema schema ) {
-}
 
 /******************************************************************
  **         TYPE GENERATION             **/
