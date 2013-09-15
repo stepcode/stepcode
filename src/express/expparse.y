@@ -98,6 +98,7 @@ YYSTYPE yylval;
 #include "express/entity.h"
 #include "express/resolve.h"
 #include "expscan.h"
+#include <float.h>
 
     extern int print_objects_while_running;
 
@@ -1586,6 +1587,12 @@ literal(A) ::= TOK_INTEGER_LITERAL(B).
 }
 literal(A) ::= TOK_REAL_LITERAL(B).
 {
+    if( ( abs( B.rVal ) <= FLT_EPSILON ) && ( abs( B.rVal ) > 0 ) ) {
+        Symbol sym;
+        sym.line = yylineno;
+        sym.filename = current_filename;
+        ERRORreport_with_symbol(ERROR_warn_small_real, &sym, B.rVal );
+    }
     if( abs( B.rVal ) < DBL_EPSILON ) {
         A = LITERAL_ZERO;
     } else {

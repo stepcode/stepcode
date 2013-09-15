@@ -112,6 +112,7 @@ Error ERROR_unlabelled_param_type = ERROR_none;
 Error ERROR_file_unreadable;
 Error ERROR_file_unwriteable;
 Error ERROR_warn_unsupported_lang_feat;
+Error ERROR_warn_small_real;
 
 struct Scope_ * FUNC_NVL;
 struct Scope_ * FUNC_USEDIN;
@@ -522,11 +523,14 @@ void EXPRESSinitialize( void ) {
     ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
     ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
     ERROR_warn_unsupported_lang_feat = ERRORcreate( "Unsupported language feature (%s) at %s:%d", SEVERITY_WARNING );
+    ERROR_warn_small_real = ERRORcreate( "REAL with extremely small magnitude may be interpreted as zero on some "
+                                         "platforms or by other parsers - abs(%f) <= FLT_EPSILON", SEVERITY_WARNING );
 
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 
     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
     ERRORcreate_warning( "unsupported", ERROR_warn_unsupported_lang_feat );
+    ERRORcreate_warning( "limits", ERROR_warn_small_real );
 
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
 }
@@ -544,6 +548,7 @@ void EXPRESScleanup( void ) {
     ERRORdestroy( ERROR_file_unreadable );
     ERRORdestroy( ERROR_file_unwriteable );
     ERRORdestroy( ERROR_warn_unsupported_lang_feat );
+    ERRORdestroy( ERROR_warn_small_real );
 
     DICTcleanup();
     OBJcleanup();
