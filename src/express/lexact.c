@@ -241,7 +241,7 @@ SCANpop_buffer() {
     }
     --SCAN_current_buffer;
     SCANcurrent = SCANbuffer.savedPos;
-    yylineno = SCANbuffer.lineno;   /* DEL */
+    yylineno = SCANbuffer.lineno + 1;   /* DEL */
     current_filename = SCANbuffer.filename;
 }
 

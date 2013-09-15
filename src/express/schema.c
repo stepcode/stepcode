@@ -143,7 +143,7 @@ void SCHEMAadd_reference( Schema cur_schema, Symbol * ref_schema, Symbol * old, 
     if( !cur_schema->u.schema->reflist ) {
         cur_schema->u.schema->reflist = LISTcreate();
     }
-    LISTadd( cur_schema->u.schema->reflist, ( Generic )r );
+    LISTadd_last( cur_schema->u.schema->reflist, ( Generic )r );
 }
 
 void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * nnew ) {
@@ -156,7 +156,7 @@ void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol
     if( !cur_schema->u.schema->uselist ) {
         cur_schema->u.schema->uselist = LISTcreate();
     }
-    LISTadd( cur_schema->u.schema->uselist, ( Generic )r );
+    LISTadd_last( cur_schema->u.schema->uselist, ( Generic )r );
 }
 
 void SCHEMAdefine_reference( Schema schema, Rename * r ) {
@@ -208,7 +208,7 @@ static void SCHEMA_get_entities_use( Scope scope, Linked_List result ) {
     if( scope->u.schema->usedict ) {
         DICTdo_init( scope->u.schema->usedict, &de );
         while( 0 != ( rename = ( Rename * )DICTdo( &de ) ) ) {
-            LISTadd( result, rename->object );
+            LISTadd_last( result, rename->object );
         }
     }
 }
@@ -246,7 +246,7 @@ static void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
     DICTdo_init( scope->u.schema->refdict, &de );
     while( 0 != ( rename = ( Rename * )DICTdo( &de ) ) ) {
         if( DICT_type == OBJ_ENTITY ) {
-            LISTadd( result, rename->object );
+            LISTadd_last( result, rename->object );
         }
     }
 }

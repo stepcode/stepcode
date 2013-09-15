@@ -142,7 +142,7 @@ struct Funcall {
 
 union expr_union {
     int integer;
-    float real;
+    double real;
     char * attribute;   /**< inverse .... for 'attr' */
     char * binary;
     int logical;

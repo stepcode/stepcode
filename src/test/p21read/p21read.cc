@@ -91,7 +91,7 @@ void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
 }
 
 void printVersion( const char * exe ) {
-    std::cout << exe << " build info: " << sc_version() << std::endl;
+    std::cout << exe << " build info: " << sc_version << std::endl;
 }
 
 void printUse( const char * exe ) {

@@ -100,6 +100,7 @@ extern SC_EXPRESS_EXPORT Error        ERROR_nonascii_char;
 /***********************/
 
 extern SC_EXPRESS_EXPORT void SCANinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void SCANcleanup( void );
 extern SC_EXPRESS_EXPORT int  SCANprocess_real_literal PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT int  SCANprocess_integer_literal PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT int  SCANprocess_binary_literal PROTO( ( const char * ) );
@@ -110,9 +111,6 @@ extern SC_EXPRESS_EXPORT int  SCANprocess_encoded_string PROTO( ( const char * )
 extern SC_EXPRESS_EXPORT int  SCANprocess_semicolon PROTO( ( const char *, int ) );
 extern SC_EXPRESS_EXPORT void SCANsave_comment PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT bool  SCANread PROTO( ( void ) );
-#ifdef macros_bit_the_dust
-extern SC_EXPRESS_EXPORT void SCANdefine_macro PROTO( ( char *, char * ) );
-#endif
 extern SC_EXPRESS_EXPORT void SCANinclude_file PROTO( ( char * ) );
 SC_EXPRESS_EXPORT void        SCANlowerize PROTO( ( char * ) );
 SC_EXPRESS_EXPORT void        SCANupperize PROTO( ( char * ) );

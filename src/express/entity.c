@@ -356,7 +356,7 @@ void ENTITYadd_instance( Entity entity, Generic instance ) {
     if( entity->u.entity->instances == LIST_NULL ) {
         entity->u.entity->instances = LISTcreate();
     }
-    LISTadd( entity->u.entity->instances, instance );
+    LISTadd_last( entity->u.entity->instances, instance );
 }
 
 /**
