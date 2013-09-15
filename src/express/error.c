@@ -266,7 +266,7 @@ va_dcl {
             vfprintf( error_file, what->message, args );
             fputc( '\n', error_file );
             ERRORoccurred = true;
-        } else if( what->severity >= SEVERITY_WARNING ) {
+        } else {
             fprintf( error_file, "WARNING: %d", what->severity );
             vfprintf( error_file, what->message, args );
             fputc( '\n', error_file );
@@ -382,7 +382,7 @@ va_dcl {
                 *ERROR_string++ = '\n';
                 *ERROR_string++ = '\0';
                 ERRORoccurred = true;
-            } else if( what->severity >= SEVERITY_WARNING ) {
+            } else {
                 sprintf( ERROR_string, "%s:%d: WARNING: ", sym->filename, sym->line );
                 ERROR_string += strlen( ERROR_string );
                 vsprintf( ERROR_string, what->message, args );
@@ -406,7 +406,7 @@ va_dcl {
                 vfprintf( error_file, what->message, args );
                 fprintf( error_file, "\n" );
                 ERRORoccurred = true;
-            } else if( what->severity >= SEVERITY_WARNING ) {
+            } else {
                 fprintf( error_file, "%s:%d: WARNING: ", sym->filename, sym->line );
                 ERROR_string += strlen( ERROR_string ) + 1;
                 vfprintf( error_file, what->message, args );
