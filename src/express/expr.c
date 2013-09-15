@@ -693,7 +693,10 @@ void EXPresolve_op_default( Expression e, Scope s ) {
     }
 }
 
+/* prototype for this func cannot change - it is passed as a fn pointer */
 Type EXPresolve_op_unknown( Expression e, Scope s ) {
+    (void) e; /* quell unused param warning */
+    (void) s;
     ERRORreport( ERROR_internal_unrecognized_op_in_EXPresolve );
     return Type_Bad;
 }
