@@ -281,43 +281,43 @@ static int checkTypes( Schema schema )
                 schema->search_id = UNPROCESSED;
             }
         } else if( TYPEis_select( type ) ) {
-            LISTdo( SEL_TYPEget_items( type ), i, Type )
-            if( !TYPEis_entity( i ) ) {
-                if( checkItem( i, type, schema, &unknowncnt, 0 ) ) {
-                    break;
+            LISTdo( SEL_TYPEget_items( type ), i, Type ) {
+                if( !TYPEis_entity( i ) ) {
+                    if( checkItem( i, type, schema, &unknowncnt, 0 ) ) {
+                        break;
+                    }
+                    /* checkItem does most of the work of determining if
+                    // an item of a select will make the select type un-
+                    // processable.  It checks for conditions which would
+                    // make this true and sets values in type, schema, and
+                    // unknowncnt accordingly.  (See checkItem's commenting
+                    // below.)  It also return TRUE if i has made type un-
+                    // processable.  If so, we break - there's no point
+                    // checking the other items of type any more. */
+                } else {
+                    /* Check if our select has an entity item which itself
+                    // has unprocessed selects or enums. */
+                    ent = ENT_TYPEget_entity( i );
+                    if( ent->search_id == PROCESSED ) {
+                        continue;
+                    }
+                    /* If entity has been processed already, things must be
+                    // okay. (Note - but if it hasn't been processed yet we
+                    // may still be able to process type.  This is because
+                    // a sel type will only contain a pointer to an entity-
+                    // item (and we can create a pointer to a not-yet-pro-
+                    // cessed object), while it will contain actual objects
+                    // for the enum and select attributes of ent.) */
+                    attribs = ENTITYget_all_attributes( ent );
+                    LISTdo_n( attribs, attr, Variable, z ) {
+                        if( checkItem( attr->type, type, schema,
+                                    &unknowncnt, 1 ) ) {
+                            break;
+                        }
+                    } LISTod
+                    LISTfree( attribs );
                 }
-                /* checkItem does most of the work of determining if
-                // an item of a select will make the select type un-
-                // processable.  It checks for conditions which would
-                // make this true and sets values in type, schema, and
-                // unknowncnt accordingly.  (See checkItem's commenting
-                // below.)  It also return TRUE if i has made type un-
-                // processable.  If so, we break - there's no point
-                // checking the other items of type any more. */
-            } else {
-                /* Check if our select has an entity item which itself
-                // has unprocessed selects or enums. */
-                ent = ENT_TYPEget_entity( i );
-                if( ent->search_id == PROCESSED ) {
-                    continue;
-                }
-                /* If entity has been processed already, things must be
-                // okay. (Note - but if it hasn't been processed yet we
-                // may still be able to process type.  This is because
-                // a sel type will only contain a pointer to an entity-
-                // item (and we can create a pointer to a not-yet-pro-
-                // cessed object), while it will contain actual objects
-                // for the enum and select attributes of ent.) */
-                attribs = ENTITYget_all_attributes( ent );
-                LISTdo( attribs, attr, Variable )
-                if( checkItem( attr->type, type, schema,
-                               &unknowncnt, 1 ) ) {
-                    break;
-                }
-                LISTod
-                LISTfree( attribs );
-            }
-            LISTod
+            } LISTod
             /* One more condition - if we're a select which is a rename of
             // another select - we must also make sure the original select
             // is in this schema or has been processed.  Since a rename-
