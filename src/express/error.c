@@ -504,6 +504,7 @@ void ERROR_flush_message_buffer( void ) {
 }
 
 void ERRORabort( int sig ) {
+    (void) sig; /* quell unused param warning */
     ERRORflush_messages();
     if( !ERRORdebugging ) {
         if( ERROR_unsafe ) {
