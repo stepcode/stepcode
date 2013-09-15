@@ -104,7 +104,7 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
  *
  * This version takes a file pointer and eliminates use of the temp buffer.
  */
-void format_for_std_stringout( FILE * f, const char * orig_buf ) {
+void format_for_std_stringout( FILE * f, char * orig_buf ) {
     const char * optr  = orig_buf;
     char * s_end = "\\n\" );\n";
     char * s_begin = "    str.append( \"";
@@ -399,6 +399,7 @@ const char * TYPEget_idl_type( const Type t ) {
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
+    (void) arg; /* unused */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }
@@ -420,7 +421,8 @@ int Handle_FedPlus_Args( int i, char * arg ) {
  ** Status:  complete 8/5/93
  ******************************************************************/
 char * generate_attribute_name( Variable a, char * out ) {
-    char * temp, *p, *q;
+    char * temp, *q;
+    const char * p;
     int i;
 
     temp = EXPRto_string( VARget_name( a ) );
@@ -1030,9 +1032,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
  */
 void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
-    //Linked_List list;
     int attr_count_tmp = attr_count;
-    Entity super = 0;
 
     fprintf( file, "    extern EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
 
@@ -1288,7 +1288,6 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
  ** Status:  ok 12-Apr-1993
  ******************************************************************/
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
-    Linked_List list;
     int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ];
 
