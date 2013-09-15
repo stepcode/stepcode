@@ -2787,8 +2787,8 @@ static void yy_reduce(
 {
     CURRENT_SCOPE->u.entity->subtype_expression = yymsp[-4].minor.yy242.subtypes;
     CURRENT_SCOPE->u.entity->supertype_symbols = yymsp[-4].minor.yy242.supertypes;
-    LISTdo (yymsp[-2].minor.yy176.attributes, l, Linked_List) {
-        LISTdo (l, a, Variable) {
+    LISTdo( yymsp[-2].minor.yy176.attributes, l, Linked_List ) {
+        LISTdo_n( l, a, Variable, b ) {
             ENTITYadd_attribute(CURRENT_SCOPE, a);
         } LISTod;
     } LISTod;

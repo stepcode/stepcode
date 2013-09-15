@@ -133,11 +133,11 @@ SYMBOLprint( Symbol * s ) {
 }
 #endif
 
-void SCHEMAadd_reference( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * nnew ) {
+void SCHEMAadd_reference( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * snnew ) {
     Rename * r = REN_new();
     r->schema_sym = ref_schema;
     r->old = old;
-    r->nnew = nnew;
+    r->nnew = snnew;
     r->rename_type = ref;
 
     if( !cur_schema->u.schema->reflist ) {
@@ -146,11 +146,11 @@ void SCHEMAadd_reference( Schema cur_schema, Symbol * ref_schema, Symbol * old, 
     LISTadd_last( cur_schema->u.schema->reflist, ( Generic )r );
 }
 
-void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * nnew ) {
+void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * snnew ) {
     Rename * r = REN_new();
     r->schema_sym = ref_schema;
     r->old = old;
-    r->nnew = nnew;
+    r->nnew = snnew;
     r->rename_type = use;
 
     if( !cur_schema->u.schema->uselist ) {

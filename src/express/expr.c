@@ -249,7 +249,7 @@ void EXPcleanup( void ) {
 
 /**
  * \param selection the Type to look in (i.e. an enum)
- * \param ref the Symbol to be found
+ * \param sref the Symbol to be found
  * \param e set to the Expression found, when an enum is found
  * \param v set to the Variable found, when a variable is found
  * \param dt set to DICT_type when a match is found (use to determine whether to use e or v)
@@ -258,7 +258,7 @@ void EXPcleanup( void ) {
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
+static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e,
                                      Variable * v, char * dt, struct Symbol_ ** where, int s_id ) {
     Expression item;
     Variable tmp;
@@ -272,7 +272,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
     switch( selection->u.type->body->type ) {
         case entity_:
             tmp = ENTITYfind_inherited_attribute( selection->u.type->body->entity,
-                                                  ref.name, &w );
+                                                  sref.name, &w );
             if( tmp ) {
                 if( w != NULL ) {
                     *where = w;
@@ -286,7 +286,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
         case select_:
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_dot_fuzzy( t, ref, e, v, dt, &w, s_id ) ) {
+            if( EXP_resolve_op_dot_fuzzy( t, sref, e, v, dt, &w, s_id ) ) {
                 if( w != NULL ) {
                     *where = w;
                 }
@@ -304,7 +304,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
                     return 1;
             }
         case enumeration_:
-            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), ref.name );
+            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), sref.name );
             if( item ) {
                 *e = item;
                 *dt = DICT_type;
@@ -482,7 +482,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
+static int EXP_resolve_op_group_fuzzy( Type selection, Symbol sref, Entity * e,
                                        int s_id ) {
     Entity tmp;
     int options = 0;
@@ -494,7 +494,7 @@ static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
     switch( selection->u.type->body->type ) {
         case entity_:
             tmp = ( Entity )ENTITYfind_inherited_entity(
-                      selection->u.type->body->entity, ref.name, 1 );
+                      selection->u.type->body->entity, sref.name, 1 );
             if( tmp ) {
                 *e = tmp;
                 return 1;
@@ -505,7 +505,7 @@ static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
             tmp = *e;
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_group_fuzzy( t, ref, e, s_id ) ) {
+            if( EXP_resolve_op_group_fuzzy( t, sref, e, s_id ) ) {
                 if( *e != tmp ) {
                     tmp = *e;
                     ++options;
