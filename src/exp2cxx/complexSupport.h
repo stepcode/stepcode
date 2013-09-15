@@ -181,7 +181,7 @@ class EntList {
         int multiple() {
             return ( join != SIMPLE );
         }
-        EntList * next, *prev;
+        EntList * prev, * next;
 
     protected:
         MatchType viable;
