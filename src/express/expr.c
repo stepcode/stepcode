@@ -321,7 +321,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Variable v;
     Expression item;
     Type op1type;
-    bool all_enums = true; //used by 'case select_'
+    bool all_enums = true; /* used by 'case select_' */
 
     /* stuff for dealing with select_ */
     int options = 0;
@@ -613,8 +613,8 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             }
         case array_:
             if( op1->type->u.type->body->type == self_ ) {
-                return( Type_Runtime ); //not sure if there are other cases where Type_Runtime should be returned, or not
-            } // else fallthrough
+                return( Type_Runtime ); /* not sure if there are other cases where Type_Runtime should be returned, or not */
+            } /*  else fallthrough */
         case unknown_:  /* unable to resolve operand */
             /* presumably error has already been reported */
             resolve_failed( expr );
@@ -735,7 +735,7 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
          * (how?)
          */
 
-        //count aggregates and non-aggregates, check aggregate types
+        /* count aggregates and non-aggregates, check aggregate types */
         LISTdo( op1type->u.type->body->list, item, Type ) {
             if( TYPEis_aggregate( item ) ) {
                 numAggr++;
@@ -755,17 +755,17 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
         /* NOTE the following code returns the same data for every case that isn't an error.
          * It needs to be simplified or extended, depending on whether it works or not. */
         if( sameAggrType && ( numAggr != 0 ) && ( numNonAggr == 0 ) ) {
-            // All are the same aggregation type
+            /*  All are the same aggregation type */
             return( lasttype->u.type->body->base );
         } else if( numNonAggr == 0 ) {
-            // All aggregates, but different types
+            /*  All aggregates, but different types */
             ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
-            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+            return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         } else if( numAggr != 0 ) {
-            // One or more aggregates, one or more nonaggregates
+            /*  One or more aggregates, one or more nonaggregates */
             ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
-            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
-        }   // Else, all are nonaggregates. This is an error.
+            return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
+        }   /*  Else, all are nonaggregates. This is an error. */
     }
     ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
     return( Type_Unknown );

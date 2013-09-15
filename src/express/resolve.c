@@ -274,23 +274,23 @@ void RESOLVEcleanup( void ) {
 */
 Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
     if( TYPEis_select( t_select ) ) {
-        // parse the underlying types
+        /* parse the underlying types */
         LISTdo_links( t_select->u.type->body->list, link )
-        // the current underlying type
+        /* the current underlying type */
         Type t = ( Type ) link->data;
         if( TYPEis_select( t ) ) {
             t_agg = TYPE_retrieve_aggregate( t, t_agg );
         } else if( TYPEis_aggregate( t ) ) {
             if( t_agg ) {
                 if( t_agg != t->u.type->body->base ) {
-                    // 2 underlying types do not have to the same base
+                    /* 2 underlying types do not have to the same base */
                     return 0;
                 }
             } else {
                 t_agg = t->u.type->body->base;
             }
         } else {
-            // the underlying type is neither a select nor an aggregate
+            /* the underlying type is neither a select nor an aggregate */
             return 0;
         }
 
@@ -434,13 +434,13 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             if( !x ) {
                 Scope enumscope = scope;
                 while( 1 ) {
-                    // look up locally, then go through the superscopes
+                    /* look up locally, then go through the superscopes */
                     x = DICTlookup( enumscope->enum_table, expr->symbol.name );
                     if( x ) {
                         break;
                     }
                     if( enumscope->type == OBJ_SCHEMA ) {
-                        //if we get here, this means that we've looked through all scopes
+                        /* if we get here, this means that we've looked through all scopes */
                         x = 0;
                         break;
                     }
@@ -548,7 +548,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             if( TYPEis_aggregate( expr->return_type ) ) {
                 t = expr->u.query->aggregate->return_type->u.type->body->base;
             } else if( TYPEis_select( expr->return_type ) ) {
-                // retrieve the common aggregate type
+                /* retrieve the common aggregate type */
                 t = TYPE_retrieve_aggregate( expr->return_type, 0 );
                 if( !t ) {
                     ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
@@ -851,7 +851,7 @@ void CASE_ITresolve( Case_Item item, Scope scope, Statement statement ) {
 }
 
 void STMTresolve( Statement statement, Scope scope ) {
-    //scope is always the function/procedure/rule from SCOPEresolve_expressions_statements();
+    /* scope is always the function/procedure/rule from SCOPEresolve_expressions_statements(); */
     Scope proc;
 
     if( !statement ) {
@@ -932,7 +932,7 @@ void STMTresolve( Statement statement, Scope scope ) {
             break;
         case STMT_SKIP:
         case STMT_ESCAPE:
-            /* do nothing */ //WARNING should we really *not* do anything for these?
+            /* do nothing */ /* WARNING should we really *not* do anything for these? */
             ;
     }
 }
