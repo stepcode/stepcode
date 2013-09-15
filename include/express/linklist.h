@@ -89,13 +89,19 @@ extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
 #define LINKprev(link)  (link)->prev
 
 /** iteration */
-#define LISTdo(list, elt, type)                                 \
-   {struct Linked_List_ * __l = (list);                         \
-    type        elt;                                            \
-    Link        __p;                                            \
-    if (__l) {                                                  \
-    for (__p = __l->mark; (__p = __p->next) != __l->mark; ) {   \
-        (elt) = (type)((__p)->data);
+#define LISTdo(list, elt, type) LISTdo_n( list, elt, type, a )
+
+/** LISTdo_n: LISTdo with nesting
+ * parameter 'uniq' changes the variable names, allowing us to nest it without -Wshadow warnings
+ */
+#define LISTdo_n(list, elt, type, uniq)                                         \
+   {struct Linked_List_ * _ ## uniq ## l = (list);                              \
+    type        elt;                                                            \
+    Link        _ ## uniq ## p;                                                 \
+    if( _ ## uniq ## l ) {                                                      \
+    for( _ ## uniq ## p = _ ## uniq ## l->mark;                                 \
+       ( _ ## uniq ## p = _ ## uniq ## p->next ) != _ ## uniq ## l->mark; ) {   \
+        ( elt ) = ( type ) ( ( _ ## uniq ## p )->data );
 
 #define LISTdo_links(list, link)                    \
    {Linked_List     __i = (list);                   \
