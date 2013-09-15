@@ -2464,6 +2464,8 @@ while_control(A) ::= TOK_WHILE expression(B).
 %syntax_error {
     Symbol sym;
 
+    (void) yymajor; /* quell unused param warning */
+    (void) yyminor;
     yyerrstatus++;
 
     sym.line = yylineno;

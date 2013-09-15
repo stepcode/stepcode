@@ -1795,7 +1795,7 @@ static void yyStackOverflow(yyParser *yypParser, YYMINORTYPE *yypMinor){
    while( yypParser->yyidx>=0 ) yy_pop_parser_stack(yypParser);
    /* Here code is inserted which will execute if the parser
    ** stack every overflows */
-#line 2478 "expparse.y"
+#line 2480 "expparse.y"
 
     fprintf(stderr, "Express parser experienced stack overflow.\n");
     fprintf(stderr, "Last token had value %x\n", yypMinor->yy0.val);
@@ -4555,6 +4555,8 @@ static void yy_syntax_error(
 
     Symbol sym;
 
+    (void) yymajor; /* quell unused param warning */
+    (void) yyminor;
     yyerrstatus++;
 
     sym.line = yylineno;
@@ -4562,7 +4564,7 @@ static void yy_syntax_error(
 
     ERRORreport_with_symbol(ERROR_syntax, &sym, "",
     CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
-#line 4566 "expparse.c"
+#line 4568 "expparse.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 
