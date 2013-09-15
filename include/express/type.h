@@ -159,7 +159,11 @@ struct TypeBody_ {
         unsigned optional   : 1;
         unsigned fixed      : 1;
         unsigned shared     : 1; /**< type is shared */
-        unsigned repeat     : 1; /**< expression is a repeat count*/
+        unsigned repeat     : 1; /**< Expression is the number of repetitions of the previous Expression
+                                   * 10303-11:2004 production #203
+                                   *   element = expression [ ':' repetition ] .
+                                   * TODO exp2cxx and exp2py do not use this! Are all use cases handled by libexppp?
+                                   */
         unsigned encoded    : 1; /**< encoded string */
     } flags;
     Type base;      /**< underlying base type if any can also contain true type if this type is a type reference */
@@ -189,7 +193,7 @@ extern SC_EXPRESS_EXPORT Type Type_Boolean;
 extern SC_EXPRESS_EXPORT Type Type_Enumeration;
 extern SC_EXPRESS_EXPORT Type Type_Expression;
 extern SC_EXPRESS_EXPORT Type Type_Aggregate;
-extern SC_EXPRESS_EXPORT Type Type_Integer;
+extern SC_EXPRESS_EXPORT Type Type_Repeat;
 extern SC_EXPRESS_EXPORT Type Type_Integer;
 extern SC_EXPRESS_EXPORT Type Type_Number;
 extern SC_EXPRESS_EXPORT Type Type_Real;

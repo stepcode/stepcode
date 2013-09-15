@@ -110,11 +110,10 @@ extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
     (((struct Linked_List_*)list)->mark->next->data)
 
 /** function aliases */
-#define LISTadd(list, item) LISTadd_last(list, item)
 #define LISTadd_all(list, items)                    \
-    LISTdo(items, e, Generic)                       \
-    LISTadd(list, e);                       \
-    LISTod;
+    LISTdo(items, e, Generic) {                     \
+        LISTadd_last(list, e);                      \
+    } LISTod;
 
 /***********************/
 /* function prototypes */

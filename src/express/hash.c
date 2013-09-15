@@ -409,9 +409,7 @@ HASHsearch( Hash_Table table, Element item, Action action ) {
 ** Internal routines
 */
 
-static_inline
-Address
-HASHhash( char * Key, Hash_Table table ) {
+static_inline Address HASHhash( char * Key, Hash_Table table ) {
     Address     h, address;
     register unsigned char * k = ( unsigned char * )Key;
 
@@ -420,6 +418,7 @@ HASHhash( char * Key, Hash_Table table ) {
     ** Convert string to integer
     */
     /*SUPPRESS 112*/
+    assert( Key );
     while( *k )
         /*SUPPRESS 8*/ { /*SUPPRESS 112*/
         h = h * PRIME1 ^ ( *k++ - ' ' );
@@ -432,9 +431,7 @@ HASHhash( char * Key, Hash_Table table ) {
     return( address );
 }
 
-static
-void
-HASHexpand_table( Hash_Table table ) {
+static void HASHexpand_table( Hash_Table table ) {
     Segment OldSegment, NewSegment;
     Element Current, *Previous, *LastOfNew;
 

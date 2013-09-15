@@ -82,12 +82,12 @@ struct Variable_ {
     int         offset;
 
     struct {
-        int optional    : 1; /**< OPTIONAL keyword */
-        int var         : 1; /**< VAR keyword */
-        int constant    : 1; /**< from CONSTANT...END_CONSTANT */
-        int unique      : 1; /**< appears in UNIQUE list */
-        int parameter   : 1; /**< is a formal parameter */
-        int attribute   : 1; /**< is an attribute (rule parameters are marked this way, too) */
+        unsigned int optional    : 1; /**< OPTIONAL keyword */
+        unsigned int var         : 1; /**< VAR keyword */
+        unsigned int constant    : 1; /**< from CONSTANT...END_CONSTANT */
+        unsigned int unique      : 1; /**< appears in UNIQUE list */
+        unsigned int parameter   : 1; /**< is a formal parameter */
+        unsigned int attribute   : 1; /**< is an attribute (rule parameters are marked this way, too) */
     } flags;
 
 #define query_symbol inverse_symbol
