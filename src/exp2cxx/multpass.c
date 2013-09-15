@@ -200,7 +200,7 @@ static void initializeMarks( Express express )
 }
 
 static void cleanupMarks( Express express ) {
-    DictionaryEntry de_sch, de_ent, de_type;
+    DictionaryEntry de_sch;
     Schema schema;
 
     DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
