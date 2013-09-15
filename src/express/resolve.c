@@ -115,7 +115,7 @@ static bool found_self;  /**< remember whether we've seen a SELF in a WHERE clau
 
 static int WHEREresolve PROTO( ( Linked_List, Scope, int ) );
 extern void VAR_resolve_expressions PROTO( ( Variable, Entity ) );
-extern void VAR_resolve_types PROTO( ( Variable, Entity ) );
+extern void VAR_resolve_types PROTO( ( Variable v ) );
 
 /** Initialize the Fed-X second pass. */
 void RESOLVEinitialize( void ) {
@@ -676,13 +676,13 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
         resolve_in_progress( type );
 
         if( TYPEis_aggregate( type ) ) {
-            TYPEresolve( &body->base, scope );
+            TYPEresolve( &body->base );
             /* only really critical failure point for future use */
             /* of this type is the base type, ignore others (above) */
             type->symbol.resolved = body->base->symbol.resolved;
         } else if( TYPEis_select( type ) ) {
             LISTdo_links( body->list, link )
-            TYPEresolve( ( Type * )&link->data, scope );
+            TYPEresolve( ( Type * )&link->data );
             if( is_resolve_failed( ( Type )link->data ) ) {
                 resolve_failed( type );
                 break;
@@ -693,7 +693,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
         /* simple type definition such as "TYPE T = U" */
         resolve_in_progress( type );
 
-        TYPEresolve( &type->u.type->head, scope );
+        TYPEresolve( &type->u.type->head );
 
         if( !is_resolve_failed( type->u.type->head ) ) {
             if( ERRORis_enabled( ERROR_type_is_entity ) ) {
@@ -727,7 +727,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
             /* if (type->refcount--) TYPE_destroy(type); */
 
             type = *typeaddr = ref_type;
-            TYPEresolve( typeaddr, scope ); /* addr doesn't matter here */
+            TYPEresolve( typeaddr ); /* addr doesn't matter here */
             /* it will not be written through */
         } else if( DICT_type == OBJ_ENTITY ) {
             /* if (type->refcount--) TYPE_destroy(type); see above */
@@ -766,14 +766,13 @@ void VAR_resolve_expressions( Variable v, Entity entity /* was scope */ ) {
 
 /**
 ** \param v variable to resolve
-** \param entity entity in which to resolve
 **
 ** Resolve all references in a variable definition.
 */
-void VAR_resolve_types( Variable v, Entity entity /* was scope */ ) {
+void VAR_resolve_types( Variable v ) {
     int failed = 0;
 
-    TYPEresolve( &v->type, entity );
+    TYPEresolve( &v->type );
     failed = is_resolve_failed( v->type );
 
     if( v->inverse_symbol && ( !v->inverse_attribute ) ) {
@@ -1153,7 +1152,7 @@ void SCOPEresolve_types( Scope s ) {
             case OBJ_VARIABLE:  /* really constants */
                 var = ( Variable )x;
                 /* before OBJ_BITS hack, we looked in s->superscope */
-                TYPEresolve( &var->type, s );
+                TYPEresolve( &var->type );
                 if( is_resolve_failed( var->type ) ) {
                     resolve_failed( var->name );
                     resolve_failed( s );
@@ -1188,7 +1187,7 @@ void SCOPEresolve_types( Scope s ) {
         }
     }
     if( s->type == OBJ_FUNCTION ) {
-        TYPEresolve( &s->u.func->return_type, s->superscope );
+        TYPEresolve( &s->u.func->return_type );
     }
 }
 
@@ -1223,7 +1222,7 @@ void SCOPEresolve_subsupers( Scope scope ) {
                 break;
             case OBJ_TYPE:
                 t = ( Type )x;
-                TYPEresolve( &t, scope );
+                TYPEresolve( &t );
                 break;
             default:
                 /* ignored everything else */
@@ -1321,7 +1320,7 @@ void ENTITYresolve_types( Entity e ) {
 
     LISTdo( e->u.entity->attributes, att, Variable ) {
         /* resolve in context of superscope to allow "X : X;" */
-        VARresolve_types( att, e );
+        VARresolve_types( att );
         failed |= is_resolve_failed( att->name );
     } LISTod;
 
