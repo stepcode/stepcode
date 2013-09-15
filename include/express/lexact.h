@@ -110,11 +110,11 @@ extern SC_EXPRESS_EXPORT int  SCANprocess_string PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT int  SCANprocess_encoded_string PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT int  SCANprocess_semicolon PROTO( ( const char *, int ) );
 extern SC_EXPRESS_EXPORT void SCANsave_comment PROTO( ( const char * ) );
-extern SC_EXPRESS_EXPORT bool  SCANread PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT bool SCANread PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT void SCANinclude_file PROTO( ( char * ) );
-SC_EXPRESS_EXPORT void        SCANlowerize PROTO( ( char * ) );
-SC_EXPRESS_EXPORT void        SCANupperize PROTO( ( char * ) );
-extern SC_EXPRESS_EXPORT char  *  SCANstrdup PROTO( ( char * ) );
+       SC_EXPRESS_EXPORT void SCANlowerize PROTO( ( char * ) );
+       SC_EXPRESS_EXPORT void SCANupperize PROTO( ( char * ) );
+extern SC_EXPRESS_EXPORT char  *  SCANstrdup PROTO( ( const char * ) );
 extern SC_EXPRESS_EXPORT long SCANtell PROTO( ( void ) );
 
 #endif /* LEX_ACTIONS_H */

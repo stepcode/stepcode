@@ -334,11 +334,10 @@ SCANprocess_logical_literal( char * string ) {
 
 int
 SCANprocess_identifier_or_keyword( const char * yytext ) {
-    char * test_string;
+    char * test_string, * dest;
+    const char * src;
     struct keyword_entry * k;
-
     int len;
-    char * src, *dest;
 
     /* make uppercase copy */
     len = strlen( yytext );
@@ -554,8 +553,7 @@ SCANupperize( char * s ) {
     }
 }
 
-char *
-SCANstrdup( char * s ) {
+char * SCANstrdup( const char * s ) {
     char * s2 = ( char * )sc_malloc( strlen( s ) + 1 );
     if( !s2 ) {
         return 0;
