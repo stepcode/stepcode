@@ -1486,17 +1486,6 @@ static int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     }
 }
 
-/* should only be called on types known to be tagged! */
-static char * TYPEget_tagname( Type type ) {
-    for( ; type; type = type->u.type->body->base ) {
-        if( type->u.type->body->tag ) {
-            return type->u.type->body->tag->symbol.name;
-        }
-    }
-    /* can't happen */
-    return 0;
-}
-
 struct tag * TAGcreate_tags() {
     extern int tag_count;
 

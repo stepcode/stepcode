@@ -134,7 +134,6 @@ extern SC_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) )
 extern SC_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTadd_before PROTO( ( Linked_List, Link, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTremove_first PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Generic  LISTremove PROTO( ( Linked_List, Link ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_first PROTO( ( Linked_List ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );

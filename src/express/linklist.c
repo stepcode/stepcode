@@ -134,17 +134,6 @@ Generic LISTremove_first( Linked_List list ) {
     return item;
 }
 
-/* 1st arg is historical and can be removed */
-Generic LISTremove( Linked_List list, Link link ) {
-    Generic     item;
-
-    link->next->prev = link->prev;
-    link->prev->next = link->next;
-    item = link->data;
-    LINK_destroy( link );
-    return item;
-}
-
 Generic LISTget_first( Linked_List list ) {
     Link node;
     Generic item;
