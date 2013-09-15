@@ -291,7 +291,7 @@ static int checkTypes( Schema schema )
                     // processable.  It checks for conditions which would
                     // make this true and sets values in type, schema, and
                     // unknowncnt accordingly.  (See checkItem's commenting
-                    // below.)  It also return TRUE if i has made type un-
+                    // below.)  It also return TRUE if ii has made type un-
                     // processable.  If so, we break - there's no point
                     // checking the other items of type any more. */
                 } else {

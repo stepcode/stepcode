@@ -127,9 +127,9 @@ compareOrigTypes( Type a, Type b ) {
                 || ( TYPEis_enumeration( t ) && TYPEis_enumeration( u ) ) ) ) {
             return FALSE;
             /* Only go further with 1D aggregates of sels or enums.  Note that
-            // for 2D aggrs and higher we do not continue.  These are all recog-
-            // nized to be the same type ("GenericAggregate") by TYPEget_ctype(),
-            // and do not have to be handled specially here. */
+               for 2D aggrs and higher we do not continue.  These are all recog-
+               nized to be the same type ("GenericAggregate") by TYPEget_ctype(),
+               and do not have to be handled specially here. */
         }
     } else {
         return FALSE;
@@ -818,7 +818,7 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     fprintf( f, "    *logStream << \"DAVE ERR entering %s constructor.\" << std::endl;\n", n );
     fprintf( f, "    }\n#endif\n" );
 
-    //create objects for data member pointers. also in two more ctors below, and deleted in dtor which is printed at end of this function.
+    /* create objects for data member pointers. also in two more ctors below, and deleted in dtor which is printed at end of this function. */
     LISTdo( dups, t, Type ) {
         if( isAggregateType( t ) && t->u.type->body->base ) {
             fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
@@ -926,9 +926,9 @@ TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
     }
     LISTod;
 
-    //dtor
+    /* dtor */
     fprintf( f, "%s::~%s()\n{\n", n, n );
-    //delete objects that data members point to
+    /* delete objects that data members point to */
     LISTdo( dups, t, Type ) {
         if( isAggregateType( t ) && t->u.type->body->base ) {
             fprintf( f, "   if( _%s ) {\n", SEL_ITEMget_dmname( t ) );
@@ -1445,12 +1445,13 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
         case select_:
             fprintf( f, "        _%s.STEPwrite (out, currSch);\n", dm );
             /* Select type needs currSch passed too.  A Select writes the name of its
-            // current choice when it writes itself out (e.g. "DATA(33.5)").  Since
-            // the current choice name may depend on our current schema (it may be a
-            // schema which USEs "DATA" and renames it to "VAL"), we pass currSch. */
+               current choice when it writes itself out (e.g. "DATA(33.5)").  Since
+               the current choice name may depend on our current schema (it may be a
+               schema which USEs "DATA" and renames it to "VAL"), we pass currSch.
+             */
             break;
 
-            // aggregate, array, bag, set, and list were above with string, binary, etc. moved them because they will be pointers
+            /*  aggregate, array, bag, set, and list were above with string, binary, etc. moved them because they will be pointers */
         case aggregate_:
         case array_:
         case bag_:
@@ -1997,9 +1998,10 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
 
 
     /* Check if we're a renamed type, e.g., TYPE B (sel) = A.  If so, if A has
-    // been defined, we process B differently (with a couple of typedef's -
-    // some are printed in files->classes rather than here).  If A has not been
-    // defined, we must recurse. */
+       been defined, we process B differently (with a couple of typedef's -
+       some are printed in files->classes rather than here).  If A has not been
+       defined, we must recurse.
+     */
     if( ( i = TYPEget_ancestor( t ) ) != NULL ) {
         if( !TYPEget_clientData( i ) ) {
             TYPEselect_print( i, files, schema );
@@ -2009,10 +2011,11 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
         fprintf( inc, "typedef %s *        %sH;\n", nm, nm );
         fprintf( inc, "typedef %s_ptr *    %s_var;\n", nm, nm );
         /* Below are specialized create functions for the renamed sel type (both
-        // single and aggregate).  The functions call the original sel's con-
-        // structor, passing the new sel's typedescriptor to create a hybrid
-        // entity - the original select pointing to a new typedesc.   These fns
-        // give the user an easy way to create the renamed type properly. */
+           single and aggregate).  The functions call the original sel's con-
+           structor, passing the new sel's typedescriptor to create a hybrid
+           entity - the original select pointing to a new typedesc.   These fns
+           give the user an easy way to create the renamed type properly.
+         */
         fprintf( inc, "inline SDAI_Select *\ncreate_%s ()", nm );
         fprintf( inc, " { return new %s( %s ); }\n\n", nm, tdnm );
         fprintf( inc, "inline STEPaggregate *\ncreate_%s_agg ()", nm );

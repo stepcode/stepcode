@@ -52,11 +52,11 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define TYPEtd_name(t)       TypeDescriptorName (t)
 
 typedef  struct file_holder  {
-    FILE * inc;                ///<  include file
-    FILE * lib;                ///<  library file
-    FILE * incall;             ///<  include file for collecting all include files
-    FILE * initall;            ///<  for registering all entities from all schemas
-    FILE * init;               ///<  contains function to initialize program to use schema's entities
+    FILE * inc;                /**<  include file */
+    FILE * lib;                /**<  library file */
+    FILE * incall;             /**<  include file for collecting all include files */
+    FILE * initall;            /**<  for registering all entities from all schemas */
+    FILE * init;               /**<  contains function to initialize program to use schema's entities */
     FILE * create;             /**<  DAR - added - to create all schema & ent descriptors.  In multiple
                                 *    interrelated schemas, must be done before attribute descriptors and
                                 *    sub-super links created.
@@ -65,7 +65,7 @@ typedef  struct file_holder  {
                                 *    classes, so that all the .h files can refer any of the entity classes.
                                 *    Nec. if ent1 of schemaA has attribute ent2 from schemaB.
                                 */
-    FILE * names;               ///< MAP Nov 2011 - header with namespace for entity and attr descriptors
+    FILE * names;               /**< MAP Nov 2011 - header with namespace for entity and attr descriptors */
     FILE * helpers;             /**< MAP Mar 2012 - header with inline helper functions. Currently only used for
                                      helper functions to find runtime aggregate bounds */
 }  File_holder, FILES;
@@ -75,9 +75,9 @@ typedef  struct file_holder  {
  */
 typedef struct EntityTag_ * EntityTag;
 struct EntityTag_ {
-    unsigned int  started : 1;   ///<  marks the beginning of processing
-    unsigned int  complete : 1;  ///<  marks the end of processing
-    Entity        superclass;    ///< the entity being used as the supertype - with multiple inheritance only chose one
+    unsigned int  started : 1;   /**<  marks the beginning of processing */
+    unsigned int  complete : 1;  /**<  marks the end of processing */
+    Entity        superclass;    /**< the entity being used as the supertype - with multiple inheritance only chose one */
 };
 
 Entity          ENTITYget_superclass( Entity entity );
@@ -85,11 +85,11 @@ Entity          ENTITYput_superclass( Entity entity );
 int             ENTITYhas_explicit_attributes( Entity e );
 void            ENTITYget_first_attribs( Entity entity, Linked_List result );
 
-///these fields are used so that SELECT types are processed in order
+/** these fields are used so that SELECT types are processed in order */
 typedef struct SelectTag_ * SelectTag;
 struct SelectTag_ {
-    unsigned int started : 1;   ///<  marks the beginning of processing
-    unsigned int complete : 1;  ///<  marks the end of processing
+    unsigned int started : 1;   /**<  marks the beginning of processing */
+    unsigned int complete : 1;  /**<  marks the end of processing */
 };
 
 const char   *  GetTypeDescriptorName( Type t );
