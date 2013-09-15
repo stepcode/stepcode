@@ -123,9 +123,6 @@ YYSTYPE yylval;
 
     int yylineno;
 
-
-    static void    yyerror(const char*, char *string);
-
     bool yyeof = false;
 
 #define MAX_SCOPE_DEPTH    20    /* max number of scopes that can be nested */

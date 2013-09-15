@@ -110,7 +110,6 @@
 
 enum { INITIAL, code, comment, return_end_schema };
 
-extern void	yyerror();
 extern int	yylineno;
 extern bool	yyeof;
 static int	nesting_level = 0;
