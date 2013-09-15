@@ -124,7 +124,7 @@ void format_for_std_stringout( FILE * f, char * orig_buf ) {
         }
         optr++;
     }
-    fprintf( f,  s_end );
+    fprintf( f, "%s", s_end );
     sc_free( orig_buf );
 }
 
