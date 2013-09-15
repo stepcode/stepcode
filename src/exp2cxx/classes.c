@@ -701,7 +701,7 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
     return;
 }
 
-void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
+void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
@@ -747,7 +747,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
 
     if( isAggregate( a ) ) {
-        AGGRprint_access_methods( entnm, a, file, t, ctype, attrnm );
+        AGGRprint_access_methods( entnm, a, file, ctype, attrnm );
         return;
     }
     ATTRprint_access_methods_get_head( entnm, a, file );
@@ -1030,7 +1030,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
  * Nov 2011 - MAP - This function was split out of ENTITYhead_print to enable
  *                  use of a separate header with a namespace.
  */
-void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
+void ENTITYnames_print( Entity entity, FILE * file ) {
     char attrnm [BUFSIZ];
     int attr_count_tmp = attr_count;
 
@@ -1063,7 +1063,7 @@ void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
  **          remove extern keyword - MAP - Nov 2011
  **          split out stuff in namespace to ENTITYdesc_print - MAP - Nov 2011
  ******************************************************************/
-void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
+void ENTITYhead_print( Entity entity, FILE * file ) {
     char entnm [BUFSIZ];
     Linked_List list;
     Entity super = 0;
@@ -1143,7 +1143,7 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
  ** Side Effects:  generates c++ code
  ** Status:  ok 1/15/91
  ******************************************************************/
-void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
+void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     Linked_List attr_list;
     char entnm [BUFSIZ];
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
@@ -1355,9 +1355,9 @@ void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file 
  ** Side Effects:  prints segment of the c++ .h file
  ** Status:  ok 1/15/91
  ******************************************************************/
-void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
-    ENTITYhead_print( entity, file, schema );
-    DataMemberPrint( entity, neededAttr, file, schema );
+void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file ) {
+    ENTITYhead_print( entity, file );
+    DataMemberPrint( entity, neededAttr, file );
     MemberFunctionSign( entity, neededAttr, file );
 }
 
@@ -2315,11 +2315,11 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     }
 
     fprintf( files->inc,   "\n/////////         ENTITY %s\n", n );
-    ENTITYinc_print( entity, remaining, files -> inc, schema );
+    ENTITYinc_print( entity, remaining, files -> inc );
     fprintf( files->inc,     "/////////         END_ENTITY %s\n", n );
 
     fprintf( files->names, "\n/////////         ENTITY %s\n", n );
-    ENTITYnames_print( entity, files -> names, schema );
+    ENTITYnames_print( entity, files -> names );
     fprintf( files->names,   "/////////         END_ENTITY %s\n", n );
 
     fprintf( files->lib,   "\n/////////         ENTITY %s\n", n );
@@ -2543,7 +2543,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     fprintf( files->classes, "#define %s__set_var     SDAI_DAObject__set_var\n", n );
 }
 
-void MODELprint_new( Entity entity, FILES * files, Schema schema ) {
+void MODELprint_new( Entity entity, FILES * files ) {
     const char * n;
 
     n = ENTITYget_classname( entity );
@@ -3302,7 +3302,7 @@ void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
     /* DAR - moved fn call below from TYPEselect_print to here to put all init
     ** info together. */
     if( TYPEis_select( type ) ) {
-        TYPEselect_init_print( type, files->init, schema );
+        TYPEselect_init_print( type, files->init );
     }
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */

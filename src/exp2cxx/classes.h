@@ -117,9 +117,9 @@ void            TYPEprint_descriptions( const Type, FILES *, Schema );
 void            TYPEprint_init( const Type type, FILES * files, Schema schema );
 void            AGGRprint_init( FILES * files, const Type t,
                                 const char * var_name, const char * aggr_name );
-void            TYPEselect_init_print( const Type, FILE *, Schema );
+void            TYPEselect_init_print( const Type type, FILE* f );
 void            MODELPrint( Entity, FILES *, Schema, int );
-void            MODELprint_new( Entity, FILES *, Schema );
+void            MODELprint_new( Entity entity, FILES* files );
 void            MODELPrintConstructorBody( Entity, FILES *, Schema/*, int*/ );
 const char   *  PrettyTmpName( const char * oldname );
 const char   *  EnumName( const char * oldname );
@@ -130,7 +130,7 @@ const char   *  AccessType( Type t );
 const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
-void            SCHEMAprint( Schema, FILES *, Express, void *, int );
+void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
 Type            TYPEget_ancestor( Type );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 

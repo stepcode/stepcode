@@ -794,8 +794,7 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
 TYPEselect_lib_print_part_one prints constructor(s)/destructor of a select
 class.
 *******************/
-void
-TYPEselect_lib_print_part_one( const Type type, FILE * f, Schema schema,
+void TYPEselect_lib_print_part_one( const Type type, FILE * f,
                                Linked_List dups, char * n ) {
 #define schema_name SCHEMAget_name(schema)
     char tdnm[BUFSIZ],
@@ -1033,7 +1032,7 @@ a select class -- access functions for the data members of underlying entity
 types.
 *******************/
 void
-TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
+TYPEselect_lib_print_part_three( const Type type, FILE * f,
                                  char * classnm ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
@@ -1223,15 +1222,11 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
     LISTfree( attrs );
 }
 
-/*******************
-TYPEselect_lib_print_part_four prints part 4 of the SDAI document of a select
-class.
-*******************/
-void
-TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
-                                Linked_List dups, char * n ) {
+/**
+ * TYPEselect_lib_print_part_four prints part 4 of the SDAI document of a select class.
+ */
+void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups, char * n ) {
     char x[BUFSIZ];
-    int firsttime = 1;
 
     fprintf( f, "\n    //  part 4\n" );
 
@@ -1348,28 +1343,6 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
     fprintf( f, "   underlying_type = o.CurrentUnderlyingType ();\n" );
     fprintf( f, "   return *this;\n}\n\n" );
     fprintf( f, "#endif\n" );
-
-#ifdef JNK
-    /*  define ShallowCopy because operator= does not always act virtual  */
-    fprintf( f, "SDAI_Select& %s::ShallowCopy ( const SDAI_Select& o )\n{\n", n );
-
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
-    fprintf( f, "   if( o.CurrentUnderlyingType () == %s )\n",
-             TYPEtd_name( t ) );
-    if( utype_member( dups, t, 1 ) )
-        /**  if in the dup list  **/
-        fprintf( f, "      _%s = o._%s;\n",
-                 SEL_ITEMget_dmname( t ),
-                 StrToLower( TYPEget_utype( t ) ) );
-    else
-        fprintf( f, "    _%s =  o._%s;\n",
-                 SEL_ITEMget_dmname( t ),
-                 SEL_ITEMget_dmname( t ) );
-    LISTod;
-    fprintf( f, "   underlying_type = o.CurrentUnderlyingType ();\n" );
-    fprintf( f, "   return *this;\n}\n" );
-#endif
 }
 
 
@@ -1378,7 +1351,7 @@ TYPEselect_init_print prints the types that belong to the select type
 *******************/
 
 void
-TYPEselect_init_print( const Type type, FILE * f, Schema schema ) {
+TYPEselect_init_print( const Type type, FILE * f ) {
 #define schema_name SCHEMAget_name(schema)
     LISTdo( SEL_TYPEget_items( type ), t, Type )
 
@@ -1391,7 +1364,7 @@ TYPEselect_init_print( const Type type, FILE * f, Schema schema ) {
 }
 
 void
-TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
+TYPEselect_lib_part21( const Type type, FILE * f ) {
     char n[BUFSIZ];       /*  pointers to class name(s)  */
     const char * dm;  /*  data member name */
     Linked_List data_members = SELgetnew_dmlist( type );
@@ -1669,8 +1642,7 @@ TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
 }
 
 
-void
-TYPEselect_lib_StrToVal( const Type type, FILE * f, Schema schema ) {
+void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
     char n[BUFSIZ];       /*  pointers to class name  */
     Linked_List data_members = SELgetnew_dmlist( type );
     int enum_cnt = 0;
@@ -1762,13 +1734,12 @@ TYPEselect_lib_StrToVal( const Type type, FILE * f, Schema schema ) {
 }
 
 void
-TYPEselect_lib_virtual( const Type type, FILE * f, Schema schema ) {
-    TYPEselect_lib_part21( type, f,  schema );
-    TYPEselect_lib_StrToVal( type, f,  schema );
+TYPEselect_lib_virtual( const Type type, FILE * f ) {
+    TYPEselect_lib_part21( type, f );
+    TYPEselect_lib_StrToVal( type, f );
 }
 
-void
-SELlib_print_protected( const Type type,  FILE * f, const Schema schema ) {
+void SELlib_print_protected( const Type type,  FILE * f ) {
     const char * snm;
 
     /*  SELECT::AssignEntity  */
@@ -1834,7 +1805,7 @@ TYPEselect_lib_print prints the member functions (definitions) of a select
 class.
 *******************/
 void
-TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
+TYPEselect_lib_print( const Type type, FILE * f ) {
     char n[BUFSIZ], m[BUFSIZ];
     const char * z; /*  pointers to class name(s)  */
     Linked_List dups;
@@ -1844,9 +1815,9 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
     strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
     fprintf( f, "\n//////////  SELECT TYPE %s\n", TYPEget_name( type ) );
 
-    SELlib_print_protected( type,  f,  schema )  ;
-    TYPEselect_lib_virtual( type, f, schema );
-    TYPEselect_lib_print_part_one( type, f, schema, dups, n );
+    SELlib_print_protected( type,  f )  ;
+    TYPEselect_lib_virtual( type, f );
+    TYPEselect_lib_print_part_one( type, f, dups, n );
 
     fprintf( f, "\n    //  part 2\n" );
 
@@ -1906,8 +1877,8 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
         }
     } LISTod
 
-    TYPEselect_lib_print_part_three( type, f, schema, n );
-    TYPEselect_lib_print_part_four( type, f, schema, dups, n );
+    TYPEselect_lib_print_part_three( type, f, n );
+    TYPEselect_lib_print_part_four( type, f, dups, n );
 
     fprintf( f, "\n    //  part 5\n" );
     LISTdo( SEL_TYPEget_items( type ), t, Type )
@@ -1977,7 +1948,7 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
     FILE * inc = files->inc;
 
     /*  if type is already marked, return  */
-    if( tmp = ( SelectTag ) TYPEget_clientData( t ) ) {
+    if( ( tmp = ( SelectTag ) TYPEget_clientData( t ) ) ) {
         if( ( tmp ->started ) && ( ! tmp ->complete ) )
             fprintf( stderr, "WARNING:  SELECT type %s causes circular references\n",
                      TYPEget_name( t ) );
@@ -2051,7 +2022,7 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
     } LISTod
 
     TYPEselect_inc_print( t, files -> inc );
-    TYPEselect_lib_print( t, files -> lib, schema );
+    TYPEselect_lib_print( t, files -> lib );
     /* TYPEselect_init_print (t, files -> init, schema);
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;

@@ -109,10 +109,9 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
                         // will create files with the suffixes "_1", "_2", etc.
                         // If not, no file suffix will be added. */
                         suffix = ++*( int * )schema->clientData;
-                        SCHEMAprint( schema, files, express, complexCol,
-                                     suffix );
+                        SCHEMAprint( schema, files, complexCol, suffix );
                     } else {
-                        SCHEMAprint( schema, files, express, complexCol, 0 );
+                        SCHEMAprint( schema, files, complexCol, 0 );
                     }
                 }
                 complete = complete && ( schema->search_id == PROCESSED );
