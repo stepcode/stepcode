@@ -84,6 +84,7 @@
 #include "expparse.h"
 #include "expscan.h"
 #include "parse_data.h"
+#include "express/lexact.h"
 
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
@@ -609,6 +610,9 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
     PARSERrun( filename, model->u.express->file = fp );
 }
 
+/* TODO LEMON ought to put this in expparse.h */
+void parserInitState();
+
 /** start parsing a new schema file */
 static Express PARSERrun( char * filename, FILE * fp ) {
     extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
@@ -633,7 +637,8 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     parserInitState();
 
     yyerrstatus = 0;
-//     ParseTrace( stderr, "- expparse - " ); //NOTE uncomment this to enable parser tracing
+    /* NOTE uncomment the next line to enable parser tracing */
+    /* ParseTrace( stderr, "- expparse - " ); */
     while( ( tokenID = yylex( scanner ) ) > 0 ) {
         Parse( parser, tokenID, yylval, parseData );
     }
@@ -660,8 +665,10 @@ static void RENAMEresolve( Rename * r, Schema s );
  * find the final object to which a rename points
  * i.e., follow chain of USEs or REFs
  * sets DICT_type
+ *
+ * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
-static Generic SCOPEfind_for_rename( Scope schema, char * name, enum rename_type type ) {
+static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
     Generic result;
     Rename * rename;
 
@@ -674,13 +681,13 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name, enum rename_type
     }
 
     /* Occurs in a fully USE'd schema? */
-    LISTdo( schema->u.schema->use_schemas, schema, Schema )
-    /* follow chain'd USEs */
-    result = SCOPEfind_for_rename( schema, name, use );
-    if( result ) {
-        return( result );
-    }
-    LISTod;
+    LISTdo( schema->u.schema->use_schemas, use_schema, Schema ) {
+        /* follow chain'd USEs */
+        result = SCOPEfind_for_rename( use_schema, name );
+        if( result ) {
+            return( result );
+        }
+    } LISTod;
 
     /* Occurs in a partially USE'd schema? */
     rename = ( Rename * )DICTlookup( schema->u.schema->usedict, name );
@@ -725,7 +732,7 @@ static void RENAMEresolve( Rename * r, Schema s ) {
     }
     resolve_in_progress_raw( r->old );
 
-    remote = SCOPEfind_for_rename( r->schema, r->old->name, r->rename_type );
+    remote = SCOPEfind_for_rename( r->schema, r->old->name );
     if( remote == 0 ) {
         ERRORreport_with_symbol( ERROR_ref_nonexistent, r->old,
                                  r->old->name, r->schema->symbol.name );
@@ -891,24 +898,24 @@ void EXPRESSresolve( Express model ) {
     /* add news schemas to end, drop old ones off the front as we */
     /* process them. */
 
-    LISTdo( PARSEnew_schemas, schema, Schema )
-    if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-        fprintf( stdout, "pass %d: %s (schema)\n",
-                 EXPRESSpass, schema->symbol.name );
-    }
+    LISTdo( PARSEnew_schemas, print_schema, Schema ) {
+        if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
+            fprintf( stdout, "pass %d: %s (schema)\n",
+                    EXPRESSpass, print_schema->symbol.name );
+        }
 
-    if( schema->u.schema->uselist )
-        connect_lists( model->symbol_table,
-                       schema, schema->u.schema->uselist );
-    if( schema->u.schema->reflist )
-        connect_lists( model->symbol_table,
-                       schema, schema->u.schema->reflist );
+        if( print_schema->u.schema->uselist )
+            connect_lists( model->symbol_table,
+                        print_schema, print_schema->u.schema->uselist );
+        if( print_schema->u.schema->reflist )
+            connect_lists( model->symbol_table,
+                        print_schema, print_schema->u.schema->reflist );
 
-    connect_schema_lists( model->symbol_table,
-                          schema, schema->u.schema->use_schemas );
-    connect_schema_lists( model->symbol_table,
-                          schema, schema->u.schema->ref_schemas );
-    LISTod;
+        connect_schema_lists( model->symbol_table,
+                            print_schema, print_schema->u.schema->use_schemas );
+        connect_schema_lists( model->symbol_table,
+                            print_schema, print_schema->u.schema->ref_schemas );
+    } LISTod;
 
     LISTfree( PARSEnew_schemas );
     PARSEnew_schemas = 0;   /* just in case */

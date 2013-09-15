@@ -25,7 +25,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 extern char * sc_version();
 
 extern int multiple_inheritance;
-/*extern int corba_binding; */
 
 /******************************************************************
 **      The following functions will be used        ***
@@ -352,12 +351,6 @@ AccessType( Type t ) {
     static char nm [BUFSIZ];
     strncpy( nm, TypeName( t ), BUFSIZ - 4 );
     if( TYPEis_entity( t ) ) {
-        /*  if(corba_binding)
-            {
-                if (TYPEget_name (t))
-                  strncpy (nm, FirstToUpper (TYPEget_name (t)), BUFSIZ-1);
-            }
-        */
         strcat( nm, "_ptr" );
         return nm;
     } else if( TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
