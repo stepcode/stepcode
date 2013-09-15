@@ -1,15 +1,18 @@
-#use git for a pretty commit id
-#uses 'git describe --tags', so tags are required in the repo
-#create a tag with 'git tag <name>' and 'git push --tags'
+# creates sc_version_string.h, which defines sc_version()
+# sc_version() returns a pretty commit description and a build timestamp.
 
 # http://stackoverflow.com/questions/3780667
 # http://www.cmake.org/pipermail/cmake/2009-February/027014.html
 
-#sc_version_string.h defines sc_version() which returns a pretty commit description and a build timestamp.
 
 set(SC_IS_SUBBUILD "@SC_IS_SUBBUILD@")
 
-#---------- find version ------------------
+#---------- find commit id ------------------
+#use git for a pretty commit id
+#uses 'git describe --tags', so tags are required in the repo
+#create a tag with 'git tag <name>' and 'git push --tags'
+#if git can't be found, uses contents of SC_VERSION.txt
+
 set(VERS_FILE ${SOURCE_DIR}/SC_VERSION.txt )
 if( EXISTS ${SOURCE_DIR}/.git )
     find_package(Git QUIET)
@@ -36,8 +39,8 @@ else()
 endif()
 string( REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COMMIT_ID} )
 
-#-------------- Date and time ---------------
-#cmake 2.8.11 and up only
+#-------------- date and time ---------------
+#once cmake_minimum_required is >= 2.8.11, we can use TIMESTAMP:
 #string( TIMESTAMP date_time_string )
 
 if( UNIX )
@@ -56,13 +59,14 @@ endif()
 set( header_string "/* sc_version_string.h - written by cmake. Changes will be lost! */\n"
              "#ifndef SC_VERSION_STRING\n"
              "#define SC_VERSION_STRING\n\n"
-             "/*\n** Returns a string like \"test-1-g5e1fb47, build timestamp <timestamp>\", where test is the\n"
+             "/*\n** The git commit id looks like \"test-1-g5e1fb47\", where test is the\n"
              "** name of the last tagged git revision, 1 is the number of commits since that tag,\n"
-             "** 'g' is unknown, 5e1fb47 is the first 7 chars of the git sha1 commit id, and <timestamp>\n"
-             "** is a string on known platforms and preprocessor macros elsewhere.\n*/\n\n"
-             "const char* sc_version() {\n"
-             "    return \"git commit id ${GIT_COMMIT_ID}, build timestamp ${date_time_string}\"\;\n"
-             "}\n\n"
+             "** 'g' is unknown, and 5e1fb47 is the first 7 chars of the git sha1 commit id.\n"
+             "** timestamp is created from date/time commands on known platforms, and uses\n"
+             "** preprocessor macros elsewhere.\n*/\n\n"
+             "static char sc_version[512] = {\n"
+             "    \"git commit id: ${GIT_COMMIT_ID}, build timestamp ${date_time_string}\"\n"
+             "}\;\n\n"
              "#endif\n"
    )
 

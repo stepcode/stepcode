@@ -312,7 +312,7 @@ char * SCHEMAout( Schema s ) {
     for( hp = expheader; *hp; hp++ ) {
         if( ( **hp == '\0' ) && ( **(hp + 1) == '\0' ) ) {
             /* if this and the next lines are blank, put version string on this line */
-            raw( "%s\n", sc_version() );
+            raw( "%s\n", sc_version );
         } else {
             raw( "%s\n", *hp );
         }

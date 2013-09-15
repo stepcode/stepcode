@@ -90,7 +90,7 @@ char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz"; /* larger than the string b
 static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
 void print_fedex_version( void ) {
-    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, sc_version() );
+    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, sc_version );
     no_need_to_work = 1;
 }
 
