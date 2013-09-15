@@ -161,12 +161,12 @@ void ERRORcreate_warning( char * name, Error error ) {
     struct Error_Warning_ *o;
 
     /* first check if we know about this type of error */
-    LISTdo( ERRORwarnings, opt, Error_Warning )
-    if( streq( name, opt->name ) ) {
-        LISTadd_last( opt->errors, ( Generic )error );
-        return;
-    }
-    LISTod
+    LISTdo( ERRORwarnings, opt, Error_Warning ) {
+        if( streq( name, opt->name ) ) {
+            LISTadd_last( opt->errors, ( Generic )error );
+            return;
+        }
+    } LISTod
 
     /* new error */
     o = ERROR_OPT_new();
