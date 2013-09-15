@@ -107,7 +107,7 @@ YYSTYPE yylval;
 
     extern int print_objects_while_running;
 
-    int tag_count;	/* use this to count tagged GENERIC types in the formal */
+    int tag_count;    /* use this to count tagged GENERIC types in the formal */
     /* argument lists.  Gross, but much easier to do it this */
     /* way then with the 'help' of yacc. */
     /* Set it to -1 to indicate that tags cannot be defined, */
@@ -116,10 +116,10 @@ YYSTYPE yylval;
     /* there's a gross hack sitting around, we might as well */
     /* milk it for all it's worth!  -snc */
 
-    Express yyexpresult;	/* hook to everything built by parser */
+    Express yyexpresult;    /* hook to everything built by parser */
 
-    Symbol *interface_schema;	/* schema of interest in use/ref clauses */
-    void (*interface_func)();	/* func to attach rename clauses */
+    Symbol *interface_schema;    /* schema of interest in use/ref clauses */
+    void (*interface_func)();    /* func to attach rename clauses */
 
     /* record schemas found in a single parse here, allowing them to be */
     /* differentiated from other schemas parsed earlier */
@@ -127,44 +127,44 @@ YYSTYPE yylval;
 
     void SCANskip_to_end_schema(perplex_t scanner);
 
-    int	yylineno;
+    int yylineno;
 
 
-    static void	yyerror(const char*, char *string);
+    static void    yyerror(const char*, char *string);
 
     bool yyeof = false;
 
-#define MAX_SCOPE_DEPTH	20	/* max number of scopes that can be nested */
+#define MAX_SCOPE_DEPTH    20    /* max number of scopes that can be nested */
 
     static struct scope {
         struct Scope_ *this_;
-        char type;	/* one of OBJ_XXX */
-        struct scope *pscope;	/* pointer back to most recent scope */
+        char type;    /* one of OBJ_XXX */
+        struct scope *pscope;    /* pointer back to most recent scope */
         /* that has a printable name - for better */
         /* error messages */
     } scopes[MAX_SCOPE_DEPTH], *scope;
 #define CURRENT_SCOPE (scope->this_)
 #define PREVIOUS_SCOPE ((scope-1)->this_)
 #define CURRENT_SCHEMA (scope->this_->u.schema)
-#define CURRENT_SCOPE_NAME		(OBJget_symbol(scope->pscope->this_,scope->pscope->type)->name)
-#define CURRENT_SCOPE_TYPE_PRINTABLE	(OBJget_type(scope->pscope->type))
+#define CURRENT_SCOPE_NAME        (OBJget_symbol(scope->pscope->this_,scope->pscope->type)->name)
+#define CURRENT_SCOPE_TYPE_PRINTABLE    (OBJget_type(scope->pscope->type))
 
     /* ths = new scope to enter */
     /* sym = name of scope to enter into parent.  Some scopes (i.e., increment) */
     /*       are not named, in which case sym should be 0 */
-    /*	 This is useful for when a diagnostic is printed, an earlier named */
-    /* 	 scoped can be used */
+    /*     This is useful for when a diagnostic is printed, an earlier named */
+    /*      scoped can be used */
     /* typ = type of scope */
 #define PUSH_SCOPE(ths,sym,typ) \
-	if (sym) DICTdefine(scope->this_->symbol_table,(sym)->name,(Generic)ths,sym,typ);\
-	ths->superscope = scope->this_; \
-	scope++;		\
-	scope->type = typ;	\
-	scope->pscope = (sym?scope:(scope-1)->pscope); \
-	scope->this_ = ths; \
-	if (sym) { \
-		ths->symbol = *(sym); \
-	}
+    if (sym) DICTdefine(scope->this_->symbol_table,(sym)->name,(Generic)ths,sym,typ);\
+    ths->superscope = scope->this_; \
+    scope++;        \
+    scope->type = typ;    \
+    scope->pscope = (sym?scope:(scope-1)->pscope); \
+    scope->this_ = ths; \
+    if (sym) { \
+        ths->symbol = *(sym); \
+    }
 #define POP_SCOPE() scope--
 
     /* PUSH_SCOPE_DUMMY just pushes the scope stack with nothing actually on it */
@@ -175,7 +175,7 @@ YYSTYPE yylval;
     /* bother to get pushed so fix them this way */
 #define SCOPEadd_super(ths) ths->superscope = scope->this_;
 
-#define ERROR(code)	ERRORreport(code, yylineno)
+#define ERROR(code)    ERRORreport(code, yylineno)
 
 void parserInitState()
 {
@@ -1609,7 +1609,7 @@ static void yy_destructor(
 #line 189 "expparse.y"
 
     if (parseData.scanner == NULL) {
-	(yypminor->yy0).string = (char*)NULL;
+    (yypminor->yy0).string = (char*)NULL;
     }
 
 #line 1616 "expparse.c"
@@ -2415,7 +2415,7 @@ static void yy_reduce(
         sym.line = yylineno;
         sym.filename = current_filename;
         ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
-	    CURRENT_SCOPE_NAME);
+        CURRENT_SCOPE_NAME);
     }
 }
 #line 2422 "expparse.c"
@@ -2453,7 +2453,7 @@ static void yy_reduce(
     v->initializer = yymsp[-5].minor.yy401; 
 
     DICTdefine(CURRENT_SCOPE->symbol_table, yymsp[-7].minor.yy0.symbol->name, (Generic)v,
-	    yymsp[-7].minor.yy0.symbol, OBJ_VARIABLE);
+        yymsp[-7].minor.yy0.symbol, OBJ_VARIABLE);
     yygotominor.yy332 = ALIAScreate(CURRENT_SCOPE, v, yymsp[-2].minor.yy371);
 
     POP_SCOPE();
@@ -2728,7 +2728,7 @@ static void yy_reduce(
     v->initializer = yymsp[-1].minor.yy401;
     v->flags.constant = 1;
     DICTdefine(CURRENT_SCOPE->symbol_table, yymsp[-5].minor.yy401->symbol.name, (Generic)v,
-	&yymsp[-5].minor.yy401->symbol, OBJ_VARIABLE);
+    &yymsp[-5].minor.yy401->symbol, OBJ_VARIABLE);
 }
 #line 2734 "expparse.c"
         break;
@@ -2774,7 +2774,7 @@ static void yy_reduce(
     LISTadd_last(yygotominor.yy176.attributes, (Generic)yymsp[-3].minor.yy371);
 
     if (yymsp[-2].minor.yy371 != LIST_NULL) {
-	LISTadd_last(yygotominor.yy176.attributes, (Generic)yymsp[-2].minor.yy371);
+    LISTadd_last(yygotominor.yy176.attributes, (Generic)yymsp[-2].minor.yy371);
     }
 
     yygotominor.yy176.unique = yymsp[-1].minor.yy371;
@@ -2805,7 +2805,7 @@ static void yy_reduce(
     Entity e = ENTITYcreate(yymsp[0].minor.yy0.symbol);
 
     if (print_objects_while_running & OBJ_ENTITY_BITS) {
-	fprintf(stdout, "parse: %s (entity)\n", yymsp[0].minor.yy0.symbol->name);
+    fprintf(stdout, "parse: %s (entity)\n", yymsp[0].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(e, yymsp[0].minor.yy0.symbol, OBJ_ENTITY);
@@ -2917,10 +2917,10 @@ static void yy_reduce(
     Variable v;
 
     LISTdo_links (yymsp[-4].minor.yy371, attr)
-	v = VARcreate((Expression)attr->data, yymsp[-1].minor.yy297);
-	v->flags.optional = yymsp[-2].minor.yy252.optional;
-	v->flags.attribute = true;
-	attr->data = (Generic)v;
+    v = VARcreate((Expression)attr->data, yymsp[-1].minor.yy297);
+    v->flags.optional = yymsp[-2].minor.yy252.optional;
+    v->flags.attribute = true;
+    attr->data = (Generic)v;
     LISTod;
 
     yygotominor.yy371 = yymsp[-4].minor.yy371;
@@ -3254,7 +3254,7 @@ static void yy_reduce(
     f->u.func->parameters = yymsp[0].minor.yy371;
     f->u.func->pcount = LISTget_length(yymsp[0].minor.yy371);
     f->u.func->tag_count = tag_count;
-    tag_count = -1;	/* done with parameters, no new tags can be defined */
+    tag_count = -1;     /* done with parameters, no new tags can be defined */
 }
 #line 3260 "expparse.c"
         break;
@@ -3364,7 +3364,7 @@ static void yy_reduce(
         sym.line = yylineno;
         sym.filename = current_filename;
         ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
-	    CURRENT_SCOPE_NAME);
+        CURRENT_SCOPE_NAME);
     }
 }
 #line 3371 "expparse.c"
@@ -3525,7 +3525,7 @@ static void yy_reduce(
       case 170: /* interval ::= TOK_LEFT_CURL simple_expression rel_op simple_expression rel_op simple_expression right_curl */
 #line 1469 "expparse.y"
 {
-    Expression	tmp1, tmp2;
+    Expression    tmp1, tmp2;
 
     yygotominor.yy401 = (Expression)0;
     tmp1 = BIN_EXPcreate(yymsp[-4].minor.yy126, yymsp[-5].minor.yy401, yymsp[-3].minor.yy401);
@@ -3631,11 +3631,11 @@ static void yy_reduce(
     if (yymsp[0].minor.yy0.iVal == 0) {
         yygotominor.yy401 = LITERAL_ZERO;
     } else if (yymsp[0].minor.yy0.iVal == 1) {
-	yygotominor.yy401 = LITERAL_ONE;
+    yygotominor.yy401 = LITERAL_ONE;
     } else {
-	yygotominor.yy401 = EXPcreate_simple(Type_Integer);
-	yygotominor.yy401->u.integer = (int)yymsp[0].minor.yy0.iVal;
-	resolved_all(yygotominor.yy401);
+    yygotominor.yy401 = EXPcreate_simple(Type_Integer);
+    yygotominor.yy401->u.integer = (int)yymsp[0].minor.yy0.iVal;
+    resolved_all(yygotominor.yy401);
     }
 }
 #line 3642 "expparse.c"
@@ -3644,11 +3644,11 @@ static void yy_reduce(
 #line 1591 "expparse.y"
 {
     if (yymsp[0].minor.yy0.rVal == 0.0) {
-	yygotominor.yy401 = LITERAL_ZERO;
+    yygotominor.yy401 = LITERAL_ZERO;
     } else {
-	yygotominor.yy401 = EXPcreate_simple(Type_Real);
-	yygotominor.yy401->u.real = yymsp[0].minor.yy0.rVal;
-	resolved_all(yygotominor.yy401);
+    yygotominor.yy401 = EXPcreate_simple(Type_Real);
+    yygotominor.yy401->u.real = yymsp[0].minor.yy0.rVal;
+    resolved_all(yygotominor.yy401);
     }
 }
 #line 3655 "expparse.c"
@@ -3702,7 +3702,7 @@ static void yy_reduce(
     e->symbol = *sym; SYMBOL_destroy(sym);
     v = VARcreate(e, yymsp[-1].minor.yy297);
     DICTdefine(CURRENT_SCOPE->symbol_table, e->symbol.name, (Generic)v,
-	&e->symbol, OBJ_VARIABLE);
+    &e->symbol, OBJ_VARIABLE);
     LISTod;
     LISTfree(yymsp[-3].minor.yy371);
 }
@@ -3719,7 +3719,7 @@ static void yy_reduce(
     v = VARcreate(e, yymsp[-2].minor.yy297);
     v->initializer = yymsp[-1].minor.yy401;
     DICTdefine(CURRENT_SCOPE->symbol_table, e->symbol.name, (Generic)v,
-	&e->symbol, OBJ_VARIABLE);
+    &e->symbol, OBJ_VARIABLE);
     LISTod;
     LISTfree(yymsp[-4].minor.yy371);
 }
@@ -3860,7 +3860,7 @@ static void yy_reduce(
     p->u.proc->parameters = yymsp[-1].minor.yy371;
     p->u.proc->pcount = LISTget_length(yymsp[-1].minor.yy371);
     p->u.proc->tag_count = tag_count;
-    tag_count = -1;	/* done with parameters, no new tags can be defined */
+    tag_count = -1;    /* done with parameters, no new tags can be defined */
     yygotominor.yy507 = yymsp[-3].minor.yy507;
 }
 #line 3867 "expparse.c"
@@ -3872,7 +3872,7 @@ static void yy_reduce(
     tag_count = 0;
 
     if (print_objects_while_running & OBJ_PROCEDURE_BITS) {
-	fprintf(stdout, "parse: %s (procedure)\n", yymsp[0].minor.yy0.symbol->name);
+    fprintf(stdout, "parse: %s (procedure)\n", yymsp[0].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(p, yymsp[0].minor.yy0.symbol, OBJ_PROCEDURE);
@@ -3913,7 +3913,7 @@ static void yy_reduce(
 #line 1844 "expparse.y"
 {
     yygotominor.yy46.expr = yygotominor.yy46.first = BIN_EXPcreate(OP_ARRAY_ELEMENT, (Expression)0,
-	(Expression)0);
+    (Expression)0);
     yygotominor.yy46.expr->e.op2 = yymsp[-1].minor.yy401;
 }
 #line 3920 "expparse.c"
@@ -3922,7 +3922,7 @@ static void yy_reduce(
 #line 1853 "expparse.y"
 {
     yygotominor.yy46.expr = yygotominor.yy46.first = TERN_EXPcreate(OP_SUBCOMPONENT, (Expression)0,
-	(Expression)0, (Expression)0);
+    (Expression)0, (Expression)0);
     yygotominor.yy46.expr->e.op2 = yymsp[-3].minor.yy401;
     yygotominor.yy46.expr->e.op3 = yymsp[-1].minor.yy401;
 }
@@ -4062,7 +4062,7 @@ static void yy_reduce(
 
     /* link it in to the current scope's dict */
     DICTdefine(CURRENT_SCOPE->symbol_table, yymsp[0].minor.yy0.symbol->name, (Generic)yygotominor.yy91,
-	yymsp[0].minor.yy0.symbol, OBJ_VARIABLE);
+    yymsp[0].minor.yy0.symbol, OBJ_VARIABLE);
 }
 #line 4068 "expparse.c"
         break;
@@ -4097,7 +4097,7 @@ static void yy_reduce(
     Rule r = ALGcreate(OBJ_RULE);
 
     if (print_objects_while_running & OBJ_RULE_BITS) {
-	fprintf(stdout, "parse: %s (rule)\n", yymsp[-2].minor.yy0.symbol->name);
+    fprintf(stdout, "parse: %s (rule)\n", yymsp[-2].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(r, yymsp[-2].minor.yy0.symbol, OBJ_RULE);
@@ -4119,16 +4119,16 @@ static void yy_reduce(
     Schema schema = ( Schema ) DICTlookup(CURRENT_SCOPE->symbol_table, yymsp[-1].minor.yy0.symbol->name);
 
     if (print_objects_while_running & OBJ_SCHEMA_BITS) {
-	fprintf(stdout, "parse: %s (schema)\n", yymsp[-1].minor.yy0.symbol->name);
+    fprintf(stdout, "parse: %s (schema)\n", yymsp[-1].minor.yy0.symbol->name);
     }
 
     if (EXPRESSignore_duplicate_schemas && schema) {
-	SCANskip_to_end_schema(parseData.scanner);
-	PUSH_SCOPE_DUMMY();
+    SCANskip_to_end_schema(parseData.scanner);
+    PUSH_SCOPE_DUMMY();
     } else {
-	schema = SCHEMAcreate();
-	LISTadd_last(PARSEnew_schemas, (Generic)schema);
-	PUSH_SCOPE(schema, yymsp[-1].minor.yy0.symbol, OBJ_SCHEMA);
+    schema = SCHEMAcreate();
+    LISTadd_last(PARSEnew_schemas, (Generic)schema);
+    PUSH_SCOPE(schema, yymsp[-1].minor.yy0.symbol, OBJ_SCHEMA);
     }
 }
 #line 4135 "expparse.c"
@@ -4454,11 +4454,11 @@ static void yy_reduce(
     yygotominor.yy234->expr = yymsp[-1].minor.yy401;
 
     if (!CURRENT_SCOPE->symbol_table) {
-	CURRENT_SCOPE->symbol_table = DICTcreate(25);
+    CURRENT_SCOPE->symbol_table = DICTcreate(25);
     }
 
     DICTdefine(CURRENT_SCOPE->symbol_table, yymsp[-3].minor.yy0.symbol->name, (Generic)yygotominor.yy234,
-	yymsp[-3].minor.yy0.symbol, OBJ_WHERE);
+    yymsp[-3].minor.yy0.symbol, OBJ_WHERE);
 }
 #line 4464 "expparse.c"
         break;
@@ -4557,7 +4557,7 @@ static void yy_syntax_error(
     sym.filename = current_filename;
 
     ERRORreport_with_symbol(ERROR_syntax, &sym, "",
-	CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
+    CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
 #line 4562 "expparse.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
