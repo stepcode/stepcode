@@ -300,9 +300,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         fprintf( files -> inc, "\n  public:\n" );
         fprintf( files -> inc, "    SdaiModel_contents_%s();\n",
                  SCHEMAget_name( schema ) );
-        LISTdo( list, e, Entity );
-        MODELprint_new( e, files, schema );
-        LISTod;
+        LISTdo( list, e, Entity ) {
+            MODELprint_new( e, files );
+        } LISTod;
 
         fprintf( files->inc, "\n};\n" );
 

@@ -562,17 +562,17 @@ SEL_TYPEgetnew_attribute_list( const Type type ) {
     Linked_List attrs;
     Entity cur;
 
-    LISTdo( complete, t, Type )
-    if( TYPEis_entity( t ) ) {
-        cur = ENT_TYPEget_entity( t );
-        attrs = ENTITYget_all_attributes( cur );
-        LISTdo( attrs, a, Variable )
-        if( ! ATTR_LISTmember( newlist, a ) ) {
-            LISTadd_first( newlist, ( Generic ) a );
+    LISTdo( complete, t, Type ) {
+        if( TYPEis_entity( t ) ) {
+            cur = ENT_TYPEget_entity( t );
+            attrs = ENTITYget_all_attributes( cur );
+            LISTdo_n( attrs, a, Variable, b ) {
+                if( ! ATTR_LISTmember( newlist, a ) ) {
+                    LISTadd_first( newlist, ( Generic ) a );
+                }
+            } LISTod
         }
-        LISTod;
-    }
-    LISTod;
+    } LISTod
     return newlist;
 }
 
@@ -1050,180 +1050,176 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
 
     fprintf( f, "\n    //  part 3\n" );
 
-    LISTdo( attrs, a, Variable )
-    /*  go through all the unique attributes  */
-    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        /*  only do for explicit attributes  */
-        generate_attribute_func_name( a, funcnm );
-        generate_attribute_name( a, attrnm );
-        /*
-            strncpy (funcnm, attrnm, BUFSIZ);
-            funcnm [0] = toupper (funcnm[0]);
-        */
-        /*  use the ctype since utype will be the same for all entities  */
-        strncpy( utype, TYPEget_ctype( VARget_type( a ) ), BUFSIZ );
-
-        /*   get method  */
-        ATTRprint_access_methods_get_head( classnm, a, f );
-        fprintf( f, "{\n" );
-
-        LISTdo( items, t, Type )
-        if( TYPEis_entity( t ) &&
-                ( uattr = ENTITYget_named_attribute
-                          ( ( ent = ENT_TYPEget_entity( t ) ),
-                            ( char * ) StrToLower( attrnm ) ) ) )
-
-        {
-            /*  for the select items which have the current attribute  */
-            if( !multiple_inheritance ) {
-                if( !memberOfEntPrimary( ent, uattr ) ) {
-                    /* If multiple inheritance is not supported, we must addi-
-                    tionally check that uattr is a member of the entity's
-                    primary inheritance path (i.e., the entity, its first
-                    supertype, the super's first super, etc).  The above
-                    `if' is commented out, because currently mult inher is
-                    not supported to the extent of handling accessor func-
-                    tions for non-primary supertypes. */
-                    continue;
-                }
-            }
-            if( ! VARis_derived( uattr ) )  {
-
-                if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) )  {
-                    /*  check to make sure the underlying attribute\'s type is
-                        the same as the current attribute.
-                        */
-
-                    strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
-
-                    /*  if the underlying type is that item\'s type
-                    call the underlying_item\'s member function  */
-                    // if it is the same attribute
-                    if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
-                        // update attribute_func_name because is has been overrid
-                        generate_attribute_func_name( uattr, funcnm );
-                    } else {
-                        generate_attribute_func_name( a, funcnm );
-                    }
-                    fprintf( f,
-                             "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
-                             TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
-                    fprintf( f, "    return ((%s) _%s) ->%s();\n",
-                             uent, SEL_ITEMget_dmname( t ),  funcnm );
-
-                } else {
-                    /*  types are not the same issue a warning  */
-                    fprintf( stderr,
-                             "WARNING: in SELECT TYPE %s: ambiguous "
-                             "attribute \"%s\" from underlying type \"%s\".\n\n",
-                             TYPEget_name( type ), attrnm, TYPEget_name( t ) );
-                    fprintf( f, "  //  %s\n    //  attribute access function"
-                             " has a different return type\n",
-                             StrToUpper( TYPEget_name( t ) ) );
-                }
-
-            } else /*  derived attributes  */
-                fprintf( f, "  //  for %s  attribute is derived\n",
-                         StrToUpper( TYPEget_name( t ) ) );
-        }
-        LISTod;
-        PRINT_BUG_REPORT
-
-        /* If the return type is an enumeration class then you can\'t
-            return NULL.  Instead I made the return type the
-            enumeration value.  This causes a WARNING about going from
-            int (NULL) to the enumeration type.  To get rid of the
-            WARNING you could add an explicit cast (using the code
-            commented out below.
-
-            Another option is to have the return type be the
-            enumeration class and create special "NULL" instances of
-            the class for every enumeration.  This option was not
-            implemented.
-
-            kcm 28-Mar-1995
+    LISTdo_n( attrs, a, Variable, b ) {
+        /*  go through all the unique attributes  */
+        if( VARget_initializer( a ) == EXPRESSION_NULL ) {
+            /*  only do for explicit attributes  */
+            generate_attribute_func_name( a, funcnm );
+            generate_attribute_name( a, attrnm );
+            /*
+                strncpy (funcnm, attrnm, BUFSIZ);
+                funcnm [0] = toupper (funcnm[0]);
             */
+            /*  use the ctype since utype will be the same for all entities  */
+            strncpy( utype, TYPEget_ctype( VARget_type( a ) ), BUFSIZ );
 
+            /*   get method  */
+            ATTRprint_access_methods_get_head( classnm, a, f );
+            fprintf( f, "{\n" );
 
+            LISTdo( items, t, Type ) {
+                if( TYPEis_entity( t ) && ( uattr = ENTITYget_named_attribute(
+                                    ( ent = ENT_TYPEget_entity( t ) ), ( char * ) StrToLower( attrnm ) ) ) ) {
+                    /*  for the select items which have the current attribute  */
+                    if( !multiple_inheritance ) {
+                        if( !memberOfEntPrimary( ent, uattr ) ) {
+                            /* If multiple inheritance is not supported, we must addi-
+                            tionally check that uattr is a member of the entity's
+                            primary inheritance path (i.e., the entity, its first
+                            supertype, the super's first super, etc).  The above
+                            `if' is commented out, because currently mult inher is
+                            not supported to the extent of handling accessor func-
+                            tions for non-primary supertypes. */
+                            continue;
+                        }
+                    }
+                    if( ! VARis_derived( uattr ) )  {
 
-        /*  EnumName (TYPEget_name (VARget_type (a)))*/
-        switch( TYPEget_body( VARget_type( a ) ) -> type ) {
-            case enumeration_:
-                fprintf( f, "   return (%s) 0;\n}\n\n",
-                         EnumName( TYPEget_name( VARget_type( a ) ) ) );
-                break;
+                        if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) )  {
+                            /*  check to make sure the underlying attribute\'s type is
+                                the same as the current attribute.
+                                */
 
-            case boolean_:
-                fprintf( f, "   return (Boolean) 0;\n}\n\n" );
-                break;
+                            strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
 
-            case logical_:
-                fprintf( f, "   return (Logical) 0;\n}\n\n" );
-                break;
+                            /*  if the underlying type is that item\'s type
+                            call the underlying_item\'s member function  */
+                            /*  if it is the same attribute */
+                            if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
+                                /*  update attribute_func_name because is has been overrid */
+                                generate_attribute_func_name( uattr, funcnm );
+                            } else {
+                                generate_attribute_func_name( a, funcnm );
+                            }
+                            fprintf( f,
+                                    "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
+                                    TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
+                            fprintf( f, "    return ((%s) _%s) ->%s();\n",
+                                    uent, SEL_ITEMget_dmname( t ),  funcnm );
 
-            default:
-                fprintf( f, "   return 0;\n}\n\n" );
-        }
+                        } else {
+                            /*  types are not the same issue a warning  */
+                            fprintf( stderr,
+                                    "WARNING: in SELECT TYPE %s: ambiguous "
+                                    "attribute \"%s\" from underlying type \"%s\".\n\n",
+                                    TYPEget_name( type ), attrnm, TYPEget_name( t ) );
+                            fprintf( f, "  //  %s\n    //  attribute access function"
+                                    " has a different return type\n",
+                                    StrToUpper( TYPEget_name( t ) ) );
+                        }
 
-        /*   put method  */
-        ATTRprint_access_methods_put_head( classnm, a, f );
-        fprintf( f, "{\n" );
-        LISTdo( items, t, Type )
-        if( TYPEis_entity( t ) &&
-                ( uattr = ENTITYget_named_attribute(
-                              ( ent = ENT_TYPEget_entity( t ) ),
-                              ( char * ) StrToLower( attrnm ) ) ) )
-
-        {
-            /*  for the select items which have the current attribute  */
-
-            if( !multiple_inheritance ) {
-                if( !memberOfEntPrimary( ent, uattr ) ) {
-                    /* See note for similar code segment in 1st part of fn. */
-                    continue;
+                    } else /*  derived attributes  */
+                        fprintf( f, "  //  for %s  attribute is derived\n",
+                                StrToUpper( TYPEget_name( t ) ) );
                 }
+            } LISTod;
+            PRINT_BUG_REPORT
+
+            /* If the return type is an enumeration class then you can\'t
+                return NULL.  Instead I made the return type the
+                enumeration value.  This causes a WARNING about going from
+                int (NULL) to the enumeration type.  To get rid of the
+                WARNING you could add an explicit cast (using the code
+                commented out below.
+
+                Another option is to have the return type be the
+                enumeration class and create special "NULL" instances of
+                the class for every enumeration.  This option was not
+                implemented.
+
+                kcm 28-Mar-1995
+                */
+
+
+
+            /*  EnumName (TYPEget_name (VARget_type (a)))*/
+            switch( TYPEget_body( VARget_type( a ) ) -> type ) {
+                case enumeration_:
+                    fprintf( f, "   return (%s) 0;\n}\n\n",
+                            EnumName( TYPEget_name( VARget_type( a ) ) ) );
+                    break;
+
+                case boolean_:
+                    fprintf( f, "   return (Boolean) 0;\n}\n\n" );
+                    break;
+
+                case logical_:
+                    fprintf( f, "   return (Logical) 0;\n}\n\n" );
+                    break;
+
+                default:
+                    fprintf( f, "   return 0;\n}\n\n" );
             }
 
-            if( ! VARis_derived( uattr ) )  {
+            /*   put method  */
+            ATTRprint_access_methods_put_head( classnm, a, f );
+            fprintf( f, "{\n" );
+            LISTdo( items, t, Type ) {
+                if( TYPEis_entity( t ) &&
+                        ( uattr = ENTITYget_named_attribute(
+                                    ( ent = ENT_TYPEget_entity( t ) ),
+                                    ( char * ) StrToLower( attrnm ) ) ) )
 
-                if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) ) {
-                    /*  check to make sure the underlying attribute\'s type is
-                        the same as the current attribute.
-                        */
+                {
+                    /*  for the select items which have the current attribute  */
 
-                    /*  if the underlying type is that item\'s type
-                        call the underlying_item\'s member function  */
-                    // if it is the same attribute
-                    if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
-                        // update attribute_func_name because is has been overrid
-                        generate_attribute_func_name( uattr, funcnm );
-                    } else {
-                        generate_attribute_func_name( a, funcnm );
+                    if( !multiple_inheritance ) {
+                        if( !memberOfEntPrimary( ent, uattr ) ) {
+                            /* See note for similar code segment in 1st part of fn. */
+                            continue;
+                        }
                     }
 
-                    strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
-                    fprintf( f,
-                             "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
-                             TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
-                    fprintf( f, "    {  ((%s) _%s) ->%s( x );\n      return;\n    }\n",
-                             uent, SEL_ITEMget_dmname( t ),  funcnm );
-                } else {
-                    /*  warning printed above  */
-                    fprintf( f, "  //  for %s  attribute access function"
-                             " has a different argument type\n",
-                             SEL_ITEMget_enumtype( t ) );
+                    if( ! VARis_derived( uattr ) )  {
+
+                        if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) ) {
+                            /*  check to make sure the underlying attribute\'s type is
+                                the same as the current attribute.
+                                */
+
+                            /*  if the underlying type is that item\'s type
+                                call the underlying_item\'s member function  */
+                            /*  if it is the same attribute */
+                            if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
+                                /*  update attribute_func_name because is has been overrid */
+                                generate_attribute_func_name( uattr, funcnm );
+                            } else {
+                                generate_attribute_func_name( a, funcnm );
+                            }
+
+                            strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
+                            fprintf( f,
+                                    "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
+                                    TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
+                            fprintf( f, "    {  ((%s) _%s) ->%s( x );\n      return;\n    }\n",
+                                    uent, SEL_ITEMget_dmname( t ),  funcnm );
+                        } else {
+                            /*  warning printed above  */
+                            fprintf( f, "  //  for %s  attribute access function"
+                                    " has a different argument type\n",
+                                    SEL_ITEMget_enumtype( t ) );
+                        }
+                    } else {
+                        /*  derived attributes  */
+                        fprintf( f, "  //  for %s  attribute is derived\n",
+                                SEL_ITEMget_enumtype( t ) );
+                    }
                 }
-            } else {
-                /*  derived attributes  */
-                fprintf( f, "  //  for %s  attribute is derived\n",
-                         SEL_ITEMget_enumtype( t ) );
-            }
+            } LISTod;
+            PRINT_SELECTBUG_WARNING( f );
+            fprintf( f, "}\n" );
         }
-        LISTod;
-        PRINT_SELECTBUG_WARNING( f );
-        fprintf( f, "}\n" );
-    }
-    LISTod;
+    } LISTod;
     LISTfree( attrs );
 }
 
@@ -1239,118 +1235,116 @@ TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
 
     fprintf( f, "\n    //  part 4\n" );
 
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    if( ( TYPEis_entity( t ) )
-            || ( !utype_member( dups, t, 1 ) ) ) {
-        fprintf( f, "%s& %s::operator =( const %s& o )\n{\n"
-                 "   nullify ();\n",
-                 n, n, AccessType( t ) );
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) )
+                || ( !utype_member( dups, t, 1 ) ) ) {
+            fprintf( f, "%s& %s::operator =( const %s& o )\n{\n"
+                    "   nullify ();\n",
+                    n, n, AccessType( t ) );
 
-        if( isAggregateType( t ) ) {
-            fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
-                     ( ( t->u.type->body->base ) ? "->" : "." ) );
-        } else {
-            fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            if( isAggregateType( t ) ) {
+                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
+                        ( ( t->u.type->body->base ) ? "->" : "." ) );
+            } else {
+                fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            }
+
+            fprintf( f, "   SetUnderlyingType (%s);\n", TYPEtd_name( t ) );
+            fprintf( f, "   return *this;\n}\n\n" );
         }
+    } LISTod
+    LISTdo( dups, t, Type ) {
+        if( ! TYPEis_entity( t ) ) { /*  entities were done already */
+            if( isAggregateType( t ) )  {
+                fprintf( f, "%s& %s::operator =( const %s& o )\n{\n",
+                        n, n, AccessType( t ) );
+                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ), ( ( t->u.type->body->base ) ? "->" : "." ) );
+            } else  {
+                fprintf( f, "%s& %s::operator =( const %s& o )\n{\n",
+                        n, n, TYPEget_utype( t ) );
+                fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            }
 
-        fprintf( f, "   SetUnderlyingType (%s);\n", TYPEtd_name( t ) );
-        fprintf( f, "   return *this;\n}\n\n" );
-    }
-    LISTod;
-    LISTdo( dups, t, Type )
-    if( ! TYPEis_entity( t ) ) { /*  entities were done already */
-        if( isAggregateType( t ) )  {
-            fprintf( f, "%s& %s::operator =( const %s& o )\n{\n",
-                     n, n, AccessType( t ) );
-            fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ), ( ( t->u.type->body->base ) ? "->" : "." ) );
-        } else  {
-            fprintf( f, "%s& %s::operator =( const %s& o )\n{\n",
-                     n, n, TYPEget_utype( t ) );
-            fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            fprintf( f, "   underlying_type = 0; // MUST BE SET BY USER\n" );
+            fprintf( f, "   //	discriminator = UNSET\n" );
+            fprintf( f, "   return *this;\n}\n" );
         }
-
-        fprintf( f, "   underlying_type = 0; // MUST BE SET BY USER\n" );
-        fprintf( f, "   //	discriminator = UNSET\n" );
-        fprintf( f, "   return *this;\n}\n" );
-    }
-    LISTod;
+    } LISTod
 
     fprintf( f, "\n#ifdef COMPILER_DEFINES_OPERATOR_EQ\n#else\n\n" );
     fprintf( f, "%s& %s::operator =( const %s_ptr& o )\n{\n", n, n, n );
 
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
-    fprintf( f, "    if ( o -> CurrentUnderlyingType () == %s ) {\n",
-             TYPEtd_name( t ) );
-    if( TYPEis_select( t ) ) {
-        if( utype_member( dups, t, 1 ) )
-            /**  if in the dup list  **/
-            fprintf( f, "        _%s = &(o -> _%s);\n",
-                     SEL_ITEMget_dmname( t ),
-                     StrToLower( TYPEget_utype( t ) ) );
-        else
-            fprintf( f, "        _%s =  &(o -> _%s);\n",
-                     SEL_ITEMget_dmname( t ),
-                     SEL_ITEMget_dmname( t ) );
-    } else {
-        if( utype_member( dups, t, 1 ) )
-            /**  if in the dup list  **/
-            fprintf( f, "        _%s = o -> _%s;\n",
-                     SEL_ITEMget_dmname( t ),
-                     SEL_ITEMget_dmname( t ) );
-        /* I changed this although I'm not sure how the if and else differ */
-        /*          StrToLower(TYPEget_utype(t)) ); */
-        else
-            fprintf( f, "        _%s =  o -> _%s;\n",
-                     SEL_ITEMget_dmname( t ),
-                     SEL_ITEMget_dmname( t ) );
-    }
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        strncpy( x, TYPEget_name( t ), BUFSIZ );
+        fprintf( f, "    if ( o -> CurrentUnderlyingType () == %s ) {\n",
+                TYPEtd_name( t ) );
+        if( TYPEis_select( t ) ) {
+            if( utype_member( dups, t, 1 ) )
+                /**  if in the dup list  **/
+                fprintf( f, "        _%s = &(o -> _%s);\n",
+                        SEL_ITEMget_dmname( t ),
+                        StrToLower( TYPEget_utype( t ) ) );
+            else
+                fprintf( f, "        _%s =  &(o -> _%s);\n",
+                        SEL_ITEMget_dmname( t ),
+                        SEL_ITEMget_dmname( t ) );
+        } else {
+            if( utype_member( dups, t, 1 ) )
+                /**  if in the dup list  **/
+                fprintf( f, "        _%s = o -> _%s;\n",
+                        SEL_ITEMget_dmname( t ),
+                        SEL_ITEMget_dmname( t ) );
+            /* I changed this although I'm not sure how the if and else differ */
+            /*          StrToLower(TYPEget_utype(t)) ); */
+            else
+                fprintf( f, "        _%s =  o -> _%s;\n",
+                        SEL_ITEMget_dmname( t ),
+                        SEL_ITEMget_dmname( t ) );
+        }
 
-    fprintf( f, "        underlying_type = o -> CurrentUnderlyingType ();\n" );
-    fprintf( f, "        return *this;\n" );
-    fprintf( f, "    }\n" );
-
-    LISTod;
+        fprintf( f, "        underlying_type = o -> CurrentUnderlyingType ();\n" );
+        fprintf( f, "        return *this;\n" );
+        fprintf( f, "    }\n" );
+    } LISTod;
     fprintf( f, "    underlying_type = o -> CurrentUnderlyingType ();\n" );
     fprintf( f, "    return *this;\n}\n\n" );
 
     fprintf( f, "SDAI_Select& %s::operator =( const SDAI_Select& o ) {\n", n );
 
-    firsttime = 1;
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    strncpy( x, TYPEget_name( t ), BUFSIZ );
-    x[BUFSIZ-1] = '\0';
-    fprintf( f, "    if ( o.CurrentUnderlyingType () == %s ) {\n",
-             TYPEtd_name( t ) );
-    if( TYPEis_select( t ) ) {
-        if( utype_member( dups, t, 1 ) )
-            /**  if in the dup list  **/
-            fprintf( f, "        _%s = ((%s&) o)._%s;\n",
-                     SEL_ITEMget_dmname( t ),
-                     n,
-                     SEL_ITEMget_dmname( t ) );
-        else
-            fprintf( f, "        _%s = &(((%s&) o)._%s);\n",
-                     SEL_ITEMget_dmname( t ),
-                     n,
-                     SEL_ITEMget_dmname( t ) );
-    } else {
-        if( utype_member( dups, t, 1 ) )
-            /**  if in the dup list  **/
-            fprintf( f, "        _%s = ((%s&) o)._%s;\n",
-                     SEL_ITEMget_dmname( t ),
-                     n,
-                     SEL_ITEMget_dmname( t ) );
-        else
-            fprintf( f, "        _%s = ((%s&) o)._%s;\n",
-                     SEL_ITEMget_dmname( t ),
-                     n,
-                     SEL_ITEMget_dmname( t ) );
-    }
-    fprintf( f, "        underlying_type = o.CurrentUnderlyingType ();\n" );
-    fprintf( f, "        return *this;\n" );
-    fprintf( f, "    }\n" );
-    LISTod;
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        strncpy( x, TYPEget_name( t ), BUFSIZ );
+        x[BUFSIZ-1] = '\0';
+        fprintf( f, "    if ( o.CurrentUnderlyingType () == %s ) {\n",
+                TYPEtd_name( t ) );
+        if( TYPEis_select( t ) ) {
+            if( utype_member( dups, t, 1 ) )
+                /**  if in the dup list  **/
+                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                        SEL_ITEMget_dmname( t ),
+                        n,
+                        SEL_ITEMget_dmname( t ) );
+            else
+                fprintf( f, "        _%s = &(((%s&) o)._%s);\n",
+                        SEL_ITEMget_dmname( t ),
+                        n,
+                        SEL_ITEMget_dmname( t ) );
+        } else {
+            if( utype_member( dups, t, 1 ) )
+                /**  if in the dup list  **/
+                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                        SEL_ITEMget_dmname( t ),
+                        n,
+                        SEL_ITEMget_dmname( t ) );
+            else
+                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                        SEL_ITEMget_dmname( t ),
+                        n,
+                        SEL_ITEMget_dmname( t ) );
+        }
+        fprintf( f, "        underlying_type = o.CurrentUnderlyingType ();\n" );
+        fprintf( f, "        return *this;\n" );
+        fprintf( f, "    }\n" );
+    } LISTod
     fprintf( f, "   underlying_type = o.CurrentUnderlyingType ();\n" );
     fprintf( f, "   return *this;\n}\n\n" );
     fprintf( f, "#endif\n" );
@@ -1856,61 +1850,61 @@ TYPEselect_lib_print( const Type type, FILE * f, Schema schema ) {
 
     fprintf( f, "\n    //  part 2\n" );
 
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    if( TYPEis_entity( t ) ) {
-        /*  if an entity  */
-        fprintf( f, "%s::operator %s_ptr()\n{\n", n, ClassName( TYPEget_name( t ) ) );
-        fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
-        fprintf( f, "      return ((%s_ptr) _%s);\n", ClassName( TYPEget_name( t ) ), SEL_ITEMget_dmname( t ) );
-        PRINT_SELECTBUG_WARNING( f );
-        fprintf( f, "   return NULL;\n}\n\n" );
-    } else if( !utype_member( dups, t, 1 ) ) {
-        /**  if not in the dup list  **/
-        fprintf( f, "%s::operator %s()\n{\n", n, AccessType( t ) );
-        fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
-        fprintf( f, "      return %s _%s;\n", ( ( TYPEis_select( t ) ) ? "&" : "" ), SEL_ITEMget_dmname( t ) );
-        fprintf( f, "\n   severity( SEVERITY_WARNING );\n" );
-        fprintf( f, "   Error( \"Underlying type is not %s\" );\n", AccessType( t ) );
-        PRINT_SELECTBUG_WARNING( f ) ;
-        if( TYPEis_boolean( t ) || TYPEis_logical( t ) ) {
-            fprintf( f, "   return (%s)0;\n}\n\n", TYPEget_utype( t ) );
-        } else {
-            fprintf( f, "   return 0;\n}\n\n" );
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( TYPEis_entity( t ) ) {
+            /*  if an entity  */
+            fprintf( f, "%s::operator %s_ptr()\n{\n", n, ClassName( TYPEget_name( t ) ) );
+            fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
+            fprintf( f, "      return ((%s_ptr) _%s);\n", ClassName( TYPEget_name( t ) ), SEL_ITEMget_dmname( t ) );
+            PRINT_SELECTBUG_WARNING( f );
+            fprintf( f, "   return NULL;\n}\n\n" );
+        } else if( !utype_member( dups, t, 1 ) ) {
+            /**  if not in the dup list  **/
+            fprintf( f, "%s::operator %s()\n{\n", n, AccessType( t ) );
+            fprintf( f, "   if( CurrentUnderlyingType () == %s )\n", TYPEtd_name( t ) );
+            fprintf( f, "      return %s _%s;\n", ( ( TYPEis_select( t ) ) ? "&" : "" ), SEL_ITEMget_dmname( t ) );
+            fprintf( f, "\n   severity( SEVERITY_WARNING );\n" );
+            fprintf( f, "   Error( \"Underlying type is not %s\" );\n", AccessType( t ) );
+            PRINT_SELECTBUG_WARNING( f ) ;
+            if( TYPEis_boolean( t ) || TYPEis_logical( t ) ) {
+                fprintf( f, "   return (%s)0;\n}\n\n", TYPEget_utype( t ) );
+            } else {
+                fprintf( f, "   return 0;\n}\n\n" );
+            }
         }
-    }
-    LISTod;
-    LISTdo( dups, t, Type )
-    if( ! TYPEis_entity( t ) ) { /*  entities were done already */
-        fprintf( f, "%s::operator %s()\n{\n", n,
-                 ( TYPEis_aggregate( t ) || TYPEis_select( t ) ) ?
-                 AccessType( t ) : TYPEget_utype( t ) );
-        strncpy( m, TYPEget_utype( t ), BUFSIZ );
+    } LISTod
+    LISTdo( dups, t, Type ) {
+        if( ! TYPEis_entity( t ) ) { /*  entities were done already */
+            fprintf( f, "%s::operator %s()\n{\n", n,
+                    ( TYPEis_aggregate( t ) || TYPEis_select( t ) ) ?
+                    AccessType( t ) : TYPEget_utype( t ) );
+            strncpy( m, TYPEget_utype( t ), BUFSIZ );
 
-        /**** MUST CHANGE FOR multiple big types ****/
-        LISTdo( SEL_TYPEget_items( type ), x, Type )
-        if( ( strcmp( m, TYPEget_utype( x ) ) == 0 )
-                || ( compareOrigTypes( t, x ) ) ) {
-            /* If this is one of the dups.  compareOrigTypes checks
-               if x\'s type is a rename of t\'s (see comments there).
-             */
-            fprintf( f, "   if( CurrentUnderlyingType () == %s )\n",
-                     TYPEtd_name( x ) );
-            fprintf( f, "      return %s _%s;\n",
-                     ( ( TYPEis_select( x ) ) ? "&" : "" ),
-                     SEL_ITEMget_dmname( x ) );
+            /**** MUST CHANGE FOR multiple big types ****/
+            LISTdo_n( SEL_TYPEget_items( type ), x, Type, b ) {
+                if( ( strcmp( m, TYPEget_utype( x ) ) == 0 )
+                        || ( compareOrigTypes( t, x ) ) ) {
+                    /* If this is one of the dups.  compareOrigTypes checks
+                    if x\'s type is a rename of t\'s (see comments there).
+                    */
+                    fprintf( f, "   if( CurrentUnderlyingType () == %s )\n",
+                            TYPEtd_name( x ) );
+                    fprintf( f, "      return %s _%s;\n",
+                            ( ( TYPEis_select( x ) ) ? "&" : "" ),
+                            SEL_ITEMget_dmname( x ) );
+                }
+            } LISTod
+            fprintf( f, "\n   severity( SEVERITY_WARNING );\n" );
+            fprintf( f, "   Error( \"Underlying type is not %s\" );\n",
+                    TYPEis_aggregate( t ) ?
+                    AccessType( t ) : TYPEget_utype( t ) );
+            PRINT_SELECTBUG_WARNING( f ) ;
+            fprintf( f, "   return (%s)0;\n}\n\n",
+                    TYPEis_aggregate( t ) ?
+                    AccessType( t ) : TYPEget_utype( t ) );
+            /*     fprintf( f, "   return NULL;\n}\n\n" ); */
         }
-        LISTod;
-        fprintf( f, "\n   severity( SEVERITY_WARNING );\n" );
-        fprintf( f, "   Error( \"Underlying type is not %s\" );\n",
-                 TYPEis_aggregate( t ) ?
-                 AccessType( t ) : TYPEget_utype( t ) );
-        PRINT_SELECTBUG_WARNING( f ) ;
-        fprintf( f, "   return (%s)0;\n}\n\n",
-                 TYPEis_aggregate( t ) ?
-                 AccessType( t ) : TYPEget_utype( t ) );
-        /*     fprintf( f, "   return NULL;\n}\n\n" ); */
-    }
-    LISTod;
+    } LISTod
 
     TYPEselect_lib_print_part_three( type, f, schema, n );
     TYPEselect_lib_print_part_four( type, f, schema, dups, n );
@@ -2023,48 +2017,38 @@ TYPEselect_print( Type t, FILES * files, Schema schema ) {
         return;
     }
 
-    LISTdo( SEL_TYPEget_items( t ), i, Type )
+    LISTdo( SEL_TYPEget_items( t ), ii, Type ) {
 
-    /*  check the items for select types  */
-    /*  and do the referenced select types first  */
+        /*  check the items for select types  */
+        /*  and do the referenced select types first  */
 
-    /* check aggregates too  */
-    /* set i to the bt and  catch in next ifs  */
-    if( isAggregateType( i ) )  {
-        bt = TYPEget_base_type( i );
-        /* DAR - corrected - prev'ly above line retrieved non-aggr base type.
-        // But unnec - we only need the item defined if it's a select or a 1D
-        // aggregate.  If bt is also an aggr, we go on. */
-        if( TYPEis_select( bt ) ) {
-            i = bt;
-        } else if( TYPEis_entity( bt ) ) {
-            i = bt;
+        /* check aggregates too  */
+        /* set ii to the bt and  catch in next ifs  */
+        if( isAggregateType( ii ) )  {
+            bt = TYPEget_base_type( ii );
+            /* DAR - corrected - prev'ly above line retrieved non-aggr base type.
+            But unnec - we only need the item defined if it's a select or a 1D
+            aggregate.  If bt is also an aggr, we go on. */
+            if( TYPEis_select( bt ) ) {
+                ii = bt;
+            } else if( TYPEis_entity( bt ) ) {
+                ii = bt;
+            }
         }
-    }
 
-    if( TYPEis_select( i ) && !TYPEget_clientData( i ) ) {
-        TYPEselect_print( i, files, schema );
-    }
-    /* NOTE - there was a bug here because above if did not take into account
-       that i came from a different schema (and above loop would have printed
-       it here!).  Taken care of by code in multpass.c which would not allow
-       us to get this far (wouldn't have called the type_print() fn's) if a
-       select has members in other schemas which haven't been processed.  So,
-       now by definition i must have been processed already if it's in another
-       schema.  So the above if will only reorder the printing of the sel's in
-       this schema, which is the intent.  DAR */
-
-#ifdef OBSOLETE
-    /*  check the attributes to see if a select is referenced  */
-    if( TYPEis_entity( i ) ) {
-        LISTdo( ENTITYget_all_attributes( ENT_TYPEget_entity( i ) ), a, Variable )
-        if( TYPEis_select( VARget_type( a ) ) ) {
-            TYPEselect_print( VARget_type( a ), files, schema );
+        if( TYPEis_select( ii ) && !TYPEget_clientData( ii ) ) {
+            TYPEselect_print( ii, files, schema );
         }
-        LISTod
-    }
-#endif
-    LISTod
+        /* NOTE - there was a bug here because above if did not take into account
+        that ii came from a different schema (and above loop would have printed
+        it here!).  Taken care of by code in multpass.c which would not allow
+        us to get this far (wouldn't have called the type_print() fn's) if a
+        select has members in other schemas which haven't been processed.  So,
+        now by definition ii must have been processed already if it's in another
+        schema.  So the above if will only reorder the printing of the sel's in
+        this schema, which is the intent.  DAR */
+
+    } LISTod
 
     TYPEselect_inc_print( t, files -> inc );
     TYPEselect_lib_print( t, files -> lib, schema );

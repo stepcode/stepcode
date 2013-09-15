@@ -281,9 +281,9 @@ static int checkTypes( Schema schema )
                 schema->search_id = UNPROCESSED;
             }
         } else if( TYPEis_select( type ) ) {
-            LISTdo( SEL_TYPEget_items( type ), i, Type ) {
-                if( !TYPEis_entity( i ) ) {
-                    if( checkItem( i, type, schema, &unknowncnt, 0 ) ) {
+            LISTdo( SEL_TYPEget_items( type ), ii, Type ) {
+                if( !TYPEis_entity( ii ) ) {
+                    if( checkItem( ii, type, schema, &unknowncnt, 0 ) ) {
                         break;
                     }
                     /* checkItem does most of the work of determining if
@@ -297,7 +297,7 @@ static int checkTypes( Schema schema )
                 } else {
                     /* Check if our select has an entity item which itself
                     // has unprocessed selects or enums. */
-                    ent = ENT_TYPEget_entity( i );
+                    ent = ENT_TYPEget_entity( ii );
                     if( ent->search_id == PROCESSED ) {
                         continue;
                     }

@@ -160,77 +160,77 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
     /* step 1: for each entry, store it in a schema-specific list */
     DICTdo_init( refdict, &de );
     while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
-        Linked_List list;
+        Linked_List wlist;
 
-        list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
-        if( !list ) {
-            list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, ( Generic ) list,
+        wlist = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
+        if( !wlist ) {
+            wlist = LISTcreate();
+            DICTdefine( dict, r->schema->symbol.name, ( Generic ) wlist,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd_last( list, ( Generic ) r );
+        LISTadd_last( wlist, ( Generic ) r );
     }
 
     /* step 2: for each list, print out the renames */
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
-        LISTdo( list, r, struct Rename * )
+        LISTdo( list, re, struct Rename * ) {
 
-        /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
-        if( first_time ) {
-            fprintf( file, "        // %s FROM %s (selected objects)\n", type, r->schema->symbol.name );
-            fprintf( file, "        is = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( r->schema->symbol.name ) );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        %s::schema->use_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+            /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
+            if( first_time ) {
+                fprintf( file, "        // %s FROM %s (selected objects)\n", type, re->schema->symbol.name );
+                fprintf( file, "        is = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( re->schema->symbol.name ) );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        %s::schema->use_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+                }
             }
-        }
 
-        if( first_time ) {
-            first_time = false;
-        }
-        if( r->type == OBJ_TYPE ) {
-            sprintf( td_name, "%s", TYPEtd_name( ( Type )r->object ) );
-        } else if( r->type == OBJ_FUNCTION ) {
-            sprintf( td_name, "/* Function not implemented */ 0" );
-        } else if( r->type == OBJ_PROCEDURE ) {
-            sprintf( td_name, "/* Procedure not implemented */ 0" );
-        } else if( r->type == OBJ_RULE ) {
-            sprintf( td_name, "/* Rule not implemented */ 0" );
-        } else if( r->type == OBJ_ENTITY ) {
-            sprintf( td_name, "%s%s%s",
-                     SCOPEget_name( ( ( Entity )r->object )->superscope ),
-                     ENT_PREFIX, ENTITYget_name( ( Entity )r->object ) );
-        } else {
-            sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", r->type );
-        }
-        if( r->old != r->nnew ) {
-            fprintf( file, "        // object %s AS %s\n", r->old->name,
-                     r->nnew->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        ui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+            if( first_time ) {
+                first_time = false;
             }
-        } else {
-            fprintf( file, "        // object %s\n", r->old->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        ui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+            if( re->type == OBJ_TYPE ) {
+                sprintf( td_name, "%s", TYPEtd_name( ( Type )re->object ) );
+            } else if( re->type == OBJ_FUNCTION ) {
+                sprintf( td_name, "/* Function not implemented */ 0" );
+            } else if( re->type == OBJ_PROCEDURE ) {
+                sprintf( td_name, "/* Procedure not implemented */ 0" );
+            } else if( re->type == OBJ_RULE ) {
+                sprintf( td_name, "/* Rule not implemented */ 0" );
+            } else if( re->type == OBJ_ENTITY ) {
+                sprintf( td_name, "%s%s%s",
+                        SCOPEget_name( ( ( Entity )re->object )->superscope ),
+                        ENT_PREFIX, ENTITYget_name( ( Entity )re->object ) );
             } else {
-                fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", re->type );
             }
-        }
-        LISTod
+            if( re->old != re->nnew ) {
+                fprintf( file, "        // object %s AS %s\n", re->old->name,
+                        re->nnew->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        ui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", re->schema->symbol.name, td_name, re->old->name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", re->schema->symbol.name, td_name, re->old->name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                }
+            } else {
+                fprintf( file, "        // object %s\n", re->old->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        ui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", re->schema->symbol.name, td_name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", re->schema->symbol.name, td_name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                }
+            }
+        } LISTod
     }
     HASHdestroy( dict );
 }
@@ -1466,28 +1466,27 @@ int get_attribute_number( Entity entity ) {
     complete = ENTITYget_all_attributes( entity );
     local = ENTITYget_attributes( entity );
 
-    LISTdo( local, a, Variable )
-    /*  go to the child's first explicit attribute */
-    if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
-        LISTdo( complete, p, Variable )
-        /*  cycle through all the explicit attributes until the
-        child's attribute is found  */
-        if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
-            if( p != a ) {
-                ++i;
-            } else {
-                found = 1;
-            }
+    LISTdo( local, a, Variable ) {
+        /*  go to the child's first explicit attribute */
+        if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
+                LISTdo_n( complete, p, Variable, b ) {
+                /*  cycle through all the explicit attributes until the
+                child's attribute is found  */
+                if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
+                    if( p != a ) {
+                        ++i;
+                    } else {
+                        found = 1;
+                    }
+                }
+            } LISTod;
+            if( found ) {
+                return i;
+            } else printf( "Internal error:  %s:%d\n"
+                            "Attribute %s not found.\n"
+                            , __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
         }
-        LISTod;
-        if( found ) {
-            return i;
-        } else printf( "Internal error:  %s:%d\n"
-                           "Attribute %s not found.\n"
-                           , __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
-    }
-
-    LISTod;
+    } LISTod;
     return -1;
 }
 
@@ -2397,7 +2396,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
                  "    %s::%s%s->_where_rules = new Where_rule__list;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
-        LISTdo( wheres, w, Where )
+        LISTdo( wheres, w, Where ) {
         whereRule = EXPRto_string( w->expr );
         ptr2 = whereRule;
 
@@ -2483,7 +2482,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
 
         sc_free( whereRule );
         ptr2 = whereRule = 0;
-        LISTod
+        } LISTod
     }
 
     uniqs = entity->u.entity->unique;
@@ -2509,7 +2508,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
         LISTdo( uniqs, list, Linked_List ) {
             int i = 0;
             fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
-            LISTdo( list, v, Variable ) {
+            LISTdo_n( list, v, Variable, b ) {
                 i++;
                 if( i == 1 ) {
                     /* print label if present */
