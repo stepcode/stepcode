@@ -262,12 +262,12 @@ va_dcl {
     ( what != ERROR_subordinate_failed ) &&
     what->enabled ) {
         if( what->severity >= SEVERITY_ERROR ) {
-            fprintf( error_file, "ERROR: " );
+            fprintf( error_file, "ERROR PE%03d: ", what->serial );
             vfprintf( error_file, what->message, args );
             fputc( '\n', error_file );
             ERRORoccurred = true;
         } else {
-            fprintf( error_file, "WARNING: %d", what->severity );
+            fprintf( error_file, "WARNING PW%03d: %d", what->serial, what->severity );
             vfprintf( error_file, what->message, args );
             fputc( '\n', error_file );
         }
@@ -375,7 +375,7 @@ va_dcl {
             heap[child].msg = ERROR_string;
 
             if( what->severity >= SEVERITY_ERROR ) {
-                sprintf( ERROR_string, "%s:%d: --ERROR: ", sym->filename, sym->line );
+                sprintf( ERROR_string, "%s:%d: --ERROR PE%03d: ", sym->filename, sym->line, what->serial );
                 ERROR_string += strlen( ERROR_string );
                 vsprintf( ERROR_string, what->message, args );
                 ERROR_string += strlen( ERROR_string );
@@ -383,7 +383,7 @@ va_dcl {
                 *ERROR_string++ = '\0';
                 ERRORoccurred = true;
             } else {
-                sprintf( ERROR_string, "%s:%d: WARNING: ", sym->filename, sym->line );
+                sprintf( ERROR_string, "%s:%d: WARNING PW%03d: ", sym->filename, sym->line, what->serial );
                 ERROR_string += strlen( ERROR_string );
                 vsprintf( ERROR_string, what->message, args );
                 ERROR_string += strlen( ERROR_string );
@@ -402,12 +402,12 @@ va_dcl {
             }
         } else {
             if( what->severity >= SEVERITY_ERROR ) {
-                fprintf( error_file, "%s:%d: --ERROR: ", sym->filename, sym->line );
+                fprintf( error_file, "%s:%d: --ERROR PE%03d: ", sym->filename, sym->line, what->serial );
                 vfprintf( error_file, what->message, args );
                 fprintf( error_file, "\n" );
                 ERRORoccurred = true;
             } else {
-                fprintf( error_file, "%s:%d: WARNING: ", sym->filename, sym->line );
+                fprintf( error_file, "%s:%d: WARNING PW%03d: ", sym->filename, sym->line, what->serial );
                 ERROR_string += strlen( ERROR_string ) + 1;
                 vfprintf( error_file, what->message, args );
                 fprintf( error_file, "\n" );
@@ -437,12 +437,14 @@ void ERRORnospace() {
 ** Create a new error
 */
 Error ERRORcreate( char * message, Severity severity ) {
+    static int errnum = 0; /* give each error type a unique identifier */
     Error n;
 
     n = ( struct Error_ * )sc_malloc( sizeof( struct Error_ ) );
     n->message = message;
     n->severity = severity;
     n->enabled = true;
+    n->serial = errnum++;
     return n;
 }
 
