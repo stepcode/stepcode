@@ -49,10 +49,10 @@ static int checkItem( Type, Scope, Schema, int *, int );
 static int ENUMcanBeProcessed( Type, Schema );
 static int inSchema( Scope, Scope );
 static void addRenameTypedefs( Schema, FILE * );
-static void addAggrTypedefs( Schema , FILE * );
+static void addAggrTypedefs( Schema schema );
 static void addUseRefNames( Schema, FILE * );
 
-void print_schemas_separate( Express express, void * complexCol, FILES * files )
+void print_schemas_separate( Express express, FILES * files )
 /*
  * Generates the C++ files corresponding to a list of schemas.  Does so in
  * multiple passes through the schemas.  In each pass it checks for enti-
@@ -104,10 +104,9 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
                         // will create files with the suffixes "_1", "_2", etc.
                         // If not, no file suffix will be added. */
                         suffix = ++*( int * )schema->clientData;
-                        SCHEMAprint( schema, files, complexCol,
-                                     suffix );
+                        SCHEMAprint( schema, files, suffix );
                     } else {
-                        SCHEMAprint( schema, files, complexCol, 0 );
+                        SCHEMAprint( schema, files, 0 );
                     }
                 }
                 complete = complete && ( schema->search_id == PROCESSED );
@@ -139,7 +138,6 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         /* (These two tasks are totally unrelated but are done in the same loop
         // for efficiency.) */
-        addRenameTypedefs( schema, files->classes );
         addUseRefNames( schema, files->create );
     }
     /* Third situation:  (Must be dealt with after first, see header comments
@@ -147,7 +145,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         //addAggrTypedefs( schema, files->classes );
-        addAggrTypedefs( schema, files->lib );
+        addAggrTypedefs( schema );
     }
 
     /* On our way out, print the necessary statements to add support for
@@ -580,18 +578,7 @@ static int inSchema( Scope scope, Scope super )
                       SCOPEget_name( super ) ) );
 }
 
-static void addRenameTypedefs( Schema schema, FILE * classes )
-/*
- * Prints typedefs at the end of Sdaiclasses.h for enumeration or select
- * types which are renamed from other enum/sel's.  Since the original e/s
- * may be in any schema, this must be done at the end of all the schemas.
- * (Actually, for the enum only the aggregate class name is written in
- * Sdaiclasses.h (needs to have forward declarations here).)
- */
-{
-}
-
-static void addAggrTypedefs( Schema schema, FILE * classes )
+static void addAggrTypedefs( Schema schema )
 /*
  * Print typedefs at the end of Sdiaclasses.h for aggregates of enum's and
  * selects.  Since the underlying enum/sel may appear in any schema, this
@@ -602,8 +589,6 @@ static void addAggrTypedefs( Schema schema, FILE * classes )
 {
     DictionaryEntry de;
     Type i;
-    static int firsttime = TRUE;
-    char nm[BUFSIZ];
 
     SCOPEdo_types( schema, t, de )
     if( TYPEis_aggregate( t ) ) {
