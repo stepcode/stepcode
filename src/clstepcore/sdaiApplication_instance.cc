@@ -180,7 +180,7 @@ STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm, co
 
     ResetAttributes();
     // keep going until no more attributes, or attribute is found
-    while( a = NextAttribute() ) {
+    while( ( a = NextAttribute() ) ) {
         if( 0 == strcmp( nm, a ->Name() ) &&
             //if entity isn't null, check for a match. NOTE: should we use IsA(), CanBe(), or Name()?
             ( entity ? ( 0 != a->aDesc->Owner().IsA( entity ) ) : true ) ) {

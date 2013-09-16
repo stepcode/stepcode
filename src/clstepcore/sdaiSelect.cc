@@ -135,7 +135,7 @@ void SDAI_Select::nullify() {
 }
 
 Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
-                                        InstMgr * im, int clearError ) {
+                                        InstMgr * im ) {
     SDAI_Select * tmp = NewSelect();
     Severity s = SEVERITY_NULL;
 
