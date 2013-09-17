@@ -194,7 +194,7 @@ SdaiFile_population::determination_method_( const SdaiExchange_structure_identif
     _determination_method = x;
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiFile_population::governed_sections_() const {
     return ( StringAggregate_ptr ) &_governed_sections;
 }
@@ -354,7 +354,7 @@ SdaiFile_name::time_stamp_( const SdaiTime_stamp_text x )
     _time_stamp = x;
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiFile_name::author_() const {
     return ( StringAggregate_ptr ) &_author;
 }
@@ -366,7 +366,7 @@ SdaiFile_name::author_( const StringAggregate_ptr x )
     _author.ShallowCopy( *x );
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiFile_name::organization_() const {
     return ( StringAggregate_ptr ) &_organization;
 }
@@ -480,7 +480,7 @@ SdaiSection_context::section_( const SdaiSection_name x )
     _section = x;
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiSection_context::context_identifiers_() const {
     return ( StringAggregate_ptr ) &_context_identifiers;
 }
@@ -546,7 +546,7 @@ SdaiFile_description::SdaiFile_description( SDAI_Application_instance * se, int 
     }
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiFile_description::description_() const {
     return ( StringAggregate_ptr ) &_description;
 }
@@ -610,7 +610,7 @@ SdaiFile_schema::SdaiFile_schema( SDAI_Application_instance * se, int * addAttrs
     }
 }
 
-const StringAggregate_ptr
+StringAggregate_ptr
 SdaiFile_schema::schema_identifiers_() const {
     return ( StringAggregate_ptr ) &_schema_identifiers;
 }
