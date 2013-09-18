@@ -489,7 +489,6 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -503,7 +502,6 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
-        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
@@ -729,7 +727,6 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -743,7 +740,6 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
-        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
