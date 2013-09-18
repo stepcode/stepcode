@@ -1742,18 +1742,14 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         keywd = GetKeyword( *in2, ";", _error );
         //yank the ";" from the istream
         //if (';' == in2->peek()) in2->get();
-        char c;
-        in2->get( c );
-        if( c == ';' ) {
-            ;
-        } else {
-            //FIXME shouldn't *something* be done based upon the value of c? MAP, 9/2011
+        char ch;
+        in2->get( ch );
+        if( ch != ';' ) {
+            std::cerr << __FILE__ << ":" << __LINE__ << " - Expected ';', found '" << c << "'." << std::endl;
         }
     }
 
-    if( ( strncmp( const_cast<char *>( keywd.c_str() ),
-                   END_FILE_DELIM.c_str(),
-                   strlen( const_cast<char *>( keywd.c_str() ) ) ) || !( in2 -> good() ) ) ) {
+    if( ( keywd != END_FILE_DELIM ) || !( in2 -> good() ) ) {
         _error.AppendToUserMsg( END_FILE_DELIM.c_str() );
         _error.AppendToUserMsg( " missing at end of file.\n" );
         CloseInputFile( in2 );
