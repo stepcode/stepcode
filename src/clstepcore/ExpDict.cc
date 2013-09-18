@@ -294,7 +294,7 @@ Interface_spec::Interface_spec()
 }
 
 /// not tested
-Interface_spec::Interface_spec( Interface_spec & is ) {
+Interface_spec::Interface_spec( Interface_spec & is ): Dictionary_instance() {
     _explicit_items = new Explicit_item_id__set;
     int count = is._explicit_items->Count();
     int i;
@@ -1015,7 +1015,7 @@ Where_rule::Where_rule() {
     _type_or_rule = 0;
 }
 
-Where_rule::Where_rule( const Where_rule & wr ) {
+Where_rule::Where_rule( const Where_rule & wr ): Dictionary_instance() {
     _label = wr._label;
     _type_or_rule = wr._type_or_rule;
 }
@@ -1123,7 +1123,7 @@ Uniqueness_rule::Uniqueness_rule()
     : _parent_entity( 0 ) {
 }
 
-Uniqueness_rule::Uniqueness_rule( const Uniqueness_rule & ur ) {
+Uniqueness_rule::Uniqueness_rule( const Uniqueness_rule & ur ): Dictionary_instance() {
     _label = ur._label;
     _parent_entity = ur._parent_entity;
 }
@@ -1238,7 +1238,7 @@ Global_rule::Global_rule( const char * n, Schema_ptr parent_sch, const std::stri
 }
 
 /// not fully implemented
-Global_rule::Global_rule( Global_rule & gr ) {
+Global_rule::Global_rule( Global_rule & gr ): Dictionary_instance() {
     _name = gr._name;
     _parent_schema = gr._parent_schema;
 }

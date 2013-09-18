@@ -44,7 +44,7 @@ SdaiSection_language::SdaiSection_language( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiSection_language::SdaiSection_language( SdaiSection_language & e ) {
+SdaiSection_language::SdaiSection_language( SdaiSection_language & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiSection_language::~SdaiSection_language() {  }
@@ -126,7 +126,7 @@ SdaiFile_population::SdaiFile_population( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiFile_population::SdaiFile_population( SdaiFile_population & e ) {
+SdaiFile_population::SdaiFile_population( SdaiFile_population & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiFile_population::~SdaiFile_population() {  }
@@ -246,7 +246,7 @@ SdaiFile_name::SdaiFile_name( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiFile_name::SdaiFile_name( SdaiFile_name & e ) {
+SdaiFile_name::SdaiFile_name( SdaiFile_name & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiFile_name::~SdaiFile_name() {  }
@@ -434,7 +434,7 @@ SdaiSection_context::SdaiSection_context( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiSection_context::SdaiSection_context( SdaiSection_context & e ) {
+SdaiSection_context::SdaiSection_context( SdaiSection_context & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiSection_context::~SdaiSection_context() {  }
@@ -512,7 +512,7 @@ SdaiFile_description::SdaiFile_description( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiFile_description::SdaiFile_description( SdaiFile_description & e ) {
+SdaiFile_description::SdaiFile_description( SdaiFile_description & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiFile_description::~SdaiFile_description() {  }
@@ -586,7 +586,7 @@ SdaiFile_schema::SdaiFile_schema( ) {
     a -> set_null();
     attributes.push( a );
 }
-SdaiFile_schema::SdaiFile_schema( SdaiFile_schema & e ) {
+SdaiFile_schema::SdaiFile_schema( SdaiFile_schema & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
 SdaiFile_schema::~SdaiFile_schema() {  }

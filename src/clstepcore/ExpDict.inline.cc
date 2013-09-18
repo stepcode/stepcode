@@ -46,7 +46,7 @@ Schema::~Schema() {
 Interfaced_item::Interfaced_item() {
 }
 
-Interfaced_item::Interfaced_item( const Interfaced_item & ii ) {
+Interfaced_item::Interfaced_item( const Interfaced_item & ii ): Dictionary_instance() {
     _foreign_schema = ii._foreign_schema;
 }
 
