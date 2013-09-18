@@ -332,8 +332,15 @@ void Schema::AddGlobal_rule( Global_rule_ptr gr ) {
     _global_rules->Append( gr );
 }
 
-/// not implemented
+/// hope I did this right (MP) - was "not implemented"
 void Schema::global_rules_( Global_rule__set_var & grs ) {
+    if( _global_rules ) {
+        if( _global_rules->Count() > 0 ) {
+            std::cerr << "In " << __FILE__ << ", Schema::global_rules_(): overwriting non-empty global rule set!" << std::endl;
+        }
+        delete _global_rules;
+    }
+    _global_rules = grs;
 }
 
 void Schema::AddProcedure( const std::string & p ) {
@@ -994,9 +1001,11 @@ const EntityDescriptor * EntityDescriptor::IsA( const EntityDescriptor * other )
 }
 
 Type_or_rule::Type_or_rule() {
+    std::cerr << "WARNING - Type_or_rule class doesn't seem to be complete - it has no members!" << std::endl;
 }
 
-Type_or_rule::Type_or_rule( const Type_or_rule & tor ) {
+Type_or_rule::Type_or_rule( const Type_or_rule & tor ): Dictionary_instance() {
+    (void) tor; //TODO once this class has some members, we'll actually have something to copy
 }
 
 Type_or_rule::~Type_or_rule() {
@@ -1240,9 +1249,23 @@ Global_rule::~Global_rule() {
 }
 
 void Global_rule::entities_( const Entity__set_var & e ) {
+    if( _entities ) {
+        if( _entities->EntryCount() > 0 ) {
+            std::cerr << "In " << __FILE__ << ", Global_rule::entities_(): overwriting non-empty entity set!" << std::endl;
+        }
+        delete _entities;
+    }
+    _entities = e;
 }
 
 void Global_rule::where_rules_( const Where_rule__list_var & wrl ) {
+    if( _where_rules ) {
+        if( _where_rules->Count() > 0 ) {
+            std::cerr << "In " << __FILE__ << ", Global_rule::where_rules_(): overwriting non-empty rule set!" << std::endl;
+        }
+        delete _where_rules;
+    }
+    _where_rules = wrl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

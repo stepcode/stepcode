@@ -51,14 +51,20 @@ SDAI_Model_contents::populated_folders_() const {
 }
 
 SDAI_PID_DA_ptr SDAI_Model_contents::get_object_pid( const SDAI_DAObject_ptr & d ) const {
+    std::cerr << __FILE__ << ":" << __LINE__ << " - SDAI_Model_contents::get_object_pid() unimplemented!" << std::endl;
+    (void) d; //unused
     return 0;
 }
 
 SDAI_DAObject_ptr SDAI_Model_contents::lookup( const SDAI_PID_DA_ptr & p ) const {
+    std::cerr << __FILE__ << ":" << __LINE__ << " - SDAI_Model_contents::lookup() unimplemented!" << std::endl;
+    (void) p; //unused
     return 0;
 }
 
 SDAI_DAObject_ptr SDAI_Model_contents::CreateEntityInstance( const char * Type ) {
+    std::cerr << __FILE__ << ":" << __LINE__ << " - SDAI_Model_contents::CreateEntityInstance() unimplemented!" << std::endl;
+    (void) Type; //unused
     return 0;
 }
 
