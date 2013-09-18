@@ -100,6 +100,9 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type, InstMgr * insts,
                                    int addFileId, int assignVal, int exchangeFileFormat,
                                    const char * ) {
+    (void) insts; //not used in ReadValue() for this class
+    (void) addFileId; //not used in ReadValue() for this class
+
     ErrorDescriptor errdesc;
     char errmsg[BUFSIZ];
     int value_cnt = 0;
@@ -452,6 +455,7 @@ const char * GenericAggrNode::asStr( std::string & s ) {
 }
 
 const char * GenericAggrNode::STEPwrite( std::string & s, const char * currSch ) {
+    (void) currSch; //unused
     return value.STEPwrite( s );
 }
 
@@ -859,6 +863,8 @@ SingleLinkNode * SelectNode::NewNode() {
 Severity SelectNode::StrToVal( const char * s, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgr * insts, int addFileId ) {
+    (void) elem_type; //unused
+    (void) addFileId; //unused
     istringstream in( ( char * )s );
     if( err->severity( node->STEPread( in, err, insts ) ) != SEVERITY_NULL ) {
         err->AppendToDetailMsg( node ->Error() );

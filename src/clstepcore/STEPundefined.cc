@@ -20,6 +20,7 @@
 */
 
 Severity SCLundefined::StrToVal( const char * s, ErrorDescriptor * err ) {
+    (void) err; //unused
     val = s;
     return SEVERITY_NULL;
 }
