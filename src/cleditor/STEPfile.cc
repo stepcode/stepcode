@@ -461,7 +461,7 @@ int STEPfile::ReadData1( istream & in ) {
     ErrorDescriptor e;
 
     //  PASS 1:  create instances
-    endsec = FoundEndSecKywd( in, _error );
+    endsec = FoundEndSecKywd( in );
     while( in.good() && !endsec ) {
         e.ClearErrorMsg();
         ReadTokenSeparator( in ); // also skips white space
@@ -484,7 +484,7 @@ int STEPfile::ReadData1( istream & in ) {
         if( c != ENTITY_NAME_DELIM ) {
             in.putback( c );
             while( c != ENTITY_NAME_DELIM && in.good() &&
-                    !( endsec = FoundEndSecKywd( in, _error ) ) ) {
+                    !( endsec = FoundEndSecKywd( in ) ) ) {
                 tmpbuf.clear();
                 FindStartOfInstance( in, tmpbuf );
                 cout << "ERROR: trying to recover from invalid data. skipping: "
@@ -533,7 +533,7 @@ int STEPfile::ReadData1( istream & in ) {
                 return instance_count;
             }
 
-            endsec = FoundEndSecKywd( in, _error );
+            endsec = FoundEndSecKywd( in );
 
         }
     } // end while loop
@@ -581,7 +581,7 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
     SDAI_Application_instance * obj = ENTITY_NULL;
     std::string cmtStr;
 
-    int endsec = FoundEndSecKywd( in, _error );
+    int endsec = FoundEndSecKywd( in );
 
     //  PASS 2:  read instances
     while( in.good() && !endsec ) {
@@ -599,7 +599,7 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
         if( c != ENTITY_NAME_DELIM ) {
             in.putback( c );
             while( c != ENTITY_NAME_DELIM && in.good() &&
-                    !( endsec = FoundEndSecKywd( in, _error ) ) ) {
+                    !( endsec = FoundEndSecKywd( in ) ) ) {
 
                 tmpbuf.clear();
                 FindStartOfInstance( in, tmpbuf );
@@ -653,7 +653,7 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
                 return valid_insts;
             }
 
-            endsec = FoundEndSecKywd( in, _error );
+            endsec = FoundEndSecKywd( in );
         }
     } // end while loop
 
