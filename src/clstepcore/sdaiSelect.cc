@@ -471,11 +471,11 @@ Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
         }
 
         if( base_type == ENTITY_TYPE ) {
-            // you don\'t know if this is an ENTITY or a SELECT
+            // you don't know if this is an ENTITY or a SELECT
             // have to do this here - not in STEPread_content
-            STEPentity * tmp =
+            STEPentity * temp =
                 ReadEntityRef( in, err, ",)", instances, addFileId );
-            if( tmp && ( tmp != ENTITY_NULL ) && AssignEntity( tmp ) ) {
+            if( temp && ( temp != ENTITY_NULL ) && AssignEntity( temp ) ) {
 #ifdef SC_LOGGING
 //    *logStream << "DAVE ERR Exiting SDAI_Select::STEPread for " << _type->Name() << endl;
 #endif
