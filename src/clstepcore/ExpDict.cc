@@ -1730,7 +1730,7 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const char * other ) const {
     }
 
     // see if other is one of the elements
-    while( td = elements.NextTypeDesc() )  {
+    while( ( td = elements.NextTypeDesc() ) ) {
         if( td -> CanBe( other ) ) {
             return td;
         }
