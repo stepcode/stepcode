@@ -54,7 +54,7 @@ void create_builtin_type_defn( FILES * files, char * name ) {
  ** In this case the file schema.h is initiated
  ** Status:  ok 1/15/91
  ******************************************************************/
-void print_file_header( Express express, FILES * files ) {
+void print_file_header( FILES * files ) {
 
     /*  open file which unifies all schema specific header files
     of input Express source */
@@ -125,7 +125,7 @@ void print_file_header( Express express, FILES * files ) {
  ** Description:  handles cleaning up things at end of processing
  ** Status:  ok 1/15/91
  ******************************************************************/
-void print_file_trailer( Express express, FILES * files ) {
+void print_file_trailer( FILES * files ) {
     FILEclose( files->incall );
     FILEclose( files->initall );
     fprintf( files->create, "}\n\n" );
@@ -151,8 +151,7 @@ void print_file_trailer( Express express, FILES * files ) {
  ** and what the relationship is between this organization and the
  ** organization of the schemas in the input Express
  ******************************************************************/
-void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
-                 ComplexCollect * col, int cnt ) {
+void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col, int cnt ) {
     Linked_List list = SCOPEget_entities_superclass_order( scope );
     DictionaryEntry de;
     Type i;
@@ -300,9 +299,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
         fprintf( files -> inc, "\n  public:\n" );
         fprintf( files -> inc, "    SdaiModel_contents_%s();\n",
                  SCHEMAget_name( schema ) );
-        LISTdo( list, e, Entity );
-        MODELprint_new( e, files, schema );
-        LISTod;
+        LISTdo( list, e, Entity ) {
+            MODELprint_new( e, files );
+        } LISTod;
 
         fprintf( files->inc, "\n};\n" );
 
@@ -334,18 +333,6 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
     }
 
     LISTfree( list );
-
-#if following_should_be_done_in_caller
-    list = SCOPEget_schemata( scope );
-    fprintf( files -> inc, "\n/*        **************  SCOPE          */\n" );
-    fprintf( files -> lib, "\n/*        **************  SCOPE          */\n" );
-
-    LISTdo( list, s, Schema )
-    sprintf( nm, "%s::schema", SCHEMAget_name( s ) );
-    fprintf( files->inc, "//	         include definitions for %s \n", nm );
-    fprintf( files->inc, "#include <%s.h> \n", nm );
-    LISTod;
-#endif
 }
 
 /** ****************************************************************
@@ -361,7 +348,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, Express model,
  ** Side Effects:
  ** Status:
  ******************************************************************/
-void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol,
+void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
                   int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
@@ -532,7 +519,7 @@ void SCHEMAprint( Schema schema, FILES * files, Express model, void * complexCol
     /**********  do the schemas ***********/
 
     /* really, create calls for entity constructors */
-    SCOPEPrint( schema, files, schema, model, ( ComplexCollect * )complexCol,
+    SCOPEPrint( schema, files, schema, ( ComplexCollect * )complexCol,
                 suffix );
 
 
@@ -694,7 +681,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
         fprintf( files->names, "namespace %s {\n\n", SCHEMAget_name( schema ) );
         fprintf( files->names, "    extern Schema * schema;\n\n" );
 
-        SCOPEPrint( schema, files, schema, express, &col, 0 );
+        SCOPEPrint( schema, files, schema, &col, 0 );
     }
 
 
@@ -729,12 +716,12 @@ void print_file( Express express ) {
 
     resolution_success();
 
-    print_file_header( express, &files );
+    print_file_header( &files );
     if( separate_schemas ) {
         print_schemas_separate( express, ( void * )&col, &files );
     } else {
         print_schemas_combined( express, col, &files );
     }
-    print_file_trailer( express, &files );
+    print_file_trailer( &files );
     print_complex( col, "compstructs.cc" );
 }

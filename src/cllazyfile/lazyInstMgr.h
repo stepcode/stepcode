@@ -152,7 +152,7 @@ class lazyInstMgr {
          *    //list all instances that one instance depends on (recursive)
          *    std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
          *
-         *    /** the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
+         *    / ** the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
          *    same as above, but with list of instances * /
          *    std::vector<instanceID> notDependencies(...)
          *

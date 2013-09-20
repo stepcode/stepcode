@@ -24,14 +24,14 @@
 
 char * entityName, _buf[512] = { 0 };
 
-///print usage info specific to print_attrs
+/** prints usage info specific to print_attrs */
 void my_usage() {
     EXPRESSusage( 0 );
     printf( "   ----\n\t-a <entity>: print attrs for <entity>\n" );
     exit( 2 );
 }
 
-///prints info about one attr
+/** prints info about one attr */
 void describeAttr( const orderedAttr * oa ) {
     const char * visible_p21 = "    Y    ", * hidden_p21 = "    N    ", * explicit_derived = "    *    ";
     const char * visibility, * descrip1="", * descrip2="", * descrip3=0;
@@ -82,7 +82,7 @@ void find_and_print( Express model ) {
     }
 }
 
-///reads arg setting entity name
+/** reads arg setting entity name */
 int attr_arg( int i, char * arg ) {
     const char * src = arg;
     int count = 0;
@@ -100,13 +100,15 @@ int attr_arg( int i, char * arg ) {
             entityName = 0;
         }
     } else if( !entityName ) {
-        //if libexpress comes across an unrecognized arg that isn't '-a' and if the entityName isn't set
-        return 1; // print usage and exit
+        /* if libexpress comes across an unrecognized arg that isn't '-a',
+         * and if the entityName isn't set, print usage and exit
+         */
+        return 1;
     }
     return 0;
 }
 
-///set the functions to be called by main() in libexpress
+/** set the functions to be called by main() in libexpress */
 void EXPRESSinit_init() {
     entityName = 0;
     EXPRESSbackend = find_and_print;

@@ -55,7 +55,7 @@ static int attr_count;  /**< number each attr to avoid inter-entity clashes
                             ENTITYincode_print (Entity entity, FILES* files,Schema schema)
                             DAS
                         */
-static int type_count;  ///< number each temporary type for same reason as \sa attr_count
+static int type_count;  /**< number each temporary type for same reason as \sa attr_count */
 
 extern int any_duplicates_in_select( const Linked_List list );
 extern int unique_types( const Linked_List list );
@@ -104,14 +104,14 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
  *
  * This version takes a file pointer and eliminates use of the temp buffer.
  */
-void format_for_std_stringout( FILE * f, const char * orig_buf ) {
+void format_for_std_stringout( FILE * f, char * orig_buf ) {
     const char * optr  = orig_buf;
     char * s_end = "\\n\" );\n";
     char * s_begin = "    str.append( \"";
     fprintf( f, "%s", s_begin );
     while( *optr ) {
         if( *optr == '\n' ) {
-            if( * ( optr + 1 ) == '\n' ) { // skip blank lines
+            if( * ( optr + 1 ) == '\n' ) { /*  skip blank lines */
                 optr++;
                 continue;
             }
@@ -124,7 +124,7 @@ void format_for_std_stringout( FILE * f, const char * orig_buf ) {
         }
         optr++;
     }
-    fprintf( f,  s_end );
+    fprintf( f, "%s", s_end );
     sc_free( orig_buf );
 }
 
@@ -160,77 +160,77 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
     /* step 1: for each entry, store it in a schema-specific list */
     DICTdo_init( refdict, &de );
     while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
-        Linked_List list;
+        Linked_List wlist;
 
-        list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
-        if( !list ) {
-            list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, ( Generic ) list,
+        wlist = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
+        if( !wlist ) {
+            wlist = LISTcreate();
+            DICTdefine( dict, r->schema->symbol.name, ( Generic ) wlist,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd_last( list, ( Generic ) r );
+        LISTadd_last( wlist, ( Generic ) r );
     }
 
     /* step 2: for each list, print out the renames */
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
-        LISTdo( list, r, struct Rename * )
+        LISTdo( list, re, struct Rename * ) {
 
-        /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
-        if( first_time ) {
-            fprintf( file, "        // %s FROM %s (selected objects)\n", type, r->schema->symbol.name );
-            fprintf( file, "        is = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( r->schema->symbol.name ) );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        %s::schema->use_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+            /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
+            if( first_time ) {
+                fprintf( file, "        // %s FROM %s (selected objects)\n", type, re->schema->symbol.name );
+                fprintf( file, "        is = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( re->schema->symbol.name ) );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        %s::schema->use_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
+                }
             }
-        }
 
-        if( first_time ) {
-            first_time = false;
-        }
-        if( r->type == OBJ_TYPE ) {
-            sprintf( td_name, "%s", TYPEtd_name( ( Type )r->object ) );
-        } else if( r->type == OBJ_FUNCTION ) {
-            sprintf( td_name, "/* Function not implemented */ 0" );
-        } else if( r->type == OBJ_PROCEDURE ) {
-            sprintf( td_name, "/* Procedure not implemented */ 0" );
-        } else if( r->type == OBJ_RULE ) {
-            sprintf( td_name, "/* Rule not implemented */ 0" );
-        } else if( r->type == OBJ_ENTITY ) {
-            sprintf( td_name, "%s%s%s",
-                     SCOPEget_name( ( ( Entity )r->object )->superscope ),
-                     ENT_PREFIX, ENTITYget_name( ( Entity )r->object ) );
-        } else {
-            sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", r->type );
-        }
-        if( r->old != r->nnew ) {
-            fprintf( file, "        // object %s AS %s\n", r->old->name,
-                     r->nnew->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        ui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+            if( first_time ) {
+                first_time = false;
             }
-        } else {
-            fprintf( file, "        // object %s\n", r->old->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "        ui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+            if( re->type == OBJ_TYPE ) {
+                sprintf( td_name, "%s", TYPEtd_name( ( Type )re->object ) );
+            } else if( re->type == OBJ_FUNCTION ) {
+                sprintf( td_name, "/* Function not implemented */ 0" );
+            } else if( re->type == OBJ_PROCEDURE ) {
+                sprintf( td_name, "/* Procedure not implemented */ 0" );
+            } else if( re->type == OBJ_RULE ) {
+                sprintf( td_name, "/* Rule not implemented */ 0" );
+            } else if( re->type == OBJ_ENTITY ) {
+                sprintf( td_name, "%s%s%s",
+                        SCOPEget_name( ( ( Entity )re->object )->superscope ),
+                        ENT_PREFIX, ENTITYget_name( ( Entity )re->object ) );
             } else {
-                fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", re->type );
             }
-        }
-        LISTod
+            if( re->old != re->nnew ) {
+                fprintf( file, "        // object %s AS %s\n", re->old->name,
+                        re->nnew->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        ui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", re->schema->symbol.name, td_name, re->old->name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", re->schema->symbol.name, td_name, re->old->name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                }
+            } else {
+                fprintf( file, "        // object %s\n", re->old->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "        ui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", re->schema->symbol.name, td_name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ui);\n", SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "        ri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", re->schema->symbol.name, td_name, re->nnew->name );
+                    fprintf( file, "        is->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
+                }
+            }
+        } LISTod
     }
     HASHdestroy( dict );
 }
@@ -399,6 +399,7 @@ const char * TYPEget_idl_type( const Type t ) {
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
+    (void) arg; /* unused */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }
@@ -420,7 +421,8 @@ int Handle_FedPlus_Args( int i, char * arg ) {
  ** Status:  complete 8/5/93
  ******************************************************************/
 char * generate_attribute_name( Variable a, char * out ) {
-    char * temp, *p, *q;
+    char * temp, *q;
+    const char * p;
     int i;
 
     temp = EXPRto_string( VARget_name( a ) );
@@ -699,7 +701,7 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
     return;
 }
 
-void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file, Type t,
+void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
     fprintf( file, "{\n" );
@@ -745,7 +747,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
 
     if( isAggregate( a ) ) {
-        AGGRprint_access_methods( entnm, a, file, t, ctype, attrnm );
+        AGGRprint_access_methods( entnm, a, file, ctype, attrnm );
         return;
     }
     ATTRprint_access_methods_get_head( entnm, a, file );
@@ -1028,11 +1030,9 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
  * Nov 2011 - MAP - This function was split out of ENTITYhead_print to enable
  *                  use of a separate header with a namespace.
  */
-void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
+void ENTITYnames_print( Entity entity, FILE * file ) {
     char attrnm [BUFSIZ];
-    //Linked_List list;
     int attr_count_tmp = attr_count;
-    Entity super = 0;
 
     fprintf( file, "    extern EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
 
@@ -1063,7 +1063,7 @@ void ENTITYnames_print( Entity entity, FILE * file, Schema schema ) {
  **          remove extern keyword - MAP - Nov 2011
  **          split out stuff in namespace to ENTITYdesc_print - MAP - Nov 2011
  ******************************************************************/
-void ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
+void ENTITYhead_print( Entity entity, FILE * file ) {
     char entnm [BUFSIZ];
     Linked_List list;
     Entity super = 0;
@@ -1143,7 +1143,7 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
  ** Side Effects:  generates c++ code
  ** Status:  ok 1/15/91
  ******************************************************************/
-void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
+void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     Linked_List attr_list;
     char entnm [BUFSIZ];
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
@@ -1157,7 +1157,7 @@ void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema
     }
     LISTod;
 
-    // add attributes for parent attributes not inherited through C++ inheritance.
+    /*  add attributes for parent attributes not inherited through C++ inheritance. */
     if( multiple_inheritance ) {
         LISTdo( neededAttr, attr, Variable ) {
             DataMemberPrintAttr( entity, attr, file );
@@ -1183,23 +1183,23 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
 
     if( ! LISTempty( parent_list ) ) {
         if( collect != FIRST_ONLY ) {
-            // collect attributes from parents and their supertypes
+            /*  collect attributes from parents and their supertypes */
             LISTdo( parent_list, e, Entity ) {
                 if( collect == ALL_BUT_FIRST ) {
-                    // skip first and collect from the rest
+                    /*  skip first and collect from the rest */
                     collect = ALL;
                 } else {
-                    // collect attributes of this parent and its supertypes
+                    /*  collect attributes of this parent and its supertypes */
                     collectAttributes( curList, e, ALL );
                 }
             }
             LISTod;
         } else {
-            // collect attributes of only first parent and its supertypes
+            /*  collect attributes of only first parent and its supertypes */
             collectAttributes( curList, ( Entity ) LISTpeek_first( parent_list ), ALL );
         }
     }
-    // prepend this entity's attributes to the result list
+    /*  prepend this entity's attributes to the result list */
     LISTdo( ENTITYget_attributes( curEntity ), attr, Variable ) {
         LISTadd_first( curList, ( Generic ) attr );
     }
@@ -1255,8 +1255,8 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
 
     /* //////////////// */
     if( multiple_inheritance ) {
-        // add the EXPRESS inherited attributes which are non
-        // inherited in C++
+        /*  add the EXPRESS inherited attributes which are non */
+        /*  inherited in C++ */
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
                 ATTRsign_access_methods( attr, file );
@@ -1288,7 +1288,6 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
  ** Status:  ok 12-Apr-1993
  ******************************************************************/
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
-    Linked_List list;
     int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ];
 
@@ -1356,9 +1355,9 @@ void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file 
  ** Side Effects:  prints segment of the c++ .h file
  ** Status:  ok 1/15/91
  ******************************************************************/
-void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
-    ENTITYhead_print( entity, file, schema );
-    DataMemberPrint( entity, neededAttr, file, schema );
+void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file ) {
+    ENTITYhead_print( entity, file );
+    DataMemberPrint( entity, neededAttr, file );
     MemberFunctionSign( entity, neededAttr, file );
 }
 
@@ -1467,32 +1466,31 @@ int get_attribute_number( Entity entity ) {
     complete = ENTITYget_all_attributes( entity );
     local = ENTITYget_attributes( entity );
 
-    LISTdo( local, a, Variable )
-    /*  go to the child's first explicit attribute */
-    if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
-        LISTdo( complete, p, Variable )
-        /*  cycle through all the explicit attributes until the
-        child's attribute is found  */
-        if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
-            if( p != a ) {
-                ++i;
-            } else {
-                found = 1;
-            }
+    LISTdo( local, a, Variable ) {
+        /*  go to the child's first explicit attribute */
+        if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
+                LISTdo_n( complete, p, Variable, b ) {
+                /*  cycle through all the explicit attributes until the
+                child's attribute is found  */
+                if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
+                    if( p != a ) {
+                        ++i;
+                    } else {
+                        found = 1;
+                    }
+                }
+            } LISTod;
+            if( found ) {
+                return i;
+            } else printf( "Internal error:  %s:%d\n"
+                            "Attribute %s not found.\n"
+                            , __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
         }
-        LISTod;
-        if( found ) {
-            return i;
-        } else printf( "Internal error:  %s:%d\n"
-                           "Attribute %s not found.\n"
-                           , __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
-    }
-
-    LISTod;
+    } LISTod;
     return -1;
 }
 
-/// initialize attributes in the constructor; used for two different constructors
+/** initialize attributes in the constructor; used for two different constructors */
 void initializeAttrs( Entity e, FILE* file ) {
     const orderedAttr * oa;
     orderedAttrsInit( e );
@@ -1534,7 +1532,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
     /*  constructor definition  */
 
-    //parent class initializer (if any) and '{' printed below
+    /* parent class initializer (if any) and '{' printed below */
     fprintf( file, "%s::%s()", entnm, entnm );
 
     /* ////MULTIPLE INHERITANCE//////// */
@@ -1553,7 +1551,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
                     /* ignore the 1st parent */
                     const char * parent = ENTITYget_classname( e );
 
-                    //parent class initializer
+                    /* parent class initializer */
                     fprintf( file, ": %s() {\n", parent );
                     fprintf( file, "        /*  parent: %s  */\n%s\n%s\n", parent,
                             "        /* Ignore the first parent since it is */",
@@ -1576,7 +1574,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             } LISTod;
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
-            // no parent class constructor has been printed, so still need an opening brace
+            /*  no parent class constructor has been printed, so still need an opening brace */
             fprintf( file, " {\n" );
             fprintf( file, "        /*  no SuperTypes */\n" );
         }
@@ -1599,12 +1597,12 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             /*  1. create a new STEPattribute */
 
-            // if type is aggregate, the variable is a pointer and needs initialized
+            /*  if type is aggregate, the variable is a pointer and needs initialized */
             if( TYPEis_aggregate( t ) ) {
                 fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
             }
             fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
-                     ( first ? "STEPattribute * " : "" ), //  first time through, declare 'a'
+                     ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
                      SCHEMAget_name( schema ),
                      ATTR_PREFIX, count,
                      ( VARis_type_shifter( a ) ? "R" : "" ),
@@ -1769,12 +1767,12 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
                 /*  1. create a new STEPattribute */
 
-                // if type is aggregate, the variable is a pointer and needs initialized
+                /*  if type is aggregate, the variable is a pointer and needs initialized */
                 if( TYPEis_aggregate( t ) ) {
                     fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
                 }
                 fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
-                         ( first ? "STEPattribute * " : "" ), //  first time through, declare a
+                         ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
                          SCHEMAget_name( schema ),
                          ATTR_PREFIX, count,
                          ( VARis_type_shifter( a ) ? "R" : "" ),
@@ -1864,7 +1862,7 @@ bool TYPEis_builtin( const Type t ) {
  */
 void AGGRprint_init( FILES * files, const Type t, const char * var_name, const char * aggr_name ) {
     if( !TYPEget_head( t ) ) {
-        //the code for lower and upper is almost identical
+        /* the code for lower and upper is almost identical */
         if( TYPEget_body( t )->lower ) {
             if( TYPEget_body( t )->lower->symbol.resolved ) {
                 if( TYPEget_body( t )->lower->type == Type_Funcall ) {
@@ -1873,7 +1871,7 @@ void AGGRprint_init( FILES * files, const Type t, const char * var_name, const c
                 } else {
                     fprintf( files->init, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
                 }
-            } else { //resolved == 0 seems to mean that this is Type_Runtime
+            } else { /* resolved == 0 seems to mean that this is Type_Runtime */
                 assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->lower->e.op2 ) &&
                         ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
                 fprintf( files->init, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
@@ -1892,7 +1890,7 @@ void AGGRprint_init( FILES * files, const Type t, const char * var_name, const c
                 } else {
                     fprintf( files->init, "        %s->SetBound2(%d);\n", var_name, TYPEget_body( t )->upper->u.integer );
                 }
-            } else { //resolved == 0 seems to mean that this is Type_Runtime
+            } else { /* resolved == 0 seems to mean that this is Type_Runtime */
                 assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->upper->e.op2 ) &&
                         ( TYPEget_body( t )->upper->e.op2->symbol.name ) );
                 fprintf( files->init, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
@@ -2252,6 +2250,9 @@ void ENTITYincode_print( Entity entity, FILES * files, Schema schema ) {
                              TYPEget_body( v->type )->base->symbol.name );
                     fprintf( files->init, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
                     break;
+                default:
+                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    abort();
             }
         }
     }
@@ -2297,14 +2298,14 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
         Linked_List existing = LISTcreate();
         Linked_List required = LISTcreate();
 
-        // create list of attr inherited from the parents in C++
+        /*  create list of attr inherited from the parents in C++ */
         collectAttributes( existing, entity, FIRST_ONLY );
 
-        // create list of attr that have to be inherited in EXPRESS
+        /*  create list of attr that have to be inherited in EXPRESS */
         collectAttributes( required, entity, ALL_BUT_FIRST );
 
-        // build list of unique attr that are required but havn't been
-        // inherited
+        /*  build list of unique attr that are required but havn't been */
+        /*  inherited */
         LISTdo( required, attr, Variable ) {
             if( !listContainsVar( existing, attr ) &&
                     !listContainsVar( remaining, attr ) ) {
@@ -2317,11 +2318,11 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     }
 
     fprintf( files->inc,   "\n/////////         ENTITY %s\n", n );
-    ENTITYinc_print( entity, remaining, files -> inc, schema );
+    ENTITYinc_print( entity, remaining, files -> inc );
     fprintf( files->inc,     "/////////         END_ENTITY %s\n", n );
 
     fprintf( files->names, "\n/////////         ENTITY %s\n", n );
-    ENTITYnames_print( entity, files -> names, schema );
+    ENTITYnames_print( entity, files -> names );
     fprintf( files->names,   "/////////         END_ENTITY %s\n", n );
 
     fprintf( files->lib,   "\n/////////         ENTITY %s\n", n );
@@ -2398,7 +2399,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
                  "    %s::%s%s->_where_rules = new Where_rule__list;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
-        LISTdo( wheres, w, Where )
+        LISTdo( wheres, w, Where ) {
         whereRule = EXPRto_string( w->expr );
         ptr2 = whereRule;
 
@@ -2484,7 +2485,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
 
         sc_free( whereRule );
         ptr2 = whereRule = 0;
-        LISTod
+        } LISTod
     }
 
     uniqs = entity->u.entity->unique;
@@ -2510,7 +2511,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
         LISTdo( uniqs, list, Linked_List ) {
             int i = 0;
             fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
-            LISTdo( list, v, Variable ) {
+            LISTdo_n( list, v, Variable, b ) {
                 i++;
                 if( i == 1 ) {
                     /* print label if present */
@@ -2545,7 +2546,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     fprintf( files->classes, "#define %s__set_var     SDAI_DAObject__set_var\n", n );
 }
 
-void MODELprint_new( Entity entity, FILES * files, Schema schema ) {
+void MODELprint_new( Entity entity, FILES * files ) {
     const char * n;
 
     n = ENTITYget_classname( entity );
@@ -2805,7 +2806,7 @@ void strcat_expr( Expression e, char * buf ) {
     }
 }
 
-/// print t's bounds to end of buf
+/** print t's bounds to end of buf */
 void strcat_bounds( TypeBody b, char * buf ) {
     if( !b->upper ) {
         return;
@@ -2886,6 +2887,9 @@ void TypeBody_Description( TypeBody body, char * buf ) {
                         strcat( buf, " UNIQUE" );
                     }
                     break;
+                default:
+                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    abort();
             }
 
             Type_Description( body->base, buf );
@@ -2956,22 +2960,24 @@ void Type_Description( const Type t, char * buf ) {
 void TYPEprint_typedefs( Type t, FILE * classes ) {
     char nm [BUFSIZ];
     Type i;
-    bool aggrNot1d = true;  //added so I can get rid of a goto
+    bool aggrNot1d = true;  /* added so I can get rid of a goto */
 
     /* Print the typedef statement (poss also a forward class def: */
     if( TYPEis_enumeration( t ) ) {
         /* For enums and sels (else clause below), we need forward decl's so
-        // that if we later come across a type which is an aggregate of one of
-        // them, we'll be able to process it.  For selects, we also need a decl
-        // of the class itself, while for enum's we don't.  Objects which con-
-        // tain an enum can't be generated until the enum is generated.  (The
-        // same is basically true for the select, but a sel containing an ent
-        // containing a sel needs the forward decl (trust me ;-) ). */
+          that if we later come across a type which is an aggregate of one of
+          them, we'll be able to process it.  For selects, we also need a decl
+          of the class itself, while for enum's we don't.  Objects which con-
+          tain an enum can't be generated until the enum is generated.  (The
+          same is basically true for the select, but a sel containing an ent
+          containing a sel needs the forward decl (trust me ;-) ).
+         */
         if( !TYPEget_head( t ) ) {
             /* Only print this enum if it is an actual type and not a redefi-
-            // nition of another enum.  (Those are printed at the end of the
-            // classes file - after all the actual enum's.  They must be
-            // printed last since they depend on the others.) */
+              nition of another enum.  (Those are printed at the end of the
+              classes file - after all the actual enum's.  They must be
+              printed last since they depend on the others.)
+             */
             strncpy( nm, TYPEget_ctype( t ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
             fprintf( classes, "class %s_agg;\n", nm );
@@ -2991,18 +2997,20 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
             i = TYPEget_base_type( t );
             if( TYPEis_enumeration( i ) || TYPEis_select( i ) ) {
                 /* One exceptional case - a 1d aggregate of an enum or select.
-                // We must wait till the enum/sel itself has been processed.
-                // To ensure this, we process all such 1d aggrs in a special
-                // loop at the end (in multpass.c).  2d aggrs (or higher), how-
-                // ever, can be processed now - they only require GenericAggr
-                // for their definition here. */
+                   We must wait till the enum/sel itself has been processed.
+                   To ensure this, we process all such 1d aggrs in a special
+                   loop at the end (in multpass.c).  2d aggrs (or higher), how-
+                   ever, can be processed now - they only require GenericAggr
+                   for their definition here.
+                 */
                 aggrNot1d = false;
             }
         }
         if( aggrNot1d ) {
             /* At this point, we'll print typedefs for types which are redefined
-            // fundamental types and their aggregates, and for 2D aggregates(aggre-
-            // gates of aggregates) of enum's and selects. */
+               fundamental types and their aggregates, and for 2D aggregates(aggre-
+               gates of aggregates) of enum's and selects.
+             */
             strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
             fprintf( classes, "typedef %s         %s;\n", TYPEget_ctype( t ), nm );
@@ -3231,7 +3239,7 @@ static void printEnumCreateHdr( FILE * inc, const Type type ) {
     fprintf( inc, "  SDAI_Enum * create_%s ();\n", nm );
 }
 
-/// See header comment above by printEnumCreateHdr.
+/** See header comment above by printEnumCreateHdr. */
 static void printEnumCreateBody( FILE * lib, const Type type ) {
     const char * nm = TYPEget_ctype( type );
     char tdnm[BUFSIZ];
@@ -3244,7 +3252,7 @@ static void printEnumCreateBody( FILE * lib, const Type type ) {
     fprintf( lib, "    return new %s( \"\", %s );\n}\n\n", nm, tdnm );
 }
 
-/// Similar to printEnumCreateHdr above for the enum aggregate.
+/** Similar to printEnumCreateHdr above for the enum aggregate. */
 static void printEnumAggrCrHdr( FILE * inc, const Type type ) {
     const char * n = TYPEget_ctype( type );
     /*    const char *n = ClassName( TYPEget_name(type) ));*/
@@ -3300,7 +3308,7 @@ void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
     /* DAR - moved fn call below from TYPEselect_print to here to put all init
     ** info together. */
     if( TYPEis_select( type ) ) {
-        TYPEselect_init_print( type, files->init, schema );
+        TYPEselect_init_print( type, files->init );
     }
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */

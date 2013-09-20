@@ -61,7 +61,7 @@ class SC_CORE_EXPORT SDAI_Select {
         void nullify();
 
         Severity SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
-                                   InstMgr * im, int clearError );
+                                   InstMgr * im );
 
         // reading and writing
         const char * STEPwrite( std::string & s, const char * currSch = 0 ) const;

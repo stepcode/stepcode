@@ -913,7 +913,7 @@ Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * er
         case LOGICAL_TYPE:
             return ptr.e->EnumValidLevel( attrValue, error, optional, 0, 0, 1 );
         case SELECT_TYPE:
-            return ptr.sh->SelectValidLevel( attrValue, error, im, 0 );
+            return ptr.sh->SelectValidLevel( attrValue, error, im );
 
         default:
             cerr << "Internal error:  " << __FILE__ <<  __LINE__

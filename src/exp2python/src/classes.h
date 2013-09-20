@@ -130,7 +130,7 @@ const char   *  AccessType( Type t );
 const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
-void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
+void            SCHEMAprint( Schema schema, FILES* files, int suffix );
 Type            TYPEget_ancestor( Type );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 
@@ -143,7 +143,7 @@ const char   *  FundamentalType( const Type t, int report_reftypes );
 Variable VARis_overrider( Entity e, Variable a );
 
 /* Added for multiple schema support: */
-void            print_schemas_separate( Express, void *, FILES * );
+void            print_schemas_separate( Express, FILES * );
 void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
 

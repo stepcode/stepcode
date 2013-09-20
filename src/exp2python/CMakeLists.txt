@@ -5,7 +5,6 @@ include_directories(
     ${SC_SOURCE_DIR}/include/exppp
     ${SC_SOURCE_DIR}/include/express
     ${SC_SOURCE_DIR}/src/base
-    ${SC_SOURCE_DIR}/src/exp2cxx
 )
 
 add_definitions( -DHAVE_CONFIG_H )

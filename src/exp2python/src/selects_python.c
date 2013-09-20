@@ -637,47 +637,6 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f, Schema schema,
                                  char * classnm ) {
 }
 
-/*******************
-TYPEselect_lib_print_part_four prints part 4 of the SDAI document of a select
-class.
-*******************/
-void
-TYPEselect_lib_print_part_four( const Type type, FILE * f, Schema schema,
-                                Linked_List dups, char * n ) {
-}
-
-
-/*******************
-TYPEselect_init_print prints the types that belong to the select type
-*******************/
-
-void
-TYPEselect_init_print( const Type type, FILE * f, Schema schema ) {
-#define schema_name SCHEMAget_name(schema)
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-
-    fprintf( f, "\t%s -> Elements ().AddNode",
-             TYPEtd_name( type ) );
-    fprintf( f, " (%s);\n",
-             TYPEtd_name( t ) );
-    LISTod;
-#undef schema_name
-}
-
-void
-TYPEselect_lib_part21( const Type type, FILE * f, Schema schema ) {
-}
-
-
-void
-TYPEselect_lib_StrToVal( const Type type, FILE * f, Schema schema ) {
-}
-
-void
-TYPEselect_lib_virtual( const Type type, FILE * f, Schema schema ) {
-    TYPEselect_lib_part21( type, f,  schema );
-    TYPEselect_lib_StrToVal( type, f,  schema );
-}
 
 void
 SELlib_print_protected( const Type type,  FILE * f, const Schema schema ) {
