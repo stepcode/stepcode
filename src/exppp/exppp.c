@@ -837,7 +837,7 @@ void CASEout( struct Case_Statement_ *c, int level ) {
     max_indent = 0;
     LISTdo( c->cases, ci, Case_Item ) {
         if( ci->labels ) {
-            LISTdo( ci->labels, label, Expression ) {
+            LISTdo_n( ci->labels, label, Expression, b ) {
                 len = EXPRlength( label );
             } LISTod
         } else {
@@ -851,29 +851,29 @@ void CASEout( struct Case_Statement_ *c, int level ) {
     level += exppp_nesting_indent;
 
     /* pass 2: print them */
-    LISTdo( c->cases, ci, Case_Item )
-    if( ci->labels ) {
-        LISTdo( ci->labels, label, Expression )
-        /* print label(s) */
-        indent2 = level + exppp_continuation_indent;
-        raw( "%*s", level, "" );
-        EXPR_out( label, 0 );
-        raw( "%*s : ", level + max_indent - curpos, "" );
+    LISTdo( c->cases, ci, Case_Item ) {
+        if( ci->labels ) {
+            LISTdo_n( ci->labels, label, Expression, b ) {
+                /* print label(s) */
+                indent2 = level + exppp_continuation_indent;
+                raw( "%*s", level, "" );
+                EXPR_out( label, 0 );
+                raw( "%*s : ", level + max_indent - curpos, "" );
 
-        /* print action */
-        STMT_out( ci->action, level + exppp_nesting_indent );
-        LISTod
-    } else {
-        /* print OTHERWISE */
-        indent2 = level + exppp_continuation_indent;
-        raw( "%*s", level, "" );
-        raw( "OTHERWISE" );
-        raw( "%*s : ", level + max_indent - curpos, "" );
+                /* print action */
+                STMT_out( ci->action, level + exppp_nesting_indent );
+            } LISTod
+        } else {
+            /* print OTHERWISE */
+            indent2 = level + exppp_continuation_indent;
+            raw( "%*s", level, "" );
+            raw( "OTHERWISE" );
+            raw( "%*s : ", level + max_indent - curpos, "" );
 
-        /* print action */
-        STMT_out( ci->action, level + exppp_nesting_indent );
-    }
-    LISTod
+            /* print action */
+            STMT_out( ci->action, level + exppp_nesting_indent );
+        }
+    } LISTod
 
     raw( "%*sEND_CASE;\n", level, "" );
 }
@@ -1074,41 +1074,41 @@ void ENTITYunique_out( Linked_List u, int level ) {
 
     /* pass 1 */
     max_indent = 0;
-    LISTdo( u, list, Linked_List )
-    if( 0 != ( sym = ( Symbol * )LISTget_first( list ) ) ) {
-        int length;
-        length = strlen( sym->name );
-        if( length > max_indent ) {
-            max_indent = length;
+    LISTdo( u, list, Linked_List ) {
+        if( 0 != ( sym = ( Symbol * )LISTget_first( list ) ) ) {
+            int length;
+            length = strlen( sym->name );
+            if( length > max_indent ) {
+                max_indent = length;
+            }
         }
-    }
-    LISTod
+    } LISTod
 
     level += exppp_nesting_indent;
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
-    LISTdo( u, list, Linked_List )
-    i = 0;
-    LISTdo( list, v, Variable )
-    i++;
-    if( i == 1 ) {
-        /* print label if present */
-        if( v ) {
-            raw( "%*s%-*s : ", level, "",
-                 max_indent, ( ( Symbol * )v )->name );
-        } else {
-            raw( "%*s%-*s   ", level, "",
-                 max_indent, "" );
-        }
-    } else {
-        if( i > 2 ) {
-            raw( ", " );
-        }
-        EXPR_out( v->name, 0 );
-    }
-    LISTod
-    raw( ";\n" );
-    LISTod
+    LISTdo( u, list, Linked_List ) {
+        i = 0;
+        LISTdo_n( list, v, Variable, b ) {
+            i++;
+            if( i == 1 ) {
+                /* print label if present */
+                if( v ) {
+                    raw( "%*s%-*s : ", level, "",
+                        max_indent, ( ( Symbol * )v )->name );
+                } else {
+                    raw( "%*s%-*s   ", level, "",
+                        max_indent, "" );
+                }
+            } else {
+                if( i > 2 ) {
+                    raw( ", " );
+                }
+                EXPR_out( v->name, 0 );
+            }
+        } LISTod
+        raw( ";\n" );
+    } LISTod
 }
 
 void ENTITYinverse_out( Linked_List attrs, int level ) {
@@ -1116,15 +1116,15 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
 
     /* pass 1: calculate length of longest attr name */
     max_indent = 0;
-    LISTdo( attrs, v, Variable )
-    if( v->inverse_symbol ) {
-        int length;
-        length = strlen( v->name->symbol.name );
-        if( length > max_indent ) {
-            max_indent = length;
+    LISTdo( attrs, v, Variable ) {
+        if( v->inverse_symbol ) {
+            int length;
+            length = strlen( v->name->symbol.name );
+            if( length > max_indent ) {
+                max_indent = length;
+            }
         }
-    }
-    LISTod
+    } LISTod
 
     if( max_indent == 0 ) {
         return;
@@ -1134,25 +1134,25 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
     /* pass 2: print them */
-    LISTdo( attrs, v, Variable )
-    if( v->inverse_symbol ) {
-        /* print attribute name */
-        raw( "%*s%-*s :", level, "",
-             max_indent, v->name->symbol.name );
+    LISTdo( attrs, v, Variable ) {
+        if( v->inverse_symbol ) {
+            /* print attribute name */
+            raw( "%*s%-*s :", level, "",
+                max_indent, v->name->symbol.name );
 
-        /* print attribute type */
-        if( VARget_optional( v ) ) {
-            wrap( " OPTIONAL" );
+            /* print attribute type */
+            if( VARget_optional( v ) ) {
+                wrap( " OPTIONAL" );
+            }
+            TYPE_head_out( v->type, NOLEVEL );
+
+            raw( " FOR " );
+
+            wrap( v->inverse_attribute->name->symbol.name );
+
+            raw( ";\n" );
         }
-        TYPE_head_out( v->type, NOLEVEL );
-
-        raw( " FOR " );
-
-        wrap( v->inverse_attribute->name->symbol.name );
-
-        raw( ";\n" );
-    }
-    LISTod
+    } LISTod
 }
 
 void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
@@ -1160,19 +1160,19 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
 
     /* pass 1: calculate length of longest attr name */
     max_indent = 0;
-    LISTdo( attrs, v, Variable )
-    if( v->inverse_symbol ) {
-        continue;
-    }
-    if( ( derived && v->initializer ) ||
-            ( !derived && !v->initializer ) ) {
-        int length;
-        length = EXPRlength( v->name );
-        if( length > max_indent ) {
-            max_indent = length;
+    LISTdo( attrs, v, Variable ) {
+        if( v->inverse_symbol ) {
+            continue;
         }
-    }
-    LISTod
+        if( ( derived && v->initializer ) ||
+                ( !derived && !v->initializer ) ) {
+            int length;
+            length = EXPRlength( v->name );
+            if( length > max_indent ) {
+                max_indent = length;
+            }
+        }
+    } LISTod
 
     if( max_indent == 0 ) {
         return;
@@ -1184,31 +1184,31 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
     /* pass 2: print them */
-    LISTdo( attrs, v, Variable )
-    if( v->inverse_symbol ) {
-        continue;
-    }
-    if( ( derived && v->initializer ) ||
-            ( !derived && !v->initializer ) ) {
-        /* print attribute name */
-        raw( "%*s", level, "" );
-        EXPR_out( v->name, 0 );
-        raw( "%*s :", level + max_indent + 1 - curpos, "" );
-
-        /* print attribute type */
-        if( VARget_optional( v ) ) {
-            wrap( " OPTIONAL" );
+    LISTdo( attrs, v, Variable ) {
+        if( v->inverse_symbol ) {
+            continue;
         }
-        TYPE_head_out( v->type, NOLEVEL );
+        if( ( derived && v->initializer ) ||
+                ( !derived && !v->initializer ) ) {
+            /* print attribute name */
+            raw( "%*s", level, "" );
+            EXPR_out( v->name, 0 );
+            raw( "%*s :", level + max_indent + 1 - curpos, "" );
 
-        if( derived && v->initializer ) {
-            wrap( " := " );
-            EXPR_out( v->initializer, 0 );
+            /* print attribute type */
+            if( VARget_optional( v ) ) {
+                wrap( " OPTIONAL" );
+            }
+            TYPE_head_out( v->type, NOLEVEL );
+
+            if( derived && v->initializer ) {
+                wrap( " := " );
+                EXPR_out( v->initializer, 0 );
+            }
+
+            raw( ";\n" );
         }
-
-        raw( ";\n" );
-    }
-    LISTod
+    } LISTod
 }
 
 void WHERE_out( Linked_List wheres, int level ) {

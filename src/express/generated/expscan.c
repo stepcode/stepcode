@@ -106,7 +106,6 @@
 #include "expparse.h"
 #include "expscan.h"
 enum { INITIAL, code, comment, return_end_schema };
-extern void	yyerror();
 extern int	yylineno;
 extern bool	yyeof;
 static int	nesting_level = 0;
@@ -143,17 +142,6 @@ buffer[0] = ' ';	/* substitute space */
 return 1;
 } else
 return 0;
-}
-static int
-yywrap()
-{
-int i;
-for (i = 0; i < nesting_level && i < MAX_NESTED_COMMENTS; i++) {
-ERRORreport_with_symbol(ERROR_unmatched_open_comment,
-&open_comment[i]);
-/* maybe not all, but at least some will be reported - DEL */
-}
-return 1;
 }
 #define NEWLINE (yylineno++)
 /* when lex looks ahead over a newline, error messages get thrown off */

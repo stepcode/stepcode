@@ -72,14 +72,14 @@ Scan_Buffer SCAN_buffers[SCAN_NESTING_DEPTH];
 int     SCAN_current_buffer = 0;
 char    *   SCANcurrent;
 
-Error       ERROR_include_file      = ERROR_none;
+Error       ERROR_include_file              = ERROR_none;
 Error       ERROR_unmatched_close_comment   = ERROR_none;
 Error       ERROR_unmatched_open_comment    = ERROR_none;
-Error       ERROR_unterminated_string   = ERROR_none;
+Error       ERROR_unterminated_string       = ERROR_none;
 Error       ERROR_encoded_string_bad_digit  = ERROR_none;
 Error       ERROR_encoded_string_bad_count  = ERROR_none;
-Error       ERROR_bad_identifier        = ERROR_none;
-Error       ERROR_unexpected_character  = ERROR_none;
+Error       ERROR_bad_identifier            = ERROR_none;
+Error       ERROR_unexpected_character      = ERROR_none;
 Error       ERROR_nonascii_char;
 
 
@@ -216,9 +216,7 @@ static struct keyword_entry {
     { 0,            0}
 };
 
-static
-void
-SCANpush_buffer( char * filename, FILE * fp ) {
+static void SCANpush_buffer( char * filename, FILE * fp ) {
     SCANbuffer.savedPos = SCANcurrent;
     SCANbuffer.lineno = yylineno;
     yylineno = 1;
@@ -233,9 +231,7 @@ SCANpush_buffer( char * filename, FILE * fp ) {
     SCANbuffer.filename = current_filename = filename;
 }
 
-static
-void
-SCANpop_buffer() {
+static void SCANpop_buffer() {
     if( SCANbuffer.file != NULL ) {
         fclose( SCANbuffer.file );
     }
@@ -245,13 +241,7 @@ SCANpop_buffer() {
     current_filename = SCANbuffer.filename;
 }
 
-
-/*
-** Requires:    yyin has been set
-*/
-
-void
-SCANinitialize( void ) {
+void SCANinitialize( void ) {
     struct keyword_entry * k;
 
     keyword_dictionary = HASHcreate( 100 ); /* not exact */
@@ -296,26 +286,22 @@ void SCANcleanup( void ) {
     ERRORdestroy( ERROR_nonascii_char );
 }
 
-int
-SCANprocess_real_literal( const char * yytext ) {
+int SCANprocess_real_literal( const char * yytext ) {
     sscanf( yytext, "%lf", &( yylval.rVal ) );
     return TOK_REAL_LITERAL;
 }
 
-int
-SCANprocess_integer_literal( const char * yytext ) {
+int SCANprocess_integer_literal( const char * yytext ) {
     sscanf( yytext, "%d", &( yylval.iVal ) );
     return TOK_INTEGER_LITERAL;
 }
 
-int
-SCANprocess_binary_literal( const char * yytext ) {
+int SCANprocess_binary_literal( const char * yytext ) {
     yylval.binary = SCANstrdup( yytext + 1 ); /* drop '%' prefix */
     return TOK_BINARY_LITERAL;
 }
 
-int
-SCANprocess_logical_literal( char * string ) {
+int SCANprocess_logical_literal( char * string ) {
     switch( string[0] ) {
         case 'T':
             yylval.logical = Ltrue;
@@ -332,13 +318,11 @@ SCANprocess_logical_literal( char * string ) {
     return TOK_LOGICAL_LITERAL;
 }
 
-int
-SCANprocess_identifier_or_keyword( const char * yytext ) {
-    char * test_string;
+int SCANprocess_identifier_or_keyword( const char * yytext ) {
+    char * test_string, * dest;
+    const char * src;
     struct keyword_entry * k;
-
     int len;
-    char * src, *dest;
 
     /* make uppercase copy */
     len = strlen( yytext );
@@ -375,8 +359,7 @@ SCANprocess_identifier_or_keyword( const char * yytext ) {
     }
 }
 
-int
-SCANprocess_string( const char * yytext ) {
+int SCANprocess_string( const char * yytext ) {
     char * s, *d;   /* source, destination */
 
     /* strip off quotes */
@@ -402,8 +385,7 @@ SCANprocess_string( const char * yytext ) {
     return TOK_STRING_LITERAL;
 }
 
-int
-SCANprocess_encoded_string( const char * yytext ) {
+int SCANprocess_encoded_string( const char * yytext ) {
     char * s;   /* source */
     int count;
 
@@ -431,8 +413,7 @@ SCANprocess_encoded_string( const char * yytext ) {
     return TOK_STRING_LITERAL_ENCODED;
 }
 
-int
-SCANprocess_semicolon( const char * yytext, int commentp ) {
+int SCANprocess_semicolon( const char * yytext, int commentp ) {
 
     if( commentp ) {
         strcpy( last_comment_, strchr( yytext, '-' ) );
@@ -448,14 +429,12 @@ SCANprocess_semicolon( const char * yytext, int commentp ) {
     return TOK_SEMICOLON;
 }
 
-void
-SCANsave_comment( const char * yytext ) {
+void SCANsave_comment( const char * yytext ) {
     strncpy( last_comment_ , yytext, SCAN_COMMENT_LENGTH - 1 );
     last_comment = last_comment_;
 }
 
-bool
-SCANread( void ) {
+bool SCANread( void ) {
     int     numRead;
     bool done;
 
@@ -503,25 +482,8 @@ SCANread( void ) {
     return SCANtext_ready;
 }
 
-#if macros_bit_the_dust
-void
-SCANdefine_macro( char * name, char * expansion ) {
-    Element element;
-    int     len;
 
-    HMALLOC( element, Element, "hash table entry in SCANdefine_macro" );
-    element->key = STRINGcopy( name );
-    len = STRINGlength( expansion );
-    STRALLOC( element->data, len + 1, "macro expansion in SCANdefine_macro" );
-    STRINGcopy_into( element->data, expansion );
-    element->data[len] = '\n';
-    element->data[len + 1] = '\0';
-    HASHsearch( macros, element, HASH_INSERT );
-}
-#endif
-
-void
-SCANinclude_file( char * filename ) {
+void SCANinclude_file( char * filename ) {
     extern int print_objects_while_running;
     FILE * fp;
 
@@ -536,8 +498,7 @@ SCANinclude_file( char * filename ) {
     }
 }
 
-void
-SCANlowerize( char * s ) {
+void SCANlowerize( char * s ) {
     for( ; *s; s++ ) {
         if( isupper( *s ) ) {
             *s = tolower( *s );
@@ -545,8 +506,7 @@ SCANlowerize( char * s ) {
     }
 }
 
-void
-SCANupperize( char * s ) {
+void SCANupperize( char * s ) {
     for( ; *s; s++ ) {
         if( islower( *s ) ) {
             *s = toupper( *s );
@@ -554,8 +514,7 @@ SCANupperize( char * s ) {
     }
 }
 
-char *
-SCANstrdup( char * s ) {
+char * SCANstrdup( const char * s ) {
     char * s2 = ( char * )sc_malloc( strlen( s ) + 1 );
     if( !s2 ) {
         return 0;
@@ -565,7 +524,6 @@ SCANstrdup( char * s ) {
     return s2;
 }
 
-long
-SCANtell() {
+long SCANtell() {
     return yylineno;
 }
