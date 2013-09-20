@@ -249,7 +249,7 @@ void EXPcleanup( void ) {
 
 /**
  * \param selection the Type to look in (i.e. an enum)
- * \param ref the Symbol to be found
+ * \param sref the Symbol to be found
  * \param e set to the Expression found, when an enum is found
  * \param v set to the Variable found, when a variable is found
  * \param dt set to DICT_type when a match is found (use to determine whether to use e or v)
@@ -258,7 +258,7 @@ void EXPcleanup( void ) {
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
+static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e,
                                      Variable * v, char * dt, struct Symbol_ ** where, int s_id ) {
     Expression item;
     Variable tmp;
@@ -272,7 +272,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
     switch( selection->u.type->body->type ) {
         case entity_:
             tmp = ENTITYfind_inherited_attribute( selection->u.type->body->entity,
-                                                  ref.name, &w );
+                                                  sref.name, &w );
             if( tmp ) {
                 if( w != NULL ) {
                     *where = w;
@@ -286,7 +286,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
         case select_:
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_dot_fuzzy( t, ref, e, v, dt, &w, s_id ) ) {
+            if( EXP_resolve_op_dot_fuzzy( t, sref, e, v, dt, &w, s_id ) ) {
                 if( w != NULL ) {
                     *where = w;
                 }
@@ -304,7 +304,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol ref, Expression * e,
                     return 1;
             }
         case enumeration_:
-            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), ref.name );
+            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), sref.name );
             if( item ) {
                 *e = item;
                 *dt = DICT_type;
@@ -321,7 +321,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Variable v;
     Expression item;
     Type op1type;
-    bool all_enums = true; //used by 'case select_'
+    bool all_enums = true; /* used by 'case select_' */
 
     /* stuff for dealing with select_ */
     int options = 0;
@@ -482,7 +482,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
  * there will be no ambiguities, since we're looking at (and marking)
  * only types, and it's marking only entities
  */
-static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
+static int EXP_resolve_op_group_fuzzy( Type selection, Symbol sref, Entity * e,
                                        int s_id ) {
     Entity tmp;
     int options = 0;
@@ -494,7 +494,7 @@ static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
     switch( selection->u.type->body->type ) {
         case entity_:
             tmp = ( Entity )ENTITYfind_inherited_entity(
-                      selection->u.type->body->entity, ref.name, 1 );
+                      selection->u.type->body->entity, sref.name, 1 );
             if( tmp ) {
                 *e = tmp;
                 return 1;
@@ -505,7 +505,7 @@ static int EXP_resolve_op_group_fuzzy( Type selection, Symbol ref, Entity * e,
             tmp = *e;
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_group_fuzzy( t, ref, e, s_id ) ) {
+            if( EXP_resolve_op_group_fuzzy( t, sref, e, s_id ) ) {
                 if( *e != tmp ) {
                     tmp = *e;
                     ++options;
@@ -613,8 +613,8 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             }
         case array_:
             if( op1->type->u.type->body->type == self_ ) {
-                return( Type_Runtime ); //not sure if there are other cases where Type_Runtime should be returned, or not
-            } // else fallthrough
+                return( Type_Runtime ); /* not sure if there are other cases where Type_Runtime should be returned, or not */
+            } /*  else fallthrough */
         case unknown_:  /* unable to resolve operand */
             /* presumably error has already been reported */
             resolve_failed( expr );
@@ -693,7 +693,10 @@ void EXPresolve_op_default( Expression e, Scope s ) {
     }
 }
 
+/* prototype for this func cannot change - it is passed as a fn pointer */
 Type EXPresolve_op_unknown( Expression e, Scope s ) {
+    (void) e; /* quell unused param warning */
+    (void) s;
     ERRORreport( ERROR_internal_unrecognized_op_in_EXPresolve );
     return Type_Bad;
 }
@@ -735,7 +738,7 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
          * (how?)
          */
 
-        //count aggregates and non-aggregates, check aggregate types
+        /* count aggregates and non-aggregates, check aggregate types */
         LISTdo( op1type->u.type->body->list, item, Type ) {
             if( TYPEis_aggregate( item ) ) {
                 numAggr++;
@@ -755,17 +758,17 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
         /* NOTE the following code returns the same data for every case that isn't an error.
          * It needs to be simplified or extended, depending on whether it works or not. */
         if( sameAggrType && ( numAggr != 0 ) && ( numNonAggr == 0 ) ) {
-            // All are the same aggregation type
+            /*  All are the same aggregation type */
             return( lasttype->u.type->body->base );
         } else if( numNonAggr == 0 ) {
-            // All aggregates, but different types
+            /*  All aggregates, but different types */
             ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
-            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
+            return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         } else if( numAggr != 0 ) {
-            // One or more aggregates, one or more nonaggregates
+            /*  One or more aggregates, one or more nonaggregates */
             ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
-            return( lasttype->u.type->body->base ); // WARNING I'm assuming that any of the types is acceptable!!!
-        }   // Else, all are nonaggregates. This is an error.
+            return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
+        }   /*  Else, all are nonaggregates. This is an error. */
     }
     ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
     return( Type_Unknown );

@@ -112,6 +112,7 @@ Error ERROR_unlabelled_param_type = ERROR_none;
 Error ERROR_file_unreadable;
 Error ERROR_file_unwriteable;
 Error ERROR_warn_unsupported_lang_feat;
+Error ERROR_warn_small_real;
 
 struct Scope_ * FUNC_NVL;
 struct Scope_ * FUNC_USEDIN;
@@ -506,27 +507,27 @@ void EXPRESSinitialize( void ) {
     funcdef( func_value_in, KW_VALUE_IN,    2, Type_Logical );
     funcdef( func_value_unique, KW_VALUE_UNIQUE, 1, Type_Logical );
 
-    ERROR_bail_out =
-        ERRORcreate( "Aborting due to internal error(s)", SEVERITY_DUMP );
-    ERROR_syntax =
-        ERRORcreate( "%s in %s %s", SEVERITY_EXIT );
+    ERROR_bail_out = ERRORcreate( "Aborting due to internal error(s)", SEVERITY_DUMP );
+    ERROR_syntax = ERRORcreate( "%s in %s %s", SEVERITY_EXIT );
     /* i.e., "syntax error in procedure foo" */
-    ERROR_ref_nonexistent = ERRORcreate(
-                                "USE/REF of non-existent object (%s in schema %s)", SEVERITY_ERROR );
+    ERROR_ref_nonexistent = ERRORcreate( "USE/REF of non-existent object (%s in schema %s)", SEVERITY_ERROR );
     ERROR_tilde_expansion_failed = ERRORcreate(
-                                       "Tilde expansion for %s failed in EXPRESS_PATH environment variable", SEVERITY_ERROR );
+            "Tilde expansion for %s failed in EXPRESS_PATH environment variable", SEVERITY_ERROR );
     ERROR_schema_not_in_own_schema_file = ERRORcreate(
             "Schema %s was not found in its own schema file (%s)", SEVERITY_ERROR );
     ERROR_unlabelled_param_type = ERRORcreate(
-                                      "Return type or local variable requires type label in `%s'", SEVERITY_ERROR );
+            "Return type or local variable requires type label in `%s'", SEVERITY_ERROR );
     ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
     ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
     ERROR_warn_unsupported_lang_feat = ERRORcreate( "Unsupported language feature (%s) at %s:%d", SEVERITY_WARNING );
+    ERROR_warn_small_real = ERRORcreate( "REAL with extremely small magnitude may be interpreted as zero on some "
+                                         "platforms or by other parsers - abs(%f) <= FLT_EPSILON", SEVERITY_WARNING );
 
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 
     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
     ERRORcreate_warning( "unsupported", ERROR_warn_unsupported_lang_feat );
+    ERRORcreate_warning( "limits", ERROR_warn_small_real );
 
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
 }
@@ -544,6 +545,7 @@ void EXPRESScleanup( void ) {
     ERRORdestroy( ERROR_file_unreadable );
     ERRORdestroy( ERROR_file_unwriteable );
     ERRORdestroy( ERROR_warn_unsupported_lang_feat );
+    ERRORdestroy( ERROR_warn_small_real );
 
     DICTcleanup();
     OBJcleanup();

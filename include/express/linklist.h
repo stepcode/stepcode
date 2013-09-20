@@ -89,13 +89,19 @@ extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
 #define LINKprev(link)  (link)->prev
 
 /** iteration */
-#define LISTdo(list, elt, type)                                 \
-   {struct Linked_List_ * __l = (list);                         \
-    type        elt;                                            \
-    Link        __p;                                            \
-    if (__l) {                                                  \
-    for (__p = __l->mark; (__p = __p->next) != __l->mark; ) {   \
-        (elt) = (type)((__p)->data);
+#define LISTdo(list, elt, type) LISTdo_n( list, elt, type, a )
+
+/** LISTdo_n: LISTdo with nesting
+ * parameter 'uniq' changes the variable names, allowing us to nest it without -Wshadow warnings
+ */
+#define LISTdo_n(list, elt, type, uniq)                                         \
+   {struct Linked_List_ * _ ## uniq ## l = (list);                              \
+    type        elt;                                                            \
+    Link        _ ## uniq ## p;                                                 \
+    if( _ ## uniq ## l ) {                                                      \
+    for( _ ## uniq ## p = _ ## uniq ## l->mark;                                 \
+       ( _ ## uniq ## p = _ ## uniq ## p->next ) != _ ## uniq ## l->mark; ) {   \
+        ( elt ) = ( type ) ( ( _ ## uniq ## p )->data );
 
 #define LISTdo_links(list, link)                    \
    {Linked_List     __i = (list);                   \
@@ -128,7 +134,6 @@ extern SC_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) )
 extern SC_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTadd_before PROTO( ( Linked_List, Link, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTremove_first PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Generic  LISTremove PROTO( ( Linked_List, Link ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_first PROTO( ( Linked_List ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
 extern SC_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );

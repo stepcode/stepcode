@@ -308,6 +308,9 @@ void sc_memmgr::deallocate( void * addr, const char * file, const int line ) {
             _record_erase_busy = false;
         }
     }
+#else
+    (void) file; // quell unused param warnings
+    (void) line;
 #endif /* SC_MEMMGR_ENABLE_CHECKS */
 
     // Deallocate

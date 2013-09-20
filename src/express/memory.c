@@ -45,12 +45,12 @@ Now you can say things like:
 #define ALLOC
 #endif /*ALLOC*/
 
-/* chop up big block into linked list of small blocks */
-Freelist * /* return 0 for failure */
-create_freelist( flh, bytes )
-struct freelist_head * flh; /* freelist head */
-int bytes;          /* new memory size */
-{
+/** chop up big block into linked list of small blocks
+ * return 0 for failure
+ * \param flh freelist head
+ * \param bytes new memory size
+ */
+Freelist * create_freelist( struct freelist_head * flh, int bytes ) {
     Freelist * current = ( Freelist * )malloc( bytes );
     if( current == 0 ) {
         return( 0 );
@@ -78,18 +78,18 @@ int bytes;          /* new memory size */
 
 void
 _MEMinitialize() {
-#if DEBUG_MALLOC
+#ifdef DEBUG_MALLOC
     malloc_debug( 2 );
 #endif
 }
 
-void
-MEMinitialize( flh, size, alloc1, alloc2 )
-struct freelist_head * flh;
-int size;           /* size of a single element */
-int alloc1;         /* number to allocate initially */
-int alloc2;         /* number to allocate if we run out */
-{
+/**
+ * \param flh freelist head
+ * \param size size of a single element
+ * \param alloc1 number to allocate initially
+ * \param alloc2 number to allocate if we run out
+ */
+void MEMinitialize( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) {
     flh->size_elt = size;   /* kludge for calloc-like behavior */
 #ifndef NOSTAT
     flh->alloc = flh->dealloc = flh->create = 0;
@@ -109,17 +109,14 @@ int alloc2;         /* number to allocate if we run out */
         ERRORnospace();
     }
 
-#if SPACE_PROFILE
+#ifdef SPACE_PROFILE
     flh->count = 0;
 #endif /*SPACE_PROFILE*/
 
 #endif
 }
 
-Generic
-MEM_new( flh )
-struct freelist_head * flh;
-{
+Generic MEM_new( struct freelist_head * flh ) {
     Generic obj;
 
 #ifndef NOSTAT
@@ -143,7 +140,7 @@ struct freelist_head * flh;
     }
 #endif
 
-#if SPACE_PROFILE
+#ifdef SPACE_PROFILE
     flh->count++;
 #endif /*SPACE_PROFILE*/
 
@@ -154,11 +151,7 @@ struct freelist_head * flh;
 #endif
 }
 
-void
-MEM_destroy( flh, link )
-struct freelist_head * flh;
-Freelist * link;
-{
+void MEM_destroy( struct freelist_head * flh, Freelist * link ) {
 #ifndef NOSTAT
     flh->dealloc++;
 #endif

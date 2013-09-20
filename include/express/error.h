@@ -66,6 +66,7 @@ typedef struct Error_ {
     bool enabled;
     Severity    severity;
     char  * message;
+    int serial; /* used to give each type of error a unique identifier */
 } * Error;
 
 typedef struct Error_Warning_ {

@@ -64,8 +64,8 @@ extern SC_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
 
 /* cheaper doing the check here, then inside the function call.  Return */
 /* immediately for RESOLVED, FAILED_TO_RESOLVE, and RESOLVE_IN_PROGRESS */
-#define TYPEresolve(t,s)        if (is_resolvable((*(t)))) TYPE_resolve((t))
-#define VARresolve_types(v,s)       if (is_resolvable((v)->name)) VAR_resolve_types((v),(s))
+#define TYPEresolve(t)        if (is_resolvable((*(t)))) TYPE_resolve((t))
+#define VARresolve_types(v)       if (is_resolvable((v)->name)) VAR_resolve_types((v))
 #define VARresolve_expressions(v,s) if (is_resolvable((v)->name)) VAR_resolve_expressions((v),(s))
 #define EXPresolve(expr,scope,type) if (!is_resolved(expr)) EXP_resolve(expr,scope,type)
 
