@@ -14,9 +14,11 @@ if(NOT DEBUGGING_GENERATED_SOURCES)
   # Individually verify all of the files in question.
   set(filelist "@CACHED_FILELIST@")
   VERIFY_FILES("${filelist}" 1 srcs_pass)
-  if(NOT srcs_pass)
+  if( srcs_pass)
+    message( "Generated source code has not been modified.")
+  else(srcs_pass)
     message(FATAL_ERROR "Generated sources have been modified.  These files should never be modified directly except when debugging faulty output from the generators - changes to lexer and parser logic should be made to the generator input files.  If this is a debugging situation, set the variable DEBUGGING_GENERATED_SOURCES to ON during the CMake configure.")
-  endif(NOT srcs_pass)
+  endif(srcs_pass)
 
   # If we got by that test, see if it looks like these 
   # sources came from the current input files.  It's not
