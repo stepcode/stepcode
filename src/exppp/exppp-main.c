@@ -5,9 +5,10 @@
 
 static void
 exppp_usage() {
-    fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-a or -A causes output to be alphabetized\n" );
-    fprintf( stderr, "where\t-v produces a version description\n" );
+    fprintf( stderr, "\t-v produces a version description\n" );
+    fprintf( stderr, "\t-o specifies the name of the output file (-- for stdout)\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
     fprintf( stderr, "\t-w warning enable\n" );
@@ -30,19 +31,25 @@ exppp_usage() {
 }
 
 int Handle_Exppp_Args( int i, char * arg ) {
-    ( void ) arg; /* quell unused param warning */
-
-    if( ( ( char )i == 'a' ) || ( ( char )i == 'A' ) ) {
+    if( tolower( ( char )i ) == 'a' ) {
         exppp_alphabetize = true;
-    } else {
-        exppp_alphabetize = false;
+        return 0;
+    } else if( tolower( (char)i ) == 'o' ) {
+        if( !strcmp( "--", arg ) ) {
+            exppp_print_to_stdout = true;
+            return 0;
+        }
+        exppp_output_filename_reset = false;
+        exppp_output_filename = arg;
+        return 0;
     }
-    return 0;
+    return 1;
 }
 
 void EXPRESSinit_init( void ) {
+    exppp_alphabetize = false;
     EXPRESSbackend = EXPRESSout;
     ERRORusage_function = exppp_usage;
-    strcat( EXPRESSgetopt_options, "aA" );
+    strcat( EXPRESSgetopt_options, "aAo:" );
     EXPRESSgetopt = Handle_Exppp_Args;
 }

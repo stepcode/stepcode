@@ -129,7 +129,7 @@ SCHEMAdump( Schema schema, FILE * file ) {
 
 #if 0
 SYMBOLprint( Symbol * s ) {
-    printf( "%s (r:%d #:%d f:%s)\n", s->name, s->resolved, s->line, s->filename );
+    fprintf( stderr, "%s (r:%d #:%d f:%s)\n", s->name, s->resolved, s->line, s->filename );
 }
 #endif
 

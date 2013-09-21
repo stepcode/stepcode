@@ -188,28 +188,28 @@ main() {
     memory_init( &oct_freelist, sizeof( struct oct ), 5, 2 );
 
     o1 = new_oct();
-    printf( "o1 = %x\n", o1 );
+    fprintf( stderr, "o1 = %x\n", o1 );
     o2 = new_oct();
-    printf( "o2 = %x\n", o2 );
+    fprintf( stderr, "o2 = %x\n", o2 );
     o3 = new_oct();
-    printf( "o3 = %x\n", o3 );
+    fprintf( stderr, "o3 = %x\n", o3 );
     o4 = new_oct();
-    printf( "o4 = %x\n", o4 );
+    fprintf( stderr, "o4 = %x\n", o4 );
     o5 = new_oct();
-    printf( "o5 = %x\n", o5 );
+    fprintf( stderr, "o5 = %x\n", o5 );
     o6 = new_oct();
-    printf( "o6 = %x\n", o6 );
+    fprintf( stderr, "o6 = %x\n", o6 );
     destroy_oct( o1 );
     destroy_oct( o2 );
     o1 = new_oct();
-    printf( "o1 = %x\n", o1 );
+    fprintf( stderr, "o1 = %x\n", o1 );
     o2 = new_oct();
-    printf( "o2 = %x\n", o2 );
+    fprintf( stderr, "o2 = %x\n", o2 );
     o3 = new_oct();
-    printf( "o3 = %x\n", o3 );
+    fprintf( stderr, "o3 = %x\n", o3 );
     o4 = new_oct();
-    printf( "o4 = %x\n", o4 );
+    fprintf( stderr, "o4 = %x\n", o4 );
     o5 = new_oct();
-    printf( "o5 = %x\n", o5 );
+    fprintf( stderr, "o5 = %x\n", o5 );
 }
 #endif /*ALLOC_MAIN*/

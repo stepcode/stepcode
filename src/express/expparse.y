@@ -839,7 +839,7 @@ entity_header ::= TOK_ENTITY TOK_IDENTIFIER(A).
     Entity e = ENTITYcreate(A.symbol);
 
     if (print_objects_while_running & OBJ_ENTITY_BITS) {
-    fprintf(stdout, "parse: %s (entity)\n", A.symbol->name);
+    fprintf( stderr, "parse: %s (entity)\n", A.symbol->name);
     }
 
     PUSH_SCOPE(e, A.symbol, OBJ_ENTITY);
@@ -1213,7 +1213,7 @@ fh_push_scope ::= TOK_IDENTIFIER(A).
     Function f = ALGcreate(OBJ_FUNCTION);
     tag_count = 0;
     if (print_objects_while_running & OBJ_FUNCTION_BITS) {
-        fprintf(stdout, "parse: %s (function)\n", A.symbol->name);
+        fprintf( stderr, "parse: %s (function)\n", A.symbol->name);
     }
     PUSH_SCOPE(f, A.symbol, OBJ_FUNCTION);
 }
@@ -1802,7 +1802,7 @@ ph_push_scope ::= TOK_IDENTIFIER(A).
     tag_count = 0;
 
     if (print_objects_while_running & OBJ_PROCEDURE_BITS) {
-    fprintf(stdout, "parse: %s (procedure)\n", A.symbol->name);
+    fprintf( stderr, "parse: %s (procedure)\n", A.symbol->name);
     }
 
     PUSH_SCOPE(p, A.symbol, OBJ_PROCEDURE);
@@ -1998,7 +1998,7 @@ rh_start(A) ::= TOK_RULE rh_get_line(B) TOK_IDENTIFIER(C) TOK_FOR
     Rule r = ALGcreate(OBJ_RULE);
 
     if (print_objects_while_running & OBJ_RULE_BITS) {
-    fprintf(stdout, "parse: %s (rule)\n", C.symbol->name);
+    fprintf( stderr, "parse: %s (rule)\n", C.symbol->name);
     }
 
     PUSH_SCOPE(r, C.symbol, OBJ_RULE);
@@ -2034,7 +2034,7 @@ schema_header ::= TOK_SCHEMA TOK_IDENTIFIER(A) semicolon.
     Schema schema = ( Schema ) DICTlookup(CURRENT_SCOPE->symbol_table, A.symbol->name);
 
     if (print_objects_while_running & OBJ_SCHEMA_BITS) {
-    fprintf(stdout, "parse: %s (schema)\n", A.symbol->name);
+    fprintf( stderr, "parse: %s (schema)\n", A.symbol->name);
     }
 
     if (EXPRESSignore_duplicate_schemas && schema) {

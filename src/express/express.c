@@ -628,11 +628,11 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     parseData.scanner = scanner;
 
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "parse (pass %d)\n", EXPRESSpass );
+        fprintf( stderr, "parse (pass %d)\n", EXPRESSpass );
     }
 
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-        fprintf( stdout, "parse: %s (schema file)\n", filename );
+        fprintf( stderr, "parse: %s (schema file)\n", filename );
     }
 
     SCAN_lex_init( filename, fp );
@@ -775,7 +775,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
     char lower[MAX_SCHEMA_FILENAME_SIZE];   /* avoid lowerizing original */
 
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-        fprintf( stdout, "pass %d: %s (schema reference)\n",
+        fprintf( stderr, "pass %d: %s (schema reference)\n",
                  EXPRESSpass, name );
     }
 
@@ -794,7 +794,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
     LISTdo( EXPRESS_path, dir, Dir * )
     sprintf( dir->leaf, "%s.exp", lower );
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-        fprintf( stdout, "pass %d: %s (schema file?)\n",
+        fprintf( stderr, "pass %d: %s (schema file?)\n",
                  EXPRESSpass, dir->full );
     }
     fp = fopen( dir->full, "r" );
@@ -802,7 +802,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
         Express express;
 
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: %s (schema file found)\n",
+            fprintf( stderr, "pass %d: %s (schema file found)\n",
                      EXPRESSpass, dir->full );
         }
 
@@ -818,7 +818,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
         return 0;
     } else {
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: %s (schema file not found), errno = %d\n", EXPRESSpass, dir->full, errno );
+            fprintf( stderr, "pass %d: %s (schema file not found), errno = %d\n", EXPRESSpass, dir->full, errno );
         }
     }
     LISTod
@@ -890,7 +890,7 @@ void EXPRESSresolve( Express model ) {
 
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving schema references\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving schema references\n", EXPRESSpass );
     }
 
     /* connect the real schemas to all the rename clauses */
@@ -902,7 +902,7 @@ void EXPRESSresolve( Express model ) {
 
     LISTdo( PARSEnew_schemas, print_schema, Schema ) {
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: %s (schema)\n",
+            fprintf( stderr, "pass %d: %s (schema)\n",
                     EXPRESSpass, print_schema->symbol.name );
         }
 
@@ -924,7 +924,7 @@ void EXPRESSresolve( Express model ) {
 
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving objects references to other schemas\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving objects references to other schemas\n", EXPRESSpass );
     }
 
     /* connect the object in each rename clause to the real object */
@@ -935,7 +935,7 @@ void EXPRESSresolve( Express model ) {
         }
 
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: %s (schema)\n",
+            fprintf( stderr, "pass %d: %s (schema)\n",
                      EXPRESSpass, schema->symbol.name );
         }
 
@@ -960,7 +960,7 @@ void EXPRESSresolve( Express model ) {
     /* defined types */
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving sub and supertypes\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving sub and supertypes\n", EXPRESSpass );
     }
 
     DICTdo_type_init( model->symbol_table, &de, OBJ_SCHEMA );
@@ -977,7 +977,7 @@ void EXPRESSresolve( Express model ) {
     /* resolve types */
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving types\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving types\n", EXPRESSpass );
     }
 
     SCOPEresolve_types( model );
@@ -991,7 +991,7 @@ void EXPRESSresolve( Express model ) {
     /* type resolution */
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving implied USE's\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving implied USE's\n", EXPRESSpass );
     }
 
     DICTdo_type_init( model->symbol_table, &de, OBJ_SCHEMA );
@@ -1001,7 +1001,7 @@ void EXPRESSresolve( Express model ) {
         }
 
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
-            fprintf( stdout, "pass %d: %s (schema)\n",
+            fprintf( stderr, "pass %d: %s (schema)\n",
                      EXPRESSpass, schema->symbol.name );
         }
 
@@ -1022,7 +1022,7 @@ void EXPRESSresolve( Express model ) {
 
     EXPRESSpass++;
     if( print_objects_while_running & OBJ_PASS_BITS ) {
-        fprintf( stdout, "pass %d: resolving expressions and statements\n", EXPRESSpass );
+        fprintf( stderr, "pass %d: resolving expressions and statements\n", EXPRESSpass );
     }
 
     SCOPEresolve_expressions_statements( model );

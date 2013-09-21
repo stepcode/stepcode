@@ -89,6 +89,13 @@ extern int exp_yydebug;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz"; /* larger than the string because exp2cxx, exppp, etc may append their own options */
 static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
+/** name specified on command line */
+char * input_filename = 0;
+
+/** returns input filename, so exppp can verify that it won't be overwritten */
+const char * get_filename() {
+    return input_filename;
+}
 void print_fedex_version( void ) {
     fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, sc_version );
     no_need_to_work = 1;
@@ -103,7 +110,6 @@ int main( int argc, char ** argv ) {
     int result;
 
     bool buffer_messages = false;
-    char * filename = 0;
     Express model;
 
     EXPRESSprogram_name = argv[0];
@@ -118,7 +124,7 @@ int main( int argc, char ** argv ) {
     }
 
     optind = 1;
-    while( ( c = sc_getopt( argc, argv, EXPRESSgetopt_options ) ) != -1 )
+    while( ( c = sc_getopt( argc, argv, EXPRESSgetopt_options ) ) != -1 ) {
         switch( c ) {
             case 'd':
                 ERRORdebugging = 1;
@@ -164,7 +170,7 @@ int main( int argc, char ** argv ) {
                 buffer_messages = false;
                 break;
             case 'e':
-                filename = optarg;
+                input_filename = optarg;
                 break;
             case 'r':
                 resolve = 0;
@@ -203,10 +209,10 @@ int main( int argc, char ** argv ) {
                 }
                 break;
         }
-
-    if( !filename ) {
-        filename = argv[optind];
-        if( !filename ) {
+    }
+    if( !input_filename ) {
+        input_filename = argv[optind];
+        if( !input_filename ) {
             EXPRESScleanup();
             if( no_need_to_work ) {
                 return( 0 );
@@ -226,7 +232,7 @@ int main( int argc, char ** argv ) {
     }
 
     model = EXPRESScreate();
-    EXPRESSparse( model, ( FILE * )0, filename );
+    EXPRESSparse( model, ( FILE * )0, input_filename );
     if( ERRORoccurred ) {
         result = EXPRESS_fail( model );
         EXPRESScleanup();

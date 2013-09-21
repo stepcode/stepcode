@@ -2803,7 +2803,7 @@ static void yy_reduce(
     Entity e = ENTITYcreate(yymsp[0].minor.yy0.symbol);
 
     if (print_objects_while_running & OBJ_ENTITY_BITS) {
-    fprintf(stdout, "parse: %s (entity)\n", yymsp[0].minor.yy0.symbol->name);
+    fprintf( stderr, "parse: %s (entity)\n", yymsp[0].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(e, yymsp[0].minor.yy0.symbol, OBJ_ENTITY);
@@ -3239,7 +3239,7 @@ static void yy_reduce(
     Function f = ALGcreate(OBJ_FUNCTION);
     tag_count = 0;
     if (print_objects_while_running & OBJ_FUNCTION_BITS) {
-        fprintf(stdout, "parse: %s (function)\n", yymsp[0].minor.yy0.symbol->name);
+        fprintf( stderr, "parse: %s (function)\n", yymsp[0].minor.yy0.symbol->name);
     }
     PUSH_SCOPE(f, yymsp[0].minor.yy0.symbol, OBJ_FUNCTION);
 }
@@ -3878,7 +3878,7 @@ static void yy_reduce(
     tag_count = 0;
 
     if (print_objects_while_running & OBJ_PROCEDURE_BITS) {
-    fprintf(stdout, "parse: %s (procedure)\n", yymsp[0].minor.yy0.symbol->name);
+    fprintf( stderr, "parse: %s (procedure)\n", yymsp[0].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(p, yymsp[0].minor.yy0.symbol, OBJ_PROCEDURE);
@@ -4103,7 +4103,7 @@ static void yy_reduce(
     Rule r = ALGcreate(OBJ_RULE);
 
     if (print_objects_while_running & OBJ_RULE_BITS) {
-    fprintf(stdout, "parse: %s (rule)\n", yymsp[-2].minor.yy0.symbol->name);
+    fprintf( stderr, "parse: %s (rule)\n", yymsp[-2].minor.yy0.symbol->name);
     }
 
     PUSH_SCOPE(r, yymsp[-2].minor.yy0.symbol, OBJ_RULE);
@@ -4125,7 +4125,7 @@ static void yy_reduce(
     Schema schema = ( Schema ) DICTlookup(CURRENT_SCOPE->symbol_table, yymsp[-1].minor.yy0.symbol->name);
 
     if (print_objects_while_running & OBJ_SCHEMA_BITS) {
-    fprintf(stdout, "parse: %s (schema)\n", yymsp[-1].minor.yy0.symbol->name);
+    fprintf( stderr, "parse: %s (schema)\n", yymsp[-1].minor.yy0.symbol->name);
     }
 
     if (EXPRESSignore_duplicate_schemas && schema) {

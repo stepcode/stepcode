@@ -12,6 +12,7 @@ extern SC_EXPPP_EXPORT bool exppp_reference_info;           /**< if true, add co
 extern SC_EXPPP_EXPORT bool exppp_preserve_comments;        /**< if true, preserve comments where possible */
 extern SC_EXPPP_EXPORT char * exppp_output_filename;        /**< force output filename */
 extern SC_EXPPP_EXPORT bool exppp_output_filename_reset;    /**< if true, force output filename */
+extern SC_EXPPP_EXPORT bool exppp_print_to_stdout;          /**< if true, print to stdout */
 
 SC_EXPPP_EXPORT void EXPRESSout( Express e );
 
