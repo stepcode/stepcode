@@ -76,8 +76,8 @@ int curpos;                               /* current line position (1 is first p
 #define NOLEVEL -1  /* unused-level indicator */
 
 char * exppp_output_filename = ( char * )0; /* if this is set, override default output filename */
-char filename[1000];    /* output file name */
-Symbol error_sym;   /* only used when printing errors */
+char exppp_filename_buffer[1000];           /* output file name */
+Symbol error_sym;                           /* only used when printing errors */
 
 /* Only the first line is compared to an existing file, so putting a
  * version number in here won't cause problems. The actual version must
@@ -100,17 +100,16 @@ bool exppp_alphabetize = false;
 
 bool exppp_terse = false;
 
-bool exppp_reference_info = false;   /* if true, add commentary */
-/* about where things came from */
+bool exppp_reference_info = false;   /* if true, add commentary about where things came from */
 
-bool exppp_preserve_comments = false;
+bool exppp_preserve_comments = false; /* doesn't seem to work -- MP */
 
 FILE * exppp_fp = NULL;     /* output file */
 char * exppp_buf = 0;       /* output buffer */
-int exppp_maxbuflen = 0;        /* size of expppbuf */
+int exppp_maxbuflen = 0;    /* size of expppbuf */
 int exppp_buflen = 0;       /* remaining space in expppbuf */
-char * exppp_bufp = 0;      /* pointer to write position in expppbuf */
-/* should usually be pointing to a "\0" */
+char * exppp_bufp = 0;      /* pointer to write position in expppbuf,
+                             * should usually be pointing to a "\0" */
 
 /** count newlines in a string */
 int count_newlines( char * s ) {
@@ -271,32 +270,32 @@ char * SCHEMAout( Schema s ) {
                 fprintf(stderr, "Error: input filename and output filename are the same (%s)", exppp_output_filename );
                 exit( EXIT_FAILURE );
             }
-            strcpy( filename, exppp_output_filename );
+            strcpy( exppp_filename_buffer, exppp_output_filename );
         } else {
             /* when there is only a single file, allow user to find */
             /* out what it is */
-            exppp_output_filename = filename;
+            exppp_output_filename = exppp_filename_buffer;
             exppp_output_filename_reset = true;
 
             /* since we have to generate a filename, make sure we don't */
             /* overwrite a valuable file */
 
-            sprintf( filename, "%s.exp", s->symbol.name );
+            sprintf( exppp_filename_buffer, "%s.exp", s->symbol.name );
 
-            if( 0 != ( f = fopen( filename, "r" ) ) ) {
+            if( 0 != ( f = fopen( exppp_filename_buffer, "r" ) ) ) {
                 fgets( buf, PP_SMALL_BUF_SZ, f );
                 if( 0 != ( p = strchr( buf, '\n' ) ) ) {
                     *p = '\0';
                 }
                 if( streq( buf, expheader[0] ) ) {
-                    unlink( filename );
+                    unlink( exppp_filename_buffer );
                 } else {
                     fprintf( stderr, "%s: %s already exists and appears to be hand-written\n",
-                            EXPRESSprogram_name, filename );
+                            EXPRESSprogram_name, exppp_filename_buffer );
                     /*          strcat(bp,".pp");*/
-                    strcat( filename, ".pp" );
+                    strcat( exppp_filename_buffer, ".pp" );
                     fprintf( stderr, "%s: writing schema file %s instead\n",
-                            EXPRESSprogram_name, filename );
+                            EXPRESSprogram_name, exppp_filename_buffer );
                     described = true;
                 }
             }
@@ -304,13 +303,13 @@ char * SCHEMAout( Schema s ) {
                 fclose( f );
             }
         }
-        error_sym.filename = filename;
+        error_sym.filename = exppp_filename_buffer;
 
         if( !described && !exppp_terse ) {
-            fprintf( stdout, "%s: writing schema file %s\n", EXPRESSprogram_name, filename );
+            fprintf( stdout, "%s: writing schema file %s\n", EXPRESSprogram_name, exppp_filename_buffer );
         }
-        if( !( exppp_fp = f = fopen( filename, "w" ) ) ) {
-            ERRORreport( ERROR_file_unwriteable, filename, strerror( errno ) );
+        if( !( exppp_fp = f = fopen( exppp_filename_buffer, "w" ) ) ) {
+            ERRORreport( ERROR_file_unwriteable, exppp_filename_buffer, strerror( errno ) );
             return 0;
         }
     }
@@ -348,7 +347,7 @@ char * SCHEMAout( Schema s ) {
 
     fclose( exppp_fp );
 
-    return filename;
+    return exppp_filename_buffer;
 #undef PP_SMALL_BUF_SZ
 }
 
