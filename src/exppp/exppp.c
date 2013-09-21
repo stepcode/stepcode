@@ -634,14 +634,16 @@ void FUNC_out( Function fn, int level ) {
 
     if( exppp_preserve_comments == false ) {
         raw( "%*sFUNCTION %s", level, "", fn->symbol.name );
-
-        if( fn->u.func->parameters ) {
-            raw( "(\n" );
-            ALGargs_out( fn->u.func->parameters,
-                         level + strlen( "FUNCTION     " ) );
-            raw( "\n%*s)", level + exppp_continuation_indent, "" );
+        if( !strcmp( "unambiguously_specified_multi_level_reference_designator", fn->symbol.name ) ) {
+            asm( "nop" ); /*FIXME remove this*/
         }
-        raw( " : " );
+        if( fn->u.func->parameters ) {
+            unsigned int param_indent = level + strlen( "FUNCTION     " );
+            raw( "(\n" );
+            ALGargs_out( fn->u.func->parameters, param_indent );
+            raw( "\n%*s)", param_indent - exppp_continuation_indent, "" );
+        }
+        raw( " :" );
 
         indent2 = curpos + exppp_continuation_indent;
         TYPE_head_out( fn->u.func->return_type, NOLEVEL );
@@ -848,14 +850,13 @@ void LOOPout( struct Loop_ *loop, int level ) {
 
 void CASEout( struct Case_Statement_ *c, int level ) {
     int len = 0;
-    int max_indent;
+    int max_indent = 0;
 
     raw( "%*sCASE ", level, "" );
     EXPR_out( c->selector, 0 );
     wrap( " OF\n" );
 
     /* pass 1: calculate length of longest label */
-    max_indent = 0;
     LISTdo( c->cases, ci, Case_Item ) {
         if( ci->labels ) {
             LISTdo_n( ci->labels, label, Expression, b ) {
@@ -1646,15 +1647,20 @@ unsigned int insertStrBrk( char * * const str, unsigned int indent, bool first )
  * if it is too long, error
  * if too short, enclose in '' but don't insert line breaks
  * \param in the input string
+ *
+ * use globals indent2 and curpos
  */
 const char * breakLongStr( const char * in ) {
-    const unsigned int indentLevel = 15; /* would pass indent as a param if it was accessible when this func was called */
     const unsigned int minbreak = 50;  /* if line is longer than this, try to break it */
     static char buf[8192] = { 0 }, * optr;
     const char * iptr = in;
+
     /* error message to print when we can't return `in` because it is too long and needs wrapped in '' */
     const char * errmsg = "ERROR: Cannot break long string of len %d:\n%s\n";
+
     unsigned int inlen = strlen( in ), linelen = 0;
+
+    /* used to ensure that we don't overflow the buffer */
     int extrachars = 8191 - inlen;
     optr = buf;
 
@@ -1673,12 +1679,18 @@ const char * breakLongStr( const char * in ) {
         fprintf( stderr, errmsg, inlen, in );
         abort();
     }
-
-    /* start with a newline, indent, and delimiter */
-    extrachars -= insertStrBrk( &optr, indentLevel, true );
-    if( extrachars <= (int) indentLevel + 7 ) {
-        fprintf( stderr, errmsg, inlen, in );
-        abort();
+    if( indent2 < curpos ) {
+        /* start with a newline, indent, and delimiter */
+        extrachars -= insertStrBrk( &optr, indent2, true );
+        if( extrachars <= (int) indent2 + 7 ) {
+            fprintf( stderr, errmsg, inlen, in );
+            abort();
+        }
+    } else {
+        *optr = ' ';
+        optr++;
+        *optr = '\'';
+        optr++;
     }
 
     /* copy */
@@ -1689,8 +1701,8 @@ const char * breakLongStr( const char * in ) {
         linelen++;
         /* look for '.' to break after, as long as there is something after it and the line is reasonably long */
         if( ( *( iptr - 1 ) == '.' ) && ( *iptr != '\0' ) && ( linelen >= minbreak ) ) {
-            extrachars -= insertStrBrk( &optr, indentLevel, false );
-            if( extrachars <= (int) indentLevel + 7 ) {
+            extrachars -= insertStrBrk( &optr, indent2, false );
+            if( extrachars <= (int) indent2 + 7 ) {
                 fprintf( stderr, errmsg, inlen, in );
                 abort();
             }
