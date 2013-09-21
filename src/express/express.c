@@ -525,7 +525,9 @@ void EXPRESSinitialize( void ) {
 
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 
-    ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
+/* I don't think this should be a mere warning; exppp crashes if this warning is suppressed.
+ *     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
+ */
     ERRORcreate_warning( "unsupported", ERROR_warn_unsupported_lang_feat );
     ERRORcreate_warning( "limits", ERROR_warn_small_real );
 
