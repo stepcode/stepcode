@@ -2,20 +2,16 @@
 #define EXPPP_H
 #include <sc_export.h>
 
-extern SC_EXPPP_EXPORT const int exppp_nesting_indent;    /* default nesting indent */
-extern SC_EXPPP_EXPORT const int exppp_continuation_indent;   /* default nesting indent for */
-/* continuation lines */
-extern SC_EXPPP_EXPORT const int exppp_linelength;        /* leave some slop for closing */
-/* parens.  \n is not included in */
-/* this count either */
-extern SC_EXPPP_EXPORT bool exppp_alphabetize;       /* if true, alphabetize */
-extern SC_EXPPP_EXPORT bool exppp_terse;         /* don't describe action to stdout */
-extern SC_EXPPP_EXPORT bool exppp_reference_info;    /* if true, add commentary */
-/* about where things came from */
-extern SC_EXPPP_EXPORT bool exppp_preserve_comments; /* if true, preserve comments where */
-/* possible */
-extern SC_EXPPP_EXPORT char * exppp_output_filename; /* force output filename */
-extern SC_EXPPP_EXPORT bool exppp_output_filename_reset; /* if true, force output filename */
+extern SC_EXPPP_EXPORT const int exppp_nesting_indent;      /**< default nesting indent */
+extern SC_EXPPP_EXPORT const int exppp_continuation_indent; /**< default nesting indent for continuation lines */
+extern SC_EXPPP_EXPORT const int exppp_linelength;          /**< leave some slop for closing parens.
+                                                              *  \n is not included in this count either */
+extern SC_EXPPP_EXPORT bool exppp_alphabetize;              /**< if true, alphabetize */
+extern SC_EXPPP_EXPORT bool exppp_terse;                    /**< don't describe action to stdout */
+extern SC_EXPPP_EXPORT bool exppp_reference_info;           /**< if true, add commentary about where things came from */
+extern SC_EXPPP_EXPORT bool exppp_preserve_comments;        /**< if true, preserve comments where possible */
+extern SC_EXPPP_EXPORT char * exppp_output_filename;        /**< force output filename */
+extern SC_EXPPP_EXPORT bool exppp_output_filename_reset;    /**< if true, force output filename */
 
 SC_EXPPP_EXPORT void EXPRESSout( Express e );
 
