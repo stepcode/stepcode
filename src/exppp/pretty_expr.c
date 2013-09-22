@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "exppp.h"
 #include "pp.h"
@@ -139,7 +140,8 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             raw( " )" );
             break;
         default:
-            wrap( "unknown expression, type %d", TYPEis( e->type ) );
+            fprintf( stderr, "%s:%d: ERROR - unknown expression, type %d", e->symbol.filename, e->symbol.line, TYPEis( e->type ) );
+            abort();
     }
 }
 

@@ -19,9 +19,6 @@ void FUNC_out( Function fn, int level ) {
 
     if( exppp_preserve_comments == false ) {
         raw( "%*sFUNCTION %s", level, "", fn->symbol.name );
-        if( !strcmp( "unambiguously_specified_multi_level_reference_designator", fn->symbol.name ) ) {
-            asm( "nop" ); /*FIXME remove this*/
-        }
         if( fn->u.func->parameters ) {
             unsigned int param_indent = level + strlen( "FUNCTION     " );
             raw( "(\n" );
