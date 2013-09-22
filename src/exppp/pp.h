@@ -39,27 +39,14 @@ void wrap( const char * fmt, ... );
  */
 const char * real2exp( double r );
 
-/** write delimiter, newline, indent spaces, '+', and delimiter to str
- * \param str pointer to pointer to char
- * \param indent number of spaces for indentation
- * \param first true if first call - skips delimiter before newline
- * \return count of chars added to str
- *
- * *str is assumed to have enough space
- *
- * Will not work with encoded strings
- */
-unsigned int insertStrBrk( char * * const str, unsigned int indent, bool first );
-
-/** Break a long un-encoded string up for output and enclose in ''
- * if it is too long, error
- * if too short, enclose in '' but don't insert line breaks
+/** Break a long un-encoded string up, enclose in '', output via raw()
+ * if short, don't insert line breaks
  * \param in the input string
  *
- * use globals indent2 and curpos
- * TODO: update curpos before returning
+ * side effects: output via raw()
+ * reads globals indent2 and curpos
  */
-const char * breakLongStr( const char * in );
+void breakLongStr( const char * in );
 
 int finish_buffer();
 int minimum( int a, int b, int c );

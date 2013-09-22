@@ -1,8 +1,8 @@
 #ifndef PRETTY_SCOPE_H
 #define PRETTY_SCOPE_H
 
-#include "../express/linklist.h"
-#include "../express/scope.h"
+#include <express/linklist.h>
+#include <express/scope.h>
 
 #include "pp.h"
 

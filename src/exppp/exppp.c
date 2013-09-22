@@ -92,11 +92,14 @@ int count_newlines( char * s ) {
     return count;
 }
 
+/** true if last char through exp_output was a space */
+static bool printedSpaceLast = false;
+
 void exp_output( char * buf, int len ) {
     FILE * fp = ( exppp_fp ? exppp_fp : stdout );
 
     error_sym.line += count_newlines( buf );
-
+    printedSpaceLast = ( *( buf + len - 1) == ' ' );
     if( exppp_buf ) {
         /* output to string */
         if( len > exppp_buflen ) {
@@ -114,8 +117,8 @@ void exp_output( char * buf, int len ) {
 }
 
 void wrap( const char * fmt, ... ) {
-    char * p;
     char buf[10000];
+    char * p, * start = buf;
     int len;
     va_list args;
 
@@ -124,6 +127,12 @@ void wrap( const char * fmt, ... ) {
     va_end( args );
 
     len = strlen( buf );
+
+    /* eliminate leading whitespace */
+    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ){
+        start++;
+        len--;
+    }
 
     /* 1st condition checks if string cant fit into current line */
     /* 2nd condition checks if string cant fit into any line */
@@ -139,14 +148,14 @@ void wrap( const char * fmt, ... ) {
         curpos = indent2;       /* reset current position */
     }
 
-    exp_output( buf, len );
+    exp_output( start, len );
 
     if( len ) {
         /* reset cur position based on last newline seen */
-        if( 0 == ( p = strrchr( buf, '\n' ) ) ) {
+        if( 0 == ( p = strrchr( start, '\n' ) ) ) {
             curpos += len;
         } else {
-            curpos = len + buf - p;
+            curpos = len + start - p;
         }
     }
 }
@@ -322,111 +331,73 @@ const char * real2exp( double r ) {
     #undef PP_SMALL_BUF_SZ
 }
 
-/** write delimiter, newline, indent spaces, '+', and delimiter to str
- * \param str pointer to pointer to char
- * \param indent number of spaces for indentation
- * \param first true if first call - skips delimiter before newline
- * \return count of chars added to str
- *
- * *str is assumed to have enough space
- *
- * Will not work with encoded strings
+/** Find next '.' in null-terminated string, return number of chars
+ *  If no '.' found, returns length of string
  */
-unsigned int insertStrBrk( char * * const str, unsigned int indent, bool first ) {
-    unsigned int i = 0;
-    if( !first ) {
-        **str = '\'';
-        ( *str )++;
+int nextBreakpoint( const char * pos, const char * end ) {
+    int i = 0;
+    while( ( *pos != '.' ) && ( *pos != '\0' ) && ( pos < end ) ) {
+        i++;
+        pos++;
     }
-    ** str = '\n';
-    ( *str )++;
-    while( i < indent ) {
-        **str = ' ';
-        ( *str )++;
+    if( *pos == '.' ) {
         i++;
     }
-    if( !first ) {
-        **str = '+';
-        ( *str )++;
-        ** str = ' ';
-        ( *str )++;
+    return i;
+}
+
+/** true if it makes sense to break before printing next part of the string */
+bool shouldBreak( int len ) {
+    if( ( curpos > indent2 ) &&
+        ( ( curpos + len ) > exppp_linelength ) ) {
+        return true;
     }
-    ** str = '\'';
-    ( *str )++;
-    return 2 + indent + ( first ? 3 : 0 ); /* 2 for \n' , +3 if first */
+    return false;
+}
+
+/** Insert newline if it makes sense. */
+void maybeBreak( int len, bool first ) {
+    if( shouldBreak( len ) ) {
+        if( first ) {
+            raw( "\n%*s'", indent2, "" );
+        } else {
+            raw( "'\n%*s+ '", indent2, "" );
+        }
+    } else if( first ) {
+        /* staying on same line */
+        raw( "%s", ( printedSpaceLast ? "'": " '" ) );
+    }
 }
 
 /** Break a long un-encoded string up for output and enclose in ''
- * if it is too long, error
- * if too short, enclose in '' but don't insert line breaks
+ * if short, enclose in '' but don't insert line breaks
  * \param in the input string
  *
- * use globals indent2 and curpos
+ * side effects: output via raw()
+ * reads globals indent2 and curpos
  */
-const char * breakLongStr( const char * in ) {
-    const unsigned int minbreak = 50;  /* if line is longer than this, try to break it */
-    static char buf[8192] = { 0 }, * optr;
-    const char * iptr = in;
+void breakLongStr( const char * in ) {
+    const char * iptr = in, * end;
+    unsigned int inlen = strlen( in );
+    bool first = true;
+    /* used to ensure that we don't overrun the input buffer */
+    end = in + inlen;
 
-    /* error message to print when we can't return `in` because it is too long and needs wrapped in '' */
-    const char * errmsg = "ERROR: Cannot break long string of len %d:\n%s\n";
-
-    unsigned int inlen = strlen( in ), linelen = 0;
-
-    /* used to ensure that we don't overflow the buffer */
-    int extrachars = 8191 - inlen;
-    optr = buf;
-
-    if( inlen < minbreak ) {
-        *optr = '\'';
-        optr++;
-        strcpy( optr, in );
-        optr += inlen;
-        *optr = '\'';
-        optr++;
-        *optr = '\0';
-        return buf;
-    }
-    if( inlen > 8000 ) {
-        /* 8000 gives us 191 extra chars for     '\n + '       */
-        fprintf( stderr, errmsg, inlen, in );
-        abort();
-    }
-    if( indent2 < curpos ) {
-        /* start with a newline, indent, and delimiter */
-        extrachars -= insertStrBrk( &optr, indent2, true );
-        if( extrachars <= ( int ) indent2 + 7 ) {
-            fprintf( stderr, errmsg, inlen, in );
-            abort();
-        }
-    } else {
-        *optr = ' ';
-        optr++;
-        *optr = '\'';
-        optr++;
+    if( ( ( int ) inlen + curpos ) < exppp_linelength ) {
+        /* short enough to fit on current line */
+        raw( "%s%s'", ( printedSpaceLast ? "'": " '" ), in );
+        return;
     }
 
-    /* copy */
-    while( *iptr ) {
-        *optr = *iptr;
-        optr++;
-        iptr++;
-        linelen++;
-        /* look for '.' to break after, as long as there is something after it and the line is reasonably long */
-        if( ( *( iptr - 1 ) == '.' ) && ( *iptr != '\0' ) && ( linelen >= minbreak ) ) {
-            extrachars -= insertStrBrk( &optr, indent2, false );
-            if( extrachars <= ( int ) indent2 + 7 ) {
-                fprintf( stderr, errmsg, inlen, in );
-                abort();
-            }
-            linelen = 0;
-        }
+    /* insert newlines at dots as necessary */
+    while( ( iptr < end ) && ( *iptr ) ) {
+        int i = nextBreakpoint( iptr, end );
+        maybeBreak( i, first );
+        first = false;
+        raw( "%.*s", i, iptr );
+        iptr += i;
     }
-    *optr = '\'';
-    optr++;
-    *optr = '\0';
-    optr++;
-    return buf;
+    raw( "' ");
 }
 
 /* Interfacing Definitions */

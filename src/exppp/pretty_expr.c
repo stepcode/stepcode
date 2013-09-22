@@ -73,7 +73,7 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             if( TYPEis_encoded( e->type ) ) {
                 wrap( "\"%s\"", e->symbol.name );
             } else {
-                wrap( "%s", breakLongStr( e->symbol.name ) );
+                breakLongStr( e->symbol.name );
             }
             break;
         case entity_:
@@ -300,7 +300,7 @@ void EXPRstring( char * buffer, Expression e ) {
             if( TYPEis_encoded( e->type ) ) {
                 sprintf( buffer, "\"%s\"", e->symbol.name );
             } else {
-                sprintf( buffer, "%s", breakLongStr( e->symbol.name ) );
+                sprintf( buffer, "%s", e->symbol.name );
             }
             break;
         case entity_:
