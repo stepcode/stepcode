@@ -133,7 +133,6 @@ void TYPE_body_out( Type t, int level ) {
             TYPE_head_out( tb->base, level );
             break;
         case enumeration_: {
-#if 1
             int i, count = 0;
             char ** names;
 
@@ -172,27 +171,6 @@ void TYPE_body_out( Type t, int level ) {
             raw( " )" );
             sc_free( ( char * )names );
         }
-#else
-            wrap( " ENUMERATION OF\n" );
-            DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
-            while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
-
-                /* finish line from previous enum item */
-                if( !first_time ) {
-                    raw( ",\n" );
-                }
-
-                /* start new enum item */
-                if( first_time ) {
-                    raw( "%*s( ", level, "" );
-                    first_time = false;
-                } else {
-                    raw( "%*s ", level, "" );
-                }
-                raw( expr->symbol.name );
-            }
-            raw( " )" );
-#endif
         break;
         case select_:
             wrap( " SELECT\n" );
