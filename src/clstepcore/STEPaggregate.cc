@@ -49,6 +49,7 @@ STEPaggregate::~STEPaggregate() {
 }
 
 STEPaggregate & STEPaggregate::ShallowCopy( const STEPaggregate & a ) {
+    (void) a; // unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
          << "\n" << _POC_ "\n";
     cerr << "function:  STEPaggregate::ShallowCopy \n" << "\n";
@@ -99,6 +100,9 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type, InstMgr * insts,
                                    int addFileId, int assignVal, int exchangeFileFormat,
                                    const char * ) {
+    (void) insts; //not used in ReadValue() for this class
+    (void) addFileId; //not used in ReadValue() for this class
+
     ErrorDescriptor errdesc;
     char errmsg[BUFSIZ];
     int value_cnt = 0;
@@ -273,6 +277,7 @@ void STEPaggregate::Empty() {
 
 Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
     // defined in subtypes
+    (void) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
@@ -286,6 +291,7 @@ Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
 
 Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
     // defined in subtypes
+    (void) in; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
@@ -299,6 +305,7 @@ Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
 
 Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
     //  defined in subclasses
+    (void) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -313,6 +320,7 @@ Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
 }
 
 Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
+    (void) in; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -327,6 +335,7 @@ Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
 
 const char * STEPnode::asStr( std::string & s ) {
     //  defined in subclasses
+    (void) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::asStr called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -350,6 +359,8 @@ const char * STEPnode::asStr( std::string & s ) {
  * SCLundefined's, this is not implemented.)
  */
 const char * STEPnode::STEPwrite( std::string & s, const char * currSch ) {
+    (void) s; //unused
+    (void) currSch; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -357,6 +368,7 @@ const char * STEPnode::STEPwrite( std::string & s, const char * currSch ) {
 }
 
 void STEPnode::STEPwrite( ostream & out ) {
+    (void) out; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -443,6 +455,7 @@ const char * GenericAggrNode::asStr( std::string & s ) {
 }
 
 const char * GenericAggrNode::STEPwrite( std::string & s, const char * currSch ) {
+    (void) currSch; //unused
     return value.STEPwrite( s );
 }
 
@@ -476,7 +489,6 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -490,7 +502,6 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
-        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
@@ -716,7 +727,6 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     }
 
     char c;
-    int validDelims = 1;
 
     in >> ws; // skip white space
 
@@ -730,7 +740,6 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     if( c == '(' ) {
         in.get( c );
-        validDelims = 0; // signal expectation for end delim
     } else if( exchangeFileFormat ) {
         // error did not find opening delim
         // give up because you do not know where to stop reading.
@@ -850,6 +859,8 @@ SingleLinkNode * SelectNode::NewNode() {
 Severity SelectNode::StrToVal( const char * s, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgr * insts, int addFileId ) {
+    (void) elem_type; //unused
+    (void) addFileId; //unused
     istringstream in( ( char * )s );
     if( err->severity( node->STEPread( in, err, insts ) ) != SEVERITY_NULL ) {
         err->AppendToDetailMsg( node ->Error() );
@@ -873,6 +884,7 @@ Severity SelectNode::STEPread( const char * s, ErrorDescriptor * err,
 Severity SelectNode::STEPread( istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgr * insts, int addFileId, const char * currSch ) {
+    (void) elem_type; //unused
     if( !node )  {
         cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n"
              << _POC_ "\n";

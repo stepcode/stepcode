@@ -120,6 +120,7 @@ void resolution_success( void ) {
 }
 
 int success( Express model ) {
+    (void) model; /* unused */
     printf( "Finished writing files.\n" );
     return( 0 );
 }

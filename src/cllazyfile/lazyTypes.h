@@ -18,8 +18,8 @@ enum fileTypeEnum { Part21, Part28 };
 // enum loadingEnum { immediate, lazy };
 
 typedef uint64_t instanceID;  ///< the number assigned to an instance in the file
-typedef int16_t sectionID;   ///< globally unique index of a sectionReader in a sectionReaderVec_t
-typedef int16_t fileID;      ///< the index of a lazyFileReader in a lazyFileReaderVec_t. Can be inferred from a sectionID
+typedef uint16_t sectionID;   ///< globally unique index of a sectionReader in a sectionReaderVec_t
+typedef uint16_t fileID;      ///< the index of a lazyFileReader in a lazyFileReaderVec_t. Can be inferred from a sectionID
 
 /** store 16 bits of section id and 48 of instance offset into one 64-bit int
  * use thus:

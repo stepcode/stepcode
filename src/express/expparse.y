@@ -1587,13 +1587,15 @@ literal(A) ::= TOK_INTEGER_LITERAL(B).
 }
 literal(A) ::= TOK_REAL_LITERAL(B).
 {
-    if( ( abs( B.rVal ) <= FLT_EPSILON ) && ( abs( B.rVal ) > 0 ) ) {
+    /* if rVal (a double) is nonzero and <= the smallest positive float, print a warning */
+    if( ( fabs( B.rVal ) <= nextafterf( 0.0, 1.0 ) )
+        && ( fabs( B.rVal ) > 0 ) ) {
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
         ERRORreport_with_symbol(ERROR_warn_small_real, &sym, B.rVal );
     }
-    if( abs( B.rVal ) < DBL_EPSILON ) {
+    if( fabs( B.rVal ) < nextafter( 0.0, 1.0 ) ) {
         A = LITERAL_ZERO;
     } else {
         A = EXPcreate_simple(Type_Real);

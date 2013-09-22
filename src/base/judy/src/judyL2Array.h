@@ -41,6 +41,7 @@ class judyL2Array {
         vector ** _lastSlot;
         JudyKey _buff[1];
         bool _success;
+        cpair kv;
     public:
         judyL2Array(): _maxLevels( sizeof( JudyKey ) ), _depth( 1 ), _lastSlot( 0 ), _success( true ) {
             assert( sizeof( JudyKey ) == JUDY_key_size && "JudyKey *must* be the same size as a pointer!" );
@@ -159,8 +160,7 @@ class judyL2Array {
         }
 
         /// retrieve the key-value pair for the most recent judy query.
-        inline const cpair mostRecentPair() {
-            cpair kv;
+        inline const cpair & mostRecentPair() {
             judy_key( _judyarray, ( unsigned char * ) _buff, _depth * JUDY_key_size );
             if( _lastSlot ) {
                 kv.value = *_lastSlot;

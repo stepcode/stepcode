@@ -109,10 +109,9 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
                         // will create files with the suffixes "_1", "_2", etc.
                         // If not, no file suffix will be added. */
                         suffix = ++*( int * )schema->clientData;
-                        SCHEMAprint( schema, files, express, complexCol,
-                                     suffix );
+                        SCHEMAprint( schema, files, complexCol, suffix );
                     } else {
-                        SCHEMAprint( schema, files, express, complexCol, 0 );
+                        SCHEMAprint( schema, files, complexCol, 0 );
                     }
                 }
                 complete = complete && ( schema->search_id == PROCESSED );
@@ -281,9 +280,9 @@ static int checkTypes( Schema schema )
                 schema->search_id = UNPROCESSED;
             }
         } else if( TYPEis_select( type ) ) {
-            LISTdo( SEL_TYPEget_items( type ), i, Type ) {
-                if( !TYPEis_entity( i ) ) {
-                    if( checkItem( i, type, schema, &unknowncnt, 0 ) ) {
+            LISTdo( SEL_TYPEget_items( type ), ii, Type ) {
+                if( !TYPEis_entity( ii ) ) {
+                    if( checkItem( ii, type, schema, &unknowncnt, 0 ) ) {
                         break;
                     }
                     /* checkItem does most of the work of determining if
@@ -291,13 +290,13 @@ static int checkTypes( Schema schema )
                     // processable.  It checks for conditions which would
                     // make this true and sets values in type, schema, and
                     // unknowncnt accordingly.  (See checkItem's commenting
-                    // below.)  It also return TRUE if i has made type un-
+                    // below.)  It also return TRUE if ii has made type un-
                     // processable.  If so, we break - there's no point
                     // checking the other items of type any more. */
                 } else {
                     /* Check if our select has an entity item which itself
                     // has unprocessed selects or enums. */
-                    ent = ENT_TYPEget_entity( i );
+                    ent = ENT_TYPEget_entity( ii );
                     if( ent->search_id == PROCESSED ) {
                         continue;
                     }

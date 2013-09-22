@@ -144,6 +144,8 @@ int main( int argc, char ** argv ) {
         dumpComplexInst( c, 0 );
         std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;
     }
+#else
+    (void) instWithRef; // unused
 #endif //NO_REGISTRY
 
     stats.out();
