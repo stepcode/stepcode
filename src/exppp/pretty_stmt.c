@@ -1,4 +1,4 @@
-/** \file stmt.c
+/** \file pretty_stmt.c
  * split out of exppp.c 9/21/13
  */
 
@@ -30,7 +30,7 @@ void STMT_out( Statement s, int level ) {
             CASEout( s->u.Case, level );
             break;
         case STMT_COMPOUND:
-            raw( "%*sBEGIN\n", level, "" );
+            raw( "\n%*sBEGIN\n", level, "" );
             STMTlist_out( s->u.compound->statements, level + exppp_nesting_indent );
             raw( "%*sEND;\n", level, "" );
             break;

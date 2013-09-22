@@ -388,10 +388,12 @@ void EXPRop_string( char * buffer, struct Op_Subexpression * oe ) {
     EXPRstring( buffer + strlen( buffer ), oe->op2 );
 }
 
-/** returns length of printable representation of expression w.o. printing it */
+/** returns length of printable representation of expression w.o. printing it
+ * doesn't understand as many expressions as the printing functions (!)
+ * WARNING this *does* change the global 'curpos'!
+ */
 int EXPRlength( Expression e ) {
     char buffer[10000];
-
     *buffer = '\0';
     EXPRstring( buffer, e );
     return( strlen( buffer ) );
