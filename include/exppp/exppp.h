@@ -1,6 +1,12 @@
 #ifndef EXPPP_H
 #define EXPPP_H
+
+#include <stdbool.h>
+
 #include <sc_export.h>
+
+#include "../express/expbasic.h"
+#include "../express/express.h"
 
 extern SC_EXPPP_EXPORT const int exppp_nesting_indent;      /**< default nesting indent */
 extern SC_EXPPP_EXPORT const int exppp_continuation_indent; /**< default nesting indent for continuation lines */

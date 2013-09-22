@@ -35,7 +35,7 @@ int Handle_Exppp_Args( int i, char * arg ) {
     if( tolower( ( char )i ) == 'a' ) {
         exppp_alphabetize = true;
         return 0;
-    } else if( tolower( (char)i ) == 'o' ) {
+    } else if( tolower( ( char )i ) == 'o' ) {
         if( !strcmp( "--", arg ) ) {
             exppp_print_to_stdout = true;
             return 0;
@@ -43,7 +43,7 @@ int Handle_Exppp_Args( int i, char * arg ) {
         exppp_output_filename_reset = false;
         exppp_output_filename = arg;
         return 0;
-    } else if( tolower( (char)i ) == 'l' ) {
+    } else if( tolower( ( char )i ) == 'l' ) {
         if( ( strlen( arg ) > 5 ) || ( strlen( arg ) < 2 ) ) {
             fprintf( stderr, "Unreasonable number of chars in arg for -l: %s\nTry 2-5 digits.", arg );
             return 1;
