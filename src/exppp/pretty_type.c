@@ -37,6 +37,9 @@ void TYPE_out( Type t, int level ) {
  */
 void TYPE_head_out( Type t, int level ) {
     if( t->symbol.name ) {
+        if( indent2 + ( int ) strlen( t->symbol.name ) > exppp_linelength ) {
+            indent2 = ( indent2 + level ) / 2;
+        }
         wrap( " %s", t->symbol.name );
     } else {
         TYPE_body_out( t, level );

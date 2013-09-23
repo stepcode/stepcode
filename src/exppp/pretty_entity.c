@@ -193,6 +193,9 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
     }
     level += exppp_nesting_indent;
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
+    if( indent2 > exppp_linelength / 2 ) {
+        indent2 = ( indent2 + level ) / 2;
+    }
 
     /* pass 2: print them */
     LISTdo( attrs, v, Variable ) {
