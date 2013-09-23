@@ -252,6 +252,8 @@ static Express PARSERrun PROTO( ( char *, FILE * ) );
 char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );
 }
+/** name specified on command line */
+char * input_filename = 0;
 
 void EXPRESSusage( int _exit ) {
     fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );

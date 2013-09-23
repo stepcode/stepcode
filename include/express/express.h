@@ -88,6 +88,7 @@ struct Express_ {
 /* global variables */
 /********************/
 
+extern SC_EXPRESS_EXPORT char * input_filename;
 extern SC_EXPRESS_EXPORT Linked_List EXPRESS_path;
 extern SC_EXPRESS_EXPORT int EXPRESSpass;
 
@@ -259,7 +260,6 @@ extern SC_EXPRESS_EXPORT int      EXPRESS_fail      PROTO( ( Express ) );
 extern SC_EXPRESS_EXPORT int      EXPRESS_succeed   PROTO( ( Express ) );
 extern                   void     EXPRESSinit_init  PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT void     EXPRESSusage( int _exit ); /**< exit unless _exit is non-zero */
-extern SC_EXPRESS_EXPORT const char * get_filename(); /**< return pointer to file name given on the command line */
 extern SC_EXPRESS_EXPORT void     build_complex( Express );
 
 #endif /*EXPRESS_H*/

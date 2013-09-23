@@ -56,7 +56,7 @@ char * SCHEMAout( Schema s ) {
         }
 
         if( exppp_output_filename ) {
-            if( !strcmp( get_filename(), exppp_output_filename ) ) {
+            if( !strcmp( input_filename, exppp_output_filename ) ) {
                 fprintf( stderr, "Error: input filename and output filename are the same (%s)", exppp_output_filename );
                 exit( EXIT_FAILURE );
             }

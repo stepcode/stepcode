@@ -89,13 +89,6 @@ extern int exp_yydebug;
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz"; /* larger than the string because exp2cxx, exppp, etc may append their own options */
 static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */
 
-/** name specified on command line */
-char * input_filename = 0;
-
-/** returns input filename, so exppp can verify that it won't be overwritten */
-const char * get_filename() {
-    return input_filename;
-}
 void print_fedex_version( void ) {
     fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode and scl-dev on google groups\n", EXPRESSprogram_name, sc_version );
     no_need_to_work = 1;
