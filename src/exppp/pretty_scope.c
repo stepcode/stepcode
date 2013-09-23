@@ -122,6 +122,7 @@ void SCOPEconsts_out( Scope s, int level ) {
     size_t max_indent = 0, old_indent2;
     Dictionary d = s->symbol_table;
 
+    /* checks length of constant names */
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
         if( !v->flags.constant ) {
@@ -140,11 +141,13 @@ void SCOPEconsts_out( Scope s, int level ) {
 
     raw( "%*sCONSTANT\n", level, "" );
 
-    /* if max_indent is too big, wrap() won't insert *any* newlines */
-    if( ( max_indent * 2 ) > ( size_t ) exppp_linelength ) {
-        max_indent /= 3;
+    /* if max_indent is too big, wrap() won't insert any newlines
+     * fiddled with this until it looked ok on 242 arm
+     */
+    if( ( max_indent + 20 ) > ( size_t ) exppp_linelength / 2 ) {
+        max_indent = ( size_t ) exppp_linelength / 3;
     }
-    indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
+    indent2 = level + max_indent + strlen( ": ab" ) + exppp_continuation_indent;
 
     DICTdo_type_init( d, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
@@ -161,7 +164,7 @@ void SCOPEconsts_out( Scope s, int level ) {
             wrap( " OPTIONAL" );
         }
 
-        /* let type definition stick out a bit to the left */
+        /* let type definition stick out a bit to the left if it's on a new line */
         old_indent2 = indent2;
         if( indent2 > 4 ) {
             indent2 -= 4;
@@ -170,12 +173,18 @@ void SCOPEconsts_out( Scope s, int level ) {
         indent2 = old_indent2;
 
         if( v->initializer ) {
-            wrap( " := " );
-            if( curpos > exppp_linelength * 2 / 3 ) {
-                /* let '[' on first line of initializer stick out so strings are aligned */
-                raw( "\n%*s", indent2 - 1, "" );
+            int old_line = exppp_linelength;
+            raw( " :=" );
+
+            /* let '[' on first line of initializer stick out so strings are aligned */
+            raw( "\n%*s", indent2 - 2, "" );
+
+            if( exppp_aggressively_wrap_consts ) {
+                /* causes wrap() to always begin new line */
+                exppp_linelength = indent2;
             }
             EXPR_out( v->initializer, 0 );
+            exppp_linelength = old_line;
         }
 
         raw( ";\n" );

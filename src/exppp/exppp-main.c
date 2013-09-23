@@ -5,10 +5,11 @@
 
 static void
 exppp_usage() {
-    fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-o [file|--]] express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-a or -A causes output to be alphabetized\n" );
     fprintf( stderr, "\t-v produces a version description\n" );
-    fprintf( stderr, "\t-l specifies line length in output\n" );
+    fprintf( stderr, "\t-l specifies line length hint for output\n" );
+    fprintf( stderr, "\t-c for constants, print one item per line (YMMV!)\n" );
     fprintf( stderr, "\t-o specifies the name of the output file (-- for stdout)\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
@@ -50,6 +51,9 @@ int Handle_Exppp_Args( int i, char * arg ) {
         }
         exppp_linelength = atoi( arg );
         return 0;
+    } else if( tolower( ( char )i ) == 'c' ) {
+        exppp_aggressively_wrap_consts = true;
+        return 0;
     }
     return 1;
 }
@@ -58,6 +62,6 @@ void EXPRESSinit_init( void ) {
     exppp_alphabetize = false;
     EXPRESSbackend = EXPRESSout;
     ERRORusage_function = exppp_usage;
-    strcat( EXPRESSgetopt_options, "aAo:l:" );
+    strcat( EXPRESSgetopt_options, "aAo:l:c" );
     EXPRESSgetopt = Handle_Exppp_Args;
 }

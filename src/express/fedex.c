@@ -97,7 +97,7 @@ const char * get_filename() {
     return input_filename;
 }
 void print_fedex_version( void ) {
-    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode\n", EXPRESSprogram_name, sc_version );
+    fprintf( stderr, "Build info for %s: %s\nhttp://github.com/stepcode/stepcode and scl-dev on google groups\n", EXPRESSprogram_name, sc_version );
     no_need_to_work = 1;
 }
 

@@ -67,6 +67,7 @@ Symbol error_sym;                           /* only used when printing errors */
 bool exppp_output_filename_reset = true;    /* if true, force output filename */
 bool exppp_print_to_stdout = false;
 bool exppp_alphabetize = false;
+bool exppp_aggressively_wrap_consts = false;
 
 bool exppp_terse = false;
 
@@ -134,12 +135,15 @@ void wrap( const char * fmt, ... ) {
         len--;
     }
 
-    /* 1st condition checks if string cant fit into current line */
-    /* 2nd condition checks if string cant fit into any line */
-    /* I.e., if we still can't fit after indenting, don't bother to */
-    /* go to newline, just print a long line */
-    if( ( ( curpos + len ) > exppp_linelength ) &&
-            ( ( indent2 + len ) < exppp_linelength ) ) {
+    /* 1st condition checks if string can't fit into current line
+     * 2nd condition checks if string can fit into any line
+     * I.e., if we still can't fit after indenting, don't bother to
+     * go to newline, just print a long line
+     * 3rd condition: if exppp_linelength == indent2 and curpos > indent2, always newline
+     * to use #3: temporarily change exppp_linelength; it doesn't make sense to change indent2
+     */
+    if( ( ( ( curpos + len ) > exppp_linelength ) && ( ( indent2 + len ) < exppp_linelength ) )
+        || ( ( exppp_linelength == indent2 ) && ( curpos > indent2 ) ) ) {
         /* move to new continuation line */
         char line[1000];
         sprintf( line, "\n%*s", indent2, "" );
