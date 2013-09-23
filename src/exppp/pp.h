@@ -4,16 +4,12 @@
 #ifndef PP_H
 #define PP_H
 
-#include <stdbool.h>
-#include <../express/symbol.h>
+#include <sc_stdbool.h>
+#include <express/symbol.h>
 
-extern int exppp_linelength;                    /**< leave some room for closing parens.
-                                                  * '\n' is not included in this count either */
 extern int indent2;                             /**< where continuation lines start */
 extern int curpos;                              /**< current line position (1 is first position) */
 extern const int NOLEVEL;                       /**< unused-level indicator */
-extern const int exppp_nesting_indent;          /**< default nesting indent */
-extern const int exppp_continuation_indent;     /**< default nesting indent for continuation lines */
 
 extern Symbol error_sym;                        /**< only used when printing errors */
 extern Error ERROR_select_empty;
@@ -58,7 +54,6 @@ void first_newline();
 void prep_file();
 char * finish_string();
 const char * real2exp( double r );
-int count_newlines( char * s );
 void exp_output( char * buf, int len );
 void exppp_init();
 void exppp_ref_info( Symbol * s );

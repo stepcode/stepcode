@@ -3,6 +3,8 @@
  */
 
 #include <express/schema.h>
+#include <exppp/exppp.h>
+
 #include "pp.h"
 #include "pretty_ref.h"
 

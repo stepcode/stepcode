@@ -3,8 +3,7 @@
 #include "../express/express.h"
 #include "exppp.h"
 
-static void
-exppp_usage() {
+static void exppp_usage( void ) {
     fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-a or -A causes output to be alphabetized\n" );
     fprintf( stderr, "\t-v produces a version description\n" );

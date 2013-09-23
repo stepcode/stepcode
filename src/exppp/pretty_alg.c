@@ -5,6 +5,7 @@
 
 #include <express/scope.h>
 #include <express/linklist.h>
+#include <exppp/exppp.h>
 
 #include "pp.h"
 #include "pretty_type.h"

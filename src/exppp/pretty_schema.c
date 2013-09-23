@@ -6,6 +6,7 @@
 #include <errno.h>
 
 #include <sc_version_string.h>
+#include <express/express.h>
 
 #include <exppp/exppp.h>
 #include "pp.h"

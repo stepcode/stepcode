@@ -1,7 +1,7 @@
 #ifndef EXPPP_H
 #define EXPPP_H
 
-#include <stdbool.h>
+#include <sc_stdbool.h>
 
 #include <sc_export.h>
 
@@ -64,6 +64,6 @@ SC_EXPPP_EXPORT int TYPEbody_to_buffer( Type t, char * buffer, int length );
 SC_EXPPP_EXPORT int WHEREto_buffer( Linked_List w, char * buffer, int length );
 
 SC_EXPPP_EXPORT int EXPRlength( Expression e );
-SC_EXPPP_EXPORT int count_newlines( char * s );
+extern SC_EXPPP_EXPORT int count_newlines( char * s );
 
 #endif

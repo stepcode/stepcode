@@ -4,6 +4,7 @@
 
 #include <express/variable.h>
 #include <express/dict.h>
+#include <exppp/exppp.h>
 
 #include "pp.h"
 #include "pretty_expr.h"

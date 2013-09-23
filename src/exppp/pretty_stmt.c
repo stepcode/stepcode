@@ -2,6 +2,7 @@
  * split out of exppp.c 9/21/13
  */
 
+#include <exppp/exppp.h>
 #include "pp.h"
 #include "pretty_expr.h"
 #include "pretty_case.h"
