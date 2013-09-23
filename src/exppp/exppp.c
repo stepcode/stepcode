@@ -387,9 +387,9 @@ void breakLongStr( const char * in ) {
     /* used to ensure that we don't overrun the input buffer */
     end = in + inlen;
 
-    if( ( ( int ) inlen + curpos ) < exppp_linelength ) {
+    if( ( inlen == 0 ) || ( ( ( int ) inlen + curpos ) < exppp_linelength ) ) {
         /* short enough to fit on current line */
-        raw( "%s%s'", ( printedSpaceLast ? "'": " '" ), in );
+        raw( "%s'%s'", ( printedSpaceLast ? "": " " ), in );
         return;
     }
 
