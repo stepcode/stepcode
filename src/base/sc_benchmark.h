@@ -37,6 +37,12 @@ extern "C" {
  *
  * depends on getMemAndTime() above - may not work on all platforms.
  */
+
+#ifdef _WIN32
+  template class SC_BASE_EXPORT std::allocator<char>;
+  template class SC_BASE_EXPORT std::basic_string<char, std::char_traits<char>, std::allocator<char> >;
+#endif
+
 class SC_BASE_EXPORT benchmark {
     protected:
         benchVals initialVals, laterVals;
