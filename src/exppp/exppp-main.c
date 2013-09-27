@@ -4,8 +4,7 @@
 #include "exppp.h"
 
 static void exppp_usage( void ) {
-    fprintf( stderr, "usage: %s [-a|A] [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
-    fprintf( stderr, "where\t-a or -A causes output to be alphabetized\n" );
+    fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "\t-v produces a version description\n" );
     fprintf( stderr, "\t-l specifies line length hint for output\n" );
     fprintf( stderr, "\t-c for constants, print one item per line (YMMV!)\n" );
@@ -32,10 +31,7 @@ static void exppp_usage( void ) {
 }
 
 int Handle_Exppp_Args( int i, char * arg ) {
-    if( tolower( ( char )i ) == 'a' ) {
-        exppp_alphabetize = true;
-        return 0;
-    } else if( tolower( ( char )i ) == 'o' ) {
+    if( tolower( ( char )i ) == 'o' ) {
         if( !strcmp( "--", arg ) ) {
             exppp_print_to_stdout = true;
             return 0;
@@ -58,9 +54,9 @@ int Handle_Exppp_Args( int i, char * arg ) {
 }
 
 void EXPRESSinit_init( void ) {
-    exppp_alphabetize = false;
+    exppp_alphabetize = true;
     EXPRESSbackend = EXPRESSout;
     ERRORusage_function = exppp_usage;
-    strcat( EXPRESSgetopt_options, "aAo:l:c" );
+    strcat( EXPRESSgetopt_options, "o:l:c" );
     EXPRESSgetopt = Handle_Exppp_Args;
 }

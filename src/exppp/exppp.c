@@ -66,7 +66,7 @@ Symbol error_sym;                           /* only used when printing errors */
 
 bool exppp_output_filename_reset = true;    /* if true, force output filename */
 bool exppp_print_to_stdout = false;
-bool exppp_alphabetize = false;
+bool exppp_alphabetize = true;
 bool exppp_aggressively_wrap_consts = false;
 
 bool exppp_terse = false;
