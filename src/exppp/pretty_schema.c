@@ -128,6 +128,17 @@ char * SCHEMAout( Schema s ) {
     REFout( s->u.schema->usedict, s->u.schema->use_schemas, "USE", level + exppp_nesting_indent );
     REFout( s->u.schema->refdict, s->u.schema->ref_schemas, "REFERENCE", level + exppp_nesting_indent );
 
+    /* output order for DIS & IS schemas:
+     * CONSTANT
+     * TYPE
+     * ENTITY
+     * RULE
+     * FUNCTION
+     * PROCEDURE
+     *
+     * Within each of those groups, declarations must be sorted alphabetically.
+     */
+
     SCOPEconsts_out( s, level + exppp_nesting_indent );
     SCOPEtypes_out( s, level + exppp_nesting_indent );
     SCOPEentities_out( s, level + exppp_nesting_indent );

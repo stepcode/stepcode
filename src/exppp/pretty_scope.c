@@ -12,6 +12,7 @@
 #include "pretty_proc.h"
 #include "pretty_scope.h"
 
+/** add items from s to list alphabetically */
 void SCOPEadd_inorder( Linked_List list, Scope s ) {
     Link k = 0;
 
@@ -25,6 +26,20 @@ void SCOPEadd_inorder( Linked_List list, Scope s ) {
 
     LISTadd_before( list, k, ( Generic )s );
 }
+
+/** like SCOPEadd_inorder, but for Variables */
+void SCOPEaddvars_inorder( Linked_List list, Variable v ) {
+    Link k = 0;
+
+    LISTdo_links( list, link )
+    if( 0 > strcmp( v->name->symbol.name,  ( ( Variable ) link->data )->name->symbol.name ) ) {
+        k = link;
+        break;
+    } LISTod
+
+    LISTadd_before( list, k, ( Generic )v );
+}
+
 
 /** print the rules in a scope */
 void SCOPErules_out( Scope s, int level ) {
@@ -107,6 +122,16 @@ void SCOPEprocs_out( Scope s, int level ) {
 
 }
 
+/* output order for DIS & IS schemas:
+ * CONSTANT
+ * TYPE
+ * ENTITY
+ * RULE
+ * FUNCTION
+ * PROCEDURE
+ *
+ * Within each of those groups, declarations must be sorted alphabetically.
+ */
 /* print the algorithms in a scope */
 void SCOPEalgs_out( Scope s, int level ) {
     /* Supplementary Directivies 2.1.1 requires rules to be separated */
@@ -116,10 +141,50 @@ void SCOPEalgs_out( Scope s, int level ) {
     SCOPEprocs_out( s, level );
 }
 
+/** output one const - used in SCOPEconsts_out, below */
+void SCOPEconst_out( Variable v, int level, size_t max_indent ) {
+    size_t old_indent2;
+
+    /* print attribute name */
+    raw( "%*s%-*s :", level + 2, "",
+         max_indent, v->name->symbol.name );
+
+    /* print attribute type */
+    if( VARget_optional( v ) ) {
+        wrap( " OPTIONAL" );
+    }
+
+    /* let type definition stick out a bit to the left if it's on a new line */
+    old_indent2 = indent2;
+    if( indent2 > 4 ) {
+        indent2 -= 4;
+    }
+    TYPE_head_out( v->type, NOLEVEL );
+    indent2 = old_indent2;
+
+    if( v->initializer ) {
+        int old_ll = exppp_linelength; /* so exppp_linelength can be restored */
+        raw( " :=" );
+
+        /* let '[' on first line of initializer stick out so strings are aligned */
+        raw( "\n%*s", indent2 - 2, "" );
+
+        if( exppp_aggressively_wrap_consts ) {
+            /* causes wrap() to always begin new line */
+            exppp_linelength = indent2;
+        }
+        EXPR_out( v->initializer, 0 );
+        exppp_linelength = old_ll;
+    }
+
+    raw( ";\n" );
+}
+
+/** output all consts in this scope */
 void SCOPEconsts_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
-    size_t max_indent = 0, old_indent2;
+    size_t max_indent = 0;
     Dictionary d = s->symbol_table;
 
     /* checks length of constant names */
@@ -149,47 +214,29 @@ void SCOPEconsts_out( Scope s, int level ) {
     }
     indent2 = level + max_indent + strlen( ": ab" ) + exppp_continuation_indent;
 
-    DICTdo_type_init( d, &de, OBJ_VARIABLE );
-    while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
-        if( !v->flags.constant ) {
-            continue;
-        }
-
-        /* print attribute name */
-        raw( "%*s%-*s :", level + 2, "",
-             max_indent, v->name->symbol.name );
-
-        /* print attribute type */
-        if( VARget_optional( v ) ) {
-            wrap( " OPTIONAL" );
-        }
-
-        /* let type definition stick out a bit to the left if it's on a new line */
-        old_indent2 = indent2;
-        if( indent2 > 4 ) {
-            indent2 -= 4;
-        }
-        TYPE_head_out( v->type, NOLEVEL );
-        indent2 = old_indent2;
-
-        if( v->initializer ) {
-            int old_line = exppp_linelength;
-            raw( " :=" );
-
-            /* let '[' on first line of initializer stick out so strings are aligned */
-            raw( "\n%*s", indent2 - 2, "" );
-
-            if( exppp_aggressively_wrap_consts ) {
-                /* causes wrap() to always begin new line */
-                exppp_linelength = indent2;
+    if( !exppp_alphabetize ) {
+        DICTdo_type_init( d, &de, OBJ_VARIABLE );
+        while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
+            if( !v->flags.constant ) {
+                continue;
             }
-            EXPR_out( v->initializer, 0 );
-            exppp_linelength = old_line;
+            SCOPEconst_out( v, level, max_indent );
         }
+    } else {
+        Linked_List alpha = LISTcreate();
 
-        raw( ";\n" );
+        DICTdo_type_init( d, &de, OBJ_VARIABLE );
+        while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
+            if( !v->flags.constant ) {
+                continue;
+            }
+            SCOPEaddvars_inorder( alpha, v );
+        }
+        LISTdo( alpha, cnst, Variable ) {
+            SCOPEconst_out( cnst, level, max_indent );
+        } LISTod
+        LISTfree( alpha );
     }
-
     raw( "%*sEND_CONSTANT;\n", level, "" );
 }
 
