@@ -4,7 +4,7 @@
 #include "sc_memmgr.h"
 
 #ifdef __WIN32__
-#include <Windows.h>
+#include <windows.h>
 #include <psapi.h>
 #else
 #include <sys/time.h>
