@@ -73,11 +73,11 @@ char * SCHEMAout( Schema s ) {
             sprintf( exppp_filename_buffer, "%s.exp", s->symbol.name );
 
             if( 0 != ( f = fopen( exppp_filename_buffer, "r" ) ) ) {
-                fgets( buf, PP_SMALL_BUF_SZ, f );
+                char * result = fgets( buf, PP_SMALL_BUF_SZ, f );
                 if( 0 != ( p = strchr( buf, '\n' ) ) ) {
                     *p = '\0';
                 }
-                if( streq( buf, expheader[0] ) ) {
+                if( ( !result ) || ( streq( buf, expheader[0] ) ) ) {
                     unlink( exppp_filename_buffer );
                 } else {
                     fprintf( stderr, "%s: %s already exists and appears to be hand-written\n",

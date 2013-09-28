@@ -111,7 +111,12 @@ void exp_output( char * buf, int len ) {
         exppp_buflen -= len;
     } else {
         /* output to file */
-        fwrite( buf, 1, len, fp );
+        size_t out = fwrite( buf, 1, len, fp );
+        if( out != len ) {
+            const char * err = "%s:%u - ERROR: write operation on output file failed. Wanted %u bytes, wrote %u.";
+            fprintf( stderr, err, __FILE__, __LINE__, len, out );
+            abort();
+        }
     }
 }
 
