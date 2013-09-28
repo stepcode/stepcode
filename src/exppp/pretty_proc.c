@@ -39,20 +39,15 @@ void PROC_out( Procedure p, int level ) {
     first_newline();
     exppp_ref_info( &p->symbol );
 
-    if( exppp_preserve_comments == false ) {
-        raw( "%*sPROCEDURE %s(\n", level, "", p->symbol.name );
+    raw( "%*sPROCEDURE %s(\n", level, "", p->symbol.name );
 
-        ALGargs_out( p->u.proc->parameters, level + strlen( "PROCEDURE     " ) );
+    ALGargs_out( p->u.proc->parameters, level + strlen( "PROCEDURE     " ) );
 
-        raw( "%*s);\n", level + exppp_nesting_indent, "" );
+    raw( "%*s);\n", level + exppp_nesting_indent, "" );
 
-        ALGscope_out( p, level + exppp_nesting_indent );
-        STMTlist_out( p->u.proc->body, level + exppp_nesting_indent );
+    ALGscope_out( p, level + exppp_nesting_indent );
+    STMTlist_out( p->u.proc->body, level + exppp_nesting_indent );
 
-        raw( "\n%*sEND_PROCEDURE; -- %s\n", level, "", p->symbol.name );
-    } else {
-        copy_file_chunk( p->symbol.filename, p->u.proc->text.start,
-                         p->u.proc->text.end, level );
-    }
+    raw( "\n%*sEND_PROCEDURE; -- %s\n", level, "", p->symbol.name );
 }
 

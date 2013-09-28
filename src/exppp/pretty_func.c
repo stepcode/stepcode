@@ -17,28 +17,23 @@ void FUNC_out( Function fn, int level ) {
     first_newline();
     exppp_ref_info( &fn->symbol );
 
-    if( exppp_preserve_comments == false ) {
-        raw( "%*sFUNCTION %s", level, "", fn->symbol.name );
-        if( fn->u.func->parameters ) {
-            unsigned int param_indent = level + strlen( "FUNCTION     " );
-            raw( "(\n" );
-            ALGargs_out( fn->u.func->parameters, param_indent );
-            raw( "\n%*s)", param_indent - exppp_continuation_indent, "" );
-        }
-        raw( " :" );
-
-        indent2 = curpos + exppp_continuation_indent;
-        TYPE_head_out( fn->u.func->return_type, NOLEVEL );
-        raw( ";\n" );
-
-        ALGscope_out( fn, level + exppp_nesting_indent );
-        STMTlist_out( fn->u.proc->body, level + exppp_nesting_indent );
-
-        raw( "\n%*sEND_FUNCTION; -- %s\n", level, "", fn->symbol.name );
-    } else {
-        copy_file_chunk( fn->symbol.filename, fn->u.func->text.start,
-                         fn->u.func->text.end, level );
+    raw( "%*sFUNCTION %s", level, "", fn->symbol.name );
+    if( fn->u.func->parameters ) {
+        unsigned int param_indent = level + strlen( "FUNCTION     " );
+        raw( "(\n" );
+        ALGargs_out( fn->u.func->parameters, param_indent );
+        raw( "\n%*s)", param_indent - exppp_continuation_indent, "" );
     }
+    raw( " :" );
+
+    indent2 = curpos + exppp_continuation_indent;
+    TYPE_head_out( fn->u.func->return_type, NOLEVEL );
+    raw( ";\n" );
+
+    ALGscope_out( fn, level + exppp_nesting_indent );
+    STMTlist_out( fn->u.proc->body, level + exppp_nesting_indent );
+
+    raw( "\n%*sEND_FUNCTION; -- %s\n", level, "", fn->symbol.name );
 }
 
 char * FUNCto_string( Function f ) {

@@ -33,30 +33,25 @@ void RULEout( Rule r ) {
 }
 
 void RULE_out( Rule r, int level ) {
+    int i = 0;
     first_newline();
     exppp_ref_info( &r->symbol );
 
-    if( exppp_preserve_comments == false ) {
-        int i = 0;
-        raw( "%*sRULE %s FOR ( ", level, "", r->symbol.name );
+    raw( "%*sRULE %s FOR ( ", level, "", r->symbol.name );
 
-        LISTdo( r->u.rule->parameters, p, Variable )
-        i++;
-        if( i != 1 ) {
-            raw( ", " );
-        }
-        wrap( p->name->symbol.name );
-        LISTod;
-        raw( " );\n" );
-
-        ALGscope_out( r, level + exppp_nesting_indent );
-        STMTlist_out( r->u.rule->body, level + exppp_nesting_indent );
-        raw( "\n" );
-        WHERE_out( RULEget_where( r ), level );
-
-        raw( "\n%*sEND_RULE; -- %s\n", level, "", r->symbol.name );
-    } else {
-        copy_file_chunk( r->symbol.filename, r->u.rule->text.start,
-                         r->u.rule->text.end, level );
+    LISTdo( r->u.rule->parameters, p, Variable )
+    i++;
+    if( i != 1 ) {
+        raw( ", " );
     }
+    wrap( p->name->symbol.name );
+    LISTod;
+    raw( " );\n" );
+
+    ALGscope_out( r, level + exppp_nesting_indent );
+    STMTlist_out( r->u.rule->body, level + exppp_nesting_indent );
+    raw( "\n" );
+    WHERE_out( RULEget_where( r ), level );
+
+    raw( "\n%*sEND_RULE; -- %s\n", level, "", r->symbol.name );
 }

@@ -73,8 +73,6 @@ bool exppp_terse = false;
 
 bool exppp_reference_info = false;   /* if true, add commentary about where things came from */
 
-bool exppp_preserve_comments = false; /* doesn't seem to work -- MP */
-
 FILE * exppp_fp = NULL;     /* output file */
 char * exppp_buf = 0;       /* output buffer */
 int exppp_maxbuflen = 0;    /* size of expppbuf */
@@ -227,40 +225,6 @@ int minimum( int a, int b, int c ) {
     } else {
         return ( ( b < c ) ? b : c );
     }
-}
-
-void copy_file_chunk( char * fname, int start, int end, int level ) {
-    FILE * infile;
-    char buff[256];
-    int i, indent, undent = 0, fix;
-
-    if( !( infile = fopen( fname, "r" ) ) ) {
-        ERRORreport( ERROR_file_unreadable, fname, strerror( errno ) );
-    }
-
-    /* skip to start of chunk */
-    for( i = start; --i; ) {
-        fgets( buff, 255, infile );
-    }
-
-    /* copy first line and compute indentation correction factor */
-    fgets( buff, 255, infile );
-    indent = level - strspn( buff, " " );
-    if( indent < 0 ) {
-        undent = -indent;
-        indent = 0;
-    }
-    raw( "%*s%s", indent, "", buff + undent );
-    indent = indent - undent;
-
-    /* copy the rest */
-    for( i = end - start; i--; ) {
-        fgets( buff, 255, infile );
-        fix = minimum( undent, strlen( buff ), strspn( buff, " " ) );
-        raw( "%*s%s", indent + fix, "", buff + fix );
-    }
-
-    fclose( infile );
 }
 
 /** convert a real into our preferred form compatible with 10303-11

@@ -48,7 +48,6 @@ int finish_buffer();
 int minimum( int a, int b, int c );
 int prep_buffer( char * buf, int len );
 int prep_string();
-void copy_file_chunk( char * fname, int start, int end, int level );
 void finish_file();
 void first_newline();
 void prep_file();
