@@ -12,6 +12,7 @@
 #include <unistd.h>
 #endif
 
+#include <assert.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -52,6 +53,7 @@ benchVals getMemAndTime( ) {
     PROCESS_MEMORY_COUNTERS MemoryCntrs;
     FILETIME CreationTime, ExitTime, KernelTime, UserTime;
     long page_size_kb = 1024;
+    ULARGE_INTEGER kTime, uTime;
 
     if( GetProcessMemoryInfo( GetCurrentProcess(), &MemoryCntrs, sizeof( MemoryCntrs ) ) ) {
         vals.physMemKB = MemoryCntrs.PeakWorkingSetSize / page_size_kb;
@@ -62,8 +64,11 @@ benchVals getMemAndTime( ) {
     }
 
     if( GetProcessTimes( GetCurrentProcess(), &CreationTime, &ExitTime, &KernelTime, &UserTime ) ) {
-        vals.userMilliseconds = ( long )( ( ( ULARGE_INTEGER * ) &UserTime )->QuadPart / 100000L );
-        vals.sysMilliseconds = ( long )( ( ( ULARGE_INTEGER * ) &KernelTime )->QuadPart / 100000L );
+        assert( sizeof( FILETIME ) == sizeof( ULARGE_INTEGER ) );
+        memcpy( &kTime, &KernelTime, sizeof( FILETIME ) );
+        memcpy( &uTime, &UserTime, sizeof( FILETIME ) );
+        vals.userMilliseconds = ( long )( uTime.QuadPart / 100000L );
+        vals.sysMilliseconds = ( long )( kTime.QuadPart / 100000L );
     } else {
         vals.userMilliseconds = 0;
         vals.sysMilliseconds = 0;
