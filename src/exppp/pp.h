@@ -53,7 +53,7 @@ void first_newline();
 void prep_file();
 char * finish_string();
 const char * real2exp( double r );
-void exp_output( char * buf, int len );
+void exp_output( char * buf, unsigned int len );
 void exppp_init();
 void exppp_ref_info( Symbol * s );
 extern char * placeholder;

@@ -73,12 +73,12 @@ bool exppp_terse = false;
 
 bool exppp_reference_info = false;   /* if true, add commentary about where things came from */
 
-FILE * exppp_fp = NULL;     /* output file */
-char * exppp_buf = 0;       /* output buffer */
-int exppp_maxbuflen = 0;    /* size of expppbuf */
-int exppp_buflen = 0;       /* remaining space in expppbuf */
-char * exppp_bufp = 0;      /* pointer to write position in expppbuf,
-                             * should usually be pointing to a "\0" */
+FILE * exppp_fp = NULL;         /* output file */
+char * exppp_buf = 0;           /* output buffer */
+int exppp_maxbuflen = 0;        /* size of expppbuf */
+unsigned int exppp_buflen = 0;  /* remaining space in expppbuf */
+char * exppp_bufp = 0;          /* pointer to write position in expppbuf,
+                                 * should usually be pointing to a "\0" */
 
 /** count newlines in a string */
 int count_newlines( char * s ) {
@@ -94,7 +94,7 @@ int count_newlines( char * s ) {
 /** true if last char through exp_output was a space */
 static bool printedSpaceLast = false;
 
-void exp_output( char * buf, int len ) {
+void exp_output( char * buf, unsigned int len ) {
     FILE * fp = ( exppp_fp ? exppp_fp : stdout );
 
     error_sym.line += count_newlines( buf );
