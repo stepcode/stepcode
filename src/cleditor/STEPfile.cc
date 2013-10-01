@@ -1745,12 +1745,12 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         char ch;
         in2->get( ch );
         if( ch != ';' ) {
-            std::cerr << __FILE__ << ":" << __LINE__ << " - Expected ';', found '" << c << "'." << std::endl;
+            std::cerr << __FILE__ << ":" << __LINE__ << " - Expected ';' at Part 21 EOF, found '" << c << "'." << std::endl;
         }
     }
 
-    if( ( keywd != END_FILE_DELIM ) || !( in2 -> good() ) ) {
-        _error.AppendToUserMsg( END_FILE_DELIM.c_str() );
+    if( ( !keywd.compare( 0, keywd.size(), END_FILE_DELIM ) ) || !( in2 -> good() ) ) {
+        _error.AppendToUserMsg( END_FILE_DELIM );
         _error.AppendToUserMsg( " missing at end of file.\n" );
         CloseInputFile( in2 );
         return _error.GreaterSeverity( SEVERITY_WARNING );
