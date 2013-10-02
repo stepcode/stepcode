@@ -391,7 +391,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                         resolved_all( expr );
                         return( item->type );
                     } else {
-                        printf( "EXPresolved_op_dot: attribute not an attribute?\n" );
+                        fprintf( stderr, "EXPresolved_op_dot: attribute not an attribute?\n" );
                         ERRORabort( 0 );
                     }
 
@@ -414,7 +414,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                 return( Type_Bad );
             }
             if( DICT_type != OBJ_VARIABLE ) {
-                printf( "EXPresolved_op_dot: attribute not an attribute?\n" );
+                fprintf( stderr, "EXPresolved_op_dot: attribute not an attribute?\n" );
                 ERRORabort( 0 );
             }
 

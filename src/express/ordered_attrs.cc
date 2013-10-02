@@ -61,7 +61,7 @@ void dedupList( oaList & list ) {
         for( jt = it + 1; jt != list.end(); jt++ ) {
             if( ( 0 == strcasecmp( ( * it )->attr->name->symbol.name, ( * jt )->attr->name->symbol.name ) ) &&
                 ( 0 == strcasecmp( ( * it )->creator->symbol.name, ( * jt )->creator->symbol.name ) ) ) {
-//                 printf( "erasing %s created by %s\n", ( * jt )->attr->name->symbol.name, ( * jt )->creator->symbol.name );
+                //fprintf( stderr, "erasing %s created by %s\n", ( * jt )->attr->name->symbol.name, ( * jt )->creator->symbol.name );
                 jt--;
                 list.erase( jt + 1 );
             }

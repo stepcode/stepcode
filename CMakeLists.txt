@@ -102,7 +102,7 @@ if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 
 if( NOT DEFINED SC_BUILD_SCHEMAS )
-    message( "** CMake variable SC_BUILD_SCHEMAS not set. Defaults to building ALL schemas. This will take a while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
+    set( SCHEMAS_WARNING TRUE )
     #this makes SC_BUILD_SCHEMAS show up in cmake-gui
     SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )
@@ -413,6 +413,12 @@ IF(SC_ENABLE_TESTING)
   ADD_SUBDIRECTORY( test )
 ENDIF(SC_ENABLE_TESTING)
 ADD_SUBDIRECTORY(doc)
+
+if( SCHEMAS_WARNING )
+    message( "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a")
+    message("     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
+endif( SCHEMAS_WARNING )
+message( ".. Don't worry about any messages above about missing headers or failed tests, as long as\n    you see '-- Configuring done' below. Headers and features vary by compiler." )
 
 # this is for testing - 'make core' builds everything that isn't generated
 add_custom_target( core )

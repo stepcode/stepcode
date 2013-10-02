@@ -76,7 +76,7 @@ typedef struct Variable_ * Variable;
 /***************************/
 
 struct Variable_ {
-    Expression  name;    /**< Symbol is inside of 'name' below */
+    Expression  name;    /**< Symbol is inside of 'name' */
     Type        type;
     Expression  initializer; /**< or 'derived' */
     int         offset;
@@ -90,7 +90,6 @@ struct Variable_ {
         unsigned int attribute   : 1; /**< is an attribute (rule parameters are marked this way, too) */
     } flags;
 
-#define query_symbol inverse_symbol
     Symbol   *  inverse_symbol;     /**< entity symbol */
     Variable    inverse_attribute;  /**< attribute related by inverse relationship */
 };
