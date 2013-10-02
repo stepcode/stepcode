@@ -522,8 +522,8 @@ void EXPRESSinitialize( void ) {
     ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
     ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
     ERROR_warn_unsupported_lang_feat = ERRORcreate( "Unsupported language feature (%s) at %s:%d", SEVERITY_WARNING );
-    ERROR_warn_small_real = ERRORcreate( "REAL with extremely small magnitude may be interpreted as zero on some "
-                                         "platforms or by other parsers - abs(%f) <= FLT_EPSILON", SEVERITY_WARNING );
+    ERROR_warn_small_real = ERRORcreate( "REALs with extremely small magnitude may be interpreted as zero by other EXPRESS parsers "
+                                         "(IEEE 754 float denormals are sometimes rounded to zero) - fabs(%f) <= FLT_MIN.", SEVERITY_WARNING );
 
     OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
 
