@@ -69,7 +69,8 @@ void ENTITY_out( Entity e, int level ) {
     WHERE_out( TYPEget_where( e ), level );
 
     level -= exppp_nesting_indent;
-    raw( "%*sEND_ENTITY; -- %s\n", level, "", e->symbol.name );
+    raw( "%*sEND_ENTITY;", level, "" );
+    tail_comment( e->symbol.name );
 }
 
 void ENTITYunique_out( Linked_List u, int level ) {

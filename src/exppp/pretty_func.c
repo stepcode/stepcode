@@ -33,7 +33,8 @@ void FUNC_out( Function fn, int level ) {
     ALGscope_out( fn, level + exppp_nesting_indent );
     STMTlist_out( fn->u.proc->body, level + exppp_nesting_indent );
 
-    raw( "\n%*sEND_FUNCTION; -- %s\n", level, "", fn->symbol.name );
+    raw( "\n%*sEND_FUNCTION;", level, "" );
+    tail_comment( fn->symbol.name );
 }
 
 char * FUNCto_string( Function f ) {

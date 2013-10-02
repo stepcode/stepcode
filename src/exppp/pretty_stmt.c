@@ -75,7 +75,8 @@ void STMT_out( Statement s, int level ) {
                  /* should be generalized reference */
                  s->u.alias->variable->name->symbol.name );
             STMTlist_out( s->u.alias->statements, level + exppp_nesting_indent );
-            raw( "%*sEND_ALIAS; -- %s\n", level, "", s->symbol.name );
+            raw( "%*sEND_ALIAS;", level, "" );
+            tail_comment( s->symbol.name );
             break;
         case STMT_SKIP:
             raw( "%*sSKIP;\n", level, "" );

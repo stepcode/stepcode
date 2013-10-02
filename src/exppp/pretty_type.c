@@ -29,7 +29,8 @@ void TYPE_out( Type t, int level ) {
 
     WHERE_out( t->where, level );
 
-    raw( "%*sEND_TYPE; -- %s\n", level, "", t->symbol.name );
+    raw( "%*sEND_TYPE;", level, "" );
+    tail_comment( t->symbol.name );
 }
 
 /** prints type description (preceded by a space).
