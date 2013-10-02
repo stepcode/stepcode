@@ -88,6 +88,7 @@ struct Express_ {
 /* global variables */
 /********************/
 
+extern SC_EXPRESS_EXPORT char * input_filename;
 extern SC_EXPRESS_EXPORT Linked_List EXPRESS_path;
 extern SC_EXPRESS_EXPORT int EXPRESSpass;
 

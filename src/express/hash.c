@@ -568,7 +568,7 @@ main() {
         if( !e ) {
             exit( 0 );
         }
-        printf( "found key %s, data %d\n", e->key, ( int )e->data );
+        fprintf( stderr, "found key %s, data %d\n", e->key, ( int )e->data );
     }
 }
 #endif

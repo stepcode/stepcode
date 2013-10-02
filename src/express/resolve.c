@@ -942,7 +942,7 @@ void ALGresolve_expressions_statements( Scope s, Linked_List statements ) {
 
     if( print_objects_while_running & OBJ_ALGORITHM_BITS &
             OBJget_bits( s->type ) ) {
-        fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
@@ -969,7 +969,7 @@ void ENTITYresolve_expressions( Entity e ) {
     Entity sup;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
-        fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (entity)\n", EXPRESSpass,
                  e->symbol.name );
     }
 
@@ -1137,7 +1137,7 @@ void SCOPEresolve_types( Scope s ) {
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
-        fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
@@ -1204,7 +1204,7 @@ void SCOPEresolve_subsupers( Scope scope ) {
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( scope->type ) ) {
-        fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
                  scope->symbol.name, OBJget_type( scope->type ) );
     }
 
@@ -1240,7 +1240,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
     Entity ref_entity;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
-        fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (entity)\n", EXPRESSpass,
                  e->symbol.name );
     }
 
@@ -1297,7 +1297,7 @@ static void ENTITYresolve_subtypes( Entity e ) {
     int i;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
-        fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (entity)\n", EXPRESSpass,
                  e->symbol.name );
     }
 
@@ -1314,7 +1314,7 @@ void ENTITYresolve_types( Entity e ) {
     int failed = 0;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
-        fprintf( stdout, "pass %d: %s (entity)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (entity)\n", EXPRESSpass,
                  e->symbol.name );
     }
 
@@ -1412,7 +1412,7 @@ void SCOPEresolve_expressions_statements( Scope s ) {
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
-        fprintf( stdout, "pass %d: %s (%s)\n", EXPRESSpass,
+        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
