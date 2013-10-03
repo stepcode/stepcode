@@ -54,7 +54,7 @@ Error ERROR_select_empty;
 
 const int exppp_nesting_indent = 2;       /* default nesting indent */
 const int exppp_continuation_indent = 4;  /* default nesting indent for continuation lines */
-int exppp_linelength = 75;                /* leave some room for closing parens.
+int exppp_linelength = 130;                /* leave some room for closing parens.
                                            * '\n' is not included in this count either */
 int indent2;                              /* where continuation lines start */
 int curpos;                               /* current line position (1 is first position) */
