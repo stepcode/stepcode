@@ -166,6 +166,11 @@ void wrap( const char * fmt, ... ) {
         curpos = indent2;       /* reset current position */
     }
 
+    /* eliminate leading whitespace  - again */
+    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ){
+        start++;
+        len--;
+    }
     exp_output( start, len );
 
     if( len ) {
