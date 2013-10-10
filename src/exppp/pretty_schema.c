@@ -144,7 +144,8 @@ char * SCHEMAout( Schema s ) {
     SCOPEentities_out( s, level + exppp_nesting_indent );
     SCOPEalgs_out( s, level + exppp_nesting_indent );
 
-    raw( "\nEND_SCHEMA; -- %s\n", s->symbol.name );
+    raw( "\nEND_SCHEMA;");
+    tail_comment( s->symbol.name );
 
     fclose( exppp_fp );
 

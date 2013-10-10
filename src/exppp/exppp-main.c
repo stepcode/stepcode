@@ -7,6 +7,7 @@ static void exppp_usage( void ) {
     fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "\t-v produces a version description\n" );
     fprintf( stderr, "\t-l specifies line length hint for output\n" );
+    fprintf( stderr, "\t-t enable tail comment for declarations - i.e. END_TYPE; -- axis2_placement\n" );
     fprintf( stderr, "\t-c for constants, print one item per line (YMMV!)\n" );
     fprintf( stderr, "\t-o specifies the name of the output file (-- for stdout)\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
@@ -49,6 +50,9 @@ int Handle_Exppp_Args( int i, char * arg ) {
     } else if( tolower( ( char )i ) == 'c' ) {
         exppp_aggressively_wrap_consts = true;
         return 0;
+    } else if( tolower( ( char )i ) == 't' ) {
+        exppp_tail_comment = true;
+        return 0;
     }
     return 1;
 }
@@ -57,6 +61,6 @@ void EXPRESSinit_init( void ) {
     exppp_alphabetize = true;
     EXPRESSbackend = EXPRESSout;
     ERRORusage_function = exppp_usage;
-    strcat( EXPRESSgetopt_options, "o:l:c" );
+    strcat( EXPRESSgetopt_options, "o:l:ct" );
     EXPRESSgetopt = Handle_Exppp_Args;
 }

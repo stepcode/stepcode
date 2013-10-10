@@ -29,7 +29,8 @@ void TYPE_out( Type t, int level ) {
 
     WHERE_out( t->where, level );
 
-    raw( "%*sEND_TYPE; -- %s\n", level, "", t->symbol.name );
+    raw( "%*sEND_TYPE;", level, "" );
+    tail_comment( t->symbol.name );
 }
 
 /** prints type description (preceded by a space).
@@ -37,10 +38,12 @@ void TYPE_out( Type t, int level ) {
  */
 void TYPE_head_out( Type t, int level ) {
     if( t->symbol.name ) {
+        int old_indent = indent2;
         if( indent2 + ( int ) strlen( t->symbol.name ) > exppp_linelength ) {
             indent2 = ( indent2 + level ) / 2;
         }
         wrap( " %s", t->symbol.name );
+        indent2 = old_indent;
     } else {
         TYPE_body_out( t, level );
     }
