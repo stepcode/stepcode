@@ -482,9 +482,22 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
     return const_cast<char *>( str.c_str() );
 }
 
+/// write '$' to out, put message in error, write brief error to stderr
+void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char* desc ) {
+    out << "$";
+    cerr << "Internal error:  " << __FILE__ << ":" << line << "\n" << _POC_ "\n";
+
+    _error.GreaterSeverity( SEVERITY_BUG );
+    std::stringstream ss;
+    ss << " Warning: attribute '" << Name() << " : " << TypeName() << "' " << desc << std::endl;
+    _error.AppendToUserMsg( ss.str() );
+    _error.AppendToDetailMsg( ss.str() );
+}
+
 /**
  * The value of the attribute is printed to the output stream specified by out.
  * The output is in physical file format.
+ *
  */
 void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
     // The attribute has been derived by a subtype's attribute
@@ -517,21 +530,10 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 
         case ENTITY_TYPE:
             // print instance id only if not empty pointer
-            if( ( *( ptr.c ) == 0 ) ||
+            if( ( ptr.c == 0 ) || ( *( ptr.c ) == 0 ) ||
                     // no value was assigned  <-- this would be a BUG
                     ( *( ptr.c ) == S_ENTITY_NULL ) ) {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' is null and shouldn't be.\n",
-                         Name(), TypeName() );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "is null and shouldn't be." );
             } else {
                 ( *( ptr.c ) ) -> STEPwrite_reference( out );
             }
@@ -542,18 +544,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.S ) {
                 ( ptr.S ) -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "an SDAI_String.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at an SDAI_String." );
             }
             break;
 
@@ -562,18 +553,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.b ) {
                 ( ptr.b ) -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "an SDAI_Binary.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at an SDAI_Binary." );
             }
             break;
 
@@ -591,18 +571,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.e ) {
                 ptr.e -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "a SDAI_Enum class.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at a SDAI_Enum class." );
             }
             break;
 
@@ -610,25 +579,13 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.sh ) {
                 ptr.sh -> STEPwrite( out, currSch );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "a SDAI_Select class.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at a SDAI_Select class." );
             }
             break;
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                 << "\n" << _POC_ "\n";
+            cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
             _error.GreaterSeverity( SEVERITY_BUG );
             return;
 

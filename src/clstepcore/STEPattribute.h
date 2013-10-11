@@ -106,6 +106,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         char SkipBadAttr( istream & in, char * StopChars );
         void AddErrorInfo();
+        void STEPwriteError( ostream& out, unsigned int line, const char* desc );
 
     public:
         void incrRefCount() {
@@ -137,7 +138,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         const char * asStr( std::string &, const char * = 0 ) const;
         // return the attr value as a string
-        void STEPwrite( ostream & out = cout, const char * = 0 );
+        void STEPwrite( ostream& out = cout, const char* currSch = 0 );
 
         int ShallowCopy( STEPattribute * sa );
 
@@ -169,9 +170,7 @@ class SC_CORE_EXPORT STEPattribute {
             _error.ClearErrorMsg();
         }
 
-        Severity ValidLevel( const char * attrValue, ErrorDescriptor * error,
-                             InstMgr * im, int clearError = 1 );
-    public:
+        Severity ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, int clearError = 1 );
 
 ////////////////// Constructors
 
