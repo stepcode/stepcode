@@ -178,7 +178,7 @@ const TypeDescriptor * STEPattribute::ReferentType() const {
     return aDesc->ReferentType();
 }
 
-int STEPattribute::Nullable() const {
+bool STEPattribute::Nullable() const {
     if( _redefAttr )  {
         return _redefAttr->Nullable();
     }

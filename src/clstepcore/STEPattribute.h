@@ -146,8 +146,8 @@ class SC_CORE_EXPORT STEPattribute {
 
 ////////////// Return info on attr
 
-        int Nullable() const; // may this attribute be null?
-        int is_null() const;  // is this attribute null?
+        bool Nullable() const; // may this attribute be null?
+        bool is_null() const;  // is this attribute null?
         bool IsDerived() const  {
             return _derive;
         }
@@ -170,7 +170,7 @@ class SC_CORE_EXPORT STEPattribute {
             _error.ClearErrorMsg();
         }
 
-        Severity ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, int clearError = 1 );
+        Severity ValidLevel( const char* attrValue, ErrorDescriptor* error, InstMgr* im, bool clearError = true );
 
 ////////////////// Constructors
 

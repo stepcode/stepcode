@@ -726,7 +726,7 @@ Severity STEPattribute::set_null() {
  * For a string value this reports whether the string exists (as reported by
  * SDAI_String ) not whether SDAI_String contains a null string.
  */
-int STEPattribute::is_null()  const {
+bool STEPattribute::is_null()  const {
     if( _redefAttr )  {
         return _redefAttr->is_null();
     }
@@ -794,7 +794,7 @@ bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
  * *note* for string values - (attrValue = 0) => string value does not exist,
  *       attrValue exists it is valid.
 ******************************************************************/
-Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, int clearError ) {
+Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, bool clearError ) {
     if( clearError ) {
         ClearErrorMsg();
     }
@@ -802,7 +802,7 @@ Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * er
     if( _redefAttr )  {
         return _redefAttr->ValidLevel( attrValue, error, im, clearError );
     }
-    int optional = Nullable();
+    bool optional = Nullable();
 
     if( !attrValue ) {
         if( optional ) {
