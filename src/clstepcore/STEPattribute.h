@@ -79,18 +79,8 @@ class SC_CORE_EXPORT STEPattribute {
         friend class SDAI_Application_instance;
     protected:
         bool _derive;
-    public:
         ErrorDescriptor _error;
-        void Derive( bool n = true )  {
-            _derive = n;
-        }
-
         STEPattribute * _redefAttr;
-        void RedefiningAttr( STEPattribute * a ) {
-            _redefAttr = a;
-        }
-
-    public:
         const AttrDescriptor * aDesc;
         int refCount;
 
@@ -112,14 +102,31 @@ class SC_CORE_EXPORT STEPattribute {
             SDAI_Select * sh;                // SELECT_TYPE
             SCLundefined * u;                // UNKNOWN_TYPE
             void * p;
-
         } ptr;
 
-    protected:
         char SkipBadAttr( istream & in, char * StopChars );
         void AddErrorInfo();
 
     public:
+        void incrRefCount() {
+            ++ refCount;
+        }
+        void decrRefCount() {
+            -- refCount;
+        }
+        int getRefCount() {
+            return refCount;
+        }
+        const AttrDescriptor * getADesc() {
+            return aDesc;
+        }
+        void Derive( bool n = true )  {
+            _derive = n;
+        }
+
+        void RedefiningAttr( STEPattribute * a ) {
+            _redefAttr = a;
+        }
 
 ///////////// Read, Write, Assign attr value
 

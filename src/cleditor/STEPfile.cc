@@ -289,16 +289,10 @@ SDAI_Application_instance * STEPfile::HeaderDefaultFileName() {
 
     fn->name_( "" );
     fn->time_stamp_( "" );
-    tmp->StrToVal( "", &_error,
-                   fn->attributes[2].
-                   aDesc -> DomainType(),
-                   _headerInstances );
+    tmp->StrToVal( "", &_error, fn->attributes[2].getADesc()->DomainType(), _headerInstances );
     fn->author_( tmp );
 
-    tmp->StrToVal( "", &_error,
-                   fn->attributes[3].
-                   aDesc -> DomainType(),
-                   _headerInstances );
+    tmp->StrToVal( "", &_error, fn->attributes[3].getADesc()->DomainType(), _headerInstances );
     fn->organization_( tmp );
 
     fn->preprocessor_version_( "" );
@@ -324,10 +318,7 @@ SDAI_Application_instance * STEPfile::HeaderDefaultFileSchema() {
     SdaiFile_schema * fs = new SdaiFile_schema;
     StringAggregate_ptr tmp = new StringAggregate;
 
-    tmp->StrToVal( "", &_error,
-                   fs->attributes[0].
-                   aDesc -> DomainType(),
-                   _headerInstances );
+    tmp->StrToVal( "", &_error, fs->attributes[0].getADesc()->DomainType(), _headerInstances );
     fs->schema_identifiers_( tmp );
 
     fs->STEPfile_id = HeaderId( "File_Schema" );
