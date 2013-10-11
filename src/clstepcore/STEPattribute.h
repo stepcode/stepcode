@@ -198,7 +198,14 @@ class SC_CORE_EXPORT STEPattribute {
         //  UNDEFINED
         STEPattribute( const class AttrDescriptor & d, SCLundefined * p );
 
-        friend bool operator == ( STEPattribute & a1, STEPattribute & a2 );
+        /// return true if attr types and values match
+        friend bool operator == ( const STEPattribute & a1, const STEPattribute & a2 );
+        friend bool operator != ( const STEPattribute & a1, const STEPattribute & a2 ) {
+            return !( a1 == a2 );
+        }
+
+        /// return true if aDesc's match (behavior of old operator==)
+        friend bool sameADesc ( const STEPattribute & a1, const STEPattribute & a2 );
 };
 
 #endif

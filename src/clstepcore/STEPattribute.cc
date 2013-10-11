@@ -778,12 +778,27 @@ bool STEPattribute::is_null()  const {
     }
 }
 
-/**************************************************************//**
-** evaluates the equality of two attributes
-** Side Effects:  none
-** \return bool -- if false => not equal
-******************************************************************/
-bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
+/** evaluate the equality of two attributes
+ * ignores _error and refCount, since those are ancillary
+ *  \return true if equal
+ */
+bool operator == ( const STEPattribute & a1, const STEPattribute & a2 ) {
+    if( & a1 == & a2 ) {
+        return true;
+    }
+    if( a1._derive == a2._derive && a1.aDesc == a2.aDesc && a1._redefAttr == a2._redefAttr ){
+        if( 0 == memcmp( & a1.ptr, & a2.ptr, sizeof( a1.ptr ) ) ) {
+            return true;
+        } else {
+            //ptr differs between a1 and a2, but contents aren't necessarily different
+            return a1.asStr() == a2.asStr();
+        }
+    }
+    return false;
+}
+
+/// return true if the attr descriptor is identical
+bool sameADesc( const STEPattribute & a1, const STEPattribute & a2 ) {
     return a1.aDesc == a2.aDesc;
 }
 
