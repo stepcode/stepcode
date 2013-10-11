@@ -47,8 +47,8 @@ const int Real_Num_Precision = REAL_NUM_PRECISION;
 
 /// the value of the attribute is assigned from the supplied string
 Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFileId ) {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->StrToVal( s, instances, addFileId );
+    if( _redefAttr )  {
+        return _redefAttr->StrToVal( s, instances, addFileId );
     }
 
     _error.ClearErrorMsg(); // also sets Severity to SEVERITY_NULL
@@ -199,8 +199,8 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
 
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->STEPread( in, instances, addFileId, currSch );
+    if( _redefAttr )  {
+        return _redefAttr->STEPread( in, instances, addFileId, currSch );
     }
 
     _error.ClearErrorMsg(); // also sets Severity to SEVERITY_NULL
@@ -494,8 +494,8 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
     }
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
-    if( RedefiningAttr() )  {
-        RedefiningAttr()->STEPwrite( out );
+    if( _redefAttr )  {
+        _redefAttr->STEPwrite( out );
         return;
     }
 
@@ -692,8 +692,8 @@ int STEPattribute::ShallowCopy( STEPattribute * sa ) {
  * as not containing a value (even a value of no chars).
  */
 Severity STEPattribute::set_null() {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->set_null();
+    if( _redefAttr )  {
+        return _redefAttr->set_null();
     }
     switch( NonRefType() ) {
         case INTEGER_TYPE:
@@ -842,8 +842,8 @@ Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * er
         ClearErrorMsg();
     }
 
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->ValidLevel( attrValue, error, im, clearError );
+    if( _redefAttr )  {
+        return _redefAttr->ValidLevel( attrValue, error, im, clearError );
     }
     int optional = Nullable();
 
