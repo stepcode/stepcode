@@ -21,53 +21,34 @@
 /// NOTE this code only does shallow copies. It may be necessary to do more, in which case
 /// the destructor and assignment operator will also need examined.
 STEPattribute::STEPattribute( const STEPattribute & a )
-    : _derive( a._derive ), _redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
+: _derive( a._derive ), _mustDeletePtr( false ), _redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
+    ShallowCopy( & a );
 
-    //the following comes from STEPattribute::ShallowCopy
+    //NOTE may need to do a deep copy for the following types since they are classes
+    /*
     switch( NonRefType() ) {
-        case INTEGER_TYPE:
-            *ptr.i = *( a.ptr.i );
-            break;
-
         case BINARY_TYPE:
-            *( ptr.b ) = *( a.ptr.b );
-            break;
 
         case STRING_TYPE:
-            *( ptr.S ) = *( a.ptr.S );
-            break;
-
-        case REAL_TYPE:
-        case NUMBER_TYPE:
-            *ptr.r = *( a.ptr.r );
-            break;
 
         case ENTITY_TYPE:
-            ptr.c = a.ptr.c; //NOTE may need to deep copy
-            break;
 
         case AGGREGATE_TYPE:
         case ARRAY_TYPE:      // DAS
         case BAG_TYPE:        // DAS
         case SET_TYPE:        // DAS
         case LIST_TYPE:       // DAS
-            ptr.a = a.ptr.a; //NOTE may need to deep copy
-            break;
 
         case SELECT_TYPE:
-            *ptr.sh = *( a.ptr.sh );
-            break;
 
         case ENUM_TYPE:
         case BOOLEAN_TYPE:
         case LOGICAL_TYPE:
-            ptr.e->put( a.ptr.e->asInt() );
-            break;
 
         default:
-            *ptr.u = *( a.ptr.u );
             break;
     }
+    */
 }
 
 ///  INTEGER
@@ -135,6 +116,36 @@ STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p )
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
+/// the destructor conditionally deletes the object in ptr
+STEPattribute::~STEPattribute() {
+    if( _mustDeletePtr ) {
+        switch( NonRefType() ) {
+            case AGGREGATE_TYPE:
+            case ARRAY_TYPE:      // DAS
+            case BAG_TYPE:        // DAS
+            case SET_TYPE:        // DAS
+            case LIST_TYPE:       // DAS
+                if( ptr.a ) {
+                    delete ptr.a;
+                    ptr.a = 0;
+                }
+                break;
+            case BOOLEAN_TYPE:
+                if( ptr.e ) {
+                    delete ( SDAI_BOOLEAN * ) ptr.e;
+                    ptr.e = 0;
+                }
+            case LOGICAL_TYPE:
+                if( ptr.e ) {
+                    delete ( SDAI_LOGICAL * ) ptr.e;
+                    ptr.e = 0;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+}
 
 /// name is the same even if redefined
 const char * STEPattribute::Name() const {

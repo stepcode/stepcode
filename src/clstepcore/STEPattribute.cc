@@ -599,49 +599,62 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 }
 
 
-int STEPattribute::ShallowCopy( STEPattribute * sa ) {
+void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
+    _mustDeletePtr = false;
+    aDesc = sa->aDesc;
+    refCount = 0;
+    _derive = sa->_derive;
     _redefAttr = sa->_redefAttr;
     if( _redefAttr )  {
-        return _redefAttr->ShallowCopy( sa );
+        _redefAttr->ShallowCopy( sa );
     }
+    //Should we just use memcpy()? That would be a true shallowCopy
     switch( sa->NonRefType() ) {
         case INTEGER_TYPE:
-            *ptr.i = *( sa->ptr.i );
+            ptr.i = sa->ptr.i;
             break;
         case BINARY_TYPE:
-            *( ptr.b ) = *( sa->ptr.b );
+            ptr.b = sa->ptr.b;
             break;
         case STRING_TYPE:
-            *( ptr.S ) = *( sa->ptr.S );
+            ptr.S = sa->ptr.S;
             break;
         case REAL_TYPE:
         case NUMBER_TYPE:
-            *ptr.r = *( sa->ptr.r );
+            ptr.r = sa->ptr.r;
             break;
         case ENTITY_TYPE:
-            *ptr.c = *( sa->ptr.c );
+            ptr.c = sa->ptr.c;
             break;
         case AGGREGATE_TYPE:
         case ARRAY_TYPE:      // DAS
         case BAG_TYPE:        // DAS
         case SET_TYPE:        // DAS
         case LIST_TYPE:       // DAS
-            ptr.a -> ShallowCopy( *( sa -> ptr.a ) );
+            ptr.a = new STEPaggregate;
+            ptr.a->ShallowCopy( *( sa->ptr.a ) );
+            _mustDeletePtr = true;
             break;
         case SELECT_TYPE:
-            *ptr.sh = *( sa->ptr.sh );
+            ptr.sh = sa->ptr.sh;
             break;
-        case ENUM_TYPE:
         case BOOLEAN_TYPE:
-        case LOGICAL_TYPE:
+            ptr.e = new SDAI_BOOLEAN;
             ptr.e->put( sa->ptr.e->asInt() );
+            _mustDeletePtr = true;
+            break;
+        case LOGICAL_TYPE:
+            ptr.e = new SDAI_LOGICAL;
+            ptr.e->put( sa->ptr.e->asInt() );
+            _mustDeletePtr = true;
             break;
 
+        case ENUM_TYPE:
+            // error?
         default:
-            *ptr.u = *( sa->ptr.u );
+            ptr.u = sa->ptr.u;
             break;
     }
-    return 1;
 }
 
 /**

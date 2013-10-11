@@ -79,6 +79,7 @@ class SC_CORE_EXPORT STEPattribute {
         friend class SDAI_Application_instance;
     protected:
         bool _derive;
+        bool _mustDeletePtr; ///if a member uses new to create an object in ptr
         ErrorDescriptor _error;
         STEPattribute * _redefAttr;
         const AttrDescriptor * aDesc;
@@ -141,7 +142,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         /// put the attr value in ostream
         void STEPwrite( ostream & out = cout, const char * currSch = 0 );
-        int ShallowCopy( STEPattribute * sa );
+        void ShallowCopy( const STEPattribute * sa );
 
         Severity set_null();
 
@@ -176,9 +177,11 @@ class SC_CORE_EXPORT STEPattribute {
 ////////////////// Constructors
 
         STEPattribute( const STEPattribute & a );
-        STEPattribute()  {}
-        ~STEPattribute() {}
-
+        STEPattribute(): _derive( false ), _mustDeletePtr( false ),
+                         _redefAttr( 0 ), aDesc( 0 ), refCount( 0 )  {
+            memset( & ptr, 0, sizeof( ptr ) );
+        }
+        ~STEPattribute();
         //  INTEGER
         STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p );
         //  BINARY
