@@ -136,10 +136,11 @@ class SC_CORE_EXPORT STEPattribute {
         Severity STEPread( istream & in = cin, InstMgr * instances = 0,
                            int addFileId = 0, const char * currSch = NULL, bool strict = true );
 
-        const char * asStr( std::string &, const char * currSch = 0 ) const;
-        // return the attr value as a string
-        void STEPwrite( ostream& out = cout, const char* currSch = 0 );
+        /// return the attr value as a string
+        string asStr( const char * currSch = 0 ) const;
 
+        /// put the attr value in ostream
+        void STEPwrite( ostream & out = cout, const char * currSch = 0 );
         int ShallowCopy( STEPattribute * sa );
 
         Severity set_null();
