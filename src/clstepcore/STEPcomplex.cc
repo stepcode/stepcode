@@ -608,17 +608,16 @@ void STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
 
 /** \copydoc STEPcomplex::STEPwrite */
 const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * currSch ) {
-
     std::string tmp;
 
-    buf.append( ( char * )StrToUpper( EntityName( currSch ), tmp ) );
+    StrToUpper( EntityName( currSch ), tmp );
+    buf.append( tmp );
     buf.append( "i" );
 
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
-        attributes[i].asStr( tmp, currSch ) ;
-        buf.append( tmp );
+        buf.append( attributes[i].asStr( currSch ) );
         if( i < n - 1 ) {
             buf.append( "," );
         }
@@ -629,7 +628,7 @@ const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * c
         sc->WriteExtMapEntities( buf, currSch );
     }
 
-    return const_cast<char *>( buf.c_str() );
+    return buf.c_str();
 }
 
 void STEPcomplex::CopyAs( SDAI_Application_instance * se ) {
