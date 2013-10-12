@@ -515,7 +515,7 @@ SdaiFile_description::SdaiFile_description( ) {
 SdaiFile_description::SdaiFile_description( SdaiFile_description & e ): SDAI_Application_instance() {
     CopyAs( ( SDAI_Application_instance_ptr ) &e );
 }
-SdaiFile_description::~SdaiFile_description() {  }
+SdaiFile_description::~SdaiFile_description() {}
 
 SdaiFile_description::SdaiFile_description( SDAI_Application_instance * se, int * addAttrs ) {
     /* Set this to point to the head entity. */
