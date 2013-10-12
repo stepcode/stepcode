@@ -71,7 +71,7 @@ void checkSchemaName( Registry & reg, STEPfile & sf, bool ignoreErr ) {
     SDAI_Application_instance * ai =
         sf.HeaderInstances()->FindFileId( 3 )->GetApplication_instance();
     while( ( attr = ai->NextAttribute() ) ) {
-        attr->asStr( sname );
+        sname = attr->asStr();
         while( ( sc = reg.NextSchema() ) ) {
             if( compareOneSchName( sname, sc->Name() ) ) {
                 match = true;
@@ -115,7 +115,9 @@ int main( int argc, char * argv[] ) {
     if( argc > 4 || argc < 2 ) {
         printUse( argv[0] );
     }
-    while( ( c = sc_getopt( argc, argv, "itsv" ) ) != -1 ) {
+
+    char opts[] = "itsv";
+    while( ( c = sc_getopt( argc, argv, opts ) ) != -1 ) {
         switch( c ) {
             case 'i':
                 ignoreErr = true;
