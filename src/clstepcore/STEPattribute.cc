@@ -47,8 +47,8 @@ const int Real_Num_Precision = REAL_NUM_PRECISION;
 
 /// the value of the attribute is assigned from the supplied string
 Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFileId ) {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->StrToVal( s, instances, addFileId );
+    if( _redefAttr )  {
+        return _redefAttr->StrToVal( s, instances, addFileId );
     }
 
     _error.ClearErrorMsg(); // also sets Severity to SEVERITY_NULL
@@ -199,8 +199,8 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
 
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->STEPread( in, instances, addFileId, currSch );
+    if( _redefAttr )  {
+        return _redefAttr->STEPread( in, instances, addFileId, currSch );
     }
 
     _error.ClearErrorMsg(); // also sets Severity to SEVERITY_NULL
@@ -395,26 +395,24 @@ Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFile
  ** \returns the value of the attribute
  ** Status:  complete 3/91
  *********************************************************************/
-const char * STEPattribute::asStr( std::string & str, const char * currSch ) const {
+std::string STEPattribute::asStr( const char * currSch ) const {
     ostringstream ss;
-
-    str.clear();
+    std::string str;
 
     // The attribute has been derived by a subtype's attribute
     if( IsDerived() )  {
         str = "*";
-        return const_cast<char *>( str.c_str() );
+        return str;
     }
 
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
     if( _redefAttr )  {
-        return _redefAttr->asStr( str, currSch );
+        return _redefAttr->asStr( currSch );
     }
 
     if( is_null() )  {
-        str = "";
-        return const_cast<char *>( str.c_str() );
+        return str;
     }
 
     switch( NonRefType() ) {
@@ -442,14 +440,14 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
             break;
 
         case BINARY_TYPE:
-            if( !( ( ptr.b )->empty() ) ) {
-                ( ptr.b ) -> STEPwrite( str );
+            if( !( ptr.b->empty() ) ) {
+                ptr.b->STEPwrite( str );
             }
             break;
 
         case STRING_TYPE:
             if( !( ( ptr.S )->empty() ) ) {
-                return ( ptr.S ) -> asStr( str );
+                ptr.S->asStr( str );
             }
             break;
 
@@ -458,33 +456,49 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
         case BAG_TYPE:        // DAS
         case SET_TYPE:        // DAS
         case LIST_TYPE:       // DAS
-            return  ptr.a->asStr( str ) ;
+            ptr.a->asStr( str );
+            break;
 
         case ENUM_TYPE:
         case BOOLEAN_TYPE:
         case LOGICAL_TYPE:
-            return ptr.e -> asStr( str );
+            ptr.e->asStr( str );
+            break;
 
         case SELECT_TYPE:
-            ptr.sh -> STEPwrite( str, currSch );
-            return const_cast<char *>( str.c_str() );
+            ptr.sh->STEPwrite( str, currSch );
+            break;
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
             cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
-            return 0;
+            str.clear();
+            break;
 
         case UNKNOWN_TYPE:
         default:
-            return ( ptr.u -> asStr( str ) );
+            ptr.u->asStr( str );
     }
-    return const_cast<char *>( str.c_str() );
+    return str;
+}
+
+/// write '$' to out, put message in error, write brief error to stderr
+void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char* desc ) {
+    out << "$";
+    cerr << "Internal error:  " << __FILE__ << ":" << line << "\n" << _POC_ "\n";
+
+    _error.GreaterSeverity( SEVERITY_BUG );
+    std::stringstream ss;
+    ss << " Warning: attribute '" << Name() << " : " << TypeName() << "' " << desc << std::endl;
+    _error.AppendToUserMsg( ss.str() );
+    _error.AppendToDetailMsg( ss.str() );
 }
 
 /**
  * The value of the attribute is printed to the output stream specified by out.
  * The output is in physical file format.
+ *
  */
 void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
     // The attribute has been derived by a subtype's attribute
@@ -494,8 +508,8 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
     }
     // The attribute has been redefined by the attribute pointed
     // to by _redefAttr so write the redefined value.
-    if( RedefiningAttr() )  {
-        RedefiningAttr()->STEPwrite( out );
+    if( _redefAttr )  {
+        _redefAttr->STEPwrite( out );
         return;
     }
 
@@ -517,21 +531,10 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 
         case ENTITY_TYPE:
             // print instance id only if not empty pointer
-            if( ( *( ptr.c ) == 0 ) ||
+            if( ( ptr.c == 0 ) || ( *( ptr.c ) == 0 ) ||
                     // no value was assigned  <-- this would be a BUG
                     ( *( ptr.c ) == S_ENTITY_NULL ) ) {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' is null and shouldn't be.\n",
-                         Name(), TypeName() );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "is null and shouldn't be." );
             } else {
                 ( *( ptr.c ) ) -> STEPwrite_reference( out );
             }
@@ -542,18 +545,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.S ) {
                 ( ptr.S ) -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "an SDAI_String.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at an SDAI_String." );
             }
             break;
 
@@ -562,18 +554,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.b ) {
                 ( ptr.b ) -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "an SDAI_Binary.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at an SDAI_Binary." );
             }
             break;
 
@@ -591,18 +572,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.e ) {
                 ptr.e -> STEPwrite( out );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "a SDAI_Enum class.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at a SDAI_Enum class." );
             }
             break;
 
@@ -610,25 +580,13 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
             if( ptr.sh ) {
                 ptr.sh -> STEPwrite( out, currSch );
             } else {
-                out << "$";
-                cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                     << "\n" << _POC_ "\n";
-
-                char errStr[BUFSIZ];
-                errStr[0] = '\0';
-                _error.GreaterSeverity( SEVERITY_BUG );
-                sprintf( errStr,
-                         " Warning: attribute '%s : %s' should be pointing at %s",
-                         Name(), TypeName(), "a SDAI_Select class.\n" );
-                _error.AppendToUserMsg( errStr );
-                _error.AppendToDetailMsg( errStr );
+                STEPwriteError( out, __LINE__, "should be pointing at a SDAI_Select class." );
             }
             break;
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                 << "\n" << _POC_ "\n";
+            cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
             _error.GreaterSeverity( SEVERITY_BUG );
             return;
 
@@ -641,48 +599,100 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 }
 
 
-int STEPattribute::ShallowCopy( STEPattribute * sa ) {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->ShallowCopy( sa );
+void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
+    _mustDeletePtr = false;
+    aDesc = sa->aDesc;
+    refCount = 0;
+    _derive = sa->_derive;
+    _redefAttr = sa->_redefAttr;
+    if( _redefAttr )  {
+        _redefAttr->ShallowCopy( sa );
     }
+    //Should we just use memcpy()? That would be a true shallowCopy
     switch( sa->NonRefType() ) {
         case INTEGER_TYPE:
-            *ptr.i = *( sa->ptr.i );
+            ptr.i = sa->ptr.i;
             break;
         case BINARY_TYPE:
-            *( ptr.b ) = *( sa->ptr.b );
+            ptr.b = sa->ptr.b;
             break;
         case STRING_TYPE:
-            *( ptr.S ) = *( sa->ptr.S );
+            ptr.S = sa->ptr.S;
             break;
         case REAL_TYPE:
         case NUMBER_TYPE:
-            *ptr.r = *( sa->ptr.r );
+            ptr.r = sa->ptr.r;
             break;
         case ENTITY_TYPE:
-            *ptr.c = *( sa->ptr.c );
+            ptr.c = sa->ptr.c;
             break;
-        case AGGREGATE_TYPE:
         case ARRAY_TYPE:      // DAS
         case BAG_TYPE:        // DAS
         case SET_TYPE:        // DAS
         case LIST_TYPE:       // DAS
-            ptr.a -> ShallowCopy( *( sa -> ptr.a ) );
+            switch( sa->BaseType() ) {
+                case sdaiAGGR:
+                    ptr.a = new GenericAggregate;
+                    break;
+                case sdaiINSTANCE:
+                    ptr.a = new EntityAggregate;
+                    break;
+                case sdaiSELECT:
+                    ptr.a = new SelectAggregate;
+                    break;
+                case sdaiSTRING:
+                    ptr.a = new StringAggregate;
+                    break;
+                case sdaiBINARY:
+                    ptr.a = new BinaryAggregate;
+                    break;
+                case sdaiENUMERATION:
+                    ptr.a = new EnumAggregate;
+                    break;
+                case sdaiBOOLEAN:
+                    ptr.a = new BOOLEANS;
+                    break;
+                case sdaiLOGICAL:
+                    ptr.a = new LOGICALS;
+                    break;
+                case sdaiREAL:
+                case sdaiNUMBER:
+                    ptr.a = new RealAggregate;
+                    break;
+                case sdaiINTEGER:
+                    ptr.a = new IntAggregate;
+                    break;
+                default:
+                    std::cerr << "WARNING: Reached default case for BaseType() in STEPattribute::"
+                                << "ShallowCopy(). New attribute may be invalid." << std::endl;
+                    ptr.a = new STEPaggregate;
+                    break;
+            }
+            ptr.a->ShallowCopy( *( sa->ptr.a ) );
+            _mustDeletePtr = true;
             break;
         case SELECT_TYPE:
-            *ptr.sh = *( sa->ptr.sh );
+            ptr.sh = sa->ptr.sh;
             break;
-        case ENUM_TYPE:
         case BOOLEAN_TYPE:
-        case LOGICAL_TYPE:
+            ptr.e = new SDAI_BOOLEAN;
             ptr.e->put( sa->ptr.e->asInt() );
+            _mustDeletePtr = true;
+            break;
+        case LOGICAL_TYPE:
+            ptr.e = new SDAI_LOGICAL;
+            ptr.e->put( sa->ptr.e->asInt() );
+            _mustDeletePtr = true;
             break;
 
+        case AGGREGATE_TYPE:
+        case ENUM_TYPE:
         default:
-            *ptr.u = *( sa->ptr.u );
+            std::cerr << "WARNING: Reached default case for NonRefType() in STEPattribute::"
+                        << "ShallowCopy(). New attribute may be invalid." << std::endl;
+            memcpy( & ptr, & ( sa->ptr ), sizeof( sa->ptr ) );
             break;
     }
-    return 1;
 }
 
 /**
@@ -691,8 +701,8 @@ int STEPattribute::ShallowCopy( STEPattribute * sa ) {
  * as not containing a value (even a value of no chars).
  */
 Severity STEPattribute::set_null() {
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->set_null();
+    if( _redefAttr )  {
+        return _redefAttr->set_null();
     }
     switch( NonRefType() ) {
         case INTEGER_TYPE:
@@ -768,7 +778,7 @@ Severity STEPattribute::set_null() {
  * For a string value this reports whether the string exists (as reported by
  * SDAI_String ) not whether SDAI_String contains a null string.
  */
-int STEPattribute::is_null()  const {
+bool STEPattribute::is_null()  const {
     if( _redefAttr )  {
         return _redefAttr->is_null();
     }
@@ -819,12 +829,112 @@ int STEPattribute::is_null()  const {
     }
 }
 
-/**************************************************************//**
-** evaluates the equality of two attributes
-** Side Effects:  none
-** \return bool -- if false => not equal
-******************************************************************/
-bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
+SDAI_Integer * STEPattribute::Integer(){
+    if( NonRefType() == INTEGER_TYPE ) {
+        return ptr.i;
+    }
+    return 0;
+}
+
+SDAI_Real * STEPattribute::Number() {
+    if( NonRefType() == NUMBER_TYPE ) {
+        return ptr.r;
+    }
+    return 0;
+}
+
+SDAI_Real * STEPattribute::Real() {
+    if( NonRefType() == REAL_TYPE ) {
+        return ptr.r;
+    }
+    return 0;
+}
+
+SDAI_Application_instance * STEPattribute::Entity() {
+    if( NonRefType() == ENTITY_TYPE ) {
+        return *( ptr.c );
+    }
+    return 0;
+}
+
+SDAI_String * STEPattribute::String() {
+    if( NonRefType() == STRING_TYPE ) {
+        return ptr.S;
+    }
+    return 0;
+}
+
+SDAI_Binary * STEPattribute::Binary() {
+    if( NonRefType() == BINARY_TYPE ) {
+        return ptr.b;
+    }
+    return 0;
+}
+
+STEPaggregate * STEPattribute::Aggregate() {
+    if( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
+        || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) ) {
+        return ptr.a;
+    }
+    return 0;
+}
+
+SDAI_BOOLEAN * STEPattribute::Boolean() {
+    if( NonRefType() == BOOLEAN_TYPE ) {
+        return ( SDAI_BOOLEAN * ) ptr.e;
+    }
+    return 0;
+}
+
+SDAI_LOGICAL * STEPattribute::Logical() {
+    if( NonRefType() == LOGICAL_TYPE ) {
+        return ( SDAI_LOGICAL * ) ptr.e;
+    }
+    return 0;
+}
+
+SDAI_Enum * STEPattribute::Enum() {
+    if( NonRefType() == ENUM_TYPE ) {
+        return ptr.e;
+    }
+    return 0;
+}
+
+SDAI_Select * STEPattribute::Select() {
+    if( NonRefType() == SELECT_TYPE ) {
+        return ptr.sh;
+    }
+    return 0;
+}
+
+SCLundefined * STEPattribute::Undefined() {
+    if( ( NonRefType() != REFERENCE_TYPE ) && ( NonRefType() != GENERIC_TYPE ) ) {
+        return ptr.u;
+    }
+    return 0;
+}
+
+/** evaluate the equality of two attributes
+ * ignores _error and refCount, since those are ancillary
+ *  \return true if equal
+ */
+bool operator == ( const STEPattribute & a1, const STEPattribute & a2 ) {
+    if( & a1 == & a2 ) {
+        return true;
+    }
+    if( a1._derive == a2._derive && a1.aDesc == a2.aDesc && a1._redefAttr == a2._redefAttr ){
+        if( 0 == memcmp( & a1.ptr, & a2.ptr, sizeof( a1.ptr ) ) ) {
+            return true;
+        } else {
+            //ptr differs between a1 and a2, but contents aren't necessarily different
+            return a1.asStr() == a2.asStr();
+        }
+    }
+    return false;
+}
+
+/// return true if the attr descriptor is identical
+bool sameADesc( const STEPattribute & a1, const STEPattribute & a2 ) {
     return a1.aDesc == a2.aDesc;
 }
 
@@ -836,15 +946,15 @@ bool operator == ( STEPattribute & a1, STEPattribute & a2 ) {
  * *note* for string values - (attrValue = 0) => string value does not exist,
  *       attrValue exists it is valid.
 ******************************************************************/
-Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, int clearError ) {
+Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, bool clearError ) {
     if( clearError ) {
         ClearErrorMsg();
     }
 
-    if( RedefiningAttr() )  {
-        return RedefiningAttr()->ValidLevel( attrValue, error, im, clearError );
+    if( _redefAttr )  {
+        return _redefAttr->ValidLevel( attrValue, error, im, clearError );
     }
-    int optional = Nullable();
+    bool optional = Nullable();
 
     if( !attrValue ) {
         if( optional ) {

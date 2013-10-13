@@ -556,8 +556,10 @@ Severity SDAI_Enum::STEPread( istream & in, ErrorDescriptor * err, int optional 
 
 const char * SDAI_Enum::asStr( std::string & s ) const  {
     if( exists() ) {
-        return const_cast<char *>( ( s = element_at( v ) ).c_str() );
+        s = element_at( v );
+        return s.c_str();
     } else {
+        s.clear();
         return "";
     }
 }

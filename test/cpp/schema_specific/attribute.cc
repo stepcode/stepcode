@@ -1,8 +1,7 @@
-/** \file inverse_attr.cc
-** 1-Jul-2012
-** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
-**
-*/
+/** \file attribute.cc
+ * 1-Jul-2012
+ * Test attribute access; uses a tiny schema similar to a subset of IFC2x3
+ */
 #include <sc_cf.h>
 extern void SchemaInit( class Registry & );
 #include "sc_version_string.h"

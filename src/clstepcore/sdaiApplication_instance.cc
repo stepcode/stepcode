@@ -258,11 +258,10 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
         ClearError();
     }
     int n = attributes.list_length();
-    std::string tmp;
     for( int i = 0 ; i < n; i++ ) {
         if( !( attributes[i].aDesc->AttrType() == AttrType_Redefining ) )
             error->GreaterSeverity( attributes[i].ValidLevel(
-                                        attributes[i].asStr( tmp ), &err, im, 0 ) );
+                                        attributes[i].asStr().c_str(), &err, im, 0 ) );
     }
     return error->severity();
 }
@@ -400,7 +399,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
             if( i > 0 ) {
                 buf.append( "," );
             }
-            attributes[i].asStr( tmp, currSch ) ;
+            tmp = attributes[i].asStr( currSch ) ;
             buf.append( tmp );
         }
     }

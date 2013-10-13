@@ -46,7 +46,7 @@ int main( int argc, char * argv[] ) {
      *    const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
      *    instance->isdefinedby_(inv_ed);
      */
-    EntityAggregate * aggr = instance->isdefinedby_();
+    EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
     if( aggr ) {
         cout << aggr->EntryCount() << endl;
     } else {
