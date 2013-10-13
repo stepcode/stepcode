@@ -81,8 +81,9 @@ int main( int argc, char * argv[] ) {
         }
         //loop over the attributes
         for( int i = 0; i < cnt; i++ ) {
-            if( ( sal[i].aDesc->NonRefType() == ARRAY_TYPE ) && ( sal[i].aDesc->AggrElemType() == sdaiINTEGER ) ) {
-                b2 = ( ( AggrTypeDescriptor * ) sal[i].aDesc->DomainType() )->Bound2Runtime( ent );
+            const AttrDescriptor * ad = sal[i].getADesc();
+            if( ( ad->NonRefType() == ARRAY_TYPE ) && ( ad->AggrElemType() == sdaiINTEGER ) ) {
+                b2 = ( ( AggrTypeDescriptor * ) ad->DomainType() )->Bound2Runtime( ent );
                 cout << "bound 2: " << b2 << " values: ";
                 instAggrCnt++;
                 if( ( ( id == 1 ) && ( b2 != 3 ) ) || ( ( id == 2 ) && ( b2 != 5 ) ) ) {
