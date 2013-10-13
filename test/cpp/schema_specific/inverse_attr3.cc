@@ -1,12 +1,14 @@
-/** \file inverse_attr.cc
-** 1-Jul-2012
-** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
-**
-*/
+/** \file inverse_attr3.cc
+ * Oct 2013
+ * Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
+ *
+ * This test originally used STEPfile, which didn't work. Fixing STEPfile would have been very difficult, it uses lazyInstMgr now.
+ */
 #include <sc_cf.h>
 extern void SchemaInit( class Registry & );
 #include "sc_version_string.h"
-#include <STEPfile.h>
+#include <lazyInstMgr.h>
+#include <lazyRefs.h>
 #include <sdai.h>
 #include <STEPattribute.h>
 #include <ExpDict.h>
@@ -21,22 +23,24 @@ extern void SchemaInit( class Registry & );
 #include "schema.h"
 
 int main( int argc, char * argv[] ) {
-    Registry  registry( SchemaInit );
-    InstMgr   instance_list;
-    STEPfile  sfile( registry, instance_list, "", false );
     if( argc != 2 ) {
+        cerr << "Wrong number of args!" << endl;
         exit( EXIT_FAILURE );
     }
-    sfile.ReadExchangeFile( argv[1] );
+    lazyInstMgr lim;
+    lim.initRegistry( SchemaInit );
 
-    if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        sfile.Error().PrintContents( cout );
+    lim.openFile( argv[1] );
+
+//find attributes
+    instanceTypes_t::cvector * insts = lim.getInstances( "window" );
+    if( !insts || insts->empty() ) {
+        cout << "No window instances found!" << endl;
         exit( EXIT_FAILURE );
     }
-//find attributes
-    SdaiWindow * instance = ( SdaiWindow * ) instance_list.GetApplication_instance( "window" );
+    SdaiWindow * instance = dynamic_cast< SdaiWindow * >( lim.loadInstance( insts->at( 0 ) ) );
     if( !instance ) {
-        cout << "NULL" << endl;
+        cout << "Problem loading instance" << endl;
         exit( EXIT_FAILURE );
     }
     cout << "instance #" << instance->StepFileId() << endl;
