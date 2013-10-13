@@ -53,5 +53,6 @@ void RULE_out( Rule r, int level ) {
     raw( "\n" );
     WHERE_out( RULEget_where( r ), level );
 
-    raw( "\n%*sEND_RULE; -- %s\n", level, "", r->symbol.name );
+    raw( "\n%*sEND_RULE;", level, "" );
+    tail_comment( r->symbol.name );
 }

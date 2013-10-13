@@ -19,6 +19,7 @@ extern SC_EXPPP_EXPORT char * exppp_output_filename;        /**< force output fi
 extern SC_EXPPP_EXPORT bool exppp_output_filename_reset;    /**< if true, force output filename */
 extern SC_EXPPP_EXPORT bool exppp_print_to_stdout;          /**< if true, print to stdout */
 extern SC_EXPPP_EXPORT bool exppp_aggressively_wrap_consts; /**< for constants, print one item per line */
+extern SC_EXPPP_EXPORT bool exppp_tail_comment;             /**< print tail comment, such as END_ENTITY; --entity_name */
 
 SC_EXPPP_EXPORT void EXPRESSout( Express e );
 
@@ -63,6 +64,7 @@ SC_EXPPP_EXPORT int TYPEbody_to_buffer( Type t, char * buffer, int length );
 SC_EXPPP_EXPORT int WHEREto_buffer( Linked_List w, char * buffer, int length );
 
 SC_EXPPP_EXPORT int EXPRlength( Expression e );
+extern SC_EXPPP_EXPORT void tail_comment( const char * name );
 extern SC_EXPPP_EXPORT int count_newlines( char * s );
 
 #endif

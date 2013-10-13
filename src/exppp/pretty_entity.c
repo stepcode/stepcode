@@ -4,6 +4,7 @@
  */
 
 #include <assert.h>
+#include <stdlib.h>
 
 #include "exppp.h"
 #include "pp.h"
@@ -69,7 +70,8 @@ void ENTITY_out( Entity e, int level ) {
     WHERE_out( TYPEget_where( e ), level );
 
     level -= exppp_nesting_indent;
-    raw( "%*sEND_ENTITY; -- %s\n", level, "", e->symbol.name );
+    raw( "%*sEND_ENTITY;", level, "" );
+    tail_comment( e->symbol.name );
 }
 
 void ENTITYunique_out( Linked_List u, int level ) {
@@ -192,22 +194,26 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
         raw( "%*sDERIVE\n", level, "" );
     }
     level += exppp_nesting_indent;
-    indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
-    if( indent2 > exppp_linelength / 2 ) {
-        indent2 = ( indent2 + level ) / 2;
+    if( level + max_indent > exppp_linelength / 3 ) {
+        max_indent = ( exppp_linelength / 3 ) - level;
     }
+    indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
     /* pass 2: print them */
     LISTdo( attrs, v, Variable ) {
         if( v->inverse_symbol ) {
             continue;
         }
-        if( ( derived && v->initializer ) ||
-                ( !derived && !v->initializer ) ) {
+        if( ( derived && v->initializer ) || ( !derived && !v->initializer ) ) {
+            int spaces;
             /* print attribute name */
             raw( "%*s", level, "" );
             EXPR_out( v->name, 0 );
-            raw( "%*s :", level + max_indent + 1 - curpos, "" );
+            spaces = level + max_indent + 2 - curpos;
+            if( spaces < 0 ) {
+                spaces = 0;
+            }
+            raw( "%*s :", spaces, "" );
 
             /* print attribute type */
             if( VARget_optional( v ) ) {

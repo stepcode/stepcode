@@ -54,7 +54,7 @@ Error ERROR_select_empty;
 
 const int exppp_nesting_indent = 2;       /* default nesting indent */
 const int exppp_continuation_indent = 4;  /* default nesting indent for continuation lines */
-int exppp_linelength = 75;                /* leave some room for closing parens.
+int exppp_linelength = 130;                /* leave some room for closing parens.
                                            * '\n' is not included in this count either */
 int indent2;                              /* where continuation lines start */
 int curpos;                               /* current line position (1 is first position) */
@@ -68,10 +68,9 @@ bool exppp_output_filename_reset = true;    /* if true, force output filename */
 bool exppp_print_to_stdout = false;
 bool exppp_alphabetize = true;
 bool exppp_aggressively_wrap_consts = false;
-
 bool exppp_terse = false;
-
 bool exppp_reference_info = false;   /* if true, add commentary about where things came from */
+bool exppp_tail_comment = false;
 
 FILE * exppp_fp = NULL;         /* output file */
 char * exppp_buf = 0;           /* output buffer */
@@ -79,6 +78,18 @@ int exppp_maxbuflen = 0;        /* size of expppbuf */
 unsigned int exppp_buflen = 0;  /* remaining space in expppbuf */
 char * exppp_bufp = 0;          /* pointer to write position in expppbuf,
                                  * should usually be pointing to a "\0" */
+
+/** used to print a comment containing the name of a  structure at the
+ * end of the structure's declaration, if exppp_tail_comment (-t) is true
+ *
+ * prints a newline regardless
+ */
+void tail_comment( const char * name ) {
+    if( exppp_tail_comment ) {
+        raw( " -- %s", name );
+    }
+    raw( "\n" );
+}
 
 /** count newlines in a string */
 int count_newlines( char * s ) {
@@ -155,6 +166,11 @@ void wrap( const char * fmt, ... ) {
         curpos = indent2;       /* reset current position */
     }
 
+    /* eliminate leading whitespace  - again */
+    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ){
+        start++;
+        len--;
+    }
     exp_output( start, len );
 
     if( len ) {

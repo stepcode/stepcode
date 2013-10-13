@@ -48,6 +48,7 @@ void PROC_out( Procedure p, int level ) {
     ALGscope_out( p, level + exppp_nesting_indent );
     STMTlist_out( p->u.proc->body, level + exppp_nesting_indent );
 
-    raw( "\n%*sEND_PROCEDURE; -- %s\n", level, "", p->symbol.name );
+    raw( "\n%*sEND_PROCEDURE;", level, "" );
+    tail_comment( p->symbol.name );
 }
 
