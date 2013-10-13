@@ -6,7 +6,6 @@
  */
 #include <sc_cf.h>
 extern void SchemaInit( class Registry & );
-#include "sc_version_string.h"
 #include <lazyInstMgr.h>
 #include <lazyRefs.h>
 #include <sdai.h>

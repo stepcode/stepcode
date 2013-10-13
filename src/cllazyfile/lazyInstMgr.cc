@@ -47,8 +47,12 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
     /* store 16 bits of section id and 48 of instance offset into one 64-bit int
-    * TODO: check and warn if anything is lost (in calling code?)
-    * does 32bit need anything special?
+    ** TODO: check and warn if anything is lost (in calling code?)
+    ** does 32bit need anything special?
+    **
+    ** create conversion class?
+    **  could then initialize conversion object with number of bits
+    **  also a good place to check for data loss
     */
     positionAndSection ps = inst.loc.section;
     ps <<= 48;
@@ -91,10 +95,9 @@ void lazyInstMgr::openFile( std::string fname ) {
 
 SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
-    SDAI_Application_instance * inst = 0;
     positionAndSection ps;
     sectionID sid;
-    inst = _instancesLoaded.find( id );
+    SDAI_Application_instance * inst = _instancesLoaded.find( id );
     instanceStreamPos_t::cvector * cv;
     if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!

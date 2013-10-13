@@ -22,11 +22,11 @@ class instMgrAdapter;
 
 class lazyInstMgr {
     protected:
-        /** map from instance number to instances that it refers to
+        /** multimap from instance number to instances that it refers to
          * \sa instanceRefs_pair
          */
         instanceRefs_t  _fwdInstanceRefs;
-        /** map from instance number to instances that refer to it
+        /** multimap from instance number to instances that refer to it
          * \sa instanceRefs_pair
          */
         instanceRefs_t _revInstanceRefs;
@@ -39,6 +39,8 @@ class lazyInstMgr {
 
         /** map from instance number to instance pointer (loaded instances only)
          * \sa instancesLoaded_pair
+         * TODO should be multimap to allow use of instances in multiple data sections?
+         * a unique instance ID (containing sectionID and instanceID) would also work
          */
         instancesLoaded_t _instancesLoaded;
 
@@ -65,7 +67,6 @@ class lazyInstMgr {
     public:
         lazyInstMgr();
         ~lazyInstMgr();
-        void addSchema( void ( *initFn )() ); //?
         void openFile( std::string fname );
 
         void addLazyInstance( namedLazyInstance inst );
@@ -155,19 +156,25 @@ class lazyInstMgr {
         SDAI_Application_instance * loadInstance( instanceID id );
 
         // TODO implement these
-             //list all instances that one instance depends on (recursive)
-             //std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
 
-             /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
+            // add another schema to registry
+            //void addSchema( void ( *initFn )() );
+
+            //list all instances that one instance depends on (recursive)
+            //std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
+
+            /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
                  same as above, but with list of instances */
-             //std::vector<instanceID> notDependencies(...)
+            //std::vector<instanceID> notDependencies(...)
 
-             //renumber instances so that they are numbered 1..N where N is the total number of instances
-             //void normalizeInstanceIds();
-             //find data that is repeated and eliminate, if possible
-             //void eliminateDuplicates();
-             //tell instMgr to use instances from this section
-             //void useDataSection( sectionID id );
+            //renumber instances so that they are numbered 1..N where N is the total number of instances
+            //void normalizeInstanceIds();
+
+            //find data that is repeated and eliminate, if possible
+            //void eliminateDuplicates();
+
+            //tell instMgr to use instances from this section
+            //void useDataSection( sectionID id );
 
         // TODO support references from one file to another
 };
