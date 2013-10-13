@@ -626,12 +626,48 @@ void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
         case ENTITY_TYPE:
             ptr.c = sa->ptr.c;
             break;
-        case AGGREGATE_TYPE:
         case ARRAY_TYPE:      // DAS
         case BAG_TYPE:        // DAS
         case SET_TYPE:        // DAS
         case LIST_TYPE:       // DAS
-            ptr.a = new STEPaggregate;
+            switch( sa->BaseType() ) {
+                case sdaiAGGR:
+                    ptr.a = new GenericAggregate;
+                    break;
+                case sdaiINSTANCE:
+                    ptr.a = new EntityAggregate;
+                    break;
+                case sdaiSELECT:
+                    ptr.a = new SelectAggregate;
+                    break;
+                case sdaiSTRING:
+                    ptr.a = new StringAggregate;
+                    break;
+                case sdaiBINARY:
+                    ptr.a = new BinaryAggregate;
+                    break;
+                case sdaiENUMERATION:
+                    ptr.a = new EnumAggregate;
+                    break;
+                case sdaiBOOLEAN:
+                    ptr.a = new BOOLEANS;
+                    break;
+                case sdaiLOGICAL:
+                    ptr.a = new LOGICALS;
+                    break;
+                case sdaiREAL:
+                case sdaiNUMBER:
+                    ptr.a = new RealAggregate;
+                    break;
+                case sdaiINTEGER:
+                    ptr.a = new IntAggregate;
+                    break;
+                default:
+                    std::cerr << "WARNING: Reached default case for BaseType() in STEPattribute::"
+                                << "ShallowCopy(). New attribute may be invalid." << std::endl;
+                    ptr.a = new STEPaggregate;
+                    break;
+            }
             ptr.a->ShallowCopy( *( sa->ptr.a ) );
             _mustDeletePtr = true;
             break;
@@ -649,10 +685,12 @@ void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
             _mustDeletePtr = true;
             break;
 
+        case AGGREGATE_TYPE:
         case ENUM_TYPE:
-            // error?
         default:
-            ptr.u = sa->ptr.u;
+            std::cerr << "WARNING: Reached default case for NonRefType() in STEPattribute::"
+                        << "ShallowCopy(). New attribute may be invalid." << std::endl;
+            memcpy( & ptr, & ( sa->ptr ), sizeof( sa->ptr ) );
             break;
     }
 }
