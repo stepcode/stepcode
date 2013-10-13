@@ -791,6 +791,91 @@ bool STEPattribute::is_null()  const {
     }
 }
 
+SDAI_Integer * STEPattribute::Integer(){
+    if( NonRefType() == INTEGER_TYPE ) {
+        return ptr.i;
+    }
+    return 0;
+}
+
+SDAI_Real * STEPattribute::Number() {
+    if( NonRefType() == NUMBER_TYPE ) {
+        return ptr.r;
+    }
+    return 0;
+}
+
+SDAI_Real * STEPattribute::Real() {
+    if( NonRefType() == REAL_TYPE ) {
+        return ptr.r;
+    }
+    return 0;
+}
+
+SDAI_Application_instance * STEPattribute::Entity() {
+    if( NonRefType() == ENTITY_TYPE ) {
+        return *( ptr.c );
+    }
+    return 0;
+}
+
+SDAI_String * STEPattribute::String() {
+    if( NonRefType() == STRING_TYPE ) {
+        return ptr.S;
+    }
+    return 0;
+}
+
+SDAI_Binary * STEPattribute::Binary() {
+    if( NonRefType() == BINARY_TYPE ) {
+        return ptr.b;
+    }
+    return 0;
+}
+
+STEPaggregate * STEPattribute::Aggregate() {
+    if( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
+        || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) ) {
+        return ptr.a;
+    }
+    return 0;
+}
+
+SDAI_BOOLEAN * STEPattribute::Boolean() {
+    if( NonRefType() == BOOLEAN_TYPE ) {
+        return ( SDAI_BOOLEAN * ) ptr.e;
+    }
+    return 0;
+}
+
+SDAI_LOGICAL * STEPattribute::Logical() {
+    if( NonRefType() == LOGICAL_TYPE ) {
+        return ( SDAI_LOGICAL * ) ptr.e;
+    }
+    return 0;
+}
+
+SDAI_Enum * STEPattribute::Enum() {
+    if( NonRefType() == ENUM_TYPE ) {
+        return ptr.e;
+    }
+    return 0;
+}
+
+SDAI_Select * STEPattribute::Select() {
+    if( NonRefType() == SELECT_TYPE ) {
+        return ptr.sh;
+    }
+    return 0;
+}
+
+SCLundefined * STEPattribute::Undefined() {
+    if( ( NonRefType() != REFERENCE_TYPE ) && ( NonRefType() != GENERIC_TYPE ) ) {
+        return ptr.u;
+    }
+    return 0;
+}
+
 /** evaluate the equality of two attributes
  * ignores _error and refCount, since those are ancillary
  *  \return true if equal

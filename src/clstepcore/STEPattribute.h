@@ -92,7 +92,7 @@ class SC_CORE_EXPORT STEPattribute {
         ** class in the generated schema class library (the entity class is
         ** inherited from SDAI_Application_instance)
         */
-        union  {
+        union attrUnion {
             SDAI_String * S;                 // STRING_TYPE
             SDAI_Integer * i;                // INTEGER_TYPE (Integer is a long int)
             SDAI_Binary * b;                 // BINARY_TYPE
@@ -145,6 +145,44 @@ class SC_CORE_EXPORT STEPattribute {
         void ShallowCopy( const STEPattribute * sa );
 
         Severity set_null();
+
+        /** \fn Integer()
+         * \fn Real()
+         * \fn Number()
+         * \fn String()
+         * \fn Binary()
+         * \fn Entity()
+         * \fn Aggregate()
+         * \fn Enum()
+         * \fn Logical()
+         * \fn Boolean()
+         * \fn Select()
+         * \fn Undefined()
+         *
+         * These functions verify that the attribute contains the requested type and
+         * returns a pointer. The pointer is null if the requested type does not match.
+         *
+         * \sa Raw()
+         * \sa NonRefType()
+         * \sa is_null()
+         */
+        SDAI_Integer              * Integer();
+        SDAI_Real                 * Real();
+        SDAI_Real                 * Number();
+        SDAI_String               * String();
+        SDAI_Binary               * Binary();
+        SDAI_Application_instance * Entity();
+        STEPaggregate             * Aggregate();
+        SDAI_Enum                 * Enum();
+        SDAI_LOGICAL              * Logical();
+        SDAI_BOOLEAN              * Boolean();
+        SDAI_Select               * Select();
+        SCLundefined              * Undefined();
+
+        /// allows direct access to the union containing attr data (dangerous!)
+        attrUnion * Raw() {
+            return & ptr;
+        }
 
 ////////////// Return info on attr
 
