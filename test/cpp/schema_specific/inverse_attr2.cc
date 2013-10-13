@@ -1,4 +1,4 @@
-/** \file inverse_attr.cc
+/** \file inverse_attr2.cc
 ** 1-Jul-2012
 ** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
 **
