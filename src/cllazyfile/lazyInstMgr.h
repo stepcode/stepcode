@@ -80,8 +80,14 @@ class lazyInstMgr {
         instanceRefs_t * getRevRefs() {
             return & _revInstanceRefs;
         }
-        /// returns two iterators delimiting the instances that match `type`
-        instanceTypes_t::cvector * getInstances( std::string type ) { /*const*/
+        /// returns a vector containing the instances that match `type`
+        instanceTypes_t::cvector * getInstances( std::string type, bool caseSensitive = false ) { /*const*/
+            if( !caseSensitive ) {
+                std::string::iterator it = type.begin();
+                for( ; it != type.end(); ++it ) {
+                    *it = toupper( *it );
+                }
+            }
             return _instanceTypes->find( type.c_str() );
         }
         /// get the number of instances of a certain type
