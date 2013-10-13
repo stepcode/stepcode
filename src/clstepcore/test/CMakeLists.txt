@@ -18,4 +18,5 @@ function(add_stepcore_test name libs)
     set_tests_properties( test_${name} PROPERTIES LABELS cpp_unit_stepcore DEPENDS build_cpp_${name} )
 endfunction(add_stepcore_test name libs)
 
-add_stepcore_test( "SupertypesIterator" "stepcore;steputils;stepeditor;stepdai;base" )
+add_stepcore_test( "SupertypesIterator" "stepcore;steputils;stepeditor;stepdai;base" ) #all these libs are necessary?
+add_stepcore_test( "operators_STEPattribute" "stepcore;steputils;stepeditor;stepdai;base" )
