@@ -10,6 +10,7 @@ lazyInstMgr::lazyInstMgr() {
     _lazyInstanceCount = 0;
     _loadedInstanceCount = 0;
     _longestTypeNameLen = 0;
+    _mainRegistry = 0;
     _errors = new ErrorDescriptor();
     _ima = new instMgrAdapter( this );
 }
