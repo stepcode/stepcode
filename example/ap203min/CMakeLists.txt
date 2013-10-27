@@ -1,3 +1,10 @@
+#
+# CMakeLists.txt for AP203 Minimum
+#
+#  This file is released to the public domain.  Any part of this file may be
+# freely copied in part or in full for any purpose.  No acknowledgment is required
+# for the use of this file.
+#
 PROJECT( AP203Minimum )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
