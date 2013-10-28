@@ -26,7 +26,7 @@ class lazyInstMgr {
          * \sa instanceRefs_pair
          */
         instanceRefs_t  _fwdInstanceRefs;
-        /** multimap from instance number to instances that refer to it
+        /** multimap from instance number to instances that refer to it - the majority of these will not be inverse references!
          * \sa instanceRefs_pair
          */
         instanceRefs_t _revInstanceRefs;
@@ -39,6 +39,7 @@ class lazyInstMgr {
 
         /** map from instance number to instance pointer (loaded instances only)
          * \sa instancesLoaded_pair
+         *
          * TODO should be multimap to allow use of instances in multiple data sections?
          * a unique instance ID (containing sectionID and instanceID) would also work
          */
@@ -46,6 +47,7 @@ class lazyInstMgr {
 
         /** map from instance number to beginning and end positions and the data section
          * \sa instanceStreamPos_pair
+         *
          * FIXME to save memory, modify judyL2Array to not use a vector until there are several
          * instances with the same instanceID. This will help elsewhere as well.
          */
