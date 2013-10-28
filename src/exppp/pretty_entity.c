@@ -1,4 +1,4 @@
-/** \file entity.c
+/** \file pretty_entity.c
  * functions dealing with entities
  * split out of exppp.c 9/21/13
  */

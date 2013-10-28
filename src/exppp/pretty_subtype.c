@@ -1,4 +1,4 @@
-/** \file pp_subtype.c
+/** \file pretty_subtype.c
  * split out of exppp.c 9/21/13
  */
 

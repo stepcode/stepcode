@@ -1,15 +1,16 @@
 
 
-/** **********************************************************************
-** Module:  Scope \file scope.c
-** This module implements a hierarchical (i.e., scoped)
-**  symbol table.  The symbol table can store definitions of entities,
-**  types, algorithms, and variables, as well as containing a list
-**  of subscopes.
-** Constants:
-**  SCOPE_NULL  - the null scope
-**
-************************************************************************/
+/**
+ * Module:  Scope \file scope.c
+ *
+ *  This module implements a hierarchical (i.e., scoped)
+ *  symbol table.  The symbol table can store definitions of entities,
+ *  types, algorithms, and variables, as well as containing a list
+ *  of subscopes.
+ *
+ * Constants:
+ *  SCOPE_NULL  - the null scope
+ */
 
 /*
  * This software was developed by U.S. Government employees as part of
@@ -52,8 +53,8 @@ void SCOPEinitialize( void ) {
     MEMinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
 }
 
-/**  SCOPE_get_entities
- * \sa SCOPEget_entities
+/**
+ * \sa SCOPEget_entities()
  */
 void SCOPE_get_entities( Scope scope, Linked_List result ) {
     DictionaryEntry de;
@@ -65,8 +66,8 @@ void SCOPE_get_entities( Scope scope, Linked_List result ) {
     }
 }
 
-/**  SCOPE_get_functions
- * \sa SCOPEget_functions
+/**
+ * \sa SCOPEget_functions()
  */
 void SCOPE_get_functions( Scope scope, Linked_List result ) {
     DictionaryEntry de;
@@ -77,8 +78,8 @@ void SCOPE_get_functions( Scope scope, Linked_List result ) {
         LISTadd_last( result, x );
     }
 }
-/**  SCOPE_get_functions
- * \sa SCOPEget_functions
+/**
+ * \sa SCOPE_get_functions()
  */
 Linked_List SCOPEget_functions( Scope scope ) {
     Linked_List result = LISTcreate();
@@ -86,8 +87,8 @@ Linked_List SCOPEget_functions( Scope scope ) {
     return( result );
 }
 
-/**  SCOPE_get_rules
- * \sa SCOPEget_rules
+/**
+ * \sa SCOPEget_rules()
  */
 void SCOPE_get_rules( Scope scope, Linked_List result ) {
     DictionaryEntry de;
@@ -98,8 +99,8 @@ void SCOPE_get_rules( Scope scope, Linked_List result ) {
         LISTadd_last( result, x );
     }
 }
-/**  SCOPE_get_functions
- * \sa SCOPEget_functions
+/**
+ * \sa SCOPE_get_rules()
  */
 Linked_List SCOPEget_rules( Scope scope ) {
     Linked_List result = LISTcreate();
@@ -125,7 +126,7 @@ Linked_List SCOPEget_entities( Scope scope ) {
 }
 
 /**
- * \sa SCOPEget_entities_superclass_order
+ * \sa SCOPEget_entities_superclass_order()
  */
 void SCOPE_dfs( Dictionary symbols, Entity root, Linked_List result ) {
     Entity ent;
@@ -150,7 +151,7 @@ void SCOPE_dfs( Dictionary symbols, Entity root, Linked_List result ) {
  ** Retrieve a list of the entities defined locally in a scope.
  **
  ** \note The list returned is ordered such that an entity appears before all of its subtypes.
- ** \sa SCOPEget_entities
+ ** \sa SCOPEget_entities()
  */
 Linked_List SCOPEget_entities_superclass_order( Scope scope ) {
     Linked_List result;

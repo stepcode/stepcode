@@ -852,8 +852,8 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
 }
 
 /** Initialize one entry in EXPop_table
- * This table's function pointers are resolved in \sa EXP_resolve()
- * , at approx resolve.c:520
+ * This table's function pointers are resolved in EXP_resolve(), at approx resolve.c:520
+ * \sa EXP_resolve()
  * \sa EXPop_init()
  *
  * \param token_number operator value, usually in macro form

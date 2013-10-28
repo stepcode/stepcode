@@ -1,4 +1,4 @@
-/** \file expr.c
+/** \file pretty_expr.c
  * functions dealing with expressions
  * split out of exppp.c 9/21/13
  */

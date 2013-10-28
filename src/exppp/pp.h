@@ -17,13 +17,13 @@ extern FILE * exppp_fp;
 extern bool first_line;
 
 /** output a string, exactly as provided
- * \sa wrap
+ * \sa wrap()
  */
 void raw( const char * fmt, ... );
 
 /** output a string, insert newlines to keep line length down
- * \sa raw
  * TODO list globals this func uses
+ * \sa raw()
  */
 void wrap( const char * fmt, ... );
 

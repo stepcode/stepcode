@@ -38,8 +38,7 @@
 #include "express/object.h"
 #include "express/expbasic.h"
 
-char DICT_type; /* set as a side-effect of DICT lookup routines */
-/* to type of object found */
+char DICT_type; /**< set to type of object found, as a side-effect of DICT lookup routines */
 
 static Error    ERROR_duplicate_decl;
 static Error    ERROR_duplicate_decl_diff_file;
@@ -122,7 +121,7 @@ int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char ty
  * ENUMERATION OF ( A, A ) which has happened!
  * This is the way DICTdefine used to look before enumerations gained
  * their unusual behavior with respect to scoping and visibility rules
- * \sa DICTdefine
+ * \sa DICTdefine()
  */
 int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
@@ -181,7 +180,7 @@ Generic DICTlookup( Dictionary dictionary, char * name ) {
 }
 
 /** like DICTlookup but returns symbol, too
- * \sa DICTlookup
+ * \sa DICTlookup()
  */
 Generic DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     struct Element_ e, *ep;

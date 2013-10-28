@@ -196,8 +196,8 @@ class SC_CORE_EXPORT STEPattribute {
 
 ////////////// Return info on attr
 
-        bool Nullable() const; // may this attribute be null?
-        bool is_null() const;  // is this attribute null?
+        bool Nullable() const; ///< may this attribute be null?
+        bool is_null() const;  ///< is this attribute null?
         bool IsDerived() const  {
             return _derive;
         }

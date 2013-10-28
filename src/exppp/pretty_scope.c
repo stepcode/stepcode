@@ -1,4 +1,4 @@
-/** \file scope.c
+/** \file pretty_scope.c
  * split out of exppp.c 9/21/13
  */
 
