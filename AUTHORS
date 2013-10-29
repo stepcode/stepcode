@@ -12,6 +12,7 @@ Loman, David (davidloman)
 Morrison, Christopher Sean (sean, morrison, brlcad)
 Paviot, Thomas (tpaviot)
 Pictor, Mark (mpictor)
+Reed, Nick
 Shah, Kesha (kesha)
 Thomas, Dawn (homovulgaris, madant)
 Wouters, Dave (davyw)
@@ -20,6 +21,7 @@ Yapp, Clifford (starseeker)
 Special thanks:
 Lubbell, Joshua (NIST)
 Stirk, Charlie (CostVision)
+Thurman, Tom
 
 Between 2005 and 2006, Stefan Richter worked to make SCL compatible with
 modern ANSI/ISO C++, and modified the build system. His patches are at
