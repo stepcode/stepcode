@@ -55,7 +55,7 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
                    ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc
                    ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc ${FEDEX_HEADERS} )
 
-    install( FILES ${FEDEX_HEADERS} DESTINATION ${SCHEMA_SHORT_NAME} )
+    install( FILES ${FEDEX_HEADERS} DESTINATION include/${SCHEMA_SHORT_NAME} )
 
     # *cannot* use include_directories() because the includes keep piling up - if building
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
