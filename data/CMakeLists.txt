@@ -49,10 +49,13 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     set( SCHEMA_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
     #the names of the files that will be generated
-    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h
-                   ${SCHEMA_OUTPUT_DIR}/schema.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc
-                   ${SCHEMA_OUTPUT_DIR}/schema.h ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h
-                   ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc )
+    set( FEDEX_HEADERS ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h ${SCHEMA_OUTPUT_DIR}/schema.h
+                       ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h )
+    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/schema.cc
+                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc
+                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc ${FEDEX_HEADERS} )
+
+    install( FILES ${FEDEX_HEADERS} DESTINATION ${SCHEMA_SHORT_NAME} )
 
     # *cannot* use include_directories() because the includes keep piling up - if building
     # multiple schemas, each one will use the include dirs from all previous schemas. Since
