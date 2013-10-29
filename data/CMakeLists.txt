@@ -83,6 +83,10 @@ FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
     add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
     set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS
                            ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    if( TARGET ${PROJECT_NAME}-static )
+      set_target_properties( ${PROJECT_NAME}-static PROPERTIES COMPILE_FLAGS
+                             ${${PROJECT_NAME}_COMPILE_FLAGS} )
+    endif( TARGET ${PROJECT_NAME}-static )
 
     if( SC_ENABLE_COVERAGE AND NOT SC_COVER_SCHEMAS )
       set( CMAKE_BUILD_TYPE ${PREV_BUILD_TYPE} )
