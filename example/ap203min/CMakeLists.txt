@@ -27,8 +27,11 @@ endif( EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/SC_VERSION.txt" )
 # Use STEPcode as library, but build from this build process.
 set( SC_IS_SUBBUILD TRUE )
 
-# STEPcode build type, DEBUG or RELEASE
-set( SC_BUILD_TYPE DEBUG )
+# Build type, DEBUG or RELEASE
+if( NOT DEFINED CMAKE_BUILD_TYPE )
+  set( CMAKE_BUILD_TYPE Debug )
+endif( NOT DEFINED CMAKE_BUILD_TYPE )
+set( SC_BUILD_TYPE ${CMAKE_BUILD_TYPE} )
 
 # Path to STEPcode
 set( STEPCODE_BUILD_DIR ${CMAKE_BINARY_DIR}/sc CACHE PATH "STEPcode build subdir" )
