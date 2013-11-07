@@ -23,9 +23,9 @@ class SC_DAI_EXPORT SDAI_Enum {
         virtual int set_value( const char * n );
         virtual int set_value( const int n );
         SDAI_Enum();
-        virtual ~SDAI_Enum();
 
     public:
+        virtual ~SDAI_Enum() {};
 
         void PrintContents( ostream & out = cout ) const {
             DebugDisplay( out );

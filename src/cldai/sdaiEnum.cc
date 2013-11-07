@@ -342,9 +342,6 @@ SDAI_Enum::SDAI_Enum() {
     v = 0;
 }
 
-SDAI_Enum::~SDAI_Enum() {
-}
-
 /**
  * \copydoc set_value( const char * n )
  */
