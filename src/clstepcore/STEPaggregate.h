@@ -520,6 +520,7 @@ class SC_CORE_EXPORT RealNode  : public STEPnode {
         virtual void    STEPwrite( ostream & out = cout );
 
 //  CONSTRUCTORS
+        RealNode( SDAI_Real v );
         RealNode();
         ~RealNode();
 
@@ -542,6 +543,7 @@ class SC_CORE_EXPORT IntNode  : public STEPnode {
         virtual void    STEPwrite( ostream & out = cout );
 
 //  CONSTRUCTORS
+        IntNode( SDAI_Integer v );
         IntNode();
         ~IntNode();
 

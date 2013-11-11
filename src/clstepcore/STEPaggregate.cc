@@ -1364,6 +1364,10 @@ RealNode::RealNode() {
     value = S_REAL_NULL;
 }
 
+RealNode::RealNode( SDAI_Real v) {
+    value = v;
+}
+
 RealNode::~RealNode() {
 }
 
@@ -1436,6 +1440,10 @@ void RealNode::STEPwrite( ostream & out ) {
 
 IntNode::IntNode() {
     value = S_INT_NULL;
+}
+
+IntNode::IntNode( SDAI_Integer v ) {
+    value = v;
 }
 
 IntNode::~IntNode() {
