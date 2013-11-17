@@ -184,6 +184,28 @@ class SC_CORE_EXPORT STEPattribute {
             return & ptr;
         }
 
+        /**
+         * These functions allow setting the attribute value.
+         * Attr type is verified using an assertion.
+         *
+         * TODO should they check that the pointer was null?
+         * what about ptr.c, which is ( SDAI_Application_instance ** ) ?
+         */
+        ///@{
+        void Integer( SDAI_Integer * n );
+        void Real( SDAI_Real * n );
+        void Number( SDAI_Real * n );
+        void String( SDAI_String * str );
+        void Binary( SDAI_Binary * bin );
+        void Entity( SDAI_Application_instance * ent );
+        void Aggregate( STEPaggregate * aggr );
+        void Enum( SDAI_Enum * enu );
+        void Logical( SDAI_LOGICAL * log );
+        void Boolean( SDAI_BOOLEAN * boo );
+        void Select( SDAI_Select * sel );
+        void Undefined( SCLundefined * undef );
+        ///@}
+
 ////////////// Return info on attr
 
         bool Nullable() const; // may this attribute be null?

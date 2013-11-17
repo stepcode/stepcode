@@ -829,6 +829,8 @@ bool STEPattribute::is_null()  const {
     }
 }
 
+// these get the attr value
+
 SDAI_Integer * STEPattribute::Integer(){
     if( NonRefType() == INTEGER_TYPE ) {
         return ptr.i;
@@ -913,6 +915,123 @@ SCLundefined * STEPattribute::Undefined() {
     }
     return 0;
 }
+
+// these set the attr value
+
+void STEPattribute::Integer( SDAI_Integer * n ) {
+    assert( NonRefType() == INTEGER_TYPE );
+    if( ptr.i ) {
+        *( ptr.i ) = * n;
+    } else {
+        ptr.i = n;
+    }
+}
+
+void STEPattribute::Real( SDAI_Real * n ) {
+    assert( NonRefType() == REAL_TYPE );
+    if( ptr.r ) {
+        *( ptr.r ) = * n;
+    } else {
+        ptr.r = n;
+    }
+}
+
+void STEPattribute::Number( SDAI_Real * n ) {
+    assert( NonRefType() == NUMBER_TYPE );
+    if( ptr.r ) {
+        *( ptr.r ) = * n;
+    } else {
+        ptr.r = n;
+    }
+}
+
+void STEPattribute::String( SDAI_String * str ) {
+    assert( NonRefType() == STRING_TYPE );
+    if( ptr.S ) {
+        *( ptr.S ) = * str;
+    } else {
+        ptr.S = str;
+    }
+}
+
+void STEPattribute::Binary( SDAI_Binary * bin ) {
+    assert( NonRefType() == BINARY_TYPE );
+    if( ptr.b ) {
+        *( ptr.b ) = * bin;
+    } else {
+        ptr.b = bin;
+    }
+}
+
+void STEPattribute::Entity( SDAI_Application_instance * ent ) {
+    assert( NonRefType() == ENTITY_TYPE );
+    if( ptr.c ) {
+        delete ptr.c;
+    }
+    ptr.c = new (SDAI_Application_instance * );
+    *( ptr.c ) = ent;
+}
+
+void STEPattribute::Aggregate( STEPaggregate * aggr ) {
+    assert( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
+    || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) );
+    if( ptr.a ) {
+        *( ptr.a ) = * aggr;
+    } else {
+        ptr.a = aggr;
+    }
+}
+
+void STEPattribute::Enum( SDAI_Enum * enu ) {
+    assert( NonRefType() == ENUM_TYPE );
+    if( ptr.e ) {
+        ptr.e->set_null();
+        *( ptr.e ) = * enu;
+    } else {
+        ptr.e = enu;
+    }
+}
+
+void STEPattribute::Logical( SDAI_LOGICAL * log ) {
+    assert( NonRefType() == LOGICAL_TYPE );
+    if( ptr.e ) {
+        ptr.e->set_null();
+        *( ptr.e ) = * log;
+    } else {
+        ptr.e = log;
+    }
+}
+
+void STEPattribute::Boolean( SDAI_BOOLEAN * boo ) {
+    assert( NonRefType() == BOOLEAN_TYPE );
+    if( ptr.e ) {
+        ptr.e->set_null();
+        *( ptr.e ) = *boo;
+    } else {
+        ptr.e = boo;
+    }
+}
+
+void STEPattribute::Select( SDAI_Select * sel ) {
+    assert( NonRefType() == SELECT_TYPE );
+    if( ptr.sh ) {
+        ptr.sh->set_null();
+        *( ptr.sh ) = * sel;
+    } else {
+        ptr.sh = sel;
+    }
+}
+
+void STEPattribute::Undefined( SCLundefined * undef ) {
+    //FIXME is this right, or is the Undefined() above right?
+    assert( NonRefType() == REFERENCE_TYPE || NonRefType() == UNKNOWN_TYPE );
+    if( ptr.u ) {
+        *( ptr.u ) = * undef;
+    } else {
+        ptr.u = undef;
+    }
+}
+
 
 /** evaluate the equality of two attributes
  * ignores _error and refCount, since those are ancillary

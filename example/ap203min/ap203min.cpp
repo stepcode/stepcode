@@ -111,10 +111,10 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
             stepcomplex->ResetAttributes();
             while( ( attr = stepcomplex->NextAttribute() ) != NULL ) {
                 if( !strcmp( attr->Name(), "prefix" ) ) {
-                    attr->ptr.e = new SdaiSi_prefix_var( pfx );
+                    attr->Enum( new SdaiSi_prefix_var( pfx ) );
                 }
                 if( !strcmp( attr->Name(), "name" ) ) {
-                    attr->ptr.e = new SdaiSi_unit_name_var( Si_unit_name__metre );
+                    attr->Enum( new SdaiSi_unit_name_var( Si_unit_name__metre ) );
                 }
             }
         }
@@ -178,8 +178,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                         attr->StrToVal( lenname );
                     }
                     if( !strcmp( attr->Name(), "conversion_factor" ) ) {
-                        attr->ptr.c = new( STEPentity * );
-                        *( attr->ptr.c ) = ( STEPentity * )( len_measure_with_unit );
+                        attr->Entity( ( STEPentity * )( len_measure_with_unit ) );
                     }
                 }
             }
@@ -187,8 +186,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                 stepcomplex->ResetAttributes();
                 while( ( attr = stepcomplex->NextAttribute() ) != NULL ) {
                     if( !strcmp( attr->Name(), "dimensions" ) ) {
-                        attr->ptr.c = new( STEPentity * );
-                        *( attr->ptr.c ) = ( STEPentity * )( dimensional_exp_len );
+                        attr->Entity( ( STEPentity * )( dimensional_exp_len ) );
                     }
                 }
             }
@@ -207,7 +205,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
     {
         while( ( attr = uncertainty->NextAttribute() ) != NULL ) {
             if( !strcmp( attr->Name(), "unit_component" ) ) {
-                attr->ptr.sh = tol_unit;
+                attr->Select( tol_unit );
             }
             if( !strcmp( attr->Name(), "value_component" ) ) {
                 attr->StrToVal( tolstr );
@@ -226,7 +224,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
             stepcomplex->ResetAttributes();
             while( ( attr = stepcomplex->NextAttribute() ) != NULL ) {
                 if( !strcmp( attr->Name(), "name" ) ) {
-                    attr->ptr.e = new SdaiSi_unit_name_var( Si_unit_name__radian );
+                    attr->Enum( new SdaiSi_unit_name_var( Si_unit_name__radian ) );
                 }
             }
         }
@@ -263,8 +261,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                         attr->StrToVal( "'DEGREES'" );
                     }
                     if( !strcmp( attr->Name(), "conversion_factor" ) ) {
-                        attr->ptr.c = new( STEPentity * );
-                        *( attr->ptr.c ) = ( STEPentity * )( p_ang_measure_with_unit );
+                        attr->Entity( ( STEPentity * )( p_ang_measure_with_unit ) );
                     }
                 }
             }
@@ -272,8 +269,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                 stepcomplex->ResetAttributes();
                 while( ( attr = stepcomplex->NextAttribute() ) != NULL ) {
                     if( !strcmp( attr->Name(), "dimensions" ) ) {
-                        attr->ptr.c = new( STEPentity * );
-                        *( attr->ptr.c ) = ( STEPentity * )( dimensional_exp );
+                        attr->Entity( ( STEPentity * )( dimensional_exp ) );
                     }
                 }
             }
@@ -291,7 +287,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
             stepcomplex->ResetAttributes();
             while( ( attr = stepcomplex->NextAttribute() ) != NULL ) {
                 if( !strcmp( attr->Name(), "name" ) ) {
-                    attr->ptr.e = new SdaiSi_unit_name_var( Si_unit_name__steradian );
+                    attr->Enum( new SdaiSi_unit_name_var( Si_unit_name__steradian ) );
                 }
             }
         }
@@ -322,7 +318,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                 if( !strcmp( attr->Name(), "uncertainty" ) ) {
                     EntityAggregate * unc_agg = new EntityAggregate();
                     unc_agg->AddNode( new EntityNode( ( SDAI_Application_instance * ) uncertainty ) );
-                    attr->ptr.a = unc_agg;
+                    attr->Aggregate( unc_agg );
                 }
             }
 
@@ -337,7 +333,7 @@ STEPcomplex * Geometric_Context( Registry * registry, InstMgr * instance_list, c
                     unit_assigned_agg->AddNode( new EntityNode( ( SDAI_Application_instance * ) ua_length ) );
                     unit_assigned_agg->AddNode( new EntityNode( ( SDAI_Application_instance * ) ua_plane_angle ) );
                     unit_assigned_agg->AddNode( new EntityNode( ( SDAI_Application_instance * ) ua_solid_angle ) );
-                    attr->ptr.a = unit_assigned_agg;
+                    attr->Aggregate( unit_assigned_agg );
                 }
             }
         }

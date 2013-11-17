@@ -9,12 +9,29 @@ PROJECT( AP203Minimum )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # Set STEPCODE_ROOT_DIR to point to the root of the STEPcode source tree.
+if( NOT DEFINED STEPCODE_ROOT_DIR )
+  message( FATAL_ERROR "STEPCODE_ROOT_DIR is not defined! Set via cmake-gui or on command line:\n    cmake .. -DSTEPCODE_ROOT_DIR=/path/to/sc" )
+endif( NOT DEFINED STEPCODE_ROOT_DIR )
+
+# STEPCODE_ROOT_DIR is relative or absolute path?
+if( EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/SC_VERSION.txt" )
+  set( STEPCODE_ROOT_DIR "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}" )
+  message( "** STEPCODE_ROOT_DIR is a relative path; converted to absolute path: ${STEPCODE_ROOT_DIR}." )
+else()
+  if( NOT EXISTS "${STEPCODE_ROOT_DIR}/SC_VERSION.txt" )
+    message( FATAL_ERROR "****  Cannot locate STEPCODE_ROOT_DIR - try an absolute path." )
+  endif( NOT EXISTS "${STEPCODE_ROOT_DIR}/SC_VERSION.txt" )
+endif( EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/SC_VERSION.txt" )
+
 
 # Use STEPcode as library, but build from this build process.
 set( SC_IS_SUBBUILD TRUE )
 
-# STEPcode build type, DEBUG or RELEASE
-set( SC_BUILD_TYPE DEBUG )
+# Build type, DEBUG or RELEASE
+if( NOT DEFINED CMAKE_BUILD_TYPE )
+  set( CMAKE_BUILD_TYPE Debug )
+endif( NOT DEFINED CMAKE_BUILD_TYPE )
+set( SC_BUILD_TYPE ${CMAKE_BUILD_TYPE} )
 
 # Path to STEPcode
 set( STEPCODE_BUILD_DIR ${CMAKE_BINARY_DIR}/sc CACHE PATH "STEPcode build subdir" )
@@ -24,7 +41,14 @@ set( SCHEMA ap203 )
 set( SC_BUILD_SCHEMAS ${SCHEMA} CACHE INTERNAL "Schema, internal, immutable" FORCE )
 
 # Parse out schema name and library.
-file( GLOB SCHEMA_FILE "${STEPCODE_ROOT_DIR}/data/${SCHEMA}/*.exp" )
+set( SCHEMA_PATH "${STEPCODE_ROOT_DIR}/data/${SCHEMA}/*.exp" )
+file( GLOB SCHEMA_FILE "${SCHEMA_PATH}" )
+
+if( NOT EXISTS ${SCHEMA_FILE} )
+  message( FATAL_ERROR "Cannot find the schema; cannot continue. Looked for ${SCHEMA_PATH} from ${CMAKE_CURRENT_LIST_DIR}" )
+endif( NOT EXISTS ${SCHEMA_FILE} )
+
+
 get_filename_component( SCHEMA_SN ${SCHEMA_FILE} NAME )
 string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_LINK_NAME ${SCHEMA_SN} )
 set( STEPCODE_LIBRARIES base stepcore stepeditor stepdai steputils sdai_${SCHEMA_LINK_NAME} )
