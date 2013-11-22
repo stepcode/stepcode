@@ -17,7 +17,9 @@ class lazyRefs {
         //typedefs
         typedef std::set<std::string> * entityTypeSet;
         typedef std::pair< EntityDescriptor *, const char * > attrPair; //EntityDescriptor and attr name
+        typedef std::vector< STEPattribute * > attrVec;
     protected:
+    /* don't need this - the default comparator of std::set, std::less, should work
         ///functor to compare std::pair<> of pointers; in this case, those in attrPair
         struct pairCmp {
             bool operator()( const attrPair & lhs, const attrPair & rhs ) const {
@@ -27,11 +29,13 @@ class lazyRefs {
                 return false;
             }
         };
+        typedef std::set< attrPair, pairCmp > attrVec; //set of attrPair's, and comparison functor
+    */
 
         ///find any inverse attributes, put in `attrs`
         /// attrs not necessarily in order!
-        void getInverseAttrs( std::vector< STEPattribute * > * attrs, EntityDescriptor * ed ) {
-            attrs->clear();
+        void getInverseAttrs( attrVec & attrs, EntityDescriptor * ed ) {
+            attrs.clear();
             supertypesIterator supersIter( ed );
             InverseAItr invAttrIter;
             Inverse_attribute * invAttr;
@@ -39,13 +43,13 @@ class lazyRefs {
                 //look at attrs of *si
                 invAttrIter( *supersIter );
                 while( 0 != ( invAttr = invAttrIter.NextInverse_attribute() ) ) {
-                    attrs->push_back( invAttr );
+                    attrs.push_back( invAttr );
                 }
             }
             // look at our own attrs
             invAttrIter( *ed );
             while( 0 != ( invAttr = invAttrIter.NextInverse_attribute() ) ) {
-                attrs->push_back( invAttr );
+                attrs.push_back( invAttr );
             }
         }
 
@@ -65,10 +69,9 @@ class lazyRefs {
 
 
             //for each inverse attr, add that type and its subtypes to a set
-            typedef std::set< attrPair, pairCmp > attrVec; //set of attrPair's, and comparison functor
             attrVec invAttrs;
-            getInverseAttrs( &invAttrs, eDesc );
-            attrVector::iterator iAiter = invAttrs.begin();
+            getInverseAttrs( invAttrs, eDesc );
+            attrVec::iterator iAiter = invAttrs.begin();
             for( ; iAiter != invAttrs.end(); ++iAiter ) {
                 //         const char * _inverted_attr_id;
                 //         const char * _inverted_entity_id;
@@ -91,6 +94,6 @@ class lazyRefs {
         }
     public:
         void loadInverseRefs( instanceID id ) {}
-}
+};
 
 #endif //LAZYREFS_H
