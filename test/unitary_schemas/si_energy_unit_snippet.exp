@@ -1,0 +1,274 @@
+SCHEMA si_energy_unit_snippet_209;
+
+(* derived from Ap209_multidisciplinary_analysis_and_design_mim_LF, N2617 MIM LF *)
+
+ENTITY si_energy_unit
+    SUBTYPE OF (energy_unit, si_unit);
+    WHERE
+        WR1 : SELF\si_unit.name = si_unit_name.joule;
+        WR2 : NOT EXISTS(SELF\derived_unit.name);
+END_ENTITY;
+
+ENTITY energy_unit
+    SUBTYPE OF (derived_unit);
+    WHERE
+        WR1 : derive_dimensional_exponents(SELF) = dimensions_for_si_unit (si_unit_name.joule);
+END_ENTITY;
+
+ENTITY derived_unit
+    SUPERTYPE OF (ONEOF ((*absorbed_dose_unit, acceleration_unit, radioactivity_unit, area_unit, capacitance_unit, dose_equivalent_unit, electric_charge_unit, conductance_unit, electric_potential_unit,*) energy_unit(*, magnetic_flux_density_unit, force_unit, frequency_unit, illuminance_unit, inductance_unit, magnetic_flux_unit, power_unit, pressure_unit, resistance_unit, velocity_unit, volume_unit*)));
+    elements : SET [1:?] OF derived_unit_element;
+    DERIVE
+        name : label := get_name_value(SELF);
+    WHERE
+        WR1 : (SIZEOF(elements) > 1) OR ((SIZEOF(elements) = 1) AND (elements[1].exponent <> 1.0));
+        WR2 : SIZEOF(USEDIN(SELF, 'AP209_MULTIDISCIPLINARY_ANALYSIS_AND_DESIGN_MIM_LF.' + 'NAME_ATTRIBUTE.NAMED_ITEM')) <= 1;
+END_ENTITY;
+
+ENTITY si_unit
+    SUBTYPE OF (named_unit);
+        prefix : OPTIONAL si_prefix;
+        name : si_unit_name;
+    DERIVE
+        SELF\named_unit.dimensions : dimensional_exponents := dimensions_for_si_unit(name);
+    WHERE
+        WR1 : NOT(('AP209_MULTIDISCIPLINARY_ANALYSIS_AND_DESIGN_MIM_LF.MASS_UNIT' IN TYPEOF(SELF)) AND
+        (SIZEOF(USEDIN(SELF,'AP209_MULTIDISCIPLINARY_ANALYSIS_AND_DESIGN_MIM_LF.DERIVED_UNIT_ELEMENT.UNIT')) > 0)) OR
+        (prefix = si_prefix.kilo);
+END_ENTITY;
+
+ENTITY named_unit
+SUPERTYPE OF ((ONEOF (si_unit(*, conversion_based_unit, context_dependent_unit *)) ANDOR ONEOF (length_unit, mass_unit, time_unit (*, electric_current_unit, thermodynamic_temperature_unit, amount_of_substance_unit, luminous_flux_unit, luminous_intensity_unit, plane_angle_unit, solid_angle_unit, ratio_unit*))));
+    dimensions : dimensional_exponents;
+END_ENTITY;
+
+ENTITY dimensional_exponents;
+    length_exponent : REAL;
+    mass_exponent : REAL;
+    time_exponent : REAL;
+    electric_current_exponent : REAL;
+    thermodynamic_temperature_exponent : REAL;
+    amount_of_substance_exponent : REAL;
+    luminous_intensity_exponent : REAL;
+END_ENTITY;
+
+TYPE si_prefix = ENUMERATION OF (
+    exa,
+    peta,
+    tera,
+    giga,
+    mega,
+    kilo,
+    hecto,
+    deca,
+    deci,
+    centi,
+    milli,
+    micro,
+    nano,
+    pico,
+    femto,
+    atto );
+END_TYPE;
+
+TYPE si_unit_name = ENUMERATION OF (
+    metre,
+    gram,
+    second,
+    ampere,
+    kelvin,
+    mole,
+    candela,
+    radian,
+    steradian,
+    hertz,
+    newton,
+    pascal,
+    joule,
+    watt,
+    coulomb,
+    volt,
+    farad,
+    ohm,
+    siemens,
+    weber,
+    tesla,
+    henry,
+    degree_Celsius,
+    lumen,
+    lux,
+    becquerel,
+    gray,
+    sievert );
+END_TYPE;
+
+FUNCTION dimensions_for_si_unit
+    (n: si_unit_name) : dimensional_exponents;
+    CASE n OF
+        metre:
+            RETURN (dimensional_exponents(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        gram:
+            RETURN (dimensional_exponents(0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        second:
+            RETURN (dimensional_exponents(0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0));
+        ampere:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0));
+        kelvin:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+        mole:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0));
+        candela:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0));
+        radian:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        steradian:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+        hertz:
+            RETURN (dimensional_exponents(0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0));
+        newton:
+            RETURN (dimensional_exponents(1.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0));
+        pascal:
+            RETURN (dimensional_exponents(-1.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0));
+        joule:
+            RETURN (dimensional_exponents(2.0, 1.0, -2.0, 0.0, 0.0, 0.0, 0.0));
+        watt:
+            RETURN (dimensional_exponents(2.0, 1.0, -3.0, 0.0, 0.0, 0.0, 0.0));
+        coulomb:
+            RETURN (dimensional_exponents(0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0));
+        volt:
+            RETURN (dimensional_exponents(2.0, 1.0, -3.0, -1.0, 0.0, 0.0, 0.0));
+        farad:
+            RETURN (dimensional_exponents(-2.0, -1.0, 4.0, 1.0, 0.0, 0.0, 0.0));
+        ohm:
+            RETURN (dimensional_exponents(2.0, 1.0, -3.0, -2.0, 0.0, 0.0, 0.0));
+        siemens:
+            RETURN (dimensional_exponents(-2.0, -1.0, 3.0, 2.0, 0.0, 0.0, 0.0));
+        weber:
+            RETURN (dimensional_exponents(2.0, 1.0, -2.0, -1.0, 0.0, 0.0, 0.0));
+        tesla:
+            RETURN (dimensional_exponents(0.0, 1.0, -2.0, -1.0, 0.0, 0.0, 0.0));
+        henry:
+            RETURN (dimensional_exponents(2.0, 1.0, -2.0, -2.0, 0.0, 0.0, 0.0));
+        degree_Celsius:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+        lumen:
+            RETURN (dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0));
+        lux:
+            RETURN (dimensional_exponents(-2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0));
+        becquerel:
+            RETURN (dimensional_exponents(0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0));
+        gray:
+            RETURN (dimensional_exponents(2.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0));
+        sievert:
+            RETURN (dimensional_exponents(2.0, 0.0, -2.0, 0.0, 0.0, 0.0, 0.0));
+        OTHERWISE:
+        RETURN (?);
+    END_CASE;
+END_FUNCTION;
+
+FUNCTION get_name_value
+    (obj: name_attribute_select) : label;
+    LOCAL
+        name_bag : BAG OF name_attribute := (USEDIN(obj, 'AP209_MULTIDISCIPLINARY_ANALYSIS_AND_DESIGN_MIM_LF.' + 'NAME_ATTRIBUTE.' + 'NAMED_ITEM'));
+    END_LOCAL;
+
+    IF SIZEOF(name_bag) = 1 THEN
+        RETURN (name_bag[1].attribute_value);
+    ELSE
+        RETURN (?);
+    END_IF;
+END_FUNCTION;
+
+TYPE name_attribute_select = SELECT (
+--     action_request_solution,
+--     address,
+--     configuration_design,
+--     context_dependent_shape_representation,
+    derived_unit(*,
+    effectivity,
+    person_and_organization,
+    product_definition,
+    product_definition_substitute,
+    property_definition_representation*));
+END_TYPE;
+
+ENTITY name_attribute;
+    attribute_value : label;
+    named_item : name_attribute_select;
+END_ENTITY;
+
+ENTITY derived_unit_element;
+    unit : named_unit;
+    exponent : REAL;
+END_ENTITY;
+
+FUNCTION derive_dimensional_exponents
+    (x: unit) : dimensional_exponents;
+    LOCAL
+        result : dimensional_exponents := dimensional_exponents(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    END_LOCAL;
+
+    IF 'AP209_MULTIDISCIPLINARY_ANALYSIS_AND_DESIGN_MIM_LF.DERIVED_UNIT' IN TYPEOF(x) THEN
+    REPEAT i := LOINDEX(x\derived_unit.elements) TO HIINDEX(x\derived_unit.elements);
+        result.length_exponent := result.length_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.length_exponent);
+        result.mass_exponent := result.mass_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.mass_exponent);
+        result.time_exponent := result.time_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.time_exponent);
+        result.electric_current_exponent := result.electric_current_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.electric_current_exponent);
+        result.thermodynamic_temperature_exponent := result.thermodynamic_temperature_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.thermodynamic_temperature_exponent);
+        result.amount_of_substance_exponent := result.amount_of_substance_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.amount_of_substance_exponent);
+        result.luminous_intensity_exponent := result.luminous_intensity_exponent +
+            (x\derived_unit.elements[i]\derived_unit_element.exponent *
+            x\derived_unit.elements[i]\derived_unit_element.unit\named_unit.dimensions.luminous_intensity_exponent);
+    END_REPEAT;
+    ELSE
+        result := x\named_unit.dimensions;
+    END_IF;
+    RETURN (result);
+END_FUNCTION;
+
+TYPE label = STRING;
+END_TYPE;
+
+TYPE unit = SELECT (
+    derived_unit,
+    named_unit);
+END_TYPE;
+
+ENTITY mass_unit
+    SUBTYPE OF (named_unit);
+    WHERE
+        WR1 : (SELF\named_unit.dimensions.length_exponent = 0.0) AND (SELF\named_unit.dimensions.mass_exponent = 1.0) AND (SELF\named_unit.dimensions.time_exponent = 0.0) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.0) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.0) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.0) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.0);
+END_ENTITY;
+
+ENTITY length_unit
+    SUBTYPE OF (named_unit);
+    WHERE
+        WR1 : (SELF\named_unit.dimensions.length_exponent = 1.0) AND
+        (SELF\named_unit.dimensions.mass_exponent = 0.0) AND
+        (SELF\named_unit.dimensions.time_exponent = 0.0) AND
+        (SELF\named_unit.dimensions.electric_current_exponent = 0.0) AND
+        (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.0) AND
+        (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.0) AND
+        (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.0);
+END_ENTITY;
+
+ENTITY time_unit
+    SUBTYPE OF (named_unit);
+    WHERE
+        WR1 : (SELF\named_unit.dimensions.length_exponent = 0.0) AND (SELF\named_unit.dimensions.mass_exponent = 0.0) AND (SELF\named_unit.dimensions.time_exponent = 1.0) AND (SELF\named_unit.dimensions.electric_current_exponent = 0.0) AND (SELF\named_unit.dimensions.thermodynamic_temperature_exponent = 0.0) AND (SELF\named_unit.dimensions.amount_of_substance_exponent = 0.0) AND (SELF\named_unit.dimensions.luminous_intensity_exponent = 0.0);
+END_ENTITY;
+
+
+END_SCHEMA;

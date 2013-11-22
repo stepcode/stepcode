@@ -1,0 +1,15 @@
+SCHEMA libexpress_prob_func;
+
+  FUNCTION comma_accepted(
+               lis: LIST [0:?] OF GENERIC:t
+      ): ARRAY [1:5] OF GENERIC:t;
+
+    LOCAL
+      res : ARRAY [1:5] OF GENERIC:t;
+    END_LOCAL;
+    res := [lis[1],5]; -- libexpress parser will accept this - I think it should fail
+    RETURN(res);
+
+  END_FUNCTION; -- comma_accepted
+
+END_SCHEMA; -- libexpress_prob_func

@@ -1,0 +1,41 @@
+(*
+ * Fragment of ap203.exp
+ * starseeker: _edge_list is initialized to null when an SdaiEdge_loop is created
+ *)
+
+SCHEMA uninitialized_edge_list;
+
+  ENTITY edge_loop
+    SUBTYPE OF (loop, path);
+    DERIVE
+      ne : INTEGER := SIZEOF(SELF\path.edge_list);
+--     WHERE
+--       wr1: (SELF\path.edge_list[1].edge_start :=: SELF\path.edge_list[ne].
+--                edge_end);
+  END_ENTITY; -- edge_loop
+
+  ENTITY loop
+    SUPERTYPE OF (edge_loop)
+    SUBTYPE OF (topological_representation_item);
+  END_ENTITY; -- loop
+
+  ENTITY path
+    SUPERTYPE OF (edge_loop)
+    SUBTYPE OF (topological_representation_item);
+      edge_list : LIST [1:?] OF UNIQUE INTEGER;   -- was oriented_edge
+--     WHERE
+--       wr1: path_head_to_tail(SELF);
+  END_ENTITY; -- path
+
+  ENTITY topological_representation_item
+    SUPERTYPE OF (ONEOF (loop ANDOR path))
+    SUBTYPE OF (representation_item);
+  END_ENTITY; -- topological_representation_item
+
+  ENTITY representation_item;
+      name : STRING; -- was label
+--     WHERE
+--       wr1: (SIZEOF(using_representations(SELF)) > 0);
+  END_ENTITY; -- representation_item
+
+END_SCHEMA;
