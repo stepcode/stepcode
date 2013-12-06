@@ -45,7 +45,7 @@ typedef std::set< instanceID > instanceSet;
  * situations, so the information should be kept up-to-date.
  */
 typedef struct {
-    long begin;
+    long begin; ///< this is the result of tellg() before reading the instanceID; there may be whitespace or comments, but nothing else.
     instanceID instance;
     sectionID section;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is

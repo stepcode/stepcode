@@ -822,13 +822,12 @@ class SC_CORE_EXPORT Inverse_attributeLinkNode : public  SingleLinkNode {
 class SC_CORE_EXPORT Inverse_attributeList : public  SingleLinkList {
     private:
     protected:
-    public:
-        Inverse_attributeList();
-        virtual ~Inverse_attributeList();
-
         virtual SingleLinkNode * NewNode() {
             return new Inverse_attributeLinkNode;
         }
+    public:
+        Inverse_attributeList();
+        virtual ~Inverse_attributeList();
         Inverse_attributeLinkNode * AddNode( Inverse_attribute * ia );
 };
 
