@@ -157,12 +157,17 @@ class lazyInstMgr {
 
         SDAI_Application_instance * loadInstance( instanceID id );
 
+        bool isLoaded( instanceID id ) {
+            _instancesLoaded.find( id );
+            return _instancesLoaded.success();
+        }
+
         const char * typeFromFile( instanceID id ) {
             instanceStreamPos_t::cvector * cv;
             cv = _instanceStreamPos.find( id );
             if( cv ) {
                 if( cv->size() != 1 ) {
-                    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - multiple instances with one instanceID not supported yet." << std::endl;
+                    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - multiple instances (" << cv->size() << ") with one instanceID (" << id << ") not supported yet." << std::endl;
                     return 0;
                 }
                 positionAndSection ps = cv->at( 0 );
@@ -171,6 +176,8 @@ class lazyInstMgr {
                 sectionID sid = ps >> 48;
                 return _dataSections[sid]->getType( off );
             }
+            std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - instanceID " << id << " not found." << std::endl;
+            return 0;
         }
 
         // TODO implement these

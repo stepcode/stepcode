@@ -4,6 +4,7 @@
 #include <SubSuperIterators.h>
 #include "SdaiSchemaInit.h"
 #include "instMgrHelper.h"
+#include "lazyRefs.h"
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
@@ -121,6 +122,8 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
         if( ( inst ) && ( inst != & NilSTEPentity ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
+            lazyRefs lr( this, inst );
+            lazyRefs::referentInstances_t insts = lr.result();
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
         }
