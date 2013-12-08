@@ -903,8 +903,9 @@ JudySlot * judy_last( Judy * judy, JudySlot next, unsigned int off, unsigned int
 JudySlot * judy_end( Judy * judy ) {
     judy->level = 0;
     return judy_last( judy, *judy->root, 0, 0 );
-} //    judy_nxt: return next entry
+}
 
+//    judy_nxt: return next entry
 JudySlot * judy_nxt( Judy * judy ) {
     JudySlot * table, *inner;
     int slot, size, cnt;
