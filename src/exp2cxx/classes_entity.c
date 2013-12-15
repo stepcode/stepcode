@@ -583,15 +583,13 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
             if( TYPEis_aggregate( t ) ) {
                 fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
             }
-            fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
+            fprintf( file, "    %sa = new STEPattribute( * %s::",
                      ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
-                     SCHEMAget_name( schema ),
-                     ATTR_PREFIX, count,
-                     ( VARis_type_shifter( a ) ? "R" : "" ),
-                     attrnm,
-                     ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
-                     ( TYPEis_aggregate( t ) ? "" : "& " ),
-                     attrnm );
+                     SCHEMAget_name( schema ) );
+            fprintf( file, "%s%d%s%s", ATTR_PREFIX, count, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
+            fprintf( file, ", %s%s_%s );\n",
+                     ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
+                     ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
             if( first ) {
                 first = false;
             }
