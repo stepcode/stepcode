@@ -623,7 +623,7 @@ char * TYPEget_express_type( const Type t ) {
  ** Side Effects:
  ** Status:  complete 17-Feb-1992
  ******************************************************************/
-void ATTRsign_access_methods( Variable a, FILE * file ) {
+void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     Type t = VARget_type( a );
     char ctype [BUFSIZ];
@@ -634,7 +634,13 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
     fprintf( file, "        %s %s() const;\n", ctype, attrnm );
-    fprintf( file, "        void %s (const %s x);\n\n", attrnm, ctype );
+    fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
+    if( VARget_inverse( a ) ) {
+        fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
+        fprintf( file, "        static %s get_%s( const SDAI_Application_instance * obj ) {\n            return ( ( %s * ) obj )->%s();\n        }\n", ctype, attrnm, objtype, attrnm );
+        fprintf( file, "        static void set_%s( SDAI_Application_instance * obj, const %s x) {\n            ( ( %s * ) obj )->%s( x );\n        }\n", attrnm, ctype, objtype, attrnm );
+    }
+    fprintf( file, "\n" );
     return;
 }
 
@@ -1248,7 +1254,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         if( VARget_initializer( a ) == EXPRESSION_NULL ) {
 
             /*  retrieval  and  assignment  */
-            ATTRsign_access_methods( a, file );
+            ATTRsign_access_methods( a, entnm, file );
         }
     }
     LISTod;
@@ -1259,7 +1265,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         /*  inherited in C++ */
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
-                ATTRsign_access_methods( attr, file );
+                ATTRsign_access_methods( attr, entnm, file );
             }
         }
         LISTod;
