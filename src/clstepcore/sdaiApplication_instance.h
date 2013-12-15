@@ -14,6 +14,8 @@
 
 #include <sc_export.h>
 
+class STEPinvAttrList;
+
 ///////////////////////////////////////////////////////////////////////////////
 // SDAI_Application_instance used to be STEPentity
 
@@ -23,6 +25,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
     public:
         STEPattributeList attributes;
+        STEPinvAttrList iAttrs;
         int               STEPfile_id;
         ErrorDescriptor   _error;
         std::string       p21Comment;

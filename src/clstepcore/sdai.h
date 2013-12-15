@@ -41,6 +41,7 @@ class SelectTypeDescriptor;
 class InstMgr;
 
 #include "STEPattributeList.h"
+#include "STEPinvAttrList.h"
 
 class STEPattributeList;
 class STEPattribute;
