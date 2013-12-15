@@ -584,6 +584,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     Linked_List list;
     int num_parent = 0;
     int num_derived_inverse_attr = 0;
+    int index_attribute = 0;
 
     /* class name
      need to use new-style classes for properties to work correctly
@@ -680,7 +681,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         /* if inheritance, first write the inherited parameters */
         list = ENTITYget_supertypes( entity );
         num_parent = 0;
-        int index_attribute = 0;
+        index_attribute = 0;
         if( ! LISTempty( list ) ) {
             LISTdo( list, e, Entity )
             /*  search attribute names for superclass */
