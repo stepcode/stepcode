@@ -2,13 +2,14 @@
 set(LIBSTEPCORE_SRCS
   sdaiApplication_instance.cc
   STEPcomplex.cc
+  STEPaggregate.cc
   STEPattribute.cc
   STEPattribute.inline.cc
+  STEPattributeList.cc
+  STEPinvAttrList.cc
+  STEPundefined.cc
   sdai.cc
   sdaiSelect.cc
-  STEPaggregate.cc
-  STEPundefined.cc
-  STEPattributeList.cc
   SingleLinkList.cc
   SingleLinkList.inline.cc
   Registry.inline.cc
@@ -48,6 +49,7 @@ set(SC_CLSTEPCORE_HDRS
   STEPaggregate.h
   STEPattribute.h
   STEPattributeList.h
+  STEPinvAttrList.h
   STEPcomplex.h
   STEPundefined.h
   instmgr.h
