@@ -84,7 +84,7 @@ char * generate_attribute_func_name( Variable a, char * out ) {
  ** Side Effects:
  ** Status:  complete 17-Feb-1992
  ******************************************************************/
-void ATTRsign_access_methods( Variable a, FILE * file ) {
+void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     Type t = VARget_type( a );
     char ctype [BUFSIZ];
@@ -95,7 +95,15 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
     fprintf( file, "        %s %s() const;\n", ctype, attrnm );
-    fprintf( file, "        void %s (const %s x);\n\n", attrnm, ctype );
+    fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
+    if( VARget_inverse( a ) ) {
+        fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
+        fprintf( file, "        static %s get_%s( const SDAI_Application_instance * obj ) {\n", ctype, attrnm );
+        fprintf( file, "            return ( ( %s * ) obj )->%s();\n        }\n", objtype, attrnm );
+        fprintf( file, "        static void set_%s( SDAI_Application_instance * obj, const %s x) {\n", attrnm, ctype );
+        fprintf( file, "            ( ( %s * ) obj )->%s( x );\n        }\n", objtype, attrnm );
+    }
+    fprintf( file, "\n" );
     return;
 }
 

@@ -335,7 +335,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         if( VARget_initializer( a ) == EXPRESSION_NULL ) {
 
             /*  retrieval  and  assignment  */
-            ATTRsign_access_methods( a, file );
+            ATTRsign_access_methods( a, entnm, file );
         }
     }
     LISTod;
@@ -346,7 +346,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         /*  inherited in C++ */
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
-                ATTRsign_access_methods( attr, file );
+                ATTRsign_access_methods( attr, entnm, file );
             }
         }
         LISTod;

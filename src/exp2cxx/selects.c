@@ -25,7 +25,7 @@ extern int multiple_inheritance;
 
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
-void ATTRsign_access_methods( Variable a, FILE * file );
+void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file );
 char * generate_attribute_func_name( Variable a, char * out );
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file );
 void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file );
@@ -656,7 +656,7 @@ void TYPEselect_inc_print( const Type type, FILE * f ) {
     /* get the list of unique attributes from the entity items */
     LISTdo( attrs, a, Variable )
     if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        ATTRsign_access_methods( a, f );
+        ATTRsign_access_methods( a, n, f );
     }
     LISTod;
     LISTfree( attrs );
