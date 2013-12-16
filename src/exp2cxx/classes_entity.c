@@ -303,8 +303,6 @@ void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr
 ******************************************************************/
 void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     Linked_List attr_list;
-    char entnm [BUFSIZ];
-    strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
 
     /*  print list of attributes in the protected access area   */
     fprintf( file, "    protected:\n" );
