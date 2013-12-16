@@ -1139,6 +1139,37 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     }
 }
 
+/** print an attr initializer */
+void DataMemberInit( bool * first, Variable a, FILE * lib ) {
+    char attrnm [BUFSIZ];
+    if( TYPEis_entity( VARget_type( a ) ) || TYPEis_aggregate( VARget_type( a ) ) ) {
+        if( *first ) {
+            *first = false;
+            fprintf( lib, " :" );
+        } else {
+            fprintf( lib, "," );
+        }
+        generate_attribute_name( a, attrnm );
+        fprintf( lib, " _%s( 0 )", attrnm );
+    }
+
+}
+
+/**
+ * print attribute initializers; call before printing constructor body
+ * \param first true if this is the first initializer
+ */
+void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr, FILE * lib ) {
+    Linked_List attr_list = ENTITYget_attributes( entity );
+    LISTdo( attr_list, attr, Variable ) {
+        DataMemberInit( first, attr, lib );
+    } LISTod;
+    if( multiple_inheritance ) {
+        LISTdo( neededAttr, attr, Variable ) {
+            DataMemberInit( first, attr, lib );
+        } LISTod
+    }
+}
 /**************************************************************//**
  ** Procedure:  DataMemberPrint
  ** Parameters:  const Entity entity  --  entity being processed
