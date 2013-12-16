@@ -260,6 +260,37 @@ void ENTITYhead_print( Entity entity, FILE * file ) {
     }
 }
 
+/** print an attr initializer */
+void DataMemberInit( bool * first, Variable a, FILE * lib ) {
+    char attrnm [BUFSIZ];
+    if( TYPEis_entity( VARget_type( a ) ) || TYPEis_aggregate( VARget_type( a ) ) ) {
+        if( *first ) {
+            *first = false;
+            fprintf( lib, " :" );
+        } else {
+            fprintf( lib, "," );
+        }
+        generate_attribute_name( a, attrnm );
+        fprintf( lib, " _%s( 0 )", attrnm );
+    }
+}
+
+/**
+ * print attribute initializers; call before printing constructor body
+ * \param first true if this is the first initializer
+ */
+void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr, FILE * lib ) {
+    Linked_List attr_list = ENTITYget_attributes( entity );
+    LISTdo( attr_list, attr, Variable ) {
+        DataMemberInit( first, attr, lib );
+    } LISTod;
+    if( multiple_inheritance ) {
+        LISTdo( neededAttr, attr, Variable ) {
+            DataMemberInit( first, attr, lib );
+        } LISTod
+    }
+}
+
 /**************************************************************//**
 ** Procedure:  DataMemberPrint
 ** Parameters:  const Entity entity  --  entity being processed
@@ -500,7 +531,7 @@ void initializeAttrs( Entity e, FILE* file ) {
  ** Changes: Modified STEPattribute constructors to take fewer arguments
  **     21-Dec-1992 -kcm
  ******************************************************************/
-void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
@@ -530,11 +561,14 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
                 super_cnt++;
                 if( super_cnt == 1 ) {
+                    bool firstInitializer = false;
                     /* ignore the 1st parent */
                     const char * parent = ENTITYget_classname( e );
 
                     /* parent class initializer */
-                    fprintf( file, ": %s() {\n", parent );
+                    fprintf( file, ": %s()", parent );
+                    DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
+                    fprintf( file, " {\n" );
                     fprintf( file, "        /*  parent: %s  */\n%s\n%s\n", parent,
                             "        /* Ignore the first parent since it is */",
                             "        /* part of the main inheritance hierarchy */"  );
@@ -557,6 +591,8 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
             /*  no parent class constructor has been printed, so still need an opening brace */
+            bool firstInitializer = true;
+            DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
             fprintf( file, " {\n" );
             fprintf( file, "        /*  no SuperTypes */\n" );
         }
@@ -664,7 +700,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
    when building multiply inherited entities.
    \sa LIBstructor_print()
 */
-void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
@@ -681,6 +717,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
     bool first = true;
 
     if( multiple_inheritance ) {
+        bool firstInitializer = true;
         Entity parentEntity = 0;
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
@@ -700,11 +737,14 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             the above use. DAS */
         entnm = ENTITYget_classname( entity );
         /*  constructor definition  */
-        if( parent )
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) : %s( se, addAttrs ) {\n", entnm, entnm, parentnm );
-        else {
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) {\n", entnm, entnm );
+        if( parent ) {
+            firstInitializer = false;
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) : %s( se, addAttrs )", entnm, entnm, parentnm );
+        } else {
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs )", entnm, entnm );
         }
+        DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
+        fprintf( file, " {\n" );
 
         fprintf( file, "    /* Set this to point to the head entity. */\n" );
         fprintf( file, "    HeadEntity(se);\n" );
@@ -1233,9 +1273,9 @@ static bool listContainsVar( Linked_List l, Variable v ) {
  ******************************************************************/
 void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     LIBdescribe_entity( entity, file, schema );
-    LIBstructor_print( entity, file, schema );
+    LIBstructor_print( entity, neededAttr, file, schema );
     if( multiple_inheritance ) {
-        LIBstructor_print_w_args( entity, file, schema );
+        LIBstructor_print_w_args( entity, neededAttr, file, schema );
     }
     LIBmemberFunctionPrint( entity, neededAttr, file );
 }
