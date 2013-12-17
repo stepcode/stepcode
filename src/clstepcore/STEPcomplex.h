@@ -34,11 +34,11 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
 
         virtual const EntityDescriptor * IsA( const EntityDescriptor * ) const;
 
-        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgr * im,
+        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
                                      int clearError = 1 );
 // READ
         virtual Severity STEPread( int id, int addFileId,
-                                   class InstMgr * instance_set,
+                                   class InstMgrBase * instance_set,
                                    istream & in = cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
 

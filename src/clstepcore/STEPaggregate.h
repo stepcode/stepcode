@@ -12,7 +12,7 @@
 * and is not subject to copyright.
 */
 
-class InstMgr;
+class InstMgrBase;
 class STEPaggregate;
 class TypeDescriptor;
 
@@ -42,7 +42,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
 
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
     public:
@@ -52,22 +52,22 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
         }
 
         virtual Severity AggrValidLevel( const char * value, ErrorDescriptor * err,
-                                         const TypeDescriptor * elem_type, InstMgr * insts,
+                                         const TypeDescriptor * elem_type, InstMgrBase * insts,
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
 
         virtual Severity AggrValidLevel( istream & in, ErrorDescriptor * err,
-                                         const TypeDescriptor * elem_type, InstMgr * insts,
+                                         const TypeDescriptor * elem_type, InstMgrBase * insts,
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
 
 // INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err = 0,
                                    const TypeDescriptor * elem_type = 0,
-                                   InstMgr * insts = 0, int addFileId = 0 );
+                                   InstMgrBase * insts = 0, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type = 0,
-                                   InstMgr * insts = 0, int addFileId = 0,
+                                   InstMgrBase * insts = 0, int addFileId = 0,
                                    const char * currSch = 0 );
 // OUTPUT
         virtual const char * asStr( std::string & s ) const;
@@ -109,7 +109,7 @@ class SC_CORE_EXPORT EntityAggregate  :  public  STEPaggregate {
     public:
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
 
@@ -131,7 +131,7 @@ class SC_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
     public:
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
 
@@ -311,17 +311,17 @@ class SC_CORE_EXPORT EntityNode  : public STEPnode {
 // INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
 //  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
@@ -370,18 +370,18 @@ class SC_CORE_EXPORT SelectNode  : public STEPnode {
 //  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0,
+                                   InstMgrBase * insts, int addFileId = 0,
                                    const char * currSch = 0 );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0,
+                                   InstMgrBase * insts, int addFileId = 0,
                                    const char * currSch = 0 );
 //  OUTPUT
         virtual const char * asStr( std::string & s );
