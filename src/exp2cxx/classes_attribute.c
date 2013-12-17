@@ -173,7 +173,10 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
 void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
-    fprintf( file, "{\n" );
+    fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
+    fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
+    ATTRprint_access_methods_get_head( entnm, a, file );
+    fprintf( file, "const {\n" );
     fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
     fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
@@ -225,7 +228,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     /*      case TYPE_ENTITY:   */
     if( class == entity_ )  {
 
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
