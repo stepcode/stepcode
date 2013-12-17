@@ -1064,7 +1064,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f,
 
             /*   get method  */
             ATTRprint_access_methods_get_head( classnm, a, f );
-            fprintf( f, "{\n" );
+            fprintf( f, "const {\n" );
 
             LISTdo( items, t, Type ) {
                 if( TYPEis_entity( t ) && ( uattr = ENTITYget_named_attribute(
