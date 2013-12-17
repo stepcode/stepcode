@@ -80,6 +80,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
+// returns pointer to the contents of a static std::string
 const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
     char c;

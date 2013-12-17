@@ -14,7 +14,7 @@
  * This class is used when creating SDAI_Application_instance's and using a lazyInstMgr. It is returned
  * by instMgrAdapter. SDAI_Application_instance only uses the GetSTEPentity function.
  */
-class mgrNodeHelper: protected MgrNode {
+class mgrNodeHelper: public MgrNodeBase {
     protected:
         lazyInstMgr * _lim;
         instanceID _id;
@@ -22,12 +22,12 @@ class mgrNodeHelper: protected MgrNode {
         mgrNodeHelper( lazyInstMgr * lim ) {
             _lim = lim;
             _id = 0;
+            prev = next = 0;
         }
         inline void setInstance( instanceID id ) {
             _id = id;
         }
         inline SDAI_Application_instance * GetSTEPentity() {
-//         unsigned int c = _lim->countDataSections();
             return _lim->loadInstance( _id );
         }
 };
@@ -40,11 +40,11 @@ class mgrNodeHelper: protected MgrNode {
  * when an instance is looked up, this uses lazyInstMgr to load it, and then returns a pointer to it.
  */
 
-class instMgrAdapter: public InstMgr {
+class instMgrAdapter: public InstMgrBase {
     protected:
         mgrNodeHelper _mn;
     public:
-        instMgrAdapter( lazyInstMgr * lim ): InstMgr( 0 ), _mn( lim ) {}
+        instMgrAdapter( lazyInstMgr * lim ): InstMgrBase(), _mn( lim ) {}
 
         inline mgrNodeHelper * FindFileId( int fileId ) {
             _mn.setInstance( fileId );

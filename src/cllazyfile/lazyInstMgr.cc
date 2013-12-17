@@ -1,8 +1,10 @@
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
 #include "Registry.h"
+#include <SubSuperIterators.h>
 #include "SdaiSchemaInit.h"
 #include "instMgrHelper.h"
+#include "lazyRefs.h"
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
@@ -10,6 +12,7 @@ lazyInstMgr::lazyInstMgr() {
     _lazyInstanceCount = 0;
     _loadedInstanceCount = 0;
     _longestTypeNameLen = 0;
+    _mainRegistry = 0;
     _errors = new ErrorDescriptor();
     _ima = new instMgrAdapter( this );
 }
@@ -38,7 +41,7 @@ sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
 
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
-    assert( inst.loc.begin > 0 && inst.loc.instance > 0 && inst.loc.section >= 0 );
+    assert( inst.loc.begin > 0 && inst.loc.instance > 0 );
     int len = strlen( inst.name );
     if( len > _longestTypeNameLen ) {
         _longestTypeNameLen = len;
@@ -46,8 +49,12 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
     /* store 16 bits of section id and 48 of instance offset into one 64-bit int
-    * TODO: check and warn if anything is lost (in calling code?)
-    * does 32bit need anything special?
+    ** TODO: check and warn if anything is lost (in calling code?)
+    ** does 32bit need anything special?
+    **
+    ** create conversion class?
+    **  could then initialize conversion object with number of bits
+    **  also a good place to check for data loss
     */
     positionAndSection ps = inst.loc.section;
     ps <<= 48;
@@ -90,12 +97,14 @@ void lazyInstMgr::openFile( std::string fname ) {
 
 SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
-    SDAI_Application_instance * inst = 0;
     positionAndSection ps;
     sectionID sid;
-    inst = _instancesLoaded.find( id );
+    SDAI_Application_instance * inst = _instancesLoaded.find( id );
+    if( inst ) {
+        return inst;
+    }
     instanceStreamPos_t::cvector * cv;
-    if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
+    if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
         switch( cv->size() ) {
             case 0:
@@ -116,6 +125,8 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
         if( ( inst ) && ( inst != & NilSTEPentity ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
+            lazyRefs lr( this, inst );
+            lazyRefs::referentInstances_t insts = lr.result();
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
         }

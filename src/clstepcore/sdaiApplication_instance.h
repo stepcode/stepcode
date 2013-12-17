@@ -14,6 +14,8 @@
 
 #include <sc_export.h>
 
+class STEPinvAttrList;
+
 ///////////////////////////////////////////////////////////////////////////////
 // SDAI_Application_instance used to be STEPentity
 
@@ -23,6 +25,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
     public:
         STEPattributeList attributes;
+        STEPinvAttrList iAttrs;
         int               STEPfile_id;
         ErrorDescriptor   _error;
         std::string       p21Comment;
@@ -74,7 +77,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
         virtual const EntityDescriptor * IsA( const EntityDescriptor * ) const;
 
-        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgr * im,
+        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
                                      int clearError = 1 );
         ErrorDescriptor & Error()    {
             return _error;
@@ -95,7 +98,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
 // READ
         virtual Severity STEPread( int id, int addFileId,
-                                   class InstMgr * instance_set,
+                                   class InstMgrBase * instance_set,
                                    istream & in = cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
         virtual void STEPread_error( char c, int i, std::istream& in, const char * schnm );

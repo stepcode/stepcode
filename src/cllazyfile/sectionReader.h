@@ -81,6 +81,18 @@ class SC_LAZYFILE_EXPORT sectionReader {
 
         virtual const namedLazyInstance nextInstance() = 0;
 
+        //if this changes, probably need to change nextInstance() as well
+        //don't check errors - they would have been encountered during the initial file scan, and the file is still open
+        const char * getType( long int offset ) {
+            if( offset <= 0 ) {
+                return 0;
+            }
+            _file.seekg( offset );
+            readInstanceNumber();
+            skipWS();
+            return getDelimitedKeyword( ";( /\\" );
+        }
+
         instanceID readInstanceNumber();
 };
 

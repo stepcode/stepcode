@@ -30,7 +30,7 @@ extern int multiple_inheritance;
 
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
-void ATTRsign_access_methods( Variable a, FILE * file );
+void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file );
 char * generate_attribute_func_name( Variable a, char * out );
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file );
 void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file );
@@ -622,12 +622,12 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     fprintf( f, "    virtual void STEPwrite_verbose (ostream& out =std::cout,\n"
              "                    const char *currSch =0) const;\n" );
     fprintf( f, "    virtual Severity STEPread_content (istream& in =cin,\n"
-             "        InstMgr * instances =0, const char *utype =0,\n"
+             "        InstMgrBase * instances =0, const char *utype =0,\n"
              "        int addFileId =0, const char *currSch =0);\n" );
 
     /*  read StrToVal_content   */
     fprintf( f, "    virtual Severity StrToVal_content "
-             "(const char *,\n        InstMgr * instances =0);\n" );
+             "(const char *,\n        InstMgrBase * instances =0);\n" );
 
     /*  constructor(s)  */
     fprintf( f, "\n// STEP Part 22:  SDAI\n" );
@@ -705,7 +705,7 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
     /* get the list of unique attributes from the entity items */
     LISTdo( attrs, a, Variable )
     if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        ATTRsign_access_methods( a, f );
+        ATTRsign_access_methods( a, n, f );
     }
     LISTod;
     LISTfree( attrs );
@@ -1064,7 +1064,7 @@ TYPEselect_lib_print_part_three( const Type type, FILE * f,
 
             /*   get method  */
             ATTRprint_access_methods_get_head( classnm, a, f );
-            fprintf( f, "{\n" );
+            fprintf( f, "const {\n" );
 
             LISTdo( items, t, Type ) {
                 if( TYPEis_entity( t ) && ( uattr = ENTITYget_named_attribute(
@@ -1540,7 +1540,7 @@ TYPEselect_lib_part21( const Type type, FILE * f ) {
     fprintf( f, "    return;\n}\n" );
 
     /*  Read part 21   */
-    fprintf( f, "\nSeverity\n%s::STEPread_content (istream& in, InstMgr * instances,\n"
+    fprintf( f, "\nSeverity\n%s::STEPread_content (istream& in, InstMgrBase * instances,\n"
              "            const char *utype, int addFileId, const char *currSch)\n{\n"
              "  (void)instances;\n  (void)utype;\n  (void)addFileId;\n  (void)currSch;\n  ", n );
 
@@ -1652,7 +1652,7 @@ void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
 
     /*  read StrToVal_content   */
     fprintf( f, "\nSeverity\n%s::StrToVal_content "
-             "(const char * str, InstMgr * instances)"
+             "(const char * str, InstMgrBase * instances)"
              "\n{\n  (void)str;\n  (void)instances;\n", n );
 
     fprintf( f, "  switch (base_type)  {\n" );

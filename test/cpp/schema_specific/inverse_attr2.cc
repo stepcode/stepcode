@@ -1,4 +1,4 @@
-/** \file inverse_attr.cc
+/** \file inverse_attr2.cc
 ** 1-Jul-2012
 ** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
 **
@@ -55,7 +55,7 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
                     STEPattribute sa = attrlist[k];
                     if( sa.getADesc()->DomainType()->Type() == SET_TYPE ) {
                         STEPaggregate * aggr = sa.Aggregate();
-                        if( !aggr || aggr->is_null() != 0 ) { //this fails - and it appears that aggr is not initialized.
+                        if( !aggr || aggr->is_null() != 0 ) {
                             cout << "findInverseAttrs2 FAILED" << endl;
                             return false;
                         }

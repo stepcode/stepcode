@@ -34,6 +34,7 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
 }
 
 // part of readdata1
+//if this changes, probably need to change sectionReader::getType()
 const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     std::streampos end = -1;
     namedLazyInstance i;
@@ -44,7 +45,6 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     if( ( _file.good() ) && ( i.loc.instance > 0 ) ) {
         skipWS();
         i.loc.section = _sectionID;
-        skipWS();
         i.name = getDelimitedKeyword( ";( /\\" );
         if( _file.good() ) {
             end = seekInstanceEnd( & i.refs );

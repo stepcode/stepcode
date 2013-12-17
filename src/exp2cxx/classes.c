@@ -623,7 +623,7 @@ char * TYPEget_express_type( const Type t ) {
  ** Side Effects:
  ** Status:  complete 17-Feb-1992
  ******************************************************************/
-void ATTRsign_access_methods( Variable a, FILE * file ) {
+void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     Type t = VARget_type( a );
     char ctype [BUFSIZ];
@@ -634,7 +634,14 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
     fprintf( file, "        %s %s() const;\n", ctype, attrnm );
-    fprintf( file, "        void %s (const %s x);\n\n", attrnm, ctype );
+    fprintf( file, "        %s %s();\n", ctype, attrnm );
+    fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
+    if( VARget_inverse( a ) ) {
+        fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
+        fprintf( file, "        static %s get_%s( const SDAI_Application_instance * obj ) {\n            return ( ( %s * ) obj )->%s();\n        }\n", ctype, attrnm, objtype, attrnm );
+        fprintf( file, "        static void set_%s( SDAI_Application_instance * obj, const %s x) {\n            ( ( %s * ) obj )->%s( x );\n        }\n", attrnm, ctype, objtype, attrnm );
+    }
+    fprintf( file, "\n" );
     return;
 }
 
@@ -666,7 +673,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    fprintf( file, "\n%s %s::%s() const ", ctype, classnm, funcnm );
+    fprintf( file, "\n%s %s::%s() ", ctype, classnm, funcnm );
     return;
 }
 
@@ -704,10 +711,14 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
 void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
-    fprintf( file, "{\n" );
+    fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
+    fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
+    ATTRprint_access_methods_get_head( entnm, a, file );
+    fprintf( file, "const {\n" );
     fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
-    fprintf( file, "{\n    _%s%sShallowCopy( * x );\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : "." ) );
+    fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
+    fprintf( file, "    _%s%sShallowCopy( * x );\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : "." ) );
     return;
 }
 
@@ -755,7 +766,7 @@ void ATTRprint_access_methods( CONST char * entnm, Variable a, FILE * file ) {
     /*      case TYPE_ENTITY:   */
     if( class == entity_ )  {
 
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
@@ -1133,6 +1144,40 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     }
 }
 
+/** print an attr initializer */
+void DataMemberInit( bool * first, Variable a, FILE * lib ) {
+    char attrnm [BUFSIZ];
+    if( VARis_derived( a ) {
+        return;
+    }
+    if( TYPEis_entity( VARget_type( a ) ) || TYPEis_aggregate( VARget_type( a ) ) ) {
+        if( *first ) {
+            *first = false;
+            fprintf( lib, " :" );
+        } else {
+            fprintf( lib, "," );
+        }
+        generate_attribute_name( a, attrnm );
+        fprintf( lib, " _%s( 0 )", attrnm );
+    }
+
+}
+
+/**
+ * print attribute initializers; call before printing constructor body
+ * \param first true if this is the first initializer
+ */
+void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr, FILE * lib ) {
+    Linked_List attr_list = ENTITYget_attributes( entity );
+    LISTdo( attr_list, attr, Variable ) {
+        DataMemberInit( first, attr, lib );
+    } LISTod;
+    if( multiple_inheritance ) {
+        LISTdo( neededAttr, attr, Variable ) {
+            DataMemberInit( first, attr, lib );
+        } LISTod
+    }
+}
 /**************************************************************//**
  ** Procedure:  DataMemberPrint
  ** Parameters:  const Entity entity  --  entity being processed
@@ -1145,8 +1190,6 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
  ******************************************************************/
 void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     Linked_List attr_list;
-    char entnm [BUFSIZ];
-    strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
 
     /*  print list of attributes in the protected access area   */
     fprintf( file, "   protected:\n" );
@@ -1248,7 +1291,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         if( VARget_initializer( a ) == EXPRESSION_NULL ) {
 
             /*  retrieval  and  assignment  */
-            ATTRsign_access_methods( a, file );
+            ATTRsign_access_methods( a, entnm, file );
         }
     }
     LISTod;
@@ -1259,7 +1302,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         /*  inherited in C++ */
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
-                ATTRsign_access_methods( attr, file );
+                ATTRsign_access_methods( attr, entnm, file );
             }
         }
         LISTod;
@@ -1518,7 +1561,7 @@ void initializeAttrs( Entity e, FILE* file ) {
  ** Changes: Modified STEPattribute constructors to take fewer arguments
  **     21-Dec-1992 -kcm
  ******************************************************************/
-void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
@@ -1548,11 +1591,14 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
                 super_cnt++;
                 if( super_cnt == 1 ) {
+                    bool firstInitializer = false;
                     /* ignore the 1st parent */
                     const char * parent = ENTITYget_classname( e );
 
                     /* parent class initializer */
-                    fprintf( file, ": %s() {\n", parent );
+                    fprintf( file, ": %s()", parent );
+                    DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
+                    fprintf( file, " {\n" );
                     fprintf( file, "        /*  parent: %s  */\n%s\n%s\n", parent,
                             "        /* Ignore the first parent since it is */",
                             "        /* part of the main inheritance hierarchy */"  );
@@ -1575,6 +1621,8 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
             /*  no parent class constructor has been printed, so still need an opening brace */
+            bool firstInitializer = true;
+            DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
             fprintf( file, " {\n" );
             fprintf( file, "        /*  no SuperTypes */\n" );
         }
@@ -1594,22 +1642,23 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
         generate_attribute_name( a, attrnm );
         t = VARget_type( a );
 
-        if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
+        if ( VARget_inverse( a ) ) {
+            fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
+                     SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
+        } else if( ! VARis_derived( a ) )  {
             /*  1. create a new STEPattribute */
 
             /*  if type is aggregate, the variable is a pointer and needs initialized */
             if( TYPEis_aggregate( t ) ) {
                 fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
             }
-            fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
+            fprintf( file, "    %sa = new STEPattribute( * %s::",
                      ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
-                     SCHEMAget_name( schema ),
-                     ATTR_PREFIX, count,
-                     ( VARis_type_shifter( a ) ? "R" : "" ),
-                     attrnm,
-                     ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
-                     ( TYPEis_aggregate( t ) ? "" : "& " ),
-                     attrnm );
+                     SCHEMAget_name( schema ) );
+            fprintf( file, "%s%d%s%s", ATTR_PREFIX, count, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
+            fprintf( file, ", %s%s_%s );\n",
+                     ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
+                     ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
             if( first ) {
                 first = false;
             }
@@ -1680,7 +1729,7 @@ void LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
    when building multiply inherited entities.
    \sa LIBstructor_print()
 */
-void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
+void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
     char attrnm [BUFSIZ];
@@ -1697,6 +1746,7 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
     bool first = true;
 
     if( multiple_inheritance ) {
+        bool firstInitializer = true;
         Entity parentEntity = 0;
         list = ENTITYget_supertypes( entity );
         if( ! LISTempty( list ) ) {
@@ -1716,11 +1766,14 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             the above use. DAS */
         entnm = ENTITYget_classname( entity );
         /*  constructor definition  */
-        if( parent )
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) : %s( se, addAttrs ) {\n", entnm, entnm, parentnm );
-        else {
-            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) {\n", entnm, entnm );
+        if( parent ) {
+            firstInitializer = false;
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs ) : %s( se, addAttrs )", entnm, entnm, parentnm );
+        } else {
+            fprintf( file, "%s::%s( SDAI_Application_instance * se, bool addAttrs )", entnm, entnm );
         }
+        DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
+        fprintf( file, " {\n" );
 
         fprintf( file, "    /* Set this to point to the head entity. */\n" );
         fprintf( file, "    HeadEntity(se);\n" );
@@ -1763,8 +1816,10 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
             /*  include attribute if it is not derived  */
             generate_attribute_name( a, attrnm );
             t = VARget_type( a );
-
-            if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
+            if ( VARget_inverse( a ) ) {
+                fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
+                         SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
+            } else if( ! VARis_derived( a ) ) {
                 /*  1. create a new STEPattribute */
 
                 /*  if type is aggregate, the variable is a pointer and needs initialized */
@@ -1827,9 +1882,9 @@ void LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
  ******************************************************************/
 void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     LIBdescribe_entity( entity, file, schema );
-    LIBstructor_print( entity, file, schema );
+    LIBstructor_print( entity, neededAttr, file, schema );
     if( multiple_inheritance ) {
-        LIBstructor_print_w_args( entity, file, schema );
+        LIBstructor_print_w_args( entity, neededAttr, file, schema );
     }
     LIBmemberFunctionPrint( entity, neededAttr, file );
 }
