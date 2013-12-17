@@ -888,34 +888,44 @@ class SC_CORE_EXPORT AttrDescriptor {
             _name = n;
         }
 
-        // BaseType() is the underlying type of this attribute.
-        // NonRefType() is the first non REFERENCE_TYPE type
-        // e.g. Given attributes of each of the following types
-        // TYPE count = INTEGER;
-        // TYPE ref_count = count;
-        // TYPE count_set = SET OF ref_count;
-        //  BaseType() will return INTEGER_TYPE for an attr of each type.
-        //  BaseTypeDescriptor() returns the TypeDescriptor for Integer
-        //  NonRefType() will return INTEGER_TYPE for the first two. For an
-        //    attribute of type count_set NonRefType() would return
-        //    AGGREGATE_TYPE
-        //  NonRefTypeDescriptor() returns the TypeDescriptor for Integer
-        //     for the first two and a TypeDescriptor for an
-        //     aggregate for the last.
-
+        /** BaseType() is the underlying type of this attribute.
+         * NonRefType() is the first non REFERENCE_TYPE type
+         * e.g. Given attributes of each of the following types
+         * TYPE count = INTEGER;
+         * TYPE ref_count = count;
+         * TYPE count_set = SET OF ref_count;
+         *  BaseType() will return INTEGER_TYPE for an attr of each type.
+         *  BaseTypeDescriptor() returns the TypeDescriptor for Integer
+         *  NonRefType() will return INTEGER_TYPE for the first two. For an
+         *    attribute of type count_set NonRefType() would return
+         *    AGGREGATE_TYPE
+         *  NonRefTypeDescriptor() returns the TypeDescriptor for Integer
+         *     for the first two and a TypeDescriptor for an
+         *     aggregate for the last.
+         *
+         * \sa NonRefType()
+         * \sa NonRefTypeDescriptor()
+         */
+        ///@{
         PrimitiveType BaseType() const;
         const TypeDescriptor * BaseTypeDescriptor() const;
+        ///@}
 
-        // the first PrimitiveType that is not REFERENCE_TYPE (the first
-        // TypeDescriptor *_referentType that does not have REFERENCE_TYPE
-        // for it's fundamentalType variable).  This would return the same
-        // as BaseType() for fundamental types.  An aggregate type
-        // would return AGGREGATE_TYPE then you could find out the type of
-        // an element by calling AggrElemType().  Select types
-        // would work the same?
-
+        /**
+         * the first PrimitiveType that is not REFERENCE_TYPE (the first
+         * TypeDescriptor *_referentType that does not have REFERENCE_TYPE
+         * for it's fundamentalType variable).  This would return the same
+         * as BaseType() for fundamental types.  An aggregate type
+         * would return AGGREGATE_TYPE then you could find out the type of
+         * an element by calling AggrElemType().  Select types
+         * would work the same?
+         *
+         * \sa BaseType()
+         */
+        ///@{
         PrimitiveType NonRefType() const;
         const TypeDescriptor * NonRefTypeDescriptor() const;
+        ///@}
 
         int   IsAggrType() const;
         PrimitiveType   AggrElemType() const;

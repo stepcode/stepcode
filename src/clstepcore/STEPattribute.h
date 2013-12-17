@@ -146,19 +146,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         Severity set_null();
 
-        /** \fn Integer()
-         * \fn Real()
-         * \fn Number()
-         * \fn String()
-         * \fn Binary()
-         * \fn Entity()
-         * \fn Aggregate()
-         * \fn Enum()
-         * \fn Logical()
-         * \fn Boolean()
-         * \fn Select()
-         * \fn Undefined()
-         *
+        /**
          * These functions verify that the attribute contains the requested type and
          * returns a pointer. The pointer is null if the requested type does not match.
          *
@@ -166,6 +154,7 @@ class SC_CORE_EXPORT STEPattribute {
          * \sa NonRefType()
          * \sa is_null()
          */
+        ///@{
         SDAI_Integer              * Integer();
         SDAI_Real                 * Real();
         SDAI_Real                 * Number();
@@ -178,6 +167,7 @@ class SC_CORE_EXPORT STEPattribute {
         SDAI_BOOLEAN              * Boolean();
         SDAI_Select               * Select();
         SCLundefined              * Undefined();
+        ///@}
 
         /// allows direct access to the union containing attr data (dangerous!)
         attrUnion * Raw() {
