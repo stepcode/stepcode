@@ -100,8 +100,11 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     positionAndSection ps;
     sectionID sid;
     SDAI_Application_instance * inst = _instancesLoaded.find( id );
+    if( inst ) {
+        return inst;
+    }
     instanceStreamPos_t::cvector * cv;
-    if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
+    if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
         switch( cv->size() ) {
             case 0:
