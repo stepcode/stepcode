@@ -574,12 +574,12 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     fprintf( f, "    virtual void STEPwrite_verbose (ostream& out =std::cout,\n"
              "                    const char *currSch =0) const;\n" );
     fprintf( f, "    virtual Severity STEPread_content (istream& in =cin,\n"
-             "        InstMgr * instances =0, const char *utype =0,\n"
+             "        InstMgrBase * instances =0, const char *utype =0,\n"
              "        int addFileId =0, const char *currSch =0);\n" );
 
     /*  read StrToVal_content   */
     fprintf( f, "    virtual Severity StrToVal_content "
-             "(const char *,\n        InstMgr * instances =0);\n" );
+             "(const char *,\n        InstMgrBase * instances =0);\n" );
 
     /*  constructor(s)  */
     fprintf( f, "\n// STEP Part 22:  SDAI\n" );
@@ -1474,7 +1474,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
     fprintf( f, "    return;\n}\n" );
 
     /*  Read part 21   */
-    fprintf( f, "\nSeverity\n%s::STEPread_content (istream& in, InstMgr * instances,\n"
+    fprintf( f, "\nSeverity\n%s::STEPread_content (istream& in, InstMgrBase * instances,\n"
              "            const char *utype, int addFileId, const char *currSch)\n{\n"
              "  (void)instances;\n  (void)utype;\n  (void)addFileId;\n  (void)currSch;\n  ", n );
 
@@ -1586,7 +1586,7 @@ void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
 
     /*  read StrToVal_content   */
     fprintf( f, "\nSeverity\n%s::StrToVal_content "
-             "(const char * str, InstMgr * instances)"
+             "(const char * str, InstMgrBase * instances)"
              "\n{\n  (void)str;\n  (void)instances;\n", n );
 
     fprintf( f, "  switch (base_type)  {\n" );
