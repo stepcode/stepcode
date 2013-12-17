@@ -258,7 +258,7 @@ const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
     }
 }
 
-Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgr * im,
+Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
                                   int clearError ) {
     (void) error; //unused
     (void) im;
@@ -276,7 +276,7 @@ void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
 }
 
 // READ
-Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
+Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * instance_set,
                                 istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
     char c;
     std::string typeNm;
@@ -341,7 +341,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_
 //FIXME delete this?
 #ifdef buildwhileread
 // READ
-Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgr * instance_set,
+Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * instance_set,
                                 istream & in, const char * currSch ) {
     ClearError( 1 );
     STEPfile_id = id;

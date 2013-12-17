@@ -62,7 +62,7 @@ class SC_CORE_EXPORT SDAI_Select {
         void nullify();
 
         Severity SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
-                                   InstMgr * im );
+                                   InstMgrBase * im );
 
         // reading and writing
         const char * STEPwrite( std::string & s, const char * currSch = 0 ) const;
@@ -76,17 +76,17 @@ class SC_CORE_EXPORT SDAI_Select {
 
 
         Severity StrToVal( const char * val, const char * selectType,
-                           ErrorDescriptor * err, InstMgr * instances = 0 );
+                           ErrorDescriptor * err, InstMgrBase * instances = 0 );
         virtual Severity StrToVal_content( const char *,
-                                           InstMgr * instances = 0 ) = 0;
+                                           InstMgrBase * instances = 0 ) = 0;
 
         Severity STEPread( istream & in, ErrorDescriptor * err,
-                           InstMgr * instances = 0, const char * utype = 0,
+                           InstMgrBase * instances = 0, const char * utype = 0,
                            int addFileId = 0, const char * = NULL );
 
         // abstract function
         virtual Severity STEPread_content( istream & in = cin,
-                                           InstMgr * instances = 0,
+                                           InstMgrBase * instances = 0,
                                            const char * utype = 0,
                                            int addFileId = 0,
                                            const char * currSch = 0 ) = 0;

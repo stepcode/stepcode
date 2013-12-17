@@ -155,7 +155,7 @@ void SDAI_Select::nullify() {
 }
 
 Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
-                                        InstMgr * im ) {
+                                        InstMgrBase * im ) {
     SDAI_Select * tmp = NewSelect();
     Severity s = SEVERITY_NULL;
 
@@ -166,7 +166,7 @@ Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor 
 }
 
 Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
-                                ErrorDescriptor * err, InstMgr * instances ) {
+                                ErrorDescriptor * err, InstMgrBase * instances ) {
     severity( SEVERITY_NULL );
     if( SetUnderlyingType( CanBe( selectType ) ) )
 
@@ -228,7 +228,7 @@ Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
  * This function does the following:
  */
 Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
-                                InstMgr * instances, const char * utype,
+                                InstMgrBase * instances, const char * utype,
                                 int addFileId, const char * currSch ) {
     char c = '\0';
     std::string tmp;

@@ -95,6 +95,7 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
     fprintf( file, "        %s %s() const;\n", ctype, attrnm );
+    fprintf( file, "        %s %s();\n", ctype, attrnm );
     fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
     if( VARget_inverse( a ) ) {
         fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
@@ -135,7 +136,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    fprintf( file, "\n%s %s::%s() const ", ctype, classnm, funcnm );
+    fprintf( file, "\n%s %s::%s() ", ctype, classnm, funcnm );
     return;
 }
 

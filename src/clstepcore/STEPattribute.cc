@@ -46,7 +46,7 @@ const int Real_Num_Precision = REAL_NUM_PRECISION;
 ///////////////////////////////////////////////////////////////////////////////
 
 /// the value of the attribute is assigned from the supplied string
-Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFileId ) {
+Severity STEPattribute::StrToVal( const char * s, InstMgrBase * instances, int addFileId ) {
     if( _redefAttr )  {
         return _redefAttr->StrToVal( s, instances, addFileId );
     }
@@ -194,7 +194,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgr * instances, int addFi
 **         value >= SEVERITY_WARNING means program can continue parsing input,
 **         value <= SEVERITY_INPUT_ERROR  is fatal read error
 ******************************************************************/
-Severity STEPattribute::STEPread( istream & in, InstMgr * instances, int addFileId,
+Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int addFileId,
                                   const char * currSch, bool strict ) {
 
     // The attribute has been redefined by the attribute pointed
@@ -1069,7 +1069,7 @@ bool sameADesc( const STEPattribute & a1, const STEPattribute & a2 ) {
  * *note* for string values - (attrValue = 0) => string value does not exist,
  *       attrValue exists it is valid.
 ******************************************************************/
-Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgr * im, bool clearError ) {
+Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgrBase * im, bool clearError ) {
     if( clearError ) {
         ClearErrorMsg();
     }

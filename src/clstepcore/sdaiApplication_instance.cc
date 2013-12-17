@@ -251,7 +251,7 @@ const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor 
 /**
  * Checks the validity of the current attribute values for the entity
  */
-Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr * im,
+Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
         int clearError ) {
     ErrorDescriptor err;
     if( clearError ) {
@@ -477,7 +477,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
  ** Status:
  ******************************************************************/
 Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
-        InstMgr * instance_set, istream & in,
+        InstMgrBase * instance_set, istream & in,
         const char * currSch, bool useTechCor, bool strict ) {
     STEPfile_id = id;
     char c = '\0';
@@ -631,7 +631,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId ) {
+        InstMgrBase * instances, int addFileId ) {
     char c;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
@@ -675,7 +675,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                 //  lookup which object has id as its instance id
                 SDAI_Application_instance * inst;
                 /* If there is a ManagerNode it should have a SDAI_Application_instance */
-                MgrNode * mn = 0;
+                MgrNodeBase * mn = 0;
                 mn = instances->FindFileId( id );
                 if( mn ) {
                     inst =  mn->GetSTEPentity() ;
@@ -715,7 +715,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId ) {
+        InstMgrBase * instances, int addFileId ) {
     istringstream in( ( char * )s );
     return ReadEntityRef( in, err, tokenList, instances, addFileId );
 }
@@ -822,7 +822,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
                            // attrValue (if it exists) needs
                            // to match. (this must be an
                            // EntityDescriptor)
-                           ErrorDescriptor * err, InstMgr * im, int clearError ) {
+                           ErrorDescriptor * err, InstMgrBase * im, int clearError ) {
     char tmp [BUFSIZ];
     tmp[0] = '\0';
     char messageBuf [BUFSIZ];
@@ -834,7 +834,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
     }
 
     int fileId;
-    MgrNode * mn = 0;
+    MgrNodeBase * mn = 0;
 
     // fmtstr1 contains "#%d %ns" where n is BUFSIZ-1
     fmtstr1 << " #%d %" << BUFSIZ - 1 << "s ";
