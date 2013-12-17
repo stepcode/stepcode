@@ -44,18 +44,13 @@ int main( int argc, char * argv[] ) {
     }
     cout << "instance #" << instance->StepFileId() << endl;
 
-    /* The inverse could be set with
-     *    const Inverse_attribute * ia =...;
-     *    const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
-     *    instance->isdefinedby_(inv_ed);
-     */
     EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
-    if( aggr ) {
-        cout << aggr->EntryCount() << endl;
+    if( aggr && aggr->EntryCount() ) {
+        cout << "Found " << aggr->EntryCount() << " inverse references." << endl;
+        exit( EXIT_SUCCESS );
     } else {
         cout << "inverse attr is not defined" << endl;
         exit( EXIT_FAILURE );
     }
-    exit( EXIT_SUCCESS );
 }
 
