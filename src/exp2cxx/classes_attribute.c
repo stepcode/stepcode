@@ -284,7 +284,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     /*    case TYPE_LOGICAL:    */
     if( ( class == boolean_ ) || ( class == logical_ ) )  {
 
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
@@ -323,7 +323,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     }
     /*    case TYPE_ENUM:   */
     if( class == enumeration_ )  {
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
@@ -360,7 +360,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     }
     /*    case TYPE_SELECT: */
     if( class == select_ )  {
-        fprintf( file, "        { return (const %s) &_%s; }\n",  ctype, attrnm );
+        fprintf( file, "const {\n    return (const %s) &_%s;\n    }\n",  ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "        { _%s = x; }\n", attrnm );
         return;
@@ -372,7 +372,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     /*  case STRING:*/
     /*      case TYPE_BINARY:   */
     if( ( class == string_ ) || ( class == binary_ ) )  {
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
@@ -412,7 +412,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     }
     /*      case TYPE_INTEGER:  */
     if( class == integer_ ) {
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
