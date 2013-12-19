@@ -185,6 +185,51 @@ void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
     return;
 }
 
+/** print logging code for access methods for attrs that are entities
+ * \p var is the variable name, minus preceding underscore, or null if 'x' is to be used
+ * \p dir is either "returned" or "assigned"
+ */
+void ATTRprint_access_methods_entity_logging( const char * entnm, const char * funcnm, const char * nm,
+                                              const char * var, const char * dir, FILE * file ) {
+    if( print_logging ) {
+        fprintf( file, "#ifdef SC_LOGGING\n" );
+        fprintf( file, "    if( *logStream ) {\n" );
+        fprintf( file, "        logStream -> open( SCLLOGFILE, ios::app );\n" );
+        fprintf( file, "        if( !( %s%s == S_ENTITY_NULL ) )\n        {\n", ( var ? "_" : "" ), ( var ? var : "x" ) );
+        fprintf( file, "            *logStream << time( NULL ) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, dir );
+        fprintf( file, "            *logStream << \"reference to Sdai%s entity #\"", nm );
+        fprintf( file,                        " << %s%s->STEPfile_id << std::endl;\n", ( var ? "_" : "" ), ( var ? var : "x" ) );
+        fprintf( file, "        } else {\n" );
+        fprintf( file, "            *logStream << time( NULL ) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, dir );
+        fprintf( file, "            *logStream << \"null entity\" << std::endl;\n        }\n" );
+        fprintf( file, "        logStream->close();\n" );
+        fprintf( file, "    }\n" );
+        fprintf( file, "#endif\n" );
+    }
+}
+
+/** print access methods for attrs that are entities
+ * prints const and non-const getters and a setter
+ */
+void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
+                                      const char * ctype, Variable a, FILE * file ) {
+    fprintf( file, "const {\n" );
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+
+    ATTRprint_access_methods_get_head( entnm, a, file );
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+    fprintf( file, "    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
+    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+
+    ATTRprint_access_methods_put_head( entnm, a, file );
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file);
+    fprintf( file, "    _%s = x;\n}\n", attrnm );
+    return;
+}
+
 /**************************************************************//**
  ** Procedure:  ATTRprint_access_method
  ** Parameters:  const Variable a --  attribute to find the type for
