@@ -355,7 +355,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     if( class == select_ )  {
         fprintf( file, "const {\n    return (const %s) &_%s;\n    }\n",  ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, "        { _%s = x; }\n", attrnm );
+        fprintf( file, " {\n    _%s = x;\n    }\n", attrnm );
         return;
     }
     /*    case TYPE_AGGRETATES: */
@@ -370,15 +370,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << _%s << std::endl;\n", attrnm );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << _%s << std::endl;\n", attrnm );
             fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
 
         }
@@ -389,15 +385,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        if(!x)\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << x << std::endl;\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << x << std::endl;\n" );
             fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
         }
         fprintf( file, "    _%s = x;\n}\n", attrnm );
@@ -430,15 +422,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        if(!(x == S_INT_NULL) )\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << x << std::endl;\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << x << std::endl;\n" );
             fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
             /*  default:  INTEGER   */
             /*  is the same type as the data member  */
@@ -449,20 +437,16 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
     if( ( class == number_ ) || ( class == real_ ) ) {
-        fprintf( file, "{\n" );
+        fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        if(!(_%s == S_REAL_NULL) )\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << _%s << std::endl;\n", attrnm );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << _%s << std::endl;\n", attrnm );
             fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
         }
         fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
@@ -472,15 +456,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
             fprintf( file, "    if(*logStream)\n    {\n" );
             fprintf( file, "        if(!(_%s == S_REAL_NULL) )\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << _%s << std::endl;\n", attrnm );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << _%s << std::endl;\n", attrnm );
             fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
         }
         fprintf( file, "    _%s = x;\n}\n", attrnm );
