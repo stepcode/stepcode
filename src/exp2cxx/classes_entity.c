@@ -614,7 +614,7 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
         t = VARget_type( a );
 
         if ( VARget_inverse( a ) ) {
-            entnm = ENTITYget_classname( entity ); //entnm points to a static buffer which may have been overwritten
+            entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
             fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
                      SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
         } else if( ! VARis_derived( a ) )  {
@@ -789,7 +789,7 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
             generate_attribute_name( a, attrnm );
             t = VARget_type( a );
             if ( VARget_inverse( a ) ) {
-                entnm = ENTITYget_classname( entity ); //entnm points to a static buffer which may have been overwritten
+                entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
                 fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
                          SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
             } else if( ! VARis_derived( a ) ) {
