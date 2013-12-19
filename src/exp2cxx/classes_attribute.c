@@ -231,7 +231,7 @@ void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, c
 }
 
 /**************************************************************//**
- ** Procedure:  ATTRprint_access_method
+ ** Procedure:  ATTRprint_access_methods
  ** Parameters:  const Variable a --  attribute to find the type for
  ** FILE* file  --  file being written to
  ** Returns:  name to be used for the type of the c++ access functions
@@ -273,57 +273,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
 
     /*      case TYPE_ENTITY:   */
     if( class == entity_ )  {
-
-        fprintf( file, "const {\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        logStream->open(SCLLOGFILE,ios::app);\n" );
-            fprintf( file, "        if(! (_%s == S_ENTITY_NULL) )\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"reference to Sdai%s entity #\" << _%s->STEPfile_id << std::endl;\n",
-                     nm, attrnm );
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"null entity\" << std::endl;\n        }\n" );
-            fprintf( file, "        logStream->close();\n" );
-            fprintf( file, "    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
-
-        ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, "{\n" );
-        if( print_logging ) {
-            fprintf( file, "\n" );
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        logStream->open(SCLLOGFILE,ios::app);\n" );
-
-            fprintf( file, "        if(! (x == S_ENTITY_NULL) )\n        {\n" );
-
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
-                     entnm, funcnm );
-
-            fprintf( file,
-                     "            *logStream << \"reference to Sdai%s entity #\" << x->STEPfile_id << std::endl;\n",
-                     nm );
-
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"null entity\" << std::endl;\n        }\n" );
-            fprintf( file, "        logStream->close();\n" );
-            fprintf( file, "    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    _%s = x;\n}\n", attrnm );
-
+        ATTRprint_access_methods_entity( entnm, attrnm, funcnm, nm, ctype, a, file );
         return;
     }
     /*    case TYPE_LOGICAL:    */
