@@ -1388,6 +1388,9 @@ initializer(A) ::= TOK_ASSIGNMENT expression(B).
     A = B;
 }
 
+/* 10303-11:2004 production 259
+ * named_type_or_rename = named_types [ AS ( entity_id | type_id ) ] .
+ */
 rename ::= TOK_IDENTIFIER(A).
 {
     (*interface_func)(CURRENT_SCOPE, interface_schema, A, A);
@@ -1406,6 +1409,9 @@ rename_list(A) ::= rename_list(B) TOK_COMMA rename.
     A = B;
 }
 
+/* 10303-11:2004 production 336
+ * use_clause = USE FROM schema_ref [ ’(’ named_type_or_rename { ’,’ named_type_or_rename } ’)’ ] ’;’ .
+ */
 parened_rename_list ::= TOK_LEFT_PAREN rename_list TOK_RIGHT_PAREN.  
 
 reference_clause ::= TOK_REFERENCE TOK_FROM TOK_IDENTIFIER(A) semicolon.
@@ -1510,6 +1516,9 @@ set_or_bag_of_entity(A) ::= TOK_BAG TOK_OF defined_type(B).
     A.body->base = B;
 }
 
+/* 10303-11:2004 production 249
+ * inverse_clause = INVERSE inverse_attr { inverse_attr } .
+ */
 inverse_attr_list(A) ::= inverse_attr(B).
 {
     A = LISTcreate();
@@ -1521,6 +1530,17 @@ inverse_attr_list(A) ::= inverse_attr_list(B) inverse_attr(C).
     LISTadd_last(A, (Generic)C);
 }
 
+/* 10303-11:2004 production 248
+ * inverse_attr = attribute_decl ’:’ [ ( SET | BAG ) [ bound_spec ] OF ] entity_ref FOR [ entity_ref ’.’ ] attribute_ref ’;’ .
+ *
+ * also
+ * 177 attribute_decl = attribute_id | redeclared_attribute .
+ * 178 attribute_id = simple_id .
+ * 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+ * 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
+ *
+ * NOTE - production 279 isn't implemented
+ */
 inverse_attr(A) ::= TOK_IDENTIFIER(B) TOK_COLON set_or_bag_of_entity(C)
             TOK_FOR TOK_IDENTIFIER(D) semicolon.
 {
@@ -1541,6 +1561,9 @@ inverse_attr(A) ::= TOK_IDENTIFIER(B) TOK_COLON set_or_bag_of_entity(C)
     A->inverse_symbol = D.symbol;
 }
 
+/* 10303-11:2004 production 249
+ * inverse_clause = INVERSE inverse_attr { inverse_attr } .
+ */
 inverse_clause(A) ::= /*NULL*/.
 {
     A = LIST_NULL;
@@ -2341,6 +2364,12 @@ unique(A) ::= TOK_UNIQUE.
     A.unique = 1;
 }
 
+/* 10303-11:2004 production 275
+ * qualified_attribute = SELF group_qualifier attribute_qualifier .
+ *
+ * NOTE rule 279 doesn't seem to be implemented
+ * redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+ */
 qualified_attr(A) ::= TOK_IDENTIFIER(B).
 {
     A = QUAL_ATTR_new();
