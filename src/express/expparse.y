@@ -1533,28 +1533,17 @@ inverse_attr_list(A) ::= inverse_attr_list(B) inverse_attr(C).
 /* 10303-11:2004 production 248
  * inverse_attr = attribute_decl ’:’ [ ( SET | BAG ) [ bound_spec ] OF ] entity_ref FOR [ entity_ref ’.’ ] attribute_ref ’;’ .
  *
- * also
- * 177 attribute_decl = attribute_id | redeclared_attribute .
- * 178 attribute_id = simple_id .
- * 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
- * 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
- *
- * NOTE - production 279 isn't implemented
+ * NOTE - production 279 (RENAMED attr) isn't implemented
  */
-inverse_attr(A) ::= TOK_IDENTIFIER(B) TOK_COLON set_or_bag_of_entity(C)
+inverse_attr(A) ::= attribute_decl(B) TOK_COLON set_or_bag_of_entity(C)
             TOK_FOR TOK_IDENTIFIER(D) semicolon.
 {
-    Expression e = EXPcreate(Type_Attribute);
-
-    e->symbol = *B.symbol;
-    SYMBOL_destroy(B.symbol);
-
     if (C.type) {
-        A = VARcreate(e, C.type);
+        A = VARcreate(B, C.type);
     } else {
         Type t = TYPEcreate_from_body_anonymously(C.body);
         SCOPEadd_super(t);
-        A = VARcreate(e, t);
+        A = VARcreate(B, t);
     }
 
     A->flags.attribute = true;
