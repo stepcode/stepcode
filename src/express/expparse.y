@@ -883,6 +883,16 @@ escape_statement(A) ::= TOK_ESCAPE semicolon.
     A = STATEMENT_ESCAPE;
 }
 
+/* 10303-11:2004 production 177
+ * attribute_decl = attribute_id | redeclared_attribute .
+ *
+ * also
+ * 178 attribute_id = simple_id .
+ * 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+ * 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
+ *
+ * NOTE - production 279 isn't implemented
+ */
 attribute_decl(A) ::= TOK_IDENTIFIER(B).
 {
     A = EXPcreate(Type_Attribute);
