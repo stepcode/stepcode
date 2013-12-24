@@ -269,7 +269,7 @@ void parserInitState()
 %type var            { struct type_flags }
 %type unique            { struct type_flags }
 
-%type qualified_attr        { Qualified_Attr* }
+%type qualified_attr        { Expression }
 
 %type qualifier            { struct qualifier }
 
@@ -2369,17 +2369,9 @@ unique(A) ::= TOK_UNIQUE.
  * NOTE rule 279 doesn't seem to be implemented
  * redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
  */
-qualified_attr(A) ::= TOK_IDENTIFIER(B).
+qualified_attr(A) ::= attribute_decl(B).
 {
-    A = QUAL_ATTR_new();
-    A->attribute = B.symbol;
-}
-qualified_attr(A) ::= TOK_SELF TOK_BACKSLASH TOK_IDENTIFIER(B) TOK_DOT
-              TOK_IDENTIFIER(C).
-{
-    A = QUAL_ATTR_new();
-    A->entity = B.symbol;
-    A->attribute = C.symbol;
+    A = B;
 }
 
 qualified_attr_list(A) ::= qualified_attr(B).
