@@ -344,10 +344,8 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
 
             /* entities are treated like implicit constructor functions */
             if( DICT_type == OBJ_ENTITY ) {
-                Type self_old = self; /* save previous in the */
-                /* unlikely but possible case that SELF */
-                /* is in a derived initialization of an */
-                /* entity */
+                Type self_old = self; /* save previous in the unlikely but possible case that
+                                       * SELF is in a derived initialization of an entity */
                 e = ( Entity )x;
                 self = e->u.entity->type;
                 /* skip parameter resolution for now */
