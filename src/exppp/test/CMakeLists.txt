@@ -24,4 +24,11 @@ add_test( NAME test_exppp_unique_qualifiers
                                    -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.exp
                                    -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
         )
-set_tests_properties( test_exppp_unique_qualifiers PROPERTIES DEPENDS exppp )
+
+add_test( NAME test_exppp_inverse_qualifiers
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/../../express/test/inverse_qualifiers.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/inverse_qualifiers.cmake
+        )
+set_tests_properties( test_exppp_unique_qualifiers test_exppp_inverse_qualifiers PROPERTIES DEPENDS exppp )
