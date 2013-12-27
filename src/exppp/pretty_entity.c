@@ -102,22 +102,20 @@ void ENTITYunique_out( Linked_List u, int level ) {
 
     LISTdo( u, list, Linked_List ) {
         i = 0;
-        LISTdo_n( list, v, Variable, b ) {
+        LISTdo_n( list, e, Expression, b ) {
             i++;
             if( i == 1 ) {
                 /* print label if present */
-                if( v ) {
-                    raw( "%*s%-*s : ", level, "",
-                         max_indent, ( ( Symbol * )v )->name );
+                if( e ) {
+                    raw( "%*s%-*s : ", level, "", max_indent, ( ( Symbol * )e )->name );
                 } else {
-                    raw( "%*s%-*s   ", level, "",
-                         max_indent, "" );
+                    raw( "%*s%-*s   ", level, "", max_indent, "" );
                 }
             } else {
                 if( i > 2 ) {
                     raw( ", " );
                 }
-                EXPR_out( v->name, 0 );
+                EXPR_out( e, 0 );
             }
         } LISTod
         raw( ";\n" );
