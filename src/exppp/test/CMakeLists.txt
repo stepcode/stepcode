@@ -17,3 +17,11 @@ add_test( test_breakLongStr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tst_breakLongStr )
 set_tests_properties( test_breakLongStr PROPERTIES DEPENDS build_tst_breakLongStr )
 
 #could run test schemas through exppp, then check line length...
+
+add_test( NAME test_exppp_unique_qualifiers
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/lost_qualifiers.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/lost_qualifiers.cmake
+        )
+set_tests_properties( test_exppp_unique_qualifiers PROPERTIES DEPENDS exppp )
