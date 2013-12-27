@@ -14,7 +14,7 @@ SCHEMA pp_lost_qualifiers;
   ENTITY connection_zone_interface_plane_relationship
     SUBTYPE OF ( shape_aspect, shape_aspect_relationship );
     UNIQUE
-      ur1: SELF\shape_aspect_relationship.name;
+      ur1 : SELF\shape_aspect_relationship.name;
   END_ENTITY;
 
   ENTITY shape_aspect;
