@@ -148,8 +148,9 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
     LISTdo( attrs, v, Variable ) {
         if( v->inverse_symbol ) {
             /* print attribute name */
-            raw( "%*s%-*s :", level, "",
-                    max_indent, v->name->symbol.name );
+            raw( "%*s", level, "" );
+            EXPR_out( v->name, 0 );
+            raw( "%-*s :", ( ( ( max_indent - curpos ) > 0 ) ? max_indent - curpos  : 0 ), "" );
 
             /* print attribute type */
             if( VARget_optional( v ) ) {
