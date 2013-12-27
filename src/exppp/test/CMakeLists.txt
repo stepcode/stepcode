@@ -21,14 +21,14 @@ set_tests_properties( test_breakLongStr PROPERTIES DEPENDS build_tst_breakLongSt
 add_test( NAME test_exppp_unique_qualifiers
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
-                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.exp
+                                   -DINFILE=${SC_SOURCE_DIR}/test/unitary_schemas/unique_qualifiers.exp
                                    -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
         )
 
 add_test( NAME test_exppp_inverse_qualifiers
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
-                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/../../express/test/inverse_qualifiers.exp
+                                   -DINFILE=${SC_SOURCE_DIR}/test/unitary_schemas/inverse_qualifiers.exp
                                    -P ${CMAKE_CURRENT_SOURCE_DIR}/inverse_qualifiers.cmake
         )
 set_tests_properties( test_exppp_unique_qualifiers test_exppp_inverse_qualifiers PROPERTIES DEPENDS exppp )
