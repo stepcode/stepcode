@@ -21,7 +21,7 @@ set_tests_properties( test_breakLongStr PROPERTIES DEPENDS build_tst_breakLongSt
 add_test( NAME test_exppp_unique_qualifiers
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
-                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/lost_qualifiers.exp
-                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/lost_qualifiers.cmake
+                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
         )
 set_tests_properties( test_exppp_unique_qualifiers PROPERTIES DEPENDS exppp )

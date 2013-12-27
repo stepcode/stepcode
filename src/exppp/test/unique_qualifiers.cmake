@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.8 )
 
 # executable is ${EXPPP}, input file is ${INFILE}
 
-set( ofile "lost_qual_out.exp" )
+set( ofile "unique_qual_out.exp" )
 execute_process( COMMAND ${EXPPP} -o ${ofile} ${INFILE}
                 RESULT_VARIABLE CMD_RESULT )
 if( NOT ${CMD_RESULT} EQUAL 0 )
