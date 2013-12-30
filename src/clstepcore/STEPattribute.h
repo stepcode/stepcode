@@ -262,13 +262,11 @@ class SC_CORE_EXPORT STEPattribute {
         STEPattribute( const class AttrDescriptor & d, SCLundefined * p );
 
         /// return true if attr types and values match
-        friend bool operator == ( const STEPattribute & a1, const STEPattribute & a2 );
-        friend bool operator != ( const STEPattribute & a1, const STEPattribute & a2 ) {
-            return !( a1 == a2 );
-        }
+        SC_CORE_EXPORT friend bool operator == ( const STEPattribute & a1, const STEPattribute & a2 );
+        SC_CORE_EXPORT friend bool operator != ( const STEPattribute & a1, const STEPattribute & a2 );
 
         /// return true if aDesc's match (behavior of old operator==)
-        friend bool sameADesc ( const STEPattribute & a1, const STEPattribute & a2 );
+        SC_CORE_EXPORT friend bool sameADesc ( const STEPattribute & a1, const STEPattribute & a2 );
 };
 
 #endif

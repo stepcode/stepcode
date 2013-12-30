@@ -90,8 +90,6 @@ class SC_CORE_EXPORT SDAI_Select {
                                            int addFileId = 0,
                                            const char * currSch = 0 ) = 0;
 
-        virtual SDAI_Select & operator =( const SDAI_Select & ) = 0;
-
         int set_null();
         int is_null();
 

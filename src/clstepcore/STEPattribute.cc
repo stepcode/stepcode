@@ -1052,6 +1052,14 @@ bool operator == ( const STEPattribute & a1, const STEPattribute & a2 ) {
     return false;
 }
 
+/** evaluate the equality of two attributes
+ * ignores _error and refCount, since those are ancillary
+ *  \return true if not equal
+ */
+bool operator != ( const STEPattribute & a1, const STEPattribute & a2 ) {
+  return !( a1 == a2 );
+}
+
 /// return true if the attr descriptor is identical
 bool sameADesc( const STEPattribute & a1, const STEPattribute & a2 ) {
     return a1.aDesc == a2.aDesc;

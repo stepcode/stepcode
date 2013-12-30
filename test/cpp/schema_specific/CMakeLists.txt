@@ -16,6 +16,9 @@ FUNCTION( add_schema_dependent_test name sdai_lib exe_args )
 
     add_executable( tst_${name} "${name}.cc" )
     set_target_properties( tst_${name} PROPERTIES COMPILE_FLAGS "-I${sdai_src_path} ${ARGV3}" EXCLUDE_FROM_ALL ON )
+    if(NOT "${ARGV4}" MATCHES "NONE")
+        DEFINE_DLL_IMPORTS( "tst_${name}" "${ARGV4}" )
+    endif(NOT "${ARGV4}" MATCHES "NONE")
     target_link_libraries( tst_${name} sdai_${sdai_lib} ${ARGV4} )
     add_test( NAME build_cpp_${name}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
@@ -39,7 +42,8 @@ SET(SC_ENABLE_TESTING OFF)
 SET(SC_ENABLE_TESTING ON)
 
 add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"
-                           "${SC_SOURCE_DIR}/test/p21/test_array_bounds.p21" )
+                           "${SC_SOURCE_DIR}/test/p21/test_array_bounds.p21"
+                           "" "stepcore")
 
 #can't use the macro for this one because it depends on the test above and needs WILL_FAIL
 add_test( NAME test_aggregate_bound_runtime_FAIL1
