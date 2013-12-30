@@ -2341,7 +2341,8 @@ void ENTITYPrint_cc( Entity entity, Linked_List neededAttr, Schema schema ) {
     }
     LIBmemberFunctionPrint( entity, neededAttr, file );
     
-    fprintf( file, "void init_%s() {\n", name );
+    fprintf( file, "void init_%s( Registry& reg ) {\n", name );
+    fprintf( file, "    std::string str;\n\n" );
     ENTITYincode_print( entity, file, schema );
     fprintf( file, "}\n\n" );
 
@@ -2396,6 +2397,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     /*fprintf( files->inc,   "\n/////////         ENTITY %s\n", n );
     ENTITYinc_print( entity, remaining, files -> inc );
     fprintf( files->inc,     "/////////         END_ENTITY %s\n", n );*/
+    fprintf( files->inc, "#include \"entity/%s.h\"\n", ENTITYget_classname( entity ) );
 
     /*fprintf( files->names, "\n/////////         ENTITY %s\n", n );
     ENTITYnames_print( entity, files -> names );
