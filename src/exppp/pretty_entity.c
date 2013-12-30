@@ -102,22 +102,20 @@ void ENTITYunique_out( Linked_List u, int level ) {
 
     LISTdo( u, list, Linked_List ) {
         i = 0;
-        LISTdo_n( list, v, Variable, b ) {
+        LISTdo_n( list, e, Expression, b ) {
             i++;
             if( i == 1 ) {
                 /* print label if present */
-                if( v ) {
-                    raw( "%*s%-*s : ", level, "",
-                         max_indent, ( ( Symbol * )v )->name );
+                if( e ) {
+                    raw( "%*s%-*s : ", level, "", max_indent, ( ( Symbol * )e )->name );
                 } else {
-                    raw( "%*s%-*s   ", level, "",
-                         max_indent, "" );
+                    raw( "%*s%-*s   ", level, "", max_indent, "" );
                 }
             } else {
                 if( i > 2 ) {
                     raw( ", " );
                 }
-                EXPR_out( v->name, 0 );
+                EXPR_out( e, 0 );
             }
         } LISTod
         raw( ";\n" );
@@ -150,8 +148,9 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
     LISTdo( attrs, v, Variable ) {
         if( v->inverse_symbol ) {
             /* print attribute name */
-            raw( "%*s%-*s :", level, "",
-                    max_indent, v->name->symbol.name );
+            raw( "%*s", level, "" );
+            EXPR_out( v->name, 0 );
+            raw( "%-*s :", ( ( ( max_indent - curpos ) > 0 ) ? max_indent - curpos  : 0 ), "" );
 
             /* print attribute type */
             if( VARget_optional( v ) ) {

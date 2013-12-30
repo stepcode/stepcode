@@ -39,6 +39,6 @@ set_target_properties(libexppp PROPERTIES PREFIX "")
 
 SC_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp;express;base")
 
-if( ENABLE_TESTING )
+if( SC_ENABLE_TESTING )
   add_subdirectory(test)
-endif( ENABLE_TESTING )
+endif( SC_ENABLE_TESTING )

@@ -55,6 +55,7 @@
  *
  */
 
+#include <assert.h>
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include "express/resolve.h"
@@ -343,10 +344,8 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
 
             /* entities are treated like implicit constructor functions */
             if( DICT_type == OBJ_ENTITY ) {
-                Type self_old = self; /* save previous in the */
-                /* unlikely but possible case that SELF */
-                /* is in a derived initialization of an */
-                /* entity */
+                Type self_old = self; /* save previous in the unlikely but possible case that
+                                       * SELF is in a derived initialization of an entity */
                 e = ( Entity )x;
                 self = e->u.entity->type;
                 /* skip parameter resolution for now */
@@ -1307,10 +1306,56 @@ static void ENTITYresolve_subtypes( Entity e ) {
     }
 }
 
-void ENTITYresolve_types( Entity e ) {
-    int i;
-    Qualified_Attr * aref;
+/** resolve the 'unique' list
+ * these are lists of lists
+ * the sublists are: label, ref'd_attr, ref'd attr, ref'd attr, etc.
+ * where ref'd_attrs are either simple ids or SELF\entity.attr
+ * where "entity" represents a supertype (only, I believe)
+*/
+void ENTITYresolve_uniques( Entity e ) {
     Variable attr;
+    int failed = 0;
+    LISTdo( e->u.entity->unique, unique, Linked_List ) {
+        int i = 0;
+        LISTdo_links( unique, reflink ) {
+            Type old_self = self;
+            Expression expr;
+            /* skip first which is always the label (or NULL if no label) */
+            i++;
+            if( i == 1 ) {
+                continue;
+            }
+            expr = ( Expression ) reflink->data;
+            assert( expr );
+
+            self = e->u.entity->type;
+            EXPresolve( expr, e, Type_Dont_Care );
+            self = old_self;
+
+            /* SELF\entity.attr, or just an attr name? */
+            if( ( expr->e.op_code == OP_DOT ) &&
+                    ( expr->e.op1->e.op_code == OP_GROUP ) &&
+                    ( expr->e.op1->e.op1->type == Type_Self ) ) {
+                attr = ENTITYresolve_attr_ref( e, &( expr->e.op1->e.op2->symbol ), &( expr->e.op2->symbol ) );
+            } else {
+                attr = ENTITYresolve_attr_ref( e, 0, &( expr->symbol ) );
+            }
+            if( !attr ) {
+                /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
+                /*                  aref->attribute, aref->attribute->name,*/
+                /*                  e->symbol.name);*/
+                failed = RESOLVE_FAILED;
+                continue;
+            }
+            if( ENTITYdeclares_variable( e, attr ) ) {
+                attr->flags.unique = 1;
+            }
+        } LISTod;
+    } LISTod;
+    e->symbol.resolved |= failed;
+}
+
+void ENTITYresolve_types( Entity e ) {
     int failed = 0;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
@@ -1327,40 +1372,7 @@ void ENTITYresolve_types( Entity e ) {
     /*
      * resolve the 'unique' list
      */
-
-    /* these are lists of lists */
-    /* the sublists are: label, ref'd_attr, ref'd attr, ref'd attr, etc. */
-    /* where ref'd_attrs are either simple ids or SELF\entity.attr */
-    /* where "entity" represents a supertype (only, I believe) */
-
-    LISTdo( e->u.entity->unique, unique, Linked_List ) {
-        i = 0;
-        LISTdo_links( unique, reflink ) {
-            /* skip first which is always the label (or NULL if no label) */
-            i++;
-            if( i == 1 ) {
-                continue;
-            }
-            aref = ( Qualified_Attr * )reflink->data;
-
-            attr = ENTITYresolve_attr_ref( e, aref->entity, aref->attribute );
-            if( !attr ) {
-                /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
-                /*                  aref->attribute, aref->attribute->name,*/
-                /*                  e->symbol.name);*/
-                failed = RESOLVE_FAILED;
-                continue;
-            }
-
-            QUAL_ATTR_destroy( aref );
-            reflink->data = ( Generic )attr;
-
-            if( ENTITYdeclares_variable( e, attr ) ) {
-                attr->flags.unique = 1;
-            }
-
-        } LISTod;
-    } LISTod;
+    ENTITYresolve_uniques( e );
 
     /* don't wipe out any previous failure stat */
     e->symbol.resolved |= failed;

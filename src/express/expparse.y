@@ -269,7 +269,7 @@ void parserInitState()
 %type var            { struct type_flags }
 %type unique            { struct type_flags }
 
-%type qualified_attr        { Qualified_Attr* }
+%type qualified_attr        { Expression }
 
 %type qualifier            { struct qualifier }
 
@@ -883,6 +883,16 @@ escape_statement(A) ::= TOK_ESCAPE semicolon.
     A = STATEMENT_ESCAPE;
 }
 
+/* 10303-11:2004 production 177
+ * attribute_decl = attribute_id | redeclared_attribute .
+ *
+ * also
+ * 178 attribute_id = simple_id .
+ * 279 redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+ * 275 qualified_attribute = SELF group_qualifier attribute_qualifier .
+ *
+ * NOTE - production 279 isn't implemented
+ */
 attribute_decl(A) ::= TOK_IDENTIFIER(B).
 {
     A = EXPcreate(Type_Attribute);
@@ -1388,6 +1398,9 @@ initializer(A) ::= TOK_ASSIGNMENT expression(B).
     A = B;
 }
 
+/* 10303-11:2004 production 259
+ * named_type_or_rename = named_types [ AS ( entity_id | type_id ) ] .
+ */
 rename ::= TOK_IDENTIFIER(A).
 {
     (*interface_func)(CURRENT_SCOPE, interface_schema, A, A);
@@ -1406,6 +1419,9 @@ rename_list(A) ::= rename_list(B) TOK_COMMA rename.
     A = B;
 }
 
+/* 10303-11:2004 production 336
+ * use_clause = USE FROM schema_ref [ ’(’ named_type_or_rename { ’,’ named_type_or_rename } ’)’ ] ’;’ .
+ */
 parened_rename_list ::= TOK_LEFT_PAREN rename_list TOK_RIGHT_PAREN.  
 
 reference_clause ::= TOK_REFERENCE TOK_FROM TOK_IDENTIFIER(A) semicolon.
@@ -1510,6 +1526,9 @@ set_or_bag_of_entity(A) ::= TOK_BAG TOK_OF defined_type(B).
     A.body->base = B;
 }
 
+/* 10303-11:2004 production 249
+ * inverse_clause = INVERSE inverse_attr { inverse_attr } .
+ */
 inverse_attr_list(A) ::= inverse_attr(B).
 {
     A = LISTcreate();
@@ -1521,26 +1540,29 @@ inverse_attr_list(A) ::= inverse_attr_list(B) inverse_attr(C).
     LISTadd_last(A, (Generic)C);
 }
 
-inverse_attr(A) ::= TOK_IDENTIFIER(B) TOK_COLON set_or_bag_of_entity(C)
+/* 10303-11:2004 production 248
+ * inverse_attr = attribute_decl ’:’ [ ( SET | BAG ) [ bound_spec ] OF ] entity_ref FOR [ entity_ref ’.’ ] attribute_ref ’;’ .
+ *
+ * NOTE - production 279 (RENAMED attr) isn't implemented
+ */
+inverse_attr(A) ::= attribute_decl(B) TOK_COLON set_or_bag_of_entity(C)
             TOK_FOR TOK_IDENTIFIER(D) semicolon.
 {
-    Expression e = EXPcreate(Type_Attribute);
-
-    e->symbol = *B.symbol;
-    SYMBOL_destroy(B.symbol);
-
     if (C.type) {
-        A = VARcreate(e, C.type);
+        A = VARcreate(B, C.type);
     } else {
         Type t = TYPEcreate_from_body_anonymously(C.body);
         SCOPEadd_super(t);
-        A = VARcreate(e, t);
+        A = VARcreate(B, t);
     }
 
     A->flags.attribute = true;
     A->inverse_symbol = D.symbol;
 }
 
+/* 10303-11:2004 production 249
+ * inverse_clause = INVERSE inverse_attr { inverse_attr } .
+ */
 inverse_clause(A) ::= /*NULL*/.
 {
     A = LIST_NULL;
@@ -2341,17 +2363,15 @@ unique(A) ::= TOK_UNIQUE.
     A.unique = 1;
 }
 
-qualified_attr(A) ::= TOK_IDENTIFIER(B).
+/* 10303-11:2004 production 275
+ * qualified_attribute = SELF group_qualifier attribute_qualifier .
+ *
+ * NOTE rule 279 doesn't seem to be implemented
+ * redeclared_attribute = qualified_attribute [ RENAMED attribute_id ] .
+ */
+qualified_attr(A) ::= attribute_decl(B).
 {
-    A = QUAL_ATTR_new();
-    A->attribute = B.symbol;
-}
-qualified_attr(A) ::= TOK_SELF TOK_BACKSLASH TOK_IDENTIFIER(B) TOK_DOT
-              TOK_IDENTIFIER(C).
-{
-    A = QUAL_ATTR_new();
-    A->entity = B.symbol;
-    A->attribute = C.symbol;
+    A = B;
 }
 
 qualified_attr_list(A) ::= qualified_attr(B).

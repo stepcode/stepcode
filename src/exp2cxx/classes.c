@@ -2502,27 +2502,21 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
             uniqRule_formatted = whereRule_formatted;
         }
 
-        /*
-        FIXME DASBUG
-         * take care of qualified attribute names like SELF\entity.attrname
-         * add parent entity to the uniqueness rule
-         * change EntityDescriptor::generate_express() to generate the UNIQUE clause
-        */
         LISTdo( uniqs, list, Linked_List ) {
             int i = 0;
             fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
-            LISTdo_n( list, v, Variable, b ) {
+            LISTdo_n( list, e, Expression, b ) {
                 i++;
                 if( i == 1 ) {
                     /* print label if present */
-                    if( v ) {
-                        fprintf( files->create, "%s : ", StrToUpper( ( ( Symbol * )v )->name ) );
+                    if( e ) {
+                        fprintf( files->create, "%s : ", StrToUpper( ( ( Symbol * )e )->name ) );
                     }
                 } else {
                     if( i > 2 ) {
                         fprintf( files->create, ", " );
                     }
-                    uniqRule = EXPRto_string( v->name );
+                    uniqRule = EXPRto_string( e );
                     fprintf( files->create, "%s", uniqRule );
                     sc_free( uniqRule );
                 }

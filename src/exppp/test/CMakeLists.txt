@@ -1,3 +1,4 @@
+cmake_minimum_required( VERSION 2.8 )
 project( test_exppp )
 
 set( breakLongStr_SRCS
@@ -6,6 +7,32 @@ set( breakLongStr_SRCS
      )
 
 # this executable doesn't really check the results, just ensures no segfaults. ought to improve it...
-SC_ADDEXEC( test_breakLongStr "${breakLongStr_SRCS}" "express;base" )
+SC_ADDEXEC( tst_breakLongStr "${breakLongStr_SRCS}" "express;base" "TESTABLE" )
+add_test( NAME build_tst_breakLongStr
+              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+              COMMAND ${CMAKE_COMMAND} --build .
+                                       --target tst_breakLongStr
+                                       --config $<CONFIGURATION> )
+add_test( test_breakLongStr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tst_breakLongStr )
+set_tests_properties( test_breakLongStr PROPERTIES DEPENDS build_tst_breakLongStr )
 
 #could run test schemas through exppp, then check line length...
+
+
+# ---- syntax tests ----
+set( unitary_dir ${SC_SOURCE_DIR}/test/unitary_schemas )
+
+add_test( NAME test_exppp_unique_qualifiers
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+                                   -DINFILE=${unitary_dir}/unique_qualifiers.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
+        )
+
+add_test( NAME test_exppp_inverse_qualifiers
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+                                   -DINFILE=${unitary_dir}/inverse_qualifiers.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/inverse_qualifiers.cmake
+        )
+set_tests_properties( test_exppp_unique_qualifiers test_exppp_inverse_qualifiers PROPERTIES DEPENDS exppp )
