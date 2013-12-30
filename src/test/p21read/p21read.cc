@@ -153,8 +153,8 @@ int main( int argc, char * argv[] ) {
     benchmark stats( "p21 ReadExchangeFile()" );
 
     cout << argv[0] << ": load file ..." << endl;
-    if( argc >= ( optind + 1 ) ) {
-        flnm = argv[optind];
+    if( argc >= ( sc_optind + 1 ) ) {
+        flnm = argv[sc_optind];
     } else {
         flnm = ( char * )"testfile.step";
     }
@@ -177,8 +177,8 @@ int main( int argc, char * argv[] ) {
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
 
     cout << argv[0] << ": write file ..." << endl;
-    if( argc == optind + 2 ) {
-        flnm = argv[optind + 1];
+    if( argc == sc_optind + 2 ) {
+        flnm = argv[sc_optind + 1];
     } else {
         flnm = ( char * )"file.out";
     }
