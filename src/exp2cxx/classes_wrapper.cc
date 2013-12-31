@@ -196,7 +196,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         // Write the SdaixxxInit() fn (in .init.cc file):
         //    Do the types:
         SCOPEdo_types( scope, t, de ) {
-            TYPEprint_init( t, files, schema );
+        //    TYPEprint_init( t, files, schema );
         }
         SCOPEod;
         //    (The entities are done as a part of ENTITYPrint() below.)
@@ -449,7 +449,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
         fprintf( initfile, "#include <sc_memmgr.h>\n" );
         fprintf( files->init, "\n#include \"%sHelpers.h\"\n", schnm );
 
-        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n    std::string str;\n", schnm );
+        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
         fprintf( createall, "    %s::schema = new Schema(\"%s\");\n",

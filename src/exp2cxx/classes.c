@@ -1270,9 +1270,6 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
 
     /*  print creation function for class */
     fprintf( file, "inline %s * create_%s() {\n    return new %s;\n}\n\n", entnm, entnm, entnm );
-
-    /* print init function for class */
-    fprintf( file, "void init_%s(Registry& reg);\n\n", entnm );
 }
 
 /**************************************************************//**
@@ -2285,7 +2282,7 @@ static bool listContainsVar( Linked_List l, Variable v ) {
 }
 
 void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema ) {
-    const char *name = ENTITYget_classname( entity );
+    char *name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -2305,6 +2302,8 @@ void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema )
     DataMemberPrint( entity, neededAttr, file );
     MemberFunctionSign( entity, neededAttr, file );
     
+    fprintf( file, "void init_%s(Registry& reg);\n\n", name );
+
     fprintf( file, "namespace %s {\n", SCHEMAget_name( schema ) );
     ENTITYnames_print( entity, file );
     fprintf( file, "}\n\n" );
@@ -2315,7 +2314,7 @@ void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema )
 }
 
 void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema ) {
-    const char *name = ENTITYget_classname( entity );
+    char *name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -2363,7 +2362,6 @@ void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema 
  ** Status:  complete 1/15/91
  ******************************************************************/
 void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
-
     char * n = ENTITYget_name( entity );
     Linked_List remaining = LISTcreate();
 
@@ -3218,7 +3216,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 }
 
 void TYPEPrint_h( const Type type, Schema schema ) {
-    const char *name = TYPEget_ctype( type );
+    char *name = TYPEget_ctype( type );
     char filename[MAX_LEN];
     FILE *file = NULL;
 
@@ -3238,13 +3236,15 @@ void TYPEPrint_h( const Type type, Schema schema ) {
     else if ( TYPEis_select( type ) )
         TYPEselect_inc_print( type, file );
                 
+    fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type )/*name*/ );
+
     FILEclose(file);
 
     DEBUG( "DONE TYPEPrint_h\n" );
 }
 
 void TYPEPrint_cc( const Type type, Schema schema ) {
-    const char *name = TYPEget_ctype( type );
+    char *name = TYPEget_ctype( type );
     char filename[MAX_LEN];
     FILE *file = NULL;
 
@@ -3268,15 +3268,21 @@ void TYPEPrint_cc( const Type type, Schema schema ) {
     else if ( TYPEis_select( type ) )
         TYPEselect_lib_print( type, file );
 
+    fprintf( file, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
+    TYPEprint_init( type, file, schema );
+    fprintf( file, "}\n\n" );
+
     FILEclose(file);
 
     DEBUG( "DONE TYPEPrint_cc\n" );
 }
 
 void TYPEPrint( const Type type, FILES *files, Schema schema ) {
-    const char *name = TYPEget_ctype( type );
+    char *name = TYPEget_ctype( type );
 
     fprintf( files->inc, "#include \"type/%s.h\"\n", name);
+
+    fprintf( files->init, "    init_%s( reg );\n", name );
 
     TYPEPrint_h( type, schema );
     TYPEPrint_cc( type, schema );
@@ -3401,21 +3407,21 @@ static void printEnumAggrCrBody( FILE * lib, const Type type ) {
     fprintf( lib, "    return new %s_agg( %s );\n}\n", n, tdnm );
 }
 
-void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
+void TYPEprint_init( const Type type, FILE * file, Schema schema ) {
     char tdnm [BUFSIZ];
     char typename_buf[MAX_LEN];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
     if( isAggregateType( type ) ) {
-        AGGRprint_init( files->init, type, tdnm, type->symbol.name );
+        AGGRprint_init( file, type, tdnm, type->symbol.name );
     }
 
     /* fill in the TD's values in the SchemaInit function (it is already
     declared with basic values) */
 
     if( TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        fprintf( files->init, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
+        fprintf( file, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
     } else {
         switch( TYPEget_body( type )->type ) {
             case aggregate_: /* aggregate_ should not happen? DAS */
@@ -3424,9 +3430,9 @@ void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
             case set_:
             case list_: {
                 if( isMultiDimAggregateType( type ) ) {
-                    print_typechain( files->init, TYPEget_body( type )->base,
+                    print_typechain( file, TYPEget_body( type )->base,
                                      typename_buf, schema, type->symbol.name );
-                    fprintf( files->init, "        %s->ReferentType(%s);\n", tdnm,
+                    fprintf( file, "        %s->ReferentType(%s);\n", tdnm,
                              typename_buf );
                 }
                 break;
@@ -3439,17 +3445,17 @@ void TYPEprint_init( const Type type, FILES * files, Schema schema ) {
     /* DAR - moved fn call below from TYPEselect_print to here to put all init
     ** info together. */
     if( TYPEis_select( type ) ) {
-        TYPEselect_init_print( type, files->init );
+        TYPEselect_init_print( type, file );
     }
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */
     /* insert the type into the schema descriptor */
-    fprintf( files->init,
+    fprintf( file,
              "        ((SDAIAGGRH(Set,DefinedTypeH))%s::schema->Types())->Add((DefinedTypeH)%s);\n",
              SCHEMAget_name( schema ), tdnm );
 #endif
     /* insert into type dictionary */
-    fprintf( files->init, "        reg.AddType (*%s);\n", tdnm );
+    fprintf( file, "    reg.AddType (*%s);\n", tdnm );
 }
 
 /** print name, fundamental type, and description initialization function

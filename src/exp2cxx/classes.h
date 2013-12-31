@@ -114,7 +114,7 @@ void            TYPEprint_definition( Type, FILES *, Schema );
 void            TYPEprint_new( const Type, FILE *, Schema );
 void            TYPEprint_typedefs( Type, FILE * );
 void            TYPEprint_descriptions( const Type, FILES *, Schema );
-void            TYPEprint_init( const Type type, FILES * files, Schema schema );
+void            TYPEprint_init( const Type type, FILE * file, Schema schema );
 void            AGGRprint_init( FILE * file, const Type t,
                                 const char * var_name, const char * aggr_name );
 void            TYPEselect_init_print( const Type type, FILE* f );
