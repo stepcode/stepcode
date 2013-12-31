@@ -28,6 +28,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <direct.h>
 #include "classes.h"
 #include <ordered_attrs.h>
 
@@ -2283,8 +2284,8 @@ static bool listContainsVar( Linked_List l, Variable v ) {
     return false;
 }
 
-void ENTITYPrint_h( Entity entity, Linked_List neededAttr, Schema schema ) {
-    char *name = ENTITYget_classname( entity );
+void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema ) {
+    const char *name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -2313,8 +2314,8 @@ void ENTITYPrint_h( Entity entity, Linked_List neededAttr, Schema schema ) {
     DEBUG( "DONE ENTITYPrint_h\n" );
 }
 
-void ENTITYPrint_cc( Entity entity, Linked_List neededAttr, Schema schema ) {
-    char *name = ENTITYget_classname( entity );
+void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema ) {
+    const char *name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -2686,9 +2687,6 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     const char * n;  /*  pointer to class name  */
     int cnt = 0;
 
-    fprintf( inc, "\n//////////  ENUMERATION TYPE %s\n",
-             TYPEget_name( type ) );
-
     /*  print c++ enumerated values for class   */
     fprintf( inc, "enum %s {\n", EnumName( TYPEget_name( type ) ) );
 
@@ -2773,8 +2771,6 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     printEnumAggrCrHdr( inc, type );
 
     /* DAS brandnew above */
-
-    fprintf( inc, "\n//////////  END ENUMERATION %s\n\n", TYPEget_name( type ) );
 }
 
 void TYPEenum_lib_print( const Type type, FILE * f ) {
@@ -2783,7 +2779,6 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     const char * n;   /*  pointer to class name  */
     char c_enum_ele [BUFSIZ];
 
-    fprintf( f, "//////////  ENUMERATION TYPE %s\n", TYPEget_ctype( type ) );
     n = TYPEget_ctype( type );
 
     /*  set up the dictionary info  */
@@ -2830,8 +2825,6 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     fprintf( f, "%s_agg::~%s_agg()\n{\n}\n", n, n );
 
     printEnumAggrCrBody( f, type );
-
-    fprintf( f, "\n//////////  END ENUMERATION %s\n\n", TYPEget_name( type ) );
 }
 
 
@@ -3224,6 +3217,70 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
     return 0;
 }
 
+void TYPEPrint_h( const Type type, Schema schema ) {
+    const char *name = TYPEget_ctype( type );
+    char filename[MAX_LEN];
+    FILE *file = NULL;
+
+    DEBUG( "Entering TYPEPrint_h for %s\n", name );
+
+    mkdir( "type" );
+
+    sprintf( filename, "type/%s.h", name );
+    file = FILEcreate( filename );
+    if ( !file ) {
+        DEBUG( "FAILED TYPEPrint_h\n" );
+        return;
+    }
+
+    if ( TYPEis_enumeration( type ) )
+        TYPEenum_inc_print( type, file );
+    else if ( TYPEis_select( type ) )
+        TYPEselect_inc_print( type, file );
+                
+    FILEclose(file);
+
+    DEBUG( "DONE TYPEPrint_h\n" );
+}
+
+void TYPEPrint_cc( const Type type, Schema schema ) {
+    const char *name = TYPEget_ctype( type );
+    char filename[MAX_LEN];
+    FILE *file = NULL;
+
+    DEBUG( "Entering TYPEPrint_cc for %s\n", name );
+
+    mkdir( "type" );
+
+    sprintf( filename, "type/%s.cc", name );
+    file = FILEcreate( filename );
+    if ( !file ) {
+        DEBUG( "FAILED TYPEPrint_h\n" );
+        return;
+    }
+
+    fprintf( file, "#include \"schema.h\"\n" );
+    fprintf( file, "#include \"sc_memmgr.h\"\n" );
+    fprintf( file, "#include \"type/%s.h\"\n\n", name );
+
+    if ( TYPEis_enumeration( type ) )
+        TYPEenum_lib_print( type, file );
+    else if ( TYPEis_select( type ) )
+        TYPEselect_lib_print( type, file );
+
+    FILEclose(file);
+
+    DEBUG( "DONE TYPEPrint_cc\n" );
+}
+
+void TYPEPrint( const Type type, FILES *files, Schema schema ) {
+    const char *name = TYPEget_ctype( type );
+
+    fprintf( files->inc, "#include \"type/%s.h\"\n", name);
+
+    TYPEPrint_h( type, schema );
+    TYPEPrint_cc( type, schema );
+}
 
 /** **
    print stuff for types that are declared in Express TYPE statements... i.e.
@@ -3283,8 +3340,9 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
         switch( TYPEget_body( type )->type ) {
             case enumeration_:
-                TYPEenum_inc_print( type, files -> inc );
-                TYPEenum_lib_print( type, files -> lib );
+                TYPEPrint( type, files, schema );
+                /*TYPEenum_inc_print( type, files -> inc );
+                TYPEenum_lib_print( type, files -> lib );*/
                 break;
 
             case select_:

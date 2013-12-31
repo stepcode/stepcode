@@ -1950,8 +1950,9 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
 
     } LISTod
 
-    TYPEselect_inc_print( t, files -> inc );
-    TYPEselect_lib_print( t, files -> lib );
+    TYPEPrint(t, files, schema );
+    //TYPEselect_inc_print( t, files -> inc );
+    //TYPEselect_lib_print( t, files -> lib );
     /* TYPEselect_init_print (t, files -> init, schema);
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;
