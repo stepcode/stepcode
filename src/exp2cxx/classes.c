@@ -28,7 +28,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <direct.h>
+#include <sc_mkdir.h>
 #include "classes.h"
 #include <ordered_attrs.h>
 
@@ -2288,7 +2288,7 @@ void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema )
     
     DEBUG( "Entering ENTITYPrint_h for %s\n", name );
 
-    mkdir( "entity" );
+    sc_mkdir( "entity" );
 
     sprintf( filename, "entity/%s.h", name );
     file = FILEcreate( filename );
@@ -2320,7 +2320,7 @@ void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema 
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
-    mkdir( "entity" );
+    sc_mkdir( "entity" );
 
     sprintf( filename, "entity/%s.cc", name );
     file = FILEcreate( filename );
@@ -3222,7 +3222,7 @@ void TYPEPrint_h( const Type type, Schema schema ) {
 
     DEBUG( "Entering TYPEPrint_h for %s\n", name );
 
-    mkdir( "type" );
+    sc_mkdir( "type" );
 
     sprintf( filename, "type/%s.h", name );
     file = FILEcreate( filename );
@@ -3250,7 +3250,7 @@ void TYPEPrint_cc( const Type type, Schema schema ) {
 
     DEBUG( "Entering TYPEPrint_cc for %s\n", name );
 
-    mkdir( "type" );
+    sc_mkdir( "type" );
 
     sprintf( filename, "type/%s.cc", name );
     file = FILEcreate( filename );
