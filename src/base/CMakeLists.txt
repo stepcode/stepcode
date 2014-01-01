@@ -4,6 +4,7 @@ set(SC_BASE_SOURCES
     sc_trace_fprintf.c
     sc_getopt.cc
     sc_benchmark.cc
+    sc_mkdir.c
 )
 
 set(SC_BASE_HDRS
@@ -12,6 +13,7 @@ set(SC_BASE_HDRS
     sc_getopt.h
     sc_trace_fprintf.h
     sc_stdbool.h
+    sc_mkdir.h
 )
 
 if(MINGW OR MSVC OR BORLAND)
