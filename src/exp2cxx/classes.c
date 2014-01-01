@@ -2282,7 +2282,7 @@ static bool listContainsVar( Linked_List l, Variable v ) {
 }
 
 void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema ) {
-    char *name = ENTITYget_classname( entity );
+    const char *name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -2314,7 +2314,7 @@ void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema )
 }
 
 void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema ) {
-    char *name = ENTITYget_classname( entity );
+    const char * name = ENTITYget_classname( entity );
     char filename[MAX_LEN];
     FILE *file = NULL;
     
@@ -3216,7 +3216,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 }
 
 void TYPEPrint_h( const Type type, Schema schema ) {
-    char *name = TYPEget_ctype( type );
+    const char *name = TYPEget_ctype( type );
     char filename[MAX_LEN];
     FILE *file = NULL;
 
@@ -3244,7 +3244,7 @@ void TYPEPrint_h( const Type type, Schema schema ) {
 }
 
 void TYPEPrint_cc( const Type type, Schema schema ) {
-    char *name = TYPEget_ctype( type );
+    const char * name = TYPEget_ctype( type );
     char filename[MAX_LEN];
     FILE *file = NULL;
 
@@ -3278,7 +3278,7 @@ void TYPEPrint_cc( const Type type, Schema schema ) {
 }
 
 void TYPEPrint( const Type type, FILES *files, Schema schema ) {
-    char *name = TYPEget_ctype( type );
+    const char * name = TYPEget_ctype( type );
 
     fprintf( files->inc, "#include \"type/%s.h\"\n", name);
 
