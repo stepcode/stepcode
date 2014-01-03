@@ -51,6 +51,10 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define move(b)              (b = (b + strlen(b)))
 #define TYPEtd_name(t)       TypeDescriptorName (t)
 
+Variable VARis_type_shifter( Variable a );
+int isAggregateType( const Type t );
+int isAggregate( Variable a );
+
 typedef  struct file_holder  {
     FILE * inc;                /**<  include file */
     FILE * lib;                /**<  library file */
@@ -80,11 +84,6 @@ struct EntityTag_ {
     Entity        superclass;    /**< the entity being used as the supertype - with multiple inheritance only chose one */
 };
 
-Entity          ENTITYget_superclass( Entity entity );
-Entity          ENTITYput_superclass( Entity entity );
-int             ENTITYhas_explicit_attributes( Entity e );
-void            ENTITYget_first_attribs( Entity entity, Linked_List result );
-
 /** these fields are used so that SELECT types are processed in order */
 typedef struct SelectTag_ * SelectTag;
 struct SelectTag_ {
@@ -103,35 +102,17 @@ const char   *  SelectName( const char * );
 FILE      *     FILEcreate( const char * );
 void            FILEclose( FILE * );
 const char   *  ClassName( const char * );
-const char   *  ENTITYget_classname( Entity );
 void            FUNCPrint( Function, FILES *, Schema );
 void            RULEPrint( Rule, FILES *, Schema );
-void            ENTITYPrint( Entity, FILES *, Schema );
 const char   *  StrToConstant( const char * );
-void            TYPEselect_print( Type, FILES *, Schema );
-void            ENTITYprint_new( Entity, FILES *, Schema, int );
-void            TYPEprint_definition( Type, FILES *, Schema );
-void            TYPEprint_new( const Type, FILE *, Schema );
-void            TYPEprint_typedefs( Type, FILE * );
-void            TYPEprint_descriptions( const Type, FILES *, Schema );
-void            TYPEprint_init( const Type type, FILE * file, Schema schema );
-void            AGGRprint_init( FILE * file, const Type t,
-                                const char * var_name, const char * aggr_name );
-void            TYPEselect_init_print( const Type type, FILE* f );
 void            MODELPrint( Entity, FILES *, Schema, int );
 void            MODELprint_new( Entity entity, FILES* files );
 void            MODELPrintConstructorBody( Entity, FILES *, Schema/*, int*/ );
 const char   *  PrettyTmpName( const char * oldname );
 const char   *  EnumName( const char * oldname );
-const char   *  TypeDescriptorName( Type );
-char      *     TypeDescription( const Type t );
-const char   *  TypeName( Type t );
-const char   *  AccessType( Type t );
-const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
 void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
-Type            TYPEget_ancestor( Type );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 
 /*Variable*/
@@ -148,6 +129,10 @@ void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
 
 void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file );
+
+#include "classes_attribute.h"
+#include "classes_type.h"
+#include "classes_entity.h"
 
 #endif
 

@@ -8,6 +8,9 @@ set(exp2cxx_SOURCES
     fedex_main.c
     classes_wrapper.cc
     classes.c
+	classes_attribute.c
+	classes_entity.c
+	classes_type.c
     selects.c
     multpass.c
     collect.cc

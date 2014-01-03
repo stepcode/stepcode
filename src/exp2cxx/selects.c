@@ -19,6 +19,7 @@ extern int multiple_inheritance;
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
+#include "classes_type.h"
 
 #include <sc_trace_fprintf.h>
 
