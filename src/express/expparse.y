@@ -19,75 +19,7 @@ YYSTYPE yylval;
      * Revision 1.23  1997/11/14 17:09:04  libes
      * allow multiple group references
      *
-     * Revision 1.22  1997/01/21 19:35:43  dar
-     * made C++ compatible
-     *
-     * Revision 1.21  1995/06/08  22:59:59  clark
-     * bug fixes
-     *
-     * Revision 1.20  1995/04/08  21:06:07  clark
-     * WHERE rule resolution bug fixes, take 2
-     *
-     * Revision 1.19  1995/04/08  20:54:18  clark
-     * WHERE rule resolution bug fixes
-     *
-     * Revision 1.19  1995/04/08  20:49:08  clark
-     * WHERE
-     *
-     * Revision 1.18  1995/04/05  13:55:40  clark
-     * CADDETC preval
-     *
-     * Revision 1.17  1995/03/09  18:43:47  clark
-     * various fixes for caddetc - before interface clause changes
-     *
-     * Revision 1.16  1994/11/29  20:55:58  clark
-     * fix inline comment bug
-     *
-     * Revision 1.15  1994/11/22  18:32:39  clark
-     * Part 11 IS; group reference
-     *
-     * Revision 1.14  1994/11/10  19:20:03  clark
-     * Update to IS
-     *
-     * Revision 1.13  1994/05/11  19:50:00  libes
-     * numerous fixes
-     *
-     * Revision 1.12  1993/10/15  18:47:26  libes
-     * CADDETC certified
-     *
-     * Revision 1.10  1993/03/19  20:53:57  libes
-     * one more, with feeling
-     *
-     * Revision 1.9  1993/03/19  20:39:51  libes
-     * added unique to parameter types
-     *
-     * Revision 1.8  1993/02/16  03:17:22  libes
-     * reorg'd alg bodies to not force artificial begin/ends
-     * added flag to differentiate parameters in scopes
-     * rewrote query to fix scope handling
-     * added support for Where type
-     *
-     * Revision 1.7  1993/01/19  22:44:17  libes
-     * *** empty log message ***
-     *
-     * Revision 1.6  1992/08/27  23:36:35  libes
-     * created fifo for new schemas that are parsed
-     * connected entity list to create of oneof
-     *
-     * Revision 1.5  1992/08/18  17:11:36  libes
-     * rm'd extraneous error messages
-     *
-     * Revision 1.4  1992/06/08  18:05:20  libes
-     * prettied up interface to print_objects_when_running
-     *
-     * Revision 1.3  1992/05/31  23:31:13  libes
-     * implemented ALIAS resolution
-     *
-     * Revision 1.2  1992/05/31  08:30:54  libes
-     * multiple files
-     *
-     * Revision 1.1  1992/05/28  03:52:25  libes
-     * Initial revision
+     * ** 22 older revision log records removed 3 January 2014 **
      */
 
 #include "express/symbol.h"
