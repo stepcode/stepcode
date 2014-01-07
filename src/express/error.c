@@ -67,7 +67,7 @@
 
 
 bool __ERROR_buffer_errors = false;
-char * current_filename = "stdin";
+const char * current_filename = "stdin";
 
 /* flag to remember whether non-warning errors have occurred */
 bool ERRORoccurred = false;

@@ -42,7 +42,7 @@ void SYMBOLinitialize( void ) {
     MEMinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
 }
 
-Symbol * SYMBOLcreate( char * name, int line, char * filename ) {
+Symbol * SYMBOLcreate( char * name, int line, const char * filename ) {
     Symbol * sym = SYMBOL_new();
     sym->name = name;
     sym->line = line;
