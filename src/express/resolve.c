@@ -1313,7 +1313,7 @@ static void ENTITYresolve_subtypes( Entity e ) {
  * where "entity" represents a supertype (only, I believe)
 */
 void ENTITYresolve_uniques( Entity e ) {
-    Variable attr;
+    Variable attr, attr2 = 0;
     int failed = 0;
     LISTdo( e->u.entity->unique, unique, Linked_List ) {
         int i = 0;
@@ -1337,8 +1337,18 @@ void ENTITYresolve_uniques( Entity e ) {
                     ( expr->e.op1->e.op_code == OP_GROUP ) &&
                     ( expr->e.op1->e.op1->type == Type_Self ) ) {
                 attr = ENTITYresolve_attr_ref( e, &( expr->e.op1->e.op2->symbol ), &( expr->e.op2->symbol ) );
+                attr2 = ENTITYresolve_attr_ref( e, 0, &( expr->e.op2->symbol ) );
             } else {
                 attr = ENTITYresolve_attr_ref( e, 0, &( expr->symbol ) );
+            }
+            if( ( attr2 ) && ( attr != attr2 ) && ( ENTITYdeclares_variable( e, attr2 ) ) ) {
+                /* attr exists in type + supertype - it's a redeclaration.
+                 * in this case, eliminate qualifiers */
+                reflink->data = (Generic) expr->e.op2;
+                EXP_destroy( expr->e.op1->e.op1 );
+                EXP_destroy( expr->e.op1->e.op2 );
+                EXP_destroy( expr->e.op1 );
+                EXP_destroy( expr );
             }
             if( !attr ) {
                 /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
