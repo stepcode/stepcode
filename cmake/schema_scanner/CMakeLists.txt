@@ -1,7 +1,8 @@
-PROJECT( SC_SUBPROJECT_SCHEMA_SCANNER )
+PROJECT( SC_SUBPROJECT_SCHEMA_SCANNER C )
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.7 )
 
-if( NOT ( CALLED_FROM STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR AND DEFINED OUTDIR ) )
+if( NOT ( "${CALLED_FROM}" STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR AND DEFINED OUTDIR ) )
+  message(" ${CALLED_FROM}  ${SC_ROOT} ${SC_BUILDDIR} ${OUTDIR} ")
   message( FATAL_ERROR "This is not an independent project; it must be built during the STEPcode configuration stage." )
 endif()
 
@@ -14,6 +15,7 @@ set( CMAKE_BUILD_TYPE Debug )
 
 set( schema_scanner_src
     ${SC_ROOT}/src/exp2cxx/genCxxFilenames.c
+#     ${SC_ROOT}/src/exp2cxx/classes_misc.c
     ${SC_ROOT}/src/express/generated/expparse.c
     ${SC_ROOT}/src/express/generated/expscan.c
     ${SC_ROOT}/src/express/alg.c
@@ -35,12 +37,11 @@ set( schema_scanner_src
     ${SC_ROOT}/src/express/symbol.c
     ${SC_ROOT}/src/express/type.c
     ${SC_ROOT}/src/express/variable.c
-    #${SC_ROOT}/src/express/
     ${CMAKE_CURRENT_SOURCE_DIR}/schemaScanner.c
     )
 
 include_directories(
-    ${SC_ROOT}/include/ #express/
+    ${SC_ROOT}/include/
     ${SC_ROOT}/src/express/
     ${SC_ROOT}/src/express/generated
     ${SC_ROOT}/src/base

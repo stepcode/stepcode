@@ -5,6 +5,8 @@
 #include "express/scope.h"
 #include "genCxxFilenames.h"
 
+int multiple_inheritance = 0;
+
 void printSchemaFilenames( Schema sch ){
     DictionaryEntry de;
     Generic x;
