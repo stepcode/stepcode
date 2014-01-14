@@ -1,6 +1,8 @@
 # To build one or more schemas, configure with
 # 'cmake -DSC_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
+include( ${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake )
+
 MACRO(RELATIVE_PATH_TO_TOPLEVEL current_dir rel_path)
        string(REPLACE "${SC_SOURCE_DIR}" "" subpath "${current_dir}")
        string(REGEX REPLACE "^/" "" subpath "${subpath}")
@@ -21,6 +23,7 @@ ENDMACRO(RELATIVE_PATH_TO_TOPLEVEL current_dir rel_path)
 # in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
+LIST_SCHEMA_FILES( ${SCHEMA_FILE} RES_VAR )
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #is it a path relative to build dir?
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
     elseif( EXISTS "${SC_SOURCE_DIR}/data/${SCHEMA_FILE}" )  # path relative to STEPcode/data?
