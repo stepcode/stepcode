@@ -15,7 +15,7 @@ set( CMAKE_BUILD_TYPE Debug )
 
 set( schema_scanner_src
     ${SC_ROOT}/src/exp2cxx/genCxxFilenames.c
-#     ${SC_ROOT}/src/exp2cxx/classes_misc.c
+    ${SC_ROOT}/src/exp2cxx/class_strings.c
     ${SC_ROOT}/src/express/generated/expparse.c
     ${SC_ROOT}/src/express/generated/expscan.c
     ${SC_ROOT}/src/express/alg.c

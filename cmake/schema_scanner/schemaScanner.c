@@ -11,23 +11,24 @@ void printSchemaFilenames( Schema sch ){
     DictionaryEntry de;
     Generic x;
     filenames_t fn;
-    printf( "%s:", sch->symbol.name );
+    /* don't bother printing schema name.
+    printf( "%s: ", sch->symbol.name ); */
     DICTdo_init( sch->symbol_table, &de );
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( DICT_type ) {
             case OBJ_ENTITY:
-                fn = getTypeFilenames( ( Entity )x );
-                printf( " %s %s", fn.impl, fn.header );
+                fn = getEntityFilenames( ( Entity )x );
+                printf( "%s %s ", fn.impl, fn.header );
                 break;
             case OBJ_TYPE:
-                fn = getEntityFilenames( ( Type )x );
-                printf( " %s %s", fn.impl, fn.header );
+                fn = getTypeFilenames( ( Type )x );
+                printf( "%s %s ", fn.impl, fn.header );
                 break;
             /* case OBJ_FUNCTION:
             case OBJ_PROCEDURE:
             case OBJ_RULE: */
             default:
-                /* ignored everything else */
+                /* ignore everything else */
                 break;
         }
     }
@@ -44,7 +45,7 @@ int main( int argc, char ** argv ) {
     if( ( argc != 2 ) || ( strlen( argv[1] ) < 1 ) ) {
         fprintf( stderr, "\nUsage: %s file.exp\nOutput: one line per schema as follows,", argv[0] );
         fprintf( stderr, " containing file names for entities and types\n" );
-        fprintf( stderr, "schema_name: entity_name.h entity_name.cc type_name.h type_name.cc ...\n" );
+        fprintf( stderr, "schema_name: entity/e_name.h entity/e_name.cc type/t_name.h type/t_name.cc ...\n" );
         exit( EXIT_FAILURE );
     }
     EXPRESSprogram_name = argv[0];
@@ -58,14 +59,13 @@ int main( int argc, char ** argv ) {
         EXPRESSdestroy( model );
         exit( EXIT_FAILURE );
     }
-    /*EXPRESSresolve( model );
+    EXPRESSresolve( model );
     if( ERRORoccurred ) {
-        result = EXPRESS_fail( model );
+        int result = EXPRESS_fail( model );
         EXPRESScleanup();
         EXPRESSdestroy( model );
-        exit( EXIT_FAILURE );
+        exit( result );
     }
-    */
     /* don't resolve... just look for schemas, then through schemas for types/entities
        parser adds schemas to     PARSEnew_schemas (??) */
 

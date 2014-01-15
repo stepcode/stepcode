@@ -29,7 +29,7 @@ execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_
                  OUTPUT_QUIET
                  RESULT_VARIABLE _ss_config_stat
                 )
-execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug --clean-first
+execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug #--clean-first
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
                  TIMEOUT 30 # should take far less than 30s
                  #OUTPUT_QUIET
