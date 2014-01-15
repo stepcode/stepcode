@@ -26,7 +26,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "exppp.h"
 #include "dict.h"
 
-#define MAX_LEN              240
 #define DEBUG                if (0) printf
 
 /* Values for multiple schema support: */
@@ -44,8 +43,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define TYPEprefix(t)        (TYPEis_entity (t) ? ENT_PREFIX : TD_PREFIX)
 
 #define SCHEMA_FILE_PREFIX   "Sdai"
-#define TYPE_PREFIX          "Sdai"
-#define ENTITYCLASS_PREFIX   TYPE_PREFIX
 #define ENUM_PREFIX          ""
 
 #define move(b)              (b = (b + strlen(b)))

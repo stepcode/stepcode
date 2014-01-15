@@ -19,6 +19,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <assert.h>
 #include <sc_mkdir.h>
 #include "classes.h"
+#include "class_strings.h"
 #include <ordered_attrs.h>
 
 #include <sc_trace_fprintf.h>

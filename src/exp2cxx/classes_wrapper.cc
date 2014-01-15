@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "complexSupport.h"
+#include "class_strings.h"
 #include <sc_memmgr.h>
 
 #include <sc_trace_fprintf.h>

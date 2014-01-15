@@ -5,6 +5,7 @@
 
 #include <sc_trace_fprintf.h>
 #include "sc_version_string.h"
+#include "class_strings.h"
 
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
@@ -25,89 +26,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 extern int multiple_inheritance;
 
-/******************************************************************
-**      The following functions will be used        ***
-***     through out the the program exp2cxx      ***/
-
-
-/******************************************************************
- ** Procedure:  string functions
- ** Description:  These functions take a character or a string and return
- ** a temporary copy of the string with the function applied to it.
- ** Parameters:
- ** Returns:  temporary copy of characters
- ** Side Effects:  character or string returned persists until the
- ** next invocation of the function
- ** Status:  complete
- ******************************************************************/
-
-char
-ToLower( char c ) {
-    if( isupper( c ) ) {
-        return ( tolower( c ) );
-    } else {
-        return ( c );
-    }
-
-}
-
-char
-ToUpper( char c ) {
-    if( islower( c ) ) {
-        return ( toupper( c ) );
-    } else {
-        return ( c );
-    }
-}
-
-const char *
-StrToLower( const char * word ) {
-    static char newword [MAX_LEN];
-    int i = 0;
-    if( !word ) {
-        return 0;
-    }
-    while( word [i] != '\0' ) {
-        newword [i] = ToLower( word [i] );
-        ++i;
-    }
-    newword [i] = '\0';
-    return ( newword )    ;
-
-}
-
-const char *
-StrToUpper( const char * word ) {
-    static char newword [MAX_LEN];
-    int i = 0;
-    char ToUpper( char c );
-
-    while( word [i] != '\0' ) {
-        newword [i] = ToUpper( word [i] );
-        ++i;
-
-    }
-    newword [i] = '\0';
-    return ( newword );
-}
-
-const char *
-StrToConstant( const char * word ) {
-    static char newword [MAX_LEN];
-    int i = 0;
-
-    while( word [i] != '\0' ) {
-        if( word [i] == '/' || word [i] == '.' ) {
-            newword [i] = '_';
-        } else {
-            newword [i] = ToUpper( word [i] );
-        }
-        ++i;
-
-    }
-    newword [i] = '\0';
-    return ( newword );
-}
 
 /******************************************************************
  ** Procedure:  FILEcreate
@@ -163,176 +81,16 @@ FILEclose( FILE * file ) {
  ** Status:  complete 1/15/91
  ******************************************************************/
 
-int
-isAggregate( Variable a ) {
+int isAggregate( Variable a ) {
     return( TYPEinherits_from( VARget_type( a ), aggregate_ ) );
 }
 
-int
-isAggregateType( const Type t ) {
+int isAggregateType( const Type t ) {
     return( TYPEinherits_from( t, aggregate_ ) );
 }
 
 
-/******************************************************************
- ** Procedure:  TYPEget_ctype
- ** Parameters:  const Type t --  type for attribute
- ** Returns:  a string which is the type of the data member in the c++ class
- ** Description:  supplies the type of a data member for the c++ class
- ** Side Effects:
- ** Status:  complete 1/15/90
- ** Changes: Modified by CD to return the appropriate types as outlined in
- **          "SDAI C++ Binding for PDES, Inc. Prototyping" by Stephen Clark
- ** Change Date: 5/22/91 CD
- ** Change Date: 28-Sep-1993 made entities use their real type instead of base
- **              class STEPentityH
- ******************************************************************/
 
-const char *
-TYPEget_ctype( const Type t ) {
-    Class_Of_Type class;
-    Type bt;
-    static char retval [BUFSIZ];
-
-
-    /*  aggregates are based on their base type
-    case TYPE_ARRAY:
-    case TYPE_BAG:
-    case TYPE_LIST:
-    case TYPE_SET:
-    */
-    if( isAggregateType( t ) ) {
-        bt = TYPEget_body( t )->base;
-
-        if( isAggregateType( bt ) ) {
-            return( "GenericAggregate" );
-        }
-
-        class = TYPEget_type( bt );
-
-        /*      case TYPE_INTEGER:  */
-        if( class == integer_ ) {
-            return ( "IntAggregate" );
-        }
-
-        /*      case TYPE_REAL:
-            case TYPE_NUMBER:   */
-        if( ( class == number_ ) || ( class == real_ ) ) {
-            return ( "RealAggregate" );
-        }
-
-        /*      case TYPE_ENTITY:   */
-        if( class == entity_ ) {
-            return( "EntityAggregate" );
-        }
-
-        /*      case TYPE_ENUM:     */
-        /*  case TYPE_SELECT:   */
-        if( ( class == enumeration_ )
-                || ( class == select_ ) )  {
-            /*
-                    strcpy (retval, ClassName (TYPEget_name (bt)));
-            */
-            strcpy( retval, TYPEget_ctype( bt ) );
-            strcat( retval, "_agg" );
-            return ( retval );
-        }
-
-        /*  case TYPE_LOGICAL:  */
-        if( class == logical_ ) {
-            return ( "LOGICALS" );
-        }
-
-        /*  case TYPE_BOOLEAN:  */
-        if( class == boolean_ ) {
-            return ( "BOOLEANS" );
-        }
-
-        /*  case TYPE_STRING:   */
-        if( class == string_ ) {
-            return( "StringAggregate" );
-        }
-
-        /*  case TYPE_BINARY:   */
-        if( class == binary_ ) {
-            return( "BinaryAggregate" );
-        }
-    }
-
-    /*  the rest is for things that are not aggregates  */
-
-    class = TYPEget_type( t );
-
-    /*    case TYPE_LOGICAL:    */
-    if( class == logical_ ) {
-        return ( "SDAI_LOGICAL" );
-    }
-
-    /*    case TYPE_BOOLEAN:    */
-    if( class == boolean_ ) {
-        return ( "SDAI_BOOLEAN" );
-    }
-
-    /*      case TYPE_INTEGER:  */
-    if( class == integer_ ) {
-        return ( "SDAI_Integer" );
-    }
-
-    /*      case TYPE_REAL:
-        case TYPE_NUMBER:   */
-    if( ( class == number_ ) || ( class == real_ ) ) {
-        return ( "SDAI_Real" );
-    }
-
-    /*      case TYPE_STRING:   */
-    if( class == string_ ) {
-        return ( "SDAI_String" );
-    }
-
-    /*      case TYPE_BINARY:   */
-    if( class == binary_ ) {
-        return ( "SDAI_Binary" );
-    }
-
-    /*      case TYPE_ENTITY:   */
-    if( class == entity_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
-        strcat( retval, "_ptr" );
-        return retval;
-        /*  return ("STEPentityH");    */
-    }
-    /*    case TYPE_ENUM:   */
-    /*    case TYPE_SELECT: */
-    if( class == enumeration_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
-        strcat( retval, "_var" );
-        return retval;
-    }
-    if( class == select_ )  {
-        return ( TypeName( t ) );
-    }
-
-    /*  default returns undefined   */
-    return ( "SCLundefined" );
-}
-
-/******************************************************************
- ** Procedure:  TypeName
- ** Parameters:  Type t
- ** Returns:  name of type as defined in SDAI C++ binding  4-Nov-1993
- ** Status:   4-Nov-1993
- ******************************************************************/
-const char *
-TypeName( Type t ) {
-    static char name [BUFSIZ];
-    strcpy( name, TYPE_PREFIX );
-    if( TYPEget_name( t ) ) {
-        strncat( name, FirstToUpper( TYPEget_name( t ) ), BUFSIZ - strlen( TYPE_PREFIX ) - 1 );
-    } else {
-        return TYPEget_ctype( t );
-    }
-    return name;
-}
 
 /******************************************************************
  ** Procedure:  AccessType
@@ -371,54 +129,6 @@ AccessType( Type t ) {
         strncpy( nm, "Boolean", BUFSIZ - 2 );
     }
     return nm;
-}
-
-/******************************************************************
- ** Procedure:  ClassName
- ** Parameters:  const char * oldname
- ** Returns:  temporary copy of name suitable for use as a class name
- ** Side Effects:  erases the name created by a previous call to this function
- ** Status:  complete
- ******************************************************************/
-
-const char *
-ClassName( const char * oldname ) {
-    int i = 0, j = 0;
-    static char newname [BUFSIZ];
-    if( !oldname ) {
-        return ( "" );
-    }
-
-
-    strcpy( newname, ENTITYCLASS_PREFIX )    ;
-    j = strlen( ENTITYCLASS_PREFIX )    ;
-    newname [j] = ToUpper( oldname [i] );
-    ++i;
-    ++j;
-    while( oldname [i] != '\0' ) {
-        newname [j] = ToLower( oldname [i] );
-        /*  if (oldname [i] == '_')  */
-        /*  character is '_'    */
-        /*      newname [++j] = ToUpper (oldname [++i]);*/
-        ++i;
-        ++j;
-    }
-    newname [j] = '\0';
-    return ( newname );
-}
-
-
-/******************************************************************
- ** Procedure:  ENTITYget_classname
- ** Parameters:  Entity ent
- ** Returns:  the name of the c++ class representing the entity
- ** Status:  complete
- ******************************************************************/
-
-const char *
-ENTITYget_classname( Entity ent ) {
-    const char * oldname = ENTITYget_name( ent );
-    return ( ClassName( oldname ) );
 }
 
 /******************************************************************
@@ -485,15 +195,6 @@ SelectName( const char * oldname ) {
     j = strlen( newname );
     newname [j] = '\0';
     return ( newname );
-}
-
-const char *
-FirstToUpper( const char * word ) {
-    static char newword [MAX_LEN];
-
-    strncpy( newword, word, MAX_LEN );
-    newword[0] = ToUpper( newword[0] );
-    return ( newword );
 }
 
 /* return fundamental type but as the string which corresponds to */
@@ -718,7 +419,7 @@ void ENTITYget_first_attribs( Entity entity, Linked_List result ) {
 ** //  type shifting attributes
 ** //  ------------------------
 ** // before printing new STEPattribute
-** // check to see if it\'s already printed in supertype
+** // check to see if it's already printed in supertype
 ** // still add new access function
 **
 ** //  overriding attributes
