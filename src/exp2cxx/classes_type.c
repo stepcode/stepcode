@@ -20,6 +20,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <sc_mkdir.h>
 #include "classes.h"
 #include "class_strings.h"
+#include "genCxxFilenames.h"
 #include <ordered_attrs.h>
 
 #include <sc_trace_fprintf.h>
@@ -291,16 +292,14 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     printEnumAggrCrBody( f, type );
 }
 
-void TYPEPrint_h( const Type type, Schema schema ) {
+void TYPEPrint_h( const Type type, const char * filename, Schema schema ) {
     const char *name = TYPEget_ctype( type );
-    char filename[MAX_LEN];
     FILE *file = NULL;
 
     DEBUG( "Entering TYPEPrint_h for %s\n", name );
 
     sc_mkdir( "type" );
 
-    sprintf( filename, "type/%s.h", name );
     file = FILEcreate( filename );
     if ( !file ) {
         DEBUG( "FAILED TYPEPrint_h\n" );
@@ -319,16 +318,14 @@ void TYPEPrint_h( const Type type, Schema schema ) {
     DEBUG( "DONE TYPEPrint_h\n" );
 }
 
-void TYPEPrint_cc( const Type type, Schema schema ) {
+void TYPEPrint_cc( const Type type, const char * filename, Schema schema ) {
     const char * name = TYPEget_ctype( type );
-    char filename[MAX_LEN];
     FILE *file = NULL;
 
     DEBUG( "Entering TYPEPrint_cc for %s\n", name );
 
     sc_mkdir( "type" );
 
-    sprintf( filename, "type/%s.cc", name );
     file = FILEcreate( filename );
     if ( !file ) {
         DEBUG( "FAILED TYPEPrint_h\n" );
@@ -355,13 +352,14 @@ void TYPEPrint_cc( const Type type, Schema schema ) {
 
 void TYPEPrint( const Type type, FILES *files, Schema schema ) {
     const char * name = TYPEget_ctype( type );
+    filenames_t names = getTypeFilenames( type );
 
     fprintf( files->inc, "#include \"type/%s.h\"\n", name);
 
     fprintf( files->init, "    init_%s( reg );\n", name );
 
-    TYPEPrint_h( type, schema );
-    TYPEPrint_cc( type, schema );
+    TYPEPrint_h( type, names.header, schema );
+    TYPEPrint_cc( type, names.impl, schema );
 }
 
 /**

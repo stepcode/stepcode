@@ -20,6 +20,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <sc_mkdir.h>
 #include "classes.h"
 #include "class_strings.h"
+#include "genCxxFilenames.h"
 #include <ordered_attrs.h>
 
 #include <sc_trace_fprintf.h>
@@ -1122,19 +1123,16 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
 #undef schema_name
 }
 
-void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema ) {
+void ENTITYPrint_h( const Entity entity, const char * filename, Linked_List neededAttr, Schema schema ) {
     const char *name = ENTITYget_classname( entity );
-    char filename[MAX_LEN];
     FILE *file = NULL;
-    
+
     DEBUG( "Entering ENTITYPrint_h for %s\n", name );
 
     sc_mkdir( "entity" );
 
-    sprintf( filename, "entity/%s.h", name );
     file = FILEcreate( filename );
-    if ( !file )
-    {
+    if ( !file ) {
         DEBUG( "FAILED ENTITYPrint_h\n" );
         return;
     }
@@ -1154,19 +1152,16 @@ void ENTITYPrint_h( const Entity entity, Linked_List neededAttr, Schema schema )
     DEBUG( "DONE ENTITYPrint_h\n" );
 }
 
-void ENTITYPrint_cc( const Entity entity, Linked_List neededAttr, Schema schema ) {
+void ENTITYPrint_cc( const Entity entity, const char * filename, Linked_List neededAttr, Schema schema ) {
     const char * name = ENTITYget_classname( entity );
-    char filename[MAX_LEN];
     FILE *file = NULL;
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
     sc_mkdir( "entity" );
 
-    sprintf( filename, "entity/%s.cc", name );
     file = FILEcreate( filename );
-    if ( !file )
-    {
+    if ( !file ) {
         DEBUG( "FAILED ENTITYPrint_cc\n" );
         return;
     }
@@ -1276,6 +1271,7 @@ void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema
 void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     char * n = ENTITYget_name( entity );
     Linked_List remaining = LISTcreate();
+    filenames_t names = getEntityFilenames( entity );
 
     DEBUG( "Entering ENTITYPrint for %s\n", n );
 
@@ -1301,9 +1297,8 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
         LIST_destroy( existing );
         LIST_destroy( required );
     }
-
-    ENTITYPrint_h( entity, remaining, schema );
-    ENTITYPrint_cc( entity, remaining, schema );
+    ENTITYPrint_h( entity, names.header, remaining, schema );
+    ENTITYPrint_cc( entity, names.impl, remaining, schema );
 
     /*fprintf( files->inc,   "\n/////////         ENTITY %s\n", n );
     ENTITYinc_print( entity, remaining, files -> inc );

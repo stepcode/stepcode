@@ -26,6 +26,7 @@ set(exp2cxx_SOURCES
     trynext.cc
     write.cc
     print.cc
+    genCxxFilenames.c
 )
 
 include_directories(
