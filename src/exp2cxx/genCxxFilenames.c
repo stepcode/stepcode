@@ -1,4 +1,5 @@
 #include "genCxxFilenames.h"
+#include "class_strings.h"
 
 /** \file genCxxFilenames.c
  * functions shared by exp2cxx and the schema
@@ -7,24 +8,23 @@
  */
 
 /* these buffers are shared amongst (and potentially overwritten by) all functions in this file */
-char header[ BUFSIZ ] = {0};
 char impl[ BUFSIZ ] = {0};
+char header[ BUFSIZ ] = {0};
 
 /* struct containing pointers to above buffers. pointers are 'const char *' */
-filenames_t fnames;
+filenames_t fnames = { impl, header };
 
 
 filenames_t getEntityFilenames( Entity e ) {
-    snprintf( header, BUFSIZ-1, "%s.h", e->symbol.name );
-    snprintf( impl, BUFSIZ-1, "%s.cc", e->symbol.name );
-    fnames.header = header;
-    fnames.impl = impl;
+    const char * name = ENTITYget_classname( e );
+    snprintf( header, BUFSIZ-1, "entity/%s.h", name );
+    snprintf( impl, BUFSIZ-1, "entity/%s.cc", name );
     return fnames;
 }
+
 filenames_t getTypeFilenames( Type t ) {
-    snprintf( header, BUFSIZ-1, "%s.h", t->symbol.name );
-    snprintf( impl, BUFSIZ-1, "%s.cc", t->symbol.name );
-    fnames.header = header;
-    fnames.impl = impl;
+    const char * name = TYPEget_ctype( t );
+    snprintf( header, BUFSIZ-1, "type/%s.h", name );
+    snprintf( impl, BUFSIZ-1, "type/%s.cc", name );
     return fnames;
 }
