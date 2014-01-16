@@ -122,6 +122,7 @@ This module implements the type abstraction.  It is
  *
  */
 
+#include <assert.h>
 #include <sc_memmgr.h>
 #include "express/type.h"
 
@@ -262,7 +263,7 @@ TypeBody TYPEBODYcreate( enum type_enum type ) {
 
 bool TYPEinherits_from( Type t, enum type_enum e ) {
     TypeBody tb = t->u.type->body;
-
+    assert( ( t->type == OBJ_TYPE ) && ( tb ) && "Not a Type!" );
     switch( e ) {
         case aggregate_:
             if( tb->type == aggregate_ ||
