@@ -32,7 +32,7 @@ execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_
 execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug #--clean-first
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
                  TIMEOUT 30 # should take far less than 30s
-                 #OUTPUT_QUIET
+                 OUTPUT_QUIET
                  RESULT_VARIABLE _ss_build_stat
                )
 # replace with if...message FATAL_ERROR ...
@@ -40,16 +40,42 @@ message( "scanner config status: ${_ss_config_stat}." )
 message( "scanner build status: ${_ss_build_stat}." )
 
 # macro LIST_SCHEMA_FILES
-# SCHEMA - path to the schema
-# RES_VAR - result variable, which will contain a list of
-MACRO( LIST_SCHEMA_FILES SCHEMA RES_VAR )
-  execute_process( COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA}
+# lists the files created for individual entities or types in the schema,
+# but not the schema-level files (i.e. SdaiSCHEMA_NAME.cc)
+#
+# SCHEMA_FILE - path to the schema
+# OUT_PATH_PREFIX - prefixed to the name of each file; easier while building lists than later
+# SCHEMA_NAME_RES - result variable, set to the schema name. if multiple schemas in a file, a semicolon-separated list
+# HEADERS_RES - result variable, which will contain a list of generated headers
+# IMPLS_RES - result variable, which will contain a list of generated implementation files
+MACRO( LIST_SCHEMA_FILES SCHEMA_FILE OUT_PATH_PREFIX SCHEMA_NAME_RES HEADERS_RES IMPLS_RES)
+  execute_process( COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE}
                    RESULT_VARIABLE _ss_stat
                    OUTPUT_VARIABLE _ss_out
                    ERROR_QUIET
                  )
   #check stat, out
-  message("scan stat ${_ss_stat} - output ${_ss_out}")
-  set( ${RES_VAR} ${_ss_out} )
-  configure_file( ${SCHEMA} ${SCANNER_OUT_DIR}/dummy ) #FIXME - does this need unique file names?
-ENDMACRO( LIST_SCHEMA_FILES SCHEMA RES_VAR )
+  message("scan stat ${_ss_stat}") # - output ${_ss_out}")
+  # scanner output format
+  #  :schema_name:;entity/e_name.h;entity/e_name.cc;type/t_name.h;type/t_name.cc;...;\n
+  string( STRIP "${_ss_out}" _scan )
+  foreach( _item ${_scan} )
+    if( ${_item} MATCHES "^:.*:$" )
+      #schema name(s) will be wrapped in colons
+      string(REGEX REPLACE "^:(.*):$" "\\1" _schema ${_item})
+      list( APPEND ${SCHEMA_NAME_RES} ${_schema} )
+    elseif( ${_item} MATCHES ".*\\.h$" )
+      # header
+      list( APPEND ${HEADERS_RES} ${OUT_PATH_PREFIX}/${_item} )
+    elseif( ${_item} MATCHES ".*\\.cc$" )
+      # implementation
+      list( APPEND ${IMPLS_RES} ${OUT_PATH_PREFIX}/${_item} )
+    else()
+      # unknown?!
+      if( NOT _item STREQUAL "" )
+        message( FATAL_ERROR "unrecognized item in schema scanner output: '${_item}'. aborting." )
+      endif( NOT _item STREQUAL "" )
+    endif( ${_item} MATCHES "^:.*:$" )
+  endforeach( _item ${_ss_out} )
+  configure_file( ${SCHEMA_FILE} ${SCANNER_OUT_DIR}/${_schema} ) #if multiple schemas in one file, _schema is the last one printed.
+ENDMACRO( LIST_SCHEMA_FILES SCHEMA_FILE SCHEMA_NAME_RES HEADERS_RES IMPLS_RES)
