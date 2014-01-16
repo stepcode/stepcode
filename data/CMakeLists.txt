@@ -23,7 +23,6 @@ ENDMACRO(RELATIVE_PATH_TO_TOPLEVEL current_dir rel_path)
 # in the build dir, and it is compiled into a library. A p21read executable is
 # compiled and linked to the lib. p21read is used to test the lib.
 FUNCTION(BUILD_A_SCHEMA SCHEMA_FILE)
-LIST_SCHEMA_FILES( ${SCHEMA_FILE} RES_VAR )
     if( EXISTS "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )  #is it a path relative to build dir?
         set( SCHEMA_FILE "${CMAKE_BINARY_DIR}/${SCHEMA_FILE}" )
     elseif( EXISTS "${SC_SOURCE_DIR}/data/${SCHEMA_FILE}" )  # path relative to STEPcode/data?
@@ -39,11 +38,9 @@ LIST_SCHEMA_FILES( ${SCHEMA_FILE} RES_VAR )
     if( NOT EXISTS ${SCHEMA_FILE} )
         message(FATAL_ERROR "Expected one express file. Found '${SCHEMA_FILE}' instead.")
     endif()
+    # file is now located
 
-    # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
-    file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "^SCHEMA .*")
-    string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
-    string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #exp2cxx always uses upper case for file names
+    # subproject name, output code location
     get_filename_component( SCHEMA_SN ${SCHEMA_FILE} NAME )
     string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_SHORT_NAME ${SCHEMA_SN} )
 
@@ -51,12 +48,18 @@ LIST_SCHEMA_FILES( ${SCHEMA_FILE} RES_VAR )
     message( STATUS "Generating code for ${SCHEMA_SHORT_NAME}.")
     set( SCHEMA_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/${SCHEMA_SHORT_NAME} )
 
+    LIST_SCHEMA_FILES( ${SCHEMA_FILE} ${SCHEMA_OUTPUT_DIR} SCHEMA_N _headers _impls )
+#     message("schema ${SCHEMA_FILE}: ${SCHEMA_N}, ${_headers}, ${_impls}" )
+
+    # read the schema name from a line like 'SCHEMA AUTOMOTIVE_DESIGN;'
+#     file(STRINGS ${SCHEMA_FILE} SCHEMA_STATEMENT LIMIT_COUNT 1 REGEX "^SCHEMA .*")
+#     string(REGEX REPLACE "^SCHEMA \(.*\)\;$" "\\1" SCHEMA_N ${SCHEMA_STATEMENT} )
+# TODO handle multiple schemas in SCHEMA_N
+    string(TOUPPER ${SCHEMA_N} SCHEMA_LONG_NAME) #exp2cxx always uses upper case for file names
+
     #the names of the files that will be generated
-    set( FEDEX_HEADERS ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h ${SCHEMA_OUTPUT_DIR}/schema.h
-                       ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h )
-    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc ${SCHEMA_OUTPUT_DIR}/schema.cc
-                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc ${SCHEMA_OUTPUT_DIR}/SdaiAll.cc
-                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc ${FEDEX_HEADERS} )
+    set( FEDEX_HEADERS ${SCHEMA_OUTPUT_DIR}/Sdaiclasses.h;${SCHEMA_OUTPUT_DIR}/schema.h;${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.h;${_headers} )
+    set( FEDEX_OUT ${SCHEMA_OUTPUT_DIR}/compstructs.cc;${SCHEMA_OUTPUT_DIR}/schema.cc;                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.cc;${SCHEMA_OUTPUT_DIR}/SdaiAll.cc;                   ${SCHEMA_OUTPUT_DIR}/Sdai${SCHEMA_LONG_NAME}.init.cc;${_impls};${FEDEX_HEADERS} )
 
     install( FILES ${FEDEX_HEADERS} DESTINATION include/${SCHEMA_SHORT_NAME} )
 
