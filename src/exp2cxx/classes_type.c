@@ -292,7 +292,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     printEnumAggrCrBody( f, type );
 }
 
-void TYPEPrint_h( const Type type, const char * filename, Schema schema ) {
+void TYPEPrint_h( const Type type, const char * filename ) {
     const char *name = TYPEget_ctype( type );
     FILE *file = NULL;
 
@@ -358,7 +358,7 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
 
     fprintf( files->init, "    init_%s( reg );\n", name );
 
-    TYPEPrint_h( type, names.header, schema );
+    TYPEPrint_h( type, names.header );
     TYPEPrint_cc( type, names.impl, schema );
 }
 
@@ -1454,7 +1454,7 @@ void AGGRprint_init( FILE *file, const Type t, const char * var_name, const char
                         ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
                 fprintf( file, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                // TODO: write inline helper function to header file?
+                /* TODO: write inline helper function to header file? */
                 /*fprintf( files->helpers, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
                          ClassName( t->superscope->symbol.name ), aggr_name );
                 fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n}\n",
@@ -1474,7 +1474,7 @@ void AGGRprint_init( FILE *file, const Type t, const char * var_name, const char
                         ( TYPEget_body( t )->upper->e.op2->symbol.name ) );
                 fprintf( file, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                // TODO: write inline helper function to header file?
+                /* TODO: write inline helper function to header file? */
                 /*fprintf( files->helpers, "inline SDAI_Integer getBound2_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
                          ClassName( t->superscope->symbol.name ), aggr_name );
                 fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n}\n",
