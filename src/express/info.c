@@ -4,7 +4,13 @@
 #include "express/info.h"
 #include "express/express.h"
 
-#include "sc_version_string.h"
+#ifndef SCHEMA_SCANNER
+#  include "sc_version_string.h"
+#else
+  /* dummy string to make the compiler happy when building the schema scanner,
+   * should never be seen by users */
+  const char * sc_version = "ERROR: version unknown / SCHEMA_SCANNER defined in libexpress!";
+#endif
 
 char * EXPRESSversion( void ) {
     return( "Express Language, IS (N65), October 24, 1994" );

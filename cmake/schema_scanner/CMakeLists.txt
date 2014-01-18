@@ -61,4 +61,6 @@ else()
   add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
 endif()
 
+add_definitions( -DSCHEMA_SCANNER )
+
 add_executable( schema_scanner ${schema_scanner_src} )
