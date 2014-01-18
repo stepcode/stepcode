@@ -26,18 +26,24 @@ execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_OUT_DIR} )
 execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
                  TIMEOUT 10
-                 OUTPUT_QUIET
+                 OUTPUT_VARIABLE _ss_config_out
                  RESULT_VARIABLE _ss_config_stat
+                 ERROR_VARIABLE _ss_config_err
                 )
+if( NOT ${_ss_config_stat} STREQUAL "0" )
+  message( FATAL_ERROR "Scanner config status: ${_ss_config_stat}. stdout:\n${_ss_config_out}\nstderr:\n${_ss_config_err}" )
+endif( NOT ${_ss_config_stat} STREQUAL "0" )
 execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug #--clean-first
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
                  TIMEOUT 30 # should take far less than 30s
-                 OUTPUT_QUIET
+                 OUTPUT_VARIABLE _ss_build_out
                  RESULT_VARIABLE _ss_build_stat
+                 ERROR_VARIABLE _ss_build_err
                )
 # replace with if...message FATAL_ERROR ...
-message( "scanner config status: ${_ss_config_stat}." )
-message( "scanner build status: ${_ss_build_stat}." )
+if( NOT ${_ss_build_stat} STREQUAL "0" )
+  message( FATAL_ERROR "Scanner build status: ${_ss_build_stat}. stdout:\n${_ss_build_out}\nstderr:\n${_ss_build_err}" )
+endif( NOT ${_ss_build_stat} STREQUAL "0" )
 
 # macro LIST_SCHEMA_FILES
 # lists the files created for individual entities or types in the schema,
@@ -52,10 +58,12 @@ MACRO( LIST_SCHEMA_FILES SCHEMA_FILE OUT_PATH_PREFIX SCHEMA_NAME_RES HEADERS_RES
   execute_process( COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE}
                    RESULT_VARIABLE _ss_stat
                    OUTPUT_VARIABLE _ss_out
-                   ERROR_QUIET
+                   ERROR_VARIABLE _ss_err
                  )
-  #check stat, out
-  message("scan stat ${_ss_stat}") # - output ${_ss_out}")
+  if( NOT ${_ss_stat} STREQUAL "0" )
+    #check size of output, put in file if large?
+    message( FATAL_ERROR "Schema scan exited with error code ${_ss_build_stat}. stdout:\n${_ss_out}\nstderr:\n${_ss_err}" )
+  endif( NOT ${_ss_stat} STREQUAL "0" )
   # scanner output format
   #  :schema_name:;entity/e_name.h;entity/e_name.cc;type/t_name.h;type/t_name.cc;...;\n
   string( STRIP "${_ss_out}" _scan )
