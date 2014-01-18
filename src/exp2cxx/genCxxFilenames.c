@@ -2,9 +2,13 @@
 #include "class_strings.h"
 
 /** \file genCxxFilenames.c
- * functions shared by exp2cxx and the schema
- * scanner which determines, at configuration time,
- * the names of the files exp2cxx will generate
+ * functions shared by exp2cxx and the schema scanner.
+ * The latter creates, at configuration time, a list
+ * of file names so CMake knows how to compile the
+ * generated libs.
+ * exp2cxx is supposed to write to files with the same
+ * names, but it doesn't have access to the list the
+ * scanner created.
  */
 
 /* these buffers are shared amongst (and potentially overwritten by) all functions in this file */

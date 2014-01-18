@@ -1,4 +1,12 @@
 
+/** \file schemaScanner.c
+ * This file, along with part of libexpress, are compiled (at configure time)
+ * into a static executable. This executable is a schema scanner that is used
+ * by CMake to determine what files exp2cxx will create. Otherwise, we'd need
+ * to use a few huge files - there is no other way to tell CMake what the
+ * generated files will be called.
+ */
+
 #include "expparse.h"
 #include "expscan.h"
 
@@ -29,6 +37,7 @@ void printSchemaFilenames( Schema sch ){
             case OBJ_RULE: */
             default:
                 /* ignore everything else */
+                /* TODO: if DEBUG is defined, print the names of these to stderr */
                 break;
         }
     }
