@@ -92,6 +92,7 @@ set(EXPRESS_SOURCES
   object.c
   express.c
   ordered_attrs.cc
+  info.c
   )
 
 # TODO

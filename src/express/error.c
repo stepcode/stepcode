@@ -54,16 +54,18 @@
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include <setjmp.h>
+#include <signal.h>
+#include <string.h>
 
-#include "signal.h"
-#include "express/error.h"
-#include "string.h"
-#include "express/linklist.h"
 #ifdef __STDC__
 #include <stdarg.h>
 #else
 #include <varargs.h>
 #endif
+
+#include "express/error.h"
+#include "express/info.h"
+#include "express/linklist.h"
 
 
 bool __ERROR_buffer_errors = false;

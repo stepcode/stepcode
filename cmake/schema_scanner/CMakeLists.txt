@@ -30,6 +30,7 @@ set( schema_scanner_src
     ${SC_ROOT}/src/express/linklist.c
     ${SC_ROOT}/src/express/memory.c
     ${SC_ROOT}/src/express/object.c
+    ${SC_ROOT}/src/express/info.c
     ${SC_ROOT}/src/express/resolve.c
     ${SC_ROOT}/src/express/schema.c
     ${SC_ROOT}/src/express/scope.c
