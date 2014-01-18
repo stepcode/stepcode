@@ -40,17 +40,19 @@ execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_
 if( NOT ${_ss_config_stat} STREQUAL "0" )
   message( FATAL_ERROR "Scanner config status: ${_ss_config_stat}. stdout:\n${_ss_config_out}\nstderr:\n${_ss_config_err}" )
 endif( NOT ${_ss_config_stat} STREQUAL "0" )
-execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug #--clean-first
+execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug --clean-first
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
                  TIMEOUT 30 # should take far less than 30s
                  OUTPUT_VARIABLE _ss_build_out
                  RESULT_VARIABLE _ss_build_stat
                  ERROR_VARIABLE _ss_build_err
                )
-# replace with if...message FATAL_ERROR ...
 if( NOT ${_ss_build_stat} STREQUAL "0" )
   message( FATAL_ERROR "Scanner build status: ${_ss_build_stat}. stdout:\n${_ss_build_out}\nstderr:\n${_ss_build_err}" )
 endif( NOT ${_ss_build_stat} STREQUAL "0" )
+
+# not sure if it makes sense to install this or not...
+install( PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR} )
 
 # macro LIST_SCHEMA_FILES
 # lists the files created for individual entities or types in the schema,
