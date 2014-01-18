@@ -23,6 +23,7 @@ set( schema_scanner_src
     ${SC_ROOT}/src/express/dict.c
     ${SC_ROOT}/src/express/entity.c
     ${SC_ROOT}/src/express/error.c
+    ${SC_ROOT}/src/express/exp_kw.c
     ${SC_ROOT}/src/express/expr.c
     ${SC_ROOT}/src/express/express.c
     ${SC_ROOT}/src/express/hash.c

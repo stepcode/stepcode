@@ -93,6 +93,7 @@ set(EXPRESS_SOURCES
   express.c
   ordered_attrs.cc
   info.c
+  exp_kw.c
   )
 
 # TODO
