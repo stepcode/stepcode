@@ -12,8 +12,35 @@
 
 #include "express/scope.h"
 #include "genCxxFilenames.h"
+#include <string.h>
 
 int multiple_inheritance = 0;
+
+bool isBuiltin( const Type t ) {
+    switch( TYPEget_body( t )->type ) {
+        case integer_:
+        case real_:
+        case string_:
+        case binary_:
+        case boolean_:
+        case number_:
+        case logical_:
+            return true;
+        case aggregate_:
+        case bag_:
+        case set_:
+        case list_:
+        case array_:
+            /* this probably always evaluates to true - ought to check */
+            if( TYPEget_body( t )->base ) {
+                return isBuiltin( TYPEget_body( t )->base );
+            }
+            return false;
+        default:
+            break;
+    }
+    return false;
+}
 
 void printSchemaFilenames( Schema sch ){
     DictionaryEntry de;
@@ -28,10 +55,21 @@ void printSchemaFilenames( Schema sch ){
                 fn = getEntityFilenames( ( Entity )x );
                 printf( "%s;%s;", fn.impl, fn.header );
                 break;
-            case OBJ_TYPE:
-                fn = getTypeFilenames( ( Type )x );
+            case OBJ_TYPE: {
+                Type t = ( Type ) x;
+                if( TYPEis_enumeration( t ) && ( TYPEget_head( t ) ) ) {
+                    /* t is a renamed enum type, for which exp2cxx
+                     * will print a typedef in an existing file */
+                    break;
+                }
+                if( isBuiltin( t ) ) {
+                    /* skip builtin types */
+                    break;
+                }
+                fn = getTypeFilenames( t );
                 printf( "%s;%s;", fn.impl, fn.header );
                 break;
+            }
             /* case OBJ_FUNCTION:
             case OBJ_PROCEDURE:
             case OBJ_RULE: */
