@@ -66,6 +66,7 @@ install( PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DI
 # IMPLS_RES - result variable, which will contain a list of generated implementation files
 MACRO( LIST_SCHEMA_FILES SCHEMA_FILE OUT_PATH_PREFIX SCHEMA_NAME_RES HEADERS_RES IMPLS_RES)
   execute_process( COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE}
+                   WORKING_DIRECTORY ${SC_BINARY_DIR}/schemas
                    RESULT_VARIABLE _ss_stat
                    OUTPUT_VARIABLE _ss_out
                    ERROR_VARIABLE _ss_err
