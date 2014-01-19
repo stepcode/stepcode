@@ -31,11 +31,14 @@ bool isBuiltin( const Type t ) {
         case set_:
         case list_:
         case array_:
+            return true;
             /* this probably always evaluates to true - ought to check */
+/*
             if( TYPEget_body( t )->base ) {
                 return isBuiltin( TYPEget_body( t )->base );
             }
             return false;
+*/
         default:
             break;
     }
