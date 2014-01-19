@@ -27,6 +27,7 @@ set( OUTDIR \"${SCANNER_OUT_DIR}\" CACHE PATH \"out dir\" )
 set( CALLED_FROM \"STEPCODE_CMAKELISTS\" CACHE STRING \"verification\" )
 set( CMAKE_BUILD_TYPE \"Debug\" CACHE STRING \"build type\" )
 set( CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\" CACHE STRING \"compiler\" )
+set( CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\" CACHE STRING \"compiler\" )
 " )
 
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_OUT_DIR} )

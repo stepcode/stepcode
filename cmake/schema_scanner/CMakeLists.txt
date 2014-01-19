@@ -1,4 +1,4 @@
-PROJECT( SC_SUBPROJECT_SCHEMA_SCANNER C )
+PROJECT( SC_SUBPROJECT_SCHEMA_SCANNER )
 CMAKE_MINIMUM_REQUIRED( VERSION 2.8.7 )
 
 if( NOT ( "${CALLED_FROM}" STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR AND DEFINED OUTDIR ) )
@@ -39,7 +39,7 @@ set( schema_scanner_src
     ${SC_ROOT}/src/express/symbol.c
     ${SC_ROOT}/src/express/type.c
     ${SC_ROOT}/src/express/variable.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/schemaScanner.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/schemaScanner.cc
     )
 
 include_directories(
