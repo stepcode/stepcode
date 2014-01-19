@@ -24,14 +24,9 @@ void populateAttrList( oaList & list, Entity ent ) {
     LISTdo( ent->u.entity->attributes, attr, Variable ) {
         bool unique = true;
         for( unsigned int i = attrCount; i < list.size(); i++ ) {
-            if( 0 == strcasecmp( attr->name->symbol.name, list[i]->attr->name->symbol.name ) ) { //if true, an attr by this name exists in a supertype
-                //if we get here without an initializer, it isn't illegal. however, it's probably useless. print a warning
-                if( ! attr->initializer ) {
-                    const char * ignore = " By 10303-21 10.2.8, \"the redeclared attribute shall be ignored\".\n";
-                    fprintf( stderr, "%s:%d: WARNING - entity %s and its supertype %s both declare an explicit attr %s. %s",
-                             ent->symbol.filename, ent->symbol.line, ent->symbol.name,
-                             list[i]->creator->symbol.name, attr->name->symbol.name, ignore );
-                }
+            if( 0 == strcasecmp( attr->name->symbol.name, list[i]->attr->name->symbol.name ) ) {
+                // an attr by this name exists in a supertype
+                // originally printed a warning here, but that was misleading - they have more uses than I thought
                 unique = false;
                 list[i]->deriver = ent;
                 break;

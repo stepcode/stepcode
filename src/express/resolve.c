@@ -105,6 +105,7 @@ static Error ERROR_overloaded_attribute;
 static Error ERROR_redecl_no_such_attribute;
 static Error ERROR_redecl_no_such_supertype;
 static Error ERROR_missing_self;
+static Error WARNING_unique_qual_redecl;
 
 static Type self = 0;   /**< always points to current value of SELF or 0 if none */
 
@@ -221,12 +222,14 @@ void RESOLVEinitialize( void ) {
 
     WARNING_case_skip_label = ERRORcreate( "CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING );
 
+    WARNING_unique_qual_redecl = ERRORcreate( "Possibly unnecessary qualifiers on redeclared attr '%s' in a uniqueness rule of entity '%s'.", SEVERITY_WARNING );
 
     ERRORcreate_warning( "circular_subtype", ERROR_subsuper_loop );
     ERRORcreate_warning( "circular_select", ERROR_select_loop );
     ERRORcreate_warning( "entity_as_type", ERROR_type_is_entity );
     ERRORcreate_warning( "invariant_condition", WARNING_fn_skip_branch );
     ERRORcreate_warning( "invalid_case", WARNING_case_skip_label );
+    ERRORcreate_warning( "unnecessary_qualifiers", WARNING_unique_qual_redecl );
 }
 
 /** Clean up the Fed-X second pass */
@@ -265,6 +268,7 @@ void RESOLVEcleanup( void ) {
     ERRORdestroy( ERROR_missing_self );
     ERRORdestroy( WARNING_case_skip_label );
     ERRORdestroy( WARNING_fn_skip_branch );
+    ERRORdestroy( WARNING_unique_qual_redecl );
 }
 
 /**
@@ -1313,7 +1317,7 @@ static void ENTITYresolve_subtypes( Entity e ) {
  * where "entity" represents a supertype (only, I believe)
 */
 void ENTITYresolve_uniques( Entity e ) {
-    Variable attr;
+    Variable attr, attr2 = 0;
     int failed = 0;
     LISTdo( e->u.entity->unique, unique, Linked_List ) {
         int i = 0;
@@ -1337,8 +1341,14 @@ void ENTITYresolve_uniques( Entity e ) {
                     ( expr->e.op1->e.op_code == OP_GROUP ) &&
                     ( expr->e.op1->e.op1->type == Type_Self ) ) {
                 attr = ENTITYresolve_attr_ref( e, &( expr->e.op1->e.op2->symbol ), &( expr->e.op2->symbol ) );
+                attr2 = ENTITYresolve_attr_ref( e, 0, &( expr->e.op2->symbol ) );
             } else {
                 attr = ENTITYresolve_attr_ref( e, 0, &( expr->symbol ) );
+            }
+            if( ( attr2 ) && ( attr != attr2 ) && ( ENTITYdeclares_variable( e, attr2 ) ) ) {
+                /* attr exists in type + supertype - it's a redeclaration.
+                 * in this case, qualifiers are unnecessary; print a warning */
+                ERRORreport_with_symbol( WARNING_unique_qual_redecl, &( expr->e.op2->symbol ), expr->e.op2->symbol.name, e->symbol.name );
             }
             if( !attr ) {
                 /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
