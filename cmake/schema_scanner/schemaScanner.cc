@@ -13,6 +13,9 @@
 #include "express/scope.h"
 #include "genCxxFilenames.h"
 #include <string.h>
+#include <string>
+#include <sstream>
+#include <iomanip>
 
 int multiple_inheritance = 0;
 
@@ -46,17 +49,27 @@ bool isBuiltin( const Type t ) {
 }
 
 void printSchemaFilenames( Schema sch ){
+    std::stringstream typeHeaders, typeImpls, entityHeaders, entityImpls;
+    int ecount = 0, tcount = 0;
+
     DictionaryEntry de;
     Generic x;
     filenames_t fn;
     /* surround the schema name with colons to make it easier to parse the output */
-    printf( ":%s:;", sch->symbol.name );
+    //     printf( ":%s:;", sch->symbol.name );
     DICTdo_init( sch->symbol_table, &de );
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( DICT_type ) {
             case OBJ_ENTITY:
-                fn = getEntityFilenames( ( Entity )x );
-                printf( "%s;%s;", fn.impl, fn.header );
+                fn = getEntityFilenames( ( Entity ) x );
+//                 printf( "%s;%s;", fn.impl, fn.header );
+                entityHeaders << std::setw( 30 ) << fn.header;
+                entityImpls << std::setw( 30 ) << fn.impl;
+                ++ecount;
+                if( ( ecount % 4 ) == 0 ) {
+                    entityHeaders << std::endl;
+                    entityImpls << std::endl;
+                }
                 break;
             case OBJ_TYPE: {
                 Type t = ( Type ) x;
@@ -70,7 +83,17 @@ void printSchemaFilenames( Schema sch ){
                     break;
                 }
                 fn = getTypeFilenames( t );
-                printf( "%s;%s;", fn.impl, fn.header );
+                if( strcmp( fn.impl, "type/EntityAggregate.cc") == 0 ) {
+                    asm("nop");
+                }
+                //                 printf( "%s;%s;", fn.impl, fn.header );
+                typeHeaders << std::setw( 30 ) << fn.header;
+                typeImpls << std::setw( 30 ) << fn.impl;
+                ++tcount;
+                if( ( tcount % 4 ) == 0 ) {
+                    typeHeaders << std::endl;
+                    typeImpls << std::endl;
+                }
                 break;
             }
             /* case OBJ_FUNCTION:
@@ -82,7 +105,14 @@ void printSchemaFilenames( Schema sch ){
                 break;
         }
     }
-    printf( "\n" );
+//     printf( "\n" );
+    //now, write the CMakeLists.txt
+    std::string schemaName = sch->symbol.name;
+    std::ostream cml( schemaName + "/CMakeLists.txt" );
+    // TODO create header here
+    //cml << "
+    //one cmakelists, or 3+?
+    writeLists( sch->symbol.name, entityHeaders, entityImpls, typeHeaders, typeImpls );
 }
 
 int main( int argc, char ** argv ) {
