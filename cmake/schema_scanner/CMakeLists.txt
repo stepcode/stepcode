@@ -14,6 +14,7 @@ set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTDIR} )
 set( CMAKE_BUILD_TYPE Debug )
 
 set( schema_scanner_src
+    ${SC_ROOT}/src/base/sc_mkdir.c
     ${SC_ROOT}/src/exp2cxx/genCxxFilenames.c
     ${SC_ROOT}/src/exp2cxx/class_strings.c
     ${SC_ROOT}/src/express/generated/expparse.c
