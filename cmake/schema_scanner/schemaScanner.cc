@@ -114,7 +114,16 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
 }
 
 void printSchemaFilenames( Schema sch ){
+    const int numColumns = 2;
+    const int colWidth = 75;
+    const char * tab = "     ";
+
     stringstream typeHeaders, typeImpls, entityHeaders, entityImpls;
+    typeHeaders << tab;
+    typeImpls << tab;
+    entityHeaders << tab;
+    entityImpls << tab;
+
     int ecount = 0, tcount = 0;
 
     DictionaryEntry de;
@@ -125,13 +134,13 @@ void printSchemaFilenames( Schema sch ){
         switch( DICT_type ) {
             case OBJ_ENTITY:
                 fn = getEntityFilenames( ( Entity ) x );
-                entityHeaders << std::setw( 30 ) << fn.header;
-                entityImpls << std::setw( 30 ) << fn.impl;
+                entityHeaders << std::left << std::setw( colWidth ) << fn.header << " ";
+                entityImpls << std::left << std::setw( colWidth ) << fn.impl << " ";
                 ++ecount;
-                if( ( ecount % 4 ) == 0 ) {
-                    // 4 columns
-                    entityHeaders << endl;
-                    entityImpls << endl;
+                if( ( ecount % numColumns ) == 0 ) {
+                    // columns
+                    entityHeaders << endl << tab;
+                    entityImpls << endl << tab;
                 }
                 break;
             case OBJ_TYPE: {
@@ -146,12 +155,12 @@ void printSchemaFilenames( Schema sch ){
                     break;
                 }
                 fn = getTypeFilenames( t );
-                typeHeaders << std::setw( 30 ) << fn.header;
-                typeImpls << std::setw( 30 ) << fn.impl;
+                typeHeaders << std::left << std::setw( colWidth ) << fn.header << " ";
+                typeImpls << std::left << std::setw( colWidth ) << fn.impl << " ";
                 ++tcount;
-                if( ( tcount % 4 ) == 0 ) {
-                    typeHeaders << endl;
-                    typeImpls << endl;
+                if( ( tcount % numColumns ) == 0 ) {
+                    typeHeaders << endl << tab;
+                    typeImpls << endl << tab;
                 }
                 break;
             }
