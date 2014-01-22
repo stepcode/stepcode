@@ -21,6 +21,7 @@ extern "C" {
 #include <sstream>
 #include <iomanip>
 #include <fstream>
+#include <iostream>
 
 int multiple_inheritance = 0;
 
@@ -59,22 +60,23 @@ bool isBuiltin( const Type t ) {
 
 void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, stringstream & th, stringstream & ti ) {
     sc_mkdir( schema_name );
+    //TODO check return code!
     string cmListsPath = schema_name;
     cmListsPath += "/CMakeLists.txt";
     std::ofstream cmLists;
     cmLists.open( cmListsPath.c_str() );
-
+//TODO check for errors
     cmLists << "# -----  GENERATED FILE  -----" << endl;
     cmLists << "# -----   Do not edit!   -----" << endl << endl;
     cmLists << "PROJECT( sdai_" << schema_name << " )" << endl << endl;
     cmLists << "# headers to be installed - 3 lists - entity, type, misc" << endl << endl;
 
     cmLists << "set( " << schema_name << "_entity_hdrs" << endl;
-    cmLists << eh;
+    cmLists << eh.str();
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_type_hdrs" << endl;
-    cmLists << th;
+    cmLists << th.str();
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_misc_hdrs" << endl;
@@ -84,16 +86,16 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "# install all headers" << endl;
     cmLists << "install( FILES \"${" << schema_name << "_entity_hdrs} ${" << schema_name;
     cmLists << "_type_hdrs} ${" << schema_name << "_misc_hdrs}\"" << endl;
-    cmLists << "         DESTINATION \"schemas/" << schema_name << "\" )" << endl << endl;
+    cmLists << "         DESTINATION \"include/schemas/" << schema_name << "\" )" << endl << endl;
 
     cmLists << "# implementation files - 3 lists" << endl << endl;
 
     cmLists << "set( " << schema_name << "_entity_impls" << endl;
-    cmLists << ei;
+    cmLists << ei.str();
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_type_impls" << endl;
-    cmLists << ti;
+    cmLists << ti.str();
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_misc_impls" << endl;
@@ -105,8 +107,10 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "BUILD_SCHEMA( \"" << schema_name << "\" \"${" << schema_name << "_entity_impls} ";
     cmLists << "${" << schema_name << "_type_impls} ${" << schema_name << "_misc_impls}\" )" << endl;
 
+    cmLists.close();
 
     //TODO assemble absolute path to schema dir and print it to stdout, so CMake can use it with add_subdirectory()
+    std::cout << "TODO path to " << schema_name << endl;
 }
 
 void printSchemaFilenames( Schema sch ){
