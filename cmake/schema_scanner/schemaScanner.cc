@@ -8,13 +8,20 @@
  */
 
 extern "C" {
-#include "expparse.h"
-#include "expscan.h"
-#include "express/scope.h"
-#include "genCxxFilenames.h"
-#include "sc_mkdir.h"
+#  include "expparse.h"
+#  include "expscan.h"
+#  include "express/scope.h"
+#  include "genCxxFilenames.h"
+#  include "sc_mkdir.h"
 
-#include <string.h>
+#  include <string.h>
+
+#  if defined( _WIN32 ) || defined ( __WIN32__ )
+#    include <direct.h>
+#    define getcwd _getcwd
+#  else
+#    include <unistd.h>
+#  endif
 }
 
 #include <string>
@@ -109,8 +116,13 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
 
     cmLists.close();
 
-    //TODO assemble absolute path to schema dir and print it to stdout, so CMake can use it with add_subdirectory()
-    std::cout << "TODO path to " << schema_name << endl;
+    char pwd[BUFSIZ] = {0};
+    if( getcwd( pwd, BUFSIZ ) ) {
+        std::cout << pwd << "/" << schema_name << endl;
+    } else {
+        std::cerr << "error encountered by getcwd() for " << schema_name << " - exiting." << endl;
+        exit( EXIT_FAILURE );
+    }
 }
 
 void printSchemaFilenames( Schema sch ){
