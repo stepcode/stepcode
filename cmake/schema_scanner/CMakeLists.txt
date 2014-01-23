@@ -10,8 +10,8 @@ endif()
 # SC_BUILDDIR: SC build dir, so generated headers can be found
 # OUTDIR: location to place binary
 
-set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${OUTDIR} )
 set( CMAKE_BUILD_TYPE Debug )
+set( CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} "${OUTDIR}" )
 
 set( schema_scanner_src
     ${SC_ROOT}/src/base/sc_mkdir.c
