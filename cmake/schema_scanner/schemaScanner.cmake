@@ -55,46 +55,29 @@ endif( NOT ${_ss_build_stat} STREQUAL "0" )
 # not sure if it makes sense to install this or not...
 install( PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR} )
 
-# macro LIST_SCHEMA_FILES
-# lists the files created for individual entities or types in the schema,
-# but not the schema-level files (i.e. SdaiSCHEMA_NAME.cc)
+# macro SCHEMA_CMLIST
+# runs the schema scanner on one express file, creating a CMakeLists.txt file for each schema found. Those files are added via add_subdirectory().
 #
 # SCHEMA_FILE - path to the schema
-# OUT_PATH_PREFIX - prefixed to the name of each file; easier while building lists than later
-# SCHEMA_NAME_RES - result variable, set to the schema name. if multiple schemas in a file, a semicolon-separated list
-# HEADERS_RES - result variable, which will contain a list of generated headers
-# IMPLS_RES - result variable, which will contain a list of generated implementation files
-MACRO( LIST_SCHEMA_FILES SCHEMA_FILE OUT_PATH_PREFIX SCHEMA_NAME_RES HEADERS_RES IMPLS_RES)
+# TODO should we have a result variable to return schema name(s) found?
+MACRO( SCHEMA_CMLIST SCHEMA_FILE )
   execute_process( COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE}
                    WORKING_DIRECTORY ${SC_BINARY_DIR}/schemas
                    RESULT_VARIABLE _ss_stat
                    OUTPUT_VARIABLE _ss_out
                    ERROR_VARIABLE _ss_err
                  )
-  if( NOT ${_ss_stat} STREQUAL "0" )
+  if( NOT "${_ss_stat}" STREQUAL "0" )
     #check size of output, put in file if large?
-    message( FATAL_ERROR "Schema scan exited with error code ${_ss_build_stat}. stdout:\n${_ss_out}\nstderr:\n${_ss_err}" )
-  endif( NOT ${_ss_stat} STREQUAL "0" )
-  # scanner output format
-  #  :schema_name:;entity/e_name.h;entity/e_name.cc;type/t_name.h;type/t_name.cc;...;\n
-  string( STRIP "${_ss_out}" _scan )
-  foreach( _item ${_scan} )
-    if( ${_item} MATCHES "^:.*:$" )
-      #schema name(s) will be wrapped in colons
-      string(REGEX REPLACE "^:(.*):$" "\\1" _schema ${_item})
-      list( APPEND ${SCHEMA_NAME_RES} ${_schema} )
-    elseif( ${_item} MATCHES ".*\\.h$" )
-      # header
-      list( APPEND ${HEADERS_RES} ${OUT_PATH_PREFIX}/${_item} )
-    elseif( ${_item} MATCHES ".*\\.cc$" )
-      # implementation
-      list( APPEND ${IMPLS_RES} ${OUT_PATH_PREFIX}/${_item} )
-    else()
-      # unknown?!
-      if( NOT _item STREQUAL "" )
-        message( FATAL_ERROR "unrecognized item in schema scanner output: '${_item}'. aborting." )
-      endif( NOT _item STREQUAL "" )
-    endif( ${_item} MATCHES "^:.*:$" )
-  endforeach( _item ${_ss_out} )
+    message( FATAL_ERROR "Schema scan exited with error code ${_ss_stat}. stdout:\n${_ss_out}\nstderr:\n${_ss_err}" )
+  endif( NOT "${_ss_stat}" STREQUAL "0" )
+  # scanner output format: each line contains an absolute path. each path is a dir containing a CMakeLists for one schema
+  # there will be usually be a single line of output, but it is not illegal for multiple schemas to exist in one .exp file
+  string( STRIP "${_ss_out}" _ss_stripped )
+  string( REGEX REPLACE "\\\n" ";" _list ${_ss_stripped} )
+  foreach( _dir ${_list} )
+#    message( "${SCHEMA_FILE}: ${_dir}" )
+    add_subdirectory( ${_dir} ${_dir} ) #specify source and binary dirs as the same
+  endforeach( _dir ${_ss_out} )
   configure_file( ${SCHEMA_FILE} ${SCANNER_OUT_DIR}/${_schema} ) #if multiple schemas in one file, _schema is the last one printed.
-ENDMACRO( LIST_SCHEMA_FILES SCHEMA_FILE SCHEMA_NAME_RES HEADERS_RES IMPLS_RES)
+ENDMACRO( SCHEMA_CMLIST SCHEMA_FILE )
