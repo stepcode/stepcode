@@ -65,6 +65,7 @@ bool isBuiltin( const Type t ) {
     return false;
 }
 
+/** write a CMakeLists.txt file for the schema; print its directory to stdout for CMake's add_subdirectory() command */
 void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, stringstream & th, stringstream & ti ) {
     if( sc_mkdir( schema_name ) ) {
         std::cerr << "error reported by mkdir() for " << schema_name << " - exiting." << endl;
@@ -115,9 +116,11 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "   )" << endl << endl;
 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
-    cmLists << "include( \"cmake/schemaMacros.cmake\" )" << endl;
-    cmLists << "BUILD_SCHEMA( \"" << schema_name << "\" \"${" << schema_name << "_entity_impls} ";
-    cmLists << "${" << schema_name << "_type_impls} ${" << schema_name << "_misc_impls}\" )" << endl;
+    cmLists << "include( ${SC_CMAKE_DIR}/cxxSchemaMacros.cmake )" << endl;
+    cmLists << "BUILD_SCHEMA( \"" << schema_name << "\"" << endl;
+    cmLists << "            \"${" << schema_name << "_entity_impls}" << endl;
+    cmLists << "             ${" << schema_name << "_type_impls}" << endl;
+    cmLists << "             ${" << schema_name << "_misc_impls}\" )" << endl;
 
     cmLists.close();
 
