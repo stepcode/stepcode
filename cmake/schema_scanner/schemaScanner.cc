@@ -66,13 +66,18 @@ bool isBuiltin( const Type t ) {
 }
 
 void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, stringstream & th, stringstream & ti ) {
-    sc_mkdir( schema_name );
-    //TODO check return code!
+    if( sc_mkdir( schema_name ) ) {
+        std::cerr << "error reported by mkdir() for " << schema_name << " - exiting." << endl;
+        exit( EXIT_FAILURE );
+    }
     string cmListsPath = schema_name;
     cmListsPath += "/CMakeLists.txt";
     std::ofstream cmLists;
     cmLists.open( cmListsPath.c_str() );
-//TODO check for errors
+    if( !cmLists.good() ) {
+        std::cerr << "error opening file " << cmListsPath << " - exiting." << endl;
+        exit( EXIT_FAILURE );
+    }
     cmLists << "# -----  GENERATED FILE  -----" << endl;
     cmLists << "# -----   Do not edit!   -----" << endl << endl;
     cmLists << "PROJECT( sdai_" << schema_name << " )" << endl << endl;
