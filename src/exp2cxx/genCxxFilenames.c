@@ -1,6 +1,10 @@
 #include "genCxxFilenames.h"
 #include "class_strings.h"
 
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
+
 /** \file genCxxFilenames.c
  * functions shared by exp2cxx and the schema scanner.
  * The latter creates, at configuration time, a list
