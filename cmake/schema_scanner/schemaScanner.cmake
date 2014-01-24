@@ -30,6 +30,7 @@ set( CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\" CACHE STRING \"compiler\" )
 set( CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\" CACHE STRING \"compiler\" )
 " )
 
+execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas )
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_OUT_DIR} )
 execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
                  WORKING_DIRECTORY ${SCANNER_OUT_DIR}
