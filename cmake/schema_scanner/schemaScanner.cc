@@ -67,6 +67,7 @@ bool isBuiltin( const Type t ) {
 
 /** write a CMakeLists.txt file for the schema; print its directory to stdout for CMake's add_subdirectory() command */
 void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, stringstream & th, stringstream & ti ) {
+    //TODO check if 'dir' exists. if it does and is a dir, use it (empty, or overwrite?)  if a file or unwritable, error out
     if( sc_mkdir( schema_name ) ) {
         std::cerr << "error reported by mkdir() for " << schema_name << " - exiting." << endl;
         exit( EXIT_FAILURE );
