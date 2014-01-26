@@ -68,8 +68,14 @@ endif(NOT IS_SUBBUILD)
 # testing and compilation options, build output dirs, install dirs, etc
 include( ${SC_CMAKE_DIR}/SC_Build_opts.cmake )
 
+# SC_ADDEXEC and SC_ADDLIB macros, dllimport/export, etc
 include( ${SC_CMAKE_DIR}/SC_Targets.cmake )
+
+# Macros related to paths
 include( ${SC_CMAKE_DIR}/SC_Paths.cmake )
+
+# locale stuff
+include( ${SC_CMAKE_DIR}/SC_Locale.cmake )
 
 if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
   set( SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs" )
@@ -80,21 +86,6 @@ if( NOT DEFINED SC_BUILD_SCHEMAS )
     #this makes SC_BUILD_SCHEMAS show up in cmake-gui
     SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )
-
-# Save the current LC_ALL, LC_MESSAGES, and LANG environment variables and set them
-# to "C" so things like date output are as expected
-SET(_orig_lc_all      $ENV{LC_ALL})
-SET(_orig_lc_messages $ENV{LC_MESSAGES})
-SET(_orig_lang        $ENV{LANG})
-IF(_orig_lc_all)
-  SET(ENV{LC_ALL}      C)
-ENDIF(_orig_lc_all)
-IF(_orig_lc_messages)
-  SET(ENV{LC_MESSAGES} C)
-ENDIF(_orig_lc_messages)
-IF(_orig_lang)
-  SET(ENV{LANG}        C)
-ENDIF(_orig_lang)
 
 # Take the sc config file template as the starting point for
 # sc_cf.h.in - scripts may need to append to the template, so
