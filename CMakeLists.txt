@@ -116,7 +116,7 @@ else(NOT IS_SUBBUILD)
   SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${SC_CMAKE_DIR}")
 endif(NOT IS_SUBBUILD)
 
-include( ${SC_CMAKE_DIR}/SC_Utils.cmake )
+include( ${SC_CMAKE_DIR}/SC_Targets.cmake )
 include( ${SC_CMAKE_DIR}/SC_Paths.cmake )
 
 # Save the current LC_ALL, LC_MESSAGES, and LANG environment variables and set them
