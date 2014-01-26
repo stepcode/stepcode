@@ -83,7 +83,6 @@ MACRO( SCHEMA_CMLIST SCHEMA_FILE )
   string( STRIP "${_ss_out}" _ss_stripped )
   string( REGEX REPLACE "\\\n" ";" _list ${_ss_stripped} )
   foreach( _dir ${_list} )
-#    message( "${SCHEMA_FILE}: ${_dir}" )
     add_subdirectory( ${_dir} ${_dir} ) #specify source and binary dirs as the same
   endforeach( _dir ${_ss_out} )
   configure_file( ${SCHEMA_FILE} ${SCANNER_OUT_DIR}/${_schema} ) #if multiple schemas in one file, _schema is the last one printed.
