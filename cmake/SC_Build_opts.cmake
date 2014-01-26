@@ -97,42 +97,18 @@ set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 # directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-#-----------------------------------------------------------------------------
-# Output directories.
-# When this is a subbuild, assume that the parent project controls these
+# When this is a subbuild, assume that the parent project controls all of the following
+#======================================================================================
 IF( NOT SC_IS_SUBBUILD )
-  IF(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-    SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SC_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-  ENDIF(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-  IF(NOT DEFINED CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-    SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SC_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
-  ENDIF(NOT DEFINED CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-  IF(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-    SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SC_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-  ENDIF(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
 
-  FOREACH(CFG_TYPE ${CMAKE_CONFIGURATION_TYPES})
-    STRING(TOUPPER "${CFG_TYPE}" CFG_TYPE)
-    IF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
-      SET("CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SC_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-    ENDIF(NOT "CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CFG_TYPE}")
-    IF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
-      SET("CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SC_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all archives.")
-    ENDIF(NOT "CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CFG_TYPE}")
-    IF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
-      SET("CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}" ${SC_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-    ENDIF(NOT "CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CFG_TYPE}")
-  ENDFOREACH()
-ENDIF( NOT SC_IS_SUBBUILD )
+  # Output directories. In a separate file so it can be used by the schema scanner CMake as well.
+  include( ${SC_CMAKE_DIR}/SC_Outdirs.cmake )
 
-
-#-----------------------------------------------------------------------------
-# Configure install locations.
-
-# The location in which to install SC. Need a good Debug location
-# for Windows.  Only do this if CMAKE_INSTALL_PREFIX hasn't been set
-# already, to try and allow parent builds (if any) some control.
-if(NOT SC_IS_SUBBUILD)
+  #-----------------------------------------------------------------------------
+  # Configure install locations. Only do this if CMAKE_INSTALL_PREFIX hasn't
+  # been set already, to try and allow parent builds (if any) some control.
+  #
+  # Need a good Debug location for Windows.
   IF(NOT WIN32)
     IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
       SET(SC_INSTALL_PREFIX "${SC_SOURCE_DIR}/../sc-install")
