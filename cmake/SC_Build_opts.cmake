@@ -42,6 +42,9 @@ OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 OPTION_WITH_DEFAULT(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
 
+OPTION(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
+MARK_AS_ADVANCED(SC_BUILD_EXPRESS_ONLY)
+
 #---------------------------------------------------------------------
 # Coverage option
 OPTION_WITH_DEFAULT( SC_ENABLE_COVERAGE "Enable code coverage test" OFF )
@@ -140,7 +143,26 @@ if(NOT SC_IS_SUBBUILD)
   SET( SC_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE
     PATH "Install prefix prepended to target to create install location" )
   SET( CMAKE_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories if target destination is not absolute, immutable" FORCE )
-endif(NOT SC_IS_SUBBUILD)
 
-OPTION(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
-MARK_AS_ADVANCED(SC_BUILD_EXPRESS_ONLY)
+  #-----------------------------------------------------------------------------
+  # SC Packaging
+  # $make package
+  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
+  SET(CPACK_SET_DESTDIR "ON")
+  SET(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
+  SET(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
+  SET(CPACK_PACKAGE_NAME SC )
+  SET(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
+  INCLUDE(CPack)
+
+  #-----------------------------------------------------------------------------
+  # Uninstall target
+  # From http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY)
+  add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
+
+endif(NOT SC_IS_SUBBUILD)

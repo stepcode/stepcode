@@ -65,7 +65,7 @@ else(NOT IS_SUBBUILD)
   SET(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${SC_CMAKE_DIR}")
 endif(NOT IS_SUBBUILD)
 
-# testing and compilation options, build output dirs, install dirs, etc
+# testing and compilation options, build output dirs, install dirs, uninstall, package creation, etc
 include( ${SC_CMAKE_DIR}/SC_Build_opts.cmake )
 
 # SC_ADDEXEC and SC_ADDLIB macros, dllimport/export, etc
@@ -90,7 +90,7 @@ if( NOT DEFINED SC_BUILD_SCHEMAS )
     SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )
 
-# create sc_cf.h and sc_version_string.h
+# create config headers sc_cf.h and sc_version_string.h
 include( ${SC_CMAKE_DIR}/SC_Config_Headers.cmake )
 
 
@@ -140,33 +140,3 @@ message( ".. Don't worry about any messages above about missing headers or faile
 # this is for testing - 'make core' builds everything that isn't generated
 add_custom_target( core )
 add_dependencies( core stepdai check-express stepeditor exp2cxx )
-
-if(NOT SC_IS_SUBBUILD)
-  ###############################################################################
-  # SC Packaging                                                               #
-  # $make package                                                               #
-  ###############################################################################
-
-  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
-  SET(CPACK_SET_DESTDIR "ON")
-
-  SET(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
-  SET(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
-  SET(CPACK_PACKAGE_NAME SC )
-
-  SET(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
-  INCLUDE(CPack)
-
-  ########################################################################################
-  # Uninstall code                                                                       #
-  # From http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F #
-  # ######################################################################################
-  configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
-    IMMEDIATE @ONLY)
-
-  add_custom_target(uninstall
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake)
-
-endif(NOT SC_IS_SUBBUILD)
