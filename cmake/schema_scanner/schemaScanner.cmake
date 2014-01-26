@@ -15,7 +15,13 @@
 # SCANNER_OUT_DIR: location to place binary
 
 set( SCANNER_SRC_DIR ${SC_CMAKE_DIR}/schema_scanner )
-set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/schema_scanner )
+
+#MSVC insists on putting the executable in a different dir
+if( MSVC )
+  set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/schema_scanner/Schema )
+else()
+  set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/schema_scanner )
+endif()
 
 #write a cmake file for the cache. the alternative is a very long
 # command line - and the command line can't have newlines in it
