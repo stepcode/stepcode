@@ -85,10 +85,16 @@ if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 
 if( NOT DEFINED SC_BUILD_SCHEMAS )
-    set( SCHEMAS_WARNING TRUE )
-    #this makes SC_BUILD_SCHEMAS show up in cmake-gui
-    SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
+  list( APPEND CONFIG_END_MESSAGES
+  "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a"
+  "     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
+  #this makes SC_BUILD_SCHEMAS show up in cmake-gui
+  SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )
+
+list( APPEND CONFIG_END_MESSAGES
+  ".. Don't worry about any messages above about missing headers or failed tests, as long as"
+  "    you see 'Configuring done' below. Headers and features vary by compiler." )
 
 # create config headers sc_cf.h and sc_version_string.h
 include( ${SC_CMAKE_DIR}/SC_Config_Headers.cmake )
@@ -97,7 +103,6 @@ include( ${SC_CMAKE_DIR}/SC_Config_Headers.cmake )
 ################
 
 if(MSVC)
-  # add_definitions( -Wall )
   add_definitions( -D__MSVC__ -D__WIN32__ )
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
   add_definitions( -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS )
@@ -131,12 +136,12 @@ IF(SC_ENABLE_TESTING)
 ENDIF(SC_ENABLE_TESTING)
 ADD_SUBDIRECTORY(doc)
 
-if( SCHEMAS_WARNING )
-    message( "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a")
-    message("     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
-endif( SCHEMAS_WARNING )
-message( ".. Don't worry about any messages above about missing headers or failed tests, as long as\n    you see '-- Configuring done' below. Headers and features vary by compiler." )
-
-# this is for testing - 'make core' builds everything that isn't generated
+# 'make core' builds everything that isn't generated. for devs.
 add_custom_target( core )
 add_dependencies( core stepdai check-express stepeditor exp2cxx )
+
+# CONFIG_END_MESSAGES - list of messages to be printed after everything else is done.
+# THIS MUST BE LAST to ensure that they are visible to the user without scrolling.
+foreach( _msg ${CONFIG_END_MESSAGES} )
+  message( "${_msg}" )
+endforeach( _msg ${CONFIG_END_MESSAGES} )
