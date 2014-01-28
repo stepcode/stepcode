@@ -1,5 +1,5 @@
 
-/** \file schemaScanner.c
+/** \file schemaScanner.cc
  * This file, along with part of libexpress, are compiled (at configure time)
  * into a static executable. This executable is a schema scanner that is used
  * by CMake to determine what files exp2cxx will create. Otherwise, we'd need
@@ -35,6 +35,9 @@ int multiple_inheritance = 0;
 using std::string;
 using std::stringstream;
 using std::endl;
+using std::ofstream;
+using std::cerr;
+using std::cout;
 
 bool isBuiltin( const Type t ) {
     switch( TYPEget_body( t )->type ) {
@@ -66,24 +69,30 @@ bool isBuiltin( const Type t ) {
 }
 
 /** write a CMakeLists.txt file for the schema; print its directory to stdout for CMake's add_subdirectory() command */
-void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, stringstream & th, stringstream & ti ) {
-    //TODO check if 'dir' exists. if it does and is a dir, use it (empty, or overwrite?)  if a file or unwritable, error out
-    if( sc_mkdir( schema_name ) ) {
-        std::cerr << "error reported by mkdir() for " << schema_name << " - exiting." << endl;
+void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, int ecount,
+                                           stringstream & th, stringstream & ti, int tcount ) {
+    if( mkDirIfNone( schema_name ) < 0 ) {
+        cerr << "Error creating directory " << schema_name << " at " << __FILE__ << ":" << __LINE__;
+        perror( 0 );
         exit( EXIT_FAILURE );
+    }
+    size_t nameLen = strlen( schema_name );
+    string schema_upper( nameLen, char() );
+    for( size_t i = 0; i < nameLen; ++i) {
+        schema_upper[i] = toupper(schema_name[i]);
     }
     string cmListsPath = schema_name;
     cmListsPath += "/CMakeLists.txt";
-    std::ofstream cmLists;
+    ofstream cmLists;
     cmLists.open( cmListsPath.c_str() );
     if( !cmLists.good() ) {
-        std::cerr << "error opening file " << cmListsPath << " - exiting." << endl;
+        cerr << "error opening file " << cmListsPath << " - exiting." << endl;
         exit( EXIT_FAILURE );
     }
     cmLists << "# -----  GENERATED FILE  -----" << endl;
-    cmLists << "# -----   Do not edit!   -----" << endl << endl;
-    cmLists << "PROJECT( sdai_" << schema_name << " )" << endl << endl;
-    cmLists << "# headers to be installed - 3 lists - entity, type, misc" << endl << endl;
+    cmLists << "# -----   Do not edit!   -----" << endl;
+    cmLists << "# schema contains " << ecount << " entities, " << tcount << " types" << endl << endl;
+    cmLists << "# list headers so they can be installed - entity, type, misc" << endl << endl;
 
     cmLists << "set( " << schema_name << "_entity_hdrs" << endl;
     cmLists << eh.str();
@@ -94,7 +103,10 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_misc_hdrs" << endl;
-    cmLists << " TODO name the headers here "; //TODO
+    cmLists << "     Sdaiclasses.h   schema.h" << endl;
+    cmLists << "     Sdai" << schema_upper << "Helpers.h" << endl;
+    cmLists << "     Sdai" << schema_upper << "Names.h" << endl;
+    cmLists << "     Sdai" << schema_upper << ".h" << endl;
     cmLists << "   )" << endl << endl;
 
     cmLists << "# install all headers" << endl;
@@ -113,23 +125,26 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "   )" << endl << endl;
 
     cmLists << "set( " << schema_name << "_misc_impls" << endl;
-    cmLists << " TODO name the files here "; //TODO
-    cmLists << "   )" << endl << endl;
+    cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;
+    cmLists << "     Sdai" << schema_upper << ".cc" << endl;
+    cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
     cmLists << "include( ${SC_CMAKE_DIR}/cxxSchemaMacros.cmake )" << endl;
-    cmLists << "BUILD_SCHEMA( \"" << schema_name << "\"" << endl;
-    cmLists << "            \"${" << schema_name << "_entity_impls}" << endl;
-    cmLists << "             ${" << schema_name << "_type_impls}" << endl;
-    cmLists << "             ${" << schema_name << "_misc_impls}\" )" << endl;
+
+    cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schema_name << "\"" << endl;
+    cmLists << "                \"${" << schema_name << "_entity_impls}" << endl;
+    cmLists << "                 ${" << schema_name << "_type_impls}" << endl;
+    cmLists << "                 ${" << schema_name << "_misc_impls}\" )" << endl;
 
     cmLists.close();
 
     char pwd[BUFSIZ] = {0};
     if( getcwd( pwd, BUFSIZ ) ) {
-        std::cout << pwd << "/" << schema_name << endl;
+        cout << pwd << "/" << schema_name << endl;
     } else {
-        std::cerr << "error encountered by getcwd() for " << schema_name << " - exiting." << endl;
+        cerr << "Error encountered by getcwd() for " << schema_name << " - exiting. Error was ";
+        perror( 0 );
         exit( EXIT_FAILURE );
     }
 }
@@ -186,8 +201,8 @@ void printSchemaFilenames( Schema sch ){
                 break;
             }
             /* case OBJ_FUNCTION:
-            case OBJ_PROCEDURE:
-            case OBJ_RULE: */
+             *            case OBJ_PROCEDURE:
+             *            case OBJ_RULE: */
             default:
                 /* ignore everything else */
                 /* TODO: if DEBUG is defined, print the names of these to stderr */
@@ -195,7 +210,7 @@ void printSchemaFilenames( Schema sch ){
         }
     }
     //write the CMakeLists.txt
-    writeLists( sch->symbol.name, entityHeaders, entityImpls, typeHeaders, typeImpls );
+    writeLists( sch->symbol.name, entityHeaders, entityImpls, ecount, typeHeaders, typeImpls, tcount );
 }
 
 int main( int argc, char ** argv ) {
