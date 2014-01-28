@@ -12,24 +12,19 @@
 # SC_ROOT: SC root dir
 # SC_BUILDDIR: SC build dir, so generated headers can be found
 # SCANNER_SRC_DIR: dir this file is in
-# SCANNER_OUT_DIR: location to place binary
+# SCANNER_OUT_DIR: location of binary, same dir as SC uses
+# SCANNER_BUILD_DIR: location scanner is built
 
 set( SCANNER_SRC_DIR ${SC_CMAKE_DIR}/schema_scanner )
-
-#MSVC insists on putting the executable in a different dir
-if( MSVC )
-  set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/schema_scanner/Schema )
-else()
-  set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/schema_scanner )
-endif()
+set( SCANNER_BUILD_DIR ${SC_BINARY_DIR}/schema_scanner )
+set( SCANNER_OUT_DIR ${SC_BINARY_DIR}/bin )
 
 #write a cmake file for the cache. the alternative is a very long
 # command line - and the command line can't have newlines in it
-set( initial_scanner_cache ${SCANNER_OUT_DIR}/initial_scanner_cache.cmake )
+set( initial_scanner_cache ${SCANNER_BUILD_DIR}/initial_scanner_cache.cmake )
 file( WRITE ${initial_scanner_cache} "
 set( SC_ROOT \"${SC_SOURCE_DIR}\" CACHE STRING \"root dir\" )
 set( SC_BUILDDIR \"${SC_BINARY_DIR}\" CACHE PATH \"build dir\" )
-set( OUTDIR \"${SCANNER_OUT_DIR}\" CACHE PATH \"out dir\" )
 set( CALLED_FROM \"STEPCODE_CMAKELISTS\" CACHE STRING \"verification\" )
 set( CMAKE_BUILD_TYPE \"Debug\" CACHE STRING \"build type\" )
 set( CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\" CACHE STRING \"compiler\" )
@@ -37,9 +32,9 @@ set( CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\" CACHE STRING \"compiler\" )
 " )
 
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas )
-execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_OUT_DIR} )
+execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR} )
 execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
-                 WORKING_DIRECTORY ${SCANNER_OUT_DIR}
+                 WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
                  TIMEOUT 10
                  OUTPUT_VARIABLE _ss_config_out
                  RESULT_VARIABLE _ss_config_stat
@@ -48,8 +43,8 @@ execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_
 if( NOT ${_ss_config_stat} STREQUAL "0" )
   message( FATAL_ERROR "Scanner config status: ${_ss_config_stat}. stdout:\n${_ss_config_out}\nstderr:\n${_ss_config_err}" )
 endif( NOT ${_ss_config_stat} STREQUAL "0" )
-execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_OUT_DIR} --config Debug --clean-first
-                 WORKING_DIRECTORY ${SCANNER_OUT_DIR}
+execute_process( COMMAND ${CMAKE_COMMAND} --build ${SCANNER_BUILD_DIR} --config Debug --clean-first
+                 WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
                  TIMEOUT 30 # should take far less than 30s
                  OUTPUT_VARIABLE _ss_build_out
                  RESULT_VARIABLE _ss_build_stat
@@ -85,5 +80,5 @@ MACRO( SCHEMA_CMLIST SCHEMA_FILE )
   foreach( _dir ${_list} )
     add_subdirectory( ${_dir} ${_dir} ) #specify source and binary dirs as the same
   endforeach( _dir ${_ss_out} )
-  configure_file( ${SCHEMA_FILE} ${SCANNER_OUT_DIR}/${_schema} ) #if multiple schemas in one file, _schema is the last one printed.
+  configure_file( ${SCHEMA_FILE} ${SCANNER_BUILD_DIR}/${_schema} ) #if multiple schemas in one file, _schema is the last one printed.
 ENDMACRO( SCHEMA_CMLIST SCHEMA_FILE )
