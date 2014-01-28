@@ -94,7 +94,8 @@ endif( NOT DEFINED SC_BUILD_SCHEMAS )
 
 list( APPEND CONFIG_END_MESSAGES
   ".. Don't worry about any messages above about missing headers or failed tests, as long as"
-  "    you see 'Configuring done' below. Headers and features vary by compiler." )
+  "    you see 'Configuring done' below. Headers and features vary by compiler."
+  ".. Generating step can take a while if you are building several schemas." )
 
 # create config headers sc_cf.h and sc_version_string.h
 include( ${SC_CMAKE_DIR}/SC_Config_Headers.cmake )

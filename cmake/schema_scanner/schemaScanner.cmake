@@ -2,13 +2,14 @@
 # this file should be included from data/CMakeLists.txt
 #
 # at configure time, this builds a small program
-# which parses express schemas to determine what files
-# exp2cxx will create for that schema.
+# which will parse express schemas to determine
+# what files exp2cxx will create for that schema.
 #
-# The LIST_SCHEMA_FILES macro is to be used to run this
+# The SCHEMA_CMLIST macro is to be used to run this
 # program. It will set variables for schema name(s),
 # headers, and implementation files.
 
+# --- variables ---
 # SC_ROOT: SC root dir
 # SC_BUILDDIR: SC build dir, so generated headers can be found
 # SCANNER_SRC_DIR: dir this file is in
