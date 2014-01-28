@@ -130,7 +130,7 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
-    cmLists << "include( ${SC_CMAKE_DIR}/cxxSchemaMacros.cmake )" << endl;
+    cmLists << "include( ${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake )" << endl;
 
     cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schema_name << "\"" << endl;
     cmLists << "                \"${" << schema_name << "_entity_impls}" << endl;
