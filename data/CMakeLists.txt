@@ -1,9 +1,8 @@
 # To build one or more schemas, configure with
 # 'cmake -DSC_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
 
+if( NOT "${SC_BUILD_SCHEMAS}" STREQUAL "" )
 include( ${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake )
-
-if( DEFINED SC_BUILD_SCHEMAS )
     foreach( src ${SC_SDAI_ADDITIONAL_EXES_SRCS} )
         get_filename_component( name ${src} NAME_WE )
         message( STATUS "Additional SDAI executable: ${name}" )
@@ -17,4 +16,4 @@ if( DEFINED SC_BUILD_SCHEMAS )
         LOCATE_SCHEMA( ${FILE} abspath )
         SCHEMA_CMLIST( ${abspath} )
     endforeach()
-endif()
+endif( NOT "${SC_BUILD_SCHEMAS}" STREQUAL "" )
