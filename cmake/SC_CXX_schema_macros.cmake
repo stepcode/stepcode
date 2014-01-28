@@ -8,15 +8,15 @@ MACRO( P21_TESTS sfile )
   file( GLOB_RECURSE P21_FILES ${SCHEMA_DIR}/*.stp ${SCHEMA_DIR}/*.step ${SCHEMA_DIR}/*.p21 ${SCHEMA_DIR}/*.ifc )
   foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
-    add_test( NAME read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
+    add_test( NAME read_write_cpp_${PROJECT_NAME}_${FNAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
-    set_tests_properties( read_write_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
+    set_tests_properties( read_write_cpp_${PROJECT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     if(NOT WIN32)
-      add_test( NAME read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME}
+      add_test( NAME read_lazy_cpp_${PROJECT_NAME}_${FNAME}
                 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
                 COMMAND lazy_${PROJECT_NAME} ${TEST_FILE} )
-      set_tests_properties( read_lazy_cpp_${SCHEMA_SHORT_NAME}_${FNAME} PROPERTIES DEPENDS build_lazy_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
+      set_tests_properties( read_lazy_cpp_${PROJECT_NAME}_${FNAME} PROPERTIES DEPENDS build_lazy_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     endif(NOT WIN32)
   endforeach()
 ENDMACRO( P21_TESTS sfile )
@@ -74,12 +74,10 @@ ENDMACRO( SCHEMA_TESTS sname )
 # create targets for the schema(s) in expFile
 # targets include gen_cxx_*, sdai_cxx_*, p21read_*, lazyp21_*, ...
 MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
-  get_filename_component( SCHEMA_SN ${expFile} NAME )
-  string( REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_SHORT_NAME ${SCHEMA_SN} )
-  project( sdai_${SCHEMA_SHORT_NAME} )
-  message( STATUS "Will generate code for ${SCHEMA_SHORT_NAME}.")
+  # schema scanner comes up with a short schema name for PROJECT() ( which sets ${PROJECT_NAME} )
+  message( STATUS "Will generate code for ${PROJECT_NAME}.")
 
-  add_custom_target( generate_cpp_${SCHEMA_SHORT_NAME} DEPENDS exp2cxx ${expFile} ${sourceFiles} SOURCES ${sourceFiles} )
+  add_custom_target( generate_cpp_${PROJECT_NAME} DEPENDS exp2cxx ${expFile} ${sourceFiles} SOURCES ${sourceFiles} )
   set( _gen_script_args "-DEXE=\"$<TARGET_FILE:exp2cxx>\" -DEXP=\"${expFile}\" -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\" -DDIR=\"${CMAKE_CURRENT_LIST_DIR}\"" )
   # this calls a cmake script because it doesn't seem to be possible to divert stdout, stderr in cmake except via execute_process
   add_custom_command( OUTPUT ${sourceFiles}
@@ -94,9 +92,9 @@ MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
   )
   # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
   SC_ADDLIB( ${PROJECT_NAME} "${sourceFiles}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE" )
-  add_dependencies( ${PROJECT_NAME} generate_cpp_${SCHEMA_SHORT_NAME} )
+  add_dependencies( ${PROJECT_NAME} generate_cpp_${PROJECT_NAME} )
 
-  SCHEMA_TESTS( ${SCHEMA_SHORT_NAME} )
+  SCHEMA_TESTS( ${PROJECT_NAME} )
   P21_TESTS( ${expFile} )
 
 ENDMACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )

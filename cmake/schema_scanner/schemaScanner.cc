@@ -39,6 +39,7 @@ using std::ofstream;
 using std::cerr;
 using std::cout;
 
+/** \return true for types that exp2cxx won't generate code for */
 bool isBuiltin( const Type t ) {
     switch( TYPEget_body( t )->type ) {
         case integer_:
@@ -68,20 +69,77 @@ bool isBuiltin( const Type t ) {
     return false;
 }
 
+/** \return a short name for the schema
+ * this name is intended to be unique, but no special care is put into its generation
+ * the official schema name seems most likely to not be unique, but it is generally the longest
+ *
+ * picks the shortest of:
+ *  * the name of the dir containing the file (if in sc/data),
+ *  * the name of the file containing the schema (minus extension),
+ *  * the official name of the schema, passed in arg 'longName'
+ *
+ * TODO: maybe also consider an acronym, such that 'test_array_bounds_expr' becomes 'tabe', 'TABE', 'T_A_B_E', or similar
+ */
+string makeShortName( const char * longName ) {
+    //input_filename is path to file. we will extract dir name and file name from it.
+    string dirname = input_filename, filename = input_filename, schname = longName;
+#ifdef _WIN32
+    const char slash = '\\';
+#else
+    const char slash = '/';
+#endif //_WIN32
+
+    //for filename, get rid of dir name(s), if any, as well as the extension
+    size_t sl = filename.rfind( slash );
+    if( sl != string::npos ) {
+        filename.erase( 0, sl + 1 );
+    }
+    size_t dot = filename.rfind( '.' );
+    if( dot != string::npos ) {
+        filename.erase( dot );
+    }
+
+    //for dirname, get rid of the filename and ensure it's in data/
+    sl = dirname.rfind( slash );
+    if( sl != string::npos ) {
+        dirname.erase( sl );
+    }
+    const char * dat = "data";
+    size_t data = dirname.find( dat );
+    if( ( data == string::npos ) || ( dirname[ data + strlen( dat ) ] != slash ) ) {
+        //doesn't contain 'data/'. clear it so it'll be ignored.
+        dirname.clear();
+    } else {
+        //get rid of all but last dir name
+        dirname.erase( 0, dirname.rfind( slash ) + 1 );
+    }
+
+    //use dir name if it's at least 3 chars and shorter than file name
+    //also gets rid of short, undescriptive dir names - including '.' and '..'
+    if( ( dirname.size() > 2 ) && ( dirname.size() < filename.size() ) ) {
+        filename = dirname;
+    }
+    if( strlen( longName ) < filename.size() ) {
+        filename = longName;
+    }
+    return filename;
+}
+
 /** write a CMakeLists.txt file for the schema; print its directory to stdout for CMake's add_subdirectory() command */
-void writeLists( const char * schema_name, stringstream & eh, stringstream & ei, int ecount,
+void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, int ecount,
                                            stringstream & th, stringstream & ti, int tcount ) {
-    if( mkDirIfNone( schema_name ) < 0 ) {
-        cerr << "Error creating directory " << schema_name << " at " << __FILE__ << ":" << __LINE__;
+    string shortName = makeShortName( schemaName );
+    if( mkDirIfNone( shortName.c_str() ) < 0 ) {
+        cerr << "Error creating directory " << shortName << " at " << __FILE__ << ":" << __LINE__;
         perror( 0 );
         exit( EXIT_FAILURE );
     }
-    size_t nameLen = strlen( schema_name );
+    size_t nameLen = strlen( schemaName );
     string schema_upper( nameLen, char() );
     for( size_t i = 0; i < nameLen; ++i) {
-        schema_upper[i] = toupper(schema_name[i]);
+        schema_upper[i] = toupper(schemaName[i]);
     }
-    string cmListsPath = schema_name;
+    string cmListsPath = shortName;
     cmListsPath += "/CMakeLists.txt";
     ofstream cmLists;
     cmLists.open( cmListsPath.c_str() );
@@ -90,19 +148,24 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
         exit( EXIT_FAILURE );
     }
     cmLists << "# -----  GENERATED FILE  -----" << endl;
-    cmLists << "# -----   Do not edit!   -----" << endl;
-    cmLists << "# schema contains " << ecount << " entities, " << tcount << " types" << endl << endl;
-    cmLists << "# list headers so they can be installed - entity, type, misc" << endl << endl;
+    cmLists << "# -----   Do not edit!   -----" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_entity_hdrs" << endl;
+    cmLists << "# schema name: " << schemaName << endl;
+    cmLists << "# (short name: " << shortName << ")" << endl;
+    cmLists << "# contains " << ecount << " entities, " << tcount << " types" << endl << endl;
+
+    cmLists << "PROJECT( " << shortName << ")" << endl;
+    cmLists << "# list headers so they can be installed - entity, type, misc" << endl;
+
+    cmLists << "set( " << shortName << "_entity_hdrs" << endl;
     cmLists << eh.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_type_hdrs" << endl;
+    cmLists << "set( " << shortName << "_type_hdrs" << endl;
     cmLists << th.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_misc_hdrs" << endl;
+    cmLists << "set( " << shortName << "_misc_hdrs" << endl;
     cmLists << "     Sdaiclasses.h   schema.h" << endl;
     cmLists << "     Sdai" << schema_upper << "Helpers.h" << endl;
     cmLists << "     Sdai" << schema_upper << "Names.h" << endl;
@@ -110,21 +173,21 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "   )" << endl << endl;
 
     cmLists << "# install all headers" << endl;
-    cmLists << "install( FILES \"${" << schema_name << "_entity_hdrs} ${" << schema_name;
-    cmLists << "_type_hdrs} ${" << schema_name << "_misc_hdrs}\"" << endl;
-    cmLists << "         DESTINATION \"include/schemas/" << schema_name << "\" )" << endl << endl;
+    cmLists << "install( FILES \"${" << shortName << "_entity_hdrs} ${" << shortName;
+    cmLists << "_type_hdrs} ${" << shortName << "_misc_hdrs}\"" << endl;
+    cmLists << "         DESTINATION \"include/schemas/" << shortName << "\" )" << endl << endl;
 
     cmLists << "# implementation files - 3 lists" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_entity_impls" << endl;
+    cmLists << "set( " << shortName << "_entity_impls" << endl;
     cmLists << ei.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_type_impls" << endl;
+    cmLists << "set( " << shortName << "_type_impls" << endl;
     cmLists << ti.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << schema_name << "_misc_impls" << endl;
+    cmLists << "set( " << shortName << "_misc_impls" << endl;
     cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
@@ -132,18 +195,18 @@ void writeLists( const char * schema_name, stringstream & eh, stringstream & ei,
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
     cmLists << "include( ${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake )" << endl;
 
-    cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schema_name << "\"" << endl;
-    cmLists << "                \"${" << schema_name << "_entity_impls}" << endl;
-    cmLists << "                 ${" << schema_name << "_type_impls}" << endl;
-    cmLists << "                 ${" << schema_name << "_misc_impls}\" )" << endl;
+    cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schemaName << "\"" << endl;
+    cmLists << "                \"${" << shortName << "_entity_impls}" << endl;
+    cmLists << "                 ${" << shortName << "_type_impls}" << endl;
+    cmLists << "                 ${" << shortName << "_misc_impls}\" )" << endl;
 
     cmLists.close();
 
     char pwd[BUFSIZ] = {0};
     if( getcwd( pwd, BUFSIZ ) ) {
-        cout << pwd << "/" << schema_name << endl;
+        cout << pwd << "/" << shortName << endl;
     } else {
-        cerr << "Error encountered by getcwd() for " << schema_name << " - exiting. Error was ";
+        cerr << "Error encountered by getcwd() for " << shortName << " - exiting. Error was ";
         perror( 0 );
         exit( EXIT_FAILURE );
     }
