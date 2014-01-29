@@ -115,13 +115,14 @@ string makeShortName( const char * longName ) {
     }
 
     //use dir name if it's at least 3 chars and shorter than file name
-    //also gets rid of short, undescriptive dir names - including '.' and '..'
+    //length requirement gets rid of short, undescriptive dir names - including '.' and '..'
     if( ( dirname.size() > 2 ) && ( dirname.size() < filename.size() ) ) {
         filename = dirname;
     }
     if( strlen( longName ) < filename.size() ) {
         filename = longName;
     }
+    filename.insert( 0, "Sdai" );
     return filename;
 }
 
@@ -173,8 +174,8 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "   )" << endl << endl;
 
     cmLists << "# install all headers" << endl;
-    cmLists << "install( FILES \"${" << shortName << "_entity_hdrs} ${" << shortName;
-    cmLists << "_type_hdrs} ${" << shortName << "_misc_hdrs}\"" << endl;
+    cmLists << "install( FILES ${" << shortName << "_entity_hdrs} ${" << shortName;
+    cmLists << "_type_hdrs} ${" << shortName << "_misc_hdrs}" << endl;
     cmLists << "         DESTINATION \"include/schemas/" << shortName << "\" )" << endl << endl;
 
     cmLists << "# implementation files - 3 lists" << endl << endl;
@@ -195,10 +196,9 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
     cmLists << "include( ${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake )" << endl;
 
+    cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
     cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schemaName << "\"" << endl;
-    cmLists << "                \"${" << shortName << "_entity_impls}" << endl;
-    cmLists << "                 ${" << shortName << "_type_impls}" << endl;
-    cmLists << "                 ${" << shortName << "_misc_impls}\" )" << endl;
+    cmLists << "                 \"${schema_target_files}\" )" << endl;
 
     cmLists.close();
 
