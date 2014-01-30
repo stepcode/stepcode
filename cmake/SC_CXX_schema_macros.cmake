@@ -46,28 +46,28 @@ ENDMACRO( SCHEMA_EXES )
 
 
 # label the tests and set dependencies
-MACRO( SCHEMA_TESTS sname )
-  add_test( NAME generate_cpp_${sname}
+MACRO( SCHEMA_TESTS )
+  add_test( NAME generate_cpp_${PROJECT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
-                                      --target generate_cpp_${sname}
+                                      --target generate_cpp_${PROJECT_NAME}
                                       --config $<CONFIGURATION> )
-  set_tests_properties( generate_cpp_${sname} PROPERTIES LABELS cpp_schema_gen )
+  set_tests_properties( generate_cpp_${PROJECT_NAME} PROPERTIES LABELS cpp_schema_gen )
   add_test( NAME build_cpp_${PROJECT_NAME}
               WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
               COMMAND ${CMAKE_COMMAND} --build .
                                       --target p21read_${PROJECT_NAME}
                                       --config $<CONFIGURATION> )
-  set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${sname} LABELS cpp_schema_build )
+  set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build )
   if(NOT WIN32)
   add_test( NAME build_lazy_cpp_${PROJECT_NAME}
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND ${CMAKE_COMMAND} --build .
-                                      --target lazy_${PROJECT_NAME}
-                                      --config $<CONFIGURATION> )
-  set_tests_properties( build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${sname} LABELS cpp_schema_build )
+            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} --build .
+                                     --target lazy_${PROJECT_NAME}
+                                     --config $<CONFIGURATION> )
+  set_tests_properties( build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build )
   endif(NOT WIN32)
-ENDMACRO( SCHEMA_TESTS sname )
+ENDMACRO( SCHEMA_TESTS )
 
 # SCHEMA_TARGETS macro -
 # expFile: path to express file
@@ -101,7 +101,7 @@ MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
   SC_ADDLIB( ${PROJECT_NAME} "${sourceFiles}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE" )
   add_dependencies( ${PROJECT_NAME} generate_cpp_${PROJECT_NAME} )
 
-  SCHEMA_TESTS( ${PROJECT_NAME} )
+  SCHEMA_TESTS()
   P21_TESTS( ${expFile} )
   # TODO add test to verify that schema scanner output matches fedex_plus output
 

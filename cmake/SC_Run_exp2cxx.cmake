@@ -13,4 +13,5 @@ else()
   if( NOT "${_res}" STREQUAL "0" )
       message( FATAL_ERROR "${EXE} reported an error for ${EXP}.\nsee exp2cxx_stdout.txt and exp2cxx_stderr.txt in ${SDIR} for details." )
   endif( NOT "${_res}" STREQUAL "0" )
+  # TODO count number of lines in stdout/stderr and tell user?
 endif()
