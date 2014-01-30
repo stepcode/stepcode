@@ -153,7 +153,10 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "# schema name: " << schemaName << endl;
     cmLists << "# (short name: " << shortName << ")" << endl;
-    cmLists << "# contains " << ecount << " entities, " << tcount << " types" << endl << endl;
+    cmLists << "# " << ecount << " entities, " << tcount << " types" << endl;
+    // * 2 for headers, + 10 other files
+    cmLists << "set( " << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << " )" << endl << endl;
+
 
     cmLists << "PROJECT( " << shortName << ")" << endl;
     cmLists << "# list headers so they can be installed - entity, type, misc" << endl;
