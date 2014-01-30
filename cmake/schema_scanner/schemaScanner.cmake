@@ -32,6 +32,8 @@ set( CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\" CACHE STRING \"compiler\" )
 set( CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\" CACHE STRING \"compiler\" )
 " )
 
+message( "-- Compiling schema scanner..." )
+
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas )
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR} )
 execute_process( COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
@@ -55,6 +57,8 @@ if( NOT ${_ss_build_stat} STREQUAL "0" )
   message( FATAL_ERROR "Scanner build status: ${_ss_build_stat}. stdout:\n${_ss_build_out}\nstderr:\n${_ss_build_err}" )
 endif( NOT ${_ss_build_stat} STREQUAL "0" )
 
+message( "-- Schema scanner built. Running it..." )
+
 # not sure if it makes sense to install this or not...
 install( PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR} )
 
@@ -75,7 +79,7 @@ MACRO( SCHEMA_CMLIST SCHEMA_FILE )
     message( FATAL_ERROR "Schema scan exited with error code ${_ss_stat}. stdout:\n${_ss_out}\nstderr:\n${_ss_err}" )
   endif( NOT "${_ss_stat}" STREQUAL "0" )
   # scanner output format: each line contains an absolute path. each path is a dir containing a CMakeLists for one schema
-  # there will be usually be a single line of output, but it is not illegal for multiple schemas to exist in one .exp file
+  # there will usually be a single line of output, but it is not illegal for multiple schemas to exist in one .exp file
   string( STRIP "${_ss_out}" _ss_stripped )
   string( REGEX REPLACE "\\\n" ";" _list ${_ss_stripped} )
   foreach( _dir ${_list} )
