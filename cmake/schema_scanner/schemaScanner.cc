@@ -40,7 +40,7 @@ using std::cerr;
 using std::cout;
 
 /** \return true for types that exp2cxx won't generate code for */
-bool isBuiltin( const Type t ) {
+bool notGenerated( const Type t ) {
     switch( TYPEget_body( t )->type ) {
         case integer_:
         case real_:
@@ -49,22 +49,19 @@ bool isBuiltin( const Type t ) {
         case boolean_:
         case number_:
         case logical_:
-            return true;
         case aggregate_:
         case bag_:
         case set_:
         case list_:
         case array_:
             return true;
-            /* this probably always evaluates to true - ought to check */
-/*
-            if( TYPEget_body( t )->base ) {
-                return isBuiltin( TYPEget_body( t )->base );
-            }
-            return false;
-*/
         default:
             break;
+    }
+    /* from addRenameTypedefs() in multpass.c - check for renamed
+     * enums and selects - exp2cxx prints typedefs for them */
+    if( ( TYPEis_enumeration( t ) || TYPEis_select( t ) ) && ( TYPEget_head( t ) ) ) {
+            return true;
     }
     return false;
 }
@@ -252,7 +249,7 @@ void printSchemaFilenames( Schema sch ){
                      * will print a typedef in an existing file */
                     break;
                 }
-                if( isBuiltin( t ) ) {
+                if( notGenerated( t ) ) {
                     /* skip builtin types */
                     break;
                 }
