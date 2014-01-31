@@ -1,12 +1,11 @@
 
 #include "sc_mkdir.h"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
 #ifdef _WIN32
 #  include <direct.h>
-#else
-#  include <sys/stat.h>
-#  include <sys/types.h>
-#  include <errno.h>
 #endif /* _WIN32 */
 
 /* cross-platform mkdir */

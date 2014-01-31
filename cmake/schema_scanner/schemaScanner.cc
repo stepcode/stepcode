@@ -80,11 +80,7 @@ bool notGenerated( const Type t ) {
 string makeShortName( const char * longName ) {
     //input_filename is path to file. we will extract dir name and file name from it.
     string dirname = input_filename, filename = input_filename, schname = longName;
-#ifdef _WIN32
-    const char slash = '\\';
-#else
     const char slash = '/';
-#endif //_WIN32
 
     //for filename, get rid of dir name(s), if any, as well as the extension
     size_t sl = filename.rfind( slash );
