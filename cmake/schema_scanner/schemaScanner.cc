@@ -119,7 +119,7 @@ string makeShortName( const char * longName ) {
     if( strlen( longName ) < filename.size() ) {
         filename = longName;
     }
-    filename.insert( 0, "Sdai" );
+    filename.insert( 0, "Sdai_" );
     return filename;
 }
 
