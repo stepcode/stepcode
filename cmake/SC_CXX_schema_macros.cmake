@@ -78,7 +78,7 @@ ENDMACRO( SCHEMA_TESTS )
 # targets include gen_cxx_*, sdai_cxx_*, p21read_*, lazyp21_*, ...
 MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
   # schema scanner comes up with a short schema name for PROJECT() ( which sets ${PROJECT_NAME} )
-  message( STATUS "Will generate code for ${PROJECT_NAME} (${${PROJECT_NAME}_file_count} files).")
+  message( STATUS "Will generate ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}.")
 
   add_custom_target( generate_cpp_${PROJECT_NAME} DEPENDS exp2cxx ${expFile} ${sourceFiles} SOURCES ${sourceFiles} )
   # this calls a cmake script because it doesn't seem to be possible
