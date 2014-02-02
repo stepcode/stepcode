@@ -448,7 +448,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
 #endif
         fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
         fprintf( initfile, "#include <sc_memmgr.h>\n" );
-        fprintf( files->init, "\n#include \"%sHelpers.h\"\n", schnm );
 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
@@ -497,15 +496,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
         initfile = files->init = fopen( fnm, "a" );
     }
 
-    // 5. header containing inline helper functions (for runtime aggregate bounds, possibly other uses)
-    sprintf( fnm, "%sHelpers.h", schnm );
-    if( !( files->helpers = FILEcreate( fnm ) ) ) {
-        return;
-    }
-    fprintf( files->helpers, "\n// In the exp2cxx source code, this file is referred to as files->helpers.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
-    fprintf( files->helpers, "//this file contains inline helper functions (for runtime aggregate bounds, possibly other uses)\n\n" );
-
-
     /**********  record in files relating to entire input   ***********/
 
     /*  add to schema's include and initialization file */
@@ -533,7 +523,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
     } else {
         fclose( initfile );
     }
-    FILEclose( files->helpers );
 }
 
 /** ****************************************************************
@@ -650,17 +639,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( files->init, "\n// in the exp2cxx source code, this file is generally referred to as files->init or initfile\n" );
 
     fprintf( initfile, "#include \"%s.h\"\n\n", schnm );
-    fprintf( files->init, "\n#include \"%sHelpers.h\"\n", schnm );
     fprintf( initfile, "void \n%sInit (Registry& reg)\n{\n", schnm );
-
-    // 5. header containing inline helper functions (for runtime aggregate bounds, possibly other uses)
-    sprintf( fnm, "%sHelpers.h", schnm );
-    if( !( files->helpers = FILEcreate( fnm ) ) ) {
-        return;
-    }
-    fprintf( files->helpers, "\n// In the exp2cxx source code, this file is referred to as files->helpers.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
-    fprintf( files->helpers, "//this file contains inline helper functions (for runtime aggregate bounds, possibly other uses)\n\n" );
-
 
     /**********  record in files relating to entire input   ***********/
 

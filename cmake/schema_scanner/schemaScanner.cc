@@ -115,7 +115,7 @@ string makeShortName( const char * longName ) {
     if( strlen( longName ) < filename.size() ) {
         filename = longName;
     }
-    filename.insert( 0, "Sdai_" );
+    filename.insert( 0, "sdai_" );
     return filename;
 }
 
@@ -164,7 +164,6 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "set( " << shortName << "_misc_hdrs" << endl;
     cmLists << "     Sdaiclasses.h   schema.h" << endl;
-    cmLists << "     Sdai" << schema_upper << "Helpers.h" << endl;
     cmLists << "     Sdai" << schema_upper << "Names.h" << endl;
     cmLists << "     Sdai" << schema_upper << ".h" << endl;
     cmLists << "   )" << endl << endl;
