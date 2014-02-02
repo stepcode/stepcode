@@ -292,74 +292,62 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     printEnumAggrCrBody( f, type );
 }
 
-void TYPEPrint_h( const Type type, const char * filename ) {
-    const char *name = TYPEget_ctype( type );
-    FILE *file = NULL;
+void TYPEPrint_h( const Type type, FILE * file ) {
+    DEBUG( "Entering TYPEPrint_h for %s\n", TYPEget_ctype( type ) );
 
-    DEBUG( "Entering TYPEPrint_h for %s\n", name );
-
-    sc_mkdir( "type" );
-
-    file = FILEcreate( filename );
-    if ( !file ) {
-        DEBUG( "FAILED TYPEPrint_h\n" );
-        return;
+    if ( TYPEis_enumeration( type ) ) {
+        TYPEenum_inc_print( type, file );
+    } else if ( TYPEis_select( type ) ) {
+        TYPEselect_inc_print( type, file );
     }
 
-    if ( TYPEis_enumeration( type ) )
-        TYPEenum_inc_print( type, file );
-    else if ( TYPEis_select( type ) )
-        TYPEselect_inc_print( type, file );
-                
-    fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type )/*name*/ );
-
-    FILEclose(file);
+    fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type ) );
 
     DEBUG( "DONE TYPEPrint_h\n" );
 }
 
-void TYPEPrint_cc( const Type type, const char * filename, Schema schema ) {
-    const char * name = TYPEget_ctype( type );
-    FILE *file = NULL;
+void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE * impl, Schema schema ) {
+    DEBUG( "Entering TYPEPrint_cc for %s\n", names->impl );
 
-    DEBUG( "Entering TYPEPrint_cc for %s\n", name );
+    fprintf( impl, "#include \"schema.h\"\n" );
+    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
+    fprintf( impl, "#include \"%s\"\n\n", names->header );
 
-    sc_mkdir( "type" );
-
-    file = FILEcreate( filename );
-    if ( !file ) {
-        DEBUG( "FAILED TYPEPrint_h\n" );
-        return;
+    if ( TYPEis_enumeration( type ) ) {
+        TYPEenum_lib_print( type, impl );
+    } else if ( TYPEis_select( type ) ) {
+        TYPEselect_lib_print( type, impl );
     }
 
-    fprintf( file, "#include \"schema.h\"\n" );
-    fprintf( file, "#include \"sc_memmgr.h\"\n" );
-    fprintf( file, "#include \"type/%s.h\"\n\n", name );
-
-    if ( TYPEis_enumeration( type ) )
-        TYPEenum_lib_print( type, file );
-    else if ( TYPEis_select( type ) )
-        TYPEselect_lib_print( type, file );
-
-    fprintf( file, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
-    TYPEprint_init( type, file, schema );
-    fprintf( file, "}\n\n" );
-
-    FILEclose(file);
+    fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
+    TYPEprint_init( type, hdr, impl, schema );
+    fprintf( impl, "}\n\n" );
 
     DEBUG( "DONE TYPEPrint_cc\n" );
 }
 
 void TYPEPrint( const Type type, FILES *files, Schema schema ) {
-    const char * name = TYPEget_ctype( type );
+    FILE * hdr, * impl;
     filenames_t names = getTypeFilenames( type );
 
-    fprintf( files->inc, "#include \"type/%s.h\"\n", name);
+    fprintf( files->inc, "#include \"%s\"\n", names.header );
 
-    fprintf( files->init, "    init_%s( reg );\n", name );
+    fprintf( files->init, "    init_%s( reg );\n", TYPEget_ctype( type ) );
 
-    TYPEPrint_h( type, names.header );
-    TYPEPrint_cc( type, names.impl, schema );
+    if( mkDirIfNone( "type" ) == -1 ) {
+        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
+        perror( 0 );
+        abort();
+    }
+    hdr = FILEcreate( names.header );
+    impl = FILEcreate( names.impl );
+    assert( hdr && impl && "error creating files" );
+
+    TYPEPrint_h( type, hdr );
+    TYPEPrint_cc( type, &names, hdr, impl, schema );
+
+    FILEclose( hdr );
+    FILEclose( impl );
 }
 
 /**
@@ -568,21 +556,21 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     }
 }
 
-void TYPEprint_init( const Type type, FILE * file, Schema schema ) {
+void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema ) {
     char tdnm [BUFSIZ];
     char typename_buf[MAX_LEN];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
     if( isAggregateType( type ) ) {
-        AGGRprint_init( file, type, tdnm, type->symbol.name );
+        AGGRprint_init( header, impl, type, tdnm, type->symbol.name );
     }
 
     /* fill in the TD's values in the SchemaInit function (it is already
     declared with basic values) */
 
     if( TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        fprintf( file, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
+        fprintf( impl, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
     } else {
         switch( TYPEget_body( type )->type ) {
             case aggregate_: /* aggregate_ should not happen? DAS */
@@ -591,9 +579,9 @@ void TYPEprint_init( const Type type, FILE * file, Schema schema ) {
             case set_:
             case list_: {
                 if( isMultiDimAggregateType( type ) ) {
-                    print_typechain( file, TYPEget_body( type )->base,
+                    print_typechain( header, impl, TYPEget_body( type )->base,
                                      typename_buf, schema, type->symbol.name );
-                    fprintf( file, "        %s->ReferentType(%s);\n", tdnm,
+                    fprintf( impl, "        %s->ReferentType(%s);\n", tdnm,
                              typename_buf );
                 }
                 break;
@@ -606,17 +594,17 @@ void TYPEprint_init( const Type type, FILE * file, Schema schema ) {
     /* DAR - moved fn call below from TYPEselect_print to here to put all init
     ** info together. */
     if( TYPEis_select( type ) ) {
-        TYPEselect_init_print( type, file );
+        TYPEselect_init_print( type, impl );
     }
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */
     /* insert the type into the schema descriptor */
-    fprintf( file,
+    fprintf( impl,
              "        ((SDAIAGGRH(Set,DefinedTypeH))%s::schema->Types())->Add((DefinedTypeH)%s);\n",
              SCHEMAget_name( schema ), tdnm );
 #endif
     /* insert into type dictionary */
-    fprintf( file, "    reg.AddType (*%s);\n", tdnm );
+    fprintf( impl, "    reg.AddType (*%s);\n", tdnm );
 }
 
 /** print name, fundamental type, and description initialization function
@@ -964,7 +952,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
         that can be referenced to refer to the type that was created for
     Type t.
 */
-void print_typechain( FILE *file, const Type t, char * buf, Schema schema, const char * type_name ) {
+void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Schema schema, const char * type_name ) {
     /* if we've been called, current type has no name */
     /* nor is it a built-in type */
     /* the type_count variable is there for debugging purposes  */
@@ -981,39 +969,39 @@ void print_typechain( FILE *file, const Type t, char * buf, Schema schema, const
         case set_:
         case list_:
             /* create a new TypeDescriptor variable, e.g. t1, and new space for it */
-            fprintf( file, "        %s * %s%d = new %s;\n",
+            fprintf( impl, "        %s * %s%d = new %s;\n",
                      GetTypeDescriptorName( t ), TD_PREFIX, count,
                      GetTypeDescriptorName( t ) );
 
-            fprintf( file,
+            fprintf( impl,
                      "        %s%d->AssignAggrCreator((AggregateCreator) create_%s);%s",
                      TD_PREFIX, count, ctype, "        // Creator function\n" );
 
             s = sprintf( name_buf, "%s%d", TD_PREFIX, count );
             assert( ( s > 0 ) && ( s < MAX_LEN ) );
-            AGGRprint_init( file, t, name_buf, type_name );
+            AGGRprint_init( header, impl, t, name_buf, type_name );
 
             break;
 
         default: /* this should not happen since only aggregates are allowed to
           not have a name. This funct should only be called for aggrs
           without names. */
-            fprintf( file, "        TypeDescriptor * %s%d = new TypeDescriptor;\n",
+            fprintf( impl, "        TypeDescriptor * %s%d = new TypeDescriptor;\n",
                      TD_PREFIX, count );
     }
 
     /* there is no name so name doesn't need to be initialized */
 
-    fprintf( file, "        %s%d->FundamentalType(%s);\n", TD_PREFIX, count,
+    fprintf( impl, "        %s%d->FundamentalType(%s);\n", TD_PREFIX, count,
              FundamentalType( t, 1 ) );
-    fprintf( file, "        %s%d->Description(\"%s\");\n", TD_PREFIX, count,
+    fprintf( impl, "        %s%d->Description(\"%s\");\n", TD_PREFIX, count,
              TypeDescription( t ) );
 
     /* DAS ORIG SCHEMA FIX */
-    fprintf( file, "        %s%d->OriginatingSchema(%s::schema);\n", TD_PREFIX, count, SCHEMAget_name( schema ) );
+    fprintf( impl, "        %s%d->OriginatingSchema(%s::schema);\n", TD_PREFIX, count, SCHEMAget_name( schema ) );
 
     if( TYPEget_RefTypeVarNm( t, name_buf, schema ) ) {
-        fprintf( file, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, name_buf );
+        fprintf( impl, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, name_buf );
     } else {
         Type base = 0;
         /* no name, recurse */
@@ -1021,13 +1009,13 @@ void print_typechain( FILE *file, const Type t, char * buf, Schema schema, const
         if( TYPEget_body( t ) ) {
             base = TYPEget_body( t )->base;
         }
-        print_typechain( file, base, callee_buffer, schema, type_name );
-        fprintf( file, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
+        print_typechain( header, impl, base, callee_buffer, schema, type_name );
+        fprintf( impl, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
     }
     sprintf( buf, "%s%d", TD_PREFIX, count );
 
     /* Types */
-    fprintf( file, "        %s::schema->AddUnnamedType(%s%d);\n", SCHEMAget_name( schema ), TD_PREFIX, count );
+    fprintf( impl, "        %s::schema->AddUnnamedType(%s%d);\n", SCHEMAget_name( schema ), TD_PREFIX, count );
 }
 
 /** return 1 if it is a multidimensional aggregate at the level passed in
@@ -1433,59 +1421,63 @@ char * TYPEget_express_type( const Type t ) {
  * For aggregates, initialize Bound1, Bound2, OptionalElements, UniqueElements.
  * Handles bounds that depend on attributes (via SetBound1FromMemberAccessor() ), or
  * on function calls (via SetBound1FromExpressFuncall() ). In C++, runtime bounds
- * look like `t_0->Bound2FromMemberAccessor(SdaiStructured_mesh::index_count_);`
- * \param f the file to write to
+ * look like `t_0->SetBound2FromMemberAccessor(SdaiStructured_mesh::index_count_);`
+ * \param header the header to write attr callback members to
+ * \param impl the file to write to
  * \param t the Type
  * \param var_name the name of the C++ variable, such as t_1 or schema::t_name
  */
-void AGGRprint_init( FILE *file, const Type t, const char * var_name, const char * aggr_name ) {
+void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_name, const char * aggr_name ) {
+    if( !header ) {
+        fprintf( stderr, "ERROR at %s:%d! 'header' is null for aggregate %s.",
+                 __FILE__, __LINE__, t->symbol.name );
+        abort();
+    }
     if( !TYPEget_head( t ) ) {
         /* the code for lower and upper is almost identical */
         if( TYPEget_body( t )->lower ) {
             if( TYPEget_body( t )->lower->symbol.resolved ) {
                 if( TYPEget_body( t )->lower->type == Type_Funcall ) {
-                    fprintf( file, "        %s->SetBound1FromExpressFuncall(\"%s\");\n", var_name,
+                    fprintf( impl, "        %s->SetBound1FromExpressFuncall(\"%s\");\n", var_name,
                              EXPRto_string( TYPEget_body( t )->lower ) );
                 } else {
-                    fprintf( file, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
+                    fprintf( impl, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
                 }
             } else { /* resolved == 0 seems to mean that this is Type_Runtime */
                 assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->lower->e.op2 ) &&
                         ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
-                fprintf( file, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
+                fprintf( impl, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                /* TODO: write inline helper function to header file? */
-                /*fprintf( files->helpers, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
+                fprintf( header, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n}\n",
-                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );*/
+                fprintf( header, "    return ( (%s *) this_ptr)->%s_();\n}\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );
             }
         }
         if( TYPEget_body( t )->upper ) {
             if( TYPEget_body( t )->upper->symbol.resolved ) {
                 if( TYPEget_body( t )->upper->type == Type_Funcall ) {
-                    fprintf( file, "        %s->SetBound2FromExpressFuncall(\"%s\");\n", var_name,
+                    fprintf( impl, "        %s->SetBound2FromExpressFuncall(\"%s\");\n", var_name,
                              EXPRto_string( TYPEget_body( t )->upper ) );
                 } else {
-                    fprintf( file, "        %s->SetBound2(%d);\n", var_name, TYPEget_body( t )->upper->u.integer );
+                    fprintf( impl, "        %s->SetBound2(%d);\n", var_name, TYPEget_body( t )->upper->u.integer );
                 }
             } else { /* resolved == 0 seems to mean that this is Type_Runtime */
                 assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->upper->e.op2 ) &&
                         ( TYPEget_body( t )->upper->e.op2->symbol.name ) );
-                fprintf( file, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
+                fprintf( impl, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                /* TODO: write inline helper function to header file? */
-                /*fprintf( files->helpers, "inline SDAI_Integer getBound2_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
+                fprintf( header, "inline SDAI_Integer getBound2_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
                          ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( files->helpers, "    return ( (%s *) this_ptr)->%s_();\n}\n",
-                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );*/
+                fprintf( header, "    return ( (%s *) this_ptr)->%s_();\n}\n",
+                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );
             }
         }
         if( TYPEget_body( t )->flags.unique ) {
-            fprintf( file, "        %s->UniqueElements(LTrue);\n", var_name );
+            fprintf( impl, "        %s->UniqueElements(LTrue);\n", var_name );
         }
         if( TYPEget_body( t )->flags.optional ) {
-            fprintf( file, "        %s->OptionalElements(LTrue);\n", var_name );
+            fprintf( impl, "        %s->OptionalElements(LTrue);\n", var_name );
         }
     }
 }

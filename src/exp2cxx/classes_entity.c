@@ -870,7 +870,7 @@ char * generate_dict_attr_name( Variable a, char * out ) {
  ** Side Effects:
  ** Status:  ok 1/15/91
  ******************************************************************/
-void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
+void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schema ) {
 #define entity_name ENTITYget_name(entity)
 #define schema_name SCHEMAget_name(schema)
     char attrnm [BUFSIZ];
@@ -881,7 +881,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
 #ifdef NEWDICT
     /* DAS New SDAI Dictionary 5/95 */
     /* insert the entity into the schema descriptor */
-    fprintf( file,
+    fprintf( impl,
              "        ((SDAIAGGRH(Set,EntityH))%s::schema->Entities())->Add(%s::%s%s);\n",
              schema_name, schema_name, ENT_PREFIX, entity_name );
 #endif
@@ -889,34 +889,34 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
     if( ENTITYget_abstract( entity ) ) {
         if( entity->u.entity->subtype_expression ) {
 
-            fprintf( file, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
+            fprintf( impl, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
 
-            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( file, "\n      str.append( \")\" );\n" );
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
+            fprintf( impl, "\n      str.append( \")\" );\n" );
+            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         } else {
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
+            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
                      schema_name, ENT_PREFIX, entity_name );
         }
     } else {
         if( entity->u.entity->subtype_expression ) {
-            fprintf( file, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
-            format_for_std_stringout( file, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( file, "\n      str.append( \")\" );\n" );
-            fprintf( file, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            fprintf( impl, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
+            format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
+            fprintf( impl, "\n      str.append( \")\" );\n" );
+            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
         }
     }
     LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
     /*  set the owning schema of the supertype  */
     super_schema = SCHEMAget_name( ENTITYget_schema( sup ) );
     /* print the supertype list for this entity */
-    fprintf( file, "        %s::%s%s->AddSupertype(%s::%s%s);\n",
+    fprintf( impl, "        %s::%s%s->AddSupertype(%s::%s%s);\n",
              schema_name, ENT_PREFIX, entity_name,
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ) );
 
     /* add this entity to the subtype list of it's supertype    */
-    fprintf( file, "        %s::%s%s->AddSubtype(%s::%s%s);\n",
+    fprintf( impl, "        %s::%s%s->AddSubtype(%s::%s%s);\n",
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ),
              schema_name, ENT_PREFIX, entity_name );
@@ -930,7 +930,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+            fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                      SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
@@ -964,7 +964,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
                    );
         } else {
             /* type reference */
-            fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+            fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                      SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
@@ -994,7 +994,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
     } else if( TYPEis_builtin( v->type ) ) {
         /*  the type wasn't named -- it must be built in or aggregate  */
 
-        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+        fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
                  SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
@@ -1019,8 +1019,8 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
     } else {
         /* manufacture new one(s) on the spot */
         char typename_buf[MAX_LEN];
-        print_typechain( file, v->type, typename_buf, schema, v->name->symbol.name );
-        fprintf( file, "        %s::%s%d%s%s =\n          new %s"
+        print_typechain( header, impl, v->type, typename_buf, schema, v->name->symbol.name );
+        fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s::%s%s);\n",
                  SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
@@ -1044,7 +1044,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
                );
     }
 
-    fprintf( file, "        %s::%s%s->Add%sAttr (%s::%s%d%s%s);\n",
+    fprintf( impl, "        %s::%s%s->Add%sAttr (%s::%s%d%s%s);\n",
              schema_name, ENT_PREFIX, TYPEget_name( entity ),
              ( VARget_inverse( v ) ? "Inverse" : "Explicit" ),
              SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
@@ -1056,7 +1056,7 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
     if( VARis_derived( v ) && v->initializer ) {
         tmp = EXPRto_string( v->initializer );
         tmp2 = ( char * )sc_malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
-        fprintf( file, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
+        fprintf( impl, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
@@ -1066,46 +1066,46 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
         sc_free( tmp2 );
     }
     if( VARget_inverse( v ) ) {
-        fprintf( file, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
+        fprintf( impl, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, attr_count,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm, v->inverse_attribute->name->symbol.name );
         if( v->type->symbol.name ) {
-            fprintf( file,
+            fprintf( impl,
                      "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
                      schema_name, ATTR_PREFIX, attr_count,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                      v->type->symbol.name );
-            fprintf( file, "// inverse entity 1 %s\n", v->type->symbol.name );
+            fprintf( impl, "// inverse entity 1 %s\n", v->type->symbol.name );
         } else {
             switch( TYPEget_body( v->type )->type ) {
                 case entity_:
-                    fprintf( file,
+                    fprintf( impl,
                              "        %s%d%s%s->inverted_entity_id_(\"%s\");\n",
                              ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                              TYPEget_body( v->type )->entity->symbol.name );
-                    fprintf( file, "// inverse entity 2 %s\n", TYPEget_body( v->type )->entity->symbol.name );
+                    fprintf( impl, "// inverse entity 2 %s\n", TYPEget_body( v->type )->entity->symbol.name );
                     break;
                 case aggregate_:
                 case array_:
                 case bag_:
                 case set_:
                 case list_:
-                    fprintf( file,
+                    fprintf( impl,
                              "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
                              schema_name, ATTR_PREFIX, attr_count,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
                              TYPEget_body( v->type )->base->symbol.name );
-                    fprintf( file, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
+                    fprintf( impl, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
                     break;
                 default:
                     fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
@@ -1117,72 +1117,49 @@ void ENTITYincode_print( Entity entity, FILE *file, Schema schema ) {
 
     LISTod
 
-    fprintf( file, "        reg.AddEntity (*%s::%s%s);\n",
+    fprintf( impl, "        reg.AddEntity (*%s::%s%s);\n",
              schema_name, ENT_PREFIX, entity_name );
 
 #undef schema_name
 }
 
-void ENTITYPrint_h( const Entity entity, const char * filename, Linked_List neededAttr, Schema schema ) {
+void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, Schema schema ) {
     const char *name = ENTITYget_classname( entity );
-    FILE *file = NULL;
-
     DEBUG( "Entering ENTITYPrint_h for %s\n", name );
 
-    sc_mkdir( "entity" );
-
-    file = FILEcreate( filename );
-    if ( !file ) {
-        DEBUG( "FAILED ENTITYPrint_h\n" );
-        return;
-    }
-
-    ENTITYhead_print( entity, file );
-    DataMemberPrint( entity, neededAttr, file );
-    MemberFunctionSign( entity, neededAttr, file );
+    ENTITYhead_print( entity, header );
+    DataMemberPrint( entity, neededAttr, header );
+    MemberFunctionSign( entity, neededAttr, header );
     
-    fprintf( file, "void init_%s(Registry& reg);\n\n", name );
+    fprintf( header, "void init_%s(Registry& reg);\n\n", name );
 
-    fprintf( file, "namespace %s {\n", SCHEMAget_name( schema ) );
-    ENTITYnames_print( entity, file );
-    fprintf( file, "}\n\n" );
-
-    FILEclose(file);
+    fprintf( header, "namespace %s {\n", SCHEMAget_name( schema ) );
+    ENTITYnames_print( entity, header );
+    fprintf( header, "}\n\n" );
 
     DEBUG( "DONE ENTITYPrint_h\n" );
 }
 
-void ENTITYPrint_cc( const Entity entity, const char * filename, Linked_List neededAttr, Schema schema ) {
+void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema ) {
     const char * name = ENTITYget_classname( entity );
-    FILE *file = NULL;
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
-    sc_mkdir( "entity" );
+    fprintf( impl, "#include \"schema.h\"\n" );
+    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
+    fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
 
-    file = FILEcreate( filename );
-    if ( !file ) {
-        DEBUG( "FAILED ENTITYPrint_cc\n" );
-        return;
-    }
-
-    fprintf( file, "#include \"schema.h\"\n" );
-    fprintf( file, "#include \"sc_memmgr.h\"\n" );
-    fprintf( file, "#include \"entity/%s.h\"\n\n", name );
-
-    LIBdescribe_entity( entity, file, schema );
-    LIBstructor_print( entity, file, schema );
+    LIBdescribe_entity( entity, impl, schema );
+    LIBstructor_print( entity, impl, schema );
     if( multiple_inheritance ) {
-        LIBstructor_print_w_args( entity, file, schema );
+        LIBstructor_print_w_args( entity, impl, schema );
     }
-    LIBmemberFunctionPrint( entity, neededAttr, file );
+    LIBmemberFunctionPrint( entity, neededAttr, impl );
     
-    fprintf( file, "void init_%s( Registry& reg ) {\n", name );
-    fprintf( file, "    std::string str;\n\n" );
-    ENTITYincode_print( entity, file, schema );
-    fprintf( file, "}\n\n" );
-
-    FILEclose(file);
+    fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
+    fprintf( impl, "    std::string str;\n\n" );
+    ENTITYincode_print( entity, header, impl, schema );
+    fprintf( impl, "}\n\n" );
 
     DEBUG( "DONE ENTITYPrint_cc\n" );
 }
@@ -1269,6 +1246,7 @@ void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema
  ** Status:  complete 1/15/91
  ******************************************************************/
 void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
+    FILE * hdr, * impl;
     char * n = ENTITYget_name( entity );
     Linked_List remaining = LISTcreate();
     filenames_t names = getEntityFilenames( entity );
@@ -1297,8 +1275,20 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
         LIST_destroy( existing );
         LIST_destroy( required );
     }
-    ENTITYPrint_h( entity, names.header, remaining, schema );
-    ENTITYPrint_cc( entity, names.impl, remaining, schema );
+    if( mkDirIfNone( "entity" ) == -1 ) {
+        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
+        perror( 0 );
+        abort();
+    }
+
+    hdr = FILEcreate( names.header );
+    impl = FILEcreate( names.impl );
+    assert( hdr && impl && "error creating files" );
+
+    ENTITYPrint_h( entity, hdr, remaining, schema );
+    ENTITYPrint_cc( entity, hdr, impl, remaining, schema );
+    FILEclose( hdr );
+    FILEclose( impl );
 
     /*fprintf( files->inc,   "\n/////////         ENTITY %s\n", n );
     ENTITYinc_print( entity, remaining, files -> inc );
