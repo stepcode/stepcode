@@ -464,12 +464,11 @@ VARis_overrider( Entity e, Variable a ) {
     return 0;
 }
 
-Type
-TYPEget_ancestor( Type t )
-/*
+/**
  * For a renamed type, returns the original (ancestor) type from which t
  * descends.  Return NULL if t is top level.
  */
+Type TYPEget_ancestor( Type t )
 {
     Type i = t;
 

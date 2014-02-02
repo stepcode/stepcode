@@ -358,7 +358,7 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
 static void printEnumCreateHdr( FILE * inc, const Type type ) {
     const char * nm = TYPEget_ctype( type );
 
-    fprintf( inc, "  SDAI_Enum * create_%s ();\n", nm );
+    fprintf( inc, "  SDAI_Enum * create_%s();\n", nm );
 }
 
 /** See header comment above by printEnumCreateHdr. */
