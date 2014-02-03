@@ -20,24 +20,24 @@ SET(express_HDRS
   express/symbol.h
   express/type.h
   express/variable.h
-)
+  )
 install(FILES ${express_HDRS}
-	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/express)
+  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/express)
 
 SET(exppp_HDRS
   exppp/exppp.h
-)
+  )
 install(FILES ${exppp_HDRS}
-	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/exppp)
+  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/exppp)
 
 install(FILES ordered_attrs.h
-              sc_export.h
-              sc_stdbool.h
-	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
+  sc_export.h
+  sc_stdbool.h
+  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
 
 install(FILES ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_cf.h
-	${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h
-	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
+  ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h
+  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
 
 # Local Variables:
 # tab-width: 8

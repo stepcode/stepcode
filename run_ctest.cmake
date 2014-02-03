@@ -15,10 +15,10 @@ SC_BUILD_TYPE:STRING=Debug
 
 
 if( EXISTS "../.SC_CTEST_PREFS.cmake" )
-    include( "../.SC_CTEST_PREFS.cmake" )
+  include( "../.SC_CTEST_PREFS.cmake" )
 else()
-    message( WARNING "Did not find ../.SC_CTEST_PREFS.cmake, containing config variables - result submission disabled" )
-    set( SKIP_SUBMISSION TRUE )
+  message( WARNING "Did not find ../.SC_CTEST_PREFS.cmake, containing config variables - result submission disabled" )
+  set( SKIP_SUBMISSION TRUE )
 endif()
 
 ######################################################
@@ -45,9 +45,9 @@ endif()
 
 
 function( SUBMIT_TEST part )
-    if( NOT SKIP_SUBMISSION )
-        ctest_submit( PARTS ${part} )
-    endif()
+  if( NOT SKIP_SUBMISSION )
+    ctest_submit( PARTS ${part} )
+  endif()
 endfunction( SUBMIT_TEST part )
 
 ######################################################
@@ -73,48 +73,48 @@ SUBMIT_TEST( Build )
 # ctest_memcheck( BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE res )
 
 if(NOT SKIP_TEST_UNITARY_SCHEMAS )
-    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE_LABEL "unitary_schemas" )
-    SUBMIT_TEST( Test )
+  ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+    INCLUDE_LABEL "unitary_schemas" )
+  SUBMIT_TEST( Test )
 endif()
 
 if(NOT SKIP_CPP_TEST_SCHEMA_GEN )
+  ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+    INCLUDE_LABEL "cpp_schema_gen" )
+  SUBMIT_TEST( Test )
+  if(NOT SKIP_CPP_TEST_SCHEMA_BUILD )
     ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE_LABEL "cpp_schema_gen" )
+      INCLUDE_LABEL "cpp_schema_build" )
     SUBMIT_TEST( Test )
-    if(NOT SKIP_CPP_TEST_SCHEMA_BUILD )
-        ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                    INCLUDE_LABEL "cpp_schema_build" )
-        SUBMIT_TEST( Test )
-        if(NOT SKIP_CPP_TEST_SCHEMA_RW )
-            ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                        INCLUDE_LABEL "cpp_schema_rw" )
-            SUBMIT_TEST( Test )
-        endif()
+    if(NOT SKIP_CPP_TEST_SCHEMA_RW )
+      ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+	INCLUDE_LABEL "cpp_schema_rw" )
+      SUBMIT_TEST( Test )
     endif()
+  endif()
 endif()
 
 if(NOT SKIP_TEST_EXCHANGE_FILE )
-    if( SKIP_CPP_TEST_SCHEMA_BUILD )
-        ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE "build_cpp_sdai_AP214E3_2010" )
-        SUBMIT_TEST( Test )
-    endif()
+  if( SKIP_CPP_TEST_SCHEMA_BUILD )
     ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE_LABEL "exchange_file" )
+      INCLUDE "build_cpp_sdai_AP214E3_2010" )
     SUBMIT_TEST( Test )
+  endif()
+  ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+    INCLUDE_LABEL "exchange_file" )
+  SUBMIT_TEST( Test )
 endif()
 
 if(NOT SKIP_TEST_CPP_SCHEMA_SPECIFIC )
-    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE_LABEL "cpp_schema_specific" )
-    SUBMIT_TEST( Test )
+  ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+    INCLUDE_LABEL "cpp_schema_specific" )
+  SUBMIT_TEST( Test )
 endif()
 
 if(NOT SKIP_TEST_CPP_UNIT )
-    ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
-                INCLUDE_LABEL "cpp_unit_....*" )
-    SUBMIT_TEST( Test )
+  ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" APPEND
+    INCLUDE_LABEL "cpp_unit_....*" )
+  SUBMIT_TEST( Test )
 endif()
 
 # ctest_coverage( )

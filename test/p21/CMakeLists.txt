@@ -35,8 +35,8 @@ MACRO( INSTANCE_TEST sname test_mode instance )
   math( EXPR SI_TEST_COUNTER "${SI_TEST_COUNTER}+1" )
   set( test_file "${CMAKE_CURRENT_BINARY_DIR}/${sname}_${SI_TEST_COUNTER}.stp" )
   file( WRITE ${test_file} "${P21_FILE_HEAD}${sname}${P21_FILE_MID}
-#${SI_TEST_COUNTER}=${instance}    /* should ${test_mode} */
-${P21_FILE_TAIL}" )
+  #${SI_TEST_COUNTER}=${instance}    /* should ${test_mode} */
+  ${P21_FILE_TAIL}" )
   add_test( test_${sname}_${SI_TEST_COUNTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_${sname} ${test_file} )
   set_tests_properties( test_${sname}_${SI_TEST_COUNTER} PROPERTIES DEPENDS build_cpp_sdai_${sname} LABELS exchange_file WILL_FAIL ${_fail} )
 ENDMACRO( INSTANCE_TEST sname test_mode instance )
@@ -72,8 +72,8 @@ add_test( test_missing_and_required_strict ${p21read_ap214} -s ${CMAKE_CURRENT_S
 add_test( test_p21_entity_internal_comment ${p21read_ap214}    ${CMAKE_CURRENT_SOURCE_DIR}/comments.p21 )
 
 set_tests_properties( test_good_schema_name test_good_schema_name_asn test_mismatch_schema_name
-                      test_ignore_schema_name test_missing_and_required test_missing_and_required_strict test_p21_entity_internal_comment
-                      PROPERTIES DEPENDS build_cpp_sdai_AP214E3_2010 LABELS exchange_file )
+  test_ignore_schema_name test_missing_and_required test_missing_and_required_strict test_p21_entity_internal_comment
+  PROPERTIES DEPENDS build_cpp_sdai_AP214E3_2010 LABELS exchange_file )
 
 set_tests_properties( test_mismatch_schema_name test_missing_and_required_strict PROPERTIES WILL_FAIL TRUE )
 
@@ -86,7 +86,7 @@ set_tests_properties( test_mismatch_schema_name test_missing_and_required_strict
 #p21read will report errors with the file, but they don't matter as long as there isn't a segfault.
 BUILD_A_SCHEMA(${SC_SOURCE_DIR}/test/misc/select_segfault_210e3.exp)
 add_test( test_select_segfault ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_select_segfault_210e3
-                               ${CMAKE_CURRENT_SOURCE_DIR}/select_segfault_210e3.stp )
+  ${CMAKE_CURRENT_SOURCE_DIR}/select_segfault_210e3.stp )
 set_tests_properties( test_select_segfault PROPERTIES DEPENDS build_cpp_sdai_select_segfault_210e3 LABELS exchange_file WILL_FAIL TRUE )
 
 set( mid "multiple_inheritance_derived" )

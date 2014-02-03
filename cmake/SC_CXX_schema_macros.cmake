@@ -12,13 +12,13 @@ MACRO( P21_TESTS sfile )
   foreach( TEST_FILE ${P21_FILES} )
     get_filename_component( FNAME ${TEST_FILE} NAME_WE )
     add_test( NAME read_write_cpp_${PROJECT_NAME}_${FNAME}
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMAND p21read_${PROJECT_NAME} ${TEST_FILE} )
     set_tests_properties( read_write_cpp_${PROJECT_NAME}_${FNAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     if(NOT WIN32)
       add_test( NAME read_lazy_cpp_${PROJECT_NAME}_${FNAME}
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                COMMAND lazy_${PROJECT_NAME} ${TEST_FILE} )
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+	COMMAND lazy_${PROJECT_NAME} ${TEST_FILE} )
       set_tests_properties( read_lazy_cpp_${PROJECT_NAME}_${FNAME} PROPERTIES DEPENDS build_lazy_cpp_${PROJECT_NAME} LABELS cpp_schema_rw )
     endif(NOT WIN32)
   endforeach()
@@ -48,24 +48,24 @@ ENDMACRO( SCHEMA_EXES )
 # label the tests and set dependencies
 MACRO( SCHEMA_TESTS )
   add_test( NAME generate_cpp_${PROJECT_NAME}
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND ${CMAKE_COMMAND} --build .
-                                      --target generate_cpp_${PROJECT_NAME}
-                                      --config $<CONFIGURATION> )
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} --build .
+    --target generate_cpp_${PROJECT_NAME}
+    --config $<CONFIGURATION> )
   set_tests_properties( generate_cpp_${PROJECT_NAME} PROPERTIES LABELS cpp_schema_gen )
   add_test( NAME build_cpp_${PROJECT_NAME}
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND ${CMAKE_COMMAND} --build .
-                                      --target p21read_${PROJECT_NAME}
-                                      --config $<CONFIGURATION> )
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} --build .
+    --target p21read_${PROJECT_NAME}
+    --config $<CONFIGURATION> )
   set_tests_properties( build_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build )
   if(NOT WIN32)
-  add_test( NAME build_lazy_cpp_${PROJECT_NAME}
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} --build .
-                                     --target lazy_${PROJECT_NAME}
-                                     --config $<CONFIGURATION> )
-  set_tests_properties( build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build )
+    add_test( NAME build_lazy_cpp_${PROJECT_NAME}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      COMMAND ${CMAKE_COMMAND} --build .
+      --target lazy_${PROJECT_NAME}
+      --config $<CONFIGURATION> )
+    set_tests_properties( build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build )
   endif(NOT WIN32)
 ENDMACRO( SCHEMA_TESTS )
 
@@ -84,19 +84,19 @@ MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
   # this calls a cmake script because it doesn't seem to be possible
   # to divert stdout, stderr in cmake except via execute_process
   add_custom_command( OUTPUT ${sourceFiles}
-                      COMMAND ${CMAKE_COMMAND} -DEXE=\"$<TARGET_FILE:exp2cxx>\"  -DEXP=\"${expFile}\"
-                                               -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\"
-                                               -DSDIR=\"${CMAKE_CURRENT_LIST_DIR}\"
-                                               -P ${SC_CMAKE_DIR}/SC_Run_exp2cxx.cmake
-                      WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-                      COMMENT "[exp2cxx] Generating ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}."
-                    )
+    COMMAND ${CMAKE_COMMAND} -DEXE=\"$<TARGET_FILE:exp2cxx>\"  -DEXP=\"${expFile}\"
+    -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\"
+    -DSDIR=\"${CMAKE_CURRENT_LIST_DIR}\"
+    -P ${SC_CMAKE_DIR}/SC_Run_exp2cxx.cmake
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    COMMENT "[exp2cxx] Generating ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}."
+    )
   # will include_directories behave as desired in a macro?
   include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}         ${SC_SOURCE_DIR}/src/cldai          ${SC_SOURCE_DIR}/src/cleditor
     ${SC_SOURCE_DIR}/src/clutils        ${SC_SOURCE_DIR}/src/clstepcore     ${SC_SOURCE_DIR}/src/base
     ${SC_SOURCE_DIR}/src/base/judy/src
-  )
+    )
   # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
   SC_ADDLIB( ${PROJECT_NAME} "${sourceFiles}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE" )
   add_dependencies( ${PROJECT_NAME} generate_cpp_${PROJECT_NAME} )

@@ -1,7 +1,7 @@
 SET(sc_MANS
-    man/man1/fedex.1
-    man/man1/exp2cxx.1
-)
+  man/man1/fedex.1
+  man/man1/exp2cxx.1
+  )
 
 if(NOT DEFINED MAN_DIR)
   set(MAN_DIR share/man)

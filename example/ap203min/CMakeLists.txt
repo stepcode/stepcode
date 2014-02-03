@@ -58,31 +58,31 @@ add_subdirectory( ${STEPCODE_ROOT_DIR} "${CMAKE_CURRENT_BINARY_DIR}/sc" EXCLUDE_
 
 # Set up STEPcode include directories.
 set( STEPCODE_INCLUDE_DIR
-${STEPCODE_ROOT_DIR}/src/base
-${STEPCODE_ROOT_DIR}/src/clstepcore
-${STEPCODE_ROOT_DIR}/src/cldai
-${STEPCODE_ROOT_DIR}/src/clutils
-${STEPCODE_ROOT_DIR}/src/cleditor
-${STEPCODE_BUILD_DIR}/include
-${STEPCODE_ROOT_DIR}/include
-${CMAKE_BINARY_DIR}
-)
+  ${STEPCODE_ROOT_DIR}/src/base
+  ${STEPCODE_ROOT_DIR}/src/clstepcore
+  ${STEPCODE_ROOT_DIR}/src/cldai
+  ${STEPCODE_ROOT_DIR}/src/clutils
+  ${STEPCODE_ROOT_DIR}/src/cleditor
+  ${STEPCODE_BUILD_DIR}/include
+  ${STEPCODE_ROOT_DIR}/include
+  ${CMAKE_BINARY_DIR}
+  )
 
 # Reset sane values for build destination.  Otherwise, everything ends up in ${CMAKE_BINARY_DIR}/sc
 set( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib )
 set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 
 include_directories(
-${STEPCODE_INCLUDE_DIR}
-)
+  ${STEPCODE_INCLUDE_DIR}
+  )
 
 # Application sources and headers
 set( SRCS
-ap203min.cpp
-)
+  ap203min.cpp
+  )
 
 set( HDRS
-)
+  )
 
 add_executable( ${PROJECT_NAME} ${SRCS} ${HDRS} )
 

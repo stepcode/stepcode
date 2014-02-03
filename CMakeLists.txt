@@ -86,8 +86,8 @@ endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS )
 
 if( NOT DEFINED SC_BUILD_SCHEMAS )
   list( APPEND CONFIG_END_MESSAGES
-  "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a"
-  "     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
+    "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a"
+    "     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS" )
   #this makes SC_BUILD_SCHEMAS show up in cmake-gui
   SET(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built" )
 endif( NOT DEFINED SC_BUILD_SCHEMAS )

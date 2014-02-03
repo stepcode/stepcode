@@ -26,7 +26,7 @@ message("configuring...")
 ctest_configure( BUILD "${CTEST_BINARY_DIRECTORY}" OPTIONS "-DSC_BUILD_SCHEMAS=ALL;-DSC_ENABLE_COVERAGE=ON;-SC_PYTHON_GENERATOR=OFF" )
 message("lcov: resetting counters...")
 execute_process( COMMAND lcov -z -d .
-                 WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET )
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET )
 
 # copy files so lcov won't complain
 execute_process( COMMAND ${CMAKE_COMMAND} -E copy src/express/expparse.y ${CTEST_BINARY_DIRECTORY}/src/express/CMakeFiles/express.dir )
@@ -40,16 +40,16 @@ ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" PARALLEL_LEVEL 1 )
 
 message( "analyzing profiling data using lcov..." )
 execute_process( COMMAND lcov -c -d . -o stepcode.lcov
-                 WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET ERROR_QUIET )
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET ERROR_QUIET )
 
 message("removing system headers...")
 execute_process( COMMAND lcov -r stepcode.lcov "/usr/include/*" -o stepcode_no_usr.lcov
-                 WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET ERROR_QUIET )
+  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} OUTPUT_QUIET ERROR_QUIET )
 execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${LCOV_OUT} )
 
 message( "creating html files..." )
 execute_process( COMMAND genhtml ../stepcode_no_usr.lcov
-                 WORKING_DIRECTORY ${LCOV_OUT} OUTPUT_QUIET ERROR_QUIET )
+  WORKING_DIRECTORY ${LCOV_OUT} OUTPUT_QUIET ERROR_QUIET )
 
 message( "html files are located in ${LCOV_OUT}" )
 execute_process( COMMAND ${CMAKE_COMMAND} -E tar czf ${LCOV_OUT}.tgz ${LCOV_OUT} WORKING_DIRECTORY ${CTEST_SOURCE_DIRECTORY} )
