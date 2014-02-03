@@ -2628,7 +2628,7 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     /*  print class for enumeration */
     n = TYPEget_ctype( type );
-    fprintf( inc, "\nclass %s  :  public SDAI_Enum  {\n", n );
+    fprintf( inc, "\nclass SC_SCHEMA_EXPORT %s  :  public SDAI_Enum  {\n", n );
 
     fprintf( inc, "  protected:\n        EnumTypeDescriptor *type;\n\n" );
 
@@ -3019,7 +3019,7 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
     /* Print the extern statement: */
 #if !defined(__BORLAND__)
     strncpy( nm, TYPEtd_name( t ), BUFSIZ );
-    fprintf( classes, "extern %s         *%s;\n", GetTypeDescriptorName( t ), nm );
+    fprintf( classes, "extern SC_SCHEMA_EXPORT %s         *%s;\n", GetTypeDescriptorName( t ), nm );
 #endif
 }
 

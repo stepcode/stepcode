@@ -177,7 +177,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         TYPEprint_typedefs( t, files->classes );
 
         //print in namespace. Some logic copied from TypeDescriptorName()
-        fprintf( files->names, "    extern %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
+        fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
 
         SCOPEod;
 
