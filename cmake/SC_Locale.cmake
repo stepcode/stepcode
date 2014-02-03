@@ -12,3 +12,11 @@ ENDIF(_orig_lc_messages)
 IF(_orig_lang)
   SET(ENV{LANG}        C)
 ENDIF(_orig_lang)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

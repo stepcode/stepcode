@@ -68,3 +68,11 @@ if( ENABLE_TESTING )
     add_test( judyS2test judyS2test )
 
 endif( ENABLE_TESTING )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

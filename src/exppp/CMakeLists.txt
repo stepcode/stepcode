@@ -42,3 +42,11 @@ SC_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp;express;base")
 if( SC_ENABLE_TESTING )
   add_subdirectory(test)
 endif( SC_ENABLE_TESTING )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

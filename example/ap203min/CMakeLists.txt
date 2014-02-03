@@ -89,3 +89,11 @@ add_executable( ${PROJECT_NAME} ${SRCS} ${HDRS} )
 target_link_libraries( ${PROJECT_NAME} ${STEPCODE_LIBRARIES} )
 
 set_target_properties( ${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-I${STEPCODE_BUILD_DIR}/data/${SCHEMA_LINK_NAME}" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

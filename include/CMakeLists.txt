@@ -38,3 +38,11 @@ install(FILES ordered_attrs.h
 install(FILES ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_cf.h
 	${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h
 	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

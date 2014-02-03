@@ -34,3 +34,11 @@ SC_ADDEXEC(exp2python "${exp2python_SOURCES}" "libexppp;express;base")
 
 add_dependencies( exp2python version_string )
 endif(SC_PYTHON_GENERATOR)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

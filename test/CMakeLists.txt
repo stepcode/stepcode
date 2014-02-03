@@ -15,3 +15,11 @@ ENDFOREACH(UNITARY_SCHEMA ${UNITARY_SCHEMAS})
 
 add_subdirectory(p21)
 add_subdirectory(cpp)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

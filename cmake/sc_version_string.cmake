@@ -78,3 +78,11 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
 if(NOT SC_IS_SUBBUILD)
   message("-- sc_version_string.h is up-to-date.")
 endif(NOT SC_IS_SUBBUILD)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

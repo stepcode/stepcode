@@ -118,3 +118,11 @@ if(NOT SKIP_TEST_CPP_UNIT )
 endif()
 
 # ctest_coverage( )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

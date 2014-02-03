@@ -19,3 +19,11 @@ string( REGEX MATCH "[uU][rR]1 *: *SELF *\\\\ *shape_aspect_relationship *\\. *n
 if( match_result STREQUAL "" )
     message( FATAL_ERROR "Pretty printer output does not match input." )
 endif( match_result STREQUAL "" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

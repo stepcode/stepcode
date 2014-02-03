@@ -17,3 +17,11 @@ include( ${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake )
         SCHEMA_CMLIST( ${abspath} )
     endforeach()
 endif( NOT "${SC_BUILD_SCHEMAS}" STREQUAL "" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

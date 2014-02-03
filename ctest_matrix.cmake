@@ -23,3 +23,11 @@ ctest_test( BUILD "${CTEST_BINARY_DIRECTORY}" INCLUDE_LABEL "cpp_schema_....*" )
 message("running python script")
 execute_process( COMMAND python ../misc/wiki-scripts/update-matrix.py
                  WORKING_DIRECTORY ${CTEST_BINARY_DIRECTORY} )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

@@ -146,3 +146,11 @@ add_dependencies( core stepdai check-express stepeditor exp2cxx )
 foreach( _msg ${CONFIG_END_MESSAGES} )
   message( "${_msg}" )
 endforeach( _msg ${CONFIG_END_MESSAGES} )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

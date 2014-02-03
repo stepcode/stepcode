@@ -15,3 +15,11 @@ else()
   endif( NOT "${_res}" STREQUAL "0" )
   # TODO count number of lines in stdout/stderr and tell user?
 endif()
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

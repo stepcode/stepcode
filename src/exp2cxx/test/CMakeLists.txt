@@ -17,3 +17,10 @@ add_test( NAME test_exp2cxx_inverse_qualifiers
         )
 set_tests_properties( test_exp2cxx_unique_qualifiers test_exp2cxx_inverse_qualifiers PROPERTIES DEPENDS exp2cxx )
 
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

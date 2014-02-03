@@ -106,3 +106,11 @@ MACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
   # TODO add test to verify that schema scanner output matches fedex_plus output
 
 ENDMACRO( SCHEMA_TARGETS expFile schemaName sourceFiles )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

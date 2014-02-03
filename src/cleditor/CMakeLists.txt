@@ -31,3 +31,11 @@ SC_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" "stepcore;stepdai;steputils;base")
 
 install(FILES ${SC_CLEDITOR_HDRS}
 	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cleditor)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

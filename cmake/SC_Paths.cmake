@@ -33,3 +33,11 @@ MACRO( LOCATE_SCHEMA SCHEMA_FILE _res_var )
     message(FATAL_ERROR "Expected one express file. Found '${${_res_var}}' instead.")
   endif()
 ENDMACRO( LOCATE_SCHEMA SCHEMA_FILE _res_var )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

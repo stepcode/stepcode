@@ -19,3 +19,11 @@ string( REGEX MATCH " *SELF *\\\\ *product_occurrence *\\. *occurrence_contexts 
 if( match_result STREQUAL "" )
     message( FATAL_ERROR "Pretty printer output does not match input." )
 endif( match_result STREQUAL "" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

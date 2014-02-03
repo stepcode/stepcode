@@ -57,3 +57,11 @@ execute_process( COMMAND ${CMAKE_COMMAND} -E tar czf ${LCOV_OUT}.tgz ${LCOV_OUT}
 message( "tarball at ${LCOV_OUT}.tgz" )
 
 message( "================================================ Success! ================================================" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

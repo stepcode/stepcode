@@ -38,3 +38,11 @@ SC_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")
 
 install(FILES ${SC_CLDAI_HDRS}
 	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cldai)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

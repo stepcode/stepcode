@@ -63,3 +63,11 @@ if(HAVE_STD_THREAD)
 add_schema_dependent_test( "stepfile_rw_progress" "AP214E3_2010"
                            "${SC_SOURCE_DIR}/data/ap214e3/as1-oc-214.stp" "-pthread -std=c++0x" "pthread" )
 endif(HAVE_STD_THREAD)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

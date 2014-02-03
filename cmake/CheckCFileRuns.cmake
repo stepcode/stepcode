@@ -82,3 +82,10 @@ MACRO(CHECK_C_FILE_RUNS SOURCE VAR)
   ENDIF("${VAR}" MATCHES "^${VAR}$")
 ENDMACRO(CHECK_C_FILE_RUNS)
 
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

@@ -121,3 +121,10 @@ INSTANCE_TEST( ${mid} FAIL "AABB('z',2,.B.,1.2);"              )
 #p21read reports no errors on this one; I'm not certain whether that is right or wrong.
 #INSTANCE_TEST( ${mid} FAIL "AABB(4,.BEE.,4.5);"                )
 
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

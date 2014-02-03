@@ -17,3 +17,11 @@ string( REGEX MATCH "new *Inverse_attribute *\\\( *\\\" *product_occurrence *\\.
 if( match_result STREQUAL "" )
     message( FATAL_ERROR "exp2cxx output does not match input schema." )
 endif( match_result STREQUAL "" )
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

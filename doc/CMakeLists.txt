@@ -10,3 +10,11 @@ endif(NOT DEFINED MAN_DIR)
 IF(NOT WIN32)
   INSTALL(FILES ${sc_MANS} DESTINATION ${MAN_DIR}/man1)
 ENDIF(NOT WIN32)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

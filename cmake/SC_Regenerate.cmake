@@ -56,3 +56,11 @@ if(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
 else(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
     set(SC_GENERATE_LP_SOURCES 0)
 endif(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+

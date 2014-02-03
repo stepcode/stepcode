@@ -33,3 +33,11 @@ ENDIF()
 
 install(FILES ${SC_CLUTILS_HDRS}
 	DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clutils)
+
+# Local Variables:
+# tab-width: 8
+# mode: cmake
+# indent-tabs-mode: t
+# End:
+# ex: shiftwidth=2 tabstop=8
+
