@@ -1,21 +1,21 @@
-PROJECT( SC_SUBPROJECT_SCHEMA_SCANNER )
-CMAKE_MINIMUM_REQUIRED( VERSION 2.8.7 )
+project(SC_SUBPROJECT_SCHEMA_SCANNER)
+cmake_minimum_required(VERSION 2.8.7)
 
-if( NOT ( "${CALLED_FROM}" STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR ) )
+if(NOT ("${CALLED_FROM}" STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR))
   message(" ${CALLED_FROM}  ${SC_ROOT} ${SC_BUILDDIR}")
-  message( FATAL_ERROR "This is not a truly independent project; it should be built during the STEPcode configuration stage." )
+  message(FATAL_ERROR "This is not a truly independent project; it should be built during the STEPcode configuration stage.")
 endif()
 
 # SC_ROOT: SC root dir
 # SC_BUILDDIR: SC build dir, so generated headers can be found
 
-set( CMAKE_BUILD_TYPE Debug )
+set(CMAKE_BUILD_TYPE Debug)
 
 # set all target location variables so that MSVC will put the executable the same place as other compilers
-set( SC_BINARY_DIR ${SC_BUILDDIR} )
-include( ${CMAKE_CURRENT_SOURCE_DIR}/../SC_Outdirs.cmake )
+set(SC_BINARY_DIR ${SC_BUILDDIR})
+include(${CMAKE_CURRENT_SOURCE_DIR}/../SC_Outdirs.cmake)
 
-set( schema_scanner_src
+set(schema_scanner_src
   ${SC_ROOT}/src/base/sc_mkdir.c
   ${SC_ROOT}/src/exp2cxx/genCxxFilenames.c
   ${SC_ROOT}/src/exp2cxx/class_strings.c
@@ -43,7 +43,7 @@ set( schema_scanner_src
   ${SC_ROOT}/src/express/type.c
   ${SC_ROOT}/src/express/variable.c
   ${CMAKE_CURRENT_SOURCE_DIR}/schemaScanner.cc
-  )
+ )
 
 include_directories(
   ${SC_ROOT}/include/
@@ -52,21 +52,21 @@ include_directories(
   ${SC_ROOT}/src/base
   ${SC_ROOT}/src/exp2cxx
   ${SC_BUILDDIR}/include
-  )
+ )
 
 if(MSVC)
-  add_definitions( -D__MSVC__ -D__WIN32__ )
+  add_definitions(-D__MSVC__ -D__WIN32__)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
-  add_definitions( -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS )
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
 elseif(BORLAND)
-  add_definitions( -D__BORLAND__ -D__WIN32__ )
+  add_definitions(-D__BORLAND__ -D__WIN32__)
 else()
-  add_definitions( -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long )
+  add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
 endif()
 
-add_definitions( -DSCHEMA_SCANNER )
+add_definitions(-DSCHEMA_SCANNER)
 
-add_executable( schema_scanner ${schema_scanner_src} )
+add_executable(schema_scanner ${schema_scanner_src})
 
 # Local Variables:
 # tab-width: 8

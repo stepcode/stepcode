@@ -1,13 +1,13 @@
 
 # set compile definitions for dll exports on windows
-MACRO(DEFINE_DLL_EXPORTS libname)
+macro(DEFINE_DLL_EXPORTS libname)
   if(MSVC OR BORLAND)
     if(${libname} MATCHES "sdai_.*")
       set(export "SC_SCHEMA_DLL_EXPORTS")
     else()
-      STRING(REGEX REPLACE "lib" "" shortname "${libname}")
-      STRING(REGEX REPLACE "step" "" LOWERCORE "${shortname}")
-      STRING(TOUPPER ${LOWERCORE} UPPER_CORE)
+      string(REGEX REPLACE "lib" "" shortname "${libname}")
+      string(REGEX REPLACE "step" "" LOWERCORE "${shortname}")
+      string(TOUPPER ${LOWERCORE} UPPER_CORE)
       set(export "SC_${UPPER_CORE}_DLL_EXPORTS")
     endif()
     get_target_property(defs ${libname} COMPILE_DEFINITIONS)
@@ -21,16 +21,16 @@ MACRO(DEFINE_DLL_EXPORTS libname)
 endmacro(DEFINE_DLL_EXPORTS libname)
 
 # set compile definitions for dll imports on windows
-MACRO(DEFINE_DLL_IMPORTS tgt libs)
+macro(DEFINE_DLL_IMPORTS tgt libs)
   if(MSVC OR BORLAND)
     get_target_property(defs ${tgt} COMPILE_DEFINITIONS)
     if(NOT defs) #if no properties, ${defs} will be defs-NOTFOUND which CMake interprets as false
       set(defs "")
     endif(NOT defs)
     foreach(lib ${libs})
-      STRING(REGEX REPLACE "lib" "" shortname "${lib}")
-      STRING(REGEX REPLACE "step" "" LOWERCORE "${shortname}")
-      STRING(TOUPPER ${LOWERCORE} UPPER_CORE)
+      string(REGEX REPLACE "lib" "" shortname "${lib}")
+      string(REGEX REPLACE "step" "" LOWERCORE "${shortname}")
+      string(TOUPPER ${LOWERCORE} UPPER_CORE)
       list(APPEND defs "SC_${UPPER_CORE}_DLL_IMPORTS")
     endforeach(lib ${libs})
     if(DEFINED defs)
@@ -46,7 +46,7 @@ endmacro(DEFINE_DLL_IMPORTS tgt libs)
 # in which case the EXCLUDE_FROM_ALL property is set for testing.
 # EXCLUDE_FROM_ALL cannot be set on targets that are to be installed,
 # so either test the target or install it - but not both
-MACRO(EXCLUDE_OR_INSTALL target dest arg_3)
+macro(EXCLUDE_OR_INSTALL target dest arg_3)
   if(NOT ((SC_ENABLE_TESTING) AND ("${arg_3}" STREQUAL "TESTABLE")))
     INSTALL(TARGETS ${target} DESTINATION ${dest})
   else(NOT ((SC_ENABLE_TESTING) AND ("${arg_3}" STREQUAL "TESTABLE")))
@@ -102,7 +102,7 @@ endmacro(SC_ADDEXEC execname srcslist libslist)
 # optional args can also be used by MSVC-specific code, but it looks like these two uses
 # will not conflict because the MSVC args must contain "STRICT"
 macro(SC_ADDLIB libname srcslist libslist)
-  STRING(REGEX REPLACE "-framework;" "-framework " libslist "${libslist1}")
+  string(REGEX REPLACE "-framework;" "-framework " libslist "${libslist1}")
   if(SC_BUILD_SHARED_LIBS)
     add_library(${libname} SHARED ${srcslist})
     DEFINE_DLL_EXPORTS(${libname})

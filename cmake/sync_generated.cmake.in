@@ -69,8 +69,8 @@ if(NOT DEBUGGING_GENERATED_SOURCES)
     endforeach(outf ${output_files})
   endif(NOT LOCKED_SOURCE_DIR)
 
-else (NOT DEBUGGING_GENERATED_SOURCES)
-  
+else(NOT DEBUGGING_GENERATED_SOURCES)
+
   message("\nNote: DEBUGGING_GENERATED_SOURCES is enabled - generated outputs will contain configuration-specific debugging information, so syncing cached output files is not possible.  To restore normal behavior, disable DEBUGGING_GENERATED_SOURCES.\n") 
 
 endif(NOT DEBUGGING_GENERATED_SOURCES)

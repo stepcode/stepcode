@@ -1,37 +1,37 @@
 # testing and compilation options, build output dirs, install dirs, etc
 # included by root CMakeLists
 
-IF( NOT DEFINED INCLUDE_INSTALL_DIR )
-  SET( INCLUDE_INSTALL_DIR include )
-ENDIF( NOT DEFINED INCLUDE_INSTALL_DIR )
+if(NOT DEFINED INCLUDE_INSTALL_DIR)
+  set(INCLUDE_INSTALL_DIR include)
+endif(NOT DEFINED INCLUDE_INSTALL_DIR)
 
-IF( NOT DEFINED LIB_INSTALL_DIR )
-  SET( LIB_INSTALL_DIR lib )
-ENDIF( NOT DEFINED LIB_INSTALL_DIR )
+if(NOT DEFINED LIB_INSTALL_DIR)
+  set(LIB_INSTALL_DIR lib)
+endif(NOT DEFINED LIB_INSTALL_DIR)
 
-IF( NOT DEFINED BIN_INSTALL_DIR )
-  SET( BIN_INSTALL_DIR bin )
-ENDIF( NOT DEFINED BIN_INSTALL_DIR )
+if(NOT DEFINED BIN_INSTALL_DIR)
+  set(BIN_INSTALL_DIR bin)
+endif(NOT DEFINED BIN_INSTALL_DIR)
 
-IF( NOT DEFINED SC_BUILD_TYPE )
-  SET( SC_BUILD_TYPE "Debug" CACHE STRING "Build type" ) # By default set debug build
-ENDIF( NOT DEFINED SC_BUILD_TYPE )
-IF(NOT SC_IS_SUBBUILD)
-  SET(CMAKE_BUILD_TYPE ${SC_BUILD_TYPE} CACHE INTERNAL "Build type, immutable" FORCE )
-ELSE(NOT SC_IS_SUBBUILD)
-  SET(CMAKE_BUILD_TYPE ${SC_BUILD_TYPE} )
-ENDIF(NOT SC_IS_SUBBUILD)
+if(NOT DEFINED SC_BUILD_TYPE)
+  set(SC_BUILD_TYPE "Debug" CACHE STRING "Build type") # By default set debug build
+endif(NOT DEFINED SC_BUILD_TYPE)
+if(NOT SC_IS_SUBBUILD)
+  set(CMAKE_BUILD_TYPE ${SC_BUILD_TYPE} CACHE INTERNAL "Build type, immutable" FORCE)
+else(NOT SC_IS_SUBBUILD)
+  set(CMAKE_BUILD_TYPE ${SC_BUILD_TYPE})
+endif(NOT SC_IS_SUBBUILD)
 
 # Define helper macro OPTION_WITH_DEFAULT
-MACRO( OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT )
-  IF( NOT DEFINED ${OPTION_NAME} )
-    SET( ${OPTION_NAME} ${OPTION_DEFAULT} )
-  ENDIF( NOT DEFINED ${OPTION_NAME} )
-  OPTION( ${OPTION_NAME} "${OPTION_STRING}" ${${OPTION_NAME}} )
-ENDMACRO( OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT )
+macro(OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT)
+  if(NOT DEFINED ${OPTION_NAME})
+    set(${OPTION_NAME} ${OPTION_DEFAULT})
+  endif(NOT DEFINED ${OPTION_NAME})
+  option(${OPTION_NAME} "${OPTION_STRING}" ${${OPTION_NAME}})
+endmacro(OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT)
 
 # build shared libs by default
-OPTION_WITH_DEFAULT(SC_BUILD_SHARED_LIBS "Build shared libs" ON )
+OPTION_WITH_DEFAULT(SC_BUILD_SHARED_LIBS "Build shared libs" ON)
 
 # don't build static libs by default
 OPTION_WITH_DEFAULT(SC_BUILD_STATIC_LIBS "Build static libs" OFF)
@@ -42,34 +42,34 @@ OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 OPTION_WITH_DEFAULT(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
 
-OPTION(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
-MARK_AS_ADVANCED(SC_BUILD_EXPRESS_ONLY)
+option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
+mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
 
 #---------------------------------------------------------------------
 # Coverage option
-OPTION_WITH_DEFAULT( SC_ENABLE_COVERAGE "Enable code coverage test" OFF )
-IF(SC_ENABLE_COVERAGE)
-  SET(SC_ENABLE_TESTING ON CACHE BOOL "Testing enabled by coverage option" FORCE)
+OPTION_WITH_DEFAULT(SC_ENABLE_COVERAGE "Enable code coverage test" OFF)
+if(SC_ENABLE_COVERAGE)
+  set(SC_ENABLE_TESTING ON CACHE BOOL "Testing enabled by coverage option" FORCE)
   # build static libs, better coverage report
-  SET(SC_BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE )
-  SET(SC_BUILD_STATIC_LIBS ON CACHE BOOL "Build static libs" FORCE )
-  SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
-  SET(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
-  SET(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
-  SET(SC_BUILD_TYPE "Debug" CACHE STRING "Build type required by testing framework" FORCE)
-  SET( SC_PYTHON_GENERATOR OFF ) #won't build with static libs
-ENDIF(SC_ENABLE_COVERAGE)
+  set(SC_BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
+  set(SC_BUILD_STATIC_LIBS ON CACHE BOOL "Build static libs" FORCE)
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+  set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+  set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
+  set(SC_BUILD_TYPE "Debug" CACHE STRING "Build type required by testing framework" FORCE)
+  set(SC_PYTHON_GENERATOR OFF) #won't build with static libs
+endif(SC_ENABLE_COVERAGE)
 
 #---------------------------------------------------------------------
 # Testing option
-OPTION_WITH_DEFAULT( SC_ENABLE_TESTING "Enable unittesting framework" OFF )
-IF(SC_ENABLE_TESTING)
-  if( NOT DEFINED SC_BUILD_SCHEMAS )
-    set( SC_BUILD_SCHEMAS "ALL" ) #test all schemas, unless otherwise specified
+OPTION_WITH_DEFAULT(SC_ENABLE_TESTING "Enable unittesting framework" OFF)
+if(SC_ENABLE_TESTING)
+  if(NOT DEFINED SC_BUILD_SCHEMAS)
+    set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
   endif()
-  INCLUDE(CTest)
+  include(CTest)
   ENABLE_TESTING()
-ENDIF(SC_ENABLE_TESTING)
+endif(SC_ENABLE_TESTING)
 
 #---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in
@@ -99,37 +99,37 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # When this is a subbuild, assume that the parent project controls all of the following
 #======================================================================================
-IF( NOT SC_IS_SUBBUILD )
+if(NOT SC_IS_SUBBUILD)
 
   # Output directories. In a separate file so it can be used by the schema scanner CMake as well.
-  include( ${SC_CMAKE_DIR}/SC_Outdirs.cmake )
+  include(${SC_CMAKE_DIR}/SC_Outdirs.cmake)
 
   #-----------------------------------------------------------------------------
   # Configure install locations. Only do this if CMAKE_INSTALL_PREFIX hasn't
   # been set already, to try and allow parent builds (if any) some control.
   #
   # Need a good Debug location for Windows.
-  IF(NOT WIN32)
-    IF (${CMAKE_BUILD_TYPE} MATCHES "Debug")
-      SET(SC_INSTALL_PREFIX "${SC_SOURCE_DIR}/../sc-install")
-    ELSE()
-      SET(SC_INSTALL_PREFIX "/usr/local")
-    ENDIF()
-  ENDIF(NOT WIN32)
-  SET( SC_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE
-    PATH "Install prefix prepended to target to create install location" )
-  SET( CMAKE_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories if target destination is not absolute, immutable" FORCE )
+  if(NOT WIN32)
+    if(${CMAKE_BUILD_TYPE} MATCHES "Debug")
+      set(SC_INSTALL_PREFIX "${SC_SOURCE_DIR}/../sc-install")
+    else()
+      set(SC_INSTALL_PREFIX "/usr/local")
+    endif()
+  endif(NOT WIN32)
+  set(SC_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE
+    PATH "Install prefix prepended to target to create install location")
+  set(CMAKE_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories if target destination is not absolute, immutable" FORCE)
 
   #-----------------------------------------------------------------------------
   # SC Packaging
   # $make package
-  SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
-  SET(CPACK_SET_DESTDIR "ON")
-  SET(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
-  SET(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
-  SET(CPACK_PACKAGE_NAME SC )
-  SET(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
-  INCLUDE(CPack)
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
+  set(CPACK_SET_DESTDIR "ON")
+  set(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
+  set(CPACK_PACKAGE_NAME SC)
+  set(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
+  include(CPack)
 
   #-----------------------------------------------------------------------------
   # Uninstall target

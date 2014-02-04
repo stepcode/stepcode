@@ -3,7 +3,7 @@
 # Take the sc config file template as the starting point for
 # sc_cf.h.in - scripts may need to append to the template, so
 # it is read into memory initially.
-SET(CONFIG_H_FILE ${SC_BINARY_DIR}/include/sc_cf.h.in)
+set(CONFIG_H_FILE ${SC_BINARY_DIR}/include/sc_cf.h.in)
 set_source_files_properties(${CONFIG_H_FILE} PROPERTIES GENERATED TRUE)
 set(CMAKE_CURRENT_PROJECT SC)
 define_property(GLOBAL PROPERTY SC_CONFIG_H_CONTENTS BRIEF_DOCS "config.h.in contents" FULL_DOCS "config.h.in contents for SC project")
@@ -19,12 +19,12 @@ endif(NOT COMMAND CONFIG_H_APPEND)
 file(READ ${SC_SOURCE_DIR}/include/sc_cf_cmake.h.in CONFIG_H_FILE_CONTENTS)
 CONFIG_H_APPEND(SC "${CONFIG_H_FILE_CONTENTS}")
 
-INCLUDE(CheckLibraryExists)
-INCLUDE(CheckIncludeFile)
-INCLUDE(CheckFunctionExists)
-INCLUDE(CheckTypeSize)
-INCLUDE(CMakePushCheckState)
-INCLUDE(CheckCXXSourceRuns)
+include(CheckLibraryExists)
+include(CheckIncludeFile)
+include(CheckFunctionExists)
+include(CheckTypeSize)
+include(CMakePushCheckState)
+include(CheckCXXSourceRuns)
 
 CHECK_INCLUDE_FILE(ndir.h HAVE_NDIR_H)
 CHECK_INCLUDE_FILE(stdarg.h HAVE_STDARG_H)
