@@ -38,11 +38,11 @@ include_directories(
 
 SC_ADDEXEC(exp2cxx "${exp2cxx_SOURCES}" "libexppp;express;base")
 
-add_dependencies( exp2cxx version_string )
+add_dependencies(exp2cxx version_string)
 
-if( SC_ENABLE_TESTING )
+if(SC_ENABLE_TESTING)
   add_subdirectory(test)
-endif( SC_ENABLE_TESTING )
+endif(SC_ENABLE_TESTING)
 
 # Local Variables:
 # tab-width: 8

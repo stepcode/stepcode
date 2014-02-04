@@ -2,7 +2,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${SC_SOURCE_DIR}/src/base
-  )
+ )
 
 # Set up the information we need to feed the generated source management
 # scripts
@@ -15,7 +15,7 @@ set(BUILD_OUTPUT_FILELIST
   ${CMAKE_CURRENT_BINARY_DIR}/expscan.h
   ${CMAKE_CURRENT_BINARY_DIR}/expparse.c
   ${CMAKE_CURRENT_BINARY_DIR}/expparse.h
-  )
+ )
 set(CACHED_FILES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
 string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}" "${CACHED_FILES_DIR}" CACHED_FILELIST "${BUILD_OUTPUT_FILELIST}")
 set(SYNC_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.cmake")
@@ -30,7 +30,7 @@ if(SC_GENERATE_LP_SOURCES)
   set(EXPRESS_GENERATED_SRCS
     ${LEMON_ExpParser_OUTPUT_SOURCE}
     ${PERPLEX_ExpScanner_OUTPUTS}
-    )
+   )
   configure_file(${SC_SOURCE_DIR}/cmake/manage_generated.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.cmake @ONLY)
   add_custom_command(
@@ -38,7 +38,7 @@ if(SC_GENERATE_LP_SOURCES)
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.cmake
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.sentinel
     DEPENDS ${INPUT_FILELIST} ${TEMPLATE_FILELIST} ${CACHED_FILELIST} ${PERPLEX_ExpScanner_OUTPUTS} ${LEMON_ExpParser_OUTPUT_SOURCE} generated/verification_info.cmake ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-    )
+   )
   add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.sentinel)
 
   configure_file(${SC_SOURCE_DIR}/cmake/sync_generated.cmake.in
@@ -48,7 +48,7 @@ if(SC_GENERATE_LP_SOURCES)
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.cmake
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.sentinel
     DEPENDS ${INPUT_FILELIST} ${TEMPLATE_FILELIST} ${PERPLEX_ExpScanner_OUTPUTS} ${LEMON_ExpParser_OUTPUT_SOURCE} ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-    )
+   )
   add_custom_target(express_sync_generated_files DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.sentinel)
 
 else(SC_GENERATE_LP_SOURCES)
@@ -56,7 +56,7 @@ else(SC_GENERATE_LP_SOURCES)
   set(EXPRESS_GENERATED_SRCS
     generated/expparse.c
     generated/expscan.c
-    )
+   )
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
   configure_file(${SC_SOURCE_DIR}/cmake/verify_generated.cmake.in
     ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.cmake @ONLY)
@@ -65,7 +65,7 @@ else(SC_GENERATE_LP_SOURCES)
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.cmake
     COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.sentinel
     DEPENDS ${INPUT_FILELIST} ${CACHED_FILELIST} generated/verification_info.cmake ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-    )
+   )
   add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.sentinel)
 
 endif(SC_GENERATE_LP_SOURCES)
@@ -94,7 +94,7 @@ set(EXPRESS_SOURCES
   ordered_attrs.cc
   info.c
   exp_kw.c
-  )
+ )
 
 # TODO
 # Currently, fedex.c provides the main() for multiple programs. These programs
@@ -105,23 +105,23 @@ set(EXPRESS_SOURCES
 # fedex.c's main() into an express library function. That way, programs only
 # need to link against express (not fedex.o too) and they can do initialization
 # in their own main (instead of in a local EXPRESSinit_init definition).
-SET(CHECK_EXPRESS_SOURCES
+set(CHECK_EXPRESS_SOURCES
   fedex.c
   inithook.c
-  )
+ )
 
-SET(EXPRESS_PRIVATE_HDRS
+set(EXPRESS_PRIVATE_HDRS
   stack.h
-  )
+ )
 
 SC_ADDLIB(express "${EXPRESS_SOURCES}" "base")
 add_dependencies(express express_verify)
 add_dependencies(express version_string)
-SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base" )
+SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base")
 
-if( SC_ENABLE_TESTING )
+if(SC_ENABLE_TESTING)
   add_subdirectory(test)
-endif( SC_ENABLE_TESTING )
+endif(SC_ENABLE_TESTING)
 
 # Local Variables:
 # tab-width: 8

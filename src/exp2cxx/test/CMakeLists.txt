@@ -1,21 +1,21 @@
 #tests specific to exp2cxx
 
-set( unitary_dir ${SC_SOURCE_DIR}/test/unitary_schemas )
+set(unitary_dir ${SC_SOURCE_DIR}/test/unitary_schemas)
 
-add_test( NAME test_exp2cxx_unique_qualifiers
+add_test(NAME test_exp2cxx_unique_qualifiers
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND ${CMAKE_COMMAND} -DEXE=$<TARGET_FILE:exp2cxx>
   -DINFILE=${unitary_dir}/unique_qualifiers.exp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
-  )
+ )
 
-add_test( NAME test_exp2cxx_inverse_qualifiers
+add_test(NAME test_exp2cxx_inverse_qualifiers
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND ${CMAKE_COMMAND} -DEXE=$<TARGET_FILE:exp2cxx>
   -DINFILE=${unitary_dir}/inverse_qualifiers.exp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/inverse_qualifiers.cmake
-  )
-set_tests_properties( test_exp2cxx_unique_qualifiers test_exp2cxx_inverse_qualifiers PROPERTIES DEPENDS exp2cxx )
+ )
+set_tests_properties(test_exp2cxx_unique_qualifiers test_exp2cxx_inverse_qualifiers PROPERTIES DEPENDS exp2cxx)
 
 # Local Variables:
 # tab-width: 8

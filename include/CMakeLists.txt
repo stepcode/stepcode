@@ -1,4 +1,4 @@
-SET(express_HDRS
+set(express_HDRS
   express/alg.h
   express/basic.h
   express/caseitem.h
@@ -24,7 +24,7 @@ SET(express_HDRS
 install(FILES ${express_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/express)
 
-SET(exppp_HDRS
+set(exppp_HDRS
   exppp/exppp.h
   )
 install(FILES ${exppp_HDRS}

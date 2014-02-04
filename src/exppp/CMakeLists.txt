@@ -16,22 +16,22 @@ set(LIBEXPPP_SOURCES
   pretty_subtype.c
   pretty_type.c
   pretty_where.c
-  )
+ )
 
 SET(EXPPP_SOURCES
   ../express/fedex.c
   exppp-main.c
-  )
+ )
 
 include_directories(
   ${SC_SOURCE_DIR}/include
   ${SC_SOURCE_DIR}/include/exppp
   ${SC_SOURCE_DIR}/src/base
   ${SC_SOURCE_DIR}/src/express
-  )
+ )
 
 if(BORLAND)
-  add_definitions( -D__STDC__ )
+  add_definitions(-D__STDC__)
 endif()
 
 SC_ADDLIB(libexppp "${LIBEXPPP_SOURCES}" "express;base")
@@ -39,9 +39,9 @@ set_target_properties(libexppp PROPERTIES PREFIX "")
 
 SC_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp;express;base")
 
-if( SC_ENABLE_TESTING )
+if(SC_ENABLE_TESTING)
   add_subdirectory(test)
-endif( SC_ENABLE_TESTING )
+endif(SC_ENABLE_TESTING)
 
 # Local Variables:
 # tab-width: 8

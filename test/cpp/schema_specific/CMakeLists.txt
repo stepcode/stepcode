@@ -1,14 +1,14 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8)
 #c++ tests that depend on a particular schema
 
-INCLUDE_DIRECTORIES( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
+include_directories( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
   ${SC_SOURCE_DIR}/src/clstepcore ${SC_SOURCE_DIR}/src/base )
 
 # ${name} is used for the C++ file name (${name}.cc), and as the suffix for the target and test names
 # ${sdai_lib} is the name of the schema lib that is used
 # ${exe_args} are additional args for the test executable
 # two optional args: ARGV3, ARGV4 are compile flags and libs, respectively.
-FUNCTION( add_schema_dependent_test name sdai_lib exe_args )
+function( add_schema_dependent_test name sdai_lib exe_args )
   # need the path to the lib sources for -I
   get_target_property( sdai_srcs sdai_${sdai_lib} SOURCES )
   list(GET sdai_srcs 0 fullpath )
@@ -32,14 +32,14 @@ FUNCTION( add_schema_dependent_test name sdai_lib exe_args )
     COMMAND $<TARGET_FILE:tst_${name}> ${exe_args} )
   set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_${name}
     LABELS cpp_schema_specific )
-ENDFUNCTION( add_schema_dependent_test name sdai_lib exe_args )
+endfunction( add_schema_dependent_test name sdai_lib exe_args )
 
 #if you need a schema that won't be built automatically (i.e. not in sc/data), put it in here
 #temporarily disabling testing ensures that the schema will be built before these tests run
-SET(SC_ENABLE_TESTING OFF)
+set(SC_ENABLE_TESTING OFF)
 BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp )
 BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp )
-SET(SC_ENABLE_TESTING ON)
+set(SC_ENABLE_TESTING ON)
 
 add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"
   "${SC_SOURCE_DIR}/test/p21/test_array_bounds.p21"

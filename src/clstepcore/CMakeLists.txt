@@ -34,7 +34,7 @@ set(LIBSTEPCORE_SRCS
   needFunc.cc
   )
 
-SET(SC_CLSTEPCORE_HDRS
+set(SC_CLSTEPCORE_HDRS
   baseType.h
   complexSupport.h
   dictdefs.h
@@ -73,9 +73,9 @@ SC_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "steputils;stepdai;base")
 install(FILES ${SC_CLSTEPCORE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)
 
-IF(SC_ENABLE_TESTING)
-  ADD_SUBDIRECTORY( test )
-ENDIF(SC_ENABLE_TESTING)
+if(SC_ENABLE_TESTING)
+  add_subdirectory(test)
+endif(SC_ENABLE_TESTING)
 
 # Local Variables:
 # tab-width: 8
