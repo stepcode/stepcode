@@ -49,10 +49,6 @@
 //  $./AP203Minimum
 //  AP203Minimum    outfile.stp
 
-
-extern void
-SchemaInit( class Registry & );
-
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>
