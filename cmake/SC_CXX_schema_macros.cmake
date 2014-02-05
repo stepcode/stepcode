@@ -24,7 +24,7 @@ macro(P21_TESTS sfile)
   endforeach()
 endmacro(P21_TESTS sfile)
 
-#
+# create p21read_sdai_*, lazy_sdai_*, any exes listed in SC_SDAI_ADDITIONAL_EXES_SRCS
 macro(SCHEMA_EXES)
   RELATIVE_PATH_TO_TOPLEVEL(${CMAKE_CURRENT_SOURCE_DIR} RELATIVE_PATH_COMPONENT)
   SC_ADDEXEC(p21read_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/test/p21read/p21read.cc" "${PROJECT_NAME};stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
@@ -85,13 +85,11 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
   # to divert stdout, stderr in cmake except via execute_process
   add_custom_command(OUTPUT ${sourceFiles}
     COMMAND ${CMAKE_COMMAND} -DEXE=\"$<TARGET_FILE:exp2cxx>\"  -DEXP=\"${expFile}\"
-    -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\"
-    -DSDIR=\"${CMAKE_CURRENT_LIST_DIR}\"
+    -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\" -DSDIR=\"${CMAKE_CURRENT_LIST_DIR}\"
     -P ${SC_CMAKE_DIR}/SC_Run_exp2cxx.cmake
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMENT "[exp2cxx] Generating ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}."
   )
-  # will include_directories behave as desired in a macro?
   include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}         ${SC_SOURCE_DIR}/src/cldai          ${SC_SOURCE_DIR}/src/cleditor
     ${SC_SOURCE_DIR}/src/clutils        ${SC_SOURCE_DIR}/src/clstepcore     ${SC_SOURCE_DIR}/src/base
@@ -101,6 +99,7 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
   SC_ADDLIB(${PROJECT_NAME} "${sourceFiles}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
   add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
 
+  SCHEMA_EXES()
   SCHEMA_TESTS()
   P21_TESTS(${expFile})
   # TODO add test to verify that schema scanner output matches fedex_plus output

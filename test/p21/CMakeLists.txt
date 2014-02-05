@@ -84,14 +84,14 @@ set_tests_properties(test_mismatch_schema_name test_missing_and_required_strict 
 
 #check for a segmentation fault with selects. the files are a subset of the 210e3 schema and of SurfaceMountFlasher.stp, respectively
 #p21read will report errors with the file, but they don't matter as long as there isn't a segfault.
-BUILD_A_SCHEMA(${SC_SOURCE_DIR}/test/misc/select_segfault_210e3.exp)
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/misc/select_segfault_210e3.exp)
 add_test(test_select_segfault ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_select_segfault_210e3
   ${CMAKE_CURRENT_SOURCE_DIR}/select_segfault_210e3.stp)
 set_tests_properties(test_select_segfault PROPERTIES DEPENDS build_cpp_sdai_select_segfault_210e3 LABELS exchange_file WILL_FAIL TRUE)
 
 set(mid "multiple_inheritance_derived")
 #schema for multiple inheritance where two attrs with same name are inherited; one is derived
-BUILD_A_SCHEMA(${SC_SOURCE_DIR}/test/unitary_schemas/${mid}.exp)
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/${mid}.exp)
 
 INSTANCE_TEST(${mid} PASS "A();"                             )
 INSTANCE_TEST(${mid} FAIL "A(*);"                            )

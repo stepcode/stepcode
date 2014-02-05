@@ -17,8 +17,8 @@
 # SCANNER_BUILD_DIR: location scanner is built
 
 set(SCANNER_SRC_DIR ${SC_CMAKE_DIR}/schema_scanner)
-set(SCANNER_BUILD_DIR ${SC_BINARY_DIR}/schema_scanner)
-set(SCANNER_OUT_DIR ${SC_BINARY_DIR}/bin)
+set(SCANNER_BUILD_DIR ${SC_BINARY_DIR}/schema_scanner CACHE INTERNAL "location for scanner build, config files (copied schemas)")
+set(SCANNER_OUT_DIR ${SC_BINARY_DIR}/bin CACHE INTERNAL "location for schema_scanner executable")
 
 #write a cmake file for the cache. the alternative is a very long
 # command line - and the command line can't have newlines in it
@@ -76,7 +76,7 @@ macro(SCHEMA_CMLIST SCHEMA_FILE)
                 )
   if(NOT "${_ss_stat}" STREQUAL "0")
     #check size of output, put in file if large?
-    message(FATAL_ERROR "Schema scan exited with error code ${_ss_stat}. stdout:\n${_ss_out}\nstderr:\n${_ss_err}")
+    message(FATAL_ERROR "Schema scan for '${SCHEMA_FILE}'\nexited with error code '${_ss_stat}'\nstdout:\n${_ss_out}\nstderr:\n${_ss_err}\n")
   endif(NOT "${_ss_stat}" STREQUAL "0")
   # scanner output format: each line contains an absolute path. each path is a dir containing a CMakeLists for one schema
   # there will usually be a single line of output, but it is not illegal for multiple schemas to exist in one .exp file

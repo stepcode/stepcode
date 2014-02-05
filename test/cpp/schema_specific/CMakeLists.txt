@@ -37,8 +37,8 @@ endfunction( add_schema_dependent_test name sdai_lib exe_args )
 #if you need a schema that won't be built automatically (i.e. not in sc/data), put it in here
 #temporarily disabling testing ensures that the schema will be built before these tests run
 set(SC_ENABLE_TESTING OFF)
-BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp )
-BUILD_A_SCHEMA( ${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp )
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp)
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp)
 set(SC_ENABLE_TESTING ON)
 
 add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"

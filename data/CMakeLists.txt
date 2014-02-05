@@ -1,5 +1,14 @@
 # To build one or more schemas, configure with
 # 'cmake -DSC_BUILD_SCHEMAS="path/to/schema.exp;path/to/schema2.exp"
+# you can specify a schema in 3 ways:
+#  * path relative to build dir
+#  * path relative to sc/data (this dir)
+#  * absolute path
+#
+# cmake goes through the above options in order until it finds one
+# that exists. if ${path} is a dir, cmake expects to find a single
+# .exp file inside, which it uses. otherwise, ${path} is assumed to
+# be an express file.
 
 if(NOT "${SC_BUILD_SCHEMAS}" STREQUAL "")
   include(${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake)
