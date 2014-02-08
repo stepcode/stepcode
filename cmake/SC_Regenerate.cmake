@@ -10,11 +10,12 @@
 # this option is set to ON and the necessary tools are not found, the
 # configure step will fail.  If it is set to OFF, SC will not even try to use
 # the generators and will instead use the cached sources.
-if(NOT SC_GENERATE_LEXER_PARSER)
+if(NOT DEFINED SC_GENERATE_LEXER_PARSER)
   set(SC_GENERATE_LEXER_PARSER "AUTO" CACHE STRING "Use Perplex, RE2C and Lemon to generate C source code.")
-else(NOT SC_GENERATE_LEXER_PARSER)
+  set(_verbosity "QUIET")
+else(NOT DEFINED SC_GENERATE_LEXER_PARSER)
   string(TOUPPER "${SC_GENERATE_LEXER_PARSER}" SC_GENERATE_LEXER_PARSER)
-endif(NOT SC_GENERATE_LEXER_PARSER)
+endif(NOT DEFINED SC_GENERATE_LEXER_PARSER)
 set_property(CACHE SC_GENERATE_LEXER_PARSER PROPERTY STRINGS AUTO ON OFF)
 if (NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "AUTO" AND NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "ON" AND NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
   message(WARNING "Unknown value ${SC_GENERATE_LEXER_PARSER} supplied for SC_GENERATE_LEXER_PARSER - defaulting to AUTO")
@@ -24,9 +25,9 @@ endif (NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "AUTO" AND NOT "${SC_GENERATE_
 
 # If the generators have not been turned off, we need to check for them
 if(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
-  find_package(LEMON)
-  find_package(RE2C)
-  find_package(PERPLEX)
+  find_package(LEMON ${_verbosity})
+  find_package(RE2C ${_verbosity})
+  find_package(PERPLEX ${_verbosity})
   if(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
     # Templates may be anywhere - make sure we have a stable path if a relative
     # path was specified at CMake time
@@ -46,6 +47,7 @@ if(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
       include(${SC_CMAKE_DIR}/PERPLEX_Util.cmake)
     endif(NOT COMMAND PERPLEX_TARGET)
     set(SC_GENERATE_LP_SOURCES 1)
+    message(".. Found perplex, re2c, and lemon - can regenerate lexer/parser if necessary")
   else(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
     if("${SC_GENERATE_LEXER_PARSER}" STREQUAL "ON")
       message(FATAL_ERROR "\nSC_GENERATE_LEXER_PARSER set to ON, but one or more components of the Perplex/RE2C/Lemon toolchain were not found.\n")
