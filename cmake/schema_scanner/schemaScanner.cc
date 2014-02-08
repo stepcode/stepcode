@@ -148,6 +148,9 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "# (short name: " << shortName << ")" << endl;
     cmLists << "# " << ecount << " entities, " << tcount << " types" << endl << endl;
 
+    cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
+    cmLists << "include(${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake)" << endl;
+
     // * 2 for headers, + 10 other files
     cmLists << "set(" << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << ")" << endl << endl;
 
@@ -176,21 +179,26 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "# implementation files - 3 lists" << endl << endl;
 
-    cmLists << "set( " << shortName << "_entity_impls" << endl;
+    cmLists << "# unity build: #include small .cc files to reduce the number" << endl;
+    cmLists << "# of translation units that must be compiled" << endl;
+    cmLists << "if(SC_UNITY_BUILD)" << endl << "  # turns off include statements within type and entity .cc's - the unity T.U.'s include a unity header" << endl;
+    cmLists << "  add_definitions( -DSC_SDAI_UNITY_BUILD)" << endl;
+    cmLists << "  set(" << shortName << "_entity_impls Sdai" << schema_upper << "_unity_entities.cc)" << endl;
+    cmLists << "  set(" << shortName << "_type_impls Sdai" << schema_upper << "_unity_types.cc)" << endl;
+    cmLists << "else(SC_UNITY_BUILD)" << endl;
+    cmLists << "  set(" << shortName << "_entity_impls" << endl;
     cmLists << ei.str();
     cmLists << "   )" << endl << endl;
 
     cmLists << "  set(" << shortName << "_type_impls" << endl;
     cmLists << ti.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "   )" << endl;
+    cmLists << "endif(SC_UNITY_BUILD)" << endl << endl;
 
     cmLists << "set( " << shortName << "_misc_impls" << endl;
     cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
-
-    cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
-    cmLists << "include( ${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake )" << endl;
 
     cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
     cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;

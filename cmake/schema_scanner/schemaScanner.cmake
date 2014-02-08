@@ -9,6 +9,22 @@
 # program. It will set variables for schema name(s),
 # headers, and implementation files.
 
+# in a unity build, many small .cc files are #included to create a few large translation units
+# this makes compilation faster, but sometimes runs into compiler limitations
+if(NOT DEFINED SC_UNITY_BUILD)
+  if(BORLAND)
+    message(".. Will not do unity build for this compiler.")
+    set(SC_UNITY_BUILD FALSE)
+  else()
+    message(".. Assuming compiler is capable of unity build.")
+    set(SC_UNITY_BUILD TRUE)
+  endif(BORLAND)
+  message(".. Override by setting SC_UNITY_BUILD; TRUE will result in *huge* translation units, higher memory use in compilation, and faster build times.")
+else(NOT DEFINED SC_UNITY_BUILD)
+  message(".. Respecting user-defined SC_UNITY_BUILD value of ${SC_UNITY_BUILD}.")
+endif(NOT DEFINED SC_UNITY_BUILD)
+
+
 # --- variables ---
 # SC_ROOT: SC root dir
 # SC_BUILDDIR: SC build dir, so generated headers can be found

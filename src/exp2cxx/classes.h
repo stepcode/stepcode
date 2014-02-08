@@ -67,6 +67,12 @@ typedef  struct file_holder  {
                                 *    Nec. if ent1 of schemaA has attribute ent2 from schemaB.
                                 */
     FILE * names;               /**< MAP Nov 2011 - header with namespace for entity and attr descriptors */
+    struct {
+        struct {
+            FILE * impl;
+            FILE * hdr;
+        } entity, type;
+    } unity;
 }  File_holder, FILES;
 
 /**  these fields are used so that ENTITY types are processed in order
