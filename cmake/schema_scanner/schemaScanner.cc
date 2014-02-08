@@ -146,23 +146,24 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "# schema name: " << schemaName << endl;
     cmLists << "# (short name: " << shortName << ")" << endl;
-    cmLists << "# " << ecount << " entities, " << tcount << " types" << endl;
+    cmLists << "# " << ecount << " entities, " << tcount << " types" << endl << endl;
+
     // * 2 for headers, + 10 other files
-    cmLists << "set( " << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << " )" << endl << endl;
+    cmLists << "set(" << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << ")" << endl << endl;
 
 
-    cmLists << "PROJECT( " << shortName << ")" << endl;
+    cmLists << "PROJECT(" << shortName << ")" << endl;
     cmLists << "# list headers so they can be installed - entity, type, misc" << endl;
 
-    cmLists << "set( " << shortName << "_entity_hdrs" << endl;
+    cmLists << "set(" << shortName << "_entity_hdrs" << endl;
     cmLists << eh.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << shortName << "_type_hdrs" << endl;
+    cmLists << "set(" << shortName << "_type_hdrs" << endl;
     cmLists << th.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << shortName << "_misc_hdrs" << endl;
+    cmLists << "set(" << shortName << "_misc_hdrs" << endl;
     cmLists << "     Sdaiclasses.h   schema.h" << endl;
     cmLists << "     Sdai" << schema_upper << "Names.h" << endl;
     cmLists << "     Sdai" << schema_upper << ".h" << endl;
@@ -179,7 +180,7 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << ei.str();
     cmLists << "   )" << endl << endl;
 
-    cmLists << "set( " << shortName << "_type_impls" << endl;
+    cmLists << "  set(" << shortName << "_type_impls" << endl;
     cmLists << ti.str();
     cmLists << "   )" << endl << endl;
 
@@ -192,8 +193,8 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "include( ${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake )" << endl;
 
     cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
-    cmLists << "SCHEMA_TARGETS( \"" << input_filename << "\" \"" << schemaName << "\"" << endl;
-    cmLists << "                 \"${schema_target_files}\" )" << endl;
+    cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;
+    cmLists << "                 \"${schema_target_files}\")" << endl;
 
     cmLists.close();
 
