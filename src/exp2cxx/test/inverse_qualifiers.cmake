@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.8 )
 
 # executable is ${EXE}, input file is ${INFILE}
 
-set( ofile "SdaiINVERSE_PROBLEM.init.cc" )
+set( ofile "entity/SdaiAssembly_component.cc" )
 execute_process( COMMAND ${EXE} ${INFILE}
   RESULT_VARIABLE CMD_RESULT )
 if( NOT ${CMD_RESULT} EQUAL 0 )

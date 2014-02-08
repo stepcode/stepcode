@@ -50,7 +50,7 @@ set(sn_insts "
 set(schema_name_good     "AUTOMOTIVE_DESIGN")
 set(schema_name_good_asn "AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }")
 set(schema_name_mismatch "DOES_NOT_MATCH")
-set(p21read_ap214 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_AP214E3_2010")
+set(p21read_ap214 "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_ap214e3")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/exch_file_good.p21      "${P21_FILE_HEAD}${schema_name_good}${P21_FILE_MID}
 ${sn_insts}${P21_FILE_TAIL}")
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/exch_file_good_asn.p21  "${P21_FILE_HEAD}${schema_name_good_asn}${P21_FILE_MID}

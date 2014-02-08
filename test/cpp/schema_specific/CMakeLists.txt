@@ -11,7 +11,9 @@ include_directories( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${
 function( add_schema_dependent_test name sdai_lib exe_args )
   # need the path to the lib sources for -I
   get_target_property( sdai_srcs sdai_${sdai_lib} SOURCES )
-  list(GET sdai_srcs 0 fullpath )
+
+  # -1 --> last item in list, which will be a file that isn't in a subdir
+  list(GET sdai_srcs -1 fullpath )
   get_filename_component(sdai_src_path ${fullpath} PATH )
 
   add_executable( tst_${name} "${name}.cc" )
@@ -60,7 +62,7 @@ add_schema_dependent_test( "attribute" "inverse_attr" "${SC_SOURCE_DIR}/test/p21
 
 if(HAVE_STD_THREAD)
   # for best results, use a large file. as1-oc-214.stp is currently the largest file in the repo that sc works with.
-  add_schema_dependent_test( "stepfile_rw_progress" "AP214E3_2010"
+  add_schema_dependent_test( "stepfile_rw_progress" "ap214e3"
     "${SC_SOURCE_DIR}/data/ap214e3/as1-oc-214.stp" "-pthread -std=c++0x" "pthread" )
 endif(HAVE_STD_THREAD)
 
