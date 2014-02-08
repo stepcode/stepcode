@@ -101,5 +101,7 @@ macro(SCHEMA_CMLIST SCHEMA_FILE)
   foreach(_dir ${_list})
     add_subdirectory(${_dir} ${_dir}) #specify source and binary dirs as the same
   endforeach(_dir ${_ss_out})
-  configure_file(${SCHEMA_FILE} ${SCANNER_BUILD_DIR}/${_schema}) #if multiple schemas in one file, _schema is the last one printed.
+  # configure_file forces cmake to run again if the schema has been modified
+  #if multiple schemas in one file, _schema is the last one printed.
+  configure_file(${SCHEMA_FILE} ${SCANNER_BUILD_DIR}/${_schema})
 endmacro(SCHEMA_CMLIST SCHEMA_FILE)

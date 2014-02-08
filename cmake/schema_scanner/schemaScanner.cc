@@ -7,6 +7,12 @@
  * generated files will be called.
  */
 
+/* WARNING
+ * If you modify this file, you must re-run cmake. It doesn't seem to be possible
+ * to re-run cmake automatically, as CMake's configure_file() gets confused by
+ * the '${' and '}' in writeLists() below.
+ */
+
 extern "C" {
 #  include "expparse.h"
 #  include "expscan.h"
