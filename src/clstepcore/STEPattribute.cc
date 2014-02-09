@@ -750,22 +750,18 @@ Severity STEPattribute::set_null() {
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
-                 << "\n" << _POC_ "\n";
+            cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
             return SEVERITY_BUG;
 
         case UNKNOWN_TYPE:
-        default: {
+        default:
             ptr.u -> set_null();
-            char errStr[BUFSIZ];
-            errStr[0] = '\0';
-            sprintf( errStr, " Warning: attribute '%s : %s : %d' - %s.\n",
-                     Name(), TypeName(), Type(),
-                     "Don't know how to make attribute NULL" );
-            _error.AppendToDetailMsg( errStr );
+            std::stringstream err;
+            err << " Warning: attribute '" << Name() << " : " << TypeName() << " : ";
+            err << Type() << "' - " << "Don't know how to make attribute NULL" << std::endl;
+            _error.AppendToDetailMsg( err.str() );
             _error.GreaterSeverity( SEVERITY_WARNING );
             return SEVERITY_WARNING;
-        }
     }
     if( Nullable() ) {
         return SEVERITY_NULL;
