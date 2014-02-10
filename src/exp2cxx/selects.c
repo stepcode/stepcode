@@ -593,7 +593,7 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     size = strlen( classnm ) + 2; /* for formatting output */
 
     fprintf( f, "\n//////////  SELECT TYPE %s\n", SelectName( TYPEget_name( type ) ) );
-    fprintf( f, "class %s  :  public "  BASE_SELECT " {\n", classnm );
+    fprintf( f, "class SC_SCHEMA_EXPORT %s  :  public "  BASE_SELECT " {\n", classnm );
     fprintf( f, "  protected:\n" );
     fprintf( f, "    //  types in SELECT \n" );
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
