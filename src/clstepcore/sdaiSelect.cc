@@ -33,7 +33,27 @@ SDAI_Select::SDAI_Select( const SelectTypeDescriptor * s,
 #endif
 }
 
+SDAI_Select::SDAI_Select( const SDAI_Select & other ) {
+    underlying_type = other.underlying_type;
+    base_type = other.base_type;
+    _type = other._type;
+#ifdef SC_LOGGING
+    *logStream << "Exiting SDAI_Select constructor." << endl;
+#endif
+}
+
 SDAI_Select::~SDAI_Select() {
+}
+
+SDAI_Select & SDAI_Select::operator=( const SDAI_Select & other ) {
+    if( &other != this ) {
+        _error = other._error;
+        _type = other._type;
+        base_type = other.base_type;
+        underlying_type = other.underlying_type;
+        val = other.val;
+    }
+    return *this;
 }
 
 Severity SDAI_Select::severity() const {
