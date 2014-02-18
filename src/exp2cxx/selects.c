@@ -1238,13 +1238,13 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
                     n, n, AccessType( t ) );
 
             if( isAggregateType( t ) ) {
-                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
+                fprintf( f, "   _%s%sShallowCopy( *o );\n", SEL_ITEMget_dmname( t ),
                         ( ( t->u.type->body->base ) ? "->" : "." ) );
             } else {
                 fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
             }
 
-            fprintf( f, "   SetUnderlyingType (%s);\n", TYPEtd_name( t ) );
+            fprintf( f, "   SetUnderlyingType( %s );\n", TYPEtd_name( t ) );
             fprintf( f, "   return *this;\n}\n\n" );
         }
     } LISTod
@@ -1272,30 +1272,27 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
 
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
-        fprintf( f, "    if ( o -> CurrentUnderlyingType () == %s ) {\n",
+        fprintf( f, "    if ( o -> CurrentUnderlyingType() == %s ) {\n",
                 TYPEtd_name( t ) );
         if( TYPEis_select( t ) ) {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = &(o -> _%s);\n",
+                fprintf( f, "        _%s = &( o -> _%s );\n",
                         SEL_ITEMget_dmname( t ),
                         StrToLower( TYPEget_utype( t ) ) );
             else
-                fprintf( f, "        _%s =  &(o -> _%s);\n",
+                fprintf( f, "        _%s =  &( o -> _%s );\n",
                         SEL_ITEMget_dmname( t ),
                         SEL_ITEMget_dmname( t ) );
         } else {
-            if( utype_member( dups, t, 1 ) )
+            if( utype_member( dups, t, 1 ) ) {
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = o -> _%s;\n",
-                        SEL_ITEMget_dmname( t ),
-                        SEL_ITEMget_dmname( t ) );
+                fprintf( f, "        _%s = o -> _%s;\n", SEL_ITEMget_dmname( t ), SEL_ITEMget_dmname( t ) );
             /* I changed this although I'm not sure how the if and else differ */
             /*          StrToLower(TYPEget_utype(t)) ); */
-            else
-                fprintf( f, "        _%s =  o -> _%s;\n",
-                        SEL_ITEMget_dmname( t ),
-                        SEL_ITEMget_dmname( t ) );
+            } else {
+                fprintf( f, "        _%s =  o -> _%s;\n", SEL_ITEMget_dmname( t ), SEL_ITEMget_dmname( t ) );
+            }
         }
 
         fprintf( f, "        return *this;\n" );
@@ -1309,29 +1306,29 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
         x[BUFSIZ-1] = '\0';
-        fprintf( f, "    if ( o.CurrentUnderlyingType () == %s ) {\n",
+        fprintf( f, "    if ( o.CurrentUnderlyingType() == %s ) {\n",
                 TYPEtd_name( t ) );
         if( TYPEis_select( t ) ) {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
             else
-                fprintf( f, "        _%s = &(((%s&) o)._%s);\n",
+                fprintf( f, "        _%s = &( ( ( %s& ) o )._%s );\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
         } else {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
             else
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
@@ -1340,7 +1337,7 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
         fprintf( f, "    }\n" );
     } LISTod
     fprintf( f, "   return *this;\n}\n\n" );
-    fprintf( f, "#endif\n" );
+    fprintf( f, "#endif //ndef COMPILER_DEFINES_OPERATOR_EQ\n" );
 }
 
 
