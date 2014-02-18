@@ -1266,8 +1266,9 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
         }
     } LISTod
 
-    fprintf( f, "\n#ifdef COMPILER_DEFINES_OPERATOR_EQ\n#else\n\n" );
-    fprintf( f, "%s& %s::operator =( const %s_ptr& o )\n{\n", n, n, n );
+    fprintf( f, "\n#ifndef COMPILER_DEFINES_OPERATOR_EQ\n\n" );
+    fprintf( f, "%s& %s::operator =( const %s_ptr& o ) {\n", n, n, n );
+    fprintf( f, "    SDAI_Select::operator=( *o );\n");
 
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
@@ -1297,14 +1298,13 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
                         SEL_ITEMget_dmname( t ) );
         }
 
-        fprintf( f, "        underlying_type = o -> CurrentUnderlyingType ();\n" );
         fprintf( f, "        return *this;\n" );
         fprintf( f, "    }\n" );
     } LISTod;
-    fprintf( f, "    underlying_type = o -> CurrentUnderlyingType ();\n" );
     fprintf( f, "    return *this;\n}\n\n" );
 
     fprintf( f, "SDAI_Select& %s::operator =( const SDAI_Select& o ) {\n", n );
+    fprintf( f, "    SDAI_Select::operator=( o );\n");
 
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
@@ -1336,11 +1336,9 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
                         n,
                         SEL_ITEMget_dmname( t ) );
         }
-        fprintf( f, "        underlying_type = o.CurrentUnderlyingType ();\n" );
         fprintf( f, "        return *this;\n" );
         fprintf( f, "    }\n" );
     } LISTod
-    fprintf( f, "   underlying_type = o.CurrentUnderlyingType ();\n" );
     fprintf( f, "   return *this;\n}\n\n" );
     fprintf( f, "#endif\n" );
 }
