@@ -52,6 +52,7 @@ class SC_CORE_EXPORT SDAI_Select {
         // constructors
         SDAI_Select( const SelectTypeDescriptor * s = 0,
                      const TypeDescriptor * td = 0 );
+        SDAI_Select( const SDAI_Select & other );
         virtual ~SDAI_Select();
 
         // from SDAI binding
@@ -89,6 +90,10 @@ class SC_CORE_EXPORT SDAI_Select {
                                            const char * utype = 0,
                                            int addFileId = 0,
                                            const char * currSch = 0 ) = 0;
+
+        //windows complains if operator= is pure virtual, perhaps because the impl is not in the lib with the definition
+        //linux has a regression if the pure virtual operator= is commented out
+        virtual SDAI_Select & operator =( const SDAI_Select & other );
 
         int set_null();
         int is_null();

@@ -1,10 +1,8 @@
-/** *****************************************************************
+/**
 ** \file selects.c
 ** FedEx parser output module for generating C++  class definitions
-** December  5, 1989
-** release 2 17-Feb-1992
-** release 3 March 1993
-** release 4 December 1993
+** The functions in this file gener*ate C++ code for representing EXPRESS SELECT types.
+**
 ** K. C. Morris
 **
 ** Development of FedEx was funded by the United States Government,
@@ -18,10 +16,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 extern int multiple_inheritance;
 
-/**************************************************************************
-********    The functions in this file generate C++ code for representing
-********    EXPRESS SELECT types.
-**************************************************************************/
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
@@ -65,34 +59,23 @@ void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * f
 
 static void initSelItems( const Type, FILE * );
 
-const char *
-SEL_ITEMget_enumtype( Type t ) {
+const char * SEL_ITEMget_enumtype( Type t ) {
     return StrToUpper( TYPEget_name( t ) );
 }
 
-
-/******************************************************************
- ** Procedure:  TYPEget_utype
- ** Parameters:  Type t
- ** Returns:  type used to represent the underlying type in a select class
- ** Description:
- ** Side Effects:
- ** Status:
- ******************************************************************/
-
-const char *
-TYPEget_utype( Type t )  {
+/** \returns type used to represent the underlying type in a select class
+ */
+const char * TYPEget_utype( Type t )  {
     return ( TYPEis_entity( t ) ?  "SDAI_Application_instance_ptr" : TYPEget_ctype( t ) );
 }
 
-/*******************
+/**
 LISTmember
 
 determines if the given entity is a member of the list.
 RETURNS the member if it is a member; otherwise 0 is returned.
-*******************/
-Generic
-LISTmember( const Linked_List list, Generic e ) {
+*/
+Generic LISTmember( const Linked_List list, Generic e ) {
     Link node;
     for( node = list->mark->next; node != list->mark; node = node->next )
         if( e == node -> data ) {
@@ -101,7 +84,7 @@ LISTmember( const Linked_List list, Generic e ) {
     return ( 0 );
 }
 
-/*******************
+/**
  compareOrigTypes
 
  Specialized function to catch if two enumerations, two selects, or two aggrs
@@ -111,9 +94,8 @@ LISTmember( const Linked_List list, Generic e ) {
  ctype() is used for most type comparisons and does not consider renamed types
  equivalent.  This function is called in instances when they should be consi-
  dered equivalent.  One such case is the generation of duplicate lists.
- *******************/
-static int
-compareOrigTypes( Type a, Type b ) {
+ */
+static int compareOrigTypes( Type a, Type b ) {
     Type t, u;
 
     if( ( TYPEis_select( a ) && TYPEis_select( b ) )
@@ -144,7 +126,7 @@ compareOrigTypes( Type a, Type b ) {
     return ( !strcmp( TYPEget_name( t ), TYPEget_name( u ) ) );
 }
 
-/*******************
+/**
  utype_member
 
  determines if the given "link's" underlying type is a member of the list.
@@ -153,9 +135,8 @@ compareOrigTypes( Type a, Type b ) {
  If "rename" is TRUE, we also consider check to match in certain cases where
  list already has an item that check is a renaming of (see header comments to
  compareOrigTypes() above).
- *******************/
-const char *
-utype_member( const Linked_List list, const Type check, int rename ) {
+ */
+const char * utype_member( const Linked_List list, const Type check, int rename ) {
     static char r [BUFSIZ];
     bool checkIsEntity = TYPEis_entity( check );
 
@@ -176,17 +157,14 @@ utype_member( const Linked_List list, const Type check, int rename ) {
 }
 
 /**
-***  SELgetnew_dmlist (const Type type)
-***  Returns a list of types which have unique underlying types
-***  The returned list includes all the types which have a data members
-***  in the select type.
-***
-***  The list that is returned needs to be freed by the caller.
-***/
-
-
-Linked_List
-SELgetnew_dmlist( const Type type ) {
+ *  SELgetnew_dmlist (const Type type)
+ *  Returns a list of types which have unique underlying types
+ *  The returned list includes all the types which have a data members
+ *  in the select type.
+ *
+ *  The list that is returned needs to be freed by the caller.
+ */
+Linked_List SELgetnew_dmlist( const Type type ) {
     Linked_List complete = SEL_TYPEget_items( type );
     Linked_List newlist = LISTcreate();
 
@@ -203,24 +181,20 @@ SELgetnew_dmlist( const Type type ) {
 
 }
 
-const char *
-SEL_ITEMget_dmtype( Type t, const Linked_List l ) {
+const char * SEL_ITEMget_dmtype( Type t, const Linked_List l ) {
     const char * r = utype_member( l, t, 0 );
     return StrToLower( r ? r : TYPEget_utype( t ) );
 
 }
 
-
 /**
-***  SEL_ITEMget_dmname (Type t)
-***  Returns the name of the data member in the select class for the item of
-***    the select having the type t.
-***  Logical and boolean are handled as exceptions because TYPEget_utype()
-***    returns "PSDAI::..." for them which is not a legal variable name.
-***/
-
-const char *
-SEL_ITEMget_dmname( Type t ) {
+ *  SEL_ITEMget_dmname (Type t)
+ *  Returns the name of the data member in the select class for the item of
+ *    the select having the type t.
+ *  Logical and boolean are handled as exceptions because TYPEget_utype()
+ *    returns "PSDAI::..." for them which is not a legal variable name.
+ */
+const char * SEL_ITEMget_dmname( Type t ) {
     Class_Of_Type class = TYPEget_type( t );
 
     if( class == integer_ ) {
@@ -250,15 +224,14 @@ SEL_ITEMget_dmname( Type t ) {
     return ( StrToLower( TYPEget_utype( t ) ) );
 }
 
-/*******************
+/**
 duplicate_in_express_list
 
 determines if the given "link's" underlying type is a multiple member
 of the list.
     RETURNS 1 if true, else 0.
-*******************/
-int
-duplicate_in_express_list( const Linked_List list, const Type check ) {
+*/
+int duplicate_in_express_list( const Linked_List list, const Type check ) {
     if( TYPEis_entity( check ) ) {
         return FALSE;
     }
@@ -274,15 +247,14 @@ duplicate_in_express_list( const Linked_List list, const Type check ) {
     return FALSE;
 }
 
-/*******************
+/**
 unique_types ( const Linked_List list )
 
 determines if any of the types in a select type resolve to the same
 underlying Express type.
 RETURNS 1 if true, else 0.
-*******************/
-int
-unique_types( const Linked_List list ) {
+*/
+int unique_types( const Linked_List list ) {
     LISTdo( list, t, Type )
     if( duplicate_in_express_list( list, t ) ) {
         return FALSE;
@@ -292,14 +264,13 @@ unique_types( const Linked_List list ) {
 }
 
 
-/*******************
+/**
 duplicate_utype_member
 
 determines if the given "link's" C++ representation is used again in the list.
     RETURNS 1 if true, else 0.
-*******************/
-int
-duplicate_utype_member( const Linked_List list, const Type check ) {
+*/
+int duplicate_utype_member( const Linked_List list, const Type check ) {
     char b [BUFSIZ];
 
     if( TYPEis_entity( check ) ) {
@@ -331,15 +302,14 @@ duplicate_utype_member( const Linked_List list, const Type check ) {
     return FALSE;
 }
 
-/*******************
+/**
 any_duplicates_in_select
 
 determines if any of the types in a select type resolve to the same
 C++ representation for the underlying Express type.
 RETURNS 1 if true, else 0.
-*******************/
-int
-any_duplicates_in_select( const Linked_List list ) {
+*/
+int any_duplicates_in_select( const Linked_List list ) {
     LISTdo( list, t, Type )
     if( duplicate_utype_member( list, t ) ) {
         return TRUE;
@@ -348,16 +318,15 @@ any_duplicates_in_select( const Linked_List list ) {
     return FALSE;
 }
 
-/*******************
+/**
 find_duplicate_list
 
 finds an instance of each kind of duplicate type found in the given list.
 This list is returned as dup_list.  If a duplicate exists, the function
 returns TRUE, else FALSE.
 list should be unbound before calling, and freed afterwards.
-*******************/
-int
-find_duplicate_list( const Type type, Linked_List * duplicate_list ) {
+*/
+int find_duplicate_list( const Type type, Linked_List * duplicate_list ) {
     Linked_List temp; /** temporary list for comparison **/
 
     *duplicate_list = LISTcreate();
@@ -386,7 +355,7 @@ non_unique_types_string ( const Type type )
 returns a string containing the non-unique EXPRESS types deriveable
 from a select.  the returned string is in the form (TYPE | TYPE |...)
 *******************/
-/* In the functions below, we use a vector of ints to count paths in the
+/** In the functions below, we use a vector of ints to count paths in the
    select-graph to base types.  The names in this enum correspond to the
    indices in the vector, i.e., tvec[treal] == tvec[1], and contains the
    number of paths to REAL in the graph
@@ -408,8 +377,7 @@ enum __types {
    leaves.  It passes around the vector described above, to track paths to
    the leaf nodes.
 */
-void
-non_unique_types_vector( const Type type, int * tvec ) {
+void non_unique_types_vector( const Type type, int * tvec ) {
     LISTdo( SEL_TYPEget_items( type ), t, Type )
     switch( TYPEget_body( t )->type ) {
         case integer_:
@@ -459,8 +427,7 @@ non_unique_types_vector( const Type type, int * tvec ) {
    (FOO_TYPE | BAR_TYPE | BAZ_TYPE), where FOO, BAR, and BAZ are EXPRESS
    types.  If all types are unique, the string (0) is generated.
 */
-char *
-non_unique_types_string( const Type type ) {
+char * non_unique_types_string( const Type type ) {
     int tvec[] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     char * typestr;
     int first = 1;
@@ -518,45 +485,29 @@ non_unique_types_string( const Type type ) {
 
 
 
-/******************************************************************
- ** Procedure:  ATTR_LISTmember
- ** Parameters:  Linked_List l, Variable check
- ** Returns:  the attribute if an attribute with the same name as "check"
- **  is on the list, 0 otherwise
- ** Description:  checks to see if an attribute is a member of the list
- ** Side Effects:
- ** Status:  26-Oct-1993 done
- ******************************************************************/
-
-Variable
-ATTR_LISTmember( Linked_List l, Variable check ) {
+/** checks to see if an attribute is a member of the list
+ * \returns the attribute 'check' if an attribute with the same name is on the list, 0 otherwise
+ */
+Variable ATTR_LISTmember( Linked_List l, Variable check ) {
     char nm [BUFSIZ];
     char cur [BUFSIZ];
 
     generate_attribute_name( check, nm );
-    LISTdo( l, a, Variable )
-    generate_attribute_name( a, cur );
-    if( ! strcmp( nm, cur ) ) {
-        return check;
-    }
-    LISTod;
+    LISTdo( l, a, Variable ) {
+        generate_attribute_name( a, cur );
+        if( ! strcmp( nm, cur ) ) {
+            return check;
+        }
+    } LISTod;
     return ( 0 );
 }
 
 
-/******************************************************************
- ** Procedure:  SEL_TYPEgetnew_attribute_list
- ** Parameters:  const Type type
- ** Returns:  Returns a list of all the attributes for a select type.
- **   The list is the union of all the attributes of the underlying types.
- ** Description:
- ** Side Effects:
-***  The list that is returned needs to be freed by the caller.
- ** Status:
- ******************************************************************/
-
-Linked_List
-SEL_TYPEgetnew_attribute_list( const Type type ) {
+/** \returns a list that is the union of all the attributes for a select type.
+ * Side Effects:
+ *  The list that is returned needs to be freed by the caller.
+ */
+Linked_List SEL_TYPEgetnew_attribute_list( const Type type ) {
     Linked_List complete = SEL_TYPEget_items( type );
     Linked_List newlist = LISTcreate();
     Linked_List attrs;
@@ -666,12 +617,11 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     LISTfree( data_members );
 }
 
-/*******************
-TYPEselect_inc_print prints the class member function declarations of a select
-class.
-*******************/
-void
-TYPEselect_inc_print( const Type type, FILE * f ) {
+/**
+* TYPEselect_inc_print prints the class member function declarations of a select
+* class.
+*/
+void TYPEselect_inc_print( const Type type, FILE * f ) {
     char n[BUFSIZ];   /*  class name  */
     char tdnm [BUFSIZ];  /*  TypeDescriptor name  */
     Linked_List dups;
@@ -790,10 +740,10 @@ TYPEselect_inc_print( const Type type, FILE * f ) {
 }
 
 
-/*******************
-TYPEselect_lib_print_part_one prints constructor(s)/destructor of a select
-class.
-*******************/
+/**
+* TYPEselect_lib_print_part_one prints constructor(s)/destructor of a select
+* class.
+*/
 void TYPEselect_lib_print_part_one( const Type type, FILE * f,
                                Linked_List dups, char * n ) {
 #define schema_name SCHEMAget_name(schema)
@@ -944,15 +894,13 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
 #undef schema_name
 }
 
-static void
-initSelItems( const Type type, FILE * f )
-/*
+/**
  * Creates initialization functions for the select items of a select.  The
  * selects must have their typedescriptors set properly.  If a select is a
  * renaming of another select ("TYPE selB = selA") its td would default to
  * selA's, so it must be set specifically.
  */
-{
+static void initSelItems( const Type type, FILE * f ) {
     Linked_List data_members = SELgetnew_dmlist( type );
 
     LISTdo( data_members, t, Type )
@@ -963,8 +911,7 @@ initSelItems( const Type type, FILE * f )
     LISTod;
 }
 
-Linked_List
-ENTITYget_expanded_entities( Entity e, Linked_List l ) {
+Linked_List ENTITYget_expanded_entities( Entity e, Linked_List l ) {
     Linked_List supers;
     Entity super;
 
@@ -992,8 +939,7 @@ ENTITYget_expanded_entities( Entity e, Linked_List l ) {
     return l;
 }
 
-Linked_List
-SELget_entity_itemlist( const Type type ) {
+Linked_List SELget_entity_itemlist( const Type type ) {
     Linked_List complete = SEL_TYPEget_items( type );
     Linked_List newlist = LISTcreate();
     Entity cur;
@@ -1008,15 +954,13 @@ SELget_entity_itemlist( const Type type ) {
 
 }
 
-static int
-memberOfEntPrimary( Entity ent, Variable uattr )
-/*
+/**
  * Specialized function used in function TYPEselect_lib_print_part_three
  * below.  Calls a function to check if an attribute of an entity belongs
  * to its primary path (is its own attr, that of its first super, that of
  * its first super's first super etc), and does necessary housekeeping.
  */
-{
+static int memberOfEntPrimary( Entity ent, Variable uattr ) {
     Linked_List attrlist = LISTcreate();
     int result;
 
@@ -1026,13 +970,12 @@ memberOfEntPrimary( Entity ent, Variable uattr )
     return result;
 }
 
-/*******************
-TYPEselect_lib_print_part_three prints part 3) of the SDAI C++ binding for
-a select class -- access functions for the data members of underlying entity
-types.
-*******************/
-void
-TYPEselect_lib_print_part_three( const Type type, FILE * f,
+/**
+* TYPEselect_lib_print_part_three prints part 3) of the SDAI C++ binding for
+* a select class -- access functions for the data members of underlying entity
+* types.
+*/
+void TYPEselect_lib_print_part_three( const Type type, FILE * f,
                                  char * classnm ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
@@ -1238,13 +1181,13 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
                     n, n, AccessType( t ) );
 
             if( isAggregateType( t ) ) {
-                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
+                fprintf( f, "   _%s%sShallowCopy( *o );\n", SEL_ITEMget_dmname( t ),
                         ( ( t->u.type->body->base ) ? "->" : "." ) );
             } else {
                 fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
             }
 
-            fprintf( f, "   SetUnderlyingType (%s);\n", TYPEtd_name( t ) );
+            fprintf( f, "   SetUnderlyingType( %s );\n", TYPEtd_name( t ) );
             fprintf( f, "   return *this;\n}\n\n" );
         }
     } LISTod
@@ -1266,93 +1209,85 @@ void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups
         }
     } LISTod
 
-    fprintf( f, "\n#ifdef COMPILER_DEFINES_OPERATOR_EQ\n#else\n\n" );
-    fprintf( f, "%s& %s::operator =( const %s_ptr& o )\n{\n", n, n, n );
+    fprintf( f, "\n#ifndef COMPILER_DEFINES_OPERATOR_EQ\n\n" );
+    fprintf( f, "%s& %s::operator =( const %s_ptr& o ) {\n", n, n, n );
+    fprintf( f, "    SDAI_Select::operator=( *o );\n");
 
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
-        fprintf( f, "    if ( o -> CurrentUnderlyingType () == %s ) {\n",
+        fprintf( f, "    if ( o -> CurrentUnderlyingType() == %s ) {\n",
                 TYPEtd_name( t ) );
         if( TYPEis_select( t ) ) {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = &(o -> _%s);\n",
+                fprintf( f, "        _%s = &( o -> _%s );\n",
                         SEL_ITEMget_dmname( t ),
                         StrToLower( TYPEget_utype( t ) ) );
             else
-                fprintf( f, "        _%s =  &(o -> _%s);\n",
+                fprintf( f, "        _%s =  &( o -> _%s );\n",
                         SEL_ITEMget_dmname( t ),
                         SEL_ITEMget_dmname( t ) );
         } else {
-            if( utype_member( dups, t, 1 ) )
+            if( utype_member( dups, t, 1 ) ) {
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = o -> _%s;\n",
-                        SEL_ITEMget_dmname( t ),
-                        SEL_ITEMget_dmname( t ) );
+                fprintf( f, "        _%s = o -> _%s;\n", SEL_ITEMget_dmname( t ), SEL_ITEMget_dmname( t ) );
             /* I changed this although I'm not sure how the if and else differ */
             /*          StrToLower(TYPEget_utype(t)) ); */
-            else
-                fprintf( f, "        _%s =  o -> _%s;\n",
-                        SEL_ITEMget_dmname( t ),
-                        SEL_ITEMget_dmname( t ) );
+            } else {
+                fprintf( f, "        _%s =  o -> _%s;\n", SEL_ITEMget_dmname( t ), SEL_ITEMget_dmname( t ) );
+            }
         }
 
-        fprintf( f, "        underlying_type = o -> CurrentUnderlyingType ();\n" );
         fprintf( f, "        return *this;\n" );
         fprintf( f, "    }\n" );
     } LISTod;
-    fprintf( f, "    underlying_type = o -> CurrentUnderlyingType ();\n" );
     fprintf( f, "    return *this;\n}\n\n" );
 
     fprintf( f, "SDAI_Select& %s::operator =( const SDAI_Select& o ) {\n", n );
+    fprintf( f, "    SDAI_Select::operator=( o );\n");
 
     LISTdo( SEL_TYPEget_items( type ), t, Type ) {
         strncpy( x, TYPEget_name( t ), BUFSIZ );
         x[BUFSIZ-1] = '\0';
-        fprintf( f, "    if ( o.CurrentUnderlyingType () == %s ) {\n",
+        fprintf( f, "    if ( o.CurrentUnderlyingType() == %s ) {\n",
                 TYPEtd_name( t ) );
         if( TYPEis_select( t ) ) {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
             else
-                fprintf( f, "        _%s = &(((%s&) o)._%s);\n",
+                fprintf( f, "        _%s = &( ( ( %s& ) o )._%s );\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
         } else {
             if( utype_member( dups, t, 1 ) )
                 /**  if in the dup list  **/
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
             else
-                fprintf( f, "        _%s = ((%s&) o)._%s;\n",
+                fprintf( f, "        _%s = ( ( %s& ) o )._%s;\n",
                         SEL_ITEMget_dmname( t ),
                         n,
                         SEL_ITEMget_dmname( t ) );
         }
-        fprintf( f, "        underlying_type = o.CurrentUnderlyingType ();\n" );
         fprintf( f, "        return *this;\n" );
         fprintf( f, "    }\n" );
     } LISTod
-    fprintf( f, "   underlying_type = o.CurrentUnderlyingType ();\n" );
     fprintf( f, "   return *this;\n}\n\n" );
-    fprintf( f, "#endif\n" );
+    fprintf( f, "#endif //ndef COMPILER_DEFINES_OPERATOR_EQ\n" );
 }
 
 
-/*******************
-TYPEselect_init_print prints the types that belong to the select type
-*******************/
-
-void
-TYPEselect_init_print( const Type type, FILE * f ) {
-#define schema_name SCHEMAget_name(schema)
+/**
+* TYPEselect_init_print prints the types that belong to the select type
+*/
+void TYPEselect_init_print( const Type type, FILE * f ) {
     LISTdo( SEL_TYPEget_items( type ), t, Type )
 
     fprintf( f, "    %s -> Elements ().AddNode",
@@ -1360,11 +1295,9 @@ TYPEselect_init_print( const Type type, FILE * f ) {
     fprintf( f, " (%s);\n",
              TYPEtd_name( t ) );
     LISTod;
-#undef schema_name
 }
 
-void
-TYPEselect_lib_part21( const Type type, FILE * f ) {
+void TYPEselect_lib_part21( const Type type, FILE * f ) {
     char n[BUFSIZ];       /*  pointers to class name(s)  */
     const char * dm;  /*  data member name */
     Linked_List data_members = SELgetnew_dmlist( type );
@@ -1733,8 +1666,7 @@ void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
              "\n}\n" );
 }
 
-void
-TYPEselect_lib_virtual( const Type type, FILE * f ) {
+void TYPEselect_lib_virtual( const Type type, FILE * f ) {
     TYPEselect_lib_part21( type, f );
     TYPEselect_lib_StrToVal( type, f );
 }
@@ -1800,12 +1732,10 @@ void SELlib_print_protected( const Type type,  FILE * f ) {
 }
 
 
-/*******************
-TYPEselect_lib_print prints the member functions (definitions) of a select
-class.
-*******************/
-void
-TYPEselect_lib_print( const Type type, FILE * f ) {
+/**
+* TYPEselect_lib_print prints the member functions (definitions) of a select class.
+*/
+void TYPEselect_lib_print( const Type type, FILE * f ) {
     char n[BUFSIZ], m[BUFSIZ];
     const char * z; /*  pointers to class name(s)  */
     Linked_List dups;
@@ -1940,8 +1870,7 @@ TYPEselect_lib_print( const Type type, FILE * f ) {
 
 }
 
-void
-TYPEselect_print( Type t, FILES * files, Schema schema ) {
+void TYPEselect_print( Type t, FILES * files, Schema schema ) {
     SelectTag tag, tmp;
     Type i, bt;  /*  type of elements in an aggregate  */
     char nm[BUFSIZ], tdnm[BUFSIZ];
