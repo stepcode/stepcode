@@ -125,8 +125,14 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             } LISTod
             raw( "]" );
             break;
-        case oneof_:
+        case oneof_: {
+            int old_indent = indent2;
             wrap( "ONEOF ( " );
+
+            if( exppp_linelength == indent2 ) {
+                exppp_linelength += exppp_continuation_indent;
+            }
+            indent2 += exppp_continuation_indent;
 
             i = 0;
             LISTdo( e->u.list, arg, Expression )
@@ -137,8 +143,14 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             EXPR_out( arg, 0 );
             LISTod
 
+            if( exppp_linelength == indent2 ) {
+                exppp_linelength = old_indent;
+            }
+            indent2 = old_indent;
+
             raw( " )" );
             break;
+        }
         default:
             fprintf( stderr, "%s:%d: ERROR - unknown expression, type %d", e->symbol.filename, e->symbol.line, TYPEis( e->type ) );
             abort();
