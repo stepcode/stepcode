@@ -41,6 +41,7 @@ void ENTITY_out( Entity e, int level ) {
             SUBTYPEout( e->u.entity->subtype_expression );
         }
     }
+    exppp_linelength = linelen;
 
     if( e->u.entity->supertype_symbols ) {
         raw( "\n%*sSUBTYPE OF ( ", level, "" );
@@ -57,7 +58,6 @@ void ENTITY_out( Entity e, int level ) {
     }
 
     raw( ";\n" );
-    exppp_linelength = linelen;
 
 #if 0
     /* add a little more space before entities if sub or super appears */
