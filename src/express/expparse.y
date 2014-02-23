@@ -102,14 +102,19 @@ YYSTYPE yylval;
 
     extern int print_objects_while_running;
 
-    int tag_count;    /* use this to count tagged GENERIC types in the formal */
-    /* argument lists.  Gross, but much easier to do it this */
-    /* way then with the 'help' of yacc. */
-    /* Set it to -1 to indicate that tags cannot be defined, */
-    /* only used (outside of formal parameter list, i.e. for */
-    /* return types).  Hey, as long as */
-    /* there's a gross hack sitting around, we might as well */
-    /* milk it for all it's worth!  -snc */
+    int tag_count;    /**< use this to count tagged GENERIC types in the formal
+                         * argument lists.  Gross, but much easier to do it this
+                         * way then with the 'help' of yacc. Set it to -1 to
+                         * indicate that tags cannot be defined, only used
+                         * (outside of formal parameter list, i.e. for return
+                         * types). Hey, as long as there's a gross hack sitting
+                         * around, we might as well milk it for all it's worth!
+                         *   - snc
+                         */
+
+    int local_var_count; /**< used to keep LOCAL variables in order
+                            * used in combination with Variable.offset
+                            */
 
     Express yyexpresult;    /* hook to everything built by parser */
 
@@ -376,7 +381,7 @@ action_body_item(A) ::= local_decl(B).
 }
 
 /* this corresponds to 'algorithm_head' in N14-ese but it should be rewritten
- * to force declarationsfollowed by constants followed by local_decls
+ * to force declarations followed by constants followed by local_decls
  */
 action_body_item_rep ::= /* NULL item */.
 action_body_item_rep(A) ::= action_body_item(B) action_body_item_rep.
@@ -1669,13 +1674,13 @@ local_variable ::= id_list(A) TOK_COLON parameter_type(B) semicolon.
     e = EXPcreate(Type_Attribute);
     e->symbol = *sym; SYMBOL_destroy(sym);
     v = VARcreate(e, B);
-    DICTdefine(CURRENT_SCOPE->symbol_table, e->symbol.name, (Generic)v,
-    &e->symbol, OBJ_VARIABLE);
+    v->offset = local_var_count++;
+    DICTdefine(CURRENT_SCOPE->symbol_table, e->symbol.name, (Generic)v, &e->symbol, OBJ_VARIABLE);
     LISTod;
     LISTfree(A);
 }
-local_variable ::= id_list(A) TOK_COLON parameter_type(B) local_initializer(C)
-           semicolon.
+
+local_variable ::= id_list(A) TOK_COLON parameter_type(B) local_initializer(C) semicolon.
 {
     Expression e;
     Variable v;
@@ -1683,6 +1688,7 @@ local_variable ::= id_list(A) TOK_COLON parameter_type(B) local_initializer(C)
     e = EXPcreate(Type_Attribute);
     e->symbol = *sym; SYMBOL_destroy(sym);
     v = VARcreate(e, B);
+    v->offset = local_var_count++;
     v->initializer = C;
     DICTdefine(CURRENT_SCOPE->symbol_table, e->symbol.name, (Generic)v,
     &e->symbol, OBJ_VARIABLE);
@@ -1696,14 +1702,15 @@ local_body(A) ::= local_variable(B) local_body.
     A = B;
 }
 
-local_decl ::= TOK_LOCAL allow_generic_types local_body TOK_END_LOCAL semicolon disallow_generic_types.
+local_decl ::= TOK_LOCAL local_decl_rules_on local_body TOK_END_LOCAL semicolon local_decl_rules_off.
 
-allow_generic_types ::= /* subroutine */.
+local_decl_rules_on ::= /* subroutine */.
 {
     tag_count = 0; /* don't signal an error if we find a generic_type */
+    local_var_count = 0; /* used to keep local var decl's in the same order */
 }
 
-disallow_generic_types ::= /* subroutine */.
+local_decl_rules_off ::= /* subroutine */.
 {
     tag_count = -1; /* signal an error if we find a generic_type */
 }

@@ -240,9 +240,21 @@ void SCOPEconsts_out( Scope s, int level ) {
     raw( "%*sEND_CONSTANT;\n", level, "" );
 }
 
+/** insert variable v into list, keeping the list ordered by ascending v->offset */
+void SCOPElocals_order( Linked_List list, Variable v ) {
+    LISTdo_links( list, link ) {
+        if( v->offset < ( (Variable) link->data )->offset ) {
+            LISTadd_before( list, link, (Generic) v );
+            return;
+        }
+    } LISTod
+    LISTadd_last( list, (Generic) v );
+}
+
 void SCOPElocals_out( Scope s, int level ) {
     Variable v;
     DictionaryEntry de;
+    Linked_List orderedLocals = 0; /**< this list is used to order the vars the same way they were in the file */
     size_t max_indent = 0;
     Dictionary d = s->symbol_table;
 
@@ -276,24 +288,33 @@ void SCOPElocals_out( Scope s, int level ) {
         if( v->flags.parameter ) {
             continue;
         }
-
+        if( !orderedLocals ) {
+            orderedLocals = LISTcreate();
+            LISTadd_first( orderedLocals, (Generic) v );
+        } else {
+            /* sort by v->offset */
+            SCOPElocals_order( orderedLocals, v );
+        }
+    }
+    LISTdo( orderedLocals, var, Variable ) {
         /* print attribute name */
         raw( "%*s%-*s :", level + exppp_nesting_indent, "",
-             max_indent, v->name->symbol.name );
+             max_indent, var->name->symbol.name );
 
         /* print attribute type */
-        if( VARget_optional( v ) ) {
+        if( VARget_optional( var ) ) {
             wrap( " OPTIONAL" );
         }
-        TYPE_head_out( v->type, NOLEVEL );
+        TYPE_head_out( var->type, NOLEVEL );
 
-        if( v->initializer ) {
+        if( var->initializer ) {
             wrap( " := " );
-            EXPR_out( v->initializer, 0 );
+            EXPR_out( var->initializer, 0 );
         }
 
         raw( ";\n" );
-    }
+    } LISTod
+    LISTfree( orderedLocals );
 
     raw( "%*sEND_LOCAL;\n", level, "" );
 }

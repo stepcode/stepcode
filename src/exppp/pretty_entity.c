@@ -16,6 +16,7 @@
 
 void ENTITY_out( Entity e, int level ) {
     const unsigned int EXPLICIT = 0, DERIVED = 1;
+    int linelen = exppp_linelength;
     bool first_time = true;
 
     first_newline();
@@ -26,6 +27,7 @@ void ENTITY_out( Entity e, int level ) {
     level += exppp_nesting_indent;
     indent2 = level + exppp_continuation_indent;
 
+    exppp_linelength = indent2; /* force newlines */
     if( ENTITYget_abstract( e ) ) {
         if( e->u.entity->subtype_expression ) {
             raw( "\n%*sABSTRACT SUPERTYPE OF ", level, "" );
@@ -39,6 +41,7 @@ void ENTITY_out( Entity e, int level ) {
             SUBTYPEout( e->u.entity->subtype_expression );
         }
     }
+    exppp_linelength = linelen;
 
     if( e->u.entity->supertype_symbols ) {
         raw( "\n%*sSUBTYPE OF ( ", level, "" );

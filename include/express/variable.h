@@ -79,7 +79,7 @@ struct Variable_ {
     Expression  name;    /**< Symbol is inside of 'name' */
     Type        type;
     Expression  initializer; /**< or 'derived' */
-    int         offset;
+    int         offset; /**< used for attr order in Entitys, and for decl order in LOCAL vars. these two uses should never conflict! */
 
     struct {
         unsigned int optional    : 1; /**< OPTIONAL keyword */
