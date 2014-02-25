@@ -25,25 +25,35 @@ void ALGscope_out( Scope s, int level ) {
 /** last arg is not terminated with ; or \n */
 void ALGargs_out( Linked_List args, int level ) {
     Type previoustype = 0;
+    bool previousVAR = false;
     indent2 = level + exppp_continuation_indent;
 
-    /* combine adjacent parameters that have the same type */
+    /* combine adjacent parameters that have the same type and VAR-ness
+     *
+     * According to the EBNF, only procedures can use 'VAR', and it applies
+     * to all params in the same type assignment statement.
+     * flags.var is set in the formal_parameter production
+     */
 
-    LISTdo( args, v, Variable )
-    if( previoustype != v->type ) {
-        if( previoustype ) {
-            wrap( " : " );
-            TYPE_head_out( previoustype, NOLEVEL );
-            raw( ";\n" );
+    LISTdo( args, v, Variable ) {
+        if( ( previoustype != v->type ) || ( previousVAR != v->flags.var ) ) {
+            if( previoustype ) {
+                wrap( " : " );
+                TYPE_head_out( previoustype, NOLEVEL );
+                raw( ";\n" );
+            }
+            raw( "%*s", level, "" );
+            if( v->flags.var ) {
+                raw( "VAR " );
+            }
+            EXPR_out( VARget_name( v ), 0 );
+        } else {
+            raw( ", " );
+            EXPR_out( VARget_name( v ), 0 );
         }
-        raw( "%*s", level, "" );
-        EXPR_out( VARget_name( v ), 0 );
-    } else {
-        raw( ", " );
-        EXPR_out( VARget_name( v ), 0 );
-    }
-    previoustype = v->type;
-    LISTod
+        previoustype = v->type;
+        previousVAR = v->flags.var;
+    } LISTod
 
     wrap( " : " );
     TYPE_head_out( previoustype, NOLEVEL );

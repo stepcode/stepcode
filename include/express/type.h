@@ -164,6 +164,7 @@ struct TypeBody_ {
                                    *   element = expression [ ':' repetition ] .
                                    * TODO exp2cxx and exp2py do not use this! Are all use cases handled by libexppp?
                                    */
+        unsigned var        : 1; /** denotes variable marked 'VAR' - i.e. one where changes are propagated back to the caller */
         unsigned encoded    : 1; /**< encoded string */
     } flags;
     Type base;      /**< underlying base type if any can also contain true type if this type is a type reference */
