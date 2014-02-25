@@ -3131,14 +3131,14 @@ static void yy_reduce(
       case 115: /* var ::= */
 #line 1123 "expparse.y"
 {
-    yygotominor.yy252.var = 1;
+    yygotominor.yy252.var = 0;
 }
 #line 3137 "expparse.c"
         break;
       case 116: /* var ::= TOK_VAR */
 #line 1127 "expparse.y"
 {
-    yygotominor.yy252.var = 0;
+    yygotominor.yy252.var = 1;
 }
 #line 3144 "expparse.c"
         break;
@@ -3155,7 +3155,7 @@ static void yy_reduce(
 
     e = EXPcreate_from_symbol(Type_Attribute, tmp);
     v = VARcreate(e, yymsp[0].minor.yy297);
-    v->flags.optional = yymsp[-3].minor.yy252.var;
+    v->flags.var = yymsp[-3].minor.yy252.var; /* NOTE this was flags.optional... ?! */
     v->flags.parameter = true;
     param->data = (Generic)v;
 

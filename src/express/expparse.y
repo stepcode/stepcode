@@ -1121,11 +1121,11 @@ expression_list(A) ::= expression_list(B) TOK_COMMA expression(C).
 
 var(A) ::= /* NULL */.
 {
-    A.var = 1;
+    A.var = 0;
 }
 var(A) ::= TOK_VAR.
 {
-    A.var = 0;
+    A.var = 1;
 }
 
 formal_parameter(A) ::= var(B) id_list(C) TOK_COLON parameter_type(D).
@@ -1140,7 +1140,7 @@ formal_parameter(A) ::= var(B) id_list(C) TOK_COLON parameter_type(D).
 
     e = EXPcreate_from_symbol(Type_Attribute, tmp);
     v = VARcreate(e, D);
-    v->flags.optional = B.var;
+    v->flags.var = B.var; /* NOTE this was flags.optional... ?! */
     v->flags.parameter = true;
     param->data = (Generic)v;
 

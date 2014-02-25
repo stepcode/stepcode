@@ -18,7 +18,7 @@ struct type_flags {
     unsigned optional: 1;
     unsigned unique: 1;
     unsigned fixed: 1;
-    unsigned var: 1;        /* when formal is "VAR" */
+    unsigned var: 1;        /**< when formal is "VAR" */
 };
 
 struct entity_body {
