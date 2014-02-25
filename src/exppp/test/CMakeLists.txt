@@ -29,10 +29,17 @@ add_test( NAME test_exppp_unique_qualifiers
                                    -P ${CMAKE_CURRENT_SOURCE_DIR}/unique_qualifiers.cmake
         )
 
+add_test( NAME test_exppp_lost_var
+          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+          COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+                                   -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/exppp_lost_var.exp
+                                   -P ${CMAKE_CURRENT_SOURCE_DIR}/exppp_lost_var.cmake
+        )
+
 add_test( NAME test_exppp_inverse_qualifiers
           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
           COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
                                    -DINFILE=${unitary_dir}/inverse_qualifiers.exp
                                    -P ${CMAKE_CURRENT_SOURCE_DIR}/inverse_qualifiers.cmake
         )
-set_tests_properties( test_exppp_unique_qualifiers test_exppp_inverse_qualifiers PROPERTIES DEPENDS exppp )
+set_tests_properties( test_exppp_unique_qualifiers test_exppp_inverse_qualifiers test_exppp_lost_var PROPERTIES DEPENDS exppp )
