@@ -542,6 +542,8 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
                 /*TYPEenum_inc_print( type, files -> inc );
                 TYPEenum_lib_print( type, files -> lib );*/
         }
+    } else {
+        TYPEprint_init( type, files->inc, files->init, schema );
     }
 }
 
