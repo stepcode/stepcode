@@ -537,23 +537,10 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     }
 
     if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        switch( TYPEget_body( type )->type ) {
-            case enumeration_:
+        if( TYPEget_body( type )->type  == enumeration_ ) {
                 TYPEPrint( type, files, schema );
                 /*TYPEenum_inc_print( type, files -> inc );
                 TYPEenum_lib_print( type, files -> lib );*/
-                break;
-
-            case select_:
-                /*  the select definitions are done seperately, since they depend
-                    on the others  */
-                /*******
-                  TYPEselect_inc_print (type, files -> inc);
-                  TYPEselect_lib_print (type, files -> lib);
-                  *******/
-                break;
-            default:
-                break;
         }
     }
 }
