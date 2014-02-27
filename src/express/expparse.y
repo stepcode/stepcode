@@ -2499,7 +2499,7 @@ while_control(A) ::= TOK_WHILE expression(B).
     sym.line = yylineno;
     sym.filename = current_filename;
 
-    ERRORreport_with_symbol(ERROR_syntax, &sym, "",
+    ERRORreport_with_symbol(ERROR_syntax, &sym, "Syntax error",
     CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
 }
 

@@ -188,6 +188,8 @@ void EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous
             EXPRop1_out( oe, "NOT ", paren );
             break;
         case OP_REAL_DIV:
+            EXPRop2_out( oe, "/", paren, PAD );
+            break;
         case OP_DIV:
             EXPRop2_out( oe, "DIV", paren, PAD );
             break;
