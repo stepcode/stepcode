@@ -193,14 +193,6 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
                          col->externMapping( ENTITYget_name( e ) ) );
         LISTod;
         fprintf( files->create, "\n" );
-
-        // Write the SdaixxxInit() fn (in .init.cc file):
-        //    Do the types:
-        SCOPEdo_types( scope, t, de ) {
-        //    TYPEprint_init( t, files, schema );
-        }
-        SCOPEod;
-        //    (The entities are done as a part of ENTITYPrint() below.)
     }
 
     /* fill in the values for the type descriptors */
