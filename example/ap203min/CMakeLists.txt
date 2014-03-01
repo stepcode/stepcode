@@ -50,8 +50,8 @@ endif(NOT EXISTS ${SCHEMA_FILE})
 
 
 get_filename_component(SCHEMA_SN ${SCHEMA_FILE} NAME)
-string(REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "\\1" SCHEMA_LINK_NAME ${SCHEMA_SN})
-set(STEPCODE_LIBRARIES base stepcore stepeditor stepdai steputils sdai_${SCHEMA_LINK_NAME})
+string(REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "sdai_\\1" SCHEMA_LINK_NAME ${SCHEMA_SN})
+set(STEPCODE_LIBRARIES base stepcore stepeditor stepdai steputils ${SCHEMA_LINK_NAME})
 
 # Add STEPCode project to CMake build.
 add_subdirectory(${STEPCODE_ROOT_DIR} "${CMAKE_CURRENT_BINARY_DIR}/sc" EXCLUDE_FROM_ALL)
@@ -66,6 +66,7 @@ set(STEPCODE_INCLUDE_DIR
   ${STEPCODE_BUILD_DIR}/include
   ${STEPCODE_ROOT_DIR}/include
   ${CMAKE_BINARY_DIR}
+  ${STEPCODE_BUILD_DIR}/schemas/${SCHEMA_LINK_NAME}
  )
 
 # Reset sane values for build destination.  Otherwise, everything ends up in ${CMAKE_BINARY_DIR}/sc
@@ -84,8 +85,6 @@ set(HDRS )
 add_executable(${PROJECT_NAME} ${SRCS} ${HDRS})
 
 target_link_libraries(${PROJECT_NAME} ${STEPCODE_LIBRARIES})
-
-set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-I${STEPCODE_BUILD_DIR}/data/${SCHEMA_LINK_NAME}")
 
 # Local Variables:
 # tab-width: 8
