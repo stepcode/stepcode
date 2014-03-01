@@ -244,7 +244,7 @@ void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, c
  ******************************************************************/
 void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     Type t = VARget_type( a );
-    Class_Of_Type class;
+    Class_Of_Type classType;
     char ctype [BUFSIZ];  /*  type of data member  */
     char attrnm [BUFSIZ];
     char membernm[BUFSIZ];
@@ -260,7 +260,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     generate_attribute_name( a, attrnm );
     strcpy( membernm, attrnm );
     membernm[0] = toupper( membernm[0] );
-    class = TYPEget_type( t );
+    classType = TYPEget_type( t );
     strncpy( ctype, AccessType( t ), BUFSIZ );
 
     if( isAggregate( a ) ) {
@@ -270,12 +270,12 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     ATTRprint_access_methods_get_head( entnm, a, file );
 
     /*      case TYPE_ENTITY:   */
-    if( class == entity_ )  {
+    if( classType == entity_ )  {
         ATTRprint_access_methods_entity( entnm, attrnm, funcnm, nm, ctype, a, file );
         return;
     }
     /*    case TYPE_LOGICAL:    */
-    if( ( class == boolean_ ) || ( class == logical_ ) )  {
+    if( ( classType == boolean_ ) || ( classType == logical_ ) )  {
 
         fprintf( file, "const {\n" );
         if( print_logging ) {
@@ -315,7 +315,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*    case TYPE_ENUM:   */
-    if( class == enumeration_ )  {
+    if( classType == enumeration_ )  {
         fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
@@ -352,7 +352,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*    case TYPE_SELECT: */
-    if( class == select_ )  {
+    if( classType == select_ )  {
         fprintf( file, "const {\n    return (const %s) &_%s;\n    }\n",  ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, " {\n    _%s = x;\n    }\n", attrnm );
@@ -364,7 +364,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
 
     /*  case STRING:*/
     /*      case TYPE_BINARY:   */
-    if( ( class == string_ ) || ( class == binary_ ) )  {
+    if( ( classType == string_ ) || ( classType == binary_ ) )  {
         fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
@@ -396,7 +396,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
         return;
     }
     /*      case TYPE_INTEGER:  */
-    if( class == integer_ ) {
+    if( classType == integer_ ) {
         fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
@@ -436,7 +436,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
 
     /*      case TYPE_REAL:
         case TYPE_NUMBER:   */
-    if( ( class == number_ ) || ( class == real_ ) ) {
+    if( ( classType == number_ ) || ( classType == real_ ) ) {
         fprintf( file, "const {\n" );
         if( print_logging ) {
             fprintf( file, "#ifdef SC_LOGGING\n" );
