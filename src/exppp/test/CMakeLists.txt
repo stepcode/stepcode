@@ -6,13 +6,21 @@ set(breakLongStr_SRCS
      ../exppp.c
    )
 
+add_test(NAME build_exppp
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} --build .
+  --target exppp
+  --config $<CONFIGURATION>
+  )
+
 # this executable doesn't really check the results, just ensures no segfaults. ought to improve it...
 SC_ADDEXEC(tst_breakLongStr "${breakLongStr_SRCS}" "express;base" "TESTABLE")
 add_test(NAME build_tst_breakLongStr
-              WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-              COMMAND ${CMAKE_COMMAND} --build .
-                                       --target tst_breakLongStr
-                                       --config $<CONFIGURATION>)
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} --build .
+  --target tst_breakLongStr
+  --config $<CONFIGURATION>
+  )
 add_test(test_breakLongStr ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tst_breakLongStr)
 set_tests_properties(test_breakLongStr PROPERTIES DEPENDS build_tst_breakLongStr)
 
@@ -50,7 +58,7 @@ add_test(NAME test_exppp_div_slash
   -P ${CMAKE_CURRENT_SOURCE_DIR}/exppp_div_slash.cmake
   )
 
-set_tests_properties(test_exppp_unique_qualifiers test_exppp_inverse_qualifiers test_exppp_lost_var test_exppp_div_slash PROPERTIES DEPENDS exppp)
+set_tests_properties(test_exppp_unique_qualifiers test_exppp_inverse_qualifiers test_exppp_lost_var test_exppp_div_slash PROPERTIES DEPENDS build_exppp)
 
 # Local Variables:
 # tab-width: 8

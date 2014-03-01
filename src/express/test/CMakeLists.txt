@@ -1,5 +1,12 @@
 include_directories(..)
 
+add_test(NAME build_check_express
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} --build .
+  --target check-express
+  --config $<CONFIGURATION>
+  )
+
 sc_addexec(print_schemas "../fedex.c;print_schemas.c" "express;base")
 sc_addexec(print_attrs "../fedex.c;print_attrs.c" "express;base")
 
