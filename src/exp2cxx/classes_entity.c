@@ -1196,9 +1196,9 @@ void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_Lis
     fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
 
     LIBdescribe_entity( entity, impl, schema );
-    LIBstructor_print( entity, impl, schema );
+    LIBstructor_print( entity, neededAttr, impl, schema );
     if( multiple_inheritance ) {
-        LIBstructor_print_w_args( entity, impl, schema );
+        LIBstructor_print_w_args( entity, neededAttr, impl, schema );
     }
     LIBmemberFunctionPrint( entity, neededAttr, impl );
     
