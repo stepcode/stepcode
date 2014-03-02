@@ -94,7 +94,12 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    fprintf( file, "        %s %s();\n", ctype, attrnm );
+    if( TYPEis_entity( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+        /* pointer type, so a non-const method is possible
+         NOTE probably need much more elaborate checking to match ATTRprint_access_methods() at line 249 */
+        fprintf( file, "        %s %s();\n", ctype, attrnm );
+    }
+    fprintf( file, "        %s %s() const;\n", ctype, attrnm );
     fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
     if( VARget_inverse( a ) ) {
         fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
