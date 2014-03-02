@@ -229,6 +229,43 @@ void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, c
     return;
 }
 
+/** logging code for string and binary attribute access methods */
+void ATTRprint_access_methods_str_bin_logging( const char * entnm, const char * attrnm, const char * funcnm, FILE * file, bool setter ) {
+    if( print_logging ) {
+        const char * direction = ( setter ? "assigned" : "returned" );
+        fprintf( file, "#ifdef SC_LOGGING\n" );
+        fprintf( file, "    if(*logStream)\n    {\n" );
+        if( setter ) {
+            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
+        } else {
+            fprintf( file, "        if(!x)\n        {\n" );
+        }
+        fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+        if( setter ) {
+            fprintf( file, "            *logStream << _%s << std::endl;\n", attrnm );
+        } else {
+            fprintf( file, "            *logStream << x << std::endl;\n" );
+        }
+        fprintf( file, "        }\n        else\n        {\n" );
+        fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+        fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
+        fprintf( file, "#endif\n" );
+    }
+}
+
+/** print access methods for string or bin attribute */
+void ATTRprint_access_methods_str_bin( const char * entnm, const char * attrnm, const char * funcnm,
+                                       const char * ctype, Variable a, FILE * file ) {
+    fprintf( file, "const {\n" );
+    ATTRprint_access_methods_str_bin_logging( entnm, attrnm, funcnm, file, true );
+    fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+    ATTRprint_access_methods_put_head( entnm, a, file );
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_str_bin_logging( entnm, attrnm, funcnm, file, false );
+    fprintf( file, "    _%s = x;\n}\n", attrnm );
+    return;
+}
+
 /** prints the access method based on the attribute type
  *  i.e. get and put value access functions defined in a class
  *  generated for an entity.
@@ -361,35 +398,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     /*  case STRING:*/
     /*      case TYPE_BINARY:   */
     if( ( classType == string_ ) || ( classType == binary_ ) )  {
-        fprintf( file, "const {\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
-            fprintf( file, "            *logStream << _%s << std::endl;\n", attrnm );
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
-            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
-            fprintf( file, "#endif\n" );
-
-        }
-        fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
-        ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, "{\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        if(!x)\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
-            fprintf( file, "            *logStream << x << std::endl;\n" );
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n", entnm, funcnm );
-            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    _%s = x;\n}\n", attrnm );
-        return;
+        ATTRprint_access_methods_str_bin( entnm, attrnm, funcnm, ctype, a, file );
     }
     /*      case TYPE_INTEGER:  */
     if( classType == integer_ ) {
