@@ -607,51 +607,50 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
 
     attr_list = ENTITYget_attributes( entity );
 
-    LISTdo( attr_list, a, Variable )
-    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        /*  include attribute if it is not derived  */
-        generate_attribute_name( a, attrnm );
-        t = VARget_type( a );
+    LISTdo( attr_list, a, Variable ) {
+        if( VARget_initializer( a ) == EXPRESSION_NULL ) {
+            /*  include attribute if it is not derived  */
+            generate_attribute_name( a, attrnm );
+            t = VARget_type( a );
 
-        if ( VARget_inverse( a ) ) {
-            entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
-            fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
-                     SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
-        } else if( ! VARis_derived( a ) )  {
-            /*  1. create a new STEPattribute */
+            if ( VARget_inverse( a ) ) {
+                entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
+                fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
+                        SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
+            } else if( ! VARis_derived( a ) )  {
+                /*  1. create a new STEPattribute */
 
-            /*  if type is aggregate, the variable is a pointer and needs initialized */
-            if( TYPEis_aggregate( t ) ) {
-                fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
-            }
-            fprintf( file, "    %sa = new STEPattribute( * %s::",
-                     ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
-                     SCHEMAget_name( schema ) );
-            fprintf( file, "%s%d%s%s", ATTR_PREFIX, count, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
-            fprintf( file, ", %s%s_%s );\n",
-                     ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
-                     ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
-            if( first ) {
-                first = false;
-            }
-            /*  2. initialize everything to NULL (even if not optional)  */
+                /*  if type is aggregate, the variable is a pointer and needs initialized */
+                if( TYPEis_aggregate( t ) ) {
+                    fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
+                }
+                fprintf( file, "    %sa = new STEPattribute( * %s::",
+                        ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
+                        SCHEMAget_name( schema ) );
+                fprintf( file, "%s%d%s%s", ATTR_PREFIX, count, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
+                fprintf( file, ", %s%s_%s );\n",
+                        ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
+                        ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
+                if( first ) {
+                    first = false;
+                }
+                /*  2. initialize everything to NULL (even if not optional)  */
 
-            fprintf( file, "    a->set_null();\n" );
+                fprintf( file, "    a->set_null();\n" );
 
-            /*  3.  put attribute on attributes list  */
-            fprintf( file, "    attributes.push( a );\n" );
+                /*  3.  put attribute on attributes list  */
+                fprintf( file, "    attributes.push( a );\n" );
 
-            /* if it is redefining another attribute make connection of
-               redefined attribute to redefining attribute */
-            if( VARis_type_shifter( a ) ) {
-                fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
-                         VARget_simple_name( a ) );
+                /* if it is redefining another attribute make connection of
+                redefined attribute to redefining attribute */
+                if( VARis_type_shifter( a ) ) {
+                    fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
+                            VARget_simple_name( a ) );
+                }
             }
         }
-    }
-    count++;
-
-    LISTod;
+        count++;
+    } LISTod;
 
     initializeAttrs( entity, file );
 
@@ -783,56 +782,56 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
 
         attr_list = ENTITYget_attributes( entity );
 
-        LISTdo( attr_list, a, Variable )
-        if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-            /*  include attribute if it is not derived  */
-            generate_attribute_name( a, attrnm );
-            t = VARget_type( a );
-            if ( VARget_inverse( a ) ) {
-                entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
-                fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
-                         SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
-            } else if( ! VARis_derived( a ) ) {
-                /*  1. create a new STEPattribute */
+        LISTdo( attr_list, a, Variable ) {
+            if( VARget_initializer( a ) == EXPRESSION_NULL ) {
+                /*  include attribute if it is not derived  */
+                generate_attribute_name( a, attrnm );
+                t = VARget_type( a );
+                if ( VARget_inverse( a ) ) {
+                    entnm = ENTITYget_classname( entity ); /* entnm points to a static buffer which may have been overwritten */
+                    fprintf( file, "    iAttrs.push( %s::a_%dI%s, %s::set_%s_, %s::get_%s_ );\n",
+                            SCHEMAget_name( schema ), count, attrnm, entnm, attrnm, entnm, attrnm );
+                } else if( ! VARis_derived( a ) ) {
+                    /*  1. create a new STEPattribute */
 
-                /*  if type is aggregate, the variable is a pointer and needs initialized */
-                if( TYPEis_aggregate( t ) ) {
-                    fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
-                }
-                fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
-                         ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
-                         SCHEMAget_name( schema ),
-                         ATTR_PREFIX, count,
-                         ( VARis_type_shifter( a ) ? "R" : "" ),
-                         attrnm,
-                         ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
-                         ( TYPEis_aggregate( t ) ? "" : "&" ),
-                         attrnm );
+                    /*  if type is aggregate, the variable is a pointer and needs initialized */
+                    if( TYPEis_aggregate( t ) ) {
+                        fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
+                    }
+                    fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
+                            ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
+                            SCHEMAget_name( schema ),
+                            ATTR_PREFIX, count,
+                            ( VARis_type_shifter( a ) ? "R" : "" ),
+                            attrnm,
+                            ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
+                            ( TYPEis_aggregate( t ) ? "" : "&" ),
+                            attrnm );
 
-                if( first ) {
-                    first = false;
-                }
+                    if( first ) {
+                        first = false;
+                    }
 
-                fprintf( file, "        /* initialize to NULL (even if not optional)  */\n" );
-                fprintf( file, "    a -> set_null();\n" );
+                    fprintf( file, "        /* initialize to NULL (even if not optional)  */\n" );
+                    fprintf( file, "    a -> set_null();\n" );
 
-                fprintf( file, "        /* Put attribute on this class' attributes list so the access functions still work. */\n" );
-                fprintf( file, "    attributes.push( a );\n" );
+                    fprintf( file, "        /* Put attribute on this class' attributes list so the access functions still work. */\n" );
+                    fprintf( file, "    attributes.push( a );\n" );
 
-                fprintf( file, "        /* Put attribute on the attributes list for the main inheritance heirarchy.  **\n" );
-                fprintf( file, "        ** The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
-                fprintf( file, "    if( addAttrs ) {\n" );
-                fprintf( file, "        se->attributes.push( a );\n    }\n" );
+                    fprintf( file, "        /* Put attribute on the attributes list for the main inheritance heirarchy.  **\n" );
+                    fprintf( file, "        ** The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
+                    fprintf( file, "    if( addAttrs ) {\n" );
+                    fprintf( file, "        se->attributes.push( a );\n    }\n" );
 
-                /* if it is redefining another attribute make connection of redefined attribute to redefining attribute */
-                if( VARis_type_shifter( a ) ) {
-                    fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
-                             VARget_simple_name( a ) );
+                    /* if it is redefining another attribute make connection of redefined attribute to redefining attribute */
+                    if( VARis_type_shifter( a ) ) {
+                        fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
+                                VARget_simple_name( a ) );
+                    }
                 }
             }
-        }
-        count++;
-        LISTod;
+            count++;
+        } LISTod
 
         initializeAttrs( entity, file );
 
