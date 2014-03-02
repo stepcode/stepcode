@@ -256,6 +256,10 @@ void ATTRprint_access_methods_str_bin_logging( const char * entnm, const char * 
 /** print access methods for string or bin attribute */
 void ATTRprint_access_methods_str_bin( const char * entnm, const char * attrnm, const char * funcnm,
                                        const char * ctype, Variable a, FILE * file ) {
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_str_bin_logging( entnm, attrnm, funcnm, file, true );
+    fprintf( file, "    return _%s;\n}\n", attrnm );
+    ATTRprint_access_methods_get_head( entnm, a, file, true );
     fprintf( file, "const {\n" );
     ATTRprint_access_methods_str_bin_logging( entnm, attrnm, funcnm, file, true );
     fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
