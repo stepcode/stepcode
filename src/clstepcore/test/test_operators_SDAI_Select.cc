@@ -45,11 +45,12 @@ class TestSdaiSelect: public SDAI_Select {
         SDAI_Select* NewSelect(){ return (SDAI_Select *)0; }
         BASE_TYPE ValueType() const { return sdaiBOOLEAN; }
         void STEPwrite_content( std::ostream& /*o*/, const char* /*a*/ ) const {}
-        Severity StrToVal_content( const char* /*a*/, InstMgr* /*m*/ ) { return SEVERITY_NULL; }
-        Severity STEPread_content(std::istream& i, InstMgr* m, const char* c, int n, const char* d) {
+        Severity StrToVal_content( const char* /*a*/, InstMgrBase* /*m*/ ) { return SEVERITY_NULL; }
+        Severity STEPread_content(std::istream& i, InstMgrBase* m, const char* c, int n, const char* d) {
             (void)i; (void)m; (void)c; (void)n; (void)d; return SEVERITY_NULL;
         }
 };
+
 /// \return true for success
 bool testOperatorEq() {
     Schema * sch = 0;
