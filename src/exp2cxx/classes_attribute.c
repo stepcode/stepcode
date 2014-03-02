@@ -99,7 +99,7 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
          NOTE probably need much more elaborate checking to match ATTRprint_access_methods() at line 249 */
         fprintf( file, "        %s %s();\n", ctype, attrnm );
     }
-    fprintf( file, "        %s %s() const;\n", ctype, attrnm );
+    fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
     fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
     if( VARget_inverse( a ) ) {
         fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
@@ -128,19 +128,14 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
  ** Side Effects:
  ** Status:  complete 7/15/93       by DDH
  ******************************************************************/
-void ATTRprint_access_methods_get_head( const char * classnm, Variable a,
-                                        FILE * file ) {
+void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file, bool returnsConst ) {
     Type t = VARget_type( a );
     char ctype [BUFSIZ];   /*  return type of the get function  */
     char funcnm [BUFSIZ];  /*  name of member function  */
-
     generate_attribute_func_name( a, funcnm );
-
-    /* ///////////////////////////////////////////////// */
-
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    fprintf( file, "\n%s %s::%s() ", ctype, classnm, funcnm );
+    fprintf( file, "\n%s%s %s::%s() ", ( returnsConst ? "const " : "" ), ctype, classnm, funcnm );
     return;
 }
 
@@ -177,10 +172,10 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
 
 void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
-    ATTRprint_access_methods_get_head( entnm, a, file );
+    ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
     fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
-    ATTRprint_access_methods_get_head( entnm, a, file );
+    ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "const {\n" );
     fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
@@ -221,7 +216,7 @@ void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, c
     ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
     fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
-    ATTRprint_access_methods_get_head( entnm, a, file );
+    ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "{\n" );
     ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
     fprintf( file, "    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
@@ -266,7 +261,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
         AGGRprint_access_methods( entnm, a, file, ctype, attrnm );
         return;
     }
-    ATTRprint_access_methods_get_head( entnm, a, file );
+    ATTRprint_access_methods_get_head( entnm, a, file, false );
 
     /*      case TYPE_ENTITY:   */
     if( classType == entity_ )  {
@@ -352,9 +347,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     }
     /*    case TYPE_SELECT: */
     if( classType == select_ )  {
-        fprintf( file, "const {\n    return (const %s) &_%s;\n    }\n",  ctype, attrnm );
+        fprintf( file, " {\n    return &_%s;\n}\n", attrnm );
+        ATTRprint_access_methods_get_head( entnm, a, file, true );
+        fprintf( file, "const {\n    return (const %s) &_%s;\n}\n",  ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, " {\n    _%s = x;\n    }\n", attrnm );
+        fprintf( file, " {\n    _%s = x;\n}\n", attrnm );
         return;
     }
     /*    case TYPE_AGGRETATES: */
