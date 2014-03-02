@@ -238,7 +238,7 @@ void ATTRprint_access_methods_str_bin_logging( const char * entnm, const char * 
         if( setter ) {
             fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
         } else {
-            fprintf( file, "        if(!x)\n        {\n" );
+            fprintf( file, "        if(x)\n        {\n" );
         }
         fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
         if( setter ) {
