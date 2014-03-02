@@ -1,4 +1,3 @@
-
 # this file should be included from data/CMakeLists.txt
 #
 # at configure time, this builds a small program
@@ -54,7 +53,7 @@ execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/sche
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR})
 execute_process(COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
                  WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
-                 TIMEOUT 10
+                 TIMEOUT 60
                  OUTPUT_VARIABLE _ss_config_out
                  RESULT_VARIABLE _ss_config_stat
                  ERROR_VARIABLE _ss_config_err
@@ -64,7 +63,7 @@ if(NOT ${_ss_config_stat} STREQUAL "0")
 endif(NOT ${_ss_config_stat} STREQUAL "0")
 execute_process(COMMAND ${CMAKE_COMMAND} --build ${SCANNER_BUILD_DIR} --config Debug --clean-first
                  WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
-                 TIMEOUT 30 # should take far less than 30s
+                 TIMEOUT 120 # should take far less than 2m
                  OUTPUT_VARIABLE _ss_build_out
                  RESULT_VARIABLE _ss_build_stat
                  ERROR_VARIABLE _ss_build_err
