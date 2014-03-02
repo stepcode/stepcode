@@ -648,8 +648,8 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                          VARget_simple_name( a ) );
             }
         }
-        count++;
     }
+    count++;
 
     LISTod;
 
@@ -830,9 +830,8 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                              VARget_simple_name( a ) );
                 }
             }
-            count++;
         }
-
+        count++;
         LISTod;
 
         initializeAttrs( entity, file );
