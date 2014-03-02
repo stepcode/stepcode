@@ -72,7 +72,7 @@ char * generate_attribute_func_name( Variable a, char * out ) {
 }
 
 /**************************************************************//**
- ** Procedure:  ATTRsign_access_method
+ ** Procedure:  ATTRsign_access_methods
  ** Parameters:  const Variable a --  attribute to print
                                       access method signature for
  ** FILE* file  --  file being written to
@@ -234,18 +234,13 @@ void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, c
     return;
 }
 
-/**************************************************************//**
- ** Procedure:  ATTRprint_access_methods
- ** Parameters:  const Variable a --  attribute to find the type for
- ** FILE* file  --  file being written to
- ** Description:  prints the access method based on the attribute type
- **       i.e. get and put value access functions defined in a class
- **       generated for an entity.
- ** Side Effects:
- ** Status:  complete 1/15/91
- **     updated 17-Feb-1992 to print to library file instead of header
- ** updated 15-July-1993 to call the get/put head functions by DDH
- ******************************************************************/
+/** prints the access method based on the attribute type
+ *  i.e. get and put value access functions defined in a class
+ *  generated for an entity.
+ * \param entnm the name of the current entity
+ * \param a attribute to print methods for
+ * \param file file being written to
+ */
 void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     Type t = VARget_type( a );
     Class_Of_Type classType;
