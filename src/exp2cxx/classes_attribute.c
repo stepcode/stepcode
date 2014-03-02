@@ -212,14 +212,14 @@ void ATTRprint_access_methods_entity_logging( const char * entnm, const char * f
  */
 void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
                                       const char * ctype, Variable a, FILE * file ) {
-    fprintf( file, "const {\n" );
-    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
-    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
-
-    ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "{\n" );
     ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
     fprintf( file, "    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
+    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+
+    ATTRprint_access_methods_get_head( entnm, a, file, true );
+    fprintf( file, "const {\n" );
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
     fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
     ATTRprint_access_methods_put_head( entnm, a, file );
