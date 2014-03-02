@@ -1328,7 +1328,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     hdr = FILEcreate( names.header );
     impl = FILEcreate( names.impl );
     assert( hdr && impl && "error creating files" );
-    fprintf( files->unity.entity.hdr, "#include \"%s\"\n", names.header );
+    fprintf( files->unity.entity.hdr, "#include \"%s\"\n", names.header ); /* TODO this is not necessary? */
     fprintf( files->unity.entity.impl, "#include \"%s\"\n", names.impl );
 
     ENTITYPrint_h( entity, hdr, remaining, schema );
