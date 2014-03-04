@@ -965,6 +965,103 @@ static int memberOfEntPrimary( Entity ent, Variable uattr ) {
     return result;
 }
 
+void TYPEselect_lib_part_three_getter( const Type type, const char * classnm, const char * attrnm, const char * utype, char * uent, char * funcnm,
+                                       Linked_List items, Variable a, Variable uattr, Entity ent, FILE * f, bool returnConst ) {
+    /* return a const value? */
+    const char * constStr = "const ";
+    const char * constReturn = ( returnConst ? constStr : "" );
+    /* method can be const or non-const? */
+    bool notAlwaysConst = attrIsObj( VARget_type( a ) );
+
+    ATTRprint_access_methods_get_head( classnm, a, f, returnConst );
+
+    /* if there will not be const and non-const getters, then this method should be const */
+    fprintf( f, "%s{\n", ( notAlwaysConst ? constReturn : constStr ) );
+
+    LISTdo( items, t, Type ) {
+        if( TYPEis_entity( t ) && ( uattr = ENTITYget_named_attribute(
+            ( ent = ENT_TYPEget_entity( t ) ), ( char * ) StrToLower( attrnm ) ) ) ) {
+            /*  for the select items which have the current attribute  */
+            if( !multiple_inheritance ) {
+                if( !memberOfEntPrimary( ent, uattr ) ) {
+                    /* If multiple inheritance is not supported, we must additionally check
+                     * that uattr is a member of the entity's primary inheritance path
+                     * (i.e., the entity, its first supertype, the super's first super,
+                     * etc).  The above `if' is commented out, because currently mult inher
+                     * is not supported to the extent of handling accessor functions for
+                     * non-primary supertypes. */
+                    continue;
+                }
+            }
+            if( ! VARis_derived( uattr ) )  {
+
+                if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) )  {
+                    /* check to make sure the underlying attribute\'s type is
+                     * the same as the current attribute. */
+
+                    strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
+
+                    /* if the underlying type is that item's type, call the underlying_item's
+                     * member function if it is the same attribute */
+                    if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
+                        /*  update attribute_func_name because is has been overriden */
+                        generate_attribute_func_name( uattr, funcnm );
+                    } else {
+                        generate_attribute_func_name( a, funcnm );
+                    }
+                    fprintf( f, "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
+                                TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
+                    fprintf( f, "    return ((%s%s) _%s) ->%s();\n", constReturn, uent, SEL_ITEMget_dmname( t ),  funcnm );
+
+                } else {
+                    /*  types are not the same issue a warning  */
+                    fprintf( stderr,
+                                "WARNING: in SELECT TYPE %s: ambiguous "
+                                "attribute \"%s\" from underlying type \"%s\".\n\n",
+                                TYPEget_name( type ), attrnm, TYPEget_name( t ) );
+                    fprintf( f, "  //  %s\n    //  attribute access function"
+                    " has a different return type\n",
+                    StrToUpper( TYPEget_name( t ) ) );
+                }
+
+            } else /*  derived attributes  */
+                fprintf( f, "  //  for %s  attribute is derived\n",
+                            StrToUpper( TYPEget_name( t ) ) );
+            }
+    } LISTod;
+    PRINT_BUG_REPORT
+
+    /* If the return type is an enumeration class then you can\'t
+     * return NULL.  Instead I made the return type the
+     * enumeration value.  This causes a WARNING about going from
+     * int (NULL) to the enumeration type.  To get rid of the
+     * WARNING you could add an explicit cast (using the code
+     * commented out below.
+     *
+     * Another option is to have the return type be the
+     * enumeration class and create special "NULL" instances of
+     * the class for every enumeration.  This option was not
+     * implemented.
+     *
+     * kcm 28-Mar-1995
+     */
+
+    /*  EnumName (TYPEget_name (VARget_type (a)))*/
+    switch( TYPEget_body( VARget_type( a ) ) -> type ) {
+        case enumeration_:
+            fprintf( f, "   return (%s) 0;\n}\n\n", EnumName( TYPEget_name( VARget_type( a ) ) ) );
+            break;
+        case boolean_:
+            fprintf( f, "   return (Boolean) 0;\n}\n\n" );
+            break;
+        case logical_:
+            fprintf( f, "   return (Logical) 0;\n}\n\n" );
+            break;
+        default:
+            fprintf( f, "   return 0;\n}\n\n" );
+    }
+}
+
 /**
 * TYPEselect_lib_print_part_three prints part 3) of the SDAI C++ binding for
 * a select class -- access functions for the data members of underlying entity
@@ -1000,104 +1097,11 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f,
             /*  use the ctype since utype will be the same for all entities  */
             strncpy( utype, TYPEget_ctype( VARget_type( a ) ), BUFSIZ );
 
-            /*   get method  */
-            ATTRprint_access_methods_get_head( classnm, a, f );
-            fprintf( f, "const {\n" );
-
-            LISTdo( items, t, Type ) {
-                if( TYPEis_entity( t ) && ( uattr = ENTITYget_named_attribute(
-                                    ( ent = ENT_TYPEget_entity( t ) ), ( char * ) StrToLower( attrnm ) ) ) ) {
-                    /*  for the select items which have the current attribute  */
-                    if( !multiple_inheritance ) {
-                        if( !memberOfEntPrimary( ent, uattr ) ) {
-                            /* If multiple inheritance is not supported, we must addi-
-                            tionally check that uattr is a member of the entity's
-                            primary inheritance path (i.e., the entity, its first
-                            supertype, the super's first super, etc).  The above
-                            `if' is commented out, because currently mult inher is
-                            not supported to the extent of handling accessor func-
-                            tions for non-primary supertypes. */
-                            continue;
-                        }
-                    }
-                    if( ! VARis_derived( uattr ) )  {
-
-                        if( !strcmp( utype, TYPEget_ctype( VARget_type( uattr ) ) ) )  {
-                            /*  check to make sure the underlying attribute\'s type is
-                                the same as the current attribute.
-                                */
-
-                            strncpy( uent, TYPEget_ctype( t ), BUFSIZ );
-
-                            /*  if the underlying type is that item\'s type
-                            call the underlying_item\'s member function  */
-                            /*  if it is the same attribute */
-                            if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
-                                /*  update attribute_func_name because is has been overrid */
-                                generate_attribute_func_name( uattr, funcnm );
-                            } else {
-                                generate_attribute_func_name( a, funcnm );
-                            }
-                            fprintf( f,
-                                    "  if( CurrentUnderlyingType () == %s ) \n    //  %s\n",
-                                    TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
-                            fprintf( f, "    return ((%s) _%s) ->%s();\n",
-                                    uent, SEL_ITEMget_dmname( t ),  funcnm );
-
-                        } else {
-                            /*  types are not the same issue a warning  */
-                            fprintf( stderr,
-                                    "WARNING: in SELECT TYPE %s: ambiguous "
-                                    "attribute \"%s\" from underlying type \"%s\".\n\n",
-                                    TYPEget_name( type ), attrnm, TYPEget_name( t ) );
-                            fprintf( f, "  //  %s\n    //  attribute access function"
-                                    " has a different return type\n",
-                                    StrToUpper( TYPEget_name( t ) ) );
-                        }
-
-                    } else /*  derived attributes  */
-                        fprintf( f, "  //  for %s  attribute is derived\n",
-                                StrToUpper( TYPEget_name( t ) ) );
-                }
-            } LISTod;
-            PRINT_BUG_REPORT
-
-            /* If the return type is an enumeration class then you can\'t
-                return NULL.  Instead I made the return type the
-                enumeration value.  This causes a WARNING about going from
-                int (NULL) to the enumeration type.  To get rid of the
-                WARNING you could add an explicit cast (using the code
-                commented out below.
-
-                Another option is to have the return type be the
-                enumeration class and create special "NULL" instances of
-                the class for every enumeration.  This option was not
-                implemented.
-
-                kcm 28-Mar-1995
-                */
-
-
-
-            /*  EnumName (TYPEget_name (VARget_type (a)))*/
-            switch( TYPEget_body( VARget_type( a ) ) -> type ) {
-                case enumeration_:
-                    fprintf( f, "   return (%s) 0;\n}\n\n",
-                            EnumName( TYPEget_name( VARget_type( a ) ) ) );
-                    break;
-
-                case boolean_:
-                    fprintf( f, "   return (Boolean) 0;\n}\n\n" );
-                    break;
-
-                case logical_:
-                    fprintf( f, "   return (Logical) 0;\n}\n\n" );
-                    break;
-
-                default:
-                    fprintf( f, "   return 0;\n}\n\n" );
+            /*   get methods  */
+            TYPEselect_lib_part_three_getter( type, classnm, attrnm, utype, uent, funcnm, items, a, uattr, ent, f, false );
+            if( attrIsObj( VARget_type( a ) ) ) {
+                TYPEselect_lib_part_three_getter( type, classnm, attrnm, utype, uent, funcnm, items, a, uattr, ent, f, true );
             }
-
             /*   put method  */
             ATTRprint_access_methods_put_head( classnm, a, f );
             fprintf( f, "{\n" );
