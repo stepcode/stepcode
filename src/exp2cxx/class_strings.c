@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 
 #include "class_strings.h"
 #include "express/type.h"
@@ -31,10 +32,15 @@ const char * ENTITYget_classname( Entity ent ) {
     return ( ClassName( oldname ) );
 }
 
-const char * TYPEget_ctype( const Type t ) {
+/** like TYPEget_ctype, but caller must alloc a buffer of at least buf_siz
+ * in many circumstances, this func will return a short string rather than using that buffer
+ * buf_siz is ignored in those cases since it is meaningless
+ */
+const char * TYPE_get_ctype( const Type t, char * retval, int buf_siz ) {
+    const char * ptr = "_ptr", * var = "_var", * agg = "_agg";
+    const char * overflowMsg = "buffer overflow detected at %s:%d!";
     Class_Of_Type ctype;
     Type bt;
-    static char retval [BUFSIZ];
 
     if( TYPEinherits_from( t, aggregate_ ) ) {
         bt = TYPEget_body( t )->base;
@@ -53,8 +59,16 @@ const char * TYPEget_ctype( const Type t ) {
             return( "EntityAggregate" );
         }
         if( ( ctype == enumeration_ ) || ( ctype == select_ ) )  {
-            strcpy( retval, TYPEget_ctype( bt ) );
-            strcat( retval, "_agg" );
+            const char * tmp = TYPE_get_ctype( bt, retval, buf_siz - strlen( retval ) - 1 );
+            if( tmp != retval ) {
+                strncpy( retval, tmp, buf_siz - strlen( retval ) - 1 );
+            }
+            if( strlen( retval ) + strlen( agg ) < buf_siz ) {
+                strcat( retval, agg );
+            } else {
+                fprintf( stderr, overflowMsg, __FILE__, __LINE__ );
+                abort();
+            }
             return ( retval );
         }
         if( ctype == logical_ ) {
@@ -107,16 +121,26 @@ const char * TYPEget_ctype( const Type t ) {
 
     /*      case TYPE_ENTITY:   */
     if( ctype == entity_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
-        strcat( retval, "_ptr" );
+        strncpy( retval, TypeName( t ), buf_siz - strlen( retval ) - 1 );
+        if( strlen( retval ) + strlen( ptr ) < buf_siz ) {
+            strcat( retval, ptr );
+        } else {
+            fprintf( stderr, overflowMsg, __FILE__, __LINE__ );
+            abort();
+        }
         return retval;
         /*  return ("STEPentityH");    */
     }
     /*    case TYPE_ENUM:   */
     /*    case TYPE_SELECT: */
     if( ctype == enumeration_ ) {
-        strncpy( retval, TypeName( t ), BUFSIZ - 2 );
-        strcat( retval, "_var" );
+        strncpy( retval, TypeName( t ), buf_siz - strlen( retval ) - 1 );
+        if( strlen( retval ) + strlen( var ) < buf_siz ) {
+            strcat( retval, var );
+        } else {
+            fprintf( stderr, overflowMsg, __FILE__, __LINE__ );
+            abort();
+        }
         return retval;
     }
     if( ctype == select_ )  {
@@ -125,6 +149,11 @@ const char * TYPEget_ctype( const Type t ) {
 
     /*  default returns undefined   */
     return ( "SCLundefined" );
+}
+
+const char * TYPEget_ctype( const Type t ) {
+    static char retval [BUFSIZ] = {0};
+    return TYPE_get_ctype( t, retval, BUFSIZ );
 }
 
 const char * TypeName( Type t ) {
