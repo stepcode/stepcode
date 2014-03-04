@@ -20,15 +20,9 @@ extern int multiple_inheritance;
 #include <stdlib.h>
 #include "classes.h"
 #include "classes_type.h"
+#include "classes_attribute.h"
 
 #include <sc_trace_fprintf.h>
-
-int isAggregateType( const Type t );
-char * generate_attribute_name( Variable a, char * out );
-void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file );
-char * generate_attribute_func_name( Variable a, char * out );
-void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file );
-void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file );
 
 #define BASE_SELECT "SDAI_Select"
 
