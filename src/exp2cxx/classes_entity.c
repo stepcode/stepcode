@@ -813,7 +813,7 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                     }
 
                     fprintf( file, "        /* initialize to NULL (even if not optional)  */\n" );
-                    fprintf( file, "    a -> set_null();\n" );
+                    fprintf( file, "    a ->set_null();\n" );
 
                     fprintf( file, "        /* Put attribute on this class' attributes list so the access functions still work. */\n" );
                     fprintf( file, "    attributes.push( a );\n" );

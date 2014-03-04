@@ -73,10 +73,14 @@ char * generate_attribute_func_name( Variable a, char * out ) {
 
 /* return true if attr needs const and non-const getters */
 bool attrIsObj( Type t ) {
-    if( !( ( TYPEget_type( t ) == number_ ) || ( TYPEget_type( t ) == real_ ) || ( TYPEget_type( t ) == integer_ ) ) ) {
+    if( TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+        /* const doesn't make sense for pointer types */
+        return false;
+    } else if( !( ( TYPEget_type( t ) == number_ ) || ( TYPEget_type( t ) == real_ ) || ( TYPEget_type( t ) == integer_ ) ) ) {
         return true;
+    } else {
+        return false;
     }
-    return false;
 }
 /**************************************************************//**
  ** Procedure:  ATTRsign_access_methods
