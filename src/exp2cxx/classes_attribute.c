@@ -71,6 +71,13 @@ char * generate_attribute_func_name( Variable a, char * out ) {
     return out;
 }
 
+/* return true if attr needs const and non-const getters */
+bool attrIsObj( Type t ) {
+    if( !( ( TYPEget_type( t ) == number_ ) || ( TYPEget_type( t ) == real_ ) || ( TYPEget_type( t ) == integer_ ) ) ) {
+        return true;
+    }
+    return false;
+}
 /**************************************************************//**
  ** Procedure:  ATTRsign_access_methods
  ** Parameters:  const Variable a --  attribute to print
@@ -94,9 +101,9 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    if( TYPEis_entity( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
-        /* pointer type, so a non-const method is possible
-         NOTE probably need much more elaborate checking to match ATTRprint_access_methods() at line 249 */
+
+    if( attrIsObj( t ) ) {
+        /* object or pointer, so provide const and non-const methods */
         fprintf( file, "        %s %s();\n", ctype, attrnm );
     }
     fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
