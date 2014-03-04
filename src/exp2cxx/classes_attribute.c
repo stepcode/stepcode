@@ -104,16 +104,19 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     if( attrIsObj( t ) ) {
         /* object or pointer, so provide const and non-const methods */
+        fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
         fprintf( file, "        %s %s();\n", ctype, attrnm );
+    } else {
+        fprintf( file, "        %s %s() const;\n", ctype, attrnm );
     }
-    fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
-    fprintf( file, "        void %s (const %s x);\n", attrnm, ctype );
+    fprintf( file, "        void %s( const %s x );\n", attrnm, ctype );
     if( VARget_inverse( a ) ) {
+        const char * argType = ( ( isAggregate( a->inverse_attribute )  ) ? "SDAI_Application_instance" : "EntityAggregate" );
         fprintf( file, "        //static setter/getter pair, necessary for late binding\n" );
-        fprintf( file, "        static %s get_%s( const SDAI_Application_instance * obj ) {\n", ctype, attrnm );
-        fprintf( file, "            return ( ( %s * ) obj )->%s();\n        }\n", objtype, attrnm );
-        fprintf( file, "        static void set_%s( SDAI_Application_instance * obj, const %s x) {\n", attrnm, ctype );
-        fprintf( file, "            ( ( %s * ) obj )->%s( x );\n        }\n", objtype, attrnm );
+        fprintf( file, "        static %s * get_%s( const SDAI_Application_instance * obj ) {\n", argType, attrnm );
+        fprintf( file, "            return ( %s * )( ( ( %s * ) obj )->%s() );\n        }\n", argType, objtype, attrnm );
+        fprintf( file, "        static void set_%s( SDAI_Application_instance * obj, const %s * x) {\n", attrnm, argType );
+        fprintf( file, "            ( ( %s * ) obj )->%s( ( const %s ) x );\n        }\n", objtype, attrnm, ctype );
     }
     fprintf( file, "\n" );
     return;
