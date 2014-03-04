@@ -165,7 +165,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE *
  ** Side Effects:
  ** Status:  complete 7/15/93       by DDH
  ******************************************************************/
-void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * file ) {
+void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file ) {
 
     Type t = VARget_type( a );
     char ctype [BUFSIZ];
@@ -180,7 +180,8 @@ void ATTRprint_access_methods_put_head( CONST char * entnm, Variable a, FILE * f
     return;
 }
 
-void AGGRprint_access_methods( CONST char * entnm, Variable a, FILE * file,
+/** print access methods for aggregate attribute */
+void AGGRprint_access_methods( const char * entnm, Variable a, FILE * file,
                                char * ctype, char * attrnm ) {
     ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
