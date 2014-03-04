@@ -186,9 +186,9 @@ void AGGRprint_access_methods( const char * entnm, Variable a, FILE * file,
     ATTRprint_access_methods_get_head( entnm, a, file, false );
     fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
     fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
-    ATTRprint_access_methods_get_head( entnm, a, file, false );
+    ATTRprint_access_methods_get_head( entnm, a, file, true );
     fprintf( file, "const {\n" );
-    fprintf( file, "    return ( %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
+    fprintf( file, "    return ( const %s ) %s_%s;\n}\n", ctype, ( ( a->type->u.type->body->base ) ? "" : "& " ), attrnm );
     ATTRprint_access_methods_put_head( entnm, a, file );
     fprintf( file, "{\n    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
     fprintf( file, "    _%s%sShallowCopy( * x );\n}\n", attrnm, ( ( a->type->u.type->body->base ) ? "->" : "." ) );
