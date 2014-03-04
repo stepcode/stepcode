@@ -281,6 +281,91 @@ void ATTRprint_access_methods_str_bin( const char * entnm, const char * attrnm, 
     return;
 }
 
+/** print logging code for access methods for enumeration attribute */
+void ATTRprint_access_methods_enum_logging( const char * entnm, const char * attrnm, const char * funcnm, FILE * file, bool setter ) {
+    if( print_logging ) {
+        const char * direction = ( setter ? "assigned" : "returned" );
+        fprintf( file, "#ifdef SC_LOGGING\n" );
+        fprintf( file, "    if(*logStream)\n    {\n" );
+        if( !setter ) {
+            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
+        }
+        fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+        if( setter ) {
+            fprintf( file, "            *logStream << _%s.element_at(x) << std::endl;\n", attrnm );
+        } else {
+            fprintf( file, "            *logStream << _%s.element_at(_%s.asInt()) << std::endl;\n", attrnm, attrnm );
+            fprintf( file, "        }\n        else\n        {\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n" );
+        }
+        fprintf( file, "    }\n#endif\n" );
+    }
+}
+
+/** print access methods for enumeration attribute */
+void ATTRprint_access_methods_enum( const char * entnm, const char * attrnm, const char * funcnm,
+                                    Variable a, Type t, FILE * file ) {
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_enum_logging( entnm, attrnm, funcnm, file, false );
+    fprintf( file, "    return (%s) _%s;\n}\n", EnumName( TYPEget_name( t ) ), attrnm );
+
+    ATTRprint_access_methods_get_head( entnm, a, file, true );
+    fprintf( file, "const {\n" );
+    ATTRprint_access_methods_enum_logging( entnm, attrnm, funcnm, file, false );
+    fprintf( file, "    return (const %s) _%s;\n}\n", EnumName( TYPEget_name( t ) ), attrnm );
+
+    ATTRprint_access_methods_put_head( entnm, a, file );
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_enum_logging( entnm, attrnm, funcnm, file, true );
+    fprintf( file, "    _%s.put( x );\n}\n", attrnm );
+    return;
+}
+
+/** print logging code for access methods for logical or boolean attribute */
+void ATTRprint_access_methods_log_bool_logging( const char * entnm, const char * attrnm, const char * funcnm, FILE * file, bool setter ) {
+    if( print_logging ) {
+        const char * direction = ( setter ? "assigned" : "returned" );
+        fprintf( file, "#ifdef SC_LOGGING\n" );
+        fprintf( file, "    if(*logStream)\n    {\n" );
+        if( !setter ) {
+            /* fprintf( file, "        logStream->open(SCLLOGFILE,ios::app);\n" ); */
+            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
+        }
+        fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+        if( setter ) {
+            fprintf( file, "        *logStream << _%s.element_at(x) << std::endl;\n", attrnm );
+        } else {
+            fprintf( file, "            *logStream << _%s.element_at(_%s.asInt()) << std::endl;\n", attrnm, attrnm );
+            fprintf( file, "        }\n        else\n        {\n" );
+            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() %s: \";\n", entnm, funcnm, direction );
+            fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n" );
+            /* fprintf( file, "            logStream->close();\n" ); */
+        }
+        fprintf( file, "    }\n" );
+        fprintf( file, "#endif\n" );
+    }
+}
+
+/** print access methods for logical or boolean attribute */
+void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm, const char * funcnm,
+                                        const char * ctype, Variable a, FILE * file ) {
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
+    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
+
+    ATTRprint_access_methods_get_head( entnm, a, file, true );
+    fprintf( file, "const {\n" );
+    ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
+    fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+
+    ATTRprint_access_methods_put_head( entnm, a, file );
+    fprintf( file, "{\n" );
+    ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, true );
+    fprintf( file, "    _%s.put (x);\n}\n", attrnm );
+    return;
+}
+
 /** prints the access method based on the attribute type
  *  i.e. get and put value access functions defined in a class
  *  generated for an entity.
@@ -322,80 +407,11 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
     }
     /*    case TYPE_LOGICAL:    */
     if( ( classType == boolean_ ) || ( classType == logical_ ) )  {
-
-        fprintf( file, "const {\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        logStream->open(SCLLOGFILE,ios::app);\n" );
-            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << _%s.element_at(_%s.asInt()) << std::endl;\n",
-                     attrnm, attrnm );
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n" );
-            fprintf( file, "            logStream->close();\n" );
-            fprintf( file, "    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
-
-        ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, "{\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "        *logStream << _%s.element_at(x) << std::endl;\n", attrnm );
-            fprintf( file, "    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    _%s.put (x);\n}\n", attrnm );
-        return;
+        ATTRprint_access_methods_log_bool( entnm, attrnm, funcnm, ctype, a, file );
     }
     /*    case TYPE_ENUM:   */
     if( classType == enumeration_ )  {
-        fprintf( file, "const {\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        if(!_%s.is_null())\n        {\n", attrnm );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << _%s.element_at(_%s.asInt()) << std::endl;\n",
-                     attrnm, attrnm );
-            fprintf( file, "        }\n        else\n        {\n" );
-            fprintf( file, "            *logStream << time(NULL) << \" SDAI %s::%s() returned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    return (%s) _%s;\n}\n",
-                 EnumName( TYPEget_name( t ) ), attrnm );
-
-        ATTRprint_access_methods_put_head( entnm, a, file );
-        fprintf( file, "{\n" );
-        if( print_logging ) {
-            fprintf( file, "#ifdef SC_LOGGING\n" );
-            fprintf( file, "    if(*logStream)\n    {\n" );
-            fprintf( file, "        *logStream << time(NULL) << \" SDAI %s::%s() assigned: \";\n",
-                     entnm, funcnm );
-            fprintf( file,
-                     "        *logStream << _%s.element_at(x) << std::endl;\n", attrnm );
-            fprintf( file, "    }\n" );
-            fprintf( file, "#endif\n" );
-        }
-        fprintf( file, "    _%s.put (x);\n}\n", attrnm );
-        return;
+        ATTRprint_access_methods_enum( entnm, attrnm, funcnm, a, t, file );
     }
     /*    case TYPE_SELECT: */
     if( classType == select_ )  {
@@ -469,7 +485,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file ) {
             fprintf( file, "            *logStream << \"unset\" << std::endl;\n        }\n    }\n" );
             fprintf( file, "#endif\n" );
         }
-        fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+        fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
         if( print_logging ) {
