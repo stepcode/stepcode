@@ -193,25 +193,26 @@ instanceID sectionReader::readInstanceNumber() {
         return 0;
     }
     skipWS();
-    start = _file.tellg();
+
+    char buffer[65]; //The instance ID width cannot be larger then 64
     do {
         c = _file.get();
         if( isdigit( c ) ) {
+            buffer[digits] = c; //copy the charcter into the buffer
             digits++;
         } else {
             _file.unget();
             break;
         }
     } while( _file.good() );
+    buffer[digits] = '\0'; //Append the terminating character
     skipWS();
 
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
-        end = _file.tellg();
-        _file.seekg( start );
-        _file >> id;
-        _file.seekg( end );
+        id = atoi(buffer); //convert the buffer to integer
         assert( id > 0 );
     }
+
     return id;
 }
 
