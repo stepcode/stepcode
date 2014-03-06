@@ -174,7 +174,6 @@ void sectionReader::locateAllInstances() {
 }
 
 instanceID sectionReader::readInstanceNumber() {
-    std::streampos start, end;
     char c;
     int digits = 0;
     instanceID id = 0;
@@ -194,25 +193,33 @@ instanceID sectionReader::readInstanceNumber() {
     }
     skipWS();
 
-    char buffer[65]; //The instance ID width cannot be larger then 64
+    int instanceIDLength = ( sizeof( instanceID ) * 3 ); //An over estimate of the string length of instanceID.
+    char * buffer = new char( instanceIDLength + 1 ); 
     do {
         c = _file.get();
         if( isdigit( c ) ) {
-            buffer[digits] = c; //copy the charcter into the buffer
+            buffer[ digits ] = c; //copy the charcter into the buffer
             digits++;
+
         } else {
             _file.unget();
             break;
         }
+
+        if( digits >= instanceIDLength ) {
+            std::cerr << sizeof( instanceID ) << instanceIDLength << "A very large instance ID found. Truncating. \n";
+            break;
+        }
+
     } while( _file.good() );
     buffer[digits] = '\0'; //Append the terminating character
     skipWS();
 
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
-        id = atoi(buffer); //convert the buffer to integer
+        id = atoll( buffer ); //convert the buffer to integer
         assert( id > 0 );
     }
-
+    delete buffer;
     return id;
 }
 
