@@ -58,7 +58,7 @@ typedef struct Scan_Buffer {
 #endif
     char  * savedPos;
     FILE  * file;
-    char  *  filename;
+    const char  *  filename;
     bool readEof;
     int lineno;
     int bol;

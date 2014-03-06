@@ -20,7 +20,7 @@ if(NOT DEBUGGING_GENERATED_SOURCES)
     message(FATAL_ERROR "Generated sources have been modified.  These files should never be modified directly except when debugging faulty output from the generators - changes to lexer and parser logic should be made to the generator input files.  If this is a debugging situation, set the variable DEBUGGING_GENERATED_SOURCES to ON during the CMake configure.")
   endif(srcs_pass)
 
-  # If we got by that test, see if it looks like these 
+  # If we got by that test, see if it looks like these
   # sources came from the current input files.  It's not
   # a failure condition if they didn't, but warn about it.
   set(filelist "@INPUT_FILELIST@")

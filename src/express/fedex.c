@@ -81,6 +81,7 @@
 #include "express/error.h"
 #include "express/express.h"
 #include "express/resolve.h"
+#include "express/info.h"
 
 #ifdef YYDEBUG
 extern int exp_yydebug;

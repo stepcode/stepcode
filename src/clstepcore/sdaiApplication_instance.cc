@@ -736,7 +736,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                  "missing or invalid EntityDescriptor\n" );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
-        cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
              << "\n" << _POC_ "\n";
         return SEVERITY_BUG;
     }
@@ -747,7 +747,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                  "for SDAI_Application_instance argument." );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
-        cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
              << "\n" << _POC_ "\n";
         return SEVERITY_BUG;
     }

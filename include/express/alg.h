@@ -69,7 +69,7 @@ struct tag {
 
 /** location of fulltext of algorithm in source file */
 struct FullText {
-    char * filename;
+    const char * filename;
     unsigned int start, end;
 };
 

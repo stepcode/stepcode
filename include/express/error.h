@@ -83,7 +83,7 @@ typedef struct Error_Warning_ {
 /********************/
 
 extern SC_EXPRESS_EXPORT bool __ERROR_buffer_errors;
-extern SC_EXPRESS_EXPORT char * current_filename;
+extern SC_EXPRESS_EXPORT const char * current_filename;
 
 /* flag to remember whether non-warning errors have occurred */
 extern SC_EXPRESS_EXPORT bool ERRORoccurred;

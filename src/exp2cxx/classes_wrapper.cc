@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "complexSupport.h"
+#include "class_strings.h"
 #include <sc_memmgr.h>
 
 #include <sc_trace_fprintf.h>
@@ -192,14 +193,6 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
                          col->externMapping( ENTITYget_name( e ) ) );
         LISTod;
         fprintf( files->create, "\n" );
-
-        // Write the SdaixxxInit() fn (in .init.cc file):
-        //    Do the types:
-        SCOPEdo_types( scope, t, de ) {
-            TYPEprint_init( t, files, schema );
-        }
-        SCOPEod;
-        //    (The entities are done as a part of ENTITYPrint() below.)
     }
 
     /* fill in the values for the type descriptors */
@@ -335,6 +328,47 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     LISTfree( list );
 }
 
+/** open/init unity files which allow faster compilation with fewer translation units */
+void initUnityFiles( const char * schName, FILES * files ) {
+    const char * unity = "\n/** this file is for unity builds, which allow faster compilation\n"
+    " * with fewer translation units. not compatible with all compilers!\n */\n\n"
+    "#include \"schema.h\"\n";
+    std::string name = schName;
+    name.append( "_unity_" );
+    size_t prefixLen = name.length();
+
+    name.append( "entities.cc" );
+    files->unity.entity.impl = FILEcreate( name.c_str() );
+
+    name.resize( name.length() - 2 );
+    name.append( "h" );
+    fprintf( files->unity.entity.impl, "%s#include \"%s\"\n", unity, name.c_str() );
+
+    files->unity.entity.hdr = FILEcreate( name.c_str() );
+    fprintf( files->unity.entity.hdr, "%s\n", unity );
+
+    name.resize( prefixLen );
+    name.append( "types.cc" );
+    files->unity.type.impl = FILEcreate( name.c_str() );
+
+    name.resize( name.length() - 2 );
+    name.append( "h" );
+    fprintf( files->unity.type.impl, "%s#include \"%s\"\n", unity, name.c_str() );
+
+    files->unity.type.hdr = FILEcreate( name.c_str() );
+    fprintf( files->unity.type.hdr, "%s\n", unity );
+}
+
+/** close unity files
+ * \sa initUnityFiles()
+ */
+void closeUnityFiles( FILES * files ) {
+    FILEclose( files->unity.type.hdr );
+    FILEclose( files->unity.type.impl );
+    FILEclose( files->unity.entity.hdr );
+    FILEclose( files->unity.entity.impl );
+}
+
 /** ****************************************************************
  ** Procedure:  SCHEMAprint
  ** Parameters: const Schema schema - schema to print
@@ -348,8 +382,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
  ** Side Effects:
  ** Status:
  ******************************************************************/
-void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
-                  int suffix ) {
+void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) {
     char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile,
@@ -384,6 +417,8 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
+    /* 1.9 open/init unity files which allow faster compilation with fewer translation units */
+    initUnityFiles( sufnm, files );
     /*  2.  class source file            */
     sprintf( np, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
@@ -447,9 +482,8 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
 #endif
         fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
         fprintf( initfile, "#include <sc_memmgr.h>\n" );
-        fprintf( files->init, "\n#include \"%sHelpers.h\"\n", schnm );
 
-        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n    std::string str;\n", schnm );
+        fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
         fprintf( createall, "    %s::schema = new Schema(\"%s\");\n",
@@ -496,15 +530,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
         initfile = files->init = fopen( fnm, "a" );
     }
 
-    // 5. header containing inline helper functions (for runtime aggregate bounds, possibly other uses)
-    sprintf( fnm, "%sHelpers.h", schnm );
-    if( !( files->helpers = FILEcreate( fnm ) ) ) {
-        return;
-    }
-    fprintf( files->helpers, "\n// In the exp2cxx source code, this file is referred to as files->helpers.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
-    fprintf( files->helpers, "//this file contains inline helper functions (for runtime aggregate bounds, possibly other uses)\n\n" );
-
-
     /**********  record in files relating to entire input   ***********/
 
     /*  add to schema's include and initialization file */
@@ -524,6 +549,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
 
 
     /**********  close the files    ***********/
+    closeUnityFiles( files );
     FILEclose( libfile );
     FILEclose( incfile );
     if( schema->search_id == PROCESSED ) {
@@ -532,7 +558,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol,
     } else {
         fclose( initfile );
     }
-    FILEclose( files->helpers );
 }
 
 /** ****************************************************************
@@ -619,7 +644,8 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( incfile, "#include <sdai.h> \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
-
+    /*  1.9 init unity files (large translation units, faster compilation) */
+    initUnityFiles( schnm, files );
     /*  2.  class source file            */
     sprintf( np, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
@@ -649,17 +675,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( files->init, "\n// in the exp2cxx source code, this file is generally referred to as files->init or initfile\n" );
 
     fprintf( initfile, "#include \"%s.h\"\n\n", schnm );
-    fprintf( files->init, "\n#include \"%sHelpers.h\"\n", schnm );
     fprintf( initfile, "void \n%sInit (Registry& reg)\n{\n", schnm );
-
-    // 5. header containing inline helper functions (for runtime aggregate bounds, possibly other uses)
-    sprintf( fnm, "%sHelpers.h", schnm );
-    if( !( files->helpers = FILEcreate( fnm ) ) ) {
-        return;
-    }
-    fprintf( files->helpers, "\n// In the exp2cxx source code, this file is referred to as files->helpers.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
-    fprintf( files->helpers, "//this file contains inline helper functions (for runtime aggregate bounds, possibly other uses)\n\n" );
-
 
     /**********  record in files relating to entire input   ***********/
 
@@ -686,6 +702,7 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
 
 
     /**********  close the files    ***********/
+    closeUnityFiles( files );
     FILEclose( libfile );
     FILEclose( incfile );
     fprintf( initfile, "\n}\n" );
