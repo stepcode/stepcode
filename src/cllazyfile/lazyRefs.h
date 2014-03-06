@@ -88,8 +88,14 @@ class lazyRefs {
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
             bool ref = refersToCurrentInst( invNode->inverseADesc(), rinst );
             if( ref ) {
-                EntityAggregate * ea = invNode->getter()( _inst );
-                ea->AddNode( new EntityNode( rinst ) );
+                if( invNode->isAggregate() ) {
+                    EntityAggregate * ea = ( ( invAttrListNodeA * )invNode )->getter()( _inst );
+                    ea->AddNode( new EntityNode( rinst ) );
+                    //TODO check for duplicates
+                } else {
+                    SDAI_Application_instance * ai = ( ( invAttrListNodeI * )invNode )->getter()( _inst );
+                    //...and?
+                }
             } else {
                 if( !prevLoaded ) {
                     //TODO _lim->unload( inst ); //this should keep the inst loaded for now, but put it in a list of ones that can be unloaded if not accessed
