@@ -103,7 +103,7 @@ class lazyRefs {
             int rindex = attrIndex( referrer, ia->_inverted_attr_id, ia->_inverted_entity_id );
             STEPattribute sa = referrer->attributes[ rindex ];
             assert( ( sa.getADesc()->BaseType() == ENTITY_TYPE ) &&
-                    ( sa.getADesc()->IsAggrType() ) );
+                    ( ( sa.getADesc()->IsAggrType() ) || ( sa.getADesc()->NonRefType() == ENTITY_TYPE ) ) );
 
             //search for current inst id
             EntityAggregate * aggr = dynamic_cast< EntityAggregate * >( sa.Aggregate());
