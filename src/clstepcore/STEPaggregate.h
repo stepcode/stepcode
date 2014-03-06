@@ -88,6 +88,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
  ** \class GenericAggregate
  ** This class supports LIST OF:
  **    SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
+ ** FIXME this class, as well as SelectAggregate, for SELECTs?!
  ******************************************************************/
 class SC_CORE_EXPORT GenericAggregate  :  public STEPaggregate {
     public:
