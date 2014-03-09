@@ -207,7 +207,7 @@ instanceID sectionReader::readInstanceNumber() {
         }
 
         if( digits >= instanceIDLength ) {
-            std::cerr << "A very large instance ID of string length greater then " << instanceIDLength << " found. Truncating. \n";
+            std::cerr << "A very large instance ID of string length greater then " << instanceIDLength << " found. Truncating." << std::endl;
             break;
         }
 
