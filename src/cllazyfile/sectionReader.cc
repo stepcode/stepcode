@@ -198,7 +198,7 @@ instanceID sectionReader::readInstanceNumber() {
     do {
         c = _file.get();
         if( isdigit( c ) ) {
-            buffer[ digits ] = c; //copy the charcter into the buffer
+            buffer[ digits ] = c; //copy the charcter into the bufferinstanceIDLength << 
             digits++;
 
         } else {
@@ -207,7 +207,7 @@ instanceID sectionReader::readInstanceNumber() {
         }
 
         if( digits >= instanceIDLength ) {
-            std::cerr << sizeof( instanceID ) << instanceIDLength << "A very large instance ID found. Truncating. \n";
+            std::cerr << "A very large instance ID of string length greater then " << instanceIDLength << " found. Truncating. \n";
             break;
         }
 
