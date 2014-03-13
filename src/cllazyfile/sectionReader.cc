@@ -232,6 +232,7 @@ instanceID sectionReader::readInstanceNumber() {
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
         id = strtoull( buffer, NULL, 10); 
         if( id == std::numeric_limits<instanceID>::max() ) {
+            //Handling those cases where although the number of digits is equal, but the id value greater then equal to the maximum allowed value. 
             errorMsg << "A very large instance ID of caused an overflow. Skipping data section " << _sectionID << ".";
 
             _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
