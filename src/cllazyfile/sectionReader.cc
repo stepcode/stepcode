@@ -5,8 +5,9 @@
 #include <set>
 #include <string>
 #include <assert.h>
-#include <cerrno>
+
 #include "Registry.h"
+#include "sc_strtoull.h"
 #include "sdaiApplication_instance.h"
 #include "read_func.h"
 #include "SdaiSchemaInit.h"
@@ -230,8 +231,8 @@ instanceID sectionReader::readInstanceNumber() {
 
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
         id = strtoull( buffer, NULL, 10); 
-        if( errno == ERANGE ) {
-            errorMsg << "A very large instance ID of caused an overflow. Skipping data section " << _sectionID << "." << std::endl;
+        if( id == std::numeric_limits<instanceID>::max() ) {
+            errorMsg << "A very large instance ID of caused an overflow. Skipping data section " << _sectionID << ".";
 
             _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
             _error->UserMsg( "A Very Large Instance ID encountered" );
