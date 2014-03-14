@@ -3,7 +3,7 @@
 
 #include <limits.h>
 
-#ifdef __WIN32
+#ifdef _WIN32
 #  define strtoull _strtoui64
 #  define ULLONG_MAX _UI64_MAX
 #endif
