@@ -150,13 +150,27 @@ class lazyRefs {
                 if( ( strcasecmp( name, inst->attributes[i].Name() ) == 0 ) &&
                     ( strcasecmp( entity, inst->attributes[i].getADesc()->Owner().Name() ) == 0 ) ) {
                     return i;
-                } else {
                 }
             }
             return -1;
         }
 
         invAttrListNode * invAttr( SDAI_Application_instance * inst, const Inverse_attribute * ia /*, iaList_t & iaList */ ) {
+            /* looks for iAttrs in schemas/sdai_ap214e3/entity/SdaiGeometric_representation_context.cc, but the ctors don't populate it
+             * shouldn't the parent class ctor populate it?
+ENTITY representation_context;
+  context_identifier : identifier;
+  context_type : text;
+INVERSE
+  representations_in_context : SET [1:?] OF representation FOR context_of_items
+  ;
+END_ENTITY; -- 10303-43: representation_schema
+
+ENTITY geometric_representation_context
+SUBTYPE OF (representation_context);
+  coordinate_space_dimension : dimension_count;
+END_ENTITY; -- 10303-42: geometry_schema
+             */
             invAttrListNode * n = ( invAttrListNode * ) inst->iAttrs.GetHead();
             while( n ) {
                 if( n->inverseADesc() == ia ) {
