@@ -90,11 +90,17 @@ class lazyRefs {
             if( ref ) {
                 if( invNode->isAggregate() ) {
                     EntityAggregate * ea = ( ( invAttrListNodeA * )invNode )->getter()( _inst );
+                    //TODO check if duplicate
                     ea->AddNode( new EntityNode( rinst ) );
-                    //TODO check for duplicates
                 } else {
                     SDAI_Application_instance * ai = ( ( invAttrListNodeI * )invNode )->getter()( _inst );
-                    //...and?
+                    if( !ai ) {
+                        ( ( invAttrListNodeI * )invNode )->setter()( _inst, rinst );
+                    } else if( ai->GetFileId() != inst ) {
+                        std::cerr << "ERROR: two instances (" << rinst << " and " << ai->GetFileId() << ") refer to inst ";
+                        std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
+                        // TODO _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
+                    }
                 }
             } else {
                 if( !prevLoaded ) {
@@ -108,20 +114,26 @@ class lazyRefs {
             //find the attr
             int rindex = attrIndex( referrer, ia->_inverted_attr_id, ia->_inverted_entity_id );
             STEPattribute sa = referrer->attributes[ rindex ];
-            assert( ( sa.getADesc()->BaseType() == ENTITY_TYPE ) &&
-                    ( ( sa.getADesc()->IsAggrType() ) || ( sa.getADesc()->NonRefType() == ENTITY_TYPE ) ) );
-
-            //search for current inst id
-            EntityAggregate * aggr = dynamic_cast< EntityAggregate * >( sa.Aggregate());
-            assert( aggr );
-            EntityNode * en = ( EntityNode * ) aggr->GetHead();
+            assert( sa.getADesc()->BaseType() == ENTITY_TYPE );
             bool found = false;
-            while( en ) {
-                if( en->node == _inst ) {
-                    found = true;
-                    break;
+            if( sa.getADesc()->IsAggrType() ) {
+                //aggregate - search for current inst id
+                EntityAggregate * aggr = dynamic_cast< EntityAggregate * >( sa.Aggregate());
+                assert( aggr );
+                EntityNode * en = ( EntityNode * ) aggr->GetHead();
+                while( en ) {
+                    if( en->node == _inst ) {
+                        found = true;
+                        break;
+                    }
+                    en = ( EntityNode * ) en->NextNode();
                 }
-                en = ( EntityNode * ) en->NextNode();
+            } else {
+                //single instance
+                assert( sa.getADesc()->NonRefType() == ENTITY_TYPE );
+                if( sa.Entity() == _inst ) {
+                    found = true;
+                }
             }
             if( !found ) {
                 std::cerr << "inst #" << _inst->FileId() << " not found in #" << referrer->FileId();
@@ -152,7 +164,8 @@ class lazyRefs {
                 }
                 n = ( invAttrListNode * ) n->NextNode();
             }
-            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAttrs (" << ( void * )( & ( inst->iAttrs ) ) << ")." << std::endl;
+            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAttrs (";
+            std::cerr << ( void * )( & ( inst->iAttrs ) ) << ") - entity " << inst->eDesc->Name() << "." << std::endl;
             return 0;
         }
 
