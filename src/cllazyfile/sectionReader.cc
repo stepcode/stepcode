@@ -7,6 +7,7 @@
 #include <assert.h>
 
 #include "Registry.h"
+#include "sc_strtoull.h"
 #include "sdaiApplication_instance.h"
 #include "read_func.h"
 #include "SdaiSchemaInit.h"
@@ -23,6 +24,7 @@
 sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid ):
     _lazyFile( parent ), _file( file ), _sectionStart( start ), _sectionID( sid ) {
     _fileID = _lazyFile->ID();
+    _error = new ErrorDescriptor();
 }
 
 
@@ -174,9 +176,8 @@ void sectionReader::locateAllInstances() {
 }
 
 instanceID sectionReader::readInstanceNumber() {
-    std::streampos start, end;
     char c;
-    int digits = 0;
+    size_t digits = 0;
     instanceID id = 0;
 
     //find instance number ("# nnnn ="), where ' ' is any whitespace found by isspace()
@@ -193,25 +194,55 @@ instanceID sectionReader::readInstanceNumber() {
         return 0;
     }
     skipWS();
-    start = _file.tellg();
+
+    // The largest instance ID yet supported is the maximum value of unsigned long long int
+    assert( std::numeric_limits<instanceID>::max() <= std::numeric_limits<unsigned long long int>::max() );
+
+    size_t instanceIDLength = std::numeric_limits<instanceID>::digits10 + 1;
+    char * buffer = new char( instanceIDLength + 1 ); // +1 for the terminating character
+    
+    std::stringstream errorMsg;
+
     do {
         c = _file.get();
         if( isdigit( c ) ) {
+            buffer[ digits ] = c; //copy the charcter into the buffer
             digits++;
+
         } else {
             _file.unget();
             break;
         }
+
+        if( digits > instanceIDLength ) {
+            errorMsg << "A very large instance ID of string length greater then " << instanceIDLength << " found. Skipping data section " << _sectionID << ".";
+
+            _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
+            _error->UserMsg( "A very large instance ID encountered" );
+            _error->DetailMsg( errorMsg.str() );
+
+            delete buffer;
+            return 0;    
+        }
+
     } while( _file.good() );
+    buffer[ digits ] = '\0'; //Append the terminating character
     skipWS();
 
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
-        end = _file.tellg();
-        _file.seekg( start );
-        _file >> id;
-        _file.seekg( end );
+        id = strtoull( buffer, NULL, 10); 
+        if( id == std::numeric_limits<instanceID>::max() ) {
+            //Handling those cases where although the number of digits is equal, but the id value is greater then equal to the maximum allowed value. 
+            errorMsg << "A very large instance ID caused an overflow. Skipping data section " << _sectionID << ".";
+
+            _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
+            _error->UserMsg( "A very large instance ID encountered" );
+            _error->DetailMsg( errorMsg.str() );
+        }
+
         assert( id > 0 );
     }
+    delete buffer;
     return id;
 }
 
