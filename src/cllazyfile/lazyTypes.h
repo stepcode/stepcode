@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <set>
 #include <stdint.h>
 
 #include "judyLArray.h"
@@ -34,6 +35,8 @@ typedef uint16_t fileID;      ///< the index of a lazyFileReader in a lazyFileRe
 typedef uint64_t positionAndSection;
 
 typedef std::vector< instanceID > instanceRefs;
+
+typedef std::set< instanceID > instanceSet;
 
 //TODO: create a "unique instance id" from the sectionID and instanceID, and use it everywhere?
 

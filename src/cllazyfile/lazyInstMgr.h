@@ -74,7 +74,7 @@ class lazyInstMgr {
         }
 
         instanceRefs_t * getFwdRefs() {
-            return & _fwdInstanceRefs;
+            return  & _fwdInstanceRefs;
         }
 
         instanceRefs_t * getRevRefs() {
@@ -148,10 +148,10 @@ class lazyInstMgr {
 
         SDAI_Application_instance * loadInstance( instanceID id );
 
-        // TODO implement these
-             //list all instances that one instance depends on (recursive)
-             //std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
+        //list all instances that one instance depends on (recursive)
+        instanceSet * instanceDependencies( instanceID id );
 
+        // TODO implement these
              /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
                  same as above, but with list of instances */
              //std::vector<instanceID> notDependencies(...)

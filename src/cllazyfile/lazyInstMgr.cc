@@ -125,3 +125,29 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     return inst;
 }
 
+
+instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
+    instanceSet * checkedDependencies = new instanceSet();
+    instanceRefs dependencies;
+    dependencies.push_back( id ); // An instance depends on itself
+    instanceRefs_t * _fwdRefs = getFwdRefs();
+
+    size_t curPos = 0;
+    //Invarient: dependencies before curPos have been explored
+    while( curPos < dependencies.size() ) {
+
+        bool isNewElement = ( checkedDependencies->insert( dependencies.at( curPos ) ) ).second;
+        if( isNewElement ) {
+            instanceRefs_t::cvector * _fwdRefsVec = _fwdRefs->find( dependencies.at( curPos ) );
+            
+            if( _fwdRefsVec != 0 ) {
+                dependencies.insert( dependencies.end(), _fwdRefsVec->begin(), _fwdRefsVec->end() );
+            }
+        }
+
+        curPos++;
+    }
+
+    return checkedDependencies;
+}
+
