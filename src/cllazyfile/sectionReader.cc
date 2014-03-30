@@ -247,13 +247,15 @@ instanceID sectionReader::readInstanceNumber() {
     return id;
 }
 
-//TODO: most of the rest of readdata1, all of readdata2
+/** load an instance and return a pointer to it.
+ * side effect: recursively loads any instances the specified instance depends upon
+ */
 SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
         const std::string & typeName, const std::string & schName, bool header ) {
     char c;
     const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
     std::string comment;
-    Severity sev;
+    Severity sev = SEVERITY_NULL;
     SDAI_Application_instance * inst = 0;
 
     tName = typeName.c_str();
@@ -310,8 +312,8 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         _file.seekg( begin );
         findNormalString( "(" );
         _file.unget();
-        //TODO do something with 'sev'
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
+        //TODO do something with 'sev'
     }
     return inst;
 }

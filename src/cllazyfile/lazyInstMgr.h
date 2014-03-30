@@ -149,7 +149,6 @@ class lazyInstMgr {
         unsigned long getNumTypes() const;
 
         sectionID registerDataSection( lazyDataSectionReader * sreader );
-        fileID registerLazyFile( lazyFileReader * freader );
 
         ErrorDescriptor * getErrorDesc() {
             return _errors;

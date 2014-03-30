@@ -106,7 +106,6 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
     }
     instanceStreamPos_t::cvector * cv;
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
-        //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
         switch( cv->size() ) {
             case 0:
                 std::cerr << "Instance #" << id << " not found in any section." << std::endl;

@@ -47,6 +47,7 @@ class instMgrAdapter: public InstMgrBase {
         instMgrAdapter( lazyInstMgr * lim ): InstMgrBase(), _mn( lim ) {}
 
         inline mgrNodeHelper * FindFileId( int fileId ) {
+            //TODO check if fileId exists. if not, return null
             _mn.setInstance( fileId );
             return &_mn;
         }
