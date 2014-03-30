@@ -303,8 +303,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
             in >> ws;
             c = in.peek();
             if( c != '(' ) {
-                _error.AppendToDetailMsg(
-                    "Missing open paren before entity attr values.\n" );
+                _error.AppendToDetailMsg( "Missing open paren before entity attr values.\n" );
                 cout << "ERROR: missing open paren\n";
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
                 STEPread_error( c, 0, in, currSch );
@@ -312,15 +311,12 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
             }
 
             stepc = EntityPart( typeNm.c_str(), currSch );
-            if( stepc )
-                stepc->SDAI_Application_instance::STEPread( id, addFileId,
-                        instance_set, in,
-                        currSch );
-            else {
-                cout << "ERROR: complex entity part \"" << typeNm
-                     << "\" does not exist.\n";
-                _error.AppendToDetailMsg(
-                    "Complex entity part of instance does not exist.\n" );
+            if( stepc ) {
+                //WARNING need to seek to the correct position when this is done... how?
+                stepc->SDAI_Application_instance::STEPread( id, addFileId, instance_set, in, currSch );
+            } else {
+                cout << "ERROR: complex entity part \"" << typeNm << "\" does not exist." << endl;;
+                _error.AppendToDetailMsg( "Complex entity part of instance does not exist.\n" );
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
                 STEPread_error( c, 0, in, currSch );
                 return _error.severity();
@@ -328,12 +324,16 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
             in >> ws;
             c = in.peek();
         }
-        if( c != ')' )
-            cout <<
-                 "ERROR: missing ending paren for complex entity instance.\n";
-        else {
+        if( c != ')' ) {
+            cout << "ERROR: missing ending paren for complex entity instance." << endl;
+        } else {
             in.get( c );    // read the closing paren
         }
+    } else {
+        _error.AppendToDetailMsg( "Complex instances must begin with '('. Found '" );
+        _error.AppendToDetailMsg( c );
+        _error.AppendToDetailMsg( "' instead.\n" );
+        _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
     }
     return _error.severity();
 }

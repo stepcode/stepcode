@@ -640,8 +640,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
     in >> c;
     switch( c ) {
         case '@':
-            err->AppendToDetailMsg(
-                "Use of @ instead of # to identify entity.\n" );
+            err->AppendToDetailMsg( "Use of @ instead of # to identify entity.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
             // no break statement here on purpose
         case '#': {
