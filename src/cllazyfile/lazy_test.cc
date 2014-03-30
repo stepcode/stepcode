@@ -71,8 +71,8 @@ instanceID printRefs( lazyInstMgr & mgr ) {
     return id;
 }
 
-/// prints dependencies of the last instance: returns instanceID of last instance
-instanceID printDeps( lazyInstMgr & mgr ) {
+/// prints dependencies of an instance
+void printDeps( lazyInstMgr & mgr ) {
     const int displayInstances = 10;
     instanceRefs_t * refs = mgr.getFwdRefs();
     instanceRefs_t::cpair p = refs->end();
@@ -80,24 +80,23 @@ instanceID printDeps( lazyInstMgr & mgr ) {
     instanceID id = p.key;
     instanceSet * dependencies = mgr.instanceDependencies( id );
         
-    std::cout << "\nDependencies\n==============\n";
+    std::cout << std::endl <<"Dependencies" << std::endl << "==============" << std::endl;
     instanceSet::const_iterator it( dependencies->begin() ), end( dependencies->end() );
 
-    std::cout << "Instance #" << id << " is recursively dependent on " << dependencies->size() << " instances: ";
+    std::cout << "Example: Instance #" << id << " is recursively dependent on " << dependencies->size() << " instances: ";
     int i;
     for(i = 0; it != end && i < displayInstances; it++, i++ ) {
         std::cout << *it << " ";
     }
 
     if( dependencies->size() > displayInstances ) {
-        std::cout << ".... (Displaying only " << displayInstances << ") ";
+        std::cout << ".... (Displaying only " << displayInstances << " instances) ";
     }
 
     std::cout << std::endl;
     std::cout << std::endl;
 
     delete dependencies;
-    return id;
 }
 
 ///prints info about a complex instance
