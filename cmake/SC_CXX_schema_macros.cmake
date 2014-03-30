@@ -65,7 +65,7 @@ macro(SCHEMA_TESTS)
       COMMAND ${CMAKE_COMMAND} --build .
       --target lazy_${PROJECT_NAME}
       --config $<CONFIGURATION>)
-    set_tests_properties(build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS generate_cpp_${PROJECT_NAME} LABELS cpp_schema_build)
+    set_tests_properties(build_lazy_cpp_${PROJECT_NAME} PROPERTIES DEPENDS build_cpp_${PROJECT_NAME} LABELS cpp_schema_build)
   endif(NOT WIN32)
 endmacro(SCHEMA_TESTS)
 
