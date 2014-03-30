@@ -94,6 +94,13 @@ class SC_LAZYFILE_EXPORT sectionReader {
         }
 
         instanceID readInstanceNumber();
+
+        void seekg( std::streampos pos ) {
+            _file.seekg( pos );
+        }
+        std::streampos tellg() {
+            return _file.tellg();
+        }
 };
 
 #endif //SECTIONREADER_H

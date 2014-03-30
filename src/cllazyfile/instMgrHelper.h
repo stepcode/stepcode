@@ -28,7 +28,7 @@ class mgrNodeHelper: public MgrNodeBase {
             _id = id;
         }
         inline SDAI_Application_instance * GetSTEPentity() {
-            return _lim->loadInstance( _id );
+            return _lim->loadInstance( _id, true );
         }
 };
 

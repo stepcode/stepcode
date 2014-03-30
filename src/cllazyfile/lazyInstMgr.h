@@ -155,7 +155,11 @@ class lazyInstMgr {
             return _errors;
         }
 
-        SDAI_Application_instance * loadInstance( instanceID id );
+        /** returns a pointer to an instance, loading it if necessary.
+         * \param id the instance number to look for
+         * \param reSeek if true, reset file position to current position when done. only necessary when loading an instance with dependencies; excessive use will cause a performance hit
+         */
+        SDAI_Application_instance * loadInstance( instanceID id, bool reSeek = false );
 
         //list all instances that one instance depends on (recursive)
         instanceSet * instanceDependencies( instanceID id );

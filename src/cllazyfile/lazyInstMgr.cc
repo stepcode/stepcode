@@ -95,8 +95,9 @@ void lazyInstMgr::openFile( std::string fname ) {
     _files.push_back( new lazyFileReader( fname, this, _files.size() ) );
 }
 
-SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
+SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
+    std::streampos oldPos;
     positionAndSection ps;
     sectionID sid;
     SDAI_Application_instance * inst = _instancesLoaded.find( id );
@@ -116,7 +117,13 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
                 off = ps & 0xFFFFFFFFFFFFULL;
                 sid = ps >> 48;
                 assert( _dataSections.size() > sid );
+                if( reSeek ) {
+                    oldPos = _dataSections[sid]->tellg();
+                }
                 inst = _dataSections[sid]->getRealInstance( _mainRegistry, off, id );
+                if( reSeek ) {
+                    _dataSections[sid]->seekg( oldPos );
+                }
                 break;
             default:
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
