@@ -125,3 +125,33 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     return inst;
 }
 
+
+instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
+    instanceSet * checkedDependencies = new instanceSet();
+    instanceRefs dependencies; //Acts as queue for checking duplicated dependency
+
+    instanceRefs_t * _fwdRefs = getFwdRefs();
+    instanceRefs_t::cvector * _fwdRefsVec = _fwdRefs->find( id );
+    //Initially populating direct dependencies of id into the queue
+    if( _fwdRefsVec != 0 ) {
+        dependencies.insert( dependencies.end(), _fwdRefsVec->begin(), _fwdRefsVec->end() );
+    }
+
+    size_t curPos = 0;
+    while( curPos < dependencies.size() ) {
+
+        bool isNewElement = ( checkedDependencies->insert( dependencies.at( curPos ) ) ).second;
+        if( isNewElement ) {
+            _fwdRefsVec = _fwdRefs->find( dependencies.at( curPos ) );
+            
+            if( _fwdRefsVec != 0 ) {
+                dependencies.insert( dependencies.end(), _fwdRefsVec->begin(), _fwdRefsVec->end() );
+            }
+        }
+
+        curPos++;
+    }
+
+    return checkedDependencies;
+}
+
