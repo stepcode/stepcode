@@ -74,7 +74,7 @@ class lazyInstMgr {
         }
 
         instanceRefs_t * getFwdRefs() {
-            return  & _fwdInstanceRefs;
+            return & _fwdInstanceRefs;
         }
 
         instanceRefs_t * getRevRefs() {
