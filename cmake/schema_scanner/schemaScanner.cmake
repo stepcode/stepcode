@@ -51,7 +51,7 @@ message("-- Compiling schema scanner...")
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR})
-execute_process(COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
+execute_process(COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR} -G ${CMAKE_GENERATOR}
                  WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
                  TIMEOUT 60
                  OUTPUT_VARIABLE _ss_config_out
