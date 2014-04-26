@@ -2,7 +2,6 @@
 set(SC_BASE_SOURCES
   sc_memmgr.cc
   sc_trace_fprintf.c
-  sc_getopt.cc
   sc_benchmark.cc
   sc_mkdir.c
  )
@@ -10,7 +9,6 @@ set(SC_BASE_SOURCES
 set(SC_BASE_HDRS
   sc_benchmark.h
   sc_memmgr.h
-  sc_getopt.h
   sc_trace_fprintf.h
   sc_stdbool.h
   sc_mkdir.h
