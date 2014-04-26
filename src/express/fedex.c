@@ -219,7 +219,11 @@ int main( int argc, char ** argv ) {
             if( no_need_to_work ) {
                 return( 0 );
             } else {
-                ( *ERRORusage_function )();
+                if(ERRORusage_function) {
+                    ( *ERRORusage_function )();
+                } else {
+                    EXPRESSusage(1);
+                }
             }
         }
     }
