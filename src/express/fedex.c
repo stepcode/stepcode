@@ -77,7 +77,11 @@
 #include "sc_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
+#ifdef HAVE_GETOPT
+#include <unistd.h>
+#else
 #include "sc_getopt.h"
+#endif
 #include "express/error.h"
 #include "express/express.h"
 #include "express/resolve.h"
@@ -118,7 +122,11 @@ int main( int argc, char ** argv ) {
     }
 
     optind = 1;
+#ifdef HAVE_GETOPT
+    while( ( c = getopt( argc, argv, EXPRESSgetopt_options ) ) != -1 ) {
+#else
     while( ( c = sc_getopt( argc, argv, EXPRESSgetopt_options ) ) != -1 ) {
+#endif
         switch( c ) {
             case 'd':
                 ERRORdebugging = 1;

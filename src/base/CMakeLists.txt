@@ -16,6 +16,12 @@ set(SC_BASE_HDRS
   sc_mkdir.h
  )
 
+if(NOT HAVE_GETOPT)
+  message(WARNING "getopt is not available, sc_getopt will be built.")
+  set(SC_BASE_HDRS ${SC_BASE_HDRS} sc_getopt.h)
+  set(SC_BASE_SOURCES ${SC_BASE_SOURCES} sc_getopt.cc)
+endif()
+
 if(MINGW OR MSVC OR BORLAND)
   add_definitions(-DSC_BASE_DLL_EXPORTS)
 endif()
