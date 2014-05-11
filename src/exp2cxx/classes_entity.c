@@ -70,15 +70,13 @@ void ENTITYnames_print( Entity entity, FILE * file ) {
     LISTod;
 }
 
-/**************************************************************//**
- ** Procedure:  DataMemberPrintAttr
- ** Parameters:  Entity entity  --  entity being processed
- **              Variable a -- attribute being processed
- **              FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints out the current attribute for an entity's c++ class
- **               definition
- ******************************************************************/
+/**
+ * \param entity  entity being processed
+ * \param a attribute being processed
+ * \param file file being written to
+ *
+ * prints out the current attribute for an entity's c++ class definition
+ */
 void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     char attrnm [BUFSIZ];
     const char * ctype, * etype;
@@ -111,21 +109,16 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     }
 }
 
-/**************************************************************//**
- ** Procedure:    LIBdescribe_entity (entity, file, schema)
- ** Parameters:  Entity entity --  entity being processed
- **     FILE* file  --  file being written to
- **     Schema schema -- schema being processed
- ** Returns:
- ** Description:  declares the global pointer to the EntityDescriptor
-                  representing a particular entity
- **       DAS also prints the attr descs and inverse attr descs
- **       This function creates the storage space for the externs defs
- **       that were defined in the .h file. These global vars go in
- **       the .cc file.
- ** Side Effects:  prints c++ code to a file
- ** Status:  ok 12-Apr-1993
- ******************************************************************/
+/**
+ * \param entity entity being processed
+ * \param file file being written to
+ * \param schema schema being processed
+ *
+ * declares the global pointer to the EntityDescriptor representing a particular entity
+ *
+ * DAS: also prints the attr descs and inverse attr descs. This function creates the storage space
+ * for the externs defs that were defined in the .h file. These global vars go in the .cc file.
+ */
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ];
@@ -143,16 +136,12 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     fprintf( file, "\n");
 }
 
-/**************************************************************//**
- ** Procedure:  LIBmemberFunctionPrint
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the member functions for the class
-                  representing an entity.  These go in the .cc file
- ** Side Effects:  prints c++ code to a file
- ** Status:  ok 17-Feb-1992
- ******************************************************************/
+/**
+ * \param entity entity being processed
+ * \param file file being written to
+ *
+ * prints the member functions for the class representing an entity.  These go in the .cc file
+ */
 void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
 
     Linked_List attr_list;
@@ -218,20 +207,13 @@ int get_attribute_number( Entity entity ) {
     return -1;
 }
 
-/**************************************************************//**
- ** Procedure:  ENTITYhead_print
- ** Parameters:  const Entity entity
- **   FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the beginning of the entity class definition for the
- **               c++ code and the declaration of attr descriptors for
- **       the registry.  In the .h file
- ** Side Effects:  generates c++ code
- ** Status:  good 1/15/91
- **          added registry things 12-Apr-1993
- **          remove extern keyword - MAP - Nov 2011
- **          split out stuff in namespace to ENTITYdesc_print - MAP - Nov 2011
- ******************************************************************/
+/**
+ * \p entity entity to print
+ * \p file  file being written to
+ *
+ * prints the beginning of the entity class definition for the c++ code and the declaration
+ * of attr descriptors for the registry in the .h file
+ */
 void ENTITYhead_print( Entity entity, FILE * file ) {
     char entnm [BUFSIZ];
     Linked_List list;
