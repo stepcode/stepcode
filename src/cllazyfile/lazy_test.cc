@@ -89,7 +89,7 @@ void printDeps( lazyInstMgr & mgr ) {
         std::cout << *it << " ";
     }
 
-    if( dependencies->size() > displayInstances ) {
+    if( ( int )dependencies->size() > displayInstances ) {
         std::cout << ".... (Displaying only " << displayInstances << " instances) ";
     }
 
