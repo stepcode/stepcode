@@ -35,7 +35,6 @@ static int attr_count;  /**< number each attr to avoid inter-entity clashes
                             Here are the functions:
                             ENTITYhead_print (Entity entity, FILE* file,Schema schema)
                             LIBdescribe_entity (Entity entity, FILE* file, Schema schema)
-                            LIBcopy_constructor (Entity ent, FILE* file)
                             LIBstructor_print (Entity entity, FILE* file, Schema schema)
                             LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
                             ENTITYincode_print(Entity entity, FILE* file, Schema schema)
@@ -388,104 +387,6 @@ void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file ) {
     MemberFunctionSign( entity, neededAttr, file );
 }
 
-/**************************************************************//**
- ** Procedure:  LIBcopy_constructor
- ** Parameters:
- ** Returns:
- ** Description:
- ** Side Effects:
- ** Status:  not used 17-Feb-1992
- ******************************************************************/
-void LIBcopy_constructor( Entity ent, FILE * file ) {
-    Linked_List attr_list;
-    Class_Of_Type class;
-    Type t;
-    char buffer [BUFSIZ],
-         attrnm[BUFSIZ],
-         *b = buffer;
-    int count = attr_count;
-
-    const char * entnm = ENTITYget_classname( ent );
-    const char * StrToLower( const char * word );
-
-    /*mjm7/10/91 copy constructor definition  */
-    fprintf( file, "        %s::%s(%s& e )\n", entnm, entnm, entnm );
-    fprintf( file, "  {" );
-
-    /*  attributes  */
-    attr_list = ENTITYget_attributes( ent );
-    LISTdo( attr_list, a, Variable )
-    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        /*  include attribute if it is not derived  */
-        generate_attribute_name( a, attrnm );
-        t = VARget_type( a );
-        class = TYPEget_type( t );
-
-        /*  1. initialize everything to NULL (even if not optional)  */
-
-        /*    default:  to intialize attribute to NULL  */
-        sprintf( b, "        _%s = e.%s();\n", attrnm, attrnm );
-
-        /*mjm7/11/91  case TYPE_STRING */
-        if( ( class == string_ ) || ( class == binary_ ) ) {
-            sprintf( b, "        _%s = strdup(e.%s());\n", attrnm, attrnm );
-        }
-
-
-        /*      case TYPE_ENTITY:   */
-        if( class == entity_ ) {
-            sprintf( b, "        _%s = e.%s();\n", attrnm, attrnm );
-        }
-        /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
-
-        /*    case TYPE_ENUM:   */
-        if( class == enumeration_ ) {
-            sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
-        }
-        /*    case TYPE_SELECT: */
-        if( class == select_ ) {
-            sprintf( b, "DDDDDDD        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
-        }
-        /*   case TYPE_BOOLEAN    */
-        if( class == boolean_ ) {
-            sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
-        }
-        /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
-
-        /*   case TYPE_LOGICAL    */
-        if( class == logical_ ) {
-            sprintf( b, "        _%s.put(e.%s().asInt());\n", attrnm, attrnm );
-        }
-        /* previous line modified to conform with SDAI C++ Binding for PDES, Inc. Prototyping 5/22/91 CD */
-
-        /*  case TYPE_ARRAY:
-        case TYPE_LIST:
-          case TYPE_SET:
-          case TYPE_BAG:  */
-        if( isAggregateType( t ) ) {
-            *b = '\0';
-        }
-
-        fprintf( file, "%s", b )       ;
-
-        fprintf( file, "         attributes.push " );
-
-        /*  2.  put attribute on attributes list    */
-
-        /*  default:    */
-
-        fprintf( file, "\n        (new STEPattribute(*%s%d%s, %s &_%s));\n",
-                 ATTR_PREFIX, count,
-                 attrnm,
-                 ( TYPEis_entity( t ) ? "(SDAI_Application_instance_ptr *)" : "" ),
-                 attrnm );
-        ++count;
-
-    }
-    LISTod;
-    fprintf( file, " }\n" );
-}
-
 /** initialize attributes in the constructor; used for two different constructors */
 void initializeAttrs( Entity e, FILE* file ) {
     const orderedAttr * oa;
@@ -639,7 +540,6 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
     fprintf( file, "}\n\n" );
 
     /*  copy constructor  */
-    /*  LIBcopy_constructor (entity, file); */
     entnm = ENTITYget_classname( entity );
     fprintf( file, "%s::%s ( %s & e ) : ", entnm, entnm, entnm );
 
