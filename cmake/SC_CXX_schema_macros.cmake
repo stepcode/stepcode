@@ -30,7 +30,7 @@ macro(SCHEMA_EXES)
   SC_ADDEXEC(p21read_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/test/p21read/p21read.cc" "${PROJECT_NAME};stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
   #add_dependencies(p21read_${PROJECT_NAME} version_string)
   if(NOT WIN32)
-    SC_ADDEXEC(lazy_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
+    #SC_ADDEXEC(lazy_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
     #add_dependencies(lazy_${PROJECT_NAME} version_string)
   endif(NOT WIN32)
 

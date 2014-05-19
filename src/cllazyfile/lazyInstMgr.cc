@@ -125,6 +125,24 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     return inst;
 }
 
+instanceRefs_t * lazyInstMgr::getFwdRefsSafely() {
+
+    fwdRefsMtx.lock();
+    instanceRefs_t * myFwdRefsCopy = new instanceRefs_t( _fwdInstanceRefs );
+    fwdRefsMtx.unlock();
+
+    return myFwdRefsCopy;
+}
+
+// A thread safe counterpart of getRevRefs()
+instanceRefs_t * lazyInstMgr::getRevRefsSafely() {
+
+    revRefsMtx.lock();
+    instanceRefs_t * myRevRefsCopy = new instanceRefs_t( _revInstanceRefs ); 
+    revRefsMtx.unlock();
+
+    return myRevRefsCopy;
+}
 
 instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
     instanceSet * checkedDependencies = new instanceSet();

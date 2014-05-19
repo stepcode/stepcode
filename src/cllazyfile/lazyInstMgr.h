@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <assert.h>
+#include <mutex>
 
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
@@ -62,6 +63,10 @@ class lazyInstMgr {
 
         instMgrAdapter * _ima;
 
+        /** mutexes for mutual exclusion */
+        std::mutex fwdRefsMtx;
+        std::mutex revRefsMtx;
+
     public:
         lazyInstMgr();
         ~lazyInstMgr();
@@ -80,6 +85,13 @@ class lazyInstMgr {
         instanceRefs_t * getRevRefs() {
             return & _revInstanceRefs;
         }
+
+        /// thread safe counterpart of getFwdRefs()
+        instanceRefs_t * getFwdRefsSafely();
+
+        /// thread safe counterpart of getRevRefs()
+        instanceRefs_t * getRevRefsSafely();
+
         /// returns two iterators delimiting the instances that match `type`
         instanceTypes_t::cvector * getInstances( std::string type ) { /*const*/
             return _instanceTypes->find( type.c_str() );

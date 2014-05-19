@@ -20,13 +20,13 @@ void prepareRealRefs ( instanceRefs_t * _refs, instanceRefs &realRefs ) {
 
 /// Used by an individual thread to iterate over the keys of the _fwdRefs / _revRefs multiple times. For each iteration it expects the order of the keys to be the same as dictated by realRefs.
 void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs &realRefs, bool forward, bool * success ) {
-    const int iterations = 10;
+    const int iterations = 1000;
     int i, k, instances = realRefs.size();
     instanceID current;
     instanceRefs_t * _refs;
  
     for( k = 0; k < iterations; k++ ) {
-        _refs = forward ? mgr->getFwdRefs() : mgr->getRevRefs();
+        _refs = forward ? mgr->getFwdRefsSafely() : mgr->getRevRefsSafely();
 
         current = _refs->begin().key;
         for( i = 0; i < instances; i++ ) {
@@ -50,7 +50,7 @@ void checkRefsSafety( char * fileName, bool forward ) {
 
     if( forward ) {
         std::cout << "Checking thread safety while iterating over forward references..." ;
-        prepareRealRefs( mgr->getFwdRefs(), realRefs );
+        prepareRealRefs( mgr->getFwdRefsSafely(), realRefs );
     } else {
         std::cout << "Checking thread safety while iterating over backward references..." ;
         prepareRealRefs( mgr->getRevRefs(), realRefs );
