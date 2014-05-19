@@ -856,38 +856,26 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
-                     "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
-                     SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
-                     ( VARis_derived( v ) ? "D" :
-                       ( VARis_type_shifter( v ) ? "R" :
-                         ( VARget_inverse( v ) ? "I" : "" ) ) ),
-                     attrnm,
-
-                     ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-
+            fprintf( impl, "    %s::%s%d%s%s =", SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+                     ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
+                     attrnm );
+            fprintf( impl, "\n      new %s( \"%s\",",
+                     ( VARget_inverse( v ) ? "Inverse_attribute" :
+                         ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
                      /* attribute name param */
-                     generate_dict_attr_name( v, dict_attrnm ),
+                     generate_dict_attr_name( v, dict_attrnm ) );
 
                      /* following assumes we are not in a nested */
                      /* entity otherwise we should search upward */
                      /* for schema */
                      /* attribute's type  */
-                     TYPEget_name(
-                         TYPEget_body( v->type )->entity->superscope ),
-                     ENT_PREFIX, TYPEget_name( v->type ),
-
-                     ( VARget_optional( v ) ? "LTrue" : "LFalse" ),
-
-                     ( VARget_unique( v ) ? "LTrue" : "LFalse" ),
-
+            fprintf( impl, " %s::%s%s, %s,\n", TYPEget_name( TYPEget_body( v->type )->entity->superscope ),
+                     ENT_PREFIX, TYPEget_name( v->type ), ( VARget_optional( v ) ? "LTrue" : "LFalse" ) );
+            fprintf( impl, "       %s%s, *%s::%s%s);\n", ( VARget_unique( v ) ? "LTrue" : "LFalse" ),
                      /* Support REDEFINED */
-                     ( VARget_inverse( v ) ? "" :
-                       ( VARis_derived( v ) ? ", AttrType_Deriving" :
+                     ( VARget_inverse( v ) ? "" : ( VARis_derived( v ) ? ", AttrType_Deriving" :
                          ( VARis_type_shifter( v ) ? ", AttrType_Redefining" : ", AttrType_Explicit" ) ) ),
-
-                     schema_name, ENT_PREFIX, TYPEget_name( entity )
-                   );
+                     schema_name, ENT_PREFIX, TYPEget_name( entity ) );
         } else {
             /* type reference */
             fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
