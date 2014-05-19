@@ -19,12 +19,15 @@ void prepareRealRefs ( instanceRefs_t * _refs, instanceRefs &realRefs ) {
 }
 
 /// Used by an individual thread to iterate over the keys of the _fwdRefs / _revRefs multiple times. For each iteration it expects the order of the keys to be the same as dictated by realRefs.
-void iterateOverRefs ( instanceRefs_t * _refs, instanceRefs &realRefs, bool * success ) {
+void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs &realRefs, bool forward, bool * success ) {
     const int iterations = 10;
     int i, k, instances = realRefs.size();
     instanceID current;
+    instanceRefs_t * _refs;
  
     for( k = 0; k < iterations; k++ ) {
+        _refs = forward ? mgr->getFwdRefs() : mgr->getRevRefs();
+
         current = _refs->begin().key;
         for( i = 0; i < instances; i++ ) {
 
@@ -41,24 +44,21 @@ void iterateOverRefs ( instanceRefs_t * _refs, instanceRefs &realRefs, bool * su
 
 /// Checks the thread safety of _fwdRefs (_revRefs) when the forward value provided to it is true (false).
 void checkRefsSafety( char * fileName, bool forward ) {
-    instanceRefs_t * _refs;
     instanceRefs realRefs; 
     lazyInstMgr * mgr = new lazyInstMgr;
     mgr->openFile( fileName );
 
     if( forward ) {
         std::cout << "Checking thread safety while iterating over forward references..." ;
-        _refs = mgr->getFwdRefs();
+        prepareRealRefs( mgr->getFwdRefs(), realRefs );
     } else {
         std::cout << "Checking thread safety while iterating over backward references..." ;
-        _refs = mgr->getRevRefs();
+        prepareRealRefs( mgr->getRevRefs(), realRefs );
     }
 
-    prepareRealRefs( _refs, realRefs );
     bool success[2] = { true, true };
-
-    std::thread first( iterateOverRefs, _refs, realRefs, &success[0] );
-    std::thread second( iterateOverRefs, _refs, realRefs, &success[1] );
+    std::thread first( iterateOverRefs, mgr, realRefs, forward, &success[0] );
+    std::thread second( iterateOverRefs, mgr, realRefs, forward, &success[1] );
 
     first.join();
     second.join();
