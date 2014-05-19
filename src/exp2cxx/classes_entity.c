@@ -815,34 +815,34 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
     if( ENTITYget_abstract( entity ) ) {
         if( entity->u.entity->subtype_expression ) {
 
-            fprintf( impl, "        str.clear();\n        str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
+            fprintf( impl, "    str.clear();\n    str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
 
             format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( impl, "\n      str.append( \")\" );\n" );
-            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            fprintf( impl, "\n    str.append( \")\" );\n" );
+            fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
         } else {
-            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
+            fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
                      schema_name, ENT_PREFIX, entity_name );
         }
     } else {
         if( entity->u.entity->subtype_expression ) {
-            fprintf( impl, "        str.clear();\n        str.append( \"SUPERTYPE OF ( \" );\n" );
+            fprintf( impl, "    str.clear();\n    str.append( \"SUPERTYPE OF ( \" );\n" );
             format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( impl, "\n      str.append( \")\" );\n" );
-            fprintf( impl, "        %s::%s%s->AddSupertype_Stmt( str );", schema_name, ENT_PREFIX, entity_name );
+            fprintf( impl, "\n    str.append( \")\" );\n" );
+            fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
         }
     }
     LISTdo( ENTITYget_supertypes( entity ), sup, Entity )
     /*  set the owning schema of the supertype  */
     super_schema = SCHEMAget_name( ENTITYget_schema( sup ) );
     /* print the supertype list for this entity */
-    fprintf( impl, "        %s::%s%s->AddSupertype(%s::%s%s);\n",
+    fprintf( impl, "    %s::%s%s->AddSupertype(%s::%s%s);\n",
              schema_name, ENT_PREFIX, entity_name,
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ) );
 
     /* add this entity to the subtype list of it's supertype    */
-    fprintf( impl, "        %s::%s%s->AddSubtype(%s::%s%s);\n",
+    fprintf( impl, "    %s::%s%s->AddSubtype(%s::%s%s);\n",
              super_schema,
              ENT_PREFIX, ENTITYget_name( sup ),
              schema_name, ENT_PREFIX, entity_name );
