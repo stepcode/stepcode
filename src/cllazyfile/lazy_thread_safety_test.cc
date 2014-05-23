@@ -121,7 +121,7 @@ void iterateTypeLists( lazyInstMgr * mgr, std::vector< const instanceRefs * > &s
 
         for( i = 0; i < instances; i++ ) {
 
-            refs = mgr->getInstances( commonTypes[i] );
+            refs = mgr->getInstancesSafely( commonTypes[i] );
 
             if( !compareTypeLists( refs, sameTypeInstances[i] ) ) {
                 break;

@@ -144,6 +144,23 @@ instanceRefs_t * lazyInstMgr::getRevRefsSafely() {
     return myRevRefsCopy;
 }
 
+instanceTypes_t::cvector * lazyInstMgr::getInstancesSafely( std::string type ) {
+
+    instanceTypesMtx.lock();
+    instanceTypes_t::cvector * typeInstances = _instanceTypes->find( type.c_str() );
+    instanceTypesMtx.unlock();
+
+    return typeInstances;
+}
+
+unsigned int lazyInstMgr::countInstancesSafely( std::string type ) {
+    instanceTypes_t::cvector * v = getInstancesSafely( type );
+    if( !v ) {
+        return 0;
+    }
+    return v->size();
+}
+
 instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
     instanceSet * checkedDependencies = new instanceSet();
     instanceRefs dependencies; //Acts as queue for checking duplicated dependency

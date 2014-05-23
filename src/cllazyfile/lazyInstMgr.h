@@ -66,6 +66,7 @@ class lazyInstMgr {
         /** mutexes for mutual exclusion */
         std::mutex fwdRefsMtx;
         std::mutex revRefsMtx;
+        std::mutex instanceTypesMtx;
 
     public:
         lazyInstMgr();
@@ -104,6 +105,13 @@ class lazyInstMgr {
             }
             return v->size();
         }
+
+        /// thread safe counterpart of getInstances()
+        instanceTypes_t::cvector * getInstancesSafely( std::string type );
+
+        /// thread safe counterpart of countInstances()
+        unsigned int countInstancesSafely( std::string type );
+
         instancesLoaded_t * getHeaderInstances( fileID file ) {
             return _files[file]->getHeaderInstances();
         }
