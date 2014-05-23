@@ -5,8 +5,6 @@
 /// It copies the keys of the _refs judy structure provided to it into the vector realRefs
 void prepareRealRefs ( instanceRefs_t * _refs, instanceRefs &realRefs ) {
 
-    realRefs.clear();
-
     instanceID last = _refs->end().key;
     instanceID current = _refs->begin().key;
 
@@ -15,7 +13,7 @@ void prepareRealRefs ( instanceRefs_t * _refs, instanceRefs &realRefs ) {
         current = _refs->next().key;
     }
 
-    realRefs.push_back ( last );
+    realRefs.push_back( last );
 }
 
 /// Used by an individual thread to iterate over the keys of the _fwdRefs / _revRefs multiple times. For each iteration it expects the order of the keys to be the same as dictated by realRefs.
@@ -50,7 +48,7 @@ void checkRefsSafety( char * fileName, bool forward ) {
 
     if( forward ) {
         std::cout << "Checking thread safety while iterating over forward references..." ;
-        prepareRealRefs( mgr->getFwdRefsSafely(), realRefs );
+        prepareRealRefs( mgr->getFwdRefs(), realRefs );
     } else {
         std::cout << "Checking thread safety while iterating over backward references..." ;
         prepareRealRefs( mgr->getRevRefs(), realRefs );
