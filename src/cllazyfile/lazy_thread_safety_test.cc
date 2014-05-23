@@ -172,7 +172,7 @@ void checkTypeInstancesSafety( char * fileName ) {
     delete mgr;
 }
 
-
+/// These tests were run on stepcode/data/cd209/ATS1-out.stp (Bigger files may take a longer time)
 int main( int argc, char ** argv ) {
     if( argc != 2 ) {
         std::cerr << "Expected one argument, given " << argc - 1 << ". Exiting." << std::endl;
