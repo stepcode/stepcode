@@ -37,9 +37,11 @@ SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai
 SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
 set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )
 
-SC_ADDEXEC(lazy_thread_safety_test "lazy_thread_safety_test.cc" "steplazyfile;stepeditor" )
-set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x" )
-list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+if(HAVE_STD_THREAD)
+  list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  SC_ADDEXEC(lazy_thread_safety_test "lazy_thread_safety_test.cc" "steplazyfile;stepeditor" )
+  set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x")
+endif(HAVE_STD_THREAD)
 
 install(FILES ${SC_CLLAZYFILE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cllazyfile)

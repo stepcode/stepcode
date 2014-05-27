@@ -4,11 +4,14 @@
 #include <map>
 #include <string>
 #include <assert.h>
-#include <mutex>
 
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
 #include "lazyTypes.h"
+
+#ifdef HAVE_STD_THREAD
+# include <mutex>
+#endif //HAVE_STD_THREAD
 
 #include "Registry.h"
 #include "sc_memmgr.h"
@@ -87,12 +90,6 @@ class lazyInstMgr {
             return & _revInstanceRefs;
         }
 
-        /// thread safe counterpart of getFwdRefs()
-        instanceRefs_t * getFwdRefsSafely();
-
-        /// thread safe counterpart of getRevRefs()
-        instanceRefs_t * getRevRefsSafely();
-
         /// returns two iterators delimiting the instances that match `type`
         instanceTypes_t::cvector * getInstances( std::string type ) { /*const*/
             return _instanceTypes->find( type.c_str() );
@@ -105,12 +102,6 @@ class lazyInstMgr {
             }
             return v->size();
         }
-
-        /// thread safe counterpart of getInstances()
-        instanceTypes_t::cvector * getInstancesSafely( std::string type );
-
-        /// thread safe counterpart of countInstances()
-        unsigned int countInstancesSafely( std::string type );
 
         instancesLoaded_t * getHeaderInstances( fileID file ) {
             return _files[file]->getHeaderInstances();
@@ -170,6 +161,20 @@ class lazyInstMgr {
 
         //list all instances that one instance depends on (recursive)
         instanceSet * instanceDependencies( instanceID id );
+
+#ifdef HAVE_STD_THREAD
+        /// thread safe counterpart of getFwdRefs()
+        instanceRefs_t * getFwdRefsSafely();
+
+        /// thread safe counterpart of getRevRefs()
+        instanceRefs_t * getRevRefsSafely();
+
+        /// thread safe counterpart of getInstances()
+        instanceTypes_t::cvector * getInstancesSafely( std::string type );
+
+        /// thread safe counterpart of countInstances()
+        unsigned int countInstancesSafely( std::string type );
+#endif //HAVE_STD_THREAD
 
         // TODO implement these
              /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance

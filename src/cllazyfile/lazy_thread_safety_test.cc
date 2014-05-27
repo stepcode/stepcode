@@ -1,6 +1,11 @@
-#include <thread>
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
+
+#ifdef HAVE_STD_THREAD
+# include <thread>
+#else
+# error Need std::thread for this test!
+#endif
 
 /// It copies the keys of the _refs judy structure provided to it into the vector realRefs
 void prepareRealRefs ( instanceRefs_t * _refs, instanceRefs &realRefs ) {
