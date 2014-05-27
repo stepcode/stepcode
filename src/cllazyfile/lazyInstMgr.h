@@ -66,10 +66,12 @@ class lazyInstMgr {
 
         instMgrAdapter * _ima;
 
+#ifdef HAVE_STD_THREAD
         /** mutexes for mutual exclusion */
         std::mutex fwdRefsMtx;
         std::mutex revRefsMtx;
         std::mutex instanceTypesMtx;
+#endif //HAVE_STD_THREAD
 
     public:
         lazyInstMgr();
