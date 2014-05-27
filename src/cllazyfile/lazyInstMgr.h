@@ -163,6 +163,7 @@ class lazyInstMgr {
 
         //list all instances that one instance depends on (recursive)
         instanceSet * instanceDependencies( instanceID id );
+        instanceSet * instanceDependenciesHelper( instanceID id, instanceRefs_t * _fwdRefs );
 
 #ifdef HAVE_STD_THREAD
         /// thread safe counterpart of getFwdRefs()
@@ -176,6 +177,9 @@ class lazyInstMgr {
 
         /// thread safe counterpart of countInstances()
         unsigned int countInstancesSafely( std::string type );
+
+        //Thread safe counterpart of instanceDependencies( instanceID )
+        instanceSet * instanceDependenciesSafely( instanceID id );
 #endif //HAVE_STD_THREAD
 
         // TODO implement these

@@ -125,11 +125,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     return inst;
 }
 
-instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
+instanceSet * lazyInstMgr::instanceDependenciesHelper( instanceID id, instanceRefs_t * _fwdRefs ) {
     instanceSet * checkedDependencies = new instanceSet();
     instanceRefs dependencies; //Acts as queue for checking duplicated dependency
 
-    instanceRefs_t * _fwdRefs = getFwdRefs();
     instanceRefs_t::cvector * _fwdRefsVec = _fwdRefs->find( id );
     //Initially populating direct dependencies of id into the queue
     if( _fwdRefsVec != 0 ) {
@@ -152,6 +151,10 @@ instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
     }
 
     return checkedDependencies;
+}
+
+instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
+   return instanceDependenciesHelper( id, getFwdRefs() );
 }
 
 #ifdef HAVE_STD_THREAD
@@ -188,6 +191,10 @@ unsigned int lazyInstMgr::countInstancesSafely( std::string type ) {
         return 0;
     }
     return v->size();
+}
+
+instanceSet * lazyInstMgr::instanceDependenciesSafely( instanceID id ) {
+   return instanceDependenciesHelper( id, getFwdRefsSafely() );
 }
 
 #endif //HAVE_STD_THREAD
