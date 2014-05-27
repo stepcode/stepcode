@@ -73,7 +73,7 @@ instanceID printRefs( lazyInstMgr & mgr ) {
 
 /// prints dependencies of an instance
 void printDeps( lazyInstMgr & mgr ) {
-    const int displayInstances = 10;
+    const unsigned int displayInstances = 10;
     instanceRefs_t * refs = mgr.getFwdRefs();
     instanceRefs_t::cpair p = refs->end();
 
@@ -84,12 +84,12 @@ void printDeps( lazyInstMgr & mgr ) {
     instanceSet::const_iterator it( dependencies->begin() ), end( dependencies->end() );
 
     std::cout << "Example: Instance #" << id << " is recursively dependent on " << dependencies->size() << " instances: ";
-    int i;
+    unsigned int i;
     for(i = 0; it != end && i < displayInstances; it++, i++ ) {
         std::cout << *it << " ";
     }
 
-    if( ( int )dependencies->size() > displayInstances ) {
+    if( dependencies->size() > displayInstances ) {
         std::cout << ".... (Displaying only " << displayInstances << " instances) ";
     }
 
