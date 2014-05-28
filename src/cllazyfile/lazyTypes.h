@@ -4,7 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <map>
 #include <stdint.h>
+
+#ifdef HAVE_STD_THREAD
+# include <thread>
+#endif //HAVE_STD_THREAD
 
 #include "judyLArray.h"
 #include "judySArray.h"
@@ -14,6 +19,7 @@
 class SDAI_Application_instance;
 class lazyDataSectionReader;
 class lazyFileReader;
+class mgrNodeHelper;
 
 enum fileTypeEnum { Part21, Part28 };
 // enum loadingEnum { immediate, lazy };
@@ -78,6 +84,14 @@ typedef std::vector< lazyDataSectionReader * > dataSectionReaderVec_t;
 
 // files
 typedef std::vector< lazyFileReader * > lazyFileReaderVec_t;
+
+#ifdef HAVE_STD_THREAD
+//map thread id to mgrNodeHelper. Each thread will have only one mgrNodeHelper value.
+typedef std::map< std::thread::id, mgrNodeHelper * > idNodeMap_t;
+
+//thread id - mgrNodeHelper pointer pair to be used while using the above map
+typedef std::pair< std::thread::id, mgrNodeHelper * > idNodePair_t;
+#endif //HAVE_STD_THREAD
 
 // type for performing actions on multiple instances
 // NOTE not useful? typedef std::vector< lazyInstance > lazyInstanceVec_t;

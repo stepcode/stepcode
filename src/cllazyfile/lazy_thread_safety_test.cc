@@ -190,7 +190,7 @@ void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLo
     // Initial insertion into myInstances
     for( i = 0; i < instances; i++ ) {
         if( useAdapter ) {
-            sdaiInstance = mgr->getAdapter()->FindFileId( _refs->at( i ) )->GetSTEPentity();
+            sdaiInstance = mgr->getAdapter()->FindFileIdSafely( _refs->at( i ) )->GetSTEPentitySafely();
         } else {
             sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
         }
@@ -201,7 +201,7 @@ void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLo
     // For each instance comparing the new pointer with the original pointer
     for( i = 0; i < instances; i++ ) {
         if( useAdapter ) {
-            sdaiInstance = mgr->getAdapter()->FindFileId( _refs->at( i ) )->GetSTEPentity();
+            sdaiInstance = mgr->getAdapter()->FindFileIdSafely( _refs->at( i ) )->GetSTEPentitySafely();
         } else {
             sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
         }
