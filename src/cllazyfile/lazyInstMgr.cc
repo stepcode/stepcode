@@ -119,7 +119,7 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
         }
-    } else {
+    } else if( !inst ) {
         std::cerr << "Instance #" << id << " not found in any section." << std::endl;
     }
     return inst;
