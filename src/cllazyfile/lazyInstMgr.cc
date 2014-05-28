@@ -6,6 +6,7 @@
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
+    _mainRegistry = 0;
     _instanceTypes = new instanceTypes_t( 255 ); //NOTE arbitrary max of 255 chars for a type name
     _lazyInstanceCount = 0;
     _loadedInstanceCount = 0;
