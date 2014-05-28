@@ -71,6 +71,7 @@ class lazyInstMgr {
         std::mutex fwdRefsMtx;
         std::mutex revRefsMtx;
         std::mutex instanceTypesMtx;
+        std::mutex loadInstanceMtx;
 #endif //HAVE_STD_THREAD
 
     public:
@@ -177,6 +178,9 @@ class lazyInstMgr {
 
         /// thread safe counterpart of countInstances()
         unsigned int countInstancesSafely( std::string type );
+
+        //Thread safe counterpart of loadInstance( instanceID )
+        SDAI_Application_instance * loadInstanceSafely( instanceID id );
 
         //Thread safe counterpart of instanceDependencies( instanceID )
         instanceSet * instanceDependenciesSafely( instanceID id );

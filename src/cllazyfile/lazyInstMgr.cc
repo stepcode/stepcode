@@ -194,6 +194,16 @@ unsigned int lazyInstMgr::countInstancesSafely( std::string type ) {
     return v->size();
 }
 
+SDAI_Application_instance * lazyInstMgr::loadInstanceSafely( instanceID id ) {
+    assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
+    //TODO: Locking can be made finer (2 seperate locks?)
+    loadInstanceMtx.lock();
+    SDAI_Application_instance * sdaiInst = loadInstance( id );
+    loadInstanceMtx.unlock();
+
+    return sdaiInst;
+}
+
 instanceSet * lazyInstMgr::instanceDependenciesSafely( instanceID id ) {
    return instanceDependenciesHelper( id, getFwdRefsSafely() );
 }

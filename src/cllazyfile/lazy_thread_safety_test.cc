@@ -188,13 +188,13 @@ void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLo
     int i;
     // Initial insertion into myInstances
     for( i = 0; i < instances; i++ ) {
-        sdaiInstance = mgr->loadInstance( _refs->at( i ) );
+        sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
         myInstances->insert( _refs->at( i ), sdaiInstance );
     }
 
     // For each instance comparing the new pointer with the original pointer
     for( i = 0; i < instances; i++ ) {
-        sdaiInstance = mgr->loadInstance( _refs->at( i ) );
+        sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
 
         if( myInstances->find( _refs->at( i ) ) != sdaiInstance ) {
 			//the old value has been overwritten. An object lazy-loaded twice. Not Good!!!
