@@ -84,7 +84,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
 const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
-    char c;
+    char c, firstSpaceDelimeter;
     str.clear();
     str.reserve( 100 );
     skipWS();
@@ -97,13 +97,19 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
             findNormalString( "*/" );
             skipWS();
             continue;
+        } else if( isspace( c ) ) {
+            //firstSpaceDelimeter is used for comparision later to handle the case where the first whitespace was a delimeter itself
+            firstSpaceDelimeter = c;
+            skipWS();//skip the remaining whitespaces
+            break;
         } else {
             _file.putback( c );
             break;
         }
     }
     c = _file.peek();
-    if( !strchr( delimiters, c ) ) {
+    if( !strchr( delimiters, c ) &&  !strchr( delimiters, firstSpaceDelimeter ) ) {
+        // current c is not a delimiter, the first white space encountered is also not a delimeter
         std::cerr << SC_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
