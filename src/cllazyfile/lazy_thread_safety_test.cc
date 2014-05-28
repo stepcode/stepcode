@@ -182,19 +182,29 @@ void checkTypeInstancesSafety( char * fileName ) {
 }
 
 /// load instances found in _refs into the instancesLoaded. After doing this once, it iterates over the _refs and reports any changes in loaded value. 
-void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLoaded_t * myInstances, bool * success) {
+/// Either directly calls loadInstance or uses an adapter, (determined by the value of useAdapter)
+void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLoaded_t * myInstances, bool useAdapter, bool * success) {
     const int instances = _refs->size();
     SDAI_Application_instance * sdaiInstance;
     int i;
     // Initial insertion into myInstances
     for( i = 0; i < instances; i++ ) {
-        sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
+        if( useAdapter ) {
+            sdaiInstance = mgr->getAdapter()->FindFileId( _refs->at( i ) )->GetSTEPentity();
+        } else {
+            sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
+        }
+
         myInstances->insert( _refs->at( i ), sdaiInstance );
     }
 
     // For each instance comparing the new pointer with the original pointer
     for( i = 0; i < instances; i++ ) {
-        sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
+        if( useAdapter ) {
+            sdaiInstance = mgr->getAdapter()->FindFileId( _refs->at( i ) )->GetSTEPentity();
+        } else {
+            sdaiInstance = mgr->loadInstanceSafely( _refs->at( i ) );
+        }
 
         if( myInstances->find( _refs->at( i ) ) != sdaiInstance ) {
 			//the old value has been overwritten. An object lazy-loaded twice. Not Good!!!
@@ -232,8 +242,8 @@ bool compareLoadedInstances( instanceRefs * toBeLoadedOnT1, instancesLoaded_t * 
     return true;
 }
 
-//checks thread safety of loadInstance.
-void checkLazyLoadingSafety( char * fileName ) {
+//checks thread safety of loadInstance. (Also of instMgrAdapter if useAdapter is TRUE)
+void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
 
     instanceRefs instancesToBeLoadedFwd, instancesToBeLoadedRev;
     instanceRefs * toBeLoadedOnT1, * toBeLoadedOnT2;
@@ -243,7 +253,7 @@ void checkLazyLoadingSafety( char * fileName ) {
     mgr->initRegistry( SchemaInit );
     mgr->openFile( fileName );
 
-    std::cout << "Checking thread safety in Lazy Loading...";
+    std::cout << "Checking thread safety in Lazy Loading ("<< ( useAdapter ? "with" : "without" ) << " Adapter)...";
 
     prepareRealRefs( mgr->getFwdRefs(), instancesToBeLoadedFwd );
     prepareRealRefs( mgr->getRevRefs(), instancesToBeLoadedRev );
@@ -256,8 +266,8 @@ void checkLazyLoadingSafety( char * fileName ) {
         toBeLoadedOnT1 = &instancesToBeLoadedFwd;
         toBeLoadedOnT2 = i < iterations ? &instancesToBeLoadedFwd : &instancesToBeLoadedRev;
 
-        std::thread first( loadInstancesFromList, mgr, toBeLoadedOnT1, &loadedOnT1, &intraThreadSuccess[0] );
-        std::thread second( loadInstancesFromList, mgr, toBeLoadedOnT2, &loadedOnT2, &intraThreadSuccess[1] );
+        std::thread first( loadInstancesFromList, mgr, toBeLoadedOnT1, &loadedOnT1, useAdapter, &intraThreadSuccess[0] );
+        std::thread second( loadInstancesFromList, mgr, toBeLoadedOnT2, &loadedOnT2, useAdapter, &intraThreadSuccess[1] );
 
         first.join();
         second.join();
@@ -291,6 +301,11 @@ void checkLazyLoadingSafety( char * fileName ) {
     delete mgr;
 }
 
+//checks thread safety of lazyloading along with that of instMgrAdapter
+void checkLazyLoadingSafetyWithAdapter( char * fileName ) {
+    checkLazyLoadingSafety( fileName, true );
+}
+
 /// These tests were run on stepcode/data/cd209/ATS1-out.stp (Bigger files may take a longer time)
 int main( int argc, char ** argv ) {
     if( argc != 2 ) {
@@ -304,5 +319,6 @@ int main( int argc, char ** argv ) {
     checkTypeInstancesSafety( argv[1] );
 
     checkLazyLoadingSafety( argv[1] );
+    checkLazyLoadingSafetyWithAdapter( argv[1] );
 }
 
