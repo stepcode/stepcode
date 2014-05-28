@@ -33,15 +33,18 @@ include_directories(
   ${SC_SOURCE_DIR}/src/base/judy/src
   )
 
-SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base")
-SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
-set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )
+SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base;")
 
 if(HAVE_STD_THREAD)
   list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  set_target_properties(steplazyfile PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD" )
+
   SC_ADDEXEC(lazy_thread_safety_test "lazy_thread_safety_test.cc" "steplazyfile;stepeditor" )
-  set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x")
+  set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
 endif(HAVE_STD_THREAD)
+
+SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
+set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )
 
 install(FILES ${SC_CLLAZYFILE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cllazyfile)
