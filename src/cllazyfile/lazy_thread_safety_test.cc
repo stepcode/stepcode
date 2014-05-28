@@ -1,5 +1,9 @@
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
+#include "SdaiSchemaInit.h"
+#include "instMgrHelper.h"
+
+#include "schema.h"
 
 #ifdef HAVE_STD_THREAD
 # include <thread>
@@ -173,6 +177,116 @@ void checkTypeInstancesSafety( char * fileName ) {
         std::cout << ( sameTypeInstances[i] == NULL ? 0 : sameTypeInstances[i]->size() ) << " ";
     }
 
+    std::cout << std::endl << std::endl;
+    delete mgr;
+}
+
+/// load instances found in _refs into the instancesLoaded. After doing this once, it iterates over the _refs and reports any changes in loaded value. 
+void loadInstancesFromList( lazyInstMgr * mgr, instanceRefs * _refs, instancesLoaded_t * myInstances, bool * success) {
+    const int instances = _refs->size();
+    SDAI_Application_instance * sdaiInstance;
+    int i;
+    // Initial insertion into myInstances
+    for( i = 0; i < instances; i++ ) {
+        sdaiInstance = mgr->loadInstance( _refs->at( i ) );
+        myInstances->insert( _refs->at( i ), sdaiInstance );
+    }
+
+    // For each instance comparing the new pointer with the original pointer
+    for( i = 0; i < instances; i++ ) {
+        sdaiInstance = mgr->loadInstance( _refs->at( i ) );
+
+        if( myInstances->find( _refs->at( i ) ) != sdaiInstance ) {
+			//the old value has been overwritten. An object lazy-loaded twice. Not Good!!!
+            *success = false;
+        }
+    }
+}
+
+//compares the instances present in loadedOnT1 and loadedOnT2. If both have an instance belonging to a particular instanceID then the instances should be same
+bool compareLoadedInstances( instanceRefs * toBeLoadedOnT1, instancesLoaded_t * loadedOnT1, instanceRefs * toBeLoadedOnT2, instancesLoaded_t * loadedOnT2 ) {
+    SDAI_Application_instance * sdaiInstance;
+
+	//Iterate over instanceID's in toBeLoadedOnT1
+    int i, instances = toBeLoadedOnT1->size();
+    for( i = 0; i < instances; i++ ) {
+        sdaiInstance = loadedOnT2->find( toBeLoadedOnT1->at( i ) );
+        if( sdaiInstance != NULL ) {
+            if( sdaiInstance != loadedOnT1->find( toBeLoadedOnT1->at( i ) ) ) {
+                return false;
+            }
+        }
+    }       
+   
+	//Iterate over instanceID's in toBeLoadedOnT2
+    instances = toBeLoadedOnT2->size();
+    for( i = 0; i < instances; i++ ) {
+        sdaiInstance = loadedOnT1->find( toBeLoadedOnT2->at( i ) );
+        if( sdaiInstance != NULL ) {
+            if( sdaiInstance != loadedOnT2->find( toBeLoadedOnT2->at( i ) ) ) {
+                return false;
+            }
+        }
+    }       
+     
+    return true;
+}
+
+//checks thread safety of loadInstance.
+void checkLazyLoadingSafety( char * fileName ) {
+
+    instanceRefs instancesToBeLoadedFwd, instancesToBeLoadedRev;
+    instanceRefs * toBeLoadedOnT1, * toBeLoadedOnT2;
+    instancesLoaded_t loadedOnT1, loadedOnT2;
+
+    lazyInstMgr * mgr = new lazyInstMgr;
+    mgr->initRegistry( SchemaInit );
+    mgr->openFile( fileName );
+
+    std::cout << "Checking thread safety in Lazy Loading...";
+
+    prepareRealRefs( mgr->getFwdRefs(), instancesToBeLoadedFwd );
+    prepareRealRefs( mgr->getRevRefs(), instancesToBeLoadedRev );
+
+    bool intraThreadSuccess[2] = { true, true };
+    bool interThreadSuccess = true;
+    const int iterations = 50;
+    for( int i = 0; i < 2 * iterations; i++ ) {
+        // First set iterations both threads will try to load from same list. 
+        toBeLoadedOnT1 = &instancesToBeLoadedFwd;
+        toBeLoadedOnT2 = i < iterations ? &instancesToBeLoadedFwd : &instancesToBeLoadedRev;
+
+        std::thread first( loadInstancesFromList, mgr, toBeLoadedOnT1, &loadedOnT1, &intraThreadSuccess[0] );
+        std::thread second( loadInstancesFromList, mgr, toBeLoadedOnT2, &loadedOnT2, &intraThreadSuccess[1] );
+
+        first.join();
+        second.join();
+        
+        interThreadSuccess &= compareLoadedInstances( toBeLoadedOnT1, &loadedOnT1, toBeLoadedOnT2, &loadedOnT2 );
+        mgr->unloadAllInstances();
+
+        loadedOnT1.clear();
+        loadedOnT2.clear();
+    } 
+
+    if( intraThreadSuccess[0] && intraThreadSuccess[1] && interThreadSuccess ) {
+        std::cout << "..PASS!" << std::endl;
+    } else {
+        std::cout << "...FAIL!" << std::endl;
+
+        if( !intraThreadSuccess[0] ) {
+            std::cout << "\tThread 0: Difference in instances loaded within 1st and 2nd iterations" << std::endl;
+        }
+
+        if( !intraThreadSuccess[1] ) {
+            std::cout << "\tThread 1: Difference in instances loaded within 1st and 2nd iterations" << std::endl;
+        }
+
+        if( !interThreadSuccess ) {
+            std::cout << "\tDifference in instances loaded by the 2 threads" << std::endl;
+        }
+    }
+
     std::cout << std::endl;
     delete mgr;
 }
@@ -188,5 +302,7 @@ int main( int argc, char ** argv ) {
     checkRevRefsSafety( argv[1] );
 
     checkTypeInstancesSafety( argv[1] );
+
+    checkLazyLoadingSafety( argv[1] );
 }
 

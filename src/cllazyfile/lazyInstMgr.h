@@ -182,6 +182,12 @@ class lazyInstMgr {
         instanceSet * instanceDependenciesSafely( instanceID id );
 #endif //HAVE_STD_THREAD
 
+        //unloads all instances. (For testing purpose, not thread safe)
+        void unloadAllInstances() {
+            _loadedInstanceCount = 0;
+            _instancesLoaded.clear();
+        }
+
         // TODO implement these
              /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
                  same as above, but with list of instances */
