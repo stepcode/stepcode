@@ -182,17 +182,10 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 
         SCOPEod;
 
-        /* do \'new\'s for entity descriptors  */
-        fprintf( files->create, "\n  //  *****  Initialize the Entities\n" );
-        fprintf( files->classes, "\n// Entities:" );
-        LISTdo( list, e, Entity );
-        /* Print in include file: class forward prototype, class typedefs,
-           and extern EntityDescriptor.  (ENTITYprint_new() combines the
-           functionality of TYPEprint_new() & print_typedefs() above.) */
-        ENTITYprint_new( e, files, schema,
-                         col->externMapping( ENTITYget_name( e ) ) );
-        LISTod;
-        fprintf( files->create, "\n" );
+        fprintf( files->classes, "\n// Entity class typedefs:" );
+        LISTdo( list, e, Entity ) {
+            ENTITYprint_classes( e, files->classes );
+        } LISTod
     }
 
     /* fill in the values for the type descriptors */
@@ -276,7 +269,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     fprintf( files->inc, "\n//        ***** Print Entity Classes          \n" );
     LISTdo( list, e, Entity );
     if( e->search_id == CANPROCESS ) {
-        ENTITYPrint( e, files, schema );
+        ENTITYPrint( e, files, schema, col->externMapping( ENTITYget_name( e ) ) );
         e->search_id = PROCESSED;
     }
     LISTod;

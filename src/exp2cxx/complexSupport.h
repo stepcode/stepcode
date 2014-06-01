@@ -412,7 +412,7 @@ class ComplexCollect {
         // it's used elsewhere.
         ComplexList * find( char * );
         int supports( EntNode * );
-        int externMapping( const char * ent ) {
+        bool externMapping( const char * ent ) {
             return ( clists ? clists->isDependent( ent ) : 0 );
         }
         // One of our clists shows that ent will have to be instantiated

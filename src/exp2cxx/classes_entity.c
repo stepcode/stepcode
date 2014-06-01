@@ -16,6 +16,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include <sc_memmgr.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <sc_mkdir.h>
 #include "classes.h"
@@ -1015,7 +1016,7 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
     DEBUG( "DONE ENTITYPrint_h\n" );
 }
 
-void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema ) {
+void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema, bool externMap ) {
     const char * name = ENTITYget_classname( entity );
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
@@ -1033,6 +1034,7 @@ void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_Lis
     
     fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
     fprintf( impl, "    std::string str;\n\n" );
+    ENTITYprint_descriptors( entity, impl, schema, externMap );
     ENTITYincode_print( entity, header, impl, schema );
     fprintf( impl, "}\n\n" );
 
@@ -1153,7 +1155,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
     fprintf( files->unity.entity.impl, "#include \"%s\"\n", names.impl );
 
     ENTITYPrint_h( entity, hdr, remaining, schema );
-    ENTITYPrint_cc( entity, hdr, impl, remaining, schema );
+    ENTITYPrint_cc( entity, hdr, impl, remaining, schema, externMap );
     FILEclose( hdr );
     FILEclose( impl );
 
@@ -1191,8 +1193,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
  * \p schema the current schema
  * \p externMap true if entity must be instantiated with external mapping (see Part 21, sect 11.2.5.1).
  */
-void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
-    const char * n;
+void ENTITYprint_descriptors( Entity entity, FILE * create, Schema schema, bool externMap ) {
     Linked_List wheres;
     char * whereRule, *whereRule_formatted = NULL;
     size_t whereRule_formatted_size = 0;
@@ -1200,23 +1201,22 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     char * uniqRule, *uniqRule_formatted;
     Linked_List uniqs;
 
-    fprintf( files->create, "    %s::%s%s = new EntityDescriptor(\n        ",
+    fprintf( create, "    %s::%s%s = new EntityDescriptor(\n        ",
              SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-    fprintf( files->create, "  \"%s\", %s::schema, %s, ",
+    fprintf( create, "  \"%s\", %s::schema, %s, ",
              PrettyTmpName( ENTITYget_name( entity ) ),
              SCHEMAget_name( schema ), ( ENTITYget_abstract( entity ) ? "LTrue" : "LFalse" ) );
-    fprintf( files->create, "%s,\n          ", externMap ? "LTrue" :
-             "LFalse" );
+    fprintf( create, "%s,\n          ", externMap ? "LTrue" : "LFalse" );
 
-    fprintf( files->create, "  (Creator) create_%s );\n",
+    fprintf( create, "  (Creator) create_%s );\n",
              ENTITYget_classname( entity ) );
     /* add the entity to the Schema dictionary entry */
-    fprintf( files->create, "    %s::schema->AddEntity(%s::%s%s);\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( create, "    %s::schema->AddEntity(%s::%s%s);\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
     wheres = TYPEget_where( entity );
 
     if( wheres ) {
-        fprintf( files->create,
+        fprintf( create,
                  "    %s::%s%s->_where_rules = new Where_rule__list;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
@@ -1300,8 +1300,8 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
             *ptr = '\0';
             strcat( ptr, ");\\n" );
         }
-        fprintf( files->create, "        wr = new Where_rule(\"%s\");\n", whereRule_formatted );
-        fprintf( files->create, "        %s::%s%s->_where_rules->Append(wr);\n",
+        fprintf( create, "        wr = new Where_rule(\"%s\");\n", whereRule_formatted );
+        fprintf( create, "        %s::%s%s->_where_rules->Append(wr);\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
         sc_free( whereRule );
@@ -1312,7 +1312,7 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     uniqs = entity->u.entity->unique;
 
     if( uniqs ) {
-        fprintf( files->create,
+        fprintf( create,
                  "        %s::%s%s->_uniqueness_rules = new Uniqueness_rule__set;\n",
                  SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
 
@@ -1325,25 +1325,25 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
 
         LISTdo( uniqs, list, Linked_List ) {
             int i = 0;
-            fprintf( files->create, "        ur = new Uniqueness_rule(\"" );
+            fprintf( create, "        ur = new Uniqueness_rule(\"" );
             LISTdo_n( list, e, Expression, b ) {
                 i++;
                 if( i == 1 ) {
                     /* print label if present */
                     if( e ) {
-                        fprintf( files->create, "%s : ", StrToUpper( ( ( Symbol * )e )->name ) );
+                        fprintf( create, "%s : ", StrToUpper( ( ( Symbol * )e )->name ) );
                     }
                 } else {
                     if( i > 2 ) {
-                        fprintf( files->create, ", " );
+                        fprintf( create, ", " );
                     }
                     uniqRule = EXPRto_string( e );
-                    fprintf( files->create, "%s", uniqRule );
+                    fprintf( create, "%s", uniqRule );
                     sc_free( uniqRule );
                 }
             } LISTod
-            fprintf( files->create, ";\\n\");\n" );
-            fprintf( files->create, "        %s::%s%s->_uniqueness_rules->Append(ur);\n",
+            fprintf( create, ";\\n\");\n" );
+            fprintf( create, "        %s::%s%s->_uniqueness_rules->Append(ur);\n",
                     SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
         } LISTod
     }
@@ -1351,12 +1351,17 @@ void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap
     if( whereRule_formatted_size > 0 ) {
         sc_free( whereRule_formatted );
     }
+}
 
-    n = ENTITYget_classname( entity );
-    fprintf( files->classes, "\nclass %s;\n", n );
-    fprintf( files->classes, "typedef %s *          %sH;\n", n, n );
-    fprintf( files->classes, "typedef %s *          %s_ptr;\n", n, n );
-    fprintf( files->classes, "typedef %s_ptr        %s_var;\n", n, n );
-    fprintf( files->classes, "#define %s__set         SDAI_DAObject__set\n", n );
-    fprintf( files->classes, "#define %s__set_var     SDAI_DAObject__set_var\n", n );
+/** print in classes file: class forward prototype, class typedefs
+ * split out of ENTITYprint_new, which is now ENTITYprint_descriptors
+ */
+void ENTITYprint_classes( Entity entity, FILE * classes ) {
+    const char * n = ENTITYget_classname( entity );
+    fprintf( classes, "\nclass %s;\n", n );
+    fprintf( classes, "typedef %s *          %sH;\n", n, n );
+    fprintf( classes, "typedef %s *          %s_ptr;\n", n, n );
+    fprintf( classes, "typedef %s_ptr        %s_var;\n", n, n );
+    fprintf( classes, "#define %s__set         SDAI_DAObject__set\n", n );
+    fprintf( classes, "#define %s__set_var     SDAI_DAObject__set_var\n", n );
 }
