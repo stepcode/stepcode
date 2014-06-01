@@ -173,14 +173,12 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
            classes.h (files->classes)). */
         fprintf( files->create, "\n  //  *****  Initialize the Types\n" );
         fprintf( files->classes, "\n// Types:\n" );
-        SCOPEdo_types( scope, t, de )
-        TYPEprint_new( t, files->create, schema );
-        TYPEprint_typedefs( t, files->classes );
-
-        //print in namespace. Some logic copied from TypeDescriptorName()
-        fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
-
-        SCOPEod;
+        SCOPEdo_types( scope, t, de ) {
+            TYPEprint_new( t, files->create, schema );
+            TYPEprint_typedefs( t, files->classes );
+            //print in namespace. Some logic copied from TypeDescriptorName()
+            fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
+        } SCOPEod
 
         fprintf( files->classes, "\n// Entity class typedefs:" );
         LISTdo( list, e, Entity ) {
@@ -188,8 +186,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         } LISTod
     }
 
-    /* fill in the values for the type descriptors */
-    /* and print the enumerations */
+    /* fill in the values for the type descriptors and print the enumerations */
     fprintf( files -> inc, "\n/*    **************  TYPES      */\n" );
     fprintf( files -> lib, "\n/*    **************  TYPES      */\n" );
     /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
@@ -213,18 +210,18 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         }
     }
 
-    SCOPEdo_types( scope, t, de )
-    /* NOTE the following comment seems to contradict the logic below it (... && !( TYPEis_enumeration( t ) && ...)
-    // Do the non-redefined enumerations:*/
-    if( ( t->search_id == CANPROCESS )
-            && !( TYPEis_enumeration( t ) && TYPEget_head( t ) ) ) {
-        TYPEprint_descriptions( t, files, schema );
-        if( !TYPEis_select( t ) ) {
-            // Selects have a lot more processing and are done below.
-            t->search_id = PROCESSED;
+    SCOPEdo_types( scope, t, de ) {
+        /* NOTE the following comment seems to contradict the logic below it (... && !( TYPEis_enumeration( t ) && ...)
+        // Do the non-redefined enumerations:*/
+        if( ( t->search_id == CANPROCESS )
+                && !( TYPEis_enumeration( t ) && TYPEget_head( t ) ) ) {
+            TYPEprint_descriptions( t, files, schema );
+            if( !TYPEis_select( t ) ) {
+                // Selects have a lot more processing and are done below.
+                t->search_id = PROCESSED;
+            }
         }
-    }
-    SCOPEod;
+    } SCOPEod
 
     if( redefs ) {
         // Here we process redefined enumerations.  See note, 2 loops ago.
@@ -232,13 +229,11 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
         * Modified Jan 2012 by MAP - moving enums to own dictionary */
         HASHlistinit_by_type( scope->enum_table, &de, OBJ_TYPE );
-        {
-            Type t;
-            while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
-                if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {
-                    TYPEprint_descriptions( t, files, schema );
-                    t->search_id = PROCESSED;
-                }
+        Type t;
+        while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
+            if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {
+                TYPEprint_descriptions( t, files, schema );
+                t->search_id = PROCESSED;
             }
         }
     }
