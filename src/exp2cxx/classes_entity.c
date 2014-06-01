@@ -33,19 +33,16 @@ static int attr_count;  /**< number each attr to avoid inter-entity clashes
                             variables.  All but the last function generating code for a particular
                             entity increment a copy of it for naming each attr in the entity.
                             Here are the functions:
-                            ENTITYhead_print (Entity entity, FILE* file,Schema schema)
-                            LIBdescribe_entity (Entity entity, FILE* file, Schema schema)
-                            LIBstructor_print (Entity entity, FILE* file, Schema schema)
-                            LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
-                            ENTITYincode_print(Entity entity, FILE* file, Schema schema)
-                            DAS
+                            \sa ENTITYnames_print( Entity entity, FILE * file )
+                            \sa LIBdescribe_entity( Entity entity, FILE * file, Schema schema )
+                            \sa LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema )
+                            \sa LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * file, Schema schema )
+                            \sa ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schema )
                         */
 
-/******************************************************************
-**      Entity Generation                */
+/*************      Entity Generation      *************/
 
-/**
- * print entity descriptors and attrdescriptors to the namespace in files->names
+/** print entity descriptors and attrdescriptors to the namespace in files->names
  * hopefully this file can be safely included everywhere, eliminating use of 'extern'
  *
  * Nov 2011 - MAP - This function was split out of ENTITYhead_print to enable
@@ -69,12 +66,10 @@ void ENTITYnames_print( Entity entity, FILE * file ) {
     LISTod;
 }
 
-/**
+/** prints out the current attribute for an entity's c++ class definition
  * \param entity  entity being processed
  * \param a attribute being processed
  * \param file file being written to
- *
- * prints out the current attribute for an entity's c++ class definition
  */
 void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     char attrnm [BUFSIZ];
@@ -108,15 +103,14 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     }
 }
 
-/**
- * \param entity entity being processed
- * \param file file being written to
- * \param schema schema being processed
- *
- * declares the global pointer to the EntityDescriptor representing a particular entity
+/** declares the global pointer to the EntityDescriptor representing a particular entity
  *
  * DAS: also prints the attr descs and inverse attr descs. This function creates the storage space
  * for the externs defs that were defined in the .h file. These global vars go in the .cc file.
+ *
+ * \param entity entity being processed
+ * \param file file being written to
+ * \param schema schema being processed
  */
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     int attr_count_tmp = attr_count;
@@ -135,11 +129,9 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     fprintf( file, "\n");
 }
 
-/**
+/** prints the member functions for the class representing an entity.  These go in the .cc file
  * \param entity entity being processed
  * \param file file being written to
- *
- * prints the member functions for the class representing an entity.  These go in the .cc file
  */
 void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
 
@@ -206,12 +198,11 @@ int get_attribute_number( Entity entity ) {
     return -1;
 }
 
-/**
+/** prints the beginning of the entity class definition for the c++ code and the declaration
+ * of attr descriptors for the registry in the .h file
+ *
  * \p entity entity to print
  * \p file  file being written to
- *
- * prints the beginning of the entity class definition for the c++ code and the declaration
- * of attr descriptors for the registry in the .h file
  */
 void ENTITYhead_print( Entity entity, FILE * file ) {
     char entnm [BUFSIZ];
@@ -259,8 +250,7 @@ void DataMemberInit( bool * first, Variable a, FILE * lib ) {
     }
 }
 
-/**
- * print attribute initializers; call before printing constructor body
+/** print attribute initializers; call before printing constructor body
  * \param first true if this is the first initializer
  */
 void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr, FILE * lib ) {
@@ -275,16 +265,10 @@ void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr
     }
 }
 
-/**************************************************************//**
-** Procedure:  DataMemberPrint
-** Parameters:  const Entity entity  --  entity being processed
-**   FILE* file  --  file being written to
-** Returns:
-** Description:  prints out the data members for an entity's c++ class
-**               definition
-** Side Effects:  generates c++ code
-** Status:  ok 1/15/91
-******************************************************************/
+/** prints out the data members for an entity's c++ class definition
+ * \param entity entity being processed
+ * \param file file being written to
+ */
 void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     Linked_List attr_list;
 
@@ -306,20 +290,10 @@ void DataMemberPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
     }
 }
 
-/**************************************************************//**
- ** Procedure:  MemberFunctionSign
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the signature for member functions
-                  of an entity's class definition
- **       DAS prints the end of the entity class def and the creation
- **       function that the EntityTypeDescriptor uses.
- ** Side Effects:  prints c++ code to a file
- ** Status:  ok 1/1/5/91
- **  updated 17-Feb-1992 to print only the signature
-             and not the function definitions
- ******************************************************************/
+/** prints the signature for member functions of an entity's class definition
+ * \param entity entity being processed
+ * \param file file being written to
+ */
 void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
 
     Linked_List attr_list;
@@ -372,15 +346,13 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     fprintf( file, "inline %s * create_%s() {\n    return new %s;\n}\n\n", entnm, entnm, entnm );
 }
 
-/**************************************************************//**
- ** Procedure:  ENTITYinc_print
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  drives the generation of the c++ class definition code
- ** Side Effects:  prints segment of the c++ .h file
- ** Status:  ok 1/15/91
- ******************************************************************/
+/** drives the generation of the c++ class definition code
+ *
+ * Side Effects:  prints segment of the c++ .h file
+ *
+ * \param entity entity being processed
+ * \param file  file being written to
+ */
 void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file ) {
     ENTITYhead_print( entity, file );
     DataMemberPrint( entity, neededAttr, file );
@@ -399,22 +371,18 @@ void initializeAttrs( Entity e, FILE* file ) {
     orderedAttrsCleanup();
 }
 
-/**************************************************************//**
- ** Procedure:  LIBstructor_print
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the c++ code for entity class's
- **     constructor and destructor.  goes to .cc file
- ** Side Effects:  generates codes segment in c++ .cc file
- ** Status:  ok 1/15/91
- ** Changes: Modified generator to initialize attributes to NULL based
- **          on the NULL symbols defined in "SDAI C++ Binding for PDES,
- **          Inc. Prototyping" by Stephen Clark.
- ** Change Date: 5/22/91 CD
- ** Changes: Modified STEPattribute constructors to take fewer arguments
- **     21-Dec-1992 -kcm
- ******************************************************************/
+/** prints the c++ code for entity class's constructor and destructor.  goes to .cc file
+ * Side Effects:  generates codes segment in c++ .cc file
+ *
+ * Changes: Modified generator to initialize attributes to NULL based
+ *          on the NULL symbols defined in "SDAI C++ Binding for PDES,
+ *          Inc. Prototyping" by Stephen Clark.
+ * Change Date: 5/22/91 CD
+ * Changes: Modified STEPattribute constructors to take fewer arguments
+ *     21-Dec-1992 -kcm
+ * \param entity entity being processed
+ * \param file  file being written to
+ */
 void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
@@ -739,27 +707,23 @@ bool TYPEis_builtin( const Type t ) {
     return false;
 }
 
-/**************************************************************//**
- ** \fn  generate_dict_attr_name
- ** \param a, an Express attribute
- ** \param out, the C++ name
- ** Description:  converts an Express name into the corresponding SCL
- **       dictionary name.  The difference between this and the
- **           generate_attribute_name() function is that for derived
- **       attributes the name will have the form <parent>.<attr_name>
- **       where <parent> is the name of the parent containing the
- **       attribute being derived and <attr_name> is the name of the
- **       derived attribute. Both <parent> and <attr_name> may
- **       contain underscores but <parent> and <attr_name> will be
- **       separated by a period.  generate_attribute_name() generates
- **       the same name except <parent> and <attr_name> will be
- **       separated by an underscore since it is illegal to have a
- **       period in a variable name.  This function is used for the
- **       dictionary name (a string) and generate_attribute_name()
- **       will be used for variable and access function names.
- ** Side Effects:
- ** Status:  complete 8/5/93
- ******************************************************************/
+/** converts an Express name into the corresponding SCL
+ *  dictionary name.  The difference between this and the
+ *  generate_attribute_name() function is that for derived
+ *  attributes the name will have the form <parent>.<attr_name>
+ *  where <parent> is the name of the parent containing the
+ *  attribute being derived and <attr_name> is the name of the
+ *  derived attribute. Both <parent> and <attr_name> may
+ *  contain underscores but <parent> and <attr_name> will be
+ *  separated by a period.  generate_attribute_name() generates
+ *  the same name except <parent> and <attr_name> will be
+ *  separated by an underscore since it is illegal to have a
+ *  period in a variable name.  This function is used for the
+ *  dictionary name (a string) and generate_attribute_name()
+ *  will be used for variable and access function names.
+ * \param a, an Express attribute
+ * \param out, the C++ name
+ */
 char * generate_dict_attr_name( Variable a, char * out ) {
     char * temp, *p, *q;
     int j;
@@ -786,16 +750,13 @@ char * generate_dict_attr_name( Variable a, char * out ) {
     return out;
 }
 
-/**************************************************************//**
- ** Procedure:  ENTITYincode_print
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  generates code to enter entity in STEP registry
- **      This goes to the .init.cc file
- ** Side Effects:
- ** Status:  ok 1/15/91
- ******************************************************************/
+/** generates code to add entity to STEP registry
+ *
+ * \param entity entity being processed
+ * \param header header being written to
+ * \param impl implementation file being written to
+ * \param schema schema the entity is in
+ */
 void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schema ) {
 #define entity_name ENTITYget_name(entity)
 #define schema_name SCHEMAget_name(schema)
@@ -818,7 +779,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
             fprintf( impl, "    str.clear();\n    str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
 
             format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( impl, "\n    str.append( \")\" );\n" );
+            fprintf( impl, "    str.append( \")\" );\n" );
             fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
         } else {
             fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
@@ -828,7 +789,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
         if( entity->u.entity->subtype_expression ) {
             fprintf( impl, "    str.clear();\n    str.append( \"SUPERTYPE OF ( \" );\n" );
             format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( impl, "\n    str.append( \")\" );\n" );
+            fprintf( impl, "    str.append( \")\" );\n" );
             fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
         }
     }
@@ -1078,18 +1039,14 @@ void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_Lis
     DEBUG( "DONE ENTITYPrint_cc\n" );
 }
 
-/**************************************************************//**
- ** Procedure:  collectAttributes
- ** Parameters:  Linked_List curList  --  current list to store the
- **  attributes
- **   Entity curEntity -- current Entity being processed
- **   int flagParent -- flag control
- ** Returns:
- ** Description:  Retrieve the list of inherited attributes of an
- ** entity
- ******************************************************************/
+/** \sa collectAttributes */
 enum CollectType { ALL, ALL_BUT_FIRST, FIRST_ONLY };
 
+/** Retrieve the list of inherited attributes of an entity
+ * \param curList current list to store the attributes
+ * \param curEntity current Entity being processed
+ * \param collect selects attrs to be collected
+ */
 static void collectAttributes( Linked_List curList, const Entity curEntity, enum CollectType collect ) {
     Linked_List parent_list = ENTITYget_supertypes( curEntity );
 
@@ -1114,8 +1071,7 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
     /*  prepend this entity's attributes to the result list */
     LISTdo( ENTITYget_attributes( curEntity ), attr, Variable ) {
         LISTadd_first( curList, ( Generic ) attr );
-    }
-    LISTod;
+    } LISTod;
 }
 
 static bool listContainsVar( Linked_List l, Variable v ) {
@@ -1129,17 +1085,15 @@ static bool listContainsVar( Linked_List l, Variable v ) {
     return false;
 }
 
-/**************************************************************//**
- ** Procedure:  ENTITYlib_print
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  drives the printing of the code for the class library
- **     additional member functions can be generated by writing a routine
- **     to generate the code and calling that routine from this procedure
- ** Side Effects:  generates code segment for c++ library file
- ** Status:  ok 1/15/91
- ******************************************************************/
+/** drives the printing of the code for the class library
+ *  additional member functions can be generated by writing a routine
+ *  to generate the code and calling that routine from this procedure
+ *
+ * ** Side Effects:  generates code segment for c++ library file
+ *
+ * \param entity entity being processed
+ * \param file  file being written to
+ */
 void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     LIBdescribe_entity( entity, file, schema );
     LIBstructor_print( entity, neededAttr, file, schema );
@@ -1149,17 +1103,14 @@ void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema
     LIBmemberFunctionPrint( entity, neededAttr, file );
 }
 
-/**************************************************************//**
- ** Procedure:  ENTITYPrint
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  drives the functions for printing out code in lib,
- **     include, and initialization files for a specific entity class
- ** Side Effects:  generates code in 3 files
- ** Status:  complete 1/15/91
- ******************************************************************/
-void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
+/** drives the functions for printing out code in lib,
+ * include, and initialization files for a specific entity class
+ * \p entity entity being processed
+ * \p files  files being written to
+ * \p schema name of the schema
+ * \p col the ComplexCollect
+ */
+void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) {
     FILE * hdr, * impl;
     char * n = ENTITYget_name( entity );
     Linked_List remaining = LISTcreate();
@@ -1228,11 +1179,17 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
     LIST_destroy( remaining );
 }
 
-/** print in include file: class forward prototype, class typedefs, and
- *   extern EntityDescriptor.  `externMap' = 1 if entity must be instantiated
- *   with external mapping (see Part 21, sect 11.2.5.1).
- *  Nov 2011 - MAP - print EntityDescriptor in namespace file, modify other
- *   generated code to use namespace
+/** create entity descriptors
+ *
+ *  Nov 2011 - MAP - print EntityDescriptor in namespace file, modify other generated code to use namespace
+ *
+ * originally part of ENTITYprint_new(), along with ENTITYprint_classes()
+ * TODO WARNING need to add code for wr, ur, gr!!!
+ *
+ * \p entity the entity to print
+ * \p create the file to write into
+ * \p schema the current schema
+ * \p externMap true if entity must be instantiated with external mapping (see Part 21, sect 11.2.5.1).
  */
 void ENTITYprint_new( Entity entity, FILES * files, Schema schema, int externMap ) {
     const char * n;
