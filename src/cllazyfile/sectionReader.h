@@ -41,7 +41,7 @@ class SC_LAZYFILE_EXPORT sectionReader {
 
         /** Get a keyword ending with one of delimiters.
          */
-        const char * getDelimitedKeyword( const char * delimiters );
+        void fillDelimitedKeyword( const char * delimiters, std::string &keyword );
 
         /** Seek to the end of the current instance */
         std::streampos seekInstanceEnd( instanceRefs ** refs );

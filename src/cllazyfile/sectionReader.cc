@@ -82,8 +82,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
-const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
-    static std::string str;
+void sectionReader::fillDelimitedKeyword( const char * delimiters, std::string &str ) {
     char c, firstSpaceDelimeter;
     str.clear();
     str.reserve( 100 );
@@ -113,7 +112,6 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
         std::cerr << SC_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
-    return str.c_str();
 }
 
 /// search forward in the file for the end of the instance. Start position should
@@ -257,7 +255,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         const std::string & typeName, const std::string & schName, bool header ) {
     char c;
     const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
-    std::string comment;
+    std::string comment, keyword;
     Severity sev;
     SDAI_Application_instance * inst = 0;
 
@@ -301,7 +299,8 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             break;
         default:
             if( ( !header ) && ( typeName.size() == 0 ) ) {
-                tName = getDelimitedKeyword( ";( /\\" );
+                fillDelimitedKeyword( ";( /\\", keyword );
+                tName = keyword.c_str();
             }
             inst = reg->ObjCreate( tName, sName );
             break;
@@ -327,7 +326,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     std::vector<std::string *> typeNames;
     _file.get(); //move past the first '('
     while( _file.good() && ( _file.peek() != ')' ) ) {
-        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
+        std::string keyword;
+        fillDelimitedKeyword( ";( /\\", keyword );
+        typeNames.push_back( new std::string( keyword ) );
         if( typeNames.back()->empty() ) {
             delete typeNames.back();
             typeNames.pop_back();

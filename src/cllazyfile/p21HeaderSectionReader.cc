@@ -39,7 +39,9 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     if( i.loc.begin <= 0 ) {
         i.name = 0;
     } else {
-        i.name = getDelimitedKeyword( ";( /\\" );
+        std::string * keyword = new string();
+        fillDelimitedKeyword( ";( /\\", *keyword );
+        i.name = keyword->c_str();
 
         if( 0 == strcmp( "FILE_DESCRIPTION", i.name ) ) {
             i.loc.instance = 1;

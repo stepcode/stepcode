@@ -54,7 +54,11 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
         skipWS();
         i.loc.section = _sectionID;
         skipWS();
-        i.name = getDelimitedKeyword( ";( /\\" );
+
+        std::string * keyword = new string();
+        fillDelimitedKeyword( ";( /\\", *keyword );
+        i.name = keyword->c_str();
+
         if( _file.good() ) {
             end = seekInstanceEnd( & i.refs );
         }
