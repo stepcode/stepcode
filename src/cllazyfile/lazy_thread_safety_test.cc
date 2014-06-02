@@ -506,7 +506,7 @@ lazyInstMgrStatus compareLazyInstMgr( lazyInstMgr * mgr1, lazyInstMgr * mgr2 ) {
 
 /// used by different threads to open a step file
 void openFile( lazyInstMgr * mgr, char * fileName ) {
-    mgr->openFile( fileName );
+    mgr->openFileSafely( fileName );
 }
 
 /// checks the thread safety by opening multiple files in parallel

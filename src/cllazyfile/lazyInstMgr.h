@@ -172,6 +172,9 @@ class lazyInstMgr {
         instanceSet * instanceDependenciesHelper( instanceID id, instanceRefs_t * _fwdRefs );
 
 #ifdef HAVE_STD_THREAD
+        /// thread safe counterpart of openFile();
+        void openFileSafely( std::string fname );
+
         /// thread safe counterpart of getFwdRefs()
         instanceRefs_t * getFwdRefsSafely();
 

@@ -64,14 +64,18 @@ void lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader, sectionI
 }
 
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
-    _lazyInstanceCount++;
     assert( inst.loc.begin > 0 && inst.loc.instance > 0 && inst.loc.section >= 0 );
+
+    mtxLock( instanceTypesMtx );
+    _lazyInstanceCount++;
     int len = strlen( inst.name );
     if( len > _longestTypeNameLen ) {
         _longestTypeNameLen = len;
         _longestTypeName = inst.name;
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
+    mtxUnlock( instanceTypesMtx );
+
     /* store 16 bits of section id and 48 of instance offset into one 64-bit int
     * TODO: check and warn if anything is lost (in calling code?)
     * does 32bit need anything special?
@@ -79,16 +83,24 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     positionAndSection ps = inst.loc.section;
     ps <<= 48;
     ps |= ( inst.loc.begin & 0xFFFFFFFFFFFFULL );
+
+    mtxLock( instanceStreamPosMtx );
     _instanceStreamPos.insert( inst.loc.instance, ps );
+    mtxUnlock( instanceStreamPosMtx );
 
     if( inst.refs ) {
         if( inst.refs->size() > 0 ) {
             //forward refs
+            mtxLock( fwdRefsMtx );
             _fwdInstanceRefs.insert( inst.loc.instance, *inst.refs );
+            mtxUnlock( fwdRefsMtx );
+
             instanceRefs::iterator it = inst.refs->begin();
             for( ; it != inst.refs->end(); ++it ) {
                 //reverse refs
+                mtxLock( revRefsMtx );
                 _revInstanceRefs.insert( *it, inst.loc.instance );
+                mtxUnlock( revRefsMtx );
             }
         } else {
             delete inst.refs;
@@ -185,6 +197,20 @@ instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
 }
 
 #ifdef HAVE_STD_THREAD
+
+void lazyInstMgr::openFileSafely( std::string fname ) {
+    filesMtx.lock();
+    size_t size = _files.size();
+    _files.push_back( NULL ); //place Holder
+    filesMtx.unlock();
+
+    lazyFileReader * fileReader = new lazyFileReader( fname, this, size );
+
+    filesMtx.lock();
+    _files[size] = fileReader;
+    filesMtx.unlock();
+}
+
 instanceRefs_t * lazyInstMgr::getFwdRefsSafely() {
 
     fwdRefsMtx.lock();
