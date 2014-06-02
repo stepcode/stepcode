@@ -192,6 +192,11 @@ class lazyInstMgr {
             _instancesLoaded.clear();
         }
 
+        // (For testing purpose, not thread safe)
+        instanceStreamPos_t * getInstanceStreamPos() {
+            return &_instanceStreamPos;
+        }
+
         // TODO implement these
              /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
                  same as above, but with list of instances */
