@@ -68,10 +68,10 @@ class lazyInstMgr {
 
 #ifdef HAVE_STD_THREAD
         /** mutexes for mutual exclusion */
-        std::mutex fwdRefsMtx;
-        std::mutex revRefsMtx;
-        std::mutex instanceTypesMtx;
-        std::mutex loadInstanceMtx;
+        std::mutex fwdRefsMtx, revRefsMtx, instanceTypesMtx, loadInstanceMtx, instanceStreamPosMtx, dataSectionsMtx, filesMtx;
+#else
+        /** Dummy variables **/
+        int fwdRefsMtx, revRefsMtx, instanceTypesMtx, loadInstanceMtx, instanceStreamPosMtx, dataSectionsMtx, filesMtx;
 #endif //HAVE_STD_THREAD
 
     public:
@@ -184,6 +184,24 @@ class lazyInstMgr {
 
         //Thread safe counterpart of instanceDependencies( instanceID )
         instanceSet * instanceDependenciesSafely( instanceID id );
+
+        void mtxLock( std::mutex &mtx ) {
+            mtx.lock();
+        }
+
+        void mtxUnlock( std::mutex &mtx ) {
+            mtx.unlock();
+        }
+#else
+        //dummy counterpart of mtxLock
+        void mtxLock( int dummy ) {
+            ( void )dummy;
+        }
+
+        //dummy counterpart of mtxUnlock
+        void mtxUnlock( int dummy ) {
+            ( void )dummy;
+        }
 #endif //HAVE_STD_THREAD
 
         //unloads all instances. (For testing purpose, not thread safe)
