@@ -132,7 +132,13 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
     SDAI_Application_instance * inst = 0;
     positionAndSection ps;
     sectionID sid;
+
+    mtxLock( instanceStreamPosMtx );
+
+    mtxLock( loadInstanceMtx );
     inst = _instancesLoaded.find( id );
+    mtxUnlock( loadInstanceMtx );
+
     instanceStreamPos_t::cvector * cv;
     if( !inst && 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         //FIXME _instanceStreamPos.find( id ) can return nonzero for nonexistent key?!
@@ -153,14 +159,18 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id ) {
                 break;
         }
         if( ( inst ) && ( inst != & NilSTEPentity ) ) {
+            mtxLock( loadInstanceMtx );
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
+            mtxUnlock( loadInstanceMtx );
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
         }
     } else if( !inst ) {
         std::cerr << "Instance #" << id << " not found in any section." << std::endl;
     }
+
+    mtxUnlock( instanceStreamPosMtx );
     return inst;
 }
 
@@ -248,10 +258,15 @@ unsigned int lazyInstMgr::countInstancesSafely( std::string type ) {
 
 SDAI_Application_instance * lazyInstMgr::loadInstanceSafely( instanceID id ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
-    //TODO: Locking can be made finer (2 seperate locks?)
-    loadInstanceMtx.lock();
-    SDAI_Application_instance * sdaiInst = loadInstance( id );
-    loadInstanceMtx.unlock();
+    SDAI_Application_instance * sdaiInst;
+
+    mtxLock( loadInstanceMtx );
+    sdaiInst = _instancesLoaded.find( id );
+    mtxUnlock( loadInstanceMtx );
+
+    if( !sdaiInst ) {
+        sdaiInst = loadInstance( id );
+    }
 
     return sdaiInst;
 }
