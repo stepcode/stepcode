@@ -6,6 +6,8 @@
 #include "sc_export.h"
 
 class SC_LAZYFILE_EXPORT p21HeaderSectionReader: public headerSectionReader {
+    protected:
+        instanceID nextFreeInstance;
     public:
         p21HeaderSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
         void findSectionStart();

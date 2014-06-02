@@ -20,6 +20,7 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
     findSectionEnd();
     _file.seekg( _sectionStart );
     namedLazyInstance nl;
+    nextFreeInstance = 4; // 1-3 are reserved per 10303-21
     while( nl = nextInstance(), ( nl.loc.begin > 0 ) ) {
         std::streampos pos = _file.tellg();
         _headerInstances->insert( nl.loc.instance, getRealInstance( _lazyFile->getInstMgr()->getHeaderRegistry(), nl.loc.begin, nl.loc.instance, nl.name, "", true ) );
@@ -31,7 +32,6 @@ p21HeaderSectionReader::p21HeaderSectionReader( lazyFileReader * parent, std::if
 // part of readdata1
 const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     namedLazyInstance i;
-    static instanceID nextFreeInstance = 4; // 1-3 are reserved per 10303-21
 
     i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
