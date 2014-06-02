@@ -11,13 +11,14 @@ void lazyFileReader::initP21() {
 
     for( ;; ) {
         lazyDataSectionReader * r;
-        r = new lazyP21DataSectionReader( this, _file, _file.tellg(), _parent->countDataSections() );
+        sectionID sid = _parent->reserveDataSection();
+        r = new lazyP21DataSectionReader( this, _file, _file.tellg(), sid );
         if( !r->success() ) {
             delete r; //last read attempt failed
             std::cerr << "Corrupted data section" << std::endl;
             break;
         }
-        _parent->registerDataSection( r );
+        _parent->registerDataSection( r, sid );
 
         //check for new data section (DATA) or end of file (END-ISO-10303-21;)
         while( isspace( _file.peek() ) && _file.good() ) {

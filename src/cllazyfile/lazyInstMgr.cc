@@ -22,19 +22,45 @@ lazyInstMgr::~lazyInstMgr() {
     //loop over files, sections, instances; delete header instances
     lazyFileReaderVec_t::iterator fit = _files.begin();
     for( ; fit != _files.end(); ++fit ) {
-        delete *fit;
+        if( *fit ) {
+            delete *fit;
+        }
     }
     dataSectionReaderVec_t::iterator sit = _dataSections.begin();
     for( ; sit != _dataSections.end(); ++sit ) {
-        delete *sit;
+        if( *sit ) {
+            delete *sit;
+        }
     }
     _instancesLoaded.clear();
     _instanceStreamPos.clear();
+
+    void * last = _instanceTypes->end().key;
+    void * current = _instanceTypes->begin().key;
+    std::string str;
+    while( current != last ) {
+        str = (char *)current;
+        str.clear();
+        current = _instanceTypes->next().key;
+    }
+    str.clear();
+
+    delete _instanceTypes;
 }
 
-sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
-    _dataSections.push_back( sreader );
-    return _dataSections.size() - 1;
+sectionID lazyInstMgr::reserveDataSection() {
+    mtxLock( dataSectionsMtx );
+    sectionID sid = _dataSections.size();
+    _dataSections.push_back( NULL );
+    mtxUnlock( dataSectionsMtx );
+    return sid;
+}
+
+void lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader, sectionID sid ) {
+    assert( _dataSections[sid] == NULL );
+    mtxLock( dataSectionsMtx );
+    _dataSections[sid] = sreader;
+    mtxUnlock( dataSectionsMtx );
 }
 
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {

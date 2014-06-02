@@ -153,7 +153,12 @@ class lazyInstMgr {
         /// get the number of types of instances.
         unsigned long getNumTypes() const;
 
-        sectionID registerDataSection( lazyDataSectionReader * sreader );
+        /// reserves a slot in _dataSections vector. Gives the slot a value null, and return the index value.
+        sectionID reserveDataSection();
+
+        /// updates _dataSections vector with the sreader value at the given index.
+        void registerDataSection( lazyDataSectionReader * sreader, sectionID sid );
+
         fileID registerLazyFile( lazyFileReader * freader );
 
         ErrorDescriptor * getErrorDesc() {
