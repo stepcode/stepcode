@@ -1139,37 +1139,55 @@ CASEout( struct Case_Statement_ *c, int level, FILE * file ) {
 void
 LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
     Variable v;
-    fprintf( file, "for " );
-
-    /* increment */
-    /*  if (loop->scope->u.incr) {*/
-    if( loop->scope ) {
+    
+    if (loop->scope) {
         DictionaryEntry de;
 
+        /* TODO: if incr != 0 && ((incr > 0 && start < stop) || (incr < 0 && start > stop)): */
         DICTdo_init( loop->scope->symbol_table, &de );
         v = ( Variable )DICTdo( &de );
-        fprintf( file, " %s in range(", v->name->symbol.name );
+        fprintf( file, "for %s in range(", v->name->symbol.name );
         EXPRESSION_out( loop->scope->u.incr->init, 0 , file );
         fprintf( file, "," );
         EXPRESSION_out( loop->scope->u.incr->end, 0 , file );
         fprintf( file, "," ); /* parser always forces a "by" expr */
         EXPRESSION_out( loop->scope->u.incr->increment, 0 , file );
         fprintf( file, "):\n" );
-    }
+        
+        if( loop->while_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->while_expr, 0 , file );
+            fprintf( file, ":\n");
+            STATEMENTlist_out( loop->statements, level + 2 , file );
+        } else {
+            STATEMENTlist_out( loop->statements, level + 1 , file );
+        }
 
-    /* while */
-    if( loop->while_expr ) {
-        fprintf( file, " while " );
+        if( loop->until_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->until_expr, 0 , file );
+            fprintf( file, ":\n\tbreak\n");
+        }
+    } else if( loop->while_expr ) {
+        fprintf( file, "while " );
         EXPRESSION_out( loop->while_expr, 0 , file );
-    }
+        fprintf( file, ":\n");
+        STATEMENTlist_out( loop->statements, level + 1 , file );
 
-    /* until */
-    if( loop->until_expr ) {
-        fprintf( file, " UNTIL " );
+        if( loop->until_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->until_expr, 0 , file );
+            fprintf( file, ":\n\tbreak\n");
+        }
+    } else {
+        fprintf( file, "while True:\n" );
+        STATEMENTlist_out( loop->statements, level + 1 , file );
+
+        fprintf( file, "if " );
         EXPRESSION_out( loop->until_expr, 0 , file );
+        fprintf( file, ":\n\tbreak\n");
     }
 
-    STATEMENTlist_out( loop->statements, level + 1 , file );
 }
 
 void
