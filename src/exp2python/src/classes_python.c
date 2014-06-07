@@ -127,6 +127,31 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
     return return_buf;
 }
 
+char * strliteral_py_dup( char * orig_buf ) {
+    char * new_buf = strdup(orig_buf);
+    char * tmp = new_buf;
+
+    while ((tmp = strstr(tmp, "\\x9"))) {
+        tmp++ ; *tmp = 't'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+
+    tmp = new_buf;
+    while ((tmp = strstr(tmp, "\\xA"))) {
+        tmp++ ; *tmp = 'n'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+
+    tmp = new_buf;
+    while ((tmp = strstr(tmp, "\\xD"))) {
+        tmp++ ; *tmp = 'r'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+    
+    return new_buf;
+}
+
+
 void
 USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {
     Dictionary dict;
@@ -1200,7 +1225,9 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                fprintf( file, "'%s'", e->symbol.name );
+                char* tmp = strliteral_py_dup(e->symbol.name);
+                fprintf( file, "'%s'", tmp );
+                free(tmp);
             }
             break;
         case entity_:
@@ -1313,7 +1340,9 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                fprintf( file, "'%s'", e->symbol.name );
+                char* tmp = strliteral_py_dup(e->symbol.name);
+                fprintf( file, "'%s'", tmp );
+                free(tmp);
             }
             break;
         case entity_:
