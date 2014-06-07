@@ -710,7 +710,11 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         index_attribute = 0;
         if( ! LISTempty( list ) ) {
             LISTdo( list, e, Entity )
-            fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
+            if (is_python_keyword(ENTITYget_name( e ))) {
+                fprintf( file, "\t\t%s_.__init__(self , ", ENTITYget_name( e ) );
+            } else {
+                fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
+            }
             /*  search and write attribute names for superclass */
             LISTdo( ENTITYget_all_attributes( e ), v2, Variable )
             generate_attribute_name( v2, parent_attrnm );
@@ -771,6 +775,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n" );
+                } else if (attr_type && is_python_keyword(attr_type)) {
+                    fprintf( file, "%s_):\n", attr_type );
                 } else {
                     fprintf( file, "%s):\n", attr_type );
                 }
@@ -780,6 +786,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n\t" );
+                } else if (attr_type && is_python_keyword(attr_type)) {
+                    fprintf( file, "%s_):\n\t", attr_type );
                 } else {
                     fprintf( file, "%s):\n\t", attr_type );
                 }
@@ -789,6 +797,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 fprintf( file, "\t\t\t\tself._%s = ", attrnm );
                 print_aggregate_type( file, t );
                 fprintf( file, "(value)\n" );
+            } else if (attr_type && is_python_keyword(attr_type)) {
+                fprintf( file, "\t\t\t\tself._%s = %s_(value)\n", attrnm, attr_type );
             } else {
                 fprintf( file, "\t\t\t\tself._%s = %s(value)\n", attrnm, attr_type );
             }
