@@ -1448,7 +1448,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previ
             ATTRIBUTE_INITIALIZERop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            ATTRIBUTE_INITIALIZERop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            ATTRIBUTE_INITIALIZERop2__out( oe, " != ", paren, PAD, previous_op, file );
             break;
         case OP_EXP:
             ATTRIBUTE_INITIALIZERop2_out( oe, " ** ", paren, PAD, file );
@@ -1542,7 +1542,7 @@ EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FI
             EXPRESSIONop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            EXPRESSIONop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            EXPRESSIONop2__out( oe, " != ", paren, PAD, previous_op, file );
             break;
         case OP_EXP:
             EXPRESSIONop2_out( oe, " ** ", paren, PAD, file );
