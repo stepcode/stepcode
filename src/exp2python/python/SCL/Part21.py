@@ -1,6 +1,11 @@
+#
+# STEP Part 21 Parser
+#
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
+# Copyright (c) 2014, Christopher HORLER (cshorler@googlemail.com)
+#
 # All rights reserved.
-
+#
 # This file is part of the StepClassLibrary (SCL).
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,179 +34,271 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import re
-import Utils
+import ply.lex as lex
+import ply.yacc as yacc
 
-INSTANCE_DEFINITION_RE = re.compile("#(\d+)[^\S\n]?=[^\S\n]?(.*?)\((.*)\)[^\S\n]?;[\\r]?$")
+####################################################################################################
+# Common Code for Lexer / Parser
+####################################################################################################
+class Base:
+    tokens = ('INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
+              'ENTITY_INSTANCE_NAME', 'ENUMERATION', 'PART21_END', 'PART21_START', 'HEADER_SEC',
+              'ENDSEC', 'DATA_SEC')
 
-def map_string_to_num(stri):
-    """ Take a string, check wether it is an integer, a float or not
-    """
-    if ('.' in stri) or ('E' in stri): #it's definitely a float
-        return REAL(stri)
-    else:
-        return INTEGER(stri)
+####################################################################################################
+# Lexer 
+####################################################################################################
+class Lexer(Base):
+    def __init__(self, debug=0, optimize=0):
+        self.lexer = lex.lex(module=self, debug=debug, optimize=optimize)
 
-class Model:
-    """
-    A model contains a list of instances
-    """
-    def __init__(self,name):
-        self._name = name
-        # a dict of instances
-        # each time an instance is added to the model, count is incremented
-        self._instances = {}
-        self._number_of_instances = 0
-        
-    def add_instance(self, instance):
-        '''
-        Adds an instance to the model
-        '''
-        self._number_of_instances += 1
-        self._instances[self._number_of_instances-1] = instance
+    def input(self, s):
+        self.lexer.input(s)
 
-    def print_instances(self):
-        '''
-        Dump instances to stdout
-        '''
-        for idx in range(self._number_of_instances):
-            "=========="
-            print "Instance #%i"%(idx+1)
-            print self._instances[idx]
-
-class Part21EntityInstance:
-    """
-    A class to represent a Part21 instance as defined in one Part21 file
-    A Part21EntityInstance is defined by the following arguments:
-    entity_name: a string
-    entity_attributes: a list of strings to represent an attribute.
-    For instance, the following expression:
-    #4 = PRODUCT_DEFINITION_SHAPE('$','$',#5);
-    will result in :
-    entity : <class 'config_control_design.product_definition_shape'>
-    entity_instance_attributes: ['$','$','#5']
-    """
-    def __init__(self,entity_name,attributes):
-        self._entity
-        self._attributes_definition = attributes
-        print self._entity_name
-        print self._attributes_definition
+    def token(self):
+        try:
+            return next(self.lexer)
+        except StopIteration:
+            return None
     
-
-class Part21Parser:
-    """
-    Loads all instances definition of a Part21 file into memory.
-    Two dicts are created:
-    self._instance_definition : stores attibutes, key is the instance integer id
-    self._number_of_ancestors : stores the number of ancestors of entity id. This enables
-    to define the order of instances creation.
-    """
-    def __init__(self, filename):
-        self._filename = filename
-        # the schema
-        self._schema_name = ""
-        # the dict self._instances contain instance definition
-        self._instances_definition = {}
-        # this dict contains lists of 0 ancestors, 1 ancestor, etc.
-        # initializes this dict
-        self._number_of_ancestors = {}
-        for i in range(2000):
-            self._number_of_ancestors[i]=[]
-        self.parse_file()
-        # reduce number_of_ancestors dict
-        for item in self._number_of_ancestors.keys():
-            if len(self._number_of_ancestors[item])==0:
-                del self._number_of_ancestors[item]
+    # Comment (ignored)
+    def t_COMMENT(self, t):
+        r'/\*(.|\n)*?\*/'
+        pass
     
-    def get_schema_name(self):
-        return self._schema_name
-        print schema_name
-        
-    def get_number_of_instances(self):
-        return len(self._instances_definition.keys())
+    def t_PART21_START(self, t):
+        r'ISO-10303-21;'
+        return t
 
-    def parse_file(self):
-        init_time = time.time()
-        print "Parsing file %s..."%self._filename,
-        fp = open(self._filename)
-        while True:
-            line = fp.readline()
-            if not line:
-                break
-            # there may be a multline definition. In this case, we read lines untill we found
-            # a ;
-            #while (not line.endswith(";\r\n")): #its a multiline
-            #    line = line.replace("\r\n","") + fp.readline()
-            # parse line
-            match_instance_definition = INSTANCE_DEFINITION_RE.search(line)  # id,name,attrs
-            if match_instance_definition:
-                instance_id, entity_name, entity_attrs = match_instance_definition.groups()
-                instance_int_id = int(instance_id)
-                # find number of ancestors
-                number_of_ancestors = entity_attrs.count('#')
-                # fill number of ancestors dict
-                self._number_of_ancestors[number_of_ancestors].append(instance_int_id)
-                # parse attributes string
-                entity_attrs_list, str_len = Utils.process_nested_parent_str(entity_attrs)
-                # then finally append this instance to the disct instance
-                self._instances_definition[instance_int_id] = (entity_name,entity_attrs_list)
-            else: #does not match with entity instance definition, parse the header
-                if line.startswith('FILE_SCHEMA'):
-                    #identify the schema name
-                    self._schema_name = line.split("'")[1].split("'")[0].split(" ")[0].lower()
-        fp.close()
-        print 'done in %fs.'%(time.time()-init_time)
-        print 'schema: - %s entities %i'%(self._schema_name,len(self._instances_definition.keys()))
+    def t_PART21_END(self, t):
+        r'END-ISO-10303-21;'
+        return t
 
-class EntityInstancesFactory(object):
-    '''
-    This class creates entity instances from the str definition
-    For instance, the definition:
-    20: ('CARTESIAN_POINT', ["''", '(5.,125.,20.)'])
-    will result in:
-    p = ARRAY(1,3,REAL)
-    p.[1] = REAL(5)
-    p.[2] = REAL(125)
-    p.[3] = REAL(20)
-    new_instance = cartesian_point(STRING(''),p)
-    '''
-    def __init__(self, schema_name, instance_definition):
-        # First try to import the schema module
+    def t_HEADER_SEC(self, t):
+        r'HEADER;'
+        return t
+
+    def t_ENDSEC(self, t):
+        r'ENDSEC;'
+        return t
+
+    # Keywords
+    # TODO: provide a hook for entity validation i.e. t.value in list_of_entities_for_AP###
+    def t_STANDARD_KEYWORD(self, t):
+        r'(?:!|)[A-Z_][0-9A-Z_]*'
+        if t.value == 'DATA':
+            t.type = 'DATA_SEC'
+        elif t.value.startswith('!'):
+            t.type = 'USER_DEFINED_KEYWORD'
+        return t
+
+    # Simple Data Types
+    t_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
+    t_INTEGER = r'[+-]*[0-9][0-9]*'
+    t_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
+    t_BINARY = r'"[0-3][0-9A-F]*"'
+    t_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
+    t_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
+
+    # Punctuation
+    literals = '()=;,*$'
+    #t_LBRACE = r'\('
+    #t_RBRACE = r'\)'
+    #t_EQ = r'='
+    #t_END_STMT = r';'
+    #t_COMMA = r','
+
+    # Placeholders
+    #t_OMITTED_PARAMETER = r'\*'
+    #t_EMPTYDEF = r'\$'
+
+    # TODO: is it okay to ignore \n?
+    t_ignore  = ' \t\n'
+
+####################################################################################################
+# Simple Model
+####################################################################################################
+class P21File:
+    def __init__(self, header, *sections):
+        self.header = header
+        self.sections = list(*sections)
+
+class P21Header:
+    def __init__(self, file_description, file_name, file_schema):
+        self.file_description = file_description
+        self.file_name = file_name
+        self.file_schema = file_schema
+        self.extra_headers = []
+
+class HeaderEntity:
+    def __init__(self, type_name, *params):
+        self.type_name = type_name
+        self.params = list(*params) if params else []
+
+class Section:
+    def __init__(self, entities):
+        self.entities = entities
+
+class SimpleEntity:
+    def __init__(self, ref, type_name, *params):
+        self.ref = ref
+        self.type_name = type_name
+        self.params = list(*params) if params else []
+
+class ComplexEntity:
+    def __init__(self, ref, *params):
+        self.ref = ref
+        self.params = list(*params) if params else []
+
+class TypedParameter:
+    def __init__(self, type_name, *params):
+        self.type_name = type_name
+        self.params = list(*params) if params else None
+
+####################################################################################################
+# Parser
+####################################################################################################
+class Parser(Base):
+    def __init__(self, lexer=None):
+        if lexer is None:
+            lexer = Lexer()
+        self.lexer = lexer
+        self.parser = yacc.yacc(module=self)
+
+    def parse(self, p21_data):
+        self.lexer.input(p21_data)
+        result = self.parser.parse(lexer=self.lexer)
+        return result
+
+    def p_exchange_file(self, p):
+        """exchange_file : PART21_START header_section data_section_list PART21_END"""
+        p[0] = P21File(p[2], p[3])
+
+    # TODO: Specialise the first 3 header entities
+    def p_header_section(self, p):
+        """header_section : HEADER_SEC header_entity header_entity header_entity ENDSEC"""
+        p[0] = P21Header(p[2], p[3], p[4])
+
+    def p_header_section_with_entity_list(self, p):
+        """header_section : HEADER_SEC header_entity header_entity header_entity header_entity_list ENDSEC"""
+        p[0] = P21Header(p[2], p[3], p[4])
+        p[0].extra_headers.extend(p[5])
+
+    def p_header_entity(self, p):
+        """header_entity : keyword '(' parameter_list ')' ';'"""
+        p[0] = HeaderEntity(p[1], p[3])
+
+    def p_simple_entity_instance(self, p):
+        """simple_entity_instance : ENTITY_INSTANCE_NAME '=' simple_record ';'"""
+        p[0] = SimpleEntity(p[1], *p[3])
+
+    def p_complex_entity_instance(self, p):
+        """complex_entity_instance : ENTITY_INSTANCE_NAME '=' subsuper_record ';'"""
+        p[0] = ComplexEntity(p[1], p[3])
+
+    def p_subsuper_record(self, p):
+        """subsuper_record : '(' simple_record_list ')'"""
+        p[0] = [TypedParameter(*x) for x in p[2]]
+
+    def p_data_section_list(self, p):
+        """data_section_list : data_section_list data_section
+                             | data_section"""
+        try: p[0] = p[1] + [p[2],]
+        except IndexError: p[0] = [p[1],]
+
+    def p_header_entity_list(self, p):
+        """header_entity_list : header_entity_list header_entity
+                              | header_entity"""
+        try: p[0] = p[1] + [p[2],]
+        except IndexError: p[0] = [p[1],]
+
+    def p_parameter_list(self, p):
+        """parameter_list : parameter_list ',' parameter
+                          | parameter"""
+        try: p[0] = p[1] + [p[3],]
+        except IndexError: p[0] = [p[1],]
+
+    def p_keyword(self, p):
+        """keyword : USER_DEFINED_KEYWORD
+                   | STANDARD_KEYWORD"""
+        p[0] = p[1]
+
+    def p_parameter_simple(self, p):
+        """parameter : STRING
+                     | INTEGER
+                     | REAL
+                     | ENTITY_INSTANCE_NAME
+                     | ENUMERATION
+                     | BINARY
+                     | '*'
+                     | '$'
+                     | typed_parameter
+                     | list_parameter"""
+        p[0] = p[1]
+
+    def p_list_parameter(self, p):
+        """list_parameter : '(' parameter_list ')'"""
+        p[0] = p[2]
+
+    def p_typed_parameter(self, p):
+        """typed_parameter : keyword '(' parameter ')'"""
+        p[0] = TypedParameter(p[1], p[3])
+
+    def p_parameter_empty_list(self, p):
+        """parameter : '(' ')'"""
+        p[0] = []
+
+    def p_data_start(self, p):
+        """data_start : DATA_SEC '(' parameter_list ')' ';'"""
         pass
 
-class Part21Population(object):
-    def __init__(self, part21_loader):
-        """ Take a part21_loader a tries to create entities
-        """
-        self._part21_loader = part21_loader
-        self._aggregate_scope = []
-        self._aggr_scope = False
-        self.create_entity_instances()
-    
-    def create_entity_instances(self):
-        """ Starts entity instances creation
-        """
-        for number_of_ancestor in self._part21_loader._number_of_ancestors.keys():
-            for entity_definition_id in self._part21_loader._number_of_ancestors[number_of_ancestor]:
-                self.create_entity_instance(entity_definition_id)
-    
-    def create_entity_instance(self, instance_id):
-        instance_definition = self._part21_loader._instances_definition[instance_id]
-        print "Instance definition to process",instance_definition
-        # first find class name
-        class_name = instance_definition[0].lower()
-        print "Class name:%s"%class_name
-        object_ = globals()[class_name]
-        # then attributes
-        #print object_.__doc__
-        instance_attributes = instance_definition[1]
-        print "instance_attributes:",instance_attributes
-        a = object_(*instance_attributes)
-        
-if __name__ == "__main__":
-    import time
-    import sys
-    from config_control_design import *
-    p21loader = Part21Parser("gasket1.p21")
-    print "Creating instances"
-    p21population = Part21Population(p21loader)
+    def p_data_start_empty(self, p):
+        """data_start : DATA_SEC '(' ')' ';'
+                      | DATA_SEC ';'"""
+        pass
+
+    def p_data_section(self, p):
+        """data_section : data_start entity_instance_list ENDSEC""" 
+        p[0] = Section(p[2])
+
+    def p_entity_instance_list(self, p):
+        """entity_instance_list : entity_instance_list entity_instance
+                                | empty"""
+        try: p[0] = p[1] + [p[2],]
+        except IndexError: pass # p[2] doesn't exist, p[1] is None
+        except TypeError: p[0] = [p[2],] # p[1] is None, p[2] is valid
+
+    def p_entity_instance(self, p):
+        """entity_instance : simple_entity_instance
+                           | complex_entity_instance"""
+        p[0] = p[1]
+
+    def p_simple_record_empty(self, p):
+        """simple_record : keyword '(' ')'"""
+        p[0] = (p[1], [])
+
+    def p_simple_record_with_params(self, p):
+        """simple_record : keyword '(' parameter_list ')'"""
+        p[0] = (p[1], p[3])
+
+    def p_simple_record_list(self, p):
+        """simple_record_list : simple_record_list simple_record
+                              | simple_record"""
+        try: p[0] = p[1] + [p[2],]
+        except IndexError: p[0] = [p[1],]
+
+    def p_empty(self, p):
+        """empty :"""
+        pass
+
+
+def test():
+    s = open('io1-tu-203.stp', 'r').read()
+    parser = Parser()
+
+    r = parser.parse(s)
+    return r
+
+if __name__ == '__main__':
+    test()
+
