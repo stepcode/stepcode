@@ -212,13 +212,13 @@ class lazyInstMgr {
         }
 #endif //HAVE_STD_THREAD
 
-        //unloads all instances. (For testing purpose, not thread safe)
+        /// unloads all instances. (For testing purpose, not thread safe)
         void unloadAllInstances() {
             _loadedInstanceCount = 0;
             _instancesLoaded.clear();
         }
 
-        // (For testing purpose, not thread safe)
+        /// (For testing purpose, not thread safe)
         instanceStreamPos_t * getInstanceStreamPos() {
             return &_instanceStreamPos;
         }
