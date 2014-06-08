@@ -597,6 +597,41 @@ process_aggregate( FILE * file, Type t ) {
     }
 }
 
+
+int count_supertypes(Entity f) {
+    int top_count;
+    int child_count;
+    Linked_List list;
+
+    list = ENTITYget_supertypes(f);
+    top_count = 0;
+    LISTdo( list, e, Entity )
+        child_count = 1;
+        child_count += count_supertypes(e);
+        if (child_count > top_count)
+            top_count = child_count;
+    LISTod;
+
+    return top_count;
+}
+
+int
+cmp_python_mro( Entity e1, Entity e2 ) {
+    int e1_chain_len, e2_chain_len;
+
+    /* TODO: This should do something more intelligent */
+    e1_chain_len = count_supertypes(e1);
+    e2_chain_len = count_supertypes(e2);
+
+    if (e1_chain_len == e2_chain_len) {
+        return 0;
+    } else if (e1_chain_len > e2_chain_len) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
 void
 LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     int attr_count_tmp = attr_count;
@@ -624,6 +659,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     * Look for inheritance and super classes
     */
     list = ENTITYget_supertypes( entity );
+    LISTsort(list, cmp_python_mro);
     num_parent = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
