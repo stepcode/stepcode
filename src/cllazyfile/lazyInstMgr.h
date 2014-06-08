@@ -167,7 +167,7 @@ class lazyInstMgr {
 
         SDAI_Application_instance * loadInstance( instanceID id );
 
-        //list all instances that one instance depends on (recursive)
+        /// lists all instances that one instance depends on (recursive)
         instanceSet * instanceDependencies( instanceID id );
         instanceSet * instanceDependenciesHelper( instanceID id, instanceRefs_t * _fwdRefs );
 
@@ -187,10 +187,10 @@ class lazyInstMgr {
         /// thread safe counterpart of countInstances()
         unsigned int countInstancesSafely( std::string type );
 
-        //Thread safe counterpart of loadInstance( instanceID )
+        /// Thread safe counterpart of loadInstance( instanceID )
         SDAI_Application_instance * loadInstanceSafely( instanceID id );
 
-        //Thread safe counterpart of instanceDependencies( instanceID )
+        /// Thread safe counterpart of instanceDependencies( instanceID )
         instanceSet * instanceDependenciesSafely( instanceID id );
 
         void mtxLock( std::mutex &mtx ) {
@@ -201,12 +201,12 @@ class lazyInstMgr {
             mtx.unlock();
         }
 #else
-        //dummy counterpart of mtxLock
+        /// dummy counterpart of mtxLock
         void mtxLock( int dummy ) {
             ( void )dummy;
         }
 
-        //dummy counterpart of mtxUnlock
+        /// dummy counterpart of mtxUnlock
         void mtxUnlock( int dummy ) {
             ( void )dummy;
         }
