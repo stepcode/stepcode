@@ -32,6 +32,30 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     Type i;
     int redefs = 0;// index = 0;
 
+    /* Defined Types based on SIMPLE types */
+    SCOPEdo_types( scope, t, de )
+    if ( ( t->search_id == CANPROCESS )
+            && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
+            && ( TYPEget_ancestor( t ) == NULL) ) {
+        TYPEprint_descriptions( t, files, schema );
+        t->search_id = PROCESSED;
+    }
+    SCOPEod
+
+    /* Defined Types with defined ancestor head
+     * TODO: recusive approach
+     */
+    SCOPEdo_types( scope, t, de )
+    if ( ( t->search_id == CANPROCESS )
+            && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
+            && ( ( i = TYPEget_head( t ) ) != NULL ) ) {
+        if (i->search_id == PROCESSED) {
+            TYPEprint_descriptions( t, files, schema );
+            t->search_id = PROCESSED;
+        }
+    }
+    SCOPEod
+
     /* fill in the values for the type descriptors */
     /* and print the enumerations */
     //fprintf( files -> inc, "\n/*\t**************  TYPES  \t*/\n" );
