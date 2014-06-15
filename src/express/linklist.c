@@ -67,6 +67,38 @@ void LISTfree( Linked_List list ) {
     LIST_destroy( list );
 }
 
+void LISTsort( Linked_List list, int (*comp)(void*, void*)) {
+    unsigned int moved;
+    Link node, prev;
+
+    if (LISTempty(list))
+        return;
+
+    while (true) {
+        for ( node = list->mark->next, moved = 0; node != list->mark; node = node->next ) {
+            prev = node->prev;
+            if (prev != list->mark && comp(prev->data, node->data) < 0) {
+                LISTswap(prev, node);
+                moved++;
+            }
+        }
+        if (moved == 0)
+            break;
+    }
+}
+
+void LISTswap( Link p, Link q ) {
+    Generic     tmp;
+
+    if( p == LINK_NULL || q == LINK_NULL || p == q )
+        return;
+
+    tmp = p->data;
+    p->data = q->data;
+    q->data = tmp;
+}
+
+
 Generic LISTadd_first( Linked_List list, Generic item ) {
     Link        node;
 

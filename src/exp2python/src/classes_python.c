@@ -127,6 +127,31 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
     return return_buf;
 }
 
+char * strliteral_py_dup( char * orig_buf ) {
+    char * new_buf = strdup(orig_buf);
+    char * tmp = new_buf;
+
+    while ((tmp = strstr(tmp, "\\x9"))) {
+        tmp++ ; *tmp = 't'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+
+    tmp = new_buf;
+    while ((tmp = strstr(tmp, "\\xA"))) {
+        tmp++ ; *tmp = 'n'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+
+    tmp = new_buf;
+    while ((tmp = strstr(tmp, "\\xD"))) {
+        tmp++ ; *tmp = 'r'; tmp++;
+        memmove(tmp, tmp+1, strlen(tmp));
+    }
+    
+    return new_buf;
+}
+
+
 void
 USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {
     Dictionary dict;
@@ -572,6 +597,41 @@ process_aggregate( FILE * file, Type t ) {
     }
 }
 
+
+int count_supertypes(Entity f) {
+    int top_count;
+    int child_count;
+    Linked_List list;
+
+    list = ENTITYget_supertypes(f);
+    top_count = 0;
+    LISTdo( list, e, Entity )
+        child_count = 1;
+        child_count += count_supertypes(e);
+        if (child_count > top_count)
+            top_count = child_count;
+    LISTod;
+
+    return top_count;
+}
+
+int
+cmp_python_mro( Entity e1, Entity e2 ) {
+    int e1_chain_len, e2_chain_len;
+
+    /* TODO: This should do something more intelligent */
+    e1_chain_len = count_supertypes(e1);
+    e2_chain_len = count_supertypes(e2);
+
+    if (e1_chain_len == e2_chain_len) {
+        return 0;
+    } else if (e1_chain_len > e2_chain_len) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
 void
 LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     int attr_count_tmp = attr_count;
@@ -599,6 +659,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     * Look for inheritance and super classes
     */
     list = ENTITYget_supertypes( entity );
+    LISTsort(list, cmp_python_mro);
     num_parent = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
@@ -710,7 +771,11 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         index_attribute = 0;
         if( ! LISTempty( list ) ) {
             LISTdo( list, e, Entity )
-            fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
+            if (is_python_keyword(ENTITYget_name( e ))) {
+                fprintf( file, "\t\t%s_.__init__(self , ", ENTITYget_name( e ) );
+            } else {
+                fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
+            }
             /*  search and write attribute names for superclass */
             LISTdo( ENTITYget_all_attributes( e ), v2, Variable )
             generate_attribute_name( v2, parent_attrnm );
@@ -771,6 +836,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n" );
+                } else if (attr_type && is_python_keyword(attr_type)) {
+                    fprintf( file, "%s_):\n", attr_type );
                 } else {
                     fprintf( file, "%s):\n", attr_type );
                 }
@@ -780,6 +847,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n\t" );
+                } else if (attr_type && is_python_keyword(attr_type)) {
+                    fprintf( file, "%s_):\n\t", attr_type );
                 } else {
                     fprintf( file, "%s):\n\t", attr_type );
                 }
@@ -789,6 +858,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                 fprintf( file, "\t\t\t\tself._%s = ", attrnm );
                 print_aggregate_type( file, t );
                 fprintf( file, "(value)\n" );
+            } else if (attr_type && is_python_keyword(attr_type)) {
+                fprintf( file, "\t\t\t\tself._%s = %s_(value)\n", attrnm, attr_type );
             } else {
                 fprintf( file, "\t\t\t\tself._%s = %s(value)\n", attrnm, attr_type );
             }
@@ -1104,37 +1175,55 @@ CASEout( struct Case_Statement_ *c, int level, FILE * file ) {
 void
 LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
     Variable v;
-    fprintf( file, "for " );
-
-    /* increment */
-    /*  if (loop->scope->u.incr) {*/
-    if( loop->scope ) {
+    
+    if (loop->scope) {
         DictionaryEntry de;
 
+        /* TODO: if incr != 0 && ((incr > 0 && start < stop) || (incr < 0 && start > stop)): */
         DICTdo_init( loop->scope->symbol_table, &de );
         v = ( Variable )DICTdo( &de );
-        fprintf( file, " %s in range(", v->name->symbol.name );
+        fprintf( file, "for %s in range(", v->name->symbol.name );
         EXPRESSION_out( loop->scope->u.incr->init, 0 , file );
         fprintf( file, "," );
         EXPRESSION_out( loop->scope->u.incr->end, 0 , file );
         fprintf( file, "," ); /* parser always forces a "by" expr */
         EXPRESSION_out( loop->scope->u.incr->increment, 0 , file );
         fprintf( file, "):\n" );
-    }
+        
+        if( loop->while_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->while_expr, 0 , file );
+            fprintf( file, ":\n");
+            STATEMENTlist_out( loop->statements, level + 2 , file );
+        } else {
+            STATEMENTlist_out( loop->statements, level + 1 , file );
+        }
 
-    /* while */
-    if( loop->while_expr ) {
-        fprintf( file, " while " );
+        if( loop->until_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->until_expr, 0 , file );
+            fprintf( file, ":\n\tbreak\n");
+        }
+    } else if( loop->while_expr ) {
+        fprintf( file, "while " );
         EXPRESSION_out( loop->while_expr, 0 , file );
-    }
+        fprintf( file, ":\n");
+        STATEMENTlist_out( loop->statements, level + 1 , file );
 
-    /* until */
-    if( loop->until_expr ) {
-        fprintf( file, " UNTIL " );
+        if( loop->until_expr ) {
+            fprintf( file, "if " );
+            EXPRESSION_out( loop->until_expr, 0 , file );
+            fprintf( file, ":\n\tbreak\n");
+        }
+    } else {
+        fprintf( file, "while True:\n" );
+        STATEMENTlist_out( loop->statements, level + 1 , file );
+
+        fprintf( file, "if " );
         EXPRESSION_out( loop->until_expr, 0 , file );
+        fprintf( file, ":\n\tbreak\n");
     }
 
-    STATEMENTlist_out( loop->statements, level + 1 , file );
 }
 
 void
@@ -1190,7 +1279,9 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                fprintf( file, "'%s'", e->symbol.name );
+                char* tmp = strliteral_py_dup(e->symbol.name);
+                fprintf( file, "'%s'", tmp );
+                free(tmp);
             }
             break;
         case entity_:
@@ -1303,7 +1394,9 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                fprintf( file, "'%s'", e->symbol.name );
+                char* tmp = strliteral_py_dup(e->symbol.name);
+                fprintf( file, "'%s'", tmp );
+                free(tmp);
             }
             break;
         case entity_:
@@ -1391,7 +1484,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previ
             ATTRIBUTE_INITIALIZERop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            ATTRIBUTE_INITIALIZERop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            ATTRIBUTE_INITIALIZERop2__out( oe, " != ", paren, PAD, previous_op, file );
             break;
         case OP_EXP:
             ATTRIBUTE_INITIALIZERop2_out( oe, " ** ", paren, PAD, file );
@@ -1485,7 +1578,7 @@ EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FI
             EXPRESSIONop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            EXPRESSIONop2__out( oe, ( char * )0, paren, PAD, previous_op, file );
+            EXPRESSIONop2__out( oe, " != ", paren, PAD, previous_op, file );
             break;
         case OP_EXP:
             EXPRESSIONop2_out( oe, " ** ", paren, PAD, file );
