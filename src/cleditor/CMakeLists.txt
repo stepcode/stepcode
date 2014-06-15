@@ -28,6 +28,10 @@ include_directories(
   )
 
 SC_ADDLIB(stepeditor "${LIBSTEPEDITOR_SRCS}" "stepcore;stepdai;steputils;base")
+if(HAVE_STD_THREAD)
+  list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  set_target_properties(stepeditor PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD" )
+endif(HAVE_STD_THREAD)
 
 install(FILES ${SC_CLEDITOR_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cleditor)

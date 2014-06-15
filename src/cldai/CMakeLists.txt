@@ -35,6 +35,10 @@ include_directories(
   )
 
 SC_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")
+if(HAVE_STD_THREAD)
+  list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  set_target_properties(stepdai PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD" )
+endif(HAVE_STD_THREAD)
 
 install(FILES ${SC_CLDAI_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cldai)

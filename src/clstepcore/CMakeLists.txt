@@ -70,6 +70,9 @@ include_directories(
 
 SC_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "steputils;stepdai;base")
 if(HAVE_STD_THREAD)
+  list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  set_target_properties(stepcore PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD" )
+
   SC_ADDEXEC(InstMgr_thread_safety_test "InstMgr_thread_safety_test.cc" "stepcore" )
   set_target_properties(InstMgr_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
   target_link_libraries(InstMgr_thread_safety_test "pthread" )
