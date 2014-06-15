@@ -346,12 +346,7 @@ InstMgr::GetApplication_instance( int index ) {
 
 SDAI_Application_instance *
 InstMgr::GetSTEPentity( int index ) {
-    MgrNode * mn = ( MgrNode * )( *master )[index];
-    if( mn ) {
-        return mn->GetApplication_instance();
-    } else {
-        return 0;
-    }
+    return GetApplication_instance( index );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -385,19 +380,7 @@ InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index
 
 SDAI_Application_instance *
 InstMgr::GetSTEPentity( const char * entityKeyword, int starting_index ) {
-    MgrNode * node;
-    SDAI_Application_instance * se;
-
-    int count = InstanceCount();
-    for( int j = starting_index; j < count; ++j ) {
-        node = GetMgrNode( j );
-        se = node->GetApplication_instance();
-        if( !strcmp( se->EntityName(),
-                     PrettyTmpName( entityKeyword ) ) ) {
-            return se;
-        }
-    }
-    return ENTITY_NULL;
+    return GetApplication_instance( entityKeyword, starting_index );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
