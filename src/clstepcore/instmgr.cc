@@ -67,15 +67,19 @@ InstMgr::~InstMgr() {
 ///////////////////////////////////////////////////////////////////////////////
 
 void InstMgr::ClearInstances() {
+    masterMtx.lock();
     master->ClearEntries();
     sortedMaster->ClearEntries();
     maxFileId = -1;
+    masterMtx.unlock();
 }
 
 void InstMgr::DeleteInstances() {
+    masterMtx.lock();
     master->DeleteEntries();
     sortedMaster->ClearEntries();
     maxFileId = -1;
+    masterMtx.unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,6 +98,8 @@ enum Severity
 InstMgr::VerifyInstances( ErrorDescriptor & err ) {
     int errorCount = 0;
     char errbuf[BUFSIZ];
+
+    masterMtx.lock();
 
     int n = InstanceCount();
     MgrNode * mn;
@@ -158,6 +164,7 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
         err.GreaterSeverity( SEVERITY_INCOMPLETE );
     }
 
+    masterMtx.unlock();
     return rval;
 }
 
@@ -184,7 +191,8 @@ int InstMgr::GetIndex( MgrNode * mn ) {
 
 int InstMgr::GetIndex( SDAI_Application_instance * se ) {
     int fileId = se->StepFileId();
-    return sortedMaster->MgrNodeIndex( fileId );
+    int index = sortedMaster->MgrNodeIndex( fileId );
+    return index;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -217,10 +225,12 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
         se->StepFileId( NextFileId() );    // assign a file id
     }
 
+    masterMtx.lock();
     mn = FindFileId( se->StepFileId() );
     if( mn ) { // if id already in list
         // and it's because instance is already in list
         if( GetApplication_instance( mn ) == se ) {
+            masterMtx.unlock();
             return 0;    // return 0 or mn?
         } else {
             se->StepFileId( NextFileId() );    // otherwise assign a new file id
@@ -241,13 +251,16 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
              " doesn't have state information" << endl;
     master->Append( mn );
     sortedMaster->Insert( mn );
+
+    masterMtx.unlock();
 //PrintSortedFileIds();
     return mn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void InstMgr::Delete( MgrNode * node ) {
+// Is common to both the the avalaible API
+void InstMgr::DeleteHelper( MgrNode * node ) {
     // delete the node from its current state list
     node->Remove();
 
@@ -267,8 +280,18 @@ void InstMgr::Delete( MgrNode * node ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void InstMgr::Delete( MgrNode * node ) {
+    masterMtx.lock();
+    DeleteHelper( node );
+    masterMtx.unlock();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void InstMgr::Delete( SDAI_Application_instance * se ) {
-    Delete( FindFileId( se->StepFileId() ) );
+    masterMtx.lock();
+    DeleteHelper( FindFileId( se->StepFileId() ) );
+    masterMtx.unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -320,6 +343,8 @@ InstMgr::EntityKeywordCount( const char * name ) {
     int count = 0;
     MgrNode * node;
     SDAI_Application_instance * se;
+
+    masterMtx.lock();
     int n = InstanceCount();
     for( int j = 0; j < n; ++j ) {
         node = GetMgrNode( j );
@@ -329,6 +354,7 @@ InstMgr::EntityKeywordCount( const char * name ) {
             ++count;
         }
     }
+    masterMtx.unlock();
     return count;
 }
 
@@ -366,6 +392,7 @@ InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index
     MgrNode * node;
     SDAI_Application_instance * se;
 
+    masterMtx.lock();
     int count = InstanceCount();
     for( int j = starting_index; j < count; ++j ) {
         node = GetMgrNode( j );
@@ -375,6 +402,8 @@ InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index
             return se;
         }
     }
+
+    masterMtx.unlock();
     return ENTITY_NULL;
 }
 
