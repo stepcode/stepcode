@@ -17,6 +17,7 @@ set(SC_CLUTILS_HDRS
   gennodelist.h
   sc_hash.h
   Str.h
+  sc_mutex.h
   )
 
 include_directories(
@@ -25,7 +26,11 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-SC_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "base")
+SC_ADDLIB(steputils "${LIBSTEPUTILS_SRCS};${SC_CLUTILS_HDRS}" "base")
+if(HAVE_STD_THREAD)
+  list(APPEND CMAKE_CXX_FLAGS "-pthread -std=c++0x")
+  set_target_properties(steputils PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD" )
+endif(HAVE_STD_THREAD)
 
 if(MINGW OR MSVC OR BORLAND)
   target_link_libraries(steputils shlwapi.lib)
