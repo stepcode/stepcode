@@ -51,6 +51,7 @@ class Base:
 class Lexer(Base):
     def __init__(self, debug=0, optimize=0):
         self.lexer = lex.lex(module=self, debug=debug, optimize=optimize)
+        self.entity_keywords = []
 
     def input(self, s):
         self.lexer.input(s)
@@ -60,6 +61,9 @@ class Lexer(Base):
             return next(self.lexer)
         except StopIteration:
             return None
+
+    def register_entities(self, entities):
+        self.entity_keywords.extend(entities)
     
     # Comment (ignored)
     def t_COMMENT(self, t):
@@ -90,6 +94,8 @@ class Lexer(Base):
             t.type = 'DATA_SEC'
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
+        elif t.value in self.entity_keywords:
+            t.type = t.value
         return t
 
     # Simple Data Types
@@ -165,9 +171,9 @@ class Parser(Base):
         self.lexer = lexer
         self.parser = yacc.yacc(module=self)
 
-    def parse(self, p21_data):
+    def parse(self, p21_data, debug=None):
         self.lexer.input(p21_data)
-        result = self.parser.parse(lexer=self.lexer)
+        result = self.parser.parse(lexer=self.lexer, debug=debug)
         return result
 
     def p_exchange_file(self, p):
