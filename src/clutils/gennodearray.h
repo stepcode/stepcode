@@ -25,6 +25,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdlib.h> // to get bcopy for CenterLine
+#include <sc_mutex.h>
 
 #include <gennode.h>
 
@@ -68,6 +69,7 @@ class SC_UTILS_EXPORT GenNodeArray {
         GenericNode ** _buf; // the array
         int _bufsize;   // the possible number of entries in the array
         int _count;     // the number of entries in the array
+        sc_recursive_mutex mtx;
 };
 
 //////////////////////////////////////////////////////////////////////////////

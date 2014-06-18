@@ -50,7 +50,9 @@ MgrNodeArray::MgrNodeArray( int defaultSize )
 void MgrNodeArray::AssignIndexAddress( int index ) {
 //    if(debug_level >= PrintFunctionTrace)
 //  cout << "MgrNodeArray::AssignIndexAddress()\n";
+    mtx.lock();
     ( ( MgrNode * )_buf[index] )->ArrayIndex( index );
+    mtx.unlock();
 }
 
 MgrNodeArray::~MgrNodeArray() {
@@ -66,11 +68,13 @@ void MgrNodeArray::ClearEntries() {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::ClearEntries()\n";
     }
+    mtx.lock();
     int i;
     for( i = 0 ; i < _count; i++ ) {
         _buf[i] = 0;
     }
     _count = 0;
+    mtx.unlock();
 }
 
 /*****************************************************************************/
@@ -79,11 +83,13 @@ void MgrNodeArray::DeleteEntries() {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::DeleteEntries()\n";
     }
+    mtx.lock();
     int i;
     for( i = 0 ; i < _count; i++ ) {
         delete( ( MgrNode * )_buf[i] );
     }
     _count = 0;
+    mtx.unlock();
 }
 
 /*****************************************************************************/
@@ -92,18 +98,23 @@ int MgrNodeArray::Insert( GenericNode * gn, int index ) {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::Insert()\n";
     }
+    mtx.lock();
     int AssignedIndex = GenNodeArray::Insert( gn, index );
     int i;
     for( i = AssignedIndex ; i < _count; i++ ) {
         ( ( MgrNode * )_buf[i] )->ArrayIndex( i );
     }
+    mtx.unlock();
     return AssignedIndex;
 }
 
 /*****************************************************************************/
 
 int MgrNodeArray::Insert( GenericNode * gn )     {
-    return Insert( gn, _count );
+    mtx.lock();
+    int index = Insert( gn, _count );
+    mtx.unlock();
+    return index;
 }
 
 /*****************************************************************************/
@@ -112,6 +123,7 @@ void MgrNodeArray::Remove( int index ) {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::Remove()\n";
     }
+    mtx.lock();
     if( 0 <= index && index < _count ) {
         GenNodeArray::Remove( index );
         int i;
@@ -119,6 +131,7 @@ void MgrNodeArray::Remove( int index ) {
             ( ( MgrNode * )_buf[i] )->ArrayIndex( i );
         }
     }
+    mtx.unlock();
 }
 
 /*****************************************************************************/
@@ -127,12 +140,15 @@ int MgrNodeArray::MgrNodeIndex( int fileId ) {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::MgrNodeIndex()\n";
     }
+    mtx.lock();
     int i;
     for( i = 0; i < _count; ++i ) {
         if( ( ( MgrNode * )_buf[i] )->GetApplication_instance()->GetFileId() == fileId ) {
+            mtx.unlock();
             return i;
         }
     }
+    mtx.unlock();
     return -1;
 }
 
@@ -149,36 +165,47 @@ int MgrNodeArraySorted::Insert( GenericNode * gn ) {
 //  cout << "MgrNodeArraySorted::Insert()\n";
 
     // since gn is really a MgrNode
+    mtx.lock();
     int fileId = ( ( MgrNode * )gn )->GetApplication_instance()->GetFileId();
 
     int index = FindInsertPosition( fileId );
+    index = GenNodeArray::Insert( gn, index );
+    mtx.unlock();
 
-    return GenNodeArray::Insert( gn, index );
+    return index;
 }
 
 int MgrNodeArraySorted::Index( GenericNode * gn ) {
 //    if(debug_level >= PrintFunctionTrace)
 //  cout << "MgrNodeArraySorted::Index()\n";
     // since gn is really a MgrNode
-    return MgrNodeIndex( ( ( MgrNode * )gn )->GetFileId() );
+    mtx.lock();
+    int index = MgrNodeIndex( ( ( MgrNode * )gn )->GetFileId() );
+    mtx.unlock();
+    return index;
 }
 
 int MgrNodeArraySorted::Index( GenericNode ** gn ) {
 //    if(debug_level >= PrintFunctionTrace)
 //  cout << "MgrNodeArraySorted::Index()\n";
     // since gn is really a MgrNode
-    return MgrNodeIndex( ( ( MgrNode * )( *gn ) )->GetFileId() );
+    mtx.lock();
+    int index = MgrNodeIndex( ( ( MgrNode * )( *gn ) )->GetFileId() );
+    mtx.unlock();
+    return index;
 }
 
 void MgrNodeArraySorted::ClearEntries() {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArraySorted::ClearEntries()\n";
     }
+    mtx.lock();
     int i;
     for( i = 0 ; i < _count; i++ ) {
         _buf[i] = 0;
     }
     _count = 0;
+    mtx.unlock();
 }
 
 /*****************************************************************************/
@@ -188,10 +215,12 @@ void MgrNodeArraySorted::DeleteEntries() {
         cout << "MgrNodeArraySorted::DeleteEntries()\n";
     }
     int i;
+    mtx.lock();
     for( i = 0 ; i < _count; i++ ) {
         delete( ( MgrNode * )_buf[i] );
     }
     _count = 0;
+    mtx.unlock();
 }
 
 /*****************************************************************************/
@@ -206,12 +235,15 @@ int MgrNodeArraySorted::FindInsertPosition( const int fileId ) {
     int i;
     int curFileId;
 
+    mtx.lock();
     for( i = _count - 1; i >= 0; --i ) {
         curFileId = ( ( MgrNode * )_buf[i] )->GetApplication_instance()->GetFileId();
         if( curFileId < fileId /*|| curFileId == fileId*/ ) {
+            mtx.unlock();
             return i + 1;
         }
     }
+    mtx.unlock();
     return 0;
 }
 
@@ -230,6 +262,7 @@ int MgrNodeArraySorted::MgrNodeIndex( int fileId ) {
     int found = 0;
     int curFileId;
 
+    mtx.lock();
     while( !found && ( low <= high ) ) {
         mid = ( low + high ) / 2;
         curFileId = ( ( MgrNode * )_buf[mid] )->GetApplication_instance()->GetFileId();
@@ -241,8 +274,9 @@ int MgrNodeArraySorted::MgrNodeIndex( int fileId ) {
             high = mid - 1;
         }
     }
-    if( found ) {
-        return mid;
+    if( !found ) {
+        mid = -1;
     }
-    return -1;
+    mtx.unlock();
+    return mid;
 }
