@@ -34,23 +34,23 @@ void DisplayNodeList::Append( GenericNode * node ) {
 
 // deletes newNode from its previous list & inserts after
 //  existNode
-void DisplayNodeList::InsertAfter( GenericNode * newNode,
+bool DisplayNodeList::InsertAfter( GenericNode * newNode,
                                    GenericNode * existNode ) {
     if( newNode->next != 0 ) { // remove the node from its previous
         newNode->Remove();  //  display state list
     }
-    GenNodeList::InsertAfter( newNode, existNode );
+    return GenNodeList::InsertAfter( newNode, existNode );
 // DON'T DO THIS    ((DisplayNode *)newNode)->displayState = listType;
 }
 
 // deletes newNode from its previous list & inserts before
 //  existNode
-void DisplayNodeList::InsertBefore( GenericNode * newNode,
+bool DisplayNodeList::InsertBefore( GenericNode * newNode,
                                     GenericNode * existNode ) {
     if( newNode->next != 0 ) { // remove the node from its previous
         newNode->Remove();  //  display state list
     }
-    GenNodeList::InsertBefore( newNode, existNode );
+    return GenNodeList::InsertBefore( newNode, existNode );
 // DON'T DO THIS!!!   ((DisplayNode *)newNode)->displayState = listType;
 }
 

@@ -40,23 +40,23 @@ void MgrNodeList::Append( GenericNode * node ) {
 
 // deletes newNode from its previous list & inserts after
 //  existNode
-void MgrNodeList::InsertAfter( GenericNode * newNode,
+bool MgrNodeList::InsertAfter( GenericNode * newNode,
                                GenericNode * existNode ) {
     if( newNode->next != 0 ) { // remove the node from its previous list
         newNode->Remove();
     }
-    GenNodeList::InsertAfter( newNode, existNode );
+    return GenNodeList::InsertAfter( newNode, existNode );
 // DON'T DO THIS    ((MgrNode *)newNode)->currState = listType;
 }
 
 // deletes newNode from its previous list & inserts before
 //  existNode
-void MgrNodeList::InsertBefore( GenericNode * newNode,
+bool MgrNodeList::InsertBefore( GenericNode * newNode,
                                 GenericNode * existNode ) {
     if( newNode->next != 0 ) { // remove the node from its previous
         newNode->Remove();  //  state list
     }
-    GenNodeList::InsertBefore( newNode, existNode );
+    return GenNodeList::InsertBefore( newNode, existNode );
 // DON'T DO THIS!!    ((MgrNode *)newNode)->currState = listType;
 }
 

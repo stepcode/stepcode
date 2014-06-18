@@ -20,27 +20,43 @@
 #include <assert.h>
 
 // inserts after existNode
-void GenNodeList::InsertAfter( GenericNode * newNode,
+bool GenNodeList::InsertAfter( GenericNode * newNode,
                                GenericNode * existNode ) {
+    bool success = false;
     assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
-    newNode->next = existNode->next;
-    newNode->next->prev = newNode;
 
-    newNode->prev = existNode;
-    existNode->next = newNode;
-    newNode->containingList = this;
+    // checking wehther existNode still belong to the same list
+    if( existNode->containingList == this ) {
+        newNode->next = existNode->next;
+        newNode->next->prev = newNode;
+
+        newNode->prev = existNode;
+        existNode->next = newNode;
+
+        newNode->containingList = this;
+        success = true;
+    }
+    return success;
 }
 
 // inserts before existNode
-void GenNodeList::InsertBefore( GenericNode * newNode,
+bool GenNodeList::InsertBefore( GenericNode * newNode,
                                 GenericNode * existNode ) {
+    bool success = false;
     assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
-    existNode->prev->next = newNode;
-    newNode->prev = existNode->prev;
 
-    newNode->next = existNode;
-    existNode->prev = newNode;
-    newNode->containingList = this;
+    // checking wehther existNode still belong to the same list
+    if( existNode->containingList == this ) {
+        existNode->prev->next = newNode;
+        newNode->prev = existNode->prev;
+
+        newNode->next = existNode;
+        existNode->prev = newNode;
+
+        newNode->containingList = this;
+        success = true;
+    }
+    return success;
 }
 
 // inserts before the head node

@@ -42,9 +42,11 @@ class SC_UTILS_EXPORT GenNodeList {
         // deletes node from its previous list & appends
         virtual void Append( GenericNode * node );
         // deletes newNode from its previous list & inserts in
-        //  relation to existNode
-        virtual void InsertAfter( GenericNode * newNode, GenericNode * existNode );
-        virtual void InsertBefore( GenericNode * newNode, GenericNode * existNode );
+        //  relation to existNode. Returns true on success. If
+        //  the existNode doesn't belong to the list then simply
+        //  returns false
+        virtual bool InsertAfter( GenericNode * newNode, GenericNode * existNode );
+        virtual bool InsertBefore( GenericNode * newNode, GenericNode * existNode );
 
         virtual void Remove( GenericNode * node );
 

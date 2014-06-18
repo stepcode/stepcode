@@ -44,8 +44,8 @@ class SC_CORE_EXPORT DisplayNodeList : public GenNodeList {
         virtual void Append( GenericNode * node );
         // deletes newNode from its previous list & inserts in
         //  relation to existNode
-        virtual void InsertAfter( GenericNode * newNode, GenericNode * existNode );
-        virtual void InsertBefore( GenericNode * newNode, GenericNode * existNode );
+        virtual bool InsertAfter( GenericNode * newNode, GenericNode * existNode );
+        virtual bool InsertBefore( GenericNode * newNode, GenericNode * existNode );
         virtual void Remove( GenericNode * node );
 
     protected:
