@@ -44,7 +44,12 @@ class SC_UTILS_EXPORT GenNodeArray {
         GenNodeArray( int defaultSize = ARRAY_DEFAULT_SIZE );
         virtual ~GenNodeArray();
 
+        // Should be avoided as index to address mapping may
+        // not remain same (especially) when multiple threads
+        // are involved. Use GetGenNode instead
         GenericNode *& operator[]( int index );
+
+        virtual GenericNode * GetGenNode( int index );
         virtual int Index( GenericNode * gn );
         virtual int Index( GenericNode ** gn );
 
@@ -69,6 +74,7 @@ class SC_UTILS_EXPORT GenNodeArray {
 // class GenNodeArray inline public functions
 //////////////////////////////////////////////////////////////////////////////
 
+// Should be avoided as the check function may move the element of the array
 inline GenericNode *& GenNodeArray::operator[]( int index ) {
     Check( index );
     return _buf[index];

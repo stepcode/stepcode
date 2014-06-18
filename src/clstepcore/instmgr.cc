@@ -42,7 +42,7 @@ InstMgr::PrintSortedFileIds() {
     int count = InstanceCount();
     int i = 0;
     for( i = 0; i < count; i++ ) {
-        mn = ( MgrNode * )( ( *sortedMaster )[i] );
+        mn = ( MgrNode * )( sortedMaster->GetGenNode( i ) );
         cout << i << " " << mn->GetFileId() << endl;
     }
     masterMtx.unlock();
@@ -177,7 +177,7 @@ MgrNode * InstMgr::FindFileId( int fileId ) {
     masterMtx.lock();
     int index = sortedMaster->MgrNodeIndex( fileId );
     if( index >= 0 ) {
-        mn = ( MgrNode * )( *sortedMaster )[index];
+        mn = ( MgrNode * )sortedMaster->GetGenNode( index );
     }
     masterMtx.unlock();
     return mn;
@@ -362,7 +362,7 @@ InstMgr::EntityKeywordCount( const char * name ) {
 
 SDAI_Application_instance *
 InstMgr::GetApplication_instance( int index ) {
-    MgrNode * mn = ( MgrNode * )( *master )[index];
+    MgrNode * mn = ( MgrNode * )master->GetGenNode( index );
     if( mn ) {
         return mn->GetApplication_instance();
     } else {
@@ -417,7 +417,7 @@ InstMgr::GetSTEPentity( const char * entityKeyword, int starting_index ) {
 
 void *
 InstMgr::GetSEE( int index ) {
-    MgrNode * mn = ( MgrNode * )( *master )[index];
+    MgrNode * mn = ( MgrNode * )master->GetGenNode( index );
     if( mn ) {
         return mn->SEE();
     } else {

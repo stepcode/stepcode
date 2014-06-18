@@ -73,8 +73,10 @@ class SC_CORE_EXPORT InstMgr {
 
         // DAS PORT possible BUG two funct's below may create a temp for the cast
         MgrNode * GetMgrNode( int index ) {
-            return ( MgrNode * ) * GetGenNode( index );
+            return ( MgrNode * ) master->GetGenNode( index );
         }
+        // Is avoided since the address of an index might change if a Check()
+        // operation is done by same / different thread.
         GenericNode ** GetGenNode( int index ) {
             return &( *master ) [index];
         }

@@ -35,6 +35,16 @@ GenNodeArray::~GenNodeArray() {
     delete [] _buf;
 }
 
+GenericNode * GenNodeArray::GetGenNode( int index ) {
+    GenericNode * gn;
+    if( 0 <= index && index < _count ) {
+        gn = _buf[index];
+    } else {
+        gn = 0;
+    }
+    return gn;
+}
+
 int GenNodeArray::Index( GenericNode ** gn ) {
     return ( ( gn - _buf ) / sizeof( GenericNode * ) );
 }
