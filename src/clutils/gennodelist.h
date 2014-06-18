@@ -62,6 +62,7 @@ inline GenNodeList::GenNodeList( GenericNode * headNode ) {
     head = headNode;
     head->next = head;
     head->prev = head;
+    head->containingList = this;
 }
 
 #endif
