@@ -46,7 +46,7 @@ bool compareKeywordCount ( InstMgr * mgr1, InstMgr * mgr2 ) {
         //some comparisions may be repeated.
         const char * str = dummyEDescNames[i].c_str();
         if( mgr1->EntityKeywordCount( str ) !=  mgr2->EntityKeywordCount( str ) ) {
-            std::cout << std::endl << "\tEntityKeywordCount mistmatch for " << str << ": " << mgr1->MaxFileId() << " and " << mgr2->MaxFileId() << std::endl; 
+            std::cout << std::endl << "\tEntityKeywordCount mistmatch for " << str << ": " << mgr1->EntityKeywordCount( str ) << " and " << mgr2->EntityKeywordCount( str ) << std::endl;
             return false;
         }
     }
@@ -84,7 +84,7 @@ void checkInstMgrAppendOnlyThreadSafety() {
     appendInstances( imExpected, sdaiVecOld, 1, 2, size );
     std::cout << "Checking thread safety of InstMgr in Append Operation..." ;
 
-    int i, iterations = 100;
+    int i, iterations = 1000;
     for( i = 0 ; i < iterations; i++ ) {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
@@ -128,7 +128,7 @@ void checkInstMgrDeleteOnlyThreadSafety() {
     deleteInstances( imExpected, sdaiVecOld, 1, 2, size );
     std::cout << "Checking thread safety of InstMgr in Delete Operation..." ;
 
-    int i, iterations = 100;
+    int i, iterations = 1000;
     for( i = 0 ; i < iterations; i++ ) {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
@@ -172,7 +172,7 @@ void checkInstMgrAppendDeleteThreadSafety() {
     deleteInstances( imExpected, sdaiVecOld, 0, 2, size );
     std::cout << "Checking thread safety of InstMgr in Append-Delete Operation..." ;
 
-    int i, iterations = 100;
+    int i, iterations = 1000;
     for( i = 0 ; i < iterations; i++ ) {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
