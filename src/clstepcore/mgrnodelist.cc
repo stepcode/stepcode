@@ -61,7 +61,11 @@ bool MgrNodeList::InsertBefore( GenericNode * newNode,
 }
 
 MgrNode * MgrNodeList::FindFileId( int fileId ) {
-    MgrNode * mn = ( MgrNode * )head->next;
+    return FindFileId( fileId, ( MgrNode * )head );
+}
+
+MgrNode * MgrNodeList::FindFileId( int fileId, MgrNode * startNode ) {
+    MgrNode * mn = ( MgrNode * )startNode->next;
     while( mn != head ) {
         if( mn->GetFileId() == fileId ) {
             return mn;

@@ -50,14 +50,7 @@ MgrNode * MgrNode::StateFindFileId( int fileId ) {
         return this;
     } else {
         // mn is really a MgrNode
-        MgrNode * mn = ( MgrNode * )( startNode->Next() );
-        while( mn != startNode ) {
-            if( mn->GetFileId() == fileId ) {
-                return ( MgrNode * )mn;
-            }
-            mn = ( ( MgrNode * )mn->Next() );
-        }
-        return ( MgrNode * )0;
+        return ( ( MgrNodeList * )containingList )->FindFileId( fileId, startNode );
     }
 }
 

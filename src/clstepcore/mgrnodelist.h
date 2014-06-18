@@ -36,6 +36,7 @@ class SC_CORE_EXPORT MgrNodeList : public GenNodeList {
 
 // ADDED functions
         virtual MgrNode * FindFileId( int fileId );
+        virtual MgrNode * FindFileId( int fileId, MgrNode * startNode );
 
 // REDEFINED functions
         // deletes node from its previous list & appends
