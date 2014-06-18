@@ -28,4 +28,24 @@ class sc_mutex {
 #endif //HAVE_STD_THREAD
         }
 };
+
+class sc_recursive_mutex {
+    protected:
+#ifdef HAVE_STD_THREAD
+		std::recursive_mutex mtx;
+#endif //HAVE_STD_THREAD
+
+    public:
+        void lock() {
+#ifdef HAVE_STD_THREAD
+            mtx.lock();
+#endif //HAVE_STD_THREAD
+        }
+
+        void unlock() {
+#ifdef HAVE_STD_THREAD
+            mtx.unlock();
+#endif //HAVE_STD_THREAD
+        }
+};
 #endif //SC_MUTEX_H

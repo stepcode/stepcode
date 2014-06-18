@@ -260,8 +260,9 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
 ///////////////////////////////////////////////////////////////////////////////
 
 // Is common to both the the avalaible API
-void InstMgr::DeleteHelper( MgrNode * node ) {
+void InstMgr::Delete( MgrNode * node ) {
     // delete the node from its current state list
+    masterMtx.lock();
     node->Remove();
 
     int index;
@@ -276,13 +277,6 @@ void InstMgr::DeleteHelper( MgrNode * node ) {
     master->Remove( index );
 
     delete node;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-void InstMgr::Delete( MgrNode * node ) {
-    masterMtx.lock();
-    DeleteHelper( node );
     masterMtx.unlock();
 }
 
@@ -290,7 +284,7 @@ void InstMgr::Delete( MgrNode * node ) {
 
 void InstMgr::Delete( SDAI_Application_instance * se ) {
     masterMtx.lock();
-    DeleteHelper( FindFileId( se->StepFileId() ) );
+    Delete( FindFileId( se->StepFileId() ) );
     masterMtx.unlock();
 }
 

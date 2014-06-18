@@ -48,7 +48,7 @@ class SC_CORE_EXPORT InstMgr {
         // this corresponds to the display list object by index
         MgrNodeArraySorted * sortedMaster;  // master array sorted by fileId
 //    StateList *master; // this will be an sorted array of ptrs to MgrNodes
-        sc_mutex masterMtx;
+        sc_recursive_mutex masterMtx;
 
     public:
         InstMgr( int ownsInstances = 0 );
@@ -89,7 +89,6 @@ class SC_CORE_EXPORT InstMgr {
 //    void Append(MgrNode *node);
         MgrNode * Append( SDAI_Application_instance * se, stateEnum listState );
         // deletes node from master list structure
-        void DeleteHelper( MgrNode * node );
         void Delete( MgrNode * node );
         void Delete( SDAI_Application_instance * se );
 
