@@ -38,12 +38,14 @@ static int debug_level = 3;
 void
 InstMgr::PrintSortedFileIds() {
     MgrNode * mn = 0;
+    masterMtx.lock();
     int count = InstanceCount();
     int i = 0;
     for( i = 0; i < count; i++ ) {
         mn = ( MgrNode * )( ( *sortedMaster )[i] );
         cout << i << " " << mn->GetFileId() << endl;
     }
+    masterMtx.unlock();
 }
 
 InstMgr::InstMgr( int ownsInstances )
@@ -171,12 +173,14 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 MgrNode * InstMgr::FindFileId( int fileId ) {
+    MgrNode * mn = 0;
+    masterMtx.lock();
     int index = sortedMaster->MgrNodeIndex( fileId );
     if( index >= 0 ) {
-        return ( MgrNode * )( *sortedMaster )[index];
-    } else {
-        return ( MgrNode * )0;
+        mn = ( MgrNode * )( *sortedMaster )[index];
     }
+    masterMtx.unlock();
+    return mn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,8 +194,10 @@ int InstMgr::GetIndex( MgrNode * mn ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 int InstMgr::GetIndex( SDAI_Application_instance * se ) {
+    masterMtx.lock();
     int fileId = se->StepFileId();
     int index = sortedMaster->MgrNodeIndex( fileId );
+    masterMtx.unlock();
     return index;
 }
 
