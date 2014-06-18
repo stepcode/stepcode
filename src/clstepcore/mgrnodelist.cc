@@ -65,13 +65,16 @@ MgrNode * MgrNodeList::FindFileId( int fileId ) {
 }
 
 MgrNode * MgrNodeList::FindFileId( int fileId, MgrNode * startNode ) {
+    MgrNode * match = 0;
+    mtx.lock();
     MgrNode * mn = ( MgrNode * )startNode->next;
     while( mn != head ) {
         if( mn->GetFileId() == fileId ) {
-            return mn;
+            match = mn;
         }
         mn = ( MgrNode * )mn->next;
     }
-    return ( MgrNode * )0;
+    mtx.unlock();
+    return match;
 }
 

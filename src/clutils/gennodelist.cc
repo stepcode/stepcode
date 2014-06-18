@@ -25,6 +25,7 @@ bool GenNodeList::InsertAfter( GenericNode * newNode,
     bool success = false;
     assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
 
+    mtx.lock();
     // checking wehther existNode still belong to the same list
     if( existNode->containingList == this ) {
         newNode->next = existNode->next;
@@ -36,6 +37,7 @@ bool GenNodeList::InsertAfter( GenericNode * newNode,
         newNode->containingList = this;
         success = true;
     }
+    mtx.unlock();
     return success;
 }
 
@@ -45,6 +47,7 @@ bool GenNodeList::InsertBefore( GenericNode * newNode,
     bool success = false;
     assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
 
+    mtx.lock();
     // checking wehther existNode still belong to the same list
     if( existNode->containingList == this ) {
         existNode->prev->next = newNode;
@@ -56,6 +59,7 @@ bool GenNodeList::InsertBefore( GenericNode * newNode,
         newNode->containingList = this;
         success = true;
     }
+    mtx.unlock();
     return success;
 }
 
@@ -66,6 +70,7 @@ void GenNodeList::Append( GenericNode * node ) {
 
 void
 GenNodeList::Remove( GenericNode * node ) {
+    mtx.lock();
     if( node != head ) {
         node->next->prev = node->prev;
         node->prev->next = node->next;
@@ -73,10 +78,12 @@ GenNodeList::Remove( GenericNode * node ) {
         node->prev = 0;
         node->containingList = 0;
     }
+    mtx.unlock();
 }
 void GenNodeList::ClearEntries() {
 //    if(debug_level >= PrintFunctionTrace)
 //  cout << "GenNodeList::ClearEntries()\n";
+    mtx.lock();
     GenericNode * gnPrev = head->Next();
     GenericNode * gn = gnPrev->Next();
 
@@ -89,11 +96,13 @@ void GenNodeList::ClearEntries() {
     }
     head->next = head;
     head->prev = head;
+    mtx.unlock();
 }
 
 void GenNodeList::DeleteEntries() {
 //    if(debug_level >= PrintFunctionTrace)
 //  cout << "GenNodeList::DeleteEntries()\n";
+    mtx.lock();
     GenericNode * gnPrev = head->Next();
     GenericNode * gn;
     head->next = 0;
@@ -105,4 +114,5 @@ void GenNodeList::DeleteEntries() {
     }
     head->next = head;
     head->prev = head;
+    mtx.unlock();
 }

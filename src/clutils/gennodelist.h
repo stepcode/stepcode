@@ -17,6 +17,7 @@
 
 #include <sc_export.h>
 #include <iostream>
+#include <sc_mutex.h>
 
 //////////////////////////////////////////////////////////////////////////////
 // class GenNodeList
@@ -52,6 +53,7 @@ class SC_UTILS_EXPORT GenNodeList {
 
     protected:
         GenericNode * head;
+        sc_recursive_mutex mtx;
 };
 
 //////////////////////////////////////////////////////////////////////////////
