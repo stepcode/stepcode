@@ -102,6 +102,12 @@ int MgrNodeArray::Insert( GenericNode * gn, int index ) {
 
 /*****************************************************************************/
 
+int MgrNodeArray::Insert( GenericNode * gn )     {
+    return Insert( gn, _count );
+}
+
+/*****************************************************************************/
+
 void MgrNodeArray::Remove( int index ) {
     if( debug_level >= PrintFunctionTrace ) {
         cout << "MgrNodeArray::Remove()\n";

@@ -48,11 +48,9 @@ class SC_CORE_EXPORT MgrNodeArray : public GenNodeArray {
         //  MgrNodeArray::Insert(GenericNode *, int index);
         virtual int Insert( GenericNode * gn, int index );
         virtual void Append( GenericNode * gn )    {
-            Insert( gn, _count );
+            Insert( gn );
         }
-        virtual int Insert( GenericNode * gn )     {
-            return Insert( gn, _count );
-        }
+        virtual int Insert( GenericNode * gn );
         virtual void Remove( int index );
         virtual void ClearEntries();
         virtual void DeleteEntries();
