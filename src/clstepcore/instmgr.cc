@@ -399,6 +399,7 @@ InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index
         se = node->GetApplication_instance();
         if( !strcmp( se->EntityName(),
                      PrettyTmpName( entityKeyword ) ) ) {
+            masterMtx.unlock();
             return se;
         }
     }
