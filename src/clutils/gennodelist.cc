@@ -17,25 +17,30 @@
 //#include <gennode.inline.h>
 #include <gennodearray.h>
 #include <sc_memmgr.h>
+#include <assert.h>
 
 // inserts after existNode
 void GenNodeList::InsertAfter( GenericNode * newNode,
                                GenericNode * existNode ) {
+    assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
     newNode->next = existNode->next;
     newNode->next->prev = newNode;
 
     newNode->prev = existNode;
     existNode->next = newNode;
+    newNode->containingList = this;
 }
 
 // inserts before existNode
 void GenNodeList::InsertBefore( GenericNode * newNode,
                                 GenericNode * existNode ) {
+    assert( newNode->containingList == 0 && "Node Already in another list, remove it first" );
     existNode->prev->next = newNode;
     newNode->prev = existNode->prev;
 
     newNode->next = existNode;
     existNode->prev = newNode;
+    newNode->containingList = this;
 }
 
 // inserts before the head node
@@ -50,6 +55,7 @@ GenNodeList::Remove( GenericNode * node ) {
         node->prev->next = node->next;
         node->next = 0;
         node->prev = 0;
+        node->containingList = 0;
     }
 }
 void GenNodeList::ClearEntries() {
@@ -61,6 +67,7 @@ void GenNodeList::ClearEntries() {
     while( gnPrev != head ) {
         gnPrev->prev = 0;
         gnPrev->next = 0;
+        gnPrev->containingList = 0;
         gnPrev = gn;
         gn = gn->Next();
     }

@@ -35,6 +35,8 @@ class SC_UTILS_EXPORT GenericNode {
     protected:
         GenericNode * next;
         GenericNode * prev;
+        //pointer to the list of which this MgrNode is a element of.
+        GenNodeList * containingList;
     public:
         GenericNode();
         virtual ~GenericNode();
@@ -45,20 +47,9 @@ class SC_UTILS_EXPORT GenericNode {
         GenericNode * Prev() {
             return prev;
         }
-        virtual void Append( GenNodeList * list );
-        virtual void Remove() {
-            ( next ) ? ( next->prev = prev ) : 0;
-            ( prev ) ? ( prev->next = next ) : 0;
-            /*
-            //  if(next)
-            //      next->prev = prev;
-            //  if(prev)
-            //      prev->next = next;
-            */
-            next = 0;
-            prev = 0;
 
-        }
+        virtual void Append( GenNodeList * list );
+        virtual void Remove();
 };
 
 //////////////////////////////////////////////////////////////////////////////

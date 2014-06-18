@@ -24,15 +24,6 @@ extern "C" {
 }
 #endif
 
-GenericNode::GenericNode() {
-    next = 0;
-    prev = 0;
-}
-
-GenericNode::~GenericNode() {
-    Remove();
-}
-
 GenNodeArray::GenNodeArray( int defaultSize ) {
     _bufsize = defaultSize;
     _buf = new GenericNode*[_bufsize];

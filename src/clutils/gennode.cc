@@ -23,6 +23,15 @@
 // depends on:
 //  void GenNodeList::Append(GenericNode *node) from the gennodelist.h
 //////////////////////////////////////////////////////////////////////////////
+GenericNode::GenericNode() {
+    next = 0;
+    prev = 0;
+    containingList = 0;
+}
+
+GenericNode::~GenericNode() {
+    Remove();
+}
 
 void GenericNode::Append( GenNodeList * list ) {
 //    if(debug_level >= PrintFunctionTrace)
@@ -30,5 +39,11 @@ void GenericNode::Append( GenNodeList * list ) {
 //    if(debug_level >= PrintValues)
 //  cout << "GenericNode::this : '" << this << "'\n";
     list->Append( this );
+}
+
+void GenericNode::Remove() {
+	if( containingList ) {
+	    containingList->Remove( this );
+	}
 }
 
