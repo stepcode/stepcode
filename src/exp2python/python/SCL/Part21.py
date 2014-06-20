@@ -34,6 +34,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import sys
 import ply.lex as lex
 import ply.yacc as yacc
 
@@ -68,7 +69,7 @@ class Lexer(Base):
     # Comment (ignored)
     def t_COMMENT(self, t):
         r'/\*(.|\n)*?\*/'
-        pass
+        t.lexer.lineno += t.value.count('\n')
     
     def t_PART21_START(self, t):
         r'ISO-10303-21;'
@@ -98,6 +99,10 @@ class Lexer(Base):
             t.type = t.value
         return t
 
+    def t_newline(self, t):
+        r'\n+'
+        t.lexer.lineno += len(t.value)
+
     # Simple Data Types
     t_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
     t_INTEGER = r'[+-]*[0-9][0-9]*'
@@ -108,18 +113,9 @@ class Lexer(Base):
 
     # Punctuation
     literals = '()=;,*$'
-    #t_LBRACE = r'\('
-    #t_RBRACE = r'\)'
-    #t_EQ = r'='
-    #t_END_STMT = r';'
-    #t_COMMA = r','
-
-    # Placeholders
-    #t_OMITTED_PARAMETER = r'\*'
-    #t_EMPTYDEF = r'\$'
 
     # TODO: is it okay to ignore \n?
-    t_ignore  = ' \t\n'
+    t_ignore  = ' \t'
 
 ####################################################################################################
 # Simple Model
@@ -171,9 +167,10 @@ class Parser(Base):
         self.lexer = lexer
         self.parser = yacc.yacc(module=self)
 
-    def parse(self, p21_data, debug=None):
+    def parse(self, p21_data, **kwargs):
         self.lexer.input(p21_data)
-        result = self.parser.parse(lexer=self.lexer, debug=debug)
+        self.refs = {}
+        result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
 
     def p_exchange_file(self, p):
@@ -194,12 +191,21 @@ class Parser(Base):
         """header_entity : keyword '(' parameter_list ')' ';'"""
         p[0] = HeaderEntity(p[1], p[3])
 
+    def p_check_entity_instance_name(self, p):
+        """check_entity_instance_name : ENTITY_INSTANCE_NAME"""
+        if p[1] in self.refs:
+            print('ERROR:  Line {0}, duplicate entity instance name: {1}'.format(p.lineno(1), p[1]), file=sys.stderr)
+            raise SyntaxError
+        else:
+            self.refs[p[1]] = None
+            p[0] = p[1]
+
     def p_simple_entity_instance(self, p):
-        """simple_entity_instance : ENTITY_INSTANCE_NAME '=' simple_record ';'"""
+        """simple_entity_instance : check_entity_instance_name '=' simple_record ';'"""
         p[0] = SimpleEntity(p[1], *p[3])
 
     def p_complex_entity_instance(self, p):
-        """complex_entity_instance : ENTITY_INSTANCE_NAME '=' subsuper_record ';'"""
+        """complex_entity_instance : check_entity_instance_name '=' subsuper_record ';'"""
         p[0] = ComplexEntity(p[1], p[3])
 
     def p_subsuper_record(self, p):
@@ -279,6 +285,7 @@ class Parser(Base):
                            | complex_entity_instance"""
         p[0] = p[1]
 
+        
     def p_simple_record_empty(self, p):
         """simple_record : keyword '(' ')'"""
         p[0] = (p[1], [])
@@ -292,16 +299,24 @@ class Parser(Base):
                               | simple_record"""
         try: p[0] = p[1] + [p[2],]
         except IndexError: p[0] = [p[1],]
-
+   
     def p_empty(self, p):
         """empty :"""
         pass
 
+    def p_error(self, p):
+        raise SyntaxError
+
 
 def test():
+    import logging
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
     s = open('io1-tu-203.stp', 'r').read()
     parser = Parser()
 
+    #r = parser.parse(s, debug=logger)
     r = parser.parse(s)
     return r
 
