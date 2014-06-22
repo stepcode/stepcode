@@ -484,25 +484,14 @@ class SC_CORE_EXPORT Where_rule : public Dictionary_instance {
 
 typedef Where_rule * Where_rule_ptr;
 
-class SC_CORE_EXPORT Where_rule__list {
+class SC_CORE_EXPORT Where_rule__list : public Dictionary_instance__set {
     public:
         Where_rule__list( int = 16 );
         ~Where_rule__list();
 
         Where_rule_ptr & operator[]( int index );
-        void Insert( Where_rule_ptr, int index );
-        void Append( Where_rule_ptr );
-        void Remove( int index );
-        int Index( Where_rule_ptr );
 
-        int Count();
         void Clear();
-    private:
-        void Check( int index );
-    private:
-        Where_rule_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Where_rule__list * Where_rule__list_ptr;
