@@ -110,269 +110,38 @@ void Dictionary_instance__set::Clear() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) {
-    _bufsize = defaultSize;
-    _buf = new Explicit_item_id_ptr[_bufsize];
-    _count = 0;
+Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) : Dictionary_instance__set( defaultSize ) {
 }
 
 Explicit_item_id__set::~Explicit_item_id__set() {
-    delete[] _buf;
-}
-
-void Explicit_item_id__set::Check( int index ) {
-    Explicit_item_id_ptr * newbuf;
-
-    if( index >= _bufsize ) {
-        _bufsize = ( index + 1 ) * 2;
-        newbuf = new Explicit_item_id_ptr[_bufsize];
-        memmove( newbuf, _buf, _count * sizeof( Explicit_item_id_ptr ) );
-        delete[] _buf;
-        _buf = newbuf;
-    }
-}
-
-void Explicit_item_id__set::Insert( Explicit_item_id_ptr v, int index ) {
-    Explicit_item_id_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Explicit_item_id_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Explicit_item_id__set::Append( Explicit_item_id_ptr v ) {
-    int index = _count;
-    Explicit_item_id_ptr * spot;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Explicit_item_id_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Explicit_item_id__set::Remove( int index ) {
-    if( 0 <= index && index < _count ) {
-        --_count;
-        Explicit_item_id_ptr * spot = &_buf[index];
-        memmove( spot, spot + 1, ( _count - index )*sizeof( Explicit_item_id_ptr ) );
-    }
-}
-
-int Explicit_item_id__set::Index( Explicit_item_id_ptr v ) {
-    for( int i = 0; i < _count; ++i ) {
-        if( _buf[i] == v ) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 Explicit_item_id_ptr & Explicit_item_id__set::operator[]( int index ) {
-    Check( index );
-    _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
-}
-
-int Explicit_item_id__set::Count() {
-    return _count;
-}
-
-void Explicit_item_id__set::Clear() {
-    _count = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Implicit_item_id__set::Implicit_item_id__set( int defaultSize ) {
-    _bufsize = defaultSize;
-    _buf = new Implicit_item_id_ptr[_bufsize];
-    _count = 0;
+Implicit_item_id__set::Implicit_item_id__set( int defaultSize ) : Dictionary_instance__set( defaultSize ) {
 }
+
 
 Implicit_item_id__set::~Implicit_item_id__set() {
-    delete[] _buf;
-}
-
-void Implicit_item_id__set::Check( int index ) {
-    Implicit_item_id_ptr * newbuf;
-
-    if( index >= _bufsize ) {
-        _bufsize = ( index + 1 ) * 2;
-        newbuf = new Implicit_item_id_ptr[_bufsize];
-        memmove( newbuf, _buf, _count * sizeof( Implicit_item_id_ptr ) );
-        delete[]_buf;
-        _buf = newbuf;
-    }
-}
-
-void Implicit_item_id__set::Insert( Implicit_item_id_ptr v, int index ) {
-    Implicit_item_id_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Implicit_item_id_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Implicit_item_id__set::Append( Implicit_item_id_ptr v ) {
-    int index = _count;
-    Implicit_item_id_ptr * spot;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Implicit_item_id_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Implicit_item_id__set::Remove( int index ) {
-    if( 0 <= index && index < _count ) {
-        --_count;
-        Implicit_item_id_ptr * spot = &_buf[index];
-        memmove( spot, spot + 1, ( _count - index )*sizeof( Implicit_item_id_ptr ) );
-    }
-}
-
-int Implicit_item_id__set::Index( Implicit_item_id_ptr v ) {
-    for( int i = 0; i < _count; ++i ) {
-        if( _buf[i] == v ) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 Implicit_item_id_ptr & Implicit_item_id__set::operator[]( int index ) {
-    Check( index );
-    _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
-}
-
-int Implicit_item_id__set::Count() {
-    return _count;
-}
-
-void Implicit_item_id__set::Clear() {
-    _count = 0;
+    return ( Implicit_item_id_ptr & )Dictionary_instance__set::operator[]( index );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Interface_spec__set::Interface_spec__set( int defaultSize ) {
-    _bufsize = defaultSize;
-    _buf = new Interface_spec_ptr[_bufsize];
-    _count = 0;
+Interface_spec__set::Interface_spec__set( int defaultSize ) : Dictionary_instance__set( defaultSize ) {
 }
 
 Interface_spec__set::~Interface_spec__set() {
-    delete[] _buf;
-}
-
-void Interface_spec__set::Check( int index ) {
-    Interface_spec_ptr * newbuf;
-
-    if( index >= _bufsize ) {
-        _bufsize = ( index + 1 ) * 2;
-        newbuf = new Interface_spec_ptr[_bufsize];
-        memmove( newbuf, _buf, _count * sizeof( Interface_spec_ptr ) );
-        delete[] _buf;
-        _buf = newbuf;
-    }
-}
-
-void Interface_spec__set::Insert( Interface_spec_ptr v, int index ) {
-    Interface_spec_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Interface_spec_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Interface_spec__set::Append( Interface_spec_ptr v ) {
-    int index = _count;
-    Interface_spec_ptr * spot;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Interface_spec_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Interface_spec__set::Remove( int index ) {
-    if( 0 <= index && index < _count ) {
-        --_count;
-        Interface_spec_ptr * spot = &_buf[index];
-        memmove( spot, spot + 1, ( _count - index )*sizeof( Interface_spec_ptr ) );
-    }
-}
-
-int Interface_spec__set::Index( Interface_spec_ptr v ) {
-    for( int i = 0; i < _count; ++i ) {
-        if( _buf[i] == v ) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 Interface_spec_ptr & Interface_spec__set::operator[]( int index ) {
-    Check( index );
-    _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
-}
-
-int Interface_spec__set::Count() {
-    return _count;
-}
-
-void Interface_spec__set::Clear() {
-    _count = 0;
+    return ( Interface_spec_ptr & )Dictionary_instance__set::operator[]( index );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1223,94 +992,20 @@ Uniqueness_rule::~Uniqueness_rule() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Uniqueness_rule__set::Uniqueness_rule__set( int defaultSize ) {
-    _bufsize = defaultSize;
-    _buf = new Uniqueness_rule_ptr[_bufsize];
-    _count = 0;
+Uniqueness_rule__set::Uniqueness_rule__set( int defaultSize ) : Dictionary_instance__set( defaultSize ) {
 }
 
 Uniqueness_rule__set::~Uniqueness_rule__set() {
     Clear();
-
-    delete[] _buf;
-}
-
-void Uniqueness_rule__set::Check( int index ) {
-    Uniqueness_rule_ptr * newbuf;
-
-    if( index >= _bufsize ) {
-        _bufsize = ( index + 1 ) * 2;
-        newbuf = new Uniqueness_rule_ptr[_bufsize];
-        memmove( newbuf, _buf, _count * sizeof( Uniqueness_rule_ptr ) );
-        delete[] _buf;
-        _buf = newbuf;
-    }
-}
-
-void Uniqueness_rule__set::Insert( Uniqueness_rule_ptr v, int index ) {
-    Uniqueness_rule_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Uniqueness_rule_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Uniqueness_rule__set::Append( Uniqueness_rule_ptr v ) {
-    int index = _count;
-    Uniqueness_rule_ptr * spot;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Uniqueness_rule_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Uniqueness_rule__set::Remove( int index ) {
-    if( 0 <= index && index < _count ) {
-        --_count;
-        Uniqueness_rule_ptr * spot = &_buf[index];
-        memmove( spot, spot + 1, ( _count - index )*sizeof( Uniqueness_rule_ptr ) );
-    }
-}
-
-int Uniqueness_rule__set::Index( Uniqueness_rule_ptr v ) {
-    for( int i = 0; i < _count; ++i ) {
-        if( _buf[i] == v ) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 Uniqueness_rule_ptr & Uniqueness_rule__set::operator[]( int index ) {
-    Check( index );
-    _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
-}
-
-int Uniqueness_rule__set::Count() {
-    return _count;
+    return ( Uniqueness_rule_ptr & )Dictionary_instance__set::operator[]( index );
 }
 
 void Uniqueness_rule__set::Clear() {
     for( int i = 0; i < _count; i ++ ) {
-        delete _buf[i];
+        delete ( Uniqueness_rule_ptr )_buf[i];
     }
     _count = 0;
 }
@@ -1359,93 +1054,20 @@ void Global_rule::where_rules_( const Where_rule__list_var & wrl ) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Global_rule__set::Global_rule__set( int defaultSize ) {
-    _bufsize = defaultSize;
-    _buf = new Global_rule_ptr[_bufsize];
-    _count = 0;
+Global_rule__set::Global_rule__set( int defaultSize ) : Dictionary_instance__set( defaultSize ) {
 }
 
 Global_rule__set::~Global_rule__set() {
     Clear();
-    delete[] _buf;
-}
-
-void Global_rule__set::Check( int index ) {
-    Global_rule_ptr * newbuf;
-
-    if( index >= _bufsize ) {
-        _bufsize = ( index + 1 ) * 2;
-        newbuf = new Global_rule_ptr[_bufsize];
-        memmove( newbuf, _buf, _count * sizeof( Global_rule_ptr ) );
-        delete[] _buf;
-        _buf = newbuf;
-    }
-}
-
-void Global_rule__set::Insert( Global_rule_ptr v, int index ) {
-    Global_rule_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Global_rule_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Global_rule__set::Append( Global_rule_ptr v ) {
-    int index = _count;
-    Global_rule_ptr * spot;
-
-    if( index < _count ) {
-        Check( _count + 1 );
-        spot = &_buf[index];
-        memmove( spot + 1, spot, ( _count - index )*sizeof( Global_rule_ptr ) );
-
-    } else {
-        Check( index );
-        spot = &_buf[index];
-    }
-    *spot = v;
-    ++_count;
-}
-
-void Global_rule__set::Remove( int index ) {
-    if( 0 <= index && index < _count ) {
-        --_count;
-        Global_rule_ptr * spot = &_buf[index];
-        memmove( spot, spot + 1, ( _count - index )*sizeof( Global_rule_ptr ) );
-    }
-}
-
-int Global_rule__set::Index( Global_rule_ptr v ) {
-    for( int i = 0; i < _count; ++i ) {
-        if( _buf[i] == v ) {
-            return i;
-        }
-    }
-    return -1;
 }
 
 Global_rule_ptr & Global_rule__set::operator[]( int index ) {
-    Check( index );
-    _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
-}
-
-int Global_rule__set::Count() {
-    return _count;
+    return ( Global_rule_ptr & )Dictionary_instance__set::operator[]( index );
 }
 
 void Global_rule__set::Clear() {
     for( int i = 0; i < _count; i ++ ) {
-        delete _buf[i];
+        delete ( Global_rule_ptr )_buf[i];
     }
     _count = 0;
 }

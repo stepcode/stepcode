@@ -312,25 +312,12 @@ class SC_CORE_EXPORT Referenced_item : public Explicit_item_id {
 
 typedef Referenced_item * Referenced_item_ptr;
 
-class SC_CORE_EXPORT Explicit_item_id__set {
+class SC_CORE_EXPORT Explicit_item_id__set : public Dictionary_instance__set {
     public:
         Explicit_item_id__set( int = 16 );
         ~Explicit_item_id__set();
 
         Explicit_item_id_ptr & operator[]( int index );
-        void Insert( Explicit_item_id_ptr, int index );
-        void Append( Explicit_item_id_ptr );
-        void Remove( int index );
-        int Index( Explicit_item_id_ptr );
-
-        int Count();
-        void Clear();
-    private:
-        void Check( int index );
-    private:
-        Explicit_item_id_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Explicit_item_id__set * Explicit_item_id__set_ptr;
@@ -364,25 +351,12 @@ typedef Implicit_item_id * Implicit_item_id_ptr;
 // Implicit_item_id__set
 ///////////////////////////////////////////////////////////////////////////////
 
-class SC_CORE_EXPORT Implicit_item_id__set {
+class SC_CORE_EXPORT Implicit_item_id__set : public Dictionary_instance__set {
     public:
         Implicit_item_id__set( int = 16 );
         ~Implicit_item_id__set();
 
         Implicit_item_id_ptr & operator[]( int index );
-        void Insert( Implicit_item_id_ptr, int index );
-        void Append( Implicit_item_id_ptr );
-        void Remove( int index );
-        int Index( Implicit_item_id_ptr );
-
-        int Count();
-        void Clear();
-    private:
-        void Check( int index );
-    private:
-        Implicit_item_id_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Implicit_item_id__set * Implicit_item_id__set_ptr;
@@ -449,25 +423,12 @@ class SC_CORE_EXPORT Interface_spec : public Dictionary_instance {
 
 typedef Interface_spec * Interface_spec_ptr;
 
-class SC_CORE_EXPORT Interface_spec__set {
+class SC_CORE_EXPORT Interface_spec__set : public Dictionary_instance__set {
     public:
         Interface_spec__set( int = 16 );
         ~Interface_spec__set();
 
         Interface_spec_ptr & operator[]( int index );
-        void Insert( Interface_spec_ptr, int index );
-        void Append( Interface_spec_ptr );
-        void Remove( int index );
-        int Index( Interface_spec_ptr );
-
-        int Count();
-        void Clear();
-    private:
-        void Check( int index );
-    private:
-        Interface_spec_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Interface_spec__set * Interface_spec__set_ptr;
@@ -592,25 +553,14 @@ class SC_CORE_EXPORT Global_rule : public Dictionary_instance {
 
 typedef Global_rule * Global_rule_ptr;
 
-class SC_CORE_EXPORT Global_rule__set {
+class SC_CORE_EXPORT Global_rule__set : public Dictionary_instance__set {
     public:
         Global_rule__set( int = 16 );
         ~Global_rule__set();
 
         Global_rule_ptr & operator[]( int index );
-        void Insert( Global_rule_ptr, int index );
-        void Append( Global_rule_ptr );
-        void Remove( int index );
-        int Index( Global_rule_ptr );
 
-        int Count();
         void Clear();
-    private:
-        void Check( int index );
-    private:
-        Global_rule_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Global_rule__set * Global_rule__set_ptr;
@@ -656,25 +606,14 @@ class SC_CORE_EXPORT Uniqueness_rule : public Dictionary_instance {
 
 typedef Uniqueness_rule * Uniqueness_rule_ptr;
 
-class SC_CORE_EXPORT Uniqueness_rule__set {
+class SC_CORE_EXPORT Uniqueness_rule__set : public Dictionary_instance__set {
     public:
         Uniqueness_rule__set( int = 16 );
         ~Uniqueness_rule__set();
 
         Uniqueness_rule_ptr & operator[]( int index );
-        void Insert( Uniqueness_rule_ptr, int index );
-        void Append( Uniqueness_rule_ptr );
-        void Remove( int index );
-        int Index( Uniqueness_rule_ptr );
 
-        int Count();
         void Clear();
-    private:
-        void Check( int index );
-    private:
-        Uniqueness_rule_ptr * _buf;
-        int _bufsize;
-        int _count;
 };
 
 typedef Uniqueness_rule__set * Uniqueness_rule__set_ptr;
