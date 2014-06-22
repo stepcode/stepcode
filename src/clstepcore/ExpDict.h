@@ -63,6 +63,32 @@ class SC_CORE_EXPORT Dictionary_instance {
         virtual ~Dictionary_instance();
 };
 
+
+typedef Dictionary_instance * Dictionary_instance_ptr;
+
+///////////////////////////////////////////////////////////////////////////////
+
+class SC_CORE_EXPORT Dictionary_instance__set {
+    public:
+        Dictionary_instance__set( int = 16 );
+        ~Dictionary_instance__set();
+
+        Dictionary_instance_ptr & operator[]( int index );
+        virtual void Insert( Dictionary_instance_ptr, int index );
+        virtual void Append( Dictionary_instance_ptr );
+        virtual void Remove( int index );
+        virtual int Index( Dictionary_instance_ptr );
+
+        virtual int Count();
+        virtual void Clear();
+    private:
+        virtual void Check( int index );
+    protected:
+        Dictionary_instance_ptr * _buf;
+        int _bufsize;
+        int _count;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class SC_CORE_EXPORT TypeDescLinkNode : public SingleLinkNode {
