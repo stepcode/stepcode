@@ -35,8 +35,12 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
+import logging
 import ply.lex as lex
 import ply.yacc as yacc
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 
 ####################################################################################################
 # Common Code for Lexer / Parser
@@ -51,8 +55,17 @@ class Base:
 ####################################################################################################
 class Lexer(Base):
     def __init__(self, debug=0, optimize=0):
-        self.lexer = lex.lex(module=self, debug=debug, optimize=optimize)
+        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
+                             errorlog=logger)
         self.entity_keywords = []
+
+    def __getattr__(self, name):
+        if name == 'lineno':
+            return self.lexer.lineno
+        elif name == 'lexpos':
+            return self.lexer.lexpos
+        else:
+            raise AttributeError
 
     def input(self, s):
         self.lexer.input(s)
@@ -117,6 +130,8 @@ class Lexer(Base):
     # TODO: is it okay to ignore \n?
     t_ignore  = ' \t'
 
+            
+
 ####################################################################################################
 # Simple Model
 ####################################################################################################
@@ -161,16 +176,21 @@ class TypedParameter:
 # Parser
 ####################################################################################################
 class Parser(Base):
-    def __init__(self, lexer=None):
+    def __init__(self, lexer=None, debug=0):
+        self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
+
         if lexer is None:
             lexer = Lexer()
         self.lexer = lexer
-        self.parser = yacc.yacc(module=self)
 
     def parse(self, p21_data, **kwargs):
         self.lexer.input(p21_data)
         self.refs = {}
-        result = self.parser.parse(lexer=self.lexer, **kwargs)
+        if 'debug' in kwargs:
+            result = self.parser.parse(lexer=self.lexer, debug=logger,
+                                       **{ k: kwargs[k] for k in kwargs if k != 'debug'})
+        else:
+            result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
 
     def p_exchange_file(self, p):
@@ -194,8 +214,8 @@ class Parser(Base):
     def p_check_entity_instance_name(self, p):
         """check_entity_instance_name : ENTITY_INSTANCE_NAME"""
         if p[1] in self.refs:
-            print('ERROR:  Line {0}, duplicate entity instance name: {1}'.format(p.lineno(1), p[1]), file=sys.stderr)
-            raise SyntaxError
+            logger.error('Line %i, duplicate entity instance name: %s', p.lineno(1), p[1])
+            sys.exit('Aborting...')
         else:
             self.refs[p[1]] = None
             p[0] = p[1]
@@ -304,20 +324,16 @@ class Parser(Base):
         """empty :"""
         pass
 
-    def p_error(self, p):
-        raise SyntaxError
-
 
 def test():
-    import logging
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
+    logging.basicConfig()
+    logger.setLevel(logging.ERROR)
 
     s = open('io1-tu-203.stp', 'r').read()
-    parser = Parser()
+    parser = Parser(debug=1)
 
-    #r = parser.parse(s, debug=logger)
-    r = parser.parse(s)
+    r = parser.parse(s, debug=1)
+    #r = parser.parse(s)
     return r
 
 if __name__ == '__main__':
