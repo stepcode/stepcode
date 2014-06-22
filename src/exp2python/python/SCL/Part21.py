@@ -54,10 +54,14 @@ class Base:
 # Lexer 
 ####################################################################################################
 class Lexer(Base):
-    def __init__(self, debug=0, optimize=0):
+    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
         self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
                              errorlog=logger)
         self.entity_keywords = []
+        self.compatibility_mode = compatibility_mode
+        self.header_limit = header_limit
+
+    states = (('compatibility', 'inclusive'),)
 
     def __getattr__(self, name):
         if name == 'lineno':
@@ -68,8 +72,17 @@ class Lexer(Base):
             raise AttributeError
 
     def input(self, s):
-        self.lexer.input(s)
+        startidx = s.find('ISO-10303-21;', 0, self.header_limit)
+        if startidx == -1:
+            sys.exit('Aborting... ISO-10303-21; header not found')
+        self.lexer.input(s[startidx:])
+        self.lexer.lineno += s[0:startidx].count('\n')
 
+        if self.compatibility_mode:
+            self.lexer.begin('compatibility')
+        else:
+            self.lexer.begin('INITIAL')
+ 
     def token(self):
         try:
             return next(self.lexer)
@@ -80,29 +93,39 @@ class Lexer(Base):
         self.entity_keywords.extend(entities)
     
     # Comment (ignored)
-    def t_COMMENT(self, t):
+    def t_ANY_COMMENT(self, t):
         r'/\*(.|\n)*?\*/'
         t.lexer.lineno += t.value.count('\n')
     
-    def t_PART21_START(self, t):
+    def t_ANY_PART21_START(self, t):
         r'ISO-10303-21;'
         return t
 
-    def t_PART21_END(self, t):
+    def t_ANY_PART21_END(self, t):
         r'END-ISO-10303-21;'
         return t
 
-    def t_HEADER_SEC(self, t):
+    def t_ANY_HEADER_SEC(self, t):
         r'HEADER;'
         return t
 
-    def t_ENDSEC(self, t):
+    def t_ANY_ENDSEC(self, t):
         r'ENDSEC;'
         return t
 
     # Keywords
-    # TODO: provide a hook for entity validation i.e. t.value in list_of_entities_for_AP###
-    def t_STANDARD_KEYWORD(self, t):
+    def t_compatibility_STANDARD_KEYWORD(self, t):
+        r'(?:!|)[A-Z_][0-9A-Za-z_]*'
+        t.value = t.value.upper()
+        if t.value == 'DATA':
+            t.type = 'DATA_SEC'
+        elif t.value.startswith('!'):
+            t.type = 'USER_DEFINED_KEYWORD'
+        elif t.value in self.entity_keywords:
+            t.type = t.value
+        return t
+
+    def t_ANY_STANDARD_KEYWORD(self, t):
         r'(?:!|)[A-Z_][0-9A-Z_]*'
         if t.value == 'DATA':
             t.type = 'DATA_SEC'
@@ -112,24 +135,22 @@ class Lexer(Base):
             t.type = t.value
         return t
 
-    def t_newline(self, t):
+    def t_ANY_newline(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
 
     # Simple Data Types
-    t_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
-    t_INTEGER = r'[+-]*[0-9][0-9]*'
-    t_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
-    t_BINARY = r'"[0-3][0-9A-F]*"'
-    t_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
-    t_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
+    t_ANY_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
+    t_ANY_INTEGER = r'[+-]*[0-9][0-9]*'
+    t_ANY_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
+    t_ANY_BINARY = r'"[0-3][0-9A-F]*"'
+    t_ANY_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
+    t_ANY_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
 
     # Punctuation
     literals = '()=;,*$'
 
-    # TODO: is it okay to ignore \n?
-    t_ignore  = ' \t'
-
+    t_ANY_ignore  = ' \t'
             
 
 ####################################################################################################
@@ -324,17 +345,34 @@ class Parser(Base):
         """empty :"""
         pass
 
+def test_debug():
+    logging.basicConfig()
+    logger.setLevel(logging.DEBUG)
+
+    s = open('io1-tu-203.stp', 'r').read()
+    parser = Parser()
+
+    try:
+        r = parser.parse(s, debug=1)
+    except SystemExit:
+        pass
+
+    return (parser, r)
 
 def test():
     logging.basicConfig()
     logger.setLevel(logging.ERROR)
 
     s = open('io1-tu-203.stp', 'r').read()
-    parser = Parser(debug=1)
+    parser = Parser()
 
-    r = parser.parse(s, debug=1)
-    #r = parser.parse(s)
-    return r
+    try:
+        r = parser.parse(s)
+    except SystemExit:
+        pass
+
+    return (parser, r)
+
 
 if __name__ == '__main__':
     test()
