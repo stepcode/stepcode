@@ -117,6 +117,7 @@ Explicit_item_id__set::~Explicit_item_id__set() {
 }
 
 Explicit_item_id_ptr & Explicit_item_id__set::operator[]( int index ) {
+    return ( Explicit_item_id_ptr & )Dictionary_instance__set::operator[]( index );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
