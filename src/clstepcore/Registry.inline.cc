@@ -113,10 +113,12 @@ Registry::~Registry() {
 
 void Registry::DeleteContents() {
     // entities first
+    entityMtx.lock();
     SC_HASHlistinit( primordialSwamp, &cur_entity );
     while( SC_HASHlist( &cur_entity ) ) {
         delete( EntityDescriptor * ) cur_entity.e->data;
     }
+    entityMtx.unlock();
 
     // schemas
     SC_HASHlistinit( active_schemas, &cur_schema );
@@ -145,12 +147,14 @@ const EntityDescriptor * Registry::FindEntity( const char * e, const char * schN
     const SchRename * altlist;
     char schformat[BUFSIZ], altName[BUFSIZ];
 
+    entityMtx.lock();
     if( check_case ) {
         entd = ( EntityDescriptor * )SC_HASHfind( primordialSwamp, ( char * )e );
     } else {
         entd = ( EntityDescriptor * )SC_HASHfind( primordialSwamp,
                 ( char * )PrettyTmpName( e ) );
     }
+    entityMtx.unlock();
     if( entd && schNm ) {
         // We've now found an entity.  If schNm has a value, we must ensure we
         // have a valid name.
@@ -209,10 +213,12 @@ const TypeDescriptor * Registry::NextType() {
 }
 
 void Registry::AddEntity( const EntityDescriptor & e ) {
+    entityMtx.lock();
     SC_HASHinsert( primordialSwamp, ( char * ) e.Name(), ( EntityDescriptor * ) &e );
     ++entity_cnt;
     ++all_ents_cnt;
     AddClones( e );
+    entityMtx.unlock();
 }
 
 
@@ -234,12 +240,14 @@ void Registry::AddType( const TypeDescriptor & d ) {
 void Registry::AddClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
 
+    entityMtx.lock();
     while( alts ) {
         SC_HASHinsert( primordialSwamp, ( char * )alts->objName(),
                        ( EntityDescriptor * )&e );
         alts = alts->next;
     }
     all_ents_cnt += uniqueNames( e.Name(), e.AltNameList() );
+    entityMtx.unlock();
 }
 
 /**
@@ -271,6 +279,7 @@ static int uniqueNames( const char * entnm, const SchRename * altlist ) {
 }
 
 void Registry::RemoveEntity( const char * n ) {
+    entityMtx.lock();
     const EntityDescriptor * e = FindEntity( n );
     struct Element tmp;
 
@@ -279,6 +288,7 @@ void Registry::RemoveEntity( const char * n ) {
     }
     tmp.key = ( char * ) n;
     SC_HASHsearch( primordialSwamp, &tmp, HASH_DELETE ) ? --entity_cnt : 0;
+    entityMtx.unlock();
 
 }
 
@@ -301,17 +311,21 @@ void Registry::RemoveClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
     struct Element * tmp;
 
+    entityMtx.lock();
     while( alts ) {
         tmp = new Element;
         tmp->key = ( char * ) alts->objName();
         SC_HASHsearch( primordialSwamp, tmp, HASH_DELETE );
         alts = alts->next;
     }
+    entityMtx.unlock();
 }
 
 
 SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * schnm, int check_case ) const {
+    entityMtx.lock();
     const EntityDescriptor  * entd = FindEntity( nm, schnm, check_case );
+    entityMtx.unlock();
     if( entd ) {
         SDAI_Application_instance * se =
             ( ( EntityDescriptor * )entd ) -> NewSTEPentity();
@@ -337,7 +351,9 @@ int Registry::GetEntityCnt() {
 }
 
 void Registry::ResetEntities() {
+    entityMtx.lock();
     SC_HASHlistinit( primordialSwamp, &cur_entity );
+    entityMtx.unlock();
 
 }
 

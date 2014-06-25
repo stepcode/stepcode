@@ -18,6 +18,7 @@
 #include <sc_hash.h>
 #include <Str.h>
 #include <complexSupport.h>
+#include <sc_mutex.h>
 
 typedef struct Hash_Table * HashTable;
 
@@ -36,6 +37,8 @@ class SC_CORE_EXPORT Registry {
         HashEntry   cur_entity;
         HashEntry   cur_schema;
         HashEntry   cur_type;
+
+        mutable sc_recursive_mutex entityMtx; // will protect primodialSwamp, entity_cnt and all_ents_cnt
 
         // used by AddEntity() and RemoveEntity() to deal with renamings of an
         // entity done in a USE or REFERENCE clause - see header comments in
