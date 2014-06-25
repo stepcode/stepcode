@@ -500,6 +500,9 @@ typedef Where_rule__list * Where_rule__list_ptr;
 typedef Where_rule__list_ptr Where_rule__list_var;
 
 class SC_CORE_EXPORT Global_rule : public Dictionary_instance {
+    protected:
+        sc_mutex mtx;
+
     public:
         Express_id _name;
         Entity__set_var _entities; // not implemented

@@ -975,6 +975,8 @@ Global_rule::~Global_rule() {
 }
 
 void Global_rule::entities_( const Entity__set_var & e ) {
+    // required to prevent potential double deletion
+    mtx.lock();
     if( _entities ) {
         if( _entities->EntryCount() > 0 ) {
             std::cerr << "In " << __FILE__ << ", Global_rule::entities_(): overwriting non-empty entity set!" << std::endl;
@@ -982,9 +984,11 @@ void Global_rule::entities_( const Entity__set_var & e ) {
         delete _entities;
     }
     _entities = e;
+    mtx.unlock();
 }
 
 void Global_rule::where_rules_( const Where_rule__list_var & wrl ) {
+    mtx.lock();
     if( _where_rules ) {
         if( _where_rules->Count() > 0 ) {
             std::cerr << "In " << __FILE__ << ", Global_rule::where_rules_(): overwriting non-empty rule set!" << std::endl;
@@ -992,6 +996,7 @@ void Global_rule::where_rules_( const Where_rule__list_var & wrl ) {
         delete _where_rules;
     }
     _where_rules = wrl;
+    mtx.unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
