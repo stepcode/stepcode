@@ -76,6 +76,10 @@ if(HAVE_STD_THREAD)
   SC_ADDEXEC(InstMgr_thread_safety_test "InstMgr_thread_safety_test.cc" "stepcore" )
   set_target_properties(InstMgr_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
   target_link_libraries(InstMgr_thread_safety_test "pthread" )
+
+  SC_ADDEXEC(Registry_thread_safety_test "Registry_thread_safety_test.cc" "stepcore" )
+  set_target_properties(Registry_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
+  target_link_libraries(Registry_thread_safety_test "pthread" )
 endif(HAVE_STD_THREAD)
 
 install(FILES ${SC_CLSTEPCORE_HDRS}
