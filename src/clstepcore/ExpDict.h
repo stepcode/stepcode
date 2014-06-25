@@ -40,6 +40,7 @@ enum AggrBoundTypeEnum {
 #include <baseType.h>
 #include <dictdefs.h>
 #include <Str.h>
+#include <sc_mutex.h>
 
 // defined and created in Registry.inline.cc
 extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiINTEGER;
@@ -87,6 +88,7 @@ class SC_CORE_EXPORT Dictionary_instance__set {
         Dictionary_instance_ptr * _buf;
         int _bufsize;
         int _count;
+        sc_recursive_mutex mtx;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

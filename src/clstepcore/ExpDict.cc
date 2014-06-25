@@ -34,6 +34,7 @@ Dictionary_instance__set::~Dictionary_instance__set() {
 void Dictionary_instance__set::Check( int index ) {
     Dictionary_instance_ptr * newbuf;
 
+    mtx.lock();
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
         newbuf = new Dictionary_instance_ptr[_bufsize];
@@ -41,12 +42,14 @@ void Dictionary_instance__set::Check( int index ) {
         delete[] _buf;
         _buf = newbuf;
     }
+    mtx.unlock();
 }
 
 void Dictionary_instance__set::Insert( Dictionary_instance_ptr v, int index ) {
     Dictionary_instance_ptr * spot;
-    index = ( index < 0 ) ? _count : index;
 
+    mtx.lock();
+    index = ( index < 0 ) ? _count : index;
     if( index < _count ) {
         Check( _count + 1 );
         spot = &_buf[index];
@@ -58,12 +61,14 @@ void Dictionary_instance__set::Insert( Dictionary_instance_ptr v, int index ) {
     }
     *spot = v;
     ++_count;
+    mtx.unlock();
 }
 
 void Dictionary_instance__set::Append( Dictionary_instance_ptr v ) {
-    int index = _count;
     Dictionary_instance_ptr * spot;
 
+    mtx.lock();
+    int index = _count;
     if( index < _count ) {
         Check( _count + 1 );
         spot = &_buf[index];
@@ -75,29 +80,39 @@ void Dictionary_instance__set::Append( Dictionary_instance_ptr v ) {
     }
     *spot = v;
     ++_count;
+    mtx.unlock();
 }
 
 void Dictionary_instance__set::Remove( int index ) {
+    mtx.lock();
     if( 0 <= index && index < _count ) {
         --_count;
         Dictionary_instance_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( Dictionary_instance_ptr ) );
     }
+    mtx.unlock();
 }
 
 int Dictionary_instance__set::Index( Dictionary_instance_ptr v ) {
+    int index = -1;
+    mtx.lock();
     for( int i = 0; i < _count; ++i ) {
         if( _buf[i] == v ) {
-            return i;
+            index = i;
+            break;
         }
     }
-    return -1;
+    mtx.unlock();
+    return index;
 }
 
 Dictionary_instance_ptr & Dictionary_instance__set::operator[]( int index ) {
+    mtx.lock();
     Check( index );
     _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
+    Dictionary_instance_ptr & dip = _buf[index];
+    mtx.unlock();
+    return dip;
 }
 
 int Dictionary_instance__set::Count() {
