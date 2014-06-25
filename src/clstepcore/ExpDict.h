@@ -635,6 +635,10 @@ class SC_CORE_EXPORT Schema : public Dictionary_instance {
 
         Global_rule__set_var _global_rules;
 
+        sc_mutex _function_list_mtx; // required as _function_list is a vector
+        sc_mutex _procedure_list_mtx; // required as _procedure_list is a vector
+        sc_mutex _global_rules_mtx; // required in AddGlobal_rule function
+
     public:
         ModelContentsCreator CreateNewModelContents;
 

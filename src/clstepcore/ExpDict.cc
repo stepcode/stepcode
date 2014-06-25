@@ -196,18 +196,24 @@ Interface_spec::~Interface_spec() {
 
 //////////////////////////////////////////////////////////////////////////////
 void Schema::AddFunction( const std::string & f ) {
+    _function_list_mtx.lock();
     _function_list.push_back( f );
+    _function_list_mtx.unlock();
 }
 
 void Schema::AddGlobal_rule( Global_rule_ptr gr ) {
+    // locking here is required to prevent _global_rules from initializing twice
+    _global_rules_mtx.lock();
     if( _global_rules == 0 ) {
         _global_rules = new Global_rule__set;
     }
     _global_rules->Append( gr );
+    _global_rules_mtx.unlock();
 }
 
 /// hope I did this right (MP) - was "not implemented"
 void Schema::global_rules_( Global_rule__set_var & grs ) {
+    _global_rules_mtx.lock();
     if( _global_rules ) {
         if( _global_rules->Count() > 0 ) {
             std::cerr << "In " << __FILE__ << ", Schema::global_rules_(): overwriting non-empty global rule set!" << std::endl;
@@ -215,10 +221,13 @@ void Schema::global_rules_( Global_rule__set_var & grs ) {
         delete _global_rules;
     }
     _global_rules = grs;
+    _global_rules_mtx.unlock();
 }
 
 void Schema::AddProcedure( const std::string & p ) {
+    _procedure_list_mtx.lock();
     _procedure_list.push_back( p );
+    _procedure_list_mtx.unlock();
 }
 
 /// the whole schema
