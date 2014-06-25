@@ -102,6 +102,10 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
   SC_ADDLIB(${PROJECT_NAME} "${sourceFiles}" "stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
   add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
 
+  if(HAVE_STD_THREAD)
+    set_target_properties(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
+  endif(HAVE_STD_THREAD)
+
   SCHEMA_EXES()
   SCHEMA_TESTS()
   P21_TESTS(${expFile})

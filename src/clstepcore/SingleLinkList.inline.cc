@@ -21,6 +21,7 @@ SingleLinkNode::NextNode()  const {
 
 SingleLinkList::SingleLinkList()
     : head( 0 ), tail( 0 ) {
+    mtxP = new sc_mutex();
 }
 
 SingleLinkList::~SingleLinkList() {
@@ -28,12 +29,14 @@ SingleLinkList::~SingleLinkList() {
 }
 
 void SingleLinkList::Empty() {
+    mtxP->lock();
     SingleLinkNode * tmp = head;
     while( tmp ) {
         tmp = head -> NextNode();
         delete head;
         head = tmp;
     }
+    mtxP->unlock();
 }
 
 SingleLinkNode * SingleLinkList::NewNode() {
@@ -51,9 +54,11 @@ int SingleLinkList::EntryCount() const {
     int entryCount = 0;
     SingleLinkNode * entryPtr = head;
 
+    mtxP->lock();
     while( entryPtr != 0 ) {
         entryPtr = entryPtr->NextNode();
         entryCount++;
     }
+    mtxP->unlock();
     return entryCount;
 }

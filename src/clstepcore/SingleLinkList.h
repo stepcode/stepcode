@@ -13,6 +13,7 @@
 */
 
 #include <sc_export.h>
+#include <sc_mutex.h>
 
 class SC_CORE_EXPORT SingleLinkList  {
 
@@ -23,6 +24,10 @@ class SC_CORE_EXPORT SingleLinkList  {
 
         class  SingleLinkNode  * head;
         SingleLinkNode  * tail;
+
+        // had to be made into a pointer due to the equality
+        //  operator being used elswhere for SingleLinkList object
+        sc_mutex * mtxP;
 
     public:
 

@@ -12,8 +12,10 @@
 
 #include <SingleLinkList.h>
 #include "sc_memmgr.h"
+#include <assert.h>
 
 void SingleLinkList::DeleteFollowingNodes( SingleLinkNode * item ) {
+    mtxP->lock();
     if( head ) {
         SingleLinkNode * trailer = 0;
         SingleLinkNode * leader = head;
@@ -42,9 +44,12 @@ void SingleLinkList::DeleteFollowingNodes( SingleLinkNode * item ) {
             }
         }
     }
+    mtxP->unlock();
 }
 
 void SingleLinkList::AppendNode( SingleLinkNode * item ) {
+    mtxP->lock();
+    assert( item->owner == 0 && "Item which is to be appended is already inside a list" );
     if( head )  {
         tail -> next = item;
         tail = item;
@@ -52,9 +57,12 @@ void SingleLinkList::AppendNode( SingleLinkNode * item ) {
         head = tail = item;
     }
     item->owner = this;
+    mtxP->unlock();
 }
 
 void SingleLinkList::DeleteNode( SingleLinkNode * item ) {
+    mtxP->lock();
+    assert( item->owner == this && "Item which is to be deleted is not inside this list" );
     if( head ) {
         SingleLinkNode * trailer = 0;
         SingleLinkNode * leader = head;
@@ -81,4 +89,5 @@ void SingleLinkList::DeleteNode( SingleLinkNode * item ) {
             }
         }
     }
+    mtxP->unlock();
 }
