@@ -39,6 +39,8 @@ class SC_CORE_EXPORT Registry {
         HashEntry   cur_type;
 
         mutable sc_recursive_mutex entityMtx; // will protect primodialSwamp, entity_cnt and all_ents_cnt
+        mutable sc_recursive_mutex schemaMtx; // will protect active_schemas
+        mutable sc_recursive_mutex typeMtx; // will protect active_types
 
         // used by AddEntity() and RemoveEntity() to deal with renamings of an
         // entity done in a USE or REFERENCE clause - see header comments in

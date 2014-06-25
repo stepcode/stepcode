@@ -121,16 +121,20 @@ void Registry::DeleteContents() {
     entityMtx.unlock();
 
     // schemas
+    schemaMtx.lock();
     SC_HASHlistinit( active_schemas, &cur_schema );
     while( SC_HASHlist( &cur_schema ) ) {
         delete( Schema * ) cur_schema.e->data;
     }
+    schemaMtx.unlock();
 
     // types
+    typeMtx.lock();
     SC_HASHlistinit( active_types, &cur_type );
     while( SC_HASHlist( &cur_type ) ) {
         delete( TypeDescriptor * ) cur_type.e->data;
     }
+    typeMtx.unlock();
 }
 
 /**
@@ -185,24 +189,35 @@ const EntityDescriptor * Registry::FindEntity( const char * e, const char * schN
 }
 
 const Schema * Registry::FindSchema( const char * n, int check_case ) const {
+    const Schema * sc;
+    schemaMtx.lock();
     if( check_case ) {
-        return ( const Schema * ) SC_HASHfind( active_schemas, ( char * ) n );
-    }
-
-    return ( const Schema * ) SC_HASHfind( active_schemas,
+        sc = ( const Schema * ) SC_HASHfind( active_schemas, ( char * ) n );
+    } else {
+        sc = ( const Schema * ) SC_HASHfind( active_schemas,
                                            ( char * )PrettyTmpName( n ) );
+    }
+    schemaMtx.unlock();
+    return sc;
 }
 
 const TypeDescriptor * Registry::FindType( const char * n, int check_case ) const {
+    const TypeDescriptor * td;
+    typeMtx.lock();
     if( check_case ) {
-        return ( const TypeDescriptor * ) SC_HASHfind( active_types, ( char * ) n );
+        td = ( const TypeDescriptor * ) SC_HASHfind( active_types, ( char * ) n );
+    } else {
+        td = ( const TypeDescriptor * ) SC_HASHfind( active_types,
+                ( char * )PrettyTmpName( n ) );
     }
-    return ( const TypeDescriptor * ) SC_HASHfind( active_types,
-            ( char * )PrettyTmpName( n ) );
+    typeMtx.unlock();
+    return td;
 }
 
 void Registry::ResetTypes() {
+    typeMtx.lock();
     SC_HASHlistinit( active_types, &cur_type );
+    typeMtx.unlock();
 }
 
 const TypeDescriptor * Registry::NextType() {
@@ -223,11 +238,15 @@ void Registry::AddEntity( const EntityDescriptor & e ) {
 
 
 void Registry::AddSchema( const Schema & d ) {
+    schemaMtx.lock();
     SC_HASHinsert( active_schemas, ( char * ) d.Name(), ( Schema * ) &d );
+    schemaMtx.unlock();
 }
 
 void Registry::AddType( const TypeDescriptor & d ) {
+    typeMtx.lock();
     SC_HASHinsert( active_types, ( char * ) d.Name(), ( TypeDescriptor * ) &d );
+    typeMtx.unlock();
 }
 
 /**
@@ -295,13 +314,17 @@ void Registry::RemoveEntity( const char * n ) {
 void Registry::RemoveSchema( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
+    schemaMtx.lock();
     SC_HASHsearch( active_schemas, &tmp, HASH_DELETE );
+    schemaMtx.unlock();
 }
 
 void Registry::RemoveType( const char * n ) {
     struct Element tmp;
     tmp.key = ( char * ) n;
+    typeMtx.lock();
     SC_HASHsearch( active_types, &tmp, HASH_DELETE );
+    typeMtx.unlock();
 }
 
 /**
@@ -365,7 +388,9 @@ const EntityDescriptor * Registry::NextEntity() {
 }
 
 void Registry::ResetSchemas() {
+    schemaMtx.lock();
     SC_HASHlistinit( active_schemas, &cur_schema );
+    schemaMtx.unlock();
 }
 
 const Schema * Registry::NextSchema() {
