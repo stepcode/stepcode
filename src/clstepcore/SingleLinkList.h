@@ -25,11 +25,10 @@ class SC_CORE_EXPORT SingleLinkList  {
         class  SingleLinkNode  * head;
         SingleLinkNode  * tail;
 
+    public:
         // had to be made into a pointer due to the equality
         //  operator being used elswhere for SingleLinkList object
-        sc_mutex * mtxP;
-
-    public:
+        sc_recursive_mutex * mtxP; //making it public for the use in STEPaggregrate
 
         virtual SingleLinkNode * NewNode();
         virtual void AppendNode( SingleLinkNode * );

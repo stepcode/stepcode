@@ -21,11 +21,12 @@ SingleLinkNode::NextNode()  const {
 
 SingleLinkList::SingleLinkList()
     : head( 0 ), tail( 0 ) {
-    mtxP = new sc_mutex();
+    mtxP = new sc_recursive_mutex();
 }
 
 SingleLinkList::~SingleLinkList() {
     Empty();
+    delete mtxP;
 }
 
 void SingleLinkList::Empty() {
