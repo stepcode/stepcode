@@ -33,8 +33,11 @@ macro(SCHEMA_EXES)
     set_target_properties(p21read_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
   endif(HAVE_STD_THREAD)
   if(NOT WIN32)
-    #SC_ADDEXEC(lazy_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
+    SC_ADDEXEC(lazy_${PROJECT_NAME} "${RELATIVE_PATH_COMPONENT}/src/cllazyfile/lazy_test.cc" "${PROJECT_NAME};steplazyfile;stepdai;stepcore;stepeditor;steputils;base" "TESTABLE")
     #add_dependencies(lazy_${PROJECT_NAME} version_string)
+    if(HAVE_STD_THREAD)
+      set_target_properties(lazy_${PROJECT_NAME} PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
+    endif(HAVE_STD_THREAD)
   endif(NOT WIN32)
 
   #add user-defined executables
