@@ -5,6 +5,7 @@
 #include "ExpDict.h"
 #include <queue>
 #include <assert.h>
+#include <sc_mutex.h>
 
 /** abstract base class for recursive breadth-first input iterators of EntityDescriptor/EntityDescLinkNode
  * NOTE: due to pure virtual functions being necessary for initialization, derived class constructor must call reset(t)
@@ -19,6 +20,7 @@ class recursiveEntDescripIterator {
 
         std::deque< queue_pair > q;
         unsigned int position; ///< primarily used in comparisons between iterators
+        sc_recursive_mutex * dqMtxP; ///< protects 'q' and 'position'
 
         ///add contents of a linked list to q
         void addLinkedList( const queue_pair qp ) {
@@ -27,7 +29,9 @@ class recursiveEntDescripIterator {
             tmp.depth = qp.depth + 1;
             while( a != 0 ) {
                 tmp.ed = nodeContent( a );
+                dqMtxP->lock( );
                 q.push_back( tmp );
+                dqMtxP->unlock( );
                 a = ( EntityDescLinkNode * ) a->NextNode( );
             }
         }
@@ -36,15 +40,17 @@ class recursiveEntDescripIterator {
 
 
     public:
-        recursiveEntDescripIterator( const EntityDescriptor * t = 0 ): startEntity( t ), position( 0 ) {
+        recursiveEntDescripIterator( const EntityDescriptor * t = 0 ): startEntity( t ), position( 0 ), dqMtxP( new sc_recursive_mutex( ) ) {
             //NOTE due to pure virtual functions, derived class constructor *must* call reset(t)
         }
-        recursiveEntDescripIterator( ): startEntity( 0 ), position( 0 ) {
+        recursiveEntDescripIterator( ): startEntity( 0 ), position( 0 ), dqMtxP( new sc_recursive_mutex( ) ) {
         }
         ~recursiveEntDescripIterator( ) {
+            delete dqMtxP;
         }
 
         void reset( const EntityDescriptor * t = 0 ) {
+            dqMtxP->lock( );
             position = 0;
             q.clear( );
             if( t ) {
@@ -56,30 +62,40 @@ class recursiveEntDescripIterator {
                 p.ed = startEntity;
                 addLinkedList( p );
             }
+            dqMtxP->unlock( );
         }
 
         const EntityDescriptor * next( ) {
-            if( q.empty( ) ) {
-                return ( EntityDescriptor * ) 0;
-            } else {
+            const EntityDescriptor * ed = 0;
+            dqMtxP->lock( );
+            if( !q.empty( ) ) {
                 position++;
                 queue_pair qp = q.front( );
                 q.pop_front( );
                 addLinkedList( qp );
-                return qp.ed;
+                ed = qp.ed;
             }
+            dqMtxP->unlock( );
+            return ed;
         }
 
         const EntityDescriptor * current( ) const {
-            if( q.empty( ) ) {
-                return ( EntityDescriptor * ) 0;
+            const EntityDescriptor * ed = 0;
+            dqMtxP->lock();
+            if( !q.empty( ) ) {
+                //q.front has to be protected by a mutex otherwise it calling front on an empty queue might lead to an undefined behavior
+                ed = ( q.front( ).ed );
             }
-            return( q.front( ).ed );
+            dqMtxP->unlock();
+            return ed;
         }
 
         bool hasNext( ) const {
-            return( ( ( q.size( ) > 1 ) && ( q[1].ed != 0 ) ) //there is another EntityDescriptor in q
-                    || ( nodeContent( listHead( q[0].ed ) ) != 0 ) ); //or, the only one in the queue has a non-empty list
+            dqMtxP->lock();
+            bool has_next = ( ( ( q.size( ) > 1 ) && ( q[1].ed != 0 ) ) //there is another EntityDescriptor in q
+                            || ( nodeContent( listHead( q[0].ed ) ) != 0 ) ); //or, the only one in the queue has a non-empty list
+            dqMtxP->unlock();
+            return has_next;
         }
 
         bool empty( ) const {
@@ -104,7 +120,10 @@ class recursiveEntDescripIterator {
 
         /// two iterators are not considered equal unless the startEntity pointers match and the positions match
         bool operator ==( const recursiveEntDescripIterator & b ) const {
-            return( ( startEntity == b.startEntity ) && ( position == b.position ) );
+            dqMtxP->lock();
+            bool eq = ( ( startEntity == b.startEntity ) && ( position == b.position ) );
+            dqMtxP->unlock();
+            return eq;
         }
 
         bool operator !=( const recursiveEntDescripIterator & b ) const {
@@ -113,47 +132,63 @@ class recursiveEntDescripIterator {
 
         /// for inequality operators, return a Logical; LUnknown means that the startEntity pointers do not match
         Logical operator >( const recursiveEntDescripIterator & b ) const {
+            Logical logical;
+            dqMtxP->lock();
             if( startEntity != b.startEntity ) {
-                return LUnknown;
+                logical = LUnknown;
             }
-            if( position > b.position ) {
-                return LTrue;
+            else if( position > b.position ) {
+                logical = LTrue;
             } else {
-                return LFalse;
+                logical = LFalse;
             }
+            dqMtxP->unlock();
+            return logical;
         }
 
         Logical operator <( const recursiveEntDescripIterator & b ) const {
+            Logical logical;
+            dqMtxP->lock();
             if( startEntity != b.startEntity ) {
-                return LUnknown;
+                logical = LUnknown;
             }
-            if( position < b.position ) {
-                return LTrue;
+            else if( position < b.position ) {
+                logical = LTrue;
             } else {
-                return LFalse;
+                logical = LFalse;
             }
+            dqMtxP->unlock();
+            return logical;
         }
 
         Logical operator >=( const recursiveEntDescripIterator & b ) const {
+            Logical logical;
+            dqMtxP->lock();
             if( startEntity != b.startEntity ) {
-                return LUnknown;
+                logical = LUnknown;
             }
-            if( position >= b.position ) {
-                return LTrue;
+            else if( position >= b.position ) {
+                logical = LTrue;
             } else {
-                return LFalse;
+                logical = LFalse;
             }
+            dqMtxP->unlock();
+            return logical;
         }
 
         Logical operator <=( const recursiveEntDescripIterator & b ) const {
+            Logical logical;
+            dqMtxP->lock();
             if( startEntity != b.startEntity ) {
-                return LUnknown;
+                logical = LUnknown;
             }
-            if( position <= b.position ) {
-                return LTrue;
+            else if( position <= b.position ) {
+                logical = LTrue;
             } else {
-                return LFalse;
+                logical = LFalse;
             }
+            dqMtxP->unlock();
+            return logical;
         }
 
         const EntityDescriptor * operator ++( ) {
@@ -161,8 +196,10 @@ class recursiveEntDescripIterator {
         }
 
         const EntityDescriptor * operator ++( int ) {
+            dqMtxP->lock();
             const EntityDescriptor * c = current( );
             next( );
+            dqMtxP->unlock();
             return c;
         }
 };
@@ -173,16 +210,22 @@ class recursiveEntDescripIterator {
 class supertypesIterator : public recursiveEntDescripIterator {
     protected:
         EntityDescLinkNode * listHead( const EntityDescriptor * t ) const {     ///< returns the head of an EntityDescriptorList
-            if( !t ) {
-                return 0;
+            EntityDescLinkNode * edln = 0;
+            dqMtxP->lock();
+            if( t ) {
+                edln = ( EntityDescLinkNode * ) t->Supertypes().GetHead();
             }
-            return ( EntityDescLinkNode * ) t->Supertypes().GetHead();
+            dqMtxP->unlock();
+            return edln;
         }
         EntityDescriptor * nodeContent( const EntityDescLinkNode * n ) const {  ///< returns the content of a EntityDescLinkNode
-            if( !n ) {
-                return 0;
+            EntityDescriptor * ed = 0;
+            dqMtxP->lock();
+            if( n ) {
+                ed = n->EntityDesc();
             }
-            return n->EntityDesc();
+            dqMtxP->unlock();
+            return ed;
         }
     public:
         supertypesIterator( const EntityDescriptor * t = 0 ): recursiveEntDescripIterator( t ) {
@@ -196,16 +239,22 @@ class supertypesIterator : public recursiveEntDescripIterator {
 class subtypesIterator: public recursiveEntDescripIterator {
     protected:
         EntityDescLinkNode * listHead( const EntityDescriptor * t ) const {     ///< returns the head of an EntityDescriptorList
-            if( !t ) {
-                return 0;
+            EntityDescLinkNode * edln = 0;
+            dqMtxP->lock();
+            if( t ) {
+                edln = ( EntityDescLinkNode * ) t->Subtypes().GetHead();
             }
-            return ( EntityDescLinkNode * ) t->Subtypes().GetHead();
+            dqMtxP->unlock();
+            return edln;
         }
         EntityDescriptor * nodeContent( const EntityDescLinkNode * n ) const {  ///< returns the content of a EntityDescLinkNode
-            if( !n ) {
-                return 0;
+            EntityDescriptor * ed = 0;
+            dqMtxP->lock();
+            if( n ) {
+                ed = n->EntityDesc();
             }
-            return n->EntityDesc();
+            dqMtxP->unlock();
+            return ed;
         }
     public:
         subtypesIterator( const EntityDescriptor * t = 0 ): recursiveEntDescripIterator( t ) {
