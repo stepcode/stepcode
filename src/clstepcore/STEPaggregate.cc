@@ -38,14 +38,7 @@ STEPaggregate::STEPaggregate() {
 }
 
 STEPaggregate::~STEPaggregate() {
-    STEPnode * node;
-
-    node = ( STEPnode * ) head;
-    while( node ) {
-        head = node->NextNode();
-        delete node;
-        node = ( STEPnode * ) head;
-    }
+    // Left to the superclass
 }
 
 STEPaggregate & STEPaggregate::ShallowCopy( const STEPaggregate & a ) {
