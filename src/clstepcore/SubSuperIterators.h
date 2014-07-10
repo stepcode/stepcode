@@ -108,7 +108,7 @@ class recursiveEntDescripIterator {
         }
 
         bool operator !=( const recursiveEntDescripIterator & b ) const {
-            return( ( startEntity != b.startEntity ) || ( position != b.position ) );
+            return( !( operator ==( b ) ) );
         }
 
         /// for inequality operators, return a Logical; LUnknown means that the startEntity pointers do not match
