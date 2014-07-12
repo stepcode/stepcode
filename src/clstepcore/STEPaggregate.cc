@@ -384,6 +384,7 @@ SingleLinkNode * GenericAggregate::NewNode() {
 STEPaggregate & GenericAggregate::ShallowCopy( const STEPaggregate & a ) {
     Empty();
 
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     SingleLinkNode * next = a.GetHead();
     SingleLinkNode * copy;
 
@@ -392,6 +393,8 @@ STEPaggregate & GenericAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( copy );
         next = next->NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -572,11 +575,14 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
 
 STEPaggregate & EntityAggregate::ShallowCopy( const STEPaggregate & a ) {
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     const EntityNode * tmp = ( const EntityNode * ) a.GetHead();
     while( tmp ) {
         AddNode( new EntityNode( tmp -> node ) );
         tmp = ( const EntityNode * ) tmp -> NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -810,12 +816,15 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
 
 STEPaggregate & SelectAggregate::ShallowCopy( const STEPaggregate & a ) {
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     const SelectNode * tmp = ( const SelectNode * ) a.GetHead();
     while( tmp ) {
         AddNode( new SelectNode( tmp -> node ) );
 
         tmp = ( const SelectNode * ) tmp -> NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -930,6 +939,7 @@ StringAggregate::~StringAggregate() {
 STEPaggregate & StringAggregate::ShallowCopy( const STEPaggregate & a ) {
     Empty();
 
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     SingleLinkNode * next = a.GetHead();
     SingleLinkNode * copy;
 
@@ -938,6 +948,8 @@ STEPaggregate & StringAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( copy );
         next = next->NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -1035,6 +1047,7 @@ BinaryAggregate::~BinaryAggregate() {
 STEPaggregate & BinaryAggregate::ShallowCopy( const STEPaggregate & a ) {
     Empty();
 
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     SingleLinkNode * next = a.GetHead();
     SingleLinkNode * copy;
 
@@ -1043,6 +1056,8 @@ STEPaggregate & BinaryAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( copy );
         next = next->NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -1135,6 +1150,7 @@ void BinaryNode::STEPwrite( ostream & out ) {
 
 /// COPY
 STEPaggregate & EnumAggregate::ShallowCopy( const STEPaggregate & a ) {
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     const EnumNode * tmp = ( const EnumNode * ) a.GetHead();
     EnumNode * to;
 
@@ -1144,6 +1160,8 @@ STEPaggregate & EnumAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( to );
         tmp = ( const EnumNode * ) tmp -> NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -1299,6 +1317,7 @@ SingleLinkNode * RealAggregate::NewNode() {
 
 // COPY
 STEPaggregate & RealAggregate::ShallowCopy( const STEPaggregate & a ) {
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     const RealNode * tmp = ( const RealNode * ) a.GetHead();
     RealNode * to;
 
@@ -1308,6 +1327,8 @@ STEPaggregate & RealAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( to );
         tmp = ( const RealNode * ) tmp -> NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {
@@ -1332,6 +1353,7 @@ SingleLinkNode * IntAggregate::NewNode() {
 
 /// COPY
 STEPaggregate & IntAggregate::ShallowCopy( const STEPaggregate & a ) {
+    a.mtxP->lock(); // required since we are iterating on 'SingleLinkList a'
     const IntNode * tmp = ( const IntNode * ) a.GetHead();
     IntNode * to;
 
@@ -1341,6 +1363,8 @@ STEPaggregate & IntAggregate::ShallowCopy( const STEPaggregate & a ) {
         AddNode( to );
         tmp = ( const IntNode * ) tmp -> NextNode();
     }
+    a.mtxP->unlock();
+
     if( head ) {
         _null = 0;
     } else {

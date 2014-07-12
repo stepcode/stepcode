@@ -24,11 +24,13 @@ class SC_CORE_EXPORT SingleLinkList  {
 
         class  SingleLinkNode  * head;
         SingleLinkNode  * tail;
+Made STEPaggregrate thread safe.
 
+This was done by relying on the mtx used by its superclass: SingleLinkList.
     public:
         // had to be made into a pointer due to the equality
         //  operator being used elswhere for SingleLinkList object
-        sc_recursive_mutex * mtxP; //making it public for the use in STEPaggregrate
+        sc_recursive_mutex * mtxP; //making it public for the use in STEPaggregrate (where another object might lock/unlock them)
 
         virtual SingleLinkNode * NewNode();
         virtual void AppendNode( SingleLinkNode * );
