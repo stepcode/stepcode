@@ -19,6 +19,7 @@
 #include <fstream>
 using namespace std;
 #include "Str.h"
+#include "sc_mutex.h"
 
 #define LISTEND 999
 /** \def LISTEND
@@ -80,13 +81,15 @@ class SC_CORE_EXPORT EntNode {
         friend class ComplexList;
 
     public:
-        EntNode( const char * nm = "" ) : next( 0 ), mark( NOMARK ), multSupers( 0 ) {
+        EntNode( const char * nm = "" ) : next( 0 ), sharedMtxP( 0 ), mark( NOMARK ), multSupers( 0 ) {
             StrToLower( nm, name );
         }
         EntNode( const char ** );                ///< given a list, create a linked list of EntNodes
         ~EntNode() {
             if( next ) {
                 delete next;
+            } else {
+                delete sharedMtxP; //The last node deletes sharedMtxP;
             }
         }
         operator const char * () {
@@ -129,6 +132,7 @@ class SC_CORE_EXPORT EntNode {
         void sort( EntNode ** );
 
         EntNode * next;
+        sc_recursive_mutex * sharedMtxP;///< will be common for all nodes. Made recursive due to ::sort()
 
     private:
         MarkType mark;

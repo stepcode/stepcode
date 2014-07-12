@@ -13,6 +13,7 @@
 
 #include "complexSupport.h"
 #include "sc_memmgr.h"
+#include "assert.h"
 
 /**
  * Given a list of entity names, creates a sorted linked list of EntNodes
@@ -29,6 +30,7 @@ EntNode::EntNode( const char ** names ) {
 
     // Create a first EntNode:
     firstnode = prev = new EntNode( names[0] );
+    firstnode->sharedMtxP = new sc_recursive_mutex();
 
     while( names[j] && *names[j] != '*' ) {
         nm = names[j];
@@ -43,6 +45,7 @@ EntNode::EntNode( const char ** names ) {
             // prev.  prev or prev2 may = NULL if newnode belongs at the end of
             // the list or before the beginning, respectively.
             newnode = new EntNode( nm );
+            newnode->sharedMtxP = firstnode->sharedMtxP;
             newnode->next = prev;
             if( prev2 == NULL ) {
                 // This will be the case if the inner while was never entered.
@@ -64,6 +67,8 @@ EntNode::EntNode( const char ** names ) {
     *this = *firstnode;
     firstnode->next = NULL;
     // (Otherwise, deleting firstnode would delete entire list.)
+    firstnode->sharedMtxP = NULL;
+    // (Otherwise, deleting firstnode would delete the sharedMtxP list.)
     delete firstnode;
 }
 
@@ -71,10 +76,14 @@ EntNode::EntNode( const char ** names ) {
  * Copies all of ent's values here.
  */
 EntNode & EntNode::operator= ( EntNode & ent ) {
+    assert( ent.sharedMtxP != 0 && "equality operator being used to assign an EntNode to another EntNode which is not a part of a list. (Not Supported)" );
+    ent.sharedMtxP->lock(); // Makes the assignment consistent
+    sharedMtxP = ent.sharedMtxP;
     Name( ent.name );
     setmark( ent.mark );
     multSuprs( ent.multSupers );
     next = ent.next;
+    ent.sharedMtxP->unlock();
     return *this;
 }
 
@@ -84,10 +93,12 @@ EntNode & EntNode::operator= ( EntNode & ent ) {
 void EntNode::markAll( MarkType stamp ) {
     EntNode * node = this;
 
+    sharedMtxP->lock(); // Protects the iteraton (as the next pointer can change in the sort function)
     while( node != NULL ) {
         node->mark = stamp;
         node = node->next;
     }
+    sharedMtxP->unlock();
 }
 
 /**
@@ -95,14 +106,18 @@ void EntNode::markAll( MarkType stamp ) {
  */
 bool EntNode::allMarked() {
     EntNode * node = this;
+    bool result = true;
 
+    sharedMtxP->lock(); // Protects the iteraton (as the next pointer can change in the sort function)
     while( node != NULL ) {
         if( node->mark == NOMARK ) {
-            return false;
+            result = false;
+            break;
         }
         node = node->next;
     }
-    return true;
+    sharedMtxP->unlock();
+    return result;
 }
 
 /**
@@ -112,12 +127,14 @@ int EntNode::unmarkedCount() {
     int count = 0;
     EntNode * node = this;
 
+    sharedMtxP->lock(); // Protects the iteraton (as the next pointer can change in the sort function)
     while( node != NULL ) {
         if( node->mark == NOMARK ) {
             count++;
         }
         node = node->next;
     }
+    sharedMtxP->unlock();
     return count;
 }
 
@@ -127,7 +144,7 @@ int EntNode::unmarkedCount() {
  */
 EntNode * EntNode::lastSmaller( EntNode * ent ) {
     EntNode * eptr = next, *prev = this;
-
+    // no locking is used here as this function is always called from EntNode::sort.
     if( *this > *ent ) {
         return NULL;
     }
@@ -150,6 +167,7 @@ EntNode * EntNode::lastSmaller( EntNode * ent ) {
 void EntNode::sort( EntNode ** first ) {
     EntNode * eptr1, *eptr2, *temp1, *temp2;
 
+    sharedMtxP->lock();
     while( next && *this > *next ) {
 
         // Find the earliest node greater than next.  (I.e., is not only this >
@@ -189,4 +207,5 @@ void EntNode::sort( EntNode ** first ) {
     if( next ) {
         next->sort( first );
     }
+    sharedMtxP->unlock();
 }
