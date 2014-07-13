@@ -24,9 +24,7 @@ class SC_CORE_EXPORT SingleLinkList  {
 
         class  SingleLinkNode  * head;
         SingleLinkNode  * tail;
-Made STEPaggregrate thread safe.
 
-This was done by relying on the mtx used by its superclass: SingleLinkList.
     public:
         // had to be made into a pointer due to the equality
         //  operator being used elswhere for SingleLinkList object
