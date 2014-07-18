@@ -606,7 +606,7 @@ void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
     _derive = sa->_derive;
     _redefAttr = sa->_redefAttr;
     if( _redefAttr )  {
-        _redefAttr->ShallowCopy( sa );
+        ShallowCopy( _redefAttr );
     }
     //Should we just use memcpy()? That would be a true shallowCopy
     switch( sa->NonRefType() ) {
