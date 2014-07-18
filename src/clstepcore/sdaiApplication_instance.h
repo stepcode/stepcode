@@ -129,7 +129,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         SDAI_Application_instance  * GetNextMiEntity() {
             return nextMiEntity;
         }
-        SDAI_Application_instance  * GetMiEntity( char * entName );
+        SDAI_Application_instance  * GetMiEntity( const char * entName );
         void AppendMultInstance( SDAI_Application_instance * se );
 
     protected:

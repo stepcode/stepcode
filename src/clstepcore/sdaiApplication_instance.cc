@@ -57,8 +57,8 @@ SDAI_Application_instance::~SDAI_Application_instance() {
     do {
         attr = NextAttribute();
         if( attr ) {
-            attr->refCount --;
-            if( attr->refCount <= 0 ) {
+            attr->decrRefCount();
+            if( attr->getRefCount() <= 0 ) {
                 delete attr;
             }
         }
@@ -141,7 +141,7 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
 
 // BUG implement this -- FIXME function is never used
 
-SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entName ) {
+SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( const char * entName ) {
     std::string s1, s2;
 
     const EntityDescLinkNode * edln = 0;
