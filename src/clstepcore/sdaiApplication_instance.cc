@@ -73,6 +73,7 @@ SDAI_Application_instance::~SDAI_Application_instance() {
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
     char errStr[BUFSIZ];
     SDAI_Application_instance * seNew;
+    mtx.lock(); // protects _error
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
@@ -92,27 +93,34 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
         seNew = eDesc->NewSTEPentity();
         seNew -> CopyAs( this );
     }
+    mtx.unlock();
     return seNew;
 }
 
 void SDAI_Application_instance::AddP21Comment( const char * s, bool replace ) {
+    mtx.lock(); // protects p21Comment
     if( replace ) {
         p21Comment.clear();
     }
     if( s ) {
         p21Comment += s;
     }
+    mtx.unlock();
 }
 
 void SDAI_Application_instance::AddP21Comment( const std::string & s, bool replace ) {
+    mtx.lock(); // protects p21Comment
     if( replace ) {
         p21Comment.clear();
     }
     p21Comment += s;
+    mtx.unlock();
 }
 
 void SDAI_Application_instance::PrependP21Comment( const std::string & s ) {
+    mtx.lock(); // protects p21Comment
     p21Comment.insert( 0, s );
+    mtx.unlock();
 }
 
 void SDAI_Application_instance::STEPwrite_reference( ostream & out ) {
@@ -129,16 +137,22 @@ const char * SDAI_Application_instance::STEPwrite_reference( std::string & buf )
 void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * se ) {
     SDAI_Application_instance * link;
     SDAI_Application_instance * linkTrailing = this;
+    linkTrailing->mtx.lock(); // protects nextMiEntity and the link loop
     if( nextMiEntity == 0 ) {
         nextMiEntity = se;
     } else {
         link = nextMiEntity;
         while( link ) {
+            //hand to  hand locking
+            link->mtx.lock(); //acquire lock for nextMiEntity
+            linkTrailing->mtx.unlock();//release lock trailing MiEntity.
+
             linkTrailing = link;
             link = link->nextMiEntity;
         }
         linkTrailing->nextMiEntity = se;
     }
+    linkTrailing->mtx.unlock();
 }
 
 // BUG implement this -- FIXME function is never used
@@ -147,12 +161,14 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( const char *
     std::string s1, s2;
     SDAI_Application_instance * mie = 0;
 
+    mtx.lock(); // protects the ed loop
     const EntityDescLinkNode * edln = 0;
     const EntityDescriptor * ed = eDesc;
 
     // compare up the *leftmost* parent path
     while( ed ) {
         if( !strcmp( StrToLower( ed->Name(), s1 ), StrToLower( entName, s2 ) ) ) {
+            mtx.unlock();
             return this;    // return this parent path
         }
         edln = ( EntityDescLinkNode * )( ed->Supertypes().GetHead() );
@@ -164,8 +180,11 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( const char *
     }
     // search alternate parent path since didn't find it in this one.
     if( nextMiEntity ) {
+        nextMiEntity->mtx.lock(); //lock is acquired increasing order
         mie = nextMiEntity->GetMiEntity( entName );
+        nextMiEntity->mtx.unlock();//locks are released in the reverse order
     }
+    mtx.unlock();
     return mie;
 }
 
@@ -181,6 +200,7 @@ STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm, co
     }
     STEPattribute * a = 0;
 
+    mtx.lock(); // protects attribute loop
     ResetAttributes();
     // keep going until no more attributes, or attribute is found
     while( ( a = NextAttribute() ) ) {
@@ -191,17 +211,20 @@ STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm, co
         }
     }
 
+    mtx.unlock();
     return a;
 }
 
 STEPattribute * SDAI_Application_instance::MakeRedefined( STEPattribute * redefiningAttr, const char * nm ) {
     // find the attribute being redefined
+    mtx.lock(); // protects the redefine operation (from a possible pointer exception)
     STEPattribute * a = GetSTEPattribute( nm );
 
     // assign its pointer to the redefining attribute
     if( a ) {
         a->RedefiningAttr( redefiningAttr );
     }
+    mtx.unlock();
     return a;
 }
 
@@ -211,14 +234,17 @@ STEPattribute * SDAI_Application_instance::MakeRedefined( STEPattribute * redefi
  * \param entity If not null, check that the attribute comes from this entity. When called from generated code, this is used to ensure that the correct attr is marked as derived. Issue #232
  */
 STEPattribute * SDAI_Application_instance::MakeDerived( const char * nm, const char * entity ) {
+    mtx.lock();
     STEPattribute * a = GetSTEPattribute( nm, entity );
     if( a ) {
         a ->Derive();
     }
+    mtx.unlock();
     return a;
 }
 
 void SDAI_Application_instance::CopyAs( SDAI_Application_instance * other ) {
+    mtx.lock();
     int numAttrs = AttributeCount();
     ResetAttributes();
     other -> ResetAttributes();
@@ -230,14 +256,17 @@ void SDAI_Application_instance::CopyAs( SDAI_Application_instance * other ) {
         this_attr -> ShallowCopy( other_attr );
         numAttrs--;
     }
+    mtx.unlock();
 }
 
 
 const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
     const char * en = NULL;
+    mtx.lock();
     if( eDesc ) {
         en = eDesc->Name( schnm );
     }
+    mtx.unlock();
     return en;
 }
 
@@ -247,9 +276,11 @@ const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
  */
 const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor * ed ) const {
     const EntityDescriptor * edA = NULL;
+    mtx.lock();
     if( eDesc ) {
         edA = ( eDesc->IsA( ed ) );
     }
+    mtx.unlock();
     return edA;
 }
 
@@ -259,6 +290,7 @@ const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor 
 Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr * im,
         int clearError ) {
     ErrorDescriptor err;
+    mtx.lock();
     if( clearError ) {
         ClearError();
     }
@@ -269,6 +301,7 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
                                         attributes[i].asStr().c_str(), &err, im, 0 ) );
     }
     Severity sev = error->severity();
+    mtx.unlock();
     return sev;
 }
 
@@ -276,10 +309,12 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
  * clears all attr's errors
  */
 void SDAI_Application_instance::ClearAttrError() {
+    mtx.lock(); // For n
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         attributes[i].Error().ClearErrorMsg();
     }
+    mtx.unlock();
 }
 
 /**
@@ -302,6 +337,7 @@ void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
     out << "begin STEPwrite ... \n" ;
     out.flush();
 
+    mtx.lock(); // For n
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         if( attributes[i].Type() == ENTITY_TYPE
@@ -309,6 +345,7 @@ void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
             ( *( attributes[i].ptr.c ) ) -> STEPwrite();
         }
     }
+    mtx.unlock();
 }
 
 /**************************************************************//**
@@ -327,6 +364,7 @@ void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
     }
     out << "#" << STEPfile_id << "=" << StrToUpper( EntityName( currSch ), tmp )
         << "(";
+    mtx.lock(); // protects n, loop
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -337,6 +375,7 @@ void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
             ( attributes[i] ).STEPwrite( out, currSch );
         }
     }
+    mtx.unlock();
     out << ");\n";
 }
 
@@ -350,6 +389,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         int writeComments, int mixedCase ) {
     std::string s, tmp, tmp2;
 
+    mtx.lock();
     if( writeComments && !p21Comment.empty() ) {
         out << p21Comment;
     }
@@ -382,6 +422,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         }
     }
     out << endl;
+    mtx.unlock();
 }
 
 
@@ -398,6 +439,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
     sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
     buf.append( instanceInfo );
 
+    mtx.lock();
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -410,6 +452,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
         }
     }
     buf.append( ");" );
+    mtx.unlock();
     return const_cast<char *>( buf.c_str() );
 }
 
@@ -417,12 +460,14 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
+    mtx.lock();
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
         sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
                  EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
+    mtx.unlock();
 }
 
 /**************************************************************//**
@@ -438,6 +483,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
+    mtx.lock();
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
         sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
@@ -465,7 +511,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
 
     sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
-    return;
+    mtx.unlock();
 }
 
 /**************************************************************//**
@@ -492,6 +538,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     Severity severe;
     int i = 0;
 
+    mtx.lock();
     ClearError( 1 );
 
     in >> ws;
@@ -509,6 +556,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
         in >> c; // look for the close paren
         if( c == ')' ) {
             severe = _error.severity();
+            mtx.unlock();
             return severe;
         }
     }
@@ -585,6 +633,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             CheckRemainingInput( in, &_error, "ENTITY", ",)" );
             severe = _error.severity();
             if( !in.good() || severe <= SEVERITY_INPUT_ERROR ) {
+                mtx.unlock();
                 return severe;
             }
         } else if( c == ')' ) {
@@ -600,6 +649,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                 i++;
             }
             severe = _error.severity();
+            mtx.unlock();
             return severe;
         }
     }
@@ -633,6 +683,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     _error.AppendToDetailMsg( errStr );
 // end of imported code
     severe = _error.severity();
+    mtx.unlock();
     return severe;
 }
 
@@ -898,11 +949,13 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 ******************************************************************/
 STEPattribute * SDAI_Application_instance::NextAttribute()  {
     STEPattribute * sa = 0;
+    mtx.lock();
     int i = AttributeCount();
     ++_cur;
     if( i >= _cur ) {
         sa = &attributes [_cur - 1];
     }
+    mtx.unlock();
     return sa;
 }
 

@@ -13,6 +13,7 @@
 */
 
 #include <sc_export.h>
+#include <sc_mutex.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // SDAI_Application_instance used to be STEPentity
@@ -39,6 +40,8 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         SDAI_Application_instance * headMiEntity;
         /// these form a chain of other entity parents for multiple inheritance
         SDAI_Application_instance * nextMiEntity;
+
+        mutable sc_recursive_mutex mtx;
 
     protected:
         int _complex;
