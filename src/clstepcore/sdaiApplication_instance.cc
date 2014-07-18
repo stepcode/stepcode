@@ -72,6 +72,7 @@ SDAI_Application_instance::~SDAI_Application_instance() {
 
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
     char errStr[BUFSIZ];
+    SDAI_Application_instance * seNew;
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
@@ -82,16 +83,16 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
         _error.AppendToDetailMsg( errStr );
         _error.AppendToUserMsg( errStr );
         _error.GreaterSeverity( SEVERITY_BUG );
-        return S_ENTITY_NULL;
+        seNew = S_ENTITY_NULL;
     } else {
         if( !eDesc ) {
-            return S_ENTITY_NULL;
+            seNew = S_ENTITY_NULL;
         }
 
-        SDAI_Application_instance * seNew = eDesc->NewSTEPentity();
+        seNew = eDesc->NewSTEPentity();
         seNew -> CopyAs( this );
-        return seNew;
     }
+    return seNew;
 }
 
 void SDAI_Application_instance::AddP21Comment( const char * s, bool replace ) {
@@ -126,11 +127,12 @@ const char * SDAI_Application_instance::STEPwrite_reference( std::string & buf )
 }
 
 void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * se ) {
+    SDAI_Application_instance * link;
+    SDAI_Application_instance * linkTrailing = this;
     if( nextMiEntity == 0 ) {
         nextMiEntity = se;
     } else {
-        SDAI_Application_instance * link = nextMiEntity;
-        SDAI_Application_instance * linkTrailing = 0;
+        link = nextMiEntity;
         while( link ) {
             linkTrailing = link;
             link = link->nextMiEntity;
@@ -143,6 +145,7 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
 
 SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( const char * entName ) {
     std::string s1, s2;
+    SDAI_Application_instance * mie = 0;
 
     const EntityDescLinkNode * edln = 0;
     const EntityDescriptor * ed = eDesc;
@@ -161,9 +164,9 @@ SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( const char *
     }
     // search alternate parent path since didn't find it in this one.
     if( nextMiEntity ) {
-        return nextMiEntity->GetMiEntity( entName );
+        mie = nextMiEntity->GetMiEntity( entName );
     }
-    return 0;
+    return mie;
 }
 
 
@@ -231,10 +234,11 @@ void SDAI_Application_instance::CopyAs( SDAI_Application_instance * other ) {
 
 
 const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
-    if( !eDesc ) {
-        return NULL;
+    const char * en = NULL;
+    if( eDesc ) {
+        en = eDesc->Name( schnm );
     }
-    return eDesc->Name( schnm );
+    return en;
 }
 
 /**
@@ -242,10 +246,11 @@ const char * SDAI_Application_instance::EntityName( const char * schnm ) const {
  * type as this one
  */
 const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor * ed ) const {
-    if( !eDesc ) {
-        return NULL;
+    const EntityDescriptor * edA = NULL;
+    if( eDesc ) {
+        edA = ( eDesc->IsA( ed ) );
     }
-    return ( eDesc->IsA( ed ) );
+    return edA;
 }
 
 /**
@@ -263,7 +268,8 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
             error->GreaterSeverity( attributes[i].ValidLevel(
                                         attributes[i].asStr().c_str(), &err, im, 0 ) );
     }
-    return error->severity();
+    Severity sev = error->severity();
+    return sev;
 }
 
 /**
@@ -502,7 +508,8 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     if( n == 0 ) { // no attributes
         in >> c; // look for the close paren
         if( c == ')' ) {
-            return _error.severity();
+            severe = _error.severity();
+            return severe;
         }
     }
 
@@ -576,11 +583,9 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                     "attribute is mapped as an asterisk so needs delimiter.\n" );
             }
             CheckRemainingInput( in, &_error, "ENTITY", ",)" );
-            if( !in.good() ) {
-                return _error.severity();
-            }
-            if( _error.severity() <= SEVERITY_INPUT_ERROR ) {
-                return _error.severity();
+            severe = _error.severity();
+            if( !in.good() || severe <= SEVERITY_INPUT_ERROR ) {
+                return severe;
             }
         } else if( c == ')' ) {
             while( i < n - 1 ) {
@@ -590,11 +595,12 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                     _error.AppendToDetailMsg( "Missing attribute value[s].\n" );
                     // recoverable error
                     _error.GreaterSeverity( SEVERITY_WARNING );
-                    return _error.severity();
+                    break;
                 }
                 i++;
             }
-            return _error.severity();
+            severe = _error.severity();
+            return severe;
         }
     }
     STEPread_error( c, i, in, currSch );
@@ -626,7 +632,8 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
 // end of imported code
-    return _error.severity();
+    severe = _error.severity();
+    return severe;
 }
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
@@ -890,13 +897,13 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 ** \Returns  reference to an attribute pointer
 ******************************************************************/
 STEPattribute * SDAI_Application_instance::NextAttribute()  {
+    STEPattribute * sa = 0;
     int i = AttributeCount();
     ++_cur;
-    if( i < _cur ) {
-        return 0;
+    if( i >= _cur ) {
+        sa = &attributes [_cur - 1];
     }
-    return &attributes [_cur - 1];
-
+    return sa;
 }
 
 int SDAI_Application_instance::AttributeCount()  {
