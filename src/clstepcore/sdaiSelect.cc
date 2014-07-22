@@ -84,9 +84,12 @@ SDAI_Select::CanBe( const char * n ) const {
 
 const TypeDescriptor *
 SDAI_Select::CanBe( BASE_TYPE bt ) const {
-    const TypeDescLinkNode * tdn =
-        ( const TypeDescLinkNode * ) _type -> GetElements().GetHead();
+    const TypeDescriptorList & tl = _type -> GetElements();
+    tl.mtxP->lock();
+
+    const TypeDescLinkNode * tdn = ( const TypeDescLinkNode * ) tl.GetHead();
     const TypeDescriptor * td = tdn -> TypeDesc();
+    const TypeDescriptor * rettd = 0;
     BASE_TYPE bt_thisnode;
 
     while( tdn )  {
@@ -96,11 +99,13 @@ SDAI_Select::CanBe( BASE_TYPE bt ) const {
                                             ( bt_thisnode == LIST_TYPE ) ||
                                             ( bt_thisnode == SET_TYPE ) ||
                                             ( bt_thisnode == BAG_TYPE ) ) ) ) {
-            return td;    // they are the same
+            rettd = td;    // they are the same
+            break;
         }
         tdn = ( TypeDescLinkNode * )( tdn -> NextNode() );
     }
-    return 0;
+    tl.mtxP->unlock();
+    return rettd;
 }
 
 const TypeDescriptor *
