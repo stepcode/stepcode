@@ -82,13 +82,13 @@ class SC_CORE_EXPORT Dictionary_instance__set {
 
         virtual int Count();
         virtual void Clear();
+        sc_recursive_mutex mtx;
     private:
         virtual void Check( int index );
     protected:
         Dictionary_instance_ptr * _buf;
         int _bufsize;
         int _count;
-        sc_recursive_mutex mtx;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

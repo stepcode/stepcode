@@ -361,6 +361,7 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
 
 /// TYPE definitions
 void Schema::GenerateTypesExpress( ostream & out ) const {
+    _typeList.mtxP->lock();
     TypeDescItr tdi( _typeList );
     tdi.ResetItr();
     std::string tmp;
@@ -370,10 +371,12 @@ void Schema::GenerateTypesExpress( ostream & out ) const {
         out << endl << td->GenerateExpress( tmp );
         td = tdi.NextTypeDesc();
     }
+    _typeList.mtxP->unlock();
 }
 
 /// Entity definitions
 void Schema::GenerateEntitiesExpress( ostream & out ) const {
+    _entList.mtxP->lock();
     EntityDescItr edi( _entList );
     edi.ResetItr();
     std::string tmp;
@@ -383,6 +386,7 @@ void Schema::GenerateEntitiesExpress( ostream & out ) const {
         out << endl << ed->GenerateExpress( tmp );
         ed = edi.NextEntityDesc();
     }
+    _entList.mtxP->unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -640,6 +644,7 @@ const char * EnumTypeDescriptor::GenerateExpress( std::string & buf ) const {
 ///////////////
     // count is # of WHERE rules
     if( _where_rules != 0 ) {
+        _where_rules->mtx.lock();
         int all_comments = 1;
         int count = _where_rules->Count();
         for( int i = 0; i < count; i++ ) { // print out each UNIQUE rule
@@ -664,6 +669,7 @@ const char * EnumTypeDescriptor::GenerateExpress( std::string & buf ) const {
                 buf.append( ( *( _where_rules ) )[i]->label_() );
             }
         }
+        _where_rules->mtx.unlock();
     }
 
     buf.append( "END_TYPE;\n" );
@@ -710,6 +716,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
 
     const EntityDescriptor * ed = 0;
 
+    _supertypes.mtxP->lock();
     EntityDescItr edi_super( _supertypes );
     edi_super.ResetItr();
     ed = edi_super.NextEntityDesc();
@@ -728,9 +735,11 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     if( supertypes ) {
         buf.append( ")" );
     }
+    _supertypes.mtxP->unlock();
 
     buf.append( ";\n" );
 
+    _explicitAttr.mtxP->lock();
     AttrDescItr adi( _explicitAttr );
 
     adi.ResetItr();
@@ -759,8 +768,10 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
         }
         ad = adi.NextAttrDesc();
     }
+    _explicitAttr.mtxP->unlock();
 /////////
 
+    _inverseAttr.mtxP->lock();
     InverseAItr iai( _inverseAttr );
 
     iai.ResetItr();
@@ -775,9 +786,11 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
         buf.append( ia->GenerateExpress( sstr ) );
         ia = iai.NextInverse_attribute();
     }
+    _inverseAttr.mtxP->unlock();
 ///////////////
     // count is # of UNIQUE rules
     if( _uniqueness_rules != 0 ) {
+        _uniqueness_rules->mtx.lock();
         count = _uniqueness_rules->Count();
         for( i = 0; i < count; i++ ) { // print out each UNIQUE rule
             if( !( *( _uniqueness_rules ) )[i]->_label.size() ) {
@@ -802,11 +815,13 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
                 buf.append( "\n" );
             }
         }
+        _uniqueness_rules->mtx.unlock();
     }
 
 ///////////////
     // count is # of WHERE rules
     if( _where_rules != 0 ) {
+        _where_rules->mtx.lock();
         all_comments = 1;
         count = _where_rules->Count();
         for( i = 0; i < count; i++ ) { // print out each UNIQUE rule
@@ -832,6 +847,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
                 buf.append( "\n" );
             }
         }
+        _where_rules->mtx.unlock();
     }
 
     buf.append( "END_ENTITY;\n" );
@@ -841,6 +857,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
 
 const char * EntityDescriptor::QualifiedName( std::string & s ) const {
     s.clear();
+    _supertypes.mtxP->lock();
     EntityDescItr edi( _supertypes );
 
     int count = 1;
@@ -853,6 +870,8 @@ const char * EntityDescriptor::QualifiedName( std::string & s ) const {
         count++;
         ed = edi.NextEntityDesc();
     }
+    _supertypes.mtxP->unlock();
+
     if( count > 1 ) {
         s.append( "&" );
     }
@@ -870,16 +889,18 @@ const TypeDescriptor * EntityDescriptor::IsA( const TypeDescriptor * td ) const 
 
 const EntityDescriptor * EntityDescriptor::IsA( const EntityDescriptor * other )  const {
     const EntityDescriptor * found = 0;
-    const EntityDescLinkNode * link = ( const EntityDescLinkNode * )( GetSupertypes().GetHead() );
+    _supertypes.mtxP->lock();
+    const EntityDescLinkNode * link = ( const EntityDescLinkNode * )( _supertypes.GetHead() );
 
     if( this == other ) {
-        return other;
+        found = other;
     } else {
         while( link && ! found )  {
             found = link -> EntityDesc() -> IsA( other );
             link = ( EntityDescLinkNode * ) link -> NextNode();
         }
     }
+    _supertypes.mtxP->unlock();
     return found;
 }
 
@@ -920,10 +941,12 @@ Where_rule_ptr & Where_rule__list::operator[]( int index ) {
 }
 
 void Where_rule__list::Clear() {
+    mtx.lock();
     for( int i = 0; i < _count ; i ++ ) {
         delete ( Where_rule_ptr )_buf[i];
     }
     _count = 0;
+    mtx.unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -955,10 +978,12 @@ Uniqueness_rule_ptr & Uniqueness_rule__set::operator[]( int index ) {
 }
 
 void Uniqueness_rule__set::Clear() {
+    mtx.lock();
     for( int i = 0; i < _count; i ++ ) {
         delete ( Uniqueness_rule_ptr )_buf[i];
     }
     _count = 0;
+    mtx.unlock();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1022,10 +1047,12 @@ Global_rule_ptr & Global_rule__set::operator[]( int index ) {
 }
 
 void Global_rule__set::Clear() {
+    mtx.lock();
     for( int i = 0; i < _count; i ++ ) {
         delete ( Global_rule_ptr )_buf[i];
     }
     _count = 0;
+    mtx.unlock();
 }
 
 
@@ -1063,6 +1090,7 @@ const char * TypeDescriptor::GenerateExpress( std::string & buf ) const {
 ///////////////
     // count is # of WHERE rules
     if( _where_rules != 0 ) {
+        _where_rules->mtx.lock();
         int all_comments = 1;
         int count = _where_rules->Count();
         for( int i = 0; i < count; i++ ) { // print out each UNIQUE rule
@@ -1087,6 +1115,7 @@ const char * TypeDescriptor::GenerateExpress( std::string & buf ) const {
                 buf.append( ( *( _where_rules ) )[i]->label_() );
             }
         }
+        _where_rules->mtx.unlock();
     }
 
     buf.append( "END_TYPE;\n" );
@@ -1371,15 +1400,20 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const TypeDescriptor * other
         return other;
     }
 
-    TypeDescItr elements( GetElements() ) ;
+    const TypeDescriptor * rettd = 0;
+    const TypeDescriptorList & tl = GetElements();
+    tl.mtxP->lock();
+    TypeDescItr elements( tl ) ;
     const TypeDescriptor * td = elements.NextTypeDesc();
     while( td )  {
         if( td -> CanBe( other ) ) {
-            return td;
+            rettd = td;
+            break;
         }
         td = elements.NextTypeDesc();
     }
-    return 0;
+    tl.mtxP->unlock();
+    return rettd;
 }
 
 /**
@@ -1388,21 +1422,26 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const TypeDescriptor * other
  * type may be an element of a td for a select that is returned.
  */
 const TypeDescriptor * SelectTypeDescriptor::CanBe( const char * other ) const {
-    TypeDescItr elements( GetElements() ) ;
-    const TypeDescriptor * td = 0;
-
     // see if other is the select
     if( !StrCmpIns( _name, other ) ) {
         return this;
     }
 
+    const TypeDescriptor * td = 0;
+    const TypeDescriptor * rettd = 0;
+    const TypeDescriptorList & tl = GetElements();
+    tl.mtxP->lock();
+
+    TypeDescItr elements( tl ) ;
     // see if other is one of the elements
     while( ( td = elements.NextTypeDesc() ) ) {
         if( td -> CanBe( other ) ) {
-            return td;
+            rettd = td;
+            break;
         }
     }
-    return 0;
+    tl.mtxP->unlock();
+    return rettd;
 }
 
 /**
@@ -1425,21 +1464,27 @@ const TypeDescriptor * SelectTypeDescriptor::CanBe( const char * other ) const {
  * from XX (A as B)").
  */
 const TypeDescriptor * SelectTypeDescriptor::CanBeSet( const char * other, const char * schNm ) const {
-    TypeDescItr elements( GetElements() ) ;
+    const TypeDescriptorList & tl = GetElements();
+    tl.mtxP->lock();
+    TypeDescItr elements( tl ) ;
     const TypeDescriptor * td = elements.NextTypeDesc();
+    const TypeDescriptor * rettd = 0;
 
     while( td ) {
         if( td->Type() == REFERENCE_TYPE && td->NonRefType() == sdaiSELECT ) {
             // Just look at this level, don't look at my items (see intro).
             if( td->CurrName( other, schNm ) ) {
-                return td;
+                rettd = td;
+                break;
             }
         } else if( td->CanBeSet( other, schNm ) ) {
-            return td;
+            rettd = td;
+            break;
         }
         td = elements.NextTypeDesc();
     }
-    return 0;
+    tl.mtxP->unlock();
+    return rettd;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
