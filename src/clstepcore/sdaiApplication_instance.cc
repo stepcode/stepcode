@@ -294,6 +294,7 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
     if( clearError ) {
         ClearError();
     }
+    attributes.mtxP->lock();
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         if( !( attributes[i].aDesc->AttrType() == AttrType_Redefining ) )
@@ -301,6 +302,7 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
                                         attributes[i].asStr().c_str(), &err, im, 0 ) );
     }
     Severity sev = error->severity();
+    attributes.mtxP->unlock();
     mtx.unlock();
     return sev;
 }
@@ -310,10 +312,12 @@ Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr
  */
 void SDAI_Application_instance::ClearAttrError() {
     mtx.lock(); // For n
+    attributes.mtxP->lock();
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         attributes[i].Error().ClearErrorMsg();
     }
+    attributes.mtxP->unlock();
     mtx.unlock();
 }
 
@@ -338,6 +342,7 @@ void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
     out.flush();
 
     mtx.lock(); // For n
+    attributes.mtxP->lock();
     int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         if( attributes[i].Type() == ENTITY_TYPE
@@ -345,6 +350,7 @@ void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
             ( *( attributes[i].ptr.c ) ) -> STEPwrite();
         }
     }
+    attributes.mtxP->unlock();
     mtx.unlock();
 }
 
@@ -365,6 +371,7 @@ void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
     out << "#" << STEPfile_id << "=" << StrToUpper( EntityName( currSch ), tmp )
         << "(";
     mtx.lock(); // protects n, loop
+    attributes.mtxP->lock();
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -375,6 +382,7 @@ void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
             ( attributes[i] ).STEPwrite( out, currSch );
         }
     }
+    attributes.mtxP->unlock();
     mtx.unlock();
     out << ");\n";
 }
@@ -404,6 +412,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         }
     }
 
+    attributes.mtxP->lock();
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -422,6 +431,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
         }
     }
     out << endl;
+    attributes.mtxP->unlock();
     mtx.unlock();
 }
 
@@ -440,6 +450,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
     buf.append( instanceInfo );
 
     mtx.lock();
+    attributes.mtxP->lock();
     int n = attributes.list_length();
 
     for( int i = 0 ; i < n; i++ ) {
@@ -452,6 +463,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
         }
     }
     buf.append( ");" );
+    attributes.mtxP->unlock();
     mtx.unlock();
     return const_cast<char *>( buf.c_str() );
 }
@@ -491,6 +503,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
         _error.PrependToDetailMsg( errStr );
     }
 
+    attributes.mtxP->lock();
     if( ( i >= 0 ) && ( i < attributes.list_length() ) ) { // i is an attribute
         Error().GreaterSeverity( SEVERITY_WARNING );
         sprintf( errStr, "  invalid data before type \'%s\'\n",
@@ -500,6 +513,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
         Error().GreaterSeverity( SEVERITY_INPUT_ERROR );
         _error.AppendToDetailMsg( "  No more attributes were expected.\n" );
     }
+    attributes.mtxP->unlock();
 
     std::string tmp;
     STEPwrite( tmp, schnm ); // STEPwrite writes to a static buffer inside function
@@ -551,11 +565,13 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     }
     ReadTokenSeparator( in, &p21Comment );
 
+    attributes.mtxP->lock();
     int n = attributes.list_length();
     if( n == 0 ) { // no attributes
         in >> c; // look for the close paren
         if( c == ')' ) {
             severe = _error.severity();
+            attributes.mtxP->unlock();
             mtx.unlock();
             return severe;
         }
@@ -633,6 +649,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             CheckRemainingInput( in, &_error, "ENTITY", ",)" );
             severe = _error.severity();
             if( !in.good() || severe <= SEVERITY_INPUT_ERROR ) {
+                attributes.mtxP->unlock();
                 mtx.unlock();
                 return severe;
             }
@@ -649,10 +666,12 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                 i++;
             }
             severe = _error.severity();
+            attributes.mtxP->unlock();
             mtx.unlock();
             return severe;
         }
     }
+    attributes.mtxP->unlock();
     STEPread_error( c, i, in, currSch );
 //  code fragment imported from STEPread_error
 //  for some currently unknown reason it was commented out of STEPread_error
@@ -950,11 +969,13 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 STEPattribute * SDAI_Application_instance::NextAttribute()  {
     STEPattribute * sa = 0;
     mtx.lock();
+    attributes.mtxP->lock();
     int i = AttributeCount();
     ++_cur;
     if( i >= _cur ) {
         sa = &attributes [_cur - 1];
     }
+    attributes.mtxP->unlock();
     mtx.unlock();
     return sa;
 }
