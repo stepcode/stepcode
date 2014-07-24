@@ -189,11 +189,9 @@ void STEPcomplex::AssignDerives() {
                     attrNm = nm;
                 }
                 scomp2 = head;
-                while( scomp2 && !a ) {
-                    if( scomp1 != scomp2 ) {
-                        scomp2->MakeDerived( attrNm );
-                        a = scomp2->GetSTEPattribute( attrNm );
-                    }
+                while( scomp2 && !a && ( scomp1 != scomp2 ) ) {
+                    scomp2->MakeDerived( attrNm );
+                    a = scomp2->GetSTEPattribute( attrNm );
                     scomp2 = scomp2->sc;
                 }
             }
