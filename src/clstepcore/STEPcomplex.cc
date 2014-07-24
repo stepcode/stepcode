@@ -64,6 +64,7 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
     bool invalid = false, outOfOrder = false;
 
     // Splice out the invalid names from our list:
+    ents->sharedMtxP->lock();
     while( eptr ) {
         enext = eptr->next;
         enDesc = _registry->FindEntity( *eptr, schnm );
@@ -95,10 +96,13 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
             }
             eptr->next = NULL;
             // must set eptr->next to NULL or next line would del entire list
+            eptr->sharedMtxP = NULL;
+            // must set eptr->sharedMtxP to NULL or the sharedMtxP for the EntNode link-list will get deleted
             delete eptr;
         }
         eptr = enext;
     }
+    ents->sharedMtxP->unlock();
 
     // If we changed the name of any of the entities, resort:
     if( outOfOrder ) {
@@ -129,20 +133,25 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
             "Entity combination does not represent a legal complex entity" );
         cerr << "ERROR: Could not create instance of the following complex"
              << " entity:" << endl;
+
+        ents->sharedMtxP->lock();
         eptr = ents;
         while( eptr ) {
             cerr << *eptr << endl;
             eptr = eptr->next;
         }
         cerr << endl;
+        ents->sharedMtxP->unlock();
         return;
     }
 
     // Finally, build what we can:
+    ents->sharedMtxP->lock();
     BuildAttrs( *ents );
     for( eptr = ents->next; eptr; eptr = eptr->next ) {
         AddEntityPart( *eptr );
     }
+    ents->sharedMtxP->unlock();
     AssignDerives();
     delete ents;
 }
@@ -170,9 +179,13 @@ void STEPcomplex::AssignDerives() {
     AttrDescLinkNode * attrPtr;
     const AttrDescriptor * ad;
 
+    // Even though the following is an interation on sc, we dont
+    // use the STEPcomplex mutex since we are assuming that no node
+    // can be removed or inserted between two
     while( scomp1 && scomp1->eDesc ) {
         a = 0;
         attrList = &( scomp1->eDesc->ExplicitAttr() );
+        attrList->mtxP->lock();
         attrPtr = ( AttrDescLinkNode * )attrList->GetHead();
 
         // assign nm to be derived attr
@@ -188,7 +201,9 @@ void STEPcomplex::AssignDerives() {
                 } else {
                     attrNm = nm;
                 }
-                scomp2 = head;
+                scomp2 = head; //locked earlier
+                // If we had used the generic hand-over-hand fine grain
+                // locking, the following loop could have caused a deadlock.
                 while( scomp2 && !a && ( scomp1 != scomp2 ) ) {
                     scomp2->MakeDerived( attrNm );
                     a = scomp2->GetSTEPattribute( attrNm );
@@ -198,6 +213,7 @@ void STEPcomplex::AssignDerives() {
             // increment attr
             attrPtr = ( AttrDescLinkNode * )attrPtr->NextNode();
         }
+        attrList->mtxP->unlock();
         scomp1 = scomp1->sc;
     }
 }
@@ -213,7 +229,7 @@ void STEPcomplex::AddEntityPart( const char * name ) {
         scomplex = new STEPcomplex( _registry, STEPfile_id );
         scomplex->BuildAttrs( name );
         if( scomplex->eDesc ) {
-            scomplex->head = this;
+            scomplex->head = this; // no locking here as the only the current thread will have the copy
             AppendEntity( scomplex );
         } else {
             cout << scomplex->_error.DetailMsg() << endl;
@@ -224,14 +240,16 @@ void STEPcomplex::AddEntityPart( const char * name ) {
 
 STEPcomplex * STEPcomplex::EntityPart( const char * name, const char * currSch ) {
     STEPcomplex * scomp = head;
+    // No locking in this loop as remove insert operaations are not allowed
     while( scomp ) {
         if( scomp->eDesc ) {
             if( scomp->eDesc->CurrName( name, currSch ) ) {
                 return scomp;
             }
-        } else
+        } else {
             cout << "Bug in STEPcomplex::EntityPart(): entity part has "
                  << "no EntityDescriptor\n";
+        }
         scomp = scomp->sc;
     }
     return 0;
@@ -266,11 +284,19 @@ Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgr * im,
 }
 
 void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
-    if( sc ) {
-        sc->AppendEntity( stepc );
-    } else {
-        sc = stepc;
+    // We use the assumption that no remove / insert operation is there.
+    // Hence is locking is required only at the last node.
+    if( !sc ) {
+        // We use the double checking. This safaly eliminates the locking of internal nodes
+        mtx.lock();
+        if( !sc ) {
+            sc = stepc;
+            mtx.unlock();
+            return;
+        } // else another node has just appended a new node
+        mtx.unlock();
     }
+    sc->AppendEntity( stepc );
 }
 
 // READ
@@ -446,13 +472,13 @@ void STEPcomplex::BuildAttrs( const char * s ) {
         //////////////////////////////////////////////
 
         STEPattribute * a = 0;
-
+        attrList->mtxP->lock();
         AttrDescLinkNode * attrPtr = ( AttrDescLinkNode * )attrList->GetHead();
         while( attrPtr != 0 ) {
             const AttrDescriptor * ad = attrPtr->AttrDesc();
 
             if( ( ad->Derived() ) != LTrue ) {
-
+                mtx.lock(); // To protect _attr_data_list and attributes
                 switch( ad->NonRefType() ) {
                     case INTEGER_TYPE:
                         integer_data = new SDAI_Integer;
@@ -533,10 +559,14 @@ void STEPcomplex::BuildAttrs( const char * s ) {
                 }
 
                 a -> set_null();
+                attributes.mtxP->lock();
                 attributes.push( a );
+                attributes.mtxP->unlock();
+                mtx.unlock();
             }
             attrPtr = ( AttrDescLinkNode * )attrPtr->NextNode();
         }
+        attrList->mtxP->unlock();
     } else {
         _error.AppendToDetailMsg( "Entity does not exist.\n" );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -590,14 +620,19 @@ void STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
     std::string tmp;
     out << StrToUpper( EntityName( currSch ), tmp );
     out << "(";
-    int n = attributes.list_length();
 
+    mtx.lock(); // Protects attributes
+    attributes.mtxP->lock();
+    int n = attributes.list_length();
     for( int i = 0 ; i < n; i++ ) {
         ( attributes[i] ).STEPwrite( out, currSch );
         if( i < n - 1 ) {
             out << ",";
         }
     }
+    attributes.mtxP->unlock();
+    mtx.unlock();
+
     out << ")\n";
     if( sc ) {
         sc->WriteExtMapEntities( out, currSch );
@@ -612,14 +647,18 @@ const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * c
     buf.append( tmp );
     buf.append( "i" );
 
+    mtx.lock();
+    attributes.mtxP->lock();
     int n = attributes.list_length();
-
     for( int i = 0 ; i < n; i++ ) {
         buf.append( attributes[i].asStr( currSch ) );
         if( i < n - 1 ) {
             buf.append( "," );
         }
     }
+    attributes.mtxP->unlock();
+    mtx.unlock();
+
     buf.append( ")\n" );
 
     if( sc ) {

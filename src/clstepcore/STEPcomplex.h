@@ -14,12 +14,20 @@ typedef std::list<void *>            STEPcomplex_attr_data_list;
 typedef std::list<void *>::iterator  STEPcomplex_attr_data;
 
 class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
+    // NOTE: The locking methodology used here assumes that a node (i.e a
+    // STEPcomplex object) can neither be removed, nor can be inserted
+    // between two existing nodes. If such APIs are introduced in
+    // future the STEPcomplex class will no longer be thread safe and can
+    // crash / deadlock under multithreaded environment.
+
     public: //TODO should this _really_ be public?!
         STEPcomplex * sc;
         STEPcomplex * head;
         Registry * _registry;
         int visited; ///< used when reading (or as you wish?)
         STEPcomplex_attr_data_list _attr_data_list;
+        //mtx will be borrowed from superclass < Each mutex will protect a STEPcomplex object.
+
     public:
         STEPcomplex( Registry * registry, int fileid );
         STEPcomplex( Registry * registry, const std::string ** names, int fileid,
