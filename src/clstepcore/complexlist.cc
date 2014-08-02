@@ -77,6 +77,8 @@ void ComplexList::buildList() {
 
     // Add first node based on supertype:
     list = new EntNode( ( dynamic_cast< SimpleList * >(head->childList ))->name );
+    list->sharedMtxP = new sc_recursive_mutex();
+
     // Recursively add all descendents:
     while( sibling ) {
         addChildren( sibling );
@@ -95,6 +97,8 @@ void ComplexList::buildList() {
 void ComplexList::addChildren( EntList * ent ) {
     EntList * child;
     char * nm;
+
+    list->sharedMtxP->lock();
     EntNode * prev = list, *prev2 = NULL, *newnode;
     int comp = 0;
 
@@ -116,6 +120,7 @@ void ComplexList::addChildren( EntList * ent ) {
             // prev.  prev or prev2 may = NULL if newnode belongs at the end
             // of the list or before the beginning, respectively.
             newnode = new EntNode( nm );
+            newnode->sharedMtxP = list->sharedMtxP;
             newnode->next = prev;
             if( prev2 == NULL ) {
                 // This will be the case if the inner while was never entered.
@@ -127,6 +132,7 @@ void ComplexList::addChildren( EntList * ent ) {
             }
         }
     }
+    list->sharedMtxP->unlock();
 }
 
 /**
@@ -134,10 +140,14 @@ void ComplexList::addChildren( EntList * ent ) {
  * EntNode list.  If not, there's no way this will match ents.  If so,
  * we'll have to run matches() (below) to check more closely.  This func-
  * tion is simplified greatly because both EntNodes are ordered alphabeti-
- * cally.
+ * cally. Two contains can cause a deadlock if ours of one is is theirs of
+ * another.
  */
 bool ComplexList::contains( EntNode * ents ) {
+    ents->sharedMtxP->lock(); // First external
+    list->sharedMtxP->lock(); // then mine
     EntNode * ours = list, *theirs = ents;
+    bool result = true;
 
     while( theirs != NULL ) {
         while( ours != NULL && *ours < *theirs ) {
@@ -146,14 +156,15 @@ bool ComplexList::contains( EntNode * ents ) {
         if( ours == NULL || *ours > *theirs ) {
             // If either of these occured, we couldn't find one of ours which
             // matched the current "theirs".
-            return false;
+            result = false;
+            break;
         }
         theirs = theirs->next;
         ours = ours->next;
     }
-    // At this point we must have matched them all.  (We may have extra, but
-    // there's nothing wrong with that.)
-    return true;
+    ents->sharedMtxP->unlock();
+    list->sharedMtxP->unlock();
+    return result;
 }
 
 /**
@@ -233,6 +244,8 @@ bool ComplexList::hitMultNodes( EntNode * ents ) {
         return true;
     }
 
+    bool result = true;
+    ents->sharedMtxP->lock();
     for( node = ents; node != NULL; node = node->next ) {
         if( node->multSuprs() ) {
             child = head->childList->next;
@@ -246,7 +259,8 @@ bool ComplexList::hitMultNodes( EntNode * ents ) {
                 // below.
                 if( child->contains( node->name ) ) {
                     if( ! child->hit( node->name ) ) {
-                        return false;
+                        result = false;
+                        break;
                     }
                 }
                 child = child->next;
@@ -258,6 +272,7 @@ bool ComplexList::hitMultNodes( EntNode * ents ) {
             }
         }
     }
-    return true;
-    // If we got here, we didn't find any unmatched complex subtypes.
+    ents->sharedMtxP->unlock();
+    return result;
+    // Will return true if we didn't find any unmatched complex subtypes.
 }

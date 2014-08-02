@@ -408,6 +408,8 @@ class SC_CORE_EXPORT ComplexList {
                     */
         AndList * head;
         ComplexList * next;
+        sc_mutex mtx; ///< For hand over hand locking
+
         int Dependent() {
             return dependent;
         }
