@@ -346,13 +346,17 @@ class SC_CORE_EXPORT OrList : public MultList {
         void unmarkAll( EntNode * );
         bool acceptChoice( EntNode * );
         bool acceptNextChoice( EntNode * ents ) {
+            mtx.lock();
             choice++;
+            mtx.unlock();
             return ( acceptChoice( ents ) );
         }
         void reset() {
+            mtx.lock();
             choice = -1;
             choice1 = -2;
             choiceCount = 0;
+            mtx.unlock();
             MultList::reset();
         }
 

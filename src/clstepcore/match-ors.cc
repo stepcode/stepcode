@@ -90,6 +90,7 @@ MatchType OrList::matchORs( EntNode * ents ) {
     EntList * child = childList;
     MatchType retval = UNKNOWN;
 
+    ents->sharedMtxP->lock(); // To make the ents consistent in this function
     for( count = 0; count < numchildren; count++, child = child->next ) {
 
         // First call (recursively) matchNonORs() to check off all nodes that
@@ -120,7 +121,10 @@ MatchType OrList::matchORs( EntNode * ents ) {
             if( choice == -1 ) {
                 choice1 = choice = count;
             }
+            mtx.lock();// protects choiceCount
             choiceCount++;
+            mtx.unlock();
+
             if( viable < retval ) {
                 viable = retval;
             }
@@ -154,6 +158,8 @@ MatchType OrList::matchORs( EntNode * ents ) {
         // *actually* marks under the current circumstances.
         acceptChoice( ents );
     }
+    ents->sharedMtxP->unlock();
+
     if( viable == MATCHALL ) {
         return getChild( choice1 )->viable;
         // viable == MATCHALL because we found a MATCHALL sol'n along the way,

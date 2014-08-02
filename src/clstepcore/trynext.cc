@@ -101,22 +101,27 @@ static EntList * nextCandidate( EntList * child ) {
  */
 MatchType OrList::tryNext( EntNode * ents ) {
     EntList * child;
+    MatchType retval;
 
-
+    mtx.lock(); // For choice
     if( choice == LISTEND ) {
         // if we've already exhausted all the choices in this OR,
+        mtx.unlock();
         return NOMORE;
     }
 
     // First try other choices of descendants of current choice:
     child = getChild( choice );
+
+    ents->sharedMtxP->lock(); // For EntNode Consistency
     if( child->multiple() ) {
         // I.e., if there are (or may be) more choices within the current
         // choice, try those first.  We must be sure to exhaust all choices in
         // our descendants before moving on.
-    	MatchType retval;
         retval = ( ( MultList * )child )->tryNext( ents );
         if( retval == MATCHALL ) {
+            mtx.unlock();
+            ents->sharedMtxP->unlock();
             return MATCHALL;
         }
         if( retval == NEWCHOICE ) {
@@ -124,6 +129,8 @@ MatchType OrList::tryNext( EntNode * ents ) {
             // EntLists on the higher levels (if there are) can retry all the
             // later choices with the new choice we just found.  Otherwise,
             // we'll continue below looking into our next choice.
+            mtx.unlock();
+            ents->sharedMtxP->unlock();
             return NEWCHOICE;
         }
     }
@@ -136,15 +143,19 @@ MatchType OrList::tryNext( EntNode * ents ) {
         // (Also, it's nec. to unmark now, as we did above before returning and
         // before the calling tryNext() tries earlier OR's - see notes, 11/12.)
         choice = LISTEND;
+        mtx.unlock();
+        ents->sharedMtxP->unlock();
         return NOMORE;
     }
+    mtx.unlock();
 
     // Otherwise, try our next:
     if( acceptNextChoice( ents ) ) {
         if( ents->allMarked() ) {
-            return MATCHALL;
+            retval = MATCHALL;
+        } else {
+            retval = NEWCHOICE;
         }
-        return NEWCHOICE;
     } else {
         // Must have been no next choice (or none which mark anything new).
         // acceptNextChoice() has set choice to LISTEND.  We leave this OR
@@ -153,6 +164,8 @@ MatchType OrList::tryNext( EntNode * ents ) {
         // their first choices, so that we'll be able to test every possibility
         // with the new choice.  At that time, this OrList will be reset to its
         // first choice too.
-        return NOMORE;
+        retval = NOMORE;
     }
+    ents->sharedMtxP->unlock();
+    return retval;
 }
