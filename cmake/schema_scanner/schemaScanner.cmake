@@ -75,7 +75,11 @@ endif(NOT ${_ss_build_stat} STREQUAL "0")
 message("-- Schema scanner built. Running it...")
 
 # not sure if it makes sense to install this or not...
-install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR})
+if(WIN32)
+	install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner.exe DESTINATION ${BIN_INSTALL_DIR})
+else(WIN32)
+	install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR})
+endif(WIN32)
 
 # macro SCHEMA_CMLIST
 # runs the schema scanner on one express file, creating a CMakeLists.txt file for each schema found. Those files are added via add_subdirectory().
