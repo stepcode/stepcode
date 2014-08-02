@@ -142,6 +142,12 @@ class SC_CORE_EXPORT EntNode {
 };
 
 class SC_CORE_EXPORT EntList {
+    // NOTE: The locking methodology used here assumes that a node (i.e a
+    // EntList object) can neither be removed, nor can be inserted
+    // between two existing nodes. If such APIs are introduced in
+    // future the EntList class (or its subclasses) will no longer be
+    // thread safe and can crash / deadlock under multithreaded environment.
+
         friend class MultList;
         friend class JoinList;
         friend class OrList;
@@ -197,6 +203,10 @@ class SC_CORE_EXPORT EntList {
             return ( join != SIMPLE );
         }
         EntList * next, *prev;
+        sc_mutex mtx;
+        /** \var mtx
+         * Currently only being used by the subclass MultList
+         */
 
     protected:
         MatchType viable;

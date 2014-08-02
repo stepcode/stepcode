@@ -24,6 +24,7 @@ int EntList::siblings() {
     int count;
     EntList * el;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     for( count = 1, el = next; el; count++, el = el->next ) {
         ;
     }
@@ -36,6 +37,7 @@ int EntList::siblings() {
 EntList * EntList::firstNot( JoinType j ) {
     EntList * sibling = this;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( sibling != NULL && sibling->join == j ) {
         sibling = sibling->next;
     }
@@ -48,6 +50,7 @@ EntList * EntList::firstNot( JoinType j ) {
 EntList * EntList::firstWanted( MatchType match ) {
     EntList * sibling = this;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( sibling != NULL && sibling->viable != match ) {
         sibling = sibling->next;
     }
@@ -61,6 +64,7 @@ EntList * EntList::firstWanted( MatchType match ) {
 EntList * EntList::lastNot( JoinType j ) {
     EntList * sibling = this;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( sibling != NULL && sibling->join == j ) {
         sibling = sibling->prev;
     }
@@ -74,6 +78,7 @@ EntList * EntList::lastNot( JoinType j ) {
 EntList * EntList::lastWanted( MatchType match ) {
     EntList * sibling = this;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( sibling != NULL && sibling->viable != match ) {
         sibling = sibling->prev;
     }
