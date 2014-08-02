@@ -81,10 +81,12 @@ MatchType AndOrList::matchNonORs( EntNode * ents ) {
     EntList * child = childList->firstNot( OR );
     MatchType retval;
 
+    ents->sharedMtxP->lock(); // To make the ents consistent in this function
     while( child != NULL ) {
         if( ( retval = child->matchNonORs( ents ) ) == MATCHALL ) {
             if( prevKnown( child ) ) {
                 viable = MATCHALL;
+                ents->sharedMtxP->unlock();
                 return MATCHALL;
                 // We found a good solution.  Nothing else to do.  (Some higher
                 // AND may have some other req's ents can't meet, but that's
@@ -119,6 +121,7 @@ MatchType AndOrList::matchNonORs( EntNode * ents ) {
         child = child->nextNot( OR );
     }
     setViableVal( ents );
+    ents->sharedMtxP->unlock();
     return viable;
 }
 
@@ -129,9 +132,11 @@ MatchType AndOrList::matchNonORs( EntNode * ents ) {
 MatchType AndList::matchNonORs( EntNode * ents ) {
     EntList * child = childList->firstNot( OR );
 
+    ents->sharedMtxP->lock(); // To make the ents consistent in this function
     while( child != NULL ) {
         if( child->matchNonORs( ents ) == UNSATISFIED ) {
             viable = UNSATISFIED;
+            ents->sharedMtxP->unlock();
             return UNSATISFIED;
             // This means the whole AndList has failed, by definition.
         }
@@ -143,5 +148,6 @@ MatchType AndList::matchNonORs( EntNode * ents ) {
         // we'll catch it in setViableVal() called below.
     }
     setViableVal( ents );
+    ents->sharedMtxP->unlock();
     return viable;
 }

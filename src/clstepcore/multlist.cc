@@ -218,6 +218,8 @@ void JoinList::setViableVal( EntNode * ents ) {
         }
         child = child->next;
     }
+
+    // dont need to lock ent as it is being used only one time
     if( viable == MATCHALL && !ents->allMarked() ) {
         // There are some situations where this may happen - a child claims
         // MATCHALL while that is not the case.  If child #2 was checked and

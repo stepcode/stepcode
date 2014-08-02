@@ -28,6 +28,7 @@
 MatchType AndOrList::matchORs( EntNode * ents ) {
     EntList * child = childList->firstWanted( UNKNOWN );
 
+    ents->sharedMtxP->lock(); // To make the ents consistent in this function
     while( child != NULL ) {
         if( ( dynamic_cast< MultList * >(child))->matchORs( ents ) == UNSATISFIED ) {
             // Unmark whatever we may have marked.  (E.g., there may have
@@ -43,6 +44,7 @@ MatchType AndOrList::matchORs( EntNode * ents ) {
     // of those children may become UNSAT later and we'll have to unmark all
     // its descendants.  If so, some of the marks we have now may disappear.
     setViableVal( ents );
+    ents->sharedMtxP->unlock();
     return viable;
 }
 
@@ -55,9 +57,11 @@ MatchType AndOrList::matchORs( EntNode * ents ) {
 MatchType AndList::matchORs( EntNode * ents ) {
     EntList * child = childList->firstWanted( UNKNOWN );
 
+    ents->sharedMtxP->lock(); // To make the ents consistent in this function
     while( child != NULL ) {
         if( ( dynamic_cast< MultList * >(child) )->matchORs( ents ) == UNSATISFIED ) {
             viable = UNSATISFIED;
+            ents->sharedMtxP->unlock();
             return UNSATISFIED;
             // This means the whole AndList has failed, by definition.
         }
@@ -69,6 +73,7 @@ MatchType AndList::matchORs( EntNode * ents ) {
         // we'll catch it in setViableVal() called below.
     }
     setViableVal( ents );
+    ents->sharedMtxP->unlock();
     return viable;
 }
 
