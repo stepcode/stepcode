@@ -37,6 +37,7 @@ void MultList::setLevel( int l ) {
     EntList * child = childList;
 
     level = l;
+    //No locking here as nodes (i.e. EntList) can be only appended
     for( ; child != NULL; child = child->next ) {
         child->setLevel( l + 1 );
     }
@@ -48,6 +49,7 @@ void MultList::setLevel( int l ) {
 bool MultList::contains( char * nm ) {
     EntList * child = childList;
 
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( child ) {
         if( child->contains( nm ) ) {
             return true;
@@ -62,6 +64,8 @@ bool MultList::contains( char * nm ) {
  */
 bool MultList::hit( char * nm ) {
     EntList * child = childList;
+
+    //No locking here as nodes (i.e. EntList) can be only appended
     while( child ) {
         if( child->viable > UNSATISFIED && child->hit( nm ) ) {
             // For most child->join types ruling out UNSATs just saves us
@@ -87,6 +91,7 @@ EntList * MultList::getChild( int num ) {
         // Check for error situations (shouldn't normally occur):
         return NULL;
     }
+    //No locking here as nodes (i.e. EntList) can be only appended
     for( j = 0; j < num; j++, child = child->next ) {
         ;
     }
@@ -100,14 +105,28 @@ EntList * MultList::getChild( int num ) {
 void MultList::appendList( EntList * ent ) {
     EntList * eprev;
 
+    mtx.lock(); // Protects numchildren, childList
     if( numchildren == 0 ) {
         childList = ent;
     } else {
         eprev = getLast();
+        eprev->mtx.lock();
+       // In a multithreaded environment It is possible that before locking
+       // more elements got added into the existing list and eprev is no
+       // longer the last element. This while loop takes care of that.
+        while( eprev->next ) {
+            eprev->mtx.unlock();
+            eprev = eprev->next;
+            eprev->mtx.lock();
+        }
+        // eprev lock is acquired
         eprev->next = ent;
-        ent->prev = eprev;
+        eprev->mtx.unlock();
+
+        ent->prev = eprev; // ent locking not required
     }
     numchildren += ent->siblings();
+    mtx.unlock();
 }
 
 /**
@@ -131,7 +150,10 @@ EntList * MultList::copyList( EntList * ent ) {
             newlist = new AndOrList;
             break;
     };
+    ent->mtx.lock(); // appendList doesn't lock the EntNode
     appendList( newlist );
+    ent->mtx.unlock();
+
     if( ent->multiple() ) {
         // For the multlists, we must recurse for all their children:
         child = ( dynamic_cast< MultList * >(ent) )->childList;
