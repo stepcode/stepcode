@@ -221,6 +221,8 @@ class SC_CORE_EXPORT EntList {
 };
 
 class SC_CORE_EXPORT SimpleList : public EntList {
+        // Note: Refer to Note in EntList class
+
         friend class ComplexList;
         friend ostream & operator<< ( ostream &, SimpleList & );
 

@@ -98,6 +98,7 @@ void SimpleList::unmarkAll( EntNode * ents ) {
         return;
     }
 
+    ents->sharedMtxP->lock(); // Locking for EntNode data structure
     while( eptr != NULL && ( comp = strcmp( eptr->name, name ) ) < 0 ) {
         eptr = eptr->next;
     }
@@ -106,6 +107,7 @@ void SimpleList::unmarkAll( EntNode * ents ) {
         // Only unmark if we gave it the strongest mark:
         eptr->setmark( NOMARK );
     }
+    ents->sharedMtxP->unlock();
     // Either way (whether or not another List's mark remains), we no longer
     // marked:
     I_marked = NOMARK;
@@ -120,7 +122,9 @@ void SimpleList::unmarkAll( EntNode * ents ) {
 bool SimpleList::acceptChoice( EntNode * ents ) {
     EntNode * eptr = ents;
     int comp;
+    bool result = false;
 
+    ents->sharedMtxP->lock(); // Locking for EntNode data structure
     while( eptr != NULL ) {
         if( ( comp = strcmp( name, eptr->name ) ) == 0 ) {
             if( ! eptr->marked() ) {
@@ -128,15 +132,17 @@ bool SimpleList::acceptChoice( EntNode * ents ) {
                 I_marked = ORMARK;
                 // Remember that we're the one who marked this.  (Nec. in case
                 // we have to unmark later to try out another OR branch.)
-                return true;
+                result = true;
             }
-            return false;  // we didn't mark
+            // else we didn't mark
+            break;
         }
         if( comp < 0 ) {
             // We're beyond name in the ents list.  No more checking to do.
-            return false;
+            break;
         }
         eptr = eptr->next;
     }
-    return false;
+    ents->sharedMtxP->unlock();
+    return result;
 }

@@ -22,7 +22,9 @@
 MatchType SimpleList::matchNonORs( EntNode * ents ) {
     EntNode * eptr = ents;
     int comp;
+    MatchType result = UNSATISFIED;
 
+    ents->sharedMtxP->lock(); // Locking for EntNode data structure
     while( eptr != NULL ) {
         if( ( comp = strcmp( name, eptr->name ) ) == 0 ) {
             if( ! eptr->marked( MARK ) ) {
@@ -42,15 +44,15 @@ MatchType SimpleList::matchNonORs( EntNode * ents ) {
                     // branch.)
                     if( ents->allMarked() ) {
                         // If this was the only unmarked left,
-                        viable = MATCHALL;
-                        return MATCHALL;
+                        result = MATCHALL;
+                        break;
                     }
                 }
-                viable = MATCHSOME;
-                return MATCHSOME;
+                result = MATCHSOME;
+                break;
             }
-            viable = SATISFIED;
-            return SATISFIED;
+            result = SATISFIED;
+            break;
             // Couldn't mark any more, but at least we're not placing a re-
             // quirement ents couldn't meet.
         }
@@ -63,8 +65,9 @@ MatchType SimpleList::matchNonORs( EntNode * ents ) {
 
     // At this point, we went through the list without finding a match.  Result
     // = UNSATISFIED - no match.
-    viable = UNSATISFIED;
-    return UNSATISFIED;
+    viable = result;
+    ents->sharedMtxP->unlock();
+    return result;
 }
 
 /**
