@@ -19,23 +19,62 @@
  * supertype name.  Increments count.
  */
 void ComplexCollect::insert( ComplexList * c ) {
+    mtx.lock();
     ComplexList * prev = NULL, *cl = clists;
 
-    while( cl && *cl < *c ) {
-        prev = cl;
-        cl = cl->next;
-    }
-    if( prev == NULL ) {
-        // I.e., c belongs before the first cl so the above loop was never
-        // entered.  (This may also be the case if there's nothing in the
-        // collect yet and cl also = NULL.)
+    if( !cl ) {
+        // checking if cl is NULL.
+        c->mtx.lock();
+        c->next = NULL;
         clists = c;
-        c->next = cl;
+        c->mtx.unlock();
     } else {
-        prev->next = c;
+        // hand over hand locking.
+        // Our aim will be to lock the element before the insert slot
+        cl->mtx.lock();
+        while( *cl < *c ) {
+            if( prev ) {
+                // Except for the first iteration will execute everytime
+                prev->mtx.unlock();
+            }
+
+            prev = cl;
+            cl = cl->next;
+            if( !cl ) {
+                // If cl has become null exit. This means we have reached
+                // the end of the list. Only the last element has been locked
+                break;
+            }
+            cl->mtx.lock();
+        }
+
+        // At this point EITHER we have locked the first element (cl locked,
+        // prev = NULL) OR we have locked the last element i.e (prev locked,
+        // cl == NULL) or we have locked both cl & prev. The element will be
+        // inserted between prev & cl
+
+        if( prev == NULL ) {
+            // I.e., c belongs before the first cl so the above loop was never
+            // entered.
+            clists = c;
+        } else {
+            prev->next = c;
+        }
+
+        c->mtx.lock();
         c->next = cl;
+        c->mtx.unlock();
+
+        if( prev ) {
+            prev->mtx.unlock();
+        }
+
+        if( cl ) {
+            cl->mtx.unlock();
+        }
     }
     count++;
+    mtx.unlock();
 }
 
 /**
@@ -47,40 +86,93 @@ void ComplexCollect::insert( ComplexList * c ) {
  * remove it from the Collect.
  */
 void ComplexCollect::remove( ComplexList * c ) {
+    mtx.lock();
     ComplexList * cl = clists, *prev = NULL;
 
-    while( cl && *cl < *c ) {
-        prev = cl;
-        cl = cl->next;
+    if( cl ) {
+        cl->mtx.lock();
+        // Our strategy will be to lock the element which is to be deleted
+        // and the element before that
+        while( *cl < *c ) {
+            // Below if is required to deal with the first iteration.
+            if( prev ) {
+                prev->mtx.unlock();
+            }
+            prev = cl;
+            cl = cl->next;
+
+            if( !cl ) {
+                // We arrived at the end of the list
+                prev->mtx.unlock();
+                break;
+            }
+            cl->mtx.lock();
+        }
     }
+
+    // At this stage we have no ComplexList locks if we have transversed
+    // theentire clists without finding c (including the case when clists
+    // is NULL). In case the first ComplexList matches (i.e. prev = NULL)
+    // the only lock acquired will be cl. In rest of the cases (where a
+    // ComplexList bigger or equal to is encountered in an iteration the
+    // locks held would be cl and prev.
+
     if( cl == NULL || cl != c ) {
         // Just in case c isn't in the list.
+        if( cl != c ) {
+            // Below if condition avoids the special case in which the
+            // first ComplexList element is bigger then c
+            if( prev ) {
+                prev->mtx.unlock();
+            }
+
+            cl->mtx.unlock();
+        }
+        mtx.unlock();
         return;
     }
+
     if( prev == NULL ) {
         // c is the first thing in clists (so prev while loop never entered)
         clists = c->next;
     } else {
         prev->next = cl->next;
+        prev->mtx.unlock();
     }
+
     cl->next = NULL;
+    cl->mtx.unlock();// cannot do it after cl->remove as it invokes the destructor
     cl->remove();
     count--;
+    mtx.unlock();
 }
 
 /**
  * Searches for and returns the ComplexList whose supertype name = name.
  */
 ComplexList * ComplexCollect::find( char * name ) {
-    ComplexList * cl = clists;
+    ComplexList * cl = clists, *prev = NULL, *retval = NULL;
 
-    while( cl && *cl < name ) {
-        cl = cl->next;
+    if( cl ) {
+        cl->mtx.lock();
+        while( *cl < name ) {
+            prev = cl;
+            cl = cl->next;
+            if( !cl ) {
+                // We have reached the end without success
+                prev->mtx.unlock();
+                return NULL;
+            }
+
+            cl->mtx.lock();
+            prev->mtx.unlock();
+        }
+
+        // At this point we only hold the lock for cl
+        retval = ( *cl == name ) ? cl : NULL;
+        cl->mtx.unlock();
     }
-    if( cl && *cl == name ) {
-        return cl;
-    }
-    return NULL;
+    return retval;
 }
 
 /**
@@ -92,10 +184,11 @@ ComplexList * ComplexCollect::find( char * name ) {
  * to match it, as described in the commenting.
  */
 bool ComplexCollect::supports( EntNode * ents ) const {
+    ents->sharedMtxP->lock();
     EntNode * node = ents, *nextnode;
     AndList * alist = 0;
-    ComplexList * clist = clists, *cl = NULL, *current;
-    bool retval;
+    ComplexList * clist = clists, *cl = NULL, *current, *prev;
+    bool retval = false;
     EntList * elist, *next;
 
     // Loop through the nodes of ents.  If 1+ of them have >1 supertype, build
@@ -112,19 +205,27 @@ bool ComplexCollect::supports( EntNode * ents ) const {
                 cl = new ComplexList( alist );
             }
             current = clists;
-            while( current ) {
-                if( current->contains( node ) ) {
-                    // Must add current CList to new CList.  First check if we
-                    // added current already (while testing an earlier node).
-                    if( ! cl->toplevel( current->supertype() ) ) {
-                        // Below line adds current to cl.  "current->head->
-                        // childList" points to the EntLists directly under the
-                        // top-level AND.  We'll add that list right under the
-                        // new AND we created at cl's top level.
-                        alist->appendList( current->head->childList );
+            if( current ) {
+                current->mtx.lock();
+                while( current ) {
+                    if( current->contains( node ) ) {
+                        // Must add current CList to new CList.  First check if we
+                        // added current already (while testing an earlier node).
+                        if( ! cl->toplevel( current->supertype() ) ) {
+                            // Below line adds current to cl.  "current->head->
+                            // childList" points to the EntLists directly under the
+                            // top-level AND.  We'll add that list right under the
+                            // new AND we created at cl's top level.
+                            alist->appendList( current->head->childList );
+                        }
                     }
+                    prev = current;
+                    current = current->next;
+                    if( current ) {
+                        current->mtx.lock();
+                    }
+                    prev->mtx.unlock();
                 }
-                current = current->next;
             }
             node->next = nextnode;
         }
@@ -136,14 +237,23 @@ bool ComplexCollect::supports( EntNode * ents ) const {
     if( !cl ) {
         // If we never built up cl in the above loop, there were no entities
         // which had mult supers.  Simply go through each CList separately:
-        while( clist != NULL ) {
-            if( clist->matches( ents ) ) {
-                return true;
+        if( clist != NULL ) {
+            clist->mtx.lock();
+            while( clist != NULL ) {
+                if( clist->matches( ents ) ) {
+                    clist->mtx.unlock();
+                    retval = true;
+                    break;
+                }
+                prev = clist;
+                clist = clist->next;
+                if( clist ) {
+                    clist->mtx.lock();
+                }
+                prev->mtx.unlock();
             }
-            clist = clist->next;
+            // retval will be false if the loop went through whole list without match
         }
-        // Went through whole list without match:
-        return false;
     } else {
         // Use cl to test that the conditions of all supertypes are met:
         cl->multSupers = true;
@@ -155,6 +265,7 @@ bool ComplexCollect::supports( EntNode * ents ) const {
         // to make cl:
         elist = cl->head->childList;
         while( elist ) {
+            // No mutexes are used here since cl has been created and build locally
             elist->prev = NULL;
             elist = elist->next;
             next = elist->next;
@@ -165,6 +276,7 @@ bool ComplexCollect::supports( EntNode * ents ) const {
         // Separate the childList from head.  We don't want to delete any of the
         // sublists when we delete cl - they still belong to other sublists.
         delete cl;
-        return retval;
     }
+    ents->sharedMtxP->unlock();
+    return retval;
 }

@@ -440,6 +440,11 @@ class SC_CORE_EXPORT ComplexCollect {
 
     private:
         int count;  ///< # of clist children
+        sc_mutex mtx; ///< protects clists and count
+        /// TODO figure out whether either the above mtx or the mutex defined in
+        /// ComplexList can be completely removed. Another option is to reduce
+        /// locking granuality (as only assignments to clists and count need to be
+        /// protected)
 };
 
 #endif
