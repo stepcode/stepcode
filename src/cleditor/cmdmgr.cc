@@ -79,9 +79,11 @@ CmdMgr::CmdMgr() {
 }
 
 void CmdMgr::ReplicateCmdList( MgrNode * mn ) {
+    replicateList->mtxP->lock(); // To prevent double appending of mn
     if( !( replicateList->IsOnList( mn ) ) ) {
         replicateList->AddNode( mn );
     }
+    replicateList->mtxP->unlock();
 }
 
 void CmdMgr::ClearInstances() {
