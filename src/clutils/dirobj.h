@@ -43,6 +43,7 @@
 #endif
 
 #include <string>
+#include <sc_mutex.h>
 
 
 /*****************************************************************************/
@@ -83,6 +84,9 @@ class SC_UTILS_EXPORT DirObj {
         char ** fileList;
         int fileCount;
         int fileListSize;
+        // Our strategy for locking is to only lock the public
+        // functions. Thus we will not need a recursive mutex
+        sc_mutex mtx;
 };
 
 // Return the number of files in the loaded directory.
@@ -97,7 +101,10 @@ inline void DirObj::AppendFile( const char * s ) {
 
 // Return the file at the given index (starting at 0) in the fileList
 inline const char * DirObj::File( int index ) {
-    return ( 0 <= index && index < fileCount ) ? fileList[index] : 0;
+    mtx.lock();
+    const char * fn = ( 0 <= index && index < fileCount ) ? fileList[index] : 0;
+    mtx.unlock();
+    return fn;
 }
 
 #endif

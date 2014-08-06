@@ -111,11 +111,15 @@ const char * DirObj::RealPath( const char * path ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool DirObj::LoadDirectory( const std::string & name ) {
+    bool retval;
+    mtx.lock();
     if( name.empty() ) {
-        return Reset( "./" );
+        retval = Reset( "./" );
     } else {
-        return Reset( name );
+        retval = Reset( name );
     }
+    mtx.unlock();
+    return retval;
 }
 
 //////////////////////////////// Index() //////////////////////////////////////
@@ -126,12 +130,16 @@ bool DirObj::LoadDirectory( const std::string & name ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 int DirObj::Index( const char * name ) {
+    int index = -1;
+    mtx.lock();
     for( int i = 0; i < fileCount; ++i ) {
         if( strcmp( fileList[i], name ) == 0 ) {
-            return i;
+            index = i;
+            break;
         }
     }
-    return -1;
+    mtx.unlock();
+    return index;
 }
 
 //////////////////////////////// Reset() //////////////////////////////////////
