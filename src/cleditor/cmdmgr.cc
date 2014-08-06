@@ -14,15 +14,19 @@
 #include "sc_memmgr.h"
 
 ReplicateLinkNode * ReplicateList::FindNode( MgrNode * mn ) {
+    mtxP->lock(); //mtxP belongs to the superclass SingleLinkList
     ReplicateLinkNode * rln = ( ReplicateLinkNode * )GetHead();
+    ReplicateLinkNode * retrln = 0;
     int numEntries = EntryCount();
     while( numEntries-- ) {
         if( rln->ReplicateNode() == mn ) {
-            return rln;
+            retrln = rln;
+            break;
         }
         rln = ( ReplicateLinkNode * )rln->NextNode();
     }
-    return 0;
+    mtxP->unlock();
+    return retrln;
 }
 
 bool ReplicateList::IsOnList( MgrNode * mn ) {
@@ -33,28 +37,30 @@ bool ReplicateList::IsOnList( MgrNode * mn ) {
 // returns true if it could delete the node
 ///////////////////////////////////////////////////////////////////////////////
 bool ReplicateList::Remove( ReplicateLinkNode * rln ) {
+    mtxP->lock();
+    bool retval = false;
     ReplicateLinkNode * rnFollow = ( ReplicateLinkNode * )GetHead();
-    if( !rnFollow || !rln ) {
-        return false;
-    } else {
+    if( rnFollow && rln ) {
         if( rnFollow == rln ) {
             head = rln->NextNode();
             delete rln;
-            return true;
+            retval = true;
         } else {
             ReplicateLinkNode * rn = ( ReplicateLinkNode * )rnFollow->NextNode();
             while( rn ) {
                 if( rn == rln ) {
                     rnFollow->next = ( SingleLinkNode * )rln->NextNode();
                     delete rln;
-                    return true;
+                    retval = true;
+                    break;
                 }
                 rnFollow = rn;
                 rn = ( ReplicateLinkNode * )rn->NextNode();
             } // end while(rn)
         } // end else
     } // end else
-    return false;
+    mtxP->unlock();
+    return retval;
 }
 
 bool ReplicateList::Remove( MgrNode * rn ) {
