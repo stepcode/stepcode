@@ -224,11 +224,12 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
     in >> ws; // skip white space
 
     // read optional sign
-    c = in.peek();
+    c = in.get();
     if( c == '+' || c == '-' ) {
-        in.get( buf[i++] );
-        c = in.peek();
+        buf[i++] = c;
+        c = in.get();
     }
+    //in is at the character next to c
 
     // check for required initial decimal digit
     if( !isdigit( c ) ) {
@@ -237,26 +238,29 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
     }
     // read one or more decimal digits
     while( isdigit( c ) ) {
-        in.get( buf[i++] );
-        c = in.peek();
+        buf[i++] = c;
+        c = in.get();
     }
+    //in is at the character next to c
 
     // read Part 21 required decimal point
     if( c == '.' ) {
-        in.get( buf[i++] );
-        c = in.peek();
+        buf[i++] = c;
+        c = in.get();
     } else {
         // It may be the number they wanted but it is incompletely specified
         // without a decimal and thus it is an error
         e.GreaterSeverity( SEVERITY_WARNING );
         e.AppendToDetailMsg( "Reals are required to have a decimal point.\n" );
     }
+    //in is at the character next to c
 
     // read optional decimal digits
     while( isdigit( c ) ) {
-        in.get( buf[i++] );
-        c = in.peek();
+        buf[i++] = c;
+        c = in.get();
     }
+    //in is at the character next to c
 
     // try to read an optional E for scientific notation
     if( ( c == 'e' ) || ( c == 'E' ) ) {
@@ -266,13 +270,13 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
             e.AppendToDetailMsg(
                 "Reals using scientific notation must use upper case E.\n" );
         }
-        in.get( buf[i++] ); // read the E
-        c = in.peek();
+        buf[i++] = c; // read the E
+        c = in.get();
 
         // read optional sign
         if( c == '+' || c == '-' ) {
-            in.get( buf[i++] );
-            c = in.peek();
+            buf[i++] = c;
+            c = in.get();
         }
 
         // read required decimal digit (since it has an E)
@@ -283,10 +287,13 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
         }
         // read one or more decimal digits
         while( isdigit( c ) ) {
-            in.get( buf[i++] );
-            c = in.peek();
+            buf[i++] = c;
+            c = in.get();
         }
+        //in is at the character next to c
     }
+
+    in.unget(); //in is now at c
     buf[i] = '\0';
 
     istringstream in2( ( char * )buf );
