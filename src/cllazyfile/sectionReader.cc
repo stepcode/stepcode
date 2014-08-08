@@ -81,7 +81,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 }
 
 
-//NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
+//NOTE different behavior than const char * FillKeyword( istream & in, const char * delims, ErrorDescriptor & err, std::string & str ) in read_func.cc
 void sectionReader::fillDelimitedKeyword( const char * delimiters, std::string &str ) {
     char c, firstSpaceDelimeter;
     str.clear();

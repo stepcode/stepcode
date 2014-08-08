@@ -671,23 +671,20 @@ const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS ) {
 }
 
 /***************************
-This function returns a null terminated const char* for the
+This function fills str with a null terminated const char* for the
 characters read from the istream up to, but not including
 the first character found in the set of delimiters, or the
 whitespace character. It leaves the delimiter on the istream.
-
-The string is returned in a static buffer, so it will change
-the next time the function is called.
 
 Keywords are special strings of characters indicating the instance
 of an entity of a specific type. They shall consist of uppercase letters,
 digits, underscore characters, and possibly an exclamation mark.
 The "!" shall appear only once, and only as the first character.
 ***************************/
-const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) {
+void FillKeyword( istream & in, const char * delims, ErrorDescriptor & err, std::string & str ) {
     char c;
     int sz = 1;
-    static std::string str;
+    str.clear();
 
     str = "";
     in.get( c );
@@ -699,10 +696,10 @@ const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & er
                 ( c == '-' )   ||  //for reading 'ISO-10303-21'
                 ( ( c == '!' ) && ( sz == 1 ) ) ) ) {
             cerr << "Error: Invalid character \'" << c <<
-                 "\' in GetKeyword.\nkeyword was: " << str << "\n";
+                 "\' in FillKeyword.\nkeyword was: " << str << "\n";
             err.GreaterSeverity( SEVERITY_WARNING );
             in.putback( c );
-            return const_cast<char *>( str.c_str() );
+            return;
         }
         if( !in.good() ) {
             break;    //BUG: should do something on eof()
@@ -712,7 +709,6 @@ const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & er
         in.get( c );
     }
     in.putback( c );
-    return const_cast<char *>( str.c_str() );
 }
 
 /**

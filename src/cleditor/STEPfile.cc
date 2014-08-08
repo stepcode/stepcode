@@ -149,7 +149,7 @@ Severity STEPfile::ReadHeader( istream & in ) {
         }
 
         //get the entity keyword
-        keywd = GetKeyword( in, ";( /\\", _error );
+        FillKeyword( in, ";( /\\", _error, keywd );
         ReadTokenSeparator( in, &cmtStr );
 
         //check for "ENDSEC"
@@ -913,7 +913,7 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
     std::vector< SDAI_Application_instance_ptr > inscope;
     std::string keywd;
 
-    keywd = GetKeyword( in, " \n\t/\\#;", _error );
+    FillKeyword( in, " \n\t/\\#;", _error, keywd );
     if( strncmp( const_cast<char *>( keywd.c_str() ), "&SCOPE", 6 ) ) {
         //ERROR: "&SCOPE" expected
         //TODO: should attempt to recover by reading through ENDSCOPE
@@ -955,7 +955,7 @@ Severity STEPfile::CreateScopeInstances( istream & in, SDAI_Application_instance
     }
 
     //check for "ENDSCOPE"
-    keywd = GetKeyword( in, " \t\n/\\#;", _error );
+    FillKeyword( in, " \t\n/\\#;", _error, keywd );
     if( strncmp( const_cast<char *>( keywd.c_str() ), "ENDSCOPE", 8 ) ) {
         //ERROR: "ENDSCOPE" expected
         SkipInstance( in, tmpbuf );
@@ -1071,7 +1071,7 @@ Severity STEPfile::ReadScopeInstances( istream & in ) {
     std::string keywd;
     std::string cmtStr;
 
-    keywd = GetKeyword( in, " \n\t/\\#;", _error );
+    FillKeyword( in, " \n\t/\\#;", _error, keywd );
     if( strncmp( const_cast<char *>( keywd.c_str() ), "&SCOPE", 6 ) ) {
         //ERROR: "&SCOPE" expected
         SkipInstance( in, tmpbuf );
@@ -1099,7 +1099,7 @@ Severity STEPfile::ReadScopeInstances( istream & in ) {
     in.putback( c );
 
     //check for "ENDSCOPE"
-    keywd = GetKeyword( in, " \t\n/\\#;", _error );
+    FillKeyword( in, " \t\n/\\#;", _error, keywd );
     if( strncmp( const_cast<char *>( keywd.c_str() ), "ENDSCOPE", 8 ) ) {
         //ERROR: "ENDSCOPE" expected
         SkipInstance( in, tmpbuf );
@@ -1609,7 +1609,8 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     int total_insts = 0,  valid_insts = 0;
 
     ReadTokenSeparator( *in );
-    std::string keywd = GetKeyword( *in, "; #", _error );
+    std::string keywd;
+    FillKeyword( *in, "; #", _error, keywd );
     // get the delimiter off the istream
     char c;
     in->get( c );
@@ -1730,7 +1731,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     if( in2 -> good() ) {
         ReadTokenSeparator( *in2 );
-        keywd = GetKeyword( *in2, ";", _error );
+        FillKeyword( *in2, ";", _error, keywd );
         //yank the ";" from the istream
         //if (';' == in2->peek()) in2->get();
         char ch;

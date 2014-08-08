@@ -67,7 +67,7 @@ extern SC_CORE_EXPORT const char * SkipSimpleRecord( istream & in, std::string &
 /// this includes entity names
 extern SC_CORE_EXPORT const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS = 1 );
 
-extern SC_CORE_EXPORT const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err );
+extern SC_CORE_EXPORT void FillKeyword( istream & in, const char * delims, ErrorDescriptor & err,  std::string & str );
 
 extern SC_CORE_EXPORT int FoundEndSecKywd( istream& in );
 
