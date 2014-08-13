@@ -48,9 +48,10 @@ class SC_CORE_EXPORT InstMgr {
         // this corresponds to the display list object by index
         MgrNodeArraySorted * sortedMaster;  // master array sorted by fileId
 //    StateList *master; // this will be an sorted array of ptrs to MgrNodes
-        sc_recursive_mutex masterMtx;
 
     public:
+        sc_recursive_mutex masterMtx; // is public as it is used in STEPfile
+
         InstMgr( int ownsInstances = 0 );
         virtual ~InstMgr();
 

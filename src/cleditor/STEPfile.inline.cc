@@ -264,11 +264,13 @@ int STEPfile::IncrementFileId( int fileid ) {
 
 
 void STEPfile::SetFileIdIncrement() {
+    instances().masterMtx.lock();
     if( instances().MaxFileId() < 0 ) {
         _fileIdIncr = 0;
     } else {
         _fileIdIncr = ( int )( ( ceil( ( instances().MaxFileId() + 99.0 ) / 1000.0 ) + 1.0 ) * 1000.0 );
     }
+    instances().masterMtx.unlock();
 }
 
 /**

@@ -1498,6 +1498,7 @@ void STEPfile::WriteHeader( ostream & out ) {
 
     // Write the rest of the header instances
     SDAI_Application_instance * se;
+    _headerInstances->masterMtx.lock();
     int n = _headerInstances->InstanceCount();
     for( int i = 0; i < n; ++i ) {
         se = _headerInstances->GetMgrNode( i ) ->GetApplication_instance();
@@ -1509,6 +1510,7 @@ void STEPfile::WriteHeader( ostream & out ) {
             WriteHeaderInstance(
                 _headerInstances->GetMgrNode( i )->GetApplication_instance(), out );
     }
+    _headerInstances->masterMtx.unlock();
     out << "ENDSEC;\n";
 }
 
@@ -1588,21 +1590,25 @@ void STEPfile::WriteData( ostream & out, int writeComments ) {
     std::string currSch = schemaName();
     out << "DATA;\n";
 
+    instances().masterMtx.lock();
     int n = instances().InstanceCount();
     for( int i = 0; i < n; ++i ) {
         instances().GetMgrNode( i )->GetApplication_instance()->STEPwrite( out, currSch.c_str(), writeComments );
         _oFileInstsWritten++;
     }
+    instances().masterMtx.unlock();
 
     out << "ENDSEC;\n";
 }
 
 void STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedCase ) {
     std::string currSch = schemaName();
+    instances().masterMtx.lock();
     int n = instances().InstanceCount();
     for( int i = 0; i < n; ++i ) {
         instances().GetMgrNode( i )->GetApplication_instance()->WriteValuePairs( out, currSch.c_str(), writeComments, mixedCase );
     }
+    instances().masterMtx.unlock();
 }
 
 Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
@@ -1776,6 +1782,8 @@ Severity STEPfile::WriteWorkingFile( const std::string filename, int clearError,
 void STEPfile::WriteWorkingData( ostream & out, int writeComments ) {
     std::string currSch = schemaName();
     out << "DATA;\n";
+
+    instances().masterMtx.lock();
     int n = instances().InstanceCount();
 
     for( int i = 0; i < n; ++i ) {
@@ -1805,6 +1813,7 @@ void STEPfile::WriteWorkingData( ostream & out, int writeComments ) {
                 break;
         }
     }
+    instances().masterMtx.unlock();
     out << "ENDSEC;\n";
 }
 
