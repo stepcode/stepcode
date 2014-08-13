@@ -1480,7 +1480,11 @@ int STEPfile::HeaderId( const char * name ) {
     if( tmp == "FILE_SCHEMA" ) {
         return 3;
     }
-    return ++_headerId;
+
+    _headerIdMtx.lock();
+    int myHeaderId = ++_headerId;
+    _headerIdMtx.unlock();
+    return myHeaderId;
 }
 
 /***************************

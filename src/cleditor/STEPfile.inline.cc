@@ -113,7 +113,9 @@ Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor
     if( _headerInstances ) {
         _headerInstances->ClearInstances();
     }
+    _headerIdMtx.lock();
     _headerId = 5;
+    _headerIdMtx.unlock();
     Severity rval = AppendFile( in, useTechCor );
     CloseInputFile( in );
     return rval;

@@ -23,6 +23,7 @@
 #include <time.h>
 
 #include <read_func.h>
+#include <sc_mutex.h>
 
 //error reporting level
 #define READ_COMPLETE    10
@@ -55,6 +56,7 @@ class SC_EDITOR_EXPORT STEPfile {
         Registry * _headerRegistry;
 
         int _headerId;     ///< STEPfile_id given to SDAI_Application_instance from header section
+        sc_mutex _headerIdMtx; ///< Protects the _headerId
 
 //file information
         DirObj * _currentDir;
