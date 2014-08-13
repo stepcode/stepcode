@@ -424,3 +424,17 @@ InstMgr::GetSEE( int index ) {
         return 0;
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+/*******************************************************
+ description:
+    This function returns the SDAI_Application_instance
+    with the given fileId.
+********************************************************/
+
+SDAI_Application_instance * InstMgr::GetApplication_instanceFromFileId( int fileId ) {
+    masterMtx.lock();
+    SDAI_Application_instance * se = GetApplication_instance( FindFileId( fileId ) );
+    masterMtx.unlock();
+    return se;
+}

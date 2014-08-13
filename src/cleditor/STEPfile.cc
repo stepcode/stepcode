@@ -367,9 +367,9 @@ void STEPfile::HeaderMergeInstances( InstMgr * im ) {
 
     //checking for _headerInstances::FILE_NAME
     idnum = HeaderId( "File_Name" );
-    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    se = _headerInstances->GetApplication_instanceFromFileId( idnum );
     if( se ) {
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
 
         // name:
         // time_stamp: keep the newer time_stamp
@@ -379,33 +379,33 @@ void STEPfile::HeaderMergeInstances( InstMgr * im ) {
         // originating_system:
         // authorization:
     } else { // No current File_Name instance
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
         _headerInstances->Append( from, completeSE );
     }
 
     //checking for _headerInstances::FILE_DESCRIPTION
     idnum = HeaderId( "File_Description" );
-    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    se = _headerInstances->GetApplication_instanceFromFileId( idnum );
     if( se ) {
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
 
         //description
         //implementation_level
     } else {
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
         _headerInstances->Append( from, completeSE );
     }
 
     //checking for _headerInstances::FILE_SCHEMA
     idnum = HeaderId( "File_Schema" );
-    se = _headerInstances->GetApplication_instance( _headerInstances->FindFileId( idnum ) );
+    se = _headerInstances->GetApplication_instanceFromFileId( idnum );
     if( se ) {
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
 
         //description
         //implementation_level
     } else {
-        from = im->GetApplication_instance( im->FindFileId( idnum ) );
+        from = im->GetApplication_instanceFromFileId( idnum );
         _headerInstances->Append( from, completeSE );
     }
 

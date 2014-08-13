@@ -112,6 +112,9 @@ class SC_CORE_EXPORT InstMgr {
             return node->GetApplication_instance();
         }
 
+        // Returns a SDAI_Application_instance from the fileId in an thread safe manner
+        SDAI_Application_instance * GetApplication_instanceFromFileId( int fileId );
+
         void * GetSEE( int index );
         void * GetSEE( MgrNode * node ) {
             return node->SEE();
