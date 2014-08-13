@@ -1522,6 +1522,8 @@ void STEPfile::WriteHeaderInstance( SDAI_Application_instance * obj, ostream & o
         out << obj->P21Comment();
     }
     out << StrToUpper( obj->EntityName(), tmp ) << "(";
+    obj->mtx.lock();
+    obj->attributes.mtxP->lock();
     int n = obj->attributes.list_length();
     for( int i = 0; i < n; ++i ) {
         ( obj->attributes[i] ).STEPwrite( out );
@@ -1529,6 +1531,8 @@ void STEPfile::WriteHeaderInstance( SDAI_Application_instance * obj, ostream & o
             out << ",";
         }
     }
+    obj->attributes.mtxP->unlock();
+    obj->mtx.unlock();
     out << ");\n";
 }
 
