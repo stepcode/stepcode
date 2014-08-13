@@ -37,6 +37,11 @@ enum  FileTypeCode {
 };
 
 class SC_EDITOR_EXPORT STEPfile {
+    /// hoiji09: As this class is a parser, the locking in this class is dependent upon how it is
+    ///          being used in a multithreaded way. Example: The variable llke _fileName restricts
+    ///          this class to parse only one file at a time. If we want to parse more then one
+    ///          then this will have to change.
+
     protected:
         //data members
 
