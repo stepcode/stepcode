@@ -54,6 +54,7 @@ SDAI_Application_instance__set::~SDAI_Application_instance__set() {
 void SDAI_Application_instance__set::Check( int index ) {
     SDAI_Application_instance_ptr * newbuf;
 
+    mtx.lock();
     if( index >= _bufsize ) {
         _bufsize = ( index + 1 ) * 2;
         newbuf = new SDAI_Application_instance_ptr[_bufsize];
@@ -61,10 +62,12 @@ void SDAI_Application_instance__set::Check( int index ) {
         delete _buf;
         _buf = newbuf;
     }
+    mtx.unlock();
 }
 
 void SDAI_Application_instance__set::Insert( SDAI_Application_instance_ptr v, int index ) {
     SDAI_Application_instance_ptr * spot;
+    mtx.lock();
     index = ( index < 0 ) ? _count : index;
 
     if( index < _count ) {
@@ -78,9 +81,11 @@ void SDAI_Application_instance__set::Insert( SDAI_Application_instance_ptr v, in
     }
     *spot = v;
     ++_count;
+    mtx.unlock();
 }
 
 void SDAI_Application_instance__set::Append( SDAI_Application_instance_ptr v ) {
+    mtx.lock();
     int index = _count;
     SDAI_Application_instance_ptr * spot;
 
@@ -95,37 +100,49 @@ void SDAI_Application_instance__set::Append( SDAI_Application_instance_ptr v ) {
     }
     *spot = v;
     ++_count;
+    mtx.unlock();
 }
 
 void SDAI_Application_instance__set::Remove( int index ) {
+    mtx.lock();
     if( 0 <= index && index < _count ) {
         --_count;
         SDAI_Application_instance_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_Application_instance_ptr ) );
     }
+    mtx.unlock();
 }
 
 void SDAI_Application_instance__set::Remove( SDAI_Application_instance_ptr a ) {
+    mtx.lock();
     int index = Index( a );
     if( !( index < 0 ) ) {
         Remove( index );
     }
+    mtx.unlock();
 }
 
 int SDAI_Application_instance__set::Index( SDAI_Application_instance_ptr v ) {
+    int retval = -1;
+    mtx.lock();
     for( int i = 0; i < _count; ++i ) {
         if( _buf[i] == v ) {
-            return i;
+            retval = i;
+            break;
         }
     }
-    return -1;
+    mtx.unlock();
+    return retval;
 }
 
 SDAI_Application_instance_ptr & SDAI_Application_instance__set::operator[]( int index ) {
+    mtx.lock();
     Check( index );
 //    _count = max(_count, index+1);
     _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
+    SDAI_Application_instance_ptr saip = _buf[index];
+    mtx.unlock();
+    return saip;
 }
 
 int
@@ -135,5 +152,7 @@ SDAI_Application_instance__set::Count() {
 
 void
 SDAI_Application_instance__set::Clear() {
+    mtx.lock();
     _count = 0;
+    mtx.unlock();
 }

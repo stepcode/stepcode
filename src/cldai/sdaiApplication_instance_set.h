@@ -31,6 +31,7 @@
 #define SDAI_APPLICATION_INSTANCE_SET_h
 
 #include <sc_export.h>
+#include <sc_mutex.h>
 
 class SDAI_Application_instance;
 class SDAI_Application_instance__set;
@@ -57,6 +58,8 @@ class SC_DAI_EXPORT SDAI_Application_instance__set {
         SDAI_Application_instance ** _buf;
         int _bufsize;
         int _count;
+        sc_recursive_mutex mtx; // A recursive mutex was needed as there is an
+                                // interdependency between various public APIs
 };
 
 #endif
