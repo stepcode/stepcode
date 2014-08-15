@@ -140,7 +140,7 @@ SDAI_Application_instance_ptr & SDAI_Application_instance__set::operator[]( int 
     Check( index );
 //    _count = max(_count, index+1);
     _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    SDAI_Application_instance_ptr saip = _buf[index];
+    SDAI_Application_instance_ptr & saip = _buf[index];
     mtx.unlock();
     return saip;
 }
