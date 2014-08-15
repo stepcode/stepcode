@@ -19,6 +19,7 @@ class SC_DAI_EXPORT SDAI__set {
         void Insert( SDAI_ptr, int index );
         void Append( SDAI_ptr );
         void Remove( int index );
+        void Remove( SDAI_ptr );
 
         int Index( SDAI_ptr );
 

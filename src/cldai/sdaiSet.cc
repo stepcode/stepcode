@@ -92,6 +92,20 @@ void SDAI__set::Remove( int index ) {
     mtxP->unlock();
 }
 
+// First find the index of v and then remove v.
+void SDAI__set::Remove( SDAI_ptr v ) {
+    mtxP->lock();
+
+    for( int i = 0; i < _count; ++i ) {
+        if( _buf[i] == v ) {
+            --_count;
+            SDAI_ptr * spot = &_buf[i];
+            memmove( spot, spot + 1, ( _count - i )*sizeof( SDAI_ptr ) );
+        }
+    }
+    mtxP->unlock();
+}
+
 int SDAI__set::Index( SDAI_ptr v ) {
     mtxP->lock();
     int index = -1;

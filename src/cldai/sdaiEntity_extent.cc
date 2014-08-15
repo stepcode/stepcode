@@ -114,7 +114,7 @@ SDAI_Entity_extent::AddInstance( const SDAI_DAObject_ptr & appInst ) {
 
 void
 SDAI_Entity_extent::RemoveInstance( const SDAI_DAObject_ptr & appInst ) {
-    _instances.Remove( _instances.Index( appInst ) );
+    _instances.Remove( appInst );
 }
 
 /////////    END_ENTITY SDAI_Entity_extent

@@ -73,7 +73,7 @@ void SDAI_Model_contents::AddInstance( const SDAI_DAObject_SDAI_ptr & appInst ) 
 }
 
 void SDAI_Model_contents::RemoveInstance( SDAI_DAObject_SDAI_ptr & appInst ) {
-    _instances.contents_()->Remove( _instances.contents_()->Index( appInst ) );
+    _instances.contents_()->Remove( appInst );
 }
 
 
