@@ -1,6 +1,7 @@
 #ifndef SDAISET_H
 #define SDAISET_H 1
 
+#include <sc_mutex.h>
 #include <sc_export.h>
 
 typedef void * SDAI_ptr;
@@ -30,6 +31,12 @@ class SC_DAI_EXPORT SDAI__set {
         SDAI_ptr * _buf;
         int _bufsize;
         int _count;
+        sc_mutex * mtxP;
+        // The above function is declared as a pointer to prevent
+        // 'use of deleted function' compilation error as the
+        // assignment operator '=' is being in the function
+        // 'SDAI_Entity_extent::owned_by_' for a subclass of
+        // SDAI__set: 'SDAI_Model_contents__list'
 
     public:
 

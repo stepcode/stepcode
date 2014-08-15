@@ -17,13 +17,18 @@ SDAI__set::SDAI__set( int defaultSize ) {
     _bufsize = defaultSize;
     _buf = new SDAI_ptr[_bufsize];
     _count = 0;
+    mtxP = new sc_mutex();
 }
 
 SDAI__set::~SDAI__set() {
     delete _buf;
+    delete mtxP;
 }
 
 void SDAI__set::Check( int index ) {
+    // No locking as it is a private function.
+    // i.e. The caller will have to take the responsibilty.
+
     SDAI_ptr * newbuf;
 
     if( index >= _bufsize ) {
@@ -37,6 +42,7 @@ void SDAI__set::Check( int index ) {
 
 void
 SDAI__set::Insert( SDAI_ptr v, int index ) {
+    mtxP->lock();
 
     SDAI_ptr * spot;
     index = ( index < 0 ) ? _count : index;
@@ -52,9 +58,11 @@ SDAI__set::Insert( SDAI_ptr v, int index ) {
     }
     *spot = v;
     ++_count;
+    mtxP->unlock();
 }
 
 void SDAI__set::Append( SDAI_ptr v ) {
+    mtxP->lock();
 
     int index = _count;
     SDAI_ptr * spot;
@@ -70,25 +78,32 @@ void SDAI__set::Append( SDAI_ptr v ) {
     }
     *spot = v;
     ++_count;
+    mtxP->unlock();
 }
 
 void SDAI__set::Remove( int index ) {
+    mtxP->lock();
 
     if( 0 <= index && index < _count ) {
         --_count;
         SDAI_ptr * spot = &_buf[index];
         memmove( spot, spot + 1, ( _count - index )*sizeof( SDAI_ptr ) );
     }
+    mtxP->unlock();
 }
 
 int SDAI__set::Index( SDAI_ptr v ) {
+    mtxP->lock();
+    int index = -1;
 
     for( int i = 0; i < _count; ++i ) {
         if( _buf[i] == v ) {
-            return i;
+            index = i;
+            break;
         }
     }
-    return -1;
+    mtxP->unlock();
+    return index;
 }
 
 SDAI_ptr
@@ -97,10 +112,13 @@ SDAI__set::retrieve( int index ) {
 }
 
 SDAI_ptr & SDAI__set::operator[]( int index ) {
+    mtxP->lock();
 
     Check( index );
     _count = ( ( _count > index + 1 ) ? _count : ( index + 1 ) );
-    return _buf[index];
+    SDAI_ptr & sp = _buf[index];
+    mtxP->unlock();
+    return sp;
 }
 
 int
@@ -115,5 +133,7 @@ SDAI__set::is_empty() {
 
 void
 SDAI__set::Clear() {
+    mtxP->lock();
     _count = 0;
+    mtxP->unlock();
 }
