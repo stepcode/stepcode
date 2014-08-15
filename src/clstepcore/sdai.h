@@ -154,6 +154,8 @@ typedef char * SDAI_Time_stamp;
 typedef char * SDAI_Entity_name;
 typedef char * SDAI_Schema_name;
 
+#include <sdaiSet.h> //A superclass for many of the *__set classes
+
 #include <sdaiString.h>
 
 #include <sdaiBinary.h>

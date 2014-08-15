@@ -10,6 +10,7 @@ set(LIBSTEPDAI_SRCS
   sdaiModel_contents_list.cc
   sdaiObject.cc
   sdaiSession_instance.cc
+  sdaiSet.cc
   sdaiString.cc
   )
 
@@ -24,6 +25,7 @@ SET(SC_CLDAI_HDRS
   sdaiModel_contents_list.h
   sdaiObject.h
   sdaiSession_instance.h
+  sdaiSet.h
   sdaiString.h
   )
 
