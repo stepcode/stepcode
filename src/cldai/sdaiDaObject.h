@@ -489,34 +489,13 @@ class SC_DAI_EXPORT SDAI_DAObject_SDAI : public SDAI_DAObject {
 typedef SDAI_DAObject_SDAI * SDAI_DAObject_SDAI_ptr;
 typedef SDAI_DAObject_SDAI_ptr SDAI_DAObject_SDAI_var;
 
-class SC_DAI_EXPORT SDAI_DAObject__set {
+class SC_DAI_EXPORT SDAI_DAObject__set : public SDAI__set {
     public:
         SDAI_DAObject__set( int = 16 );
         ~SDAI_DAObject__set();
 
         SDAI_DAObject_ptr retrieve( int index );
-        int is_empty();
-
         SDAI_DAObject_ptr & operator[]( int index );
-
-        void Insert( SDAI_DAObject_ptr, int index );
-        void Append( SDAI_DAObject_ptr );
-        void Remove( int index );
-
-        int Index( SDAI_DAObject_ptr );
-
-        void Clear();
-        int Count();
-
-    private:
-        void Check( int index );
-    private:
-        SDAI_DAObject_ptr * _buf;
-        int _bufsize;
-        int _count;
-
-    public:
-
 };
 
 typedef SDAI_DAObject__set * SDAI_DAObject__set_ptr;
