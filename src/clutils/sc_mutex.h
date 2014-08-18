@@ -7,7 +7,7 @@
 #endif //HAVE_STD_THREAD
 /*
  This class is a wrapper to std::mutex.
- It does nothing if HAVE_STD_MUTEX is not defined.
+ It does nothing if HAVE_STD_THREAD is not defined.
 */
 class sc_mutex {
     protected:
