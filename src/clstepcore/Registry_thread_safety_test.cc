@@ -129,7 +129,7 @@ bool compareRegistry( Registry * reg1, Registry * reg2 ) {
 
 /// For a particular mode adds elements to one Registry serially and to another Registry parallely. 
 ///  It then compares the two Registry and reports any disparity.
-void checkRegistryAddOnlyThreadSafety( Mode mode )  {
+bool checkRegistryAddOnlyThreadSafety( Mode mode )  {
     int size = names.size();
 
     Registry * regExpected = new Registry( dummyInit ); 
@@ -156,7 +156,8 @@ void checkRegistryAddOnlyThreadSafety( Mode mode )  {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i == iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -165,11 +166,12 @@ void checkRegistryAddOnlyThreadSafety( Mode mode )  {
     std::cout << std::endl;
 
     delete regExpected;
+    return pass;
 }
 
 /// For a particular mode removes elements to one Registry serially and to another Registry parallely. 
 ///  It then compares the two Registry and reports any disparity.
-void checkRegistryRemoveOnlyThreadSafety( Mode mode )  {
+bool checkRegistryRemoveOnlyThreadSafety( Mode mode )  {
     int size = names.size();
 
     Registry * regExpected = new Registry( dummyInit ); 
@@ -198,7 +200,8 @@ void checkRegistryRemoveOnlyThreadSafety( Mode mode )  {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i == iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -207,11 +210,12 @@ void checkRegistryRemoveOnlyThreadSafety( Mode mode )  {
     std::cout << std::endl;
 
     delete regExpected;
+    return pass;
 }
 
 /// For a particular mode adds and removes elements to one Registry serially and to ther Registry parallely. 
 ///  It then compares the two Registry and reports any disparity.
-void checkRegistryAddRemoveThreadSafety( Mode mode )  {
+bool checkRegistryAddRemoveThreadSafety( Mode mode )  {
     int size = names.size();
 
     Registry * regExpected = new Registry( dummyInit ); 
@@ -240,7 +244,8 @@ void checkRegistryAddRemoveThreadSafety( Mode mode )  {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i == iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -249,42 +254,43 @@ void checkRegistryAddRemoveThreadSafety( Mode mode )  {
     std::cout << std::endl;
 
     delete regExpected;
+    return pass;
 }
 
-void checkRegistryEntityAddOnlyThreadSafety() {
-    checkRegistryAddOnlyThreadSafety( ENTITY );
+bool checkRegistryEntityAddOnlyThreadSafety() {
+    return checkRegistryAddOnlyThreadSafety( ENTITY );
 }
 
-void checkRegistrySchemaAddOnlyThreadSafety() {
-    checkRegistryAddOnlyThreadSafety( SCHEMA );
+bool checkRegistrySchemaAddOnlyThreadSafety() {
+    return checkRegistryAddOnlyThreadSafety( SCHEMA );
 }
 
-void checkRegistryTypeAddOnlyThreadSafety() {
-    checkRegistryAddOnlyThreadSafety( TYPE );
+bool checkRegistryTypeAddOnlyThreadSafety() {
+    return checkRegistryAddOnlyThreadSafety( TYPE );
 }
 
-void checkRegistryEntityRemoveOnlyThreadSafety() {
-    checkRegistryRemoveOnlyThreadSafety( ENTITY );
+bool checkRegistryEntityRemoveOnlyThreadSafety() {
+    return checkRegistryRemoveOnlyThreadSafety( ENTITY );
 }
 
-void checkRegistrySchemaRemoveOnlyThreadSafety() {
-    checkRegistryRemoveOnlyThreadSafety( SCHEMA );
+bool checkRegistrySchemaRemoveOnlyThreadSafety() {
+    return checkRegistryRemoveOnlyThreadSafety( SCHEMA );
 }
 
-void checkRegistryTypeRemoveOnlyThreadSafety() {
-    checkRegistryRemoveOnlyThreadSafety( TYPE );
+bool checkRegistryTypeRemoveOnlyThreadSafety() {
+    return checkRegistryRemoveOnlyThreadSafety( TYPE );
 }
 
-void checkRegistryEntityAddRemoveThreadSafety() {
-    checkRegistryAddRemoveThreadSafety( ENTITY );
+bool checkRegistryEntityAddRemoveThreadSafety() {
+    return checkRegistryAddRemoveThreadSafety( ENTITY );
 }
 
-void checkRegistrySchemaAddRemoveThreadSafety() {
-    checkRegistryAddRemoveThreadSafety( SCHEMA );
+bool checkRegistrySchemaAddRemoveThreadSafety() {
+    return checkRegistryAddRemoveThreadSafety( SCHEMA );
 }
 
-void checkRegistryTypeAddRemoveThreadSafety() {
-    checkRegistryAddRemoveThreadSafety( TYPE );
+bool checkRegistryTypeAddRemoveThreadSafety() {
+    return checkRegistryAddRemoveThreadSafety( TYPE );
 }
 
 // populates the vector names[] with string of the form [A-Z]/[a-z]/[a-z]
@@ -312,15 +318,21 @@ void populateNamesVector() {
 int main( int , char ** ) {
     populateNamesVector();
 
-    checkRegistryEntityAddOnlyThreadSafety();
-    checkRegistryEntityRemoveOnlyThreadSafety();
-    checkRegistryEntityAddRemoveThreadSafety();
+    bool pass = true;
+    pass &= checkRegistryEntityAddOnlyThreadSafety();
+    pass &= checkRegistryEntityRemoveOnlyThreadSafety();
+    pass &= checkRegistryEntityAddRemoveThreadSafety();
 
-    checkRegistrySchemaAddOnlyThreadSafety();
-    checkRegistrySchemaRemoveOnlyThreadSafety();
-    checkRegistrySchemaAddRemoveThreadSafety();
+    pass &= checkRegistrySchemaAddOnlyThreadSafety();
+    pass &= checkRegistrySchemaRemoveOnlyThreadSafety();
+    pass &= checkRegistrySchemaAddRemoveThreadSafety();
 
-    checkRegistryTypeAddOnlyThreadSafety();
-    checkRegistryTypeRemoveOnlyThreadSafety();
-    checkRegistryTypeAddRemoveThreadSafety();
+    pass &= checkRegistryTypeAddOnlyThreadSafety();
+    pass &= checkRegistryTypeRemoveOnlyThreadSafety();
+    pass &= checkRegistryTypeAddRemoveThreadSafety();
+
+    if( pass ) {
+        exit( EXIT_SUCCESS );
+    }
+    exit( EXIT_FAILURE );
 }

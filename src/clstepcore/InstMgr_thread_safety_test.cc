@@ -74,7 +74,7 @@ bool compareInstMgr( InstMgr * mgr1, InstMgr * mgr2 ) {
 }
 
 /// Performs addition of different instances to the same InstMgr simultaneosly.
-void checkInstMgrAppendOnlyThreadSafety() {
+bool checkInstMgrAppendOnlyThreadSafety() {
     InstMgr * imExpected = new InstMgr( 0 );
     int size = dummyEDescNames.size();
 
@@ -104,20 +104,22 @@ void checkInstMgrAppendOnlyThreadSafety() {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i = iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
     }
 
     std::cout << std::endl;
-
     delete imExpected;
     deleteSdaiVec( sdaiVecOld );
+
+    return pass;
 }
 
 /// Performs deletion of different instances to the same InstMgr simultaneosly.
-void checkInstMgrDeleteOnlyThreadSafety() {
+bool checkInstMgrDeleteOnlyThreadSafety() {
     InstMgr * imExpected = new InstMgr( 0 );
     int size = dummyEDescNames.size();
     //simulate the work done by two threads
@@ -149,7 +151,8 @@ void checkInstMgrDeleteOnlyThreadSafety() {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i = iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -158,10 +161,12 @@ void checkInstMgrDeleteOnlyThreadSafety() {
     std::cout << std::endl;
     delete imExpected;
     deleteSdaiVec( sdaiVecOld );
+
+    return pass;
 }
 
 /// Performs addition and deletion of different instances to the same InstMgr simultaneosly.
-void checkInstMgrAppendDeleteThreadSafety() {
+bool checkInstMgrAppendDeleteThreadSafety() {
     InstMgr * imExpected = new InstMgr( 0 );
     int size = dummyEDescNames.size();
     //simulate the work done by two threads
@@ -193,7 +198,8 @@ void checkInstMgrAppendDeleteThreadSafety() {
         }
     }
 
-    if( i == iterations ) {
+    bool pass = ( i == iterations );
+    if( pass ) {
         std::cout << "...PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -202,14 +208,22 @@ void checkInstMgrAppendDeleteThreadSafety() {
     std::cout << std::endl;
     delete imExpected;
     deleteSdaiVec( sdaiVecOld );
+
+    return pass;
 }
 
 int main( int , char ** ) {
+    bool pass = true;
 
     assert( dummyEDescNames.size() % 4 == 0 && "dummyEDescNames should be a multiple of 4 ");
 
-    checkInstMgrAppendOnlyThreadSafety();
-    checkInstMgrDeleteOnlyThreadSafety();
-    checkInstMgrAppendDeleteThreadSafety();
+    pass &= checkInstMgrAppendOnlyThreadSafety();
+    pass &= checkInstMgrDeleteOnlyThreadSafety();
+    pass &= checkInstMgrAppendDeleteThreadSafety();
+
+    if( pass ) {
+        exit( EXIT_SUCCESS );
+    }
+    exit( EXIT_FAILURE );
 }
 

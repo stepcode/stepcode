@@ -70,7 +70,7 @@ void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs &realRefs, bool forward, b
 }
 
 /// Checks the thread safety of _fwdRefs (_revRefs) when the forward value provided to it is true (false).
-void checkRefsSafety( char * fileName, bool forward ) {
+bool checkRefsSafety( char * fileName, bool forward ) {
     instanceRefs realRefs; 
     lazyInstMgr * mgr = new lazyInstMgr;
     mgr->openFile( fileName );
@@ -90,7 +90,8 @@ void checkRefsSafety( char * fileName, bool forward ) {
     first.join();
     second.join();
 
-    if( success[0] && success[1] ) {
+    bool pass = ( success[0] && success[1] );
+    if( pass ) {
         std::cout << "..PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -106,16 +107,17 @@ void checkRefsSafety( char * fileName, bool forward ) {
     
     std::cout << std::endl;
     delete mgr;
+    return pass;
 }
 
 /// Checks thread safety of getFwdRefs();
-void checkFwdRefsSafety( char * fileName ) {
-    checkRefsSafety( fileName, true );
+bool checkFwdRefsSafety( char * fileName ) {
+    return checkRefsSafety( fileName, true );
 }
 
 /// Checks thread safety of getFwdRefs();
-void checkRevRefsSafety( char * fileName ) {
-    checkRefsSafety( fileName, false );
+bool checkRevRefsSafety( char * fileName ) {
+    return checkRefsSafety( fileName, false );
 }
 
 /// A vector of some common types which are present in most step files. The types persent in this vector are used to check for thread safety.
@@ -162,7 +164,7 @@ void iterateTypeLists( lazyInstMgr * mgr, std::vector< const instanceRefs * > &s
 }
 
 /// checks the thread safety of getInstances();
-void checkTypeInstancesSafety( char * fileName ) {
+bool checkTypeInstancesSafety( char * fileName ) {
     lazyInstMgr * mgr = new lazyInstMgr;
     mgr->openFile( fileName );
 
@@ -178,7 +180,8 @@ void checkTypeInstancesSafety( char * fileName ) {
     first.join();
     second.join();
 
-    if( success[0] && success[1] ) {
+    bool pass = ( success[0] && success[1] );
+    if( pass ) {
         std::cout << "..PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -199,6 +202,7 @@ void checkTypeInstancesSafety( char * fileName ) {
 
     std::cout << std::endl << std::endl;
     delete mgr;
+    return pass;
 }
 
 /// load instances found in _refs into the instancesLoaded. After doing this once, it iterates over the _refs and reports any changes in loaded value. 
@@ -264,7 +268,7 @@ bool compareLoadedInstances( instanceRefs * toBeLoadedOnT1, instancesLoaded_t * 
 
 #ifndef NO_REGISTRY
 //checks thread safety of loadInstance. (Also of instMgrAdapter if useAdapter is TRUE)
-void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
+bool checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
 
     instanceRefs instancesToBeLoadedFwd, instancesToBeLoadedRev;
     instanceRefs * toBeLoadedOnT1, * toBeLoadedOnT2;
@@ -300,7 +304,8 @@ void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
         loadedOnT2.clear();
     } 
 
-    if( intraThreadSuccess[0] && intraThreadSuccess[1] && interThreadSuccess ) {
+    bool pass = ( intraThreadSuccess[0] && intraThreadSuccess[1] && interThreadSuccess );
+    if( pass ) {
         std::cout << "..PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -320,11 +325,12 @@ void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
 
     std::cout << std::endl;
     delete mgr;
+    return pass;
 }
 
 //checks thread safety of lazyloading along with that of instMgrAdapter
-void checkLazyLoadingSafetyWithAdapter( char * fileName ) {
-    checkLazyLoadingSafety( fileName, true );
+bool checkLazyLoadingSafetyWithAdapter( char * fileName ) {
+    return checkLazyLoadingSafety( fileName, true );
 }
 #endif //NO_REGISTRY
 
@@ -516,7 +522,7 @@ void openFile( lazyInstMgr * mgr, char * fileName ) {
 }
 
 /// checks the thread safety by opening multiple files in parallel
-void checkOpenFileSafety( char * file1, char * file2 ) {
+bool checkOpenFileSafety( char * file1, char * file2 ) {
     lazyInstMgr * e_mgr = new lazyInstMgr; //expected lazyInstMgr
 
     std::cout << "Checking thread safety while opening multiple files in parallel...";
@@ -544,7 +550,8 @@ void checkOpenFileSafety( char * file1, char * file2 ) {
         }
     }
 
-    if( compareResult == OK ) {
+    bool pass = ( compareResult == OK );
+    if( pass ) {
         std::cout << "..PASS!" << std::endl;
     } else {
         std::cout << "...FAIL!" << std::endl;
@@ -553,6 +560,7 @@ void checkOpenFileSafety( char * file1, char * file2 ) {
 
     std::cout << std::endl;
     delete e_mgr;
+    return pass;
 }
 
 
@@ -563,16 +571,23 @@ int main( int argc, char ** argv ) {
         exit( EXIT_FAILURE );
     }
 
-    checkFwdRefsSafety( argv[1] );
-    checkRevRefsSafety( argv[1] );
+    bool pass = true;
 
-    checkTypeInstancesSafety( argv[1] );
+    pass &= checkFwdRefsSafety( argv[1] );
+    pass &= checkRevRefsSafety( argv[1] );
+
+    pass &= checkTypeInstancesSafety( argv[1] );
 
 #ifndef NO_REGISTRY
-    checkLazyLoadingSafety( argv[1] );
-    checkLazyLoadingSafetyWithAdapter( argv[1] );
+    pass &= checkLazyLoadingSafety( argv[1] );
+    pass &= checkLazyLoadingSafetyWithAdapter( argv[1] );
 #endif //NO_REGISTRY
 
-    checkOpenFileSafety( argv[1], argv[2] );
+    pass &= checkOpenFileSafety( argv[1], argv[2] );
+
+    if( pass ) {
+        exit( EXIT_SUCCESS );
+    }
+    exit( EXIT_FAILURE );
 }
 
