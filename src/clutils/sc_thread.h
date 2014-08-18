@@ -7,18 +7,28 @@
 
 #ifdef HAVE_STD_THREAD
     typedef std::thread::id thread_id_t;
-
-    static thread_id_t sc_getthread_id() {
-        return std::this_thread::get_id();
-    }
-
 #else //dummy equivalent
     typedef int thread_id_t;
-
-    static thread_id_t sc_getthread_id() {
-        return 0;
-    }
-
 #endif //HAVE_STD_THREAD
+
+/*
+ This class is a wrapper to std::thread.
+ It will have wrapper functions of different functionalities
+ provided by the std::thread class.
+ It does nothing if HAVE_STD_THREAD is not defined.
+*/
+class sc_thread {
+    public:
+
+        static thread_id_t getthread_id() {
+
+#ifdef HAVE_STD_THREAD
+            return std::this_thread::get_id();
+#else
+            return 0;
+#endif //HAVE_STD_THREAD
+
+        }
+};
 
 #endif //SC_THREAD_H
