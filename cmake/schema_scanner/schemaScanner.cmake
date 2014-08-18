@@ -51,7 +51,7 @@ message("-- Compiling schema scanner...")
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR})
-execute_process(COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR}
+execute_process(COMMAND ${CMAKE_COMMAND} -C ${initial_scanner_cache} ${SCANNER_SRC_DIR} -G ${CMAKE_GENERATOR}
                  WORKING_DIRECTORY ${SCANNER_BUILD_DIR}
                  TIMEOUT 60
                  OUTPUT_VARIABLE _ss_config_out
@@ -75,7 +75,11 @@ endif(NOT ${_ss_build_stat} STREQUAL "0")
 message("-- Schema scanner built. Running it...")
 
 # not sure if it makes sense to install this or not...
-install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR})
+if(WIN32)
+	install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner.exe DESTINATION ${BIN_INSTALL_DIR})
+else(WIN32)
+	install(PROGRAMS ${SCANNER_OUT_DIR}/schema_scanner DESTINATION ${BIN_INSTALL_DIR})
+endif(WIN32)
 
 # macro SCHEMA_CMLIST
 # runs the schema scanner on one express file, creating a CMakeLists.txt file for each schema found. Those files are added via add_subdirectory().

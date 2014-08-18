@@ -129,6 +129,8 @@ extern SC_EXPRESS_EXPORT void LISTinitialize PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT void LISTcleanup PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT Linked_List LISTcreate PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT Linked_List LISTcopy PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT void LISTsort PROTO( ( Linked_List, int (*comp)(void*, void*) ) );
+extern SC_EXPRESS_EXPORT void LISTswap PROTO( ( Link, Link ) );
 extern SC_EXPRESS_EXPORT Generic  LISTadd_first PROTO( ( Linked_List, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) );
 extern SC_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );

@@ -54,6 +54,9 @@ set(SC_ABI_VERSION ${SC_ABI_SOVERSION}.0.0)
 cmake_minimum_required(VERSION 2.8.7)
 if(COMMAND CMAKE_POLICY)
   CMAKE_POLICY(SET CMP0003 NEW)
+  if ("${CMAKE_VERSION}" VERSION_GREATER 2.99)
+    CMAKE_POLICY(SET CMP0026 OLD)
+  endif ("${CMAKE_VERSION}" VERSION_GREATER 2.99)
 endif(COMMAND CMAKE_POLICY)
 
 # CMake derives much of its functionality from modules, typically

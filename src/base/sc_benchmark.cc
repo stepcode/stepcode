@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
+#include <ios>
 
 /// mem values in kb, times in ms (granularity may be higher than 1ms)
 benchVals getMemAndTime( ) {

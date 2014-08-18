@@ -51,6 +51,9 @@ endif(HAVE_STD_THREAD)
 
 SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
 set_target_properties(lazy_test PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )
+if(TARGET lazy_test-static)
+  set_target_properties(lazy_test-static PROPERTIES COMPILE_FLAGS "-DNO_REGISTRY" )
+endif(TARGET lazy_test-static)
 
 install(FILES ${SC_CLLAZYFILE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cllazyfile)

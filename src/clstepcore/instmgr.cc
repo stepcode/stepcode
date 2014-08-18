@@ -37,13 +37,12 @@ static int debug_level = 3;
 
 void
 InstMgr::PrintSortedFileIds() {
-    MgrNode * mn = 0;
     masterMtx.lock();
-    int count = InstanceCount();
     int i = 0;
-    for( i = 0; i < count; i++ ) {
-        mn = ( MgrNode * )( sortedMaster->GetGenNode( i ) );
-        cout << i << " " << mn->GetFileId() << endl;
+    std::map<int, MgrNode *>::iterator it;
+    for( it = sortedMaster->begin(); it!=sortedMaster->end(); ++it ) {
+        std::cout << i << " " << it->first << std::endl;
+        i = i+1;
     }
     masterMtx.unlock();
 }
@@ -51,7 +50,7 @@ InstMgr::PrintSortedFileIds() {
 InstMgr::InstMgr( int ownsInstances )
     : maxFileId( -1 ), _ownsInstances( ownsInstances ) {
     master = new MgrNodeArray();
-    sortedMaster = new MgrNodeArraySorted();
+    sortedMaster = new std::map<int, MgrNode *>;
 }
 
 InstMgr::~InstMgr() {
@@ -60,7 +59,7 @@ InstMgr::~InstMgr() {
     } else {
         master->ClearEntries();
     }
-    sortedMaster->ClearEntries();
+    sortedMaster->clear();
 
     delete master;
     delete sortedMaster;
@@ -71,7 +70,7 @@ InstMgr::~InstMgr() {
 void InstMgr::ClearInstances() {
     masterMtx.lock();
     master->ClearEntries();
-    sortedMaster->ClearEntries();
+    sortedMaster->clear();
     maxFileId = -1;
     masterMtx.unlock();
 }
@@ -79,7 +78,7 @@ void InstMgr::ClearInstances() {
 void InstMgr::DeleteInstances() {
     masterMtx.lock();
     master->DeleteEntries();
-    sortedMaster->ClearEntries();
+    sortedMaster->clear();
     maxFileId = -1;
     masterMtx.unlock();
 }
@@ -175,9 +174,11 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
 MgrNode * InstMgr::FindFileId( int fileId ) {
     MgrNode * mn = 0;
     masterMtx.lock();
-    int index = sortedMaster->MgrNodeIndex( fileId );
-    if( index >= 0 ) {
-        mn = ( MgrNode * )sortedMaster->GetGenNode( index );
+
+	std::map<int, MgrNode *>::iterator it;
+	it=sortedMaster->find( fileId );
+	if( it != sortedMaster->end() ) {
+        mn = it->second;
     }
     masterMtx.unlock();
     return mn;
@@ -189,16 +190,6 @@ MgrNode * InstMgr::FindFileId( int fileId ) {
 //  called by see initiated functions
 int InstMgr::GetIndex( MgrNode * mn ) {
     return mn->ArrayIndex();
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-int InstMgr::GetIndex( SDAI_Application_instance * se ) {
-    masterMtx.lock();
-    int fileId = se->StepFileId();
-    int index = sortedMaster->MgrNodeIndex( fileId );
-    masterMtx.unlock();
-    return index;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -224,7 +215,6 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
     if( debug_level > 3 ) {
         cout << "#" << se->StepFileId() << " append node to InstMgr" << endl;
     }
-
     MgrNode * mn = 0;
 
     if( se->StepFileId() == 0 ) { // no id assigned
@@ -256,10 +246,10 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
         cout << "append to InstMgr **ERROR ** node #" << se->StepFileId() <<
              " doesn't have state information" << endl;
     master->Append( mn );
-    sortedMaster->Insert( mn );
+    (*sortedMaster)[mn->GetFileId()] = mn;
 
+    //PrintSortedFileIds();
     masterMtx.unlock();
-//PrintSortedFileIds();
     return mn;
 }
 
@@ -271,15 +261,11 @@ void InstMgr::Delete( MgrNode * node ) {
     masterMtx.lock();
     node->Remove();
 
-    int index;
-
-    // get the index of the node in the sorted master array
-    index = sortedMaster->MgrNodeIndex( node->GetFileId() );
     // remove the node from the sorted master array
-    sortedMaster->Remove( index );
+    sortedMaster->erase( node->GetFileId() );
 
     // get the index into the master array by ptr arithmetic
-    index = node->ArrayIndex();
+    int index = node->ArrayIndex();
     master->Remove( index );
 
     delete node;

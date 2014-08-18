@@ -179,9 +179,17 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "   )" << endl << endl;
 
     cmLists << "# install all headers" << endl;
-    cmLists << "install( FILES ${" << shortName << "_entity_hdrs} ${" << shortName;
-    cmLists << "_type_hdrs} ${" << shortName << "_misc_hdrs}" << endl;
-    cmLists << "         DESTINATION \"include/schemas/" << shortName << "\" )" << endl << endl;
+    cmLists << "set(all_headers ${" << shortName << "_entity_hdrs} ${" << shortName << "_type_hdrs} ${" << shortName << "_misc_hdrs})" << endl;
+    cmLists << "foreach( header_file ${all_headers} )" << endl;
+    cmLists << "  set(curr_dir)" << endl;
+    cmLists << "  get_filename_component(curr_dir ${header_file} PATH)" << endl;
+    cmLists << "  get_filename_component(curr_name ${header_file} NAME)" << endl;
+    cmLists << "  if (curr_dir)" << endl;
+    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "/${curr_dir}\" )" << endl;
+    cmLists << "  else (curr_dir)" << endl;
+    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "\" )" << endl;
+    cmLists << "  endif (curr_dir)" << endl;
+    cmLists << "endforeach()" << endl;
 
     cmLists << "# implementation files - 3 lists" << endl << endl;
 
