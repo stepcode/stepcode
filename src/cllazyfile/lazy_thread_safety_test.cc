@@ -3,7 +3,11 @@
 #include "SdaiSchemaInit.h"
 #include "instMgrHelper.h"
 
-#include "schema.h"
+// Registry will be needed for checkLazyLoadingSafety & checkLazyLoadingSafetyWithAdapter checks.
+#ifndef NO_REGISTRY
+# include "schema.h"
+#endif //NO_REGISTRY
+
 #include <algorithm>
 
 #ifdef HAVE_STD_THREAD
@@ -258,6 +262,7 @@ bool compareLoadedInstances( instanceRefs * toBeLoadedOnT1, instancesLoaded_t * 
     return true;
 }
 
+#ifndef NO_REGISTRY
 //checks thread safety of loadInstance. (Also of instMgrAdapter if useAdapter is TRUE)
 void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
 
@@ -321,6 +326,7 @@ void checkLazyLoadingSafety( char * fileName, bool useAdapter=false ) {
 void checkLazyLoadingSafetyWithAdapter( char * fileName ) {
     checkLazyLoadingSafety( fileName, true );
 }
+#endif //NO_REGISTRY
 
 /// enum elements represent the status used checking thread safety of openFile
 enum lazyInstMgrStatus {
@@ -562,8 +568,10 @@ int main( int argc, char ** argv ) {
 
     checkTypeInstancesSafety( argv[1] );
 
+#ifndef NO_REGISTRY
     checkLazyLoadingSafety( argv[1] );
     checkLazyLoadingSafetyWithAdapter( argv[1] );
+#endif //NO_REGISTRY
 
     checkOpenFileSafety( argv[1], argv[2] );
 }

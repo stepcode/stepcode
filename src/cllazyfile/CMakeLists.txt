@@ -45,8 +45,8 @@ if(HAVE_STD_THREAD)
   )
 
   SC_ADDEXEC(lazy_thread_safety_test "lazy_thread_safety_test.cc" "steplazyfile;stepeditor" )
-  set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD")
-  target_link_libraries(lazy_thread_safety_test sdai_cd209 "pthread" )
+  set_target_properties(lazy_thread_safety_test PROPERTIES COMPILE_FLAGS "-pthread -std=c++0x -DHAVE_STD_THREAD -DNO_REGISTRY")
+  target_link_libraries(lazy_thread_safety_test sdai_cd209 "pthread" ) #sdai_cd209 in causes schema dependency
 endif(HAVE_STD_THREAD)
 
 SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
