@@ -18,6 +18,7 @@ set(SC_CLUTILS_HDRS
   sc_hash.h
   Str.h
   sc_mutex.h
+  sc_thread.h
   )
 
 include_directories(
