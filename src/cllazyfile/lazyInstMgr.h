@@ -164,7 +164,6 @@ class lazyInstMgr {
         instanceSet * instanceDependencies( instanceID id );
         instanceSet * instanceDependenciesHelper( instanceID id, instanceRefs_t * _fwdRefs );
 
-#ifdef HAVE_STD_THREAD
         /// thread safe counterpart of openFile();
         void openFileSafely( std::string fname );
 
@@ -185,7 +184,6 @@ class lazyInstMgr {
 
         /// Thread safe counterpart of instanceDependencies( instanceID )
         instanceSet * instanceDependenciesSafely( instanceID id );
-#endif //HAVE_STD_THREAD
 
         void mtxLock( sc_mutex &mtx ) {
             mtx.lock();

@@ -7,9 +7,7 @@
 #include <map>
 #include <stdint.h>
 
-#ifdef HAVE_STD_THREAD
-# include <thread>
-#endif //HAVE_STD_THREAD
+# include <sc_thread.h>
 
 #include "judyLArray.h"
 #include "judySArray.h"
@@ -85,13 +83,11 @@ typedef std::vector< lazyDataSectionReader * > dataSectionReaderVec_t;
 // files
 typedef std::vector< lazyFileReader * > lazyFileReaderVec_t;
 
-#ifdef HAVE_STD_THREAD
 //map thread id to mgrNodeHelper. Each thread will have only one mgrNodeHelper value.
-typedef std::map< std::thread::id, mgrNodeHelper * > idNodeMap_t;
+typedef std::map< thread_id_t, mgrNodeHelper * > idNodeMap_t;
 
 //thread id - mgrNodeHelper pointer pair to be used while using the above map
-typedef std::pair< std::thread::id, mgrNodeHelper * > idNodePair_t;
-#endif //HAVE_STD_THREAD
+typedef std::pair< thread_id_t, mgrNodeHelper * > idNodePair_t;
 
 // type for performing actions on multiple instances
 // NOTE not useful? typedef std::vector< lazyInstance > lazyInstanceVec_t;

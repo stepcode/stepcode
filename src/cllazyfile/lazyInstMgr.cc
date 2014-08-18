@@ -206,8 +206,6 @@ instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
    return instanceDependenciesHelper( id, getFwdRefs() );
 }
 
-#ifdef HAVE_STD_THREAD
-
 void lazyInstMgr::openFileSafely( std::string fname ) {
     filesMtx.lock();
     size_t size = _files.size();
@@ -274,6 +272,4 @@ SDAI_Application_instance * lazyInstMgr::loadInstanceSafely( instanceID id ) {
 instanceSet * lazyInstMgr::instanceDependenciesSafely( instanceID id ) {
    return instanceDependenciesHelper( id, getFwdRefsSafely() );
 }
-
-#endif //HAVE_STD_THREAD
 
