@@ -7,9 +7,9 @@
 
 #ifdef HAVE_STD_THREAD
 # include <thread>
-# include <mutex>
 #endif //HAVE_STD_THREAD
 
+#include <sc_mutex.h>
 
 /**
  * \file instMgrHelper.h helper classes for the lazyInstMgr. Allows use of SDAI_Application_instance class
@@ -64,7 +64,7 @@ class instMgrAdapter: public InstMgr {
 		//map between threadID and the thread's local copy of mgrNodeHelper. Each thread has zero or one copy
 		//of mgrNodeHelper assigned to it. This _map holds the pointer to that mgrNodeHelper. 
         idNodeMap_t _map;
-        std::mutex _mapMtx;
+        sc_mutex _mapMtx;
 #endif //HAVE_STD_THREAD
 
     public:

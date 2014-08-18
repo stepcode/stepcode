@@ -9,9 +9,7 @@
 #include "lazyFileReader.h"
 #include "lazyTypes.h"
 
-#ifdef HAVE_STD_THREAD
-# include <mutex>
-#endif //HAVE_STD_THREAD
+#include "sc_mutex.h"
 
 #include "Registry.h"
 #include "sc_memmgr.h"
@@ -66,13 +64,8 @@ class lazyInstMgr {
 
         instMgrAdapter * _ima;
 
-#ifdef HAVE_STD_THREAD
         /** mutexes for mutual exclusion */
-        std::mutex fwdRefsMtx, revRefsMtx, instanceTypesMtx, loadInstanceMtx, instanceStreamPosMtx, dataSectionsMtx, filesMtx;
-#else
-        /** Dummy variables **/
-        int fwdRefsMtx, revRefsMtx, instanceTypesMtx, loadInstanceMtx, instanceStreamPosMtx, dataSectionsMtx, filesMtx;
-#endif //HAVE_STD_THREAD
+        sc_mutex fwdRefsMtx, revRefsMtx, instanceTypesMtx, loadInstanceMtx, instanceStreamPosMtx, dataSectionsMtx, filesMtx;
 
     public:
         lazyInstMgr();
@@ -192,25 +185,15 @@ class lazyInstMgr {
 
         /// Thread safe counterpart of instanceDependencies( instanceID )
         instanceSet * instanceDependenciesSafely( instanceID id );
+#endif //HAVE_STD_THREAD
 
-        void mtxLock( std::mutex &mtx ) {
+        void mtxLock( sc_mutex &mtx ) {
             mtx.lock();
         }
 
-        void mtxUnlock( std::mutex &mtx ) {
+        void mtxUnlock( sc_mutex &mtx ) {
             mtx.unlock();
         }
-#else
-        /// dummy counterpart of mtxLock
-        void mtxLock( int dummy ) {
-            ( void )dummy;
-        }
-
-        /// dummy counterpart of mtxUnlock
-        void mtxUnlock( int dummy ) {
-            ( void )dummy;
-        }
-#endif //HAVE_STD_THREAD
 
         /// unloads all instances. (For testing purpose, not thread safe)
         void unloadAllInstances() {
