@@ -204,17 +204,14 @@ void STEPcomplex::AssignDerives() {
     }
 }
 
-/** \fn STEPcomplex::AddEntityPart
-** this function should only be called for the head entity
-** in the list of entity parts.
-*/
+/** this function should only be called for the head entity in the list of entity parts. */
 void STEPcomplex::AddEntityPart( const char * name ) {
     STEPcomplex * scomplex;
-
     if( name ) {
         scomplex = new STEPcomplex( _registry, STEPfile_id );
         scomplex->BuildAttrs( name );
         if( scomplex->eDesc ) {
+            scomplex->InitIAttrs();
             scomplex->head = this;
             AppendEntity( scomplex );
         } else {

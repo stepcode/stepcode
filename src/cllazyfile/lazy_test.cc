@@ -168,7 +168,7 @@ int main( int argc, char ** argv ) {
 
     instanceTypes_t::cvector * complexInsts = mgr->getInstances( "" );
     if( complexInsts && complexInsts->size() > 0 ) {
-        std::cout << "loading lazy instance #" << complexInsts->at( 0 ) << "." << std::endl;
+        std::cout << "loading complex instance #" << complexInsts->at( 0 ) << "." << std::endl;
         STEPcomplex * c = dynamic_cast<STEPcomplex *>( mgr->loadInstance( complexInsts->at( 0 ) ) );
         dumpComplexInst( c, 0 );
         std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;

@@ -346,8 +346,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
         names[ i ] = typeNames[i]->c_str();
     }
     //TODO still need the schema name
-    STEPcomplex * sc = new STEPcomplex( ( const_cast<Registry *>( reg ) ), ( const char ** ) names, ( int ) fileid /*, schnm*/ );
+    STEPcomplex * sc = new STEPcomplex( ( const_cast<Registry *>( reg ) ), names, ( int ) fileid /*, schnm*/ );
     delete[] names;
+    //TODO also delete contents of typeNames!
     return sc;
 }
 

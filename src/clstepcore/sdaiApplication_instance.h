@@ -14,23 +14,32 @@
 
 #include <sc_export.h>
 
-class STEPinvAttrList;
+//class STEPinvAttrList;
+class EntityAggregate;
+class Inverse_Attribute;
+typedef struct { /** exactly one of these must be non-null */
+    EntityAggregate * a;
+    SDAI_Application_instance * i;
+} iAstruct;
 
-///////////////////////////////////////////////////////////////////////////////
-// SDAI_Application_instance used to be STEPentity
-
+/** @class
+ * this used to be STEPentity
+ */
 class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
     private:
         int _cur;        // provides a built-in way of accessing attributes in order.
 
-    public:
+    protected:
+        const EntityDescriptor * eDesc;
+        typedef std::map< const Inverse_Attribute * const, const iAstruct> iAMap_t;
+        iAMap_t iAMap;
+
+    public: //TODO make these private?
         STEPattributeList attributes;
-        STEPinvAttrList iAttrs;
+        //STEPinvAttrList iAttrs;
         int               STEPfile_id;
         ErrorDescriptor   _error;
         std::string       p21Comment;
-        // registry additions
-        const EntityDescriptor * eDesc;
 
         /**
         ** head entity for multiple inheritance.  If it is null then this
@@ -43,18 +52,24 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         /// these form a chain of other entity parents for multiple inheritance
         SDAI_Application_instance * nextMiEntity;
 
-    protected:
-        int _complex;
-
     public:
         SDAI_Application_instance();
         SDAI_Application_instance( int fileid, int complex = 0 );
         virtual ~SDAI_Application_instance();
 
-        int IsComplex() const {
-            return _complex;
+        virtual bool IsComplex() const {
+            return false;
         }
+        /// initialize inverse attribute list
+        void InitIAttrs();
 
+        void setEDesc( const EntityDescriptor * const ed ) {
+            eDesc = ed;
+
+        }
+        const EntityDescriptor * getEDesc() const {
+            return eDesc;
+        }
         void StepFileId( int fid ) {
             STEPfile_id = fid;
         }
@@ -95,6 +110,9 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         void ResetAttributes() {
             _cur = 0;
         }
+// ACCESS inverse attributes
+        const iAstruct getInvAttr( const Inverse_Attribute * const ia ) const;
+        void setInvAttr( const Inverse_Attribute * const ia, const iAstruct ias );
 
 // READ
         virtual Severity STEPread( int id, int addFileId,

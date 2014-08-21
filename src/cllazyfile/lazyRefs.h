@@ -146,7 +146,7 @@ class lazyRefs {
 
         int attrIndex( SDAI_Application_instance * inst, const char * name, const char * entity ) {
             for( int i = 0; i < inst->attributes.list_length(); i++ ) {
-                std::cout << "attr " << i << " name " << inst->attributes[i].Name() << ", entity " << inst->EntityName() << std::endl;
+//                 std::cout << "attr " << i << " name " << inst->attributes[i].Name() << ", entity " << inst->EntityName() << std::endl;
                 if( ( strcasecmp( name, inst->attributes[i].Name() ) == 0 ) &&
                     ( strcasecmp( entity, inst->attributes[i].getADesc()->Owner().Name() ) == 0 ) ) {
                     return i;

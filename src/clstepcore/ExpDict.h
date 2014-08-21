@@ -1072,7 +1072,7 @@ class SC_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
         const char * _inverted_attr_id;
         const char * _inverted_entity_id;
     protected:
-        AttrDescriptor * _inverted_attr; // not implemented
+        AttrDescriptor * _inverted_attr; // not implemented (?!)
     public:
 
         Inverse_attribute(
@@ -1107,7 +1107,7 @@ class SC_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
             _inverted_entity_id = iei;
         }
 
-        /// FIXME not implemented
+        /// FIXME not implemented (?!)
         class AttrDescriptor * inverted_attr_() {
                 return _inverted_attr;
         }
