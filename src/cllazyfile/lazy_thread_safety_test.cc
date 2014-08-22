@@ -46,9 +46,9 @@ void prepareRealRefsFromStreamPos ( instanceStreamPos_t * _spos, instanceRefs &r
 
 
 /// Used by an individual thread to iterate over the keys of the _fwdRefs / _revRefs multiple times. For each iteration it expects the order of the keys to be the same as dictated by realRefs.
-void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs &realRefs, bool forward, bool * success ) {
+void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs * realRefs, bool forward, bool * success ) {
     const int iterations = 1000;
-    int i, k, instances = realRefs.size();
+    int i, k, instances = realRefs->size();
     instanceID current;
     instanceRefs_t * _refs;
  
@@ -58,7 +58,7 @@ void iterateOverRefs ( lazyInstMgr *mgr, instanceRefs &realRefs, bool forward, b
         current = _refs->begin().key;
         for( i = 0; i < instances; i++ ) {
 
-            if( current != realRefs[i] ) {
+            if( current != (*realRefs)[i] ) {
                 break;
             }
 
@@ -84,8 +84,8 @@ bool checkRefsSafety( char * fileName, bool forward ) {
     }
 
     bool success[2] = { true, true };
-    std::thread first( iterateOverRefs, mgr, realRefs, forward, &success[0] );
-    std::thread second( iterateOverRefs, mgr, realRefs, forward, &success[1] );
+    std::thread first( iterateOverRefs, mgr, &realRefs, forward, &success[0] );
+    std::thread second( iterateOverRefs, mgr, &realRefs, forward, &success[1] );
 
     first.join();
     second.join();
@@ -144,7 +144,7 @@ bool compareTypeLists( const instanceRefs * v1, const instanceRefs * v2 ) {
 }
 
 /// compares the original instances lists with the thread's own view of instances list.
-void iterateTypeLists( lazyInstMgr * mgr, std::vector< const instanceRefs * > &sameTypeInstances, bool * success ) {
+void iterateTypeLists( lazyInstMgr * mgr, std::vector< const instanceRefs * > * sameTypeInstances, bool * success ) {
     const int iterations = 100000;
     const instanceRefs * refs;
     int i, k, instances = commonTypes.size();
@@ -154,7 +154,7 @@ void iterateTypeLists( lazyInstMgr * mgr, std::vector< const instanceRefs * > &s
 
             refs = mgr->getInstancesSafely( commonTypes[i] );
 
-            if( !compareTypeLists( refs, sameTypeInstances[i] ) ) {
+            if( !compareTypeLists( refs, (*sameTypeInstances)[i] ) ) {
                 break;
             }
         }
@@ -174,8 +174,8 @@ bool checkTypeInstancesSafety( char * fileName ) {
     prepareSameTypeInstances( mgr, sameTypeInstances );
 
     bool success[2] = { true, true };
-    std::thread first( iterateTypeLists, mgr, sameTypeInstances, &success[0] );
-    std::thread second( iterateTypeLists, mgr, sameTypeInstances, &success[1] );
+    std::thread first( iterateTypeLists, mgr, &sameTypeInstances, &success[0] );
+    std::thread second( iterateTypeLists, mgr, &sameTypeInstances, &success[1] );
 
     first.join();
     second.join();

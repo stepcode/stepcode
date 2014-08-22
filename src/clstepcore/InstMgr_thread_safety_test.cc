@@ -23,20 +23,20 @@ void deleteSdaiVec( sdaiVec_t &sdaiVec ) {
     } 
 }
 
-void appendInstances( InstMgr * im, sdaiVec_t &sdaiVec, int offset, int stride, int limit ) {
+void appendInstances( InstMgr * im, sdaiVec_t * sdaiVec, int offset, int stride, int limit ) {
     SDAI_Application_instance * sai;
     for( int i = offset; i < limit; i+=stride ) {        
         sai = new SDAI_Application_instance( i+1 );
         sai->eDesc = new EntityDescriptor( dummyEDescNames[i].c_str(), ( Schema * ) NULL, LTrue, LFalse );
-        sdaiVec[i] = sai;
+        (*sdaiVec)[i] = sai;
         im->Append( sai, completeSE );
     }
 }
 
-void deleteInstances( InstMgr * im, sdaiVec_t &sdaiVec, int offset, int stride, int limit ) {
+void deleteInstances( InstMgr * im, sdaiVec_t * sdaiVec, int offset, int stride, int limit ) {
     for( int i = offset; i < limit; i+=stride ) {
-        im->Delete( sdaiVec[i] );
-        sdaiVec[i] = 0;
+        im->Delete( (*sdaiVec)[i] );
+        (*sdaiVec)[i] = 0;
     }
 }
 
@@ -80,8 +80,8 @@ bool checkInstMgrAppendOnlyThreadSafety() {
 
     //simulate the work done by two threads
     sdaiVec_t sdaiVecOld( size );
-    appendInstances( imExpected, sdaiVecOld, 0, 2, size );
-    appendInstances( imExpected, sdaiVecOld, 1, 2, size );
+    appendInstances( imExpected, &sdaiVecOld, 0, 2, size );
+    appendInstances( imExpected, &sdaiVecOld, 1, 2, size );
     std::cout << "Checking thread safety of InstMgr in Append Operation..." ;
 
     int i, iterations = 1000;
@@ -89,8 +89,8 @@ bool checkInstMgrAppendOnlyThreadSafety() {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
 
-        std::thread first( appendInstances, imActual, sdaiVecNew, 0, 2, size );
-        std::thread second( appendInstances, imActual, sdaiVecNew, 1, 2, size );
+        std::thread first( appendInstances, imActual, &sdaiVecNew, 0, 2, size );
+        std::thread second( appendInstances, imActual, &sdaiVecNew, 1, 2, size );
         
         first.join();
         second.join();
@@ -125,9 +125,9 @@ bool checkInstMgrDeleteOnlyThreadSafety() {
     //simulate the work done by two threads
 
     sdaiVec_t sdaiVecOld( size );
-    appendInstances( imExpected, sdaiVecOld, 0, 1, size );
-    deleteInstances( imExpected, sdaiVecOld, 0, 2, size );
-    deleteInstances( imExpected, sdaiVecOld, 1, 2, size );
+    appendInstances( imExpected, &sdaiVecOld, 0, 1, size );
+    deleteInstances( imExpected, &sdaiVecOld, 0, 2, size );
+    deleteInstances( imExpected, &sdaiVecOld, 1, 2, size );
     std::cout << "Checking thread safety of InstMgr in Delete Operation..." ;
 
     int i, iterations = 1000;
@@ -135,9 +135,9 @@ bool checkInstMgrDeleteOnlyThreadSafety() {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
 
-        appendInstances( imActual, sdaiVecNew, 0, 1, size ); //Preparetion
-        std::thread first( deleteInstances, imActual, sdaiVecNew, 0, 2, size );
-        std::thread second( deleteInstances, imActual, sdaiVecNew, 1, 2, size );
+        appendInstances( imActual, &sdaiVecNew, 0, 1, size ); //Preparetion
+        std::thread first( deleteInstances, imActual, &sdaiVecNew, 0, 2, size );
+        std::thread second( deleteInstances, imActual, &sdaiVecNew, 1, 2, size );
 
         first.join();
         second.join();
@@ -172,9 +172,9 @@ bool checkInstMgrAppendDeleteThreadSafety() {
     //simulate the work done by two threads
 
     sdaiVec_t sdaiVecOld( size );
-    appendInstances( imExpected, sdaiVecOld, 0, 2, size );
-    appendInstances( imExpected, sdaiVecOld, 1, 2, size );
-    deleteInstances( imExpected, sdaiVecOld, 0, 2, size );
+    appendInstances( imExpected, &sdaiVecOld, 0, 2, size );
+    appendInstances( imExpected, &sdaiVecOld, 1, 2, size );
+    deleteInstances( imExpected, &sdaiVecOld, 0, 2, size );
     std::cout << "Checking thread safety of InstMgr in Append-Delete Operation..." ;
 
     int i, iterations = 1000;
@@ -182,9 +182,9 @@ bool checkInstMgrAppendDeleteThreadSafety() {
         InstMgr * imActual = new InstMgr( 0 );
         sdaiVec_t sdaiVecNew( size );
 
-        appendInstances( imActual, sdaiVecNew, 0, 2, size ); //Preparation
-        std::thread first( appendInstances, imActual, sdaiVecNew, 1, 2, size );
-        std::thread second( deleteInstances, imActual, sdaiVecNew, 0, 2, size );
+        appendInstances( imActual, &sdaiVecNew, 0, 2, size ); //Preparation
+        std::thread first( appendInstances, imActual, &sdaiVecNew, 1, 2, size );
+        std::thread second( deleteInstances, imActual, &sdaiVecNew, 0, 2, size );
 
         first.join();
         second.join();

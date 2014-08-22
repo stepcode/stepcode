@@ -66,19 +66,19 @@ void deleteInstanceList( sdaiVec_t & sdaiVec ) {
 }
 
 // appends the sdaiApplication_instances from a certain section of the list to sai. (upper and lower limits are inclusive)
-void appendListTo( SDAI_Application_instance * sai, sdaiVec_t & sdaiVec, int llimit, int ulimit ) {
+void appendListTo( SDAI_Application_instance * sai, sdaiVec_t * sdaiVec, int llimit, int ulimit ) {
     for( int i = llimit; i <= ulimit; i++ ) {
-        sai->AppendMultInstance( sdaiVec[i] );
+        sai->AppendMultInstance( (*sdaiVec)[i] );
     }
 }
 
 // searches for the sdaiApplication_instances belonging to ahe certain section of the list from sai. (upper and lower limits are inclusive)
 // nullAllowedIndex marks the index after which GetMiEntity is allowed to return a NULL value 
-void searchForElements( SDAI_Application_instance * sai, sdaiVec_t & sdaiVec, int llimit, int ulimit, int nullAllowedIndex, bool * errorInFinding ) {
+void searchForElements( SDAI_Application_instance * sai, sdaiVec_t * sdaiVec, int llimit, int ulimit, int nullAllowedIndex, bool * errorInFinding ) {
     SDAI_Application_instance * saiFound;
     for( int i = llimit; i <= ulimit; i++ ) {
         saiFound = sai->GetMiEntity( EntityNames[i].c_str() );
-        if( saiFound != sdaiVec[i] ) {
+        if( saiFound != (*sdaiVec)[i] ) {
             if( saiFound == NULL && i >= nullAllowedIndex ) {
                 continue;
             } else if( i < nullAllowedIndex ) {
@@ -129,10 +129,10 @@ bool checkAddAddInstance() {
         createInstanceList( sdaiVec );
         size = sdaiVec.size();
         
-        appendListTo( sdaiVec[0], sdaiVec, 1, 4 ); //Initializing List before test
+        appendListTo( sdaiVec[0], &sdaiVec, 1, 4 ); //Initializing List before test
 
-        std::thread first( appendListTo, sdaiVec[0], sdaiVec, 5, size/2  );
-        std::thread second( appendListTo, sdaiVec[4], sdaiVec, ( size/2 )+1 , size-1  );
+        std::thread first( appendListTo, sdaiVec[0], &sdaiVec, 5, size/2  );
+        std::thread second( appendListTo, sdaiVec[4], &sdaiVec, ( size/2 )+1 , size-1  );
         
         first.join();
         second.join();
@@ -163,17 +163,17 @@ bool checkAddAddGetInstance() {
         createInstanceList( sdaiVec );
         size = sdaiVec.size();
         
-        appendListTo( sdaiVec[0], sdaiVec, 1, 4 ); //Initializing List before test
+        appendListTo( sdaiVec[0], &sdaiVec, 1, 4 ); //Initializing List before test
 
         // The elements added by the two threads are in the ratio 1:3
-        std::thread first( appendListTo, sdaiVec[0], sdaiVec, 5, size/4 ); 
-        std::thread second( appendListTo, sdaiVec[4], sdaiVec, ( size/4 )+1 , size-1  );
+        std::thread first( appendListTo, sdaiVec[0], &sdaiVec, 5, size/4 );
+        std::thread second( appendListTo, sdaiVec[4], &sdaiVec, ( size/4 )+1 , size-1  );
         
         first.join();
 
         bool errorInFinding;
         //search for first half of the sdaiApplication_instances. 1/4 elements will be present. rest 1/4 elements may / may not be present
-        std::thread third( searchForElements, sdaiVec[0], sdaiVec, 0, size/2, size/4, &errorInFinding );
+        std::thread third( searchForElements, sdaiVec[0], &sdaiVec, 0, size/2, size/4, &errorInFinding );
 
         second.join();
         third.join();
