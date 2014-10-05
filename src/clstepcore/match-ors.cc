@@ -121,9 +121,9 @@ MatchType OrList::matchORs( EntNode * ents ) {
             if( choice == -1 ) {
                 choice1 = choice = count;
             }
-            mtx.lock();// protects choiceCount
+            mtxP->lock();// protects choiceCount
             choiceCount++;
-            mtx.unlock();
+            mtxP->unlock();
 
             if( viable < retval ) {
                 viable = retval;

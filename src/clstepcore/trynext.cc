@@ -103,10 +103,10 @@ MatchType OrList::tryNext( EntNode * ents ) {
     EntList * child;
     MatchType retval;
 
-    mtx.lock(); // For choice
+    mtxP->lock(); // For choice
     if( choice == LISTEND ) {
         // if we've already exhausted all the choices in this OR,
-        mtx.unlock();
+        mtxP->unlock();
         return NOMORE;
     }
 
@@ -120,7 +120,7 @@ MatchType OrList::tryNext( EntNode * ents ) {
         // our descendants before moving on.
         retval = ( ( MultList * )child )->tryNext( ents );
         if( retval == MATCHALL ) {
-            mtx.unlock();
+            mtxP->unlock();
             ents->sharedMtxP->unlock();
             return MATCHALL;
         }
@@ -129,7 +129,7 @@ MatchType OrList::tryNext( EntNode * ents ) {
             // EntLists on the higher levels (if there are) can retry all the
             // later choices with the new choice we just found.  Otherwise,
             // we'll continue below looking into our next choice.
-            mtx.unlock();
+            mtxP->unlock();
             ents->sharedMtxP->unlock();
             return NEWCHOICE;
         }
@@ -143,11 +143,11 @@ MatchType OrList::tryNext( EntNode * ents ) {
         // (Also, it's nec. to unmark now, as we did above before returning and
         // before the calling tryNext() tries earlier OR's - see notes, 11/12.)
         choice = LISTEND;
-        mtx.unlock();
+        mtxP->unlock();
         ents->sharedMtxP->unlock();
         return NOMORE;
     }
-    mtx.unlock();
+    mtxP->unlock();
 
     // Otherwise, try our next:
     if( acceptNextChoice( ents ) ) {

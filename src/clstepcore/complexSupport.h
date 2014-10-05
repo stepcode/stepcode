@@ -142,12 +142,6 @@ class SC_CORE_EXPORT EntNode {
 };
 
 class SC_CORE_EXPORT EntList {
-    // NOTE: The locking methodology used here assumes that a node (i.e a
-    // EntList object) can neither be removed, nor can be inserted
-    // between two existing nodes. If such APIs are introduced in
-    // future the EntList class (or its subclasses) will no longer be
-    // thread safe and can crash / deadlock under multithreaded environment.
-
         friend class MultList;
         friend class JoinList;
         friend class OrList;
@@ -203,10 +197,6 @@ class SC_CORE_EXPORT EntList {
             return ( join != SIMPLE );
         }
         EntList * next, *prev;
-        sc_mutex mtx;
-        /** \var mtx
-         * Currently only being used by the subclass MultList
-         */
 
     protected:
         MatchType viable;
@@ -269,7 +259,7 @@ class SC_CORE_EXPORT MultList : public EntList {
 
     public:
         MultList( JoinType j ) : EntList( j ), supertype( 0 ), numchildren( 0 ),
-            childList( 0 ) {}
+            childList( 0 ), mtxP( new sc_mutex() ) {;}
         ~MultList();
         void setLevel( int );
         bool contains( char * );
@@ -300,6 +290,13 @@ class SC_CORE_EXPORT MultList : public EntList {
          * AND, it would point to a list of the entity types we are AND'ing.
          * The children may be SIMPLE EntLists (contain entity names) or may
          * themselves be And-, Or-, or AndOrLists.
+         */
+
+        mutable sc_mutex * mtxP;
+        /** \var mtxP
+         * Protects childList, numchildren and the counters in subclass
+         * OrList. NOTE: The locking methodology assumes that a childList
+         * will have a unique parent.
          */
 };
 
@@ -346,17 +343,17 @@ class SC_CORE_EXPORT OrList : public MultList {
         void unmarkAll( EntNode * );
         bool acceptChoice( EntNode * );
         bool acceptNextChoice( EntNode * ents ) {
-            mtx.lock();
+            mtxP->lock();
             choice++;
-            mtx.unlock();
+            mtxP->unlock();
             return ( acceptChoice( ents ) );
         }
         void reset() {
-            mtx.lock();
+            mtxP->lock();
             choice = -1;
             choice1 = -2;
             choiceCount = 0;
-            mtx.unlock();
+            mtxP->unlock();
             MultList::reset();
         }
 

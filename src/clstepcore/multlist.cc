@@ -27,6 +27,7 @@ MultList::~MultList() {
         delete child;
         child = cnext;
     }
+    delete mtxP;
 }
 
 /**
@@ -104,29 +105,16 @@ EntList * MultList::getChild( int num ) {
  */
 void MultList::appendList( EntList * ent ) {
     EntList * eprev;
-
-    mtx.lock(); // Protects numchildren, childList
+    mtxP->lock(); // Protects numchildren, childList
     if( numchildren == 0 ) {
         childList = ent;
     } else {
         eprev = getLast();
-        eprev->mtx.lock();
-       // In a multithreaded environment It is possible that before locking
-       // more elements got added into the existing list and eprev is no
-       // longer the last element. This while loop takes care of that.
-        while( eprev->next ) {
-            eprev->mtx.unlock();
-            eprev = eprev->next;
-            eprev->mtx.lock();
-        }
-        // eprev lock is acquired
         eprev->next = ent;
-        eprev->mtx.unlock();
-
         ent->prev = eprev; // ent locking not required
     }
     numchildren += ent->siblings();
-    mtx.unlock();
+    mtxP->unlock();
 }
 
 /**
@@ -150,9 +138,7 @@ EntList * MultList::copyList( EntList * ent ) {
             newlist = new AndOrList;
             break;
     };
-    ent->mtx.lock(); // appendList doesn't lock the EntNode
     appendList( newlist );
-    ent->mtx.unlock();
 
     if( ent->multiple() ) {
         // For the multlists, we must recurse for all their children:

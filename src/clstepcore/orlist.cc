@@ -65,7 +65,7 @@ void OrList::unmarkAll( EntNode * ents ) {
 bool OrList::acceptChoice( EntNode * ents ) {
     EntList * child;
 
-    mtx.lock(); // to proctect choice
+    mtxP->lock(); // to proctect choice
     if( choice == LISTEND ) {
         choice = choice1;
     }
@@ -73,7 +73,7 @@ bool OrList::acceptChoice( EntNode * ents ) {
     while( child ) {
         if( child->viable >= MATCHSOME && child->acceptChoice( ents ) ) {
             // acceptChoice() returns true if we marked something.
-            mtx.unlock();
+            mtxP->unlock();
             return true;
         }
         child = child->next;
@@ -82,6 +82,6 @@ bool OrList::acceptChoice( EntNode * ents ) {
     // If we got here, we must have gotten to the end of the childList without
     // finding a choice which marks something.
     choice = LISTEND;
-    mtx.unlock();
+    mtxP->unlock();
     return false;
 }
