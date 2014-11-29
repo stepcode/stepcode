@@ -607,18 +607,12 @@ void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema 
     fprintf( impl, "    reg.AddType (*%s);\n", tdnm );
 }
 
-/** print name, fundamental type, and description initialization function
-   calls */
+/** print name, fundamental type, and description initialization function calls */
 void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endChars ) {
-
-    fprintf( f, "                  \"%s\",        // Name\n",
-             PrettyTmpName( TYPEget_name( type ) ) );
-    fprintf( f, "                  %s,        // FundamentalType\n",
-             FundamentalType( type, 1 ) );
-    fprintf( f, "                  %s::schema,        // Originating Schema\n",
-             SCHEMAget_name( schema ) );
-    fprintf( f, "                  \"%s\"%s        // Description\n",
-             TypeDescription( type ), endChars );
+    fprintf( f, "                  \"%s\",        // Name\n", PrettyTmpName( TYPEget_name( type ) ) );
+    fprintf( f, "                  %s,        // FundamentalType\n", FundamentalType( type, 1 ) );
+    fprintf( f, "                  %s::schema,        // Originating Schema\n", SCHEMAget_name( schema ) );
+    fprintf( f, "                  \"%s\"%s        // Description\n", TypeDescription( type ), endChars );
 }
 
 /** new space for a variable of type TypeDescriptor (or subtype).  This
@@ -634,96 +628,53 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR )
     if( TYPEis_select( type ) ) {
         char * temp;
         temp = non_unique_types_string( type );
-        fprintf( create,
-                 "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n",
-                 TYPEtd_name( type ),
-                 temp );
+        fprintf( create, "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n", TYPEtd_name( type ), temp );
         sc_free( temp );
         TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-        fprintf( create,
-                 "                  (SelectCreator) create_%s);        // Creator function\n",
-                 SelectName( TYPEget_name( type ) ) );
-    } else
+        fprintf( create, "                  (SelectCreator) create_%s);        // Creator function\n", SelectName( TYPEget_name( type ) ) );
+    } else {
         switch( TYPEget_body( type )->type ) {
             case boolean_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-                fprintf( create,
-                         "                  (EnumCreator) create_BOOLEAN);        // Creator function\n" );
+                fprintf( create, "                  (EnumCreator) create_BOOLEAN);        // Creator function\n" );
                 break;
-
             case logical_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-                fprintf( create,
-                         "                  (EnumCreator) create_LOGICAL);        // Creator function\n" );
+                fprintf( create, "                  (EnumCreator) create_LOGICAL);        // Creator function\n" );
                 break;
-
             case enumeration_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-                /* get the type name of the underlying type - it is the type that
-                   needs to get created */
-
+                /* get the type name of the underlying type - it is the type that needs to get created */
                 tmpType = TYPEget_head( type );
                 if( tmpType ) {
-
                     bodyType = tmpType;
-
                     while( tmpType ) {
                         bodyType = tmpType;
                         tmpType = TYPEget_head( tmpType );
                     }
-
-                    fprintf( create,
-                             "                  (EnumCreator) create_%s);        // Creator function\n",
-                             TYPEget_ctype( bodyType ) );
-                } else
-                    fprintf( create,
-                             "                  (EnumCreator) create_%s);        // Creator function\n",
-                             TYPEget_ctype( type ) );
+                    fprintf( create, "                  (EnumCreator) create_%s);        // Creator function\n", TYPEget_ctype( bodyType ) );
+                } else {
+                    fprintf( create, "                  (EnumCreator) create_%s);        // Creator function\n", TYPEget_ctype( type ) );
+                }
                 break;
-
             case aggregate_:
             case array_:
             case bag_:
             case set_:
             case list_:
-
-                fprintf( create, "\n        %s = new %s (\n",
-                         TYPEtd_name( type ), GetTypeDescriptorName( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "\n        %s = new %s (\n", TYPEtd_name( type ), GetTypeDescriptorName( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-                fprintf( create,
-                         "                  (AggregateCreator) create_%s);        // Creator function\n\n",
-                         ClassName( TYPEget_name( type ) ) );
+                fprintf( create, "                  (AggregateCreator) create_%s);        // Creator function\n\n", ClassName( TYPEget_name( type ) ) );
                 break;
-
             default:
-                fprintf( create, "        %s = new TypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new TypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, ");" );
-
                 break;
         }
+    }
     /* add the type to the Schema dictionary entry */
     fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
 
