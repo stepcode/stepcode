@@ -5,10 +5,12 @@
 #include <stdio.h>
 
 /* print Where_rule's. for types, schema should be null - tename will include schema name */
-void WHEREprint( const char * tename, Linked_List wheres, FILE * impl, Schema schema ) {
+void WHEREprint( const char * tename, Linked_List wheres, FILE * impl, Schema schema, bool needWR ) {
     if( wheres ) {
         fprintf( impl, "    %s%s%s->_where_rules = new Where_rule__list;\n", ( schema ? SCHEMAget_name( schema ) : "" ), ( schema ? "::" ENT_PREFIX : "" ), tename );
-        fprintf( impl, "        Where_rule * wr;\n" );
+        if( needWR ) {
+            fprintf( impl, "        Where_rule * wr;\n" );
+        }
 
         LISTdo( wheres, w, Where ) {
             fprintf( impl, "        str.clear();\n");

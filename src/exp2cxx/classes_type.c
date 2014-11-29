@@ -325,7 +325,7 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
     fprintf( impl, "    std::string str;\n" );
     /* moved from SCOPEPrint in classes_wrapper */
-    TYPEprint_new( type, impl, schema );
+    TYPEprint_new( type, impl, schema, true );
     TYPEprint_init( type, hdr, impl, schema );
     fprintf( impl, "}\n\n" );
 
@@ -547,12 +547,11 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     }
 
     if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        if( TYPEget_body( type )->type  == enumeration_ ) {
+        if( TYPEis_enumeration( type ) ) {
                 TYPEPrint( type, files, schema );
-                /*TYPEenum_inc_print( type, files -> inc );
-                TYPEenum_lib_print( type, files -> lib );*/
-        }
+        } /* so we don't do anything for non-enums??? */
     } else {
+        TYPEprint_new( type, files->create, schema, false );
         TYPEprint_init( type, files->inc, files->init, schema );
     }
 }
@@ -625,7 +624,7 @@ void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endC
 /** new space for a variable of type TypeDescriptor (or subtype).  This
  *  function is called for Types that have an Express name.
  */
-void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
+void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR ) {
     Type tmpType = TYPEget_head( type );
     Type bodyType = tmpType;
 
@@ -728,7 +727,7 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
     /* add the type to the Schema dictionary entry */
     fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
 
-    WHEREprint( TYPEtd_name( type ), type->where, create, 0 );
+    WHEREprint( TYPEtd_name( type ), type->where, create, 0, needWR );
 }
 
 /** Get the TypeDescriptor variable name that t's TypeDescriptor references (if

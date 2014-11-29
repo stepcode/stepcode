@@ -174,8 +174,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files->create, "\n  //  *****  Initialize the Types\n" );
         fprintf( files->classes, "\n// Types:\n" );
         SCOPEdo_types( scope, t, de ) {
-            //moved to TYPEPrint_cc in classes_type
-//             TYPEprint_new( t, files->create, schema );
+            //TYPEprint_new moved to TYPEPrint_cc and TYPEprint_descriptions in classes_type.c
             TYPEprint_typedefs( t, files->classes );
             //print in namespace. Some logic copied from TypeDescriptorName()
             fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );

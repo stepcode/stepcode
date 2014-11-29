@@ -72,9 +72,8 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /* First set all marks we'll be using to UNPROCESSED/NOTKNOWN: */
     initializeMarks( express );
 
-    /* TODO only print gr, str as needed, from SCHEMAprint in classes_wrapper.cc? */
-    fprintf( files->create, "    Global_rule_ptr gr;\n"
-             "    std::string str; //for large strings such as functions or global rules\n" );
+    /* TODO only print gr, wr, str as needed, from SCHEMAprint in classes_wrapper.cc? */
+    fprintf( files->create, "    Global_rule_ptr gr;\n    Where_rule_ptr wr;\n    std::string str; //for large strings such as functions or global rules\n" );
     while( !complete ) {
         complete = true;
         DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );

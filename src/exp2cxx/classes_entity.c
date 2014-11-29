@@ -1183,7 +1183,7 @@ void ENTITYprint_descriptors( Entity entity, FILE * impl, Schema schema, bool ex
     fprintf( impl, "  (Creator) create_%s );\n", ENTITYget_classname( entity ) );
     /* add the entity to the Schema dictionary entry */
     fprintf( impl, "    %s::schema->AddEntity(%s::%s%s);\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-    WHEREprint( ENTITYget_name( entity ), TYPEget_where( entity ), impl, schema );
+    WHEREprint( ENTITYget_name( entity ), TYPEget_where( entity ), impl, schema, true );
     UNIQUEprint( entity, impl, schema );
 }
 
