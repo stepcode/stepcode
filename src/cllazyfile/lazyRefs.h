@@ -75,27 +75,29 @@ class lazyRefs {
             //3c - for each item in both _refMap and edL, add it to _referentInstances
             potentialReferentInsts( edL );
             //3d - load each inst
-            invAttrListNode * invNode = invAttr( _inst, ia /*, iaList*/ );
+            /*invAttrListNode * invNode*/
+            iAstruct * ias = invAttr( _inst, ia /*, iaList*/ );
             referentInstances_t::iterator insts = _referentInstances.begin();
             for( ; insts != _referentInstances.end(); ++insts ) {
-                loadInstIFFreferent( *insts, invNode );
+                loadInstIFFreferent( *insts, ias, ia );
             }
             //3f - cache edL - TODO
         }
 
-        void loadInstIFFreferent( instanceID inst, invAttrListNode * invNode ) {
+        void loadInstIFFreferent( instanceID inst, iAstruct * ias, const Inverse_attribute * ia ) {
             bool prevLoaded = _lim->isLoaded( inst );
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
-            bool ref = refersToCurrentInst( invNode->inverseADesc(), rinst );
+            bool ref = refersToCurrentInst( ia, rinst );
             if( ref ) {
-                if( invNode->isAggregate() ) {
-                    EntityAggregate * ea = ( ( invAttrListNodeA * )invNode )->getter()( _inst );
+                if( ia->inverted_attr_()->IsAggrType() ) {
+                    EntityAggregate * ea = ias->a;
+                    assert( ea && "is it possible for this to be null here? if so, must create & assign");
                     //TODO check if duplicate
                     ea->AddNode( new EntityNode( rinst ) );
                 } else {
-                    SDAI_Application_instance * ai = ( ( invAttrListNodeI * )invNode )->getter()( _inst );
+                    SDAI_Application_instance * ai = ias->i;
                     if( !ai ) {
-                        ( ( invAttrListNodeI * )invNode )->setter()( _inst, rinst );
+                        ias->i = rinst;
                     } else if( ai->GetFileId() != inst ) {
                         std::cerr << "ERROR: two instances (" << rinst << " and " << ai->GetFileId() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
@@ -110,7 +112,7 @@ class lazyRefs {
         }
 
         ///3e - check if actually inverse ref
-        bool refersToCurrentInst( Inverse_attribute * ia, SDAI_Application_instance * referrer ) {
+        bool refersToCurrentInst( const Inverse_attribute * ia, SDAI_Application_instance * referrer ) {
             //find the attr
             int rindex = attrIndex( referrer, ia->_inverted_attr_id, ia->_inverted_entity_id );
             STEPattribute sa = referrer->attributes[ rindex ];
@@ -155,7 +157,7 @@ class lazyRefs {
             return -1;
         }
 
-        invAttrListNode * invAttr( SDAI_Application_instance * inst, const Inverse_attribute * ia /*, iaList_t & iaList */ ) {
+        iAstruct * invAttr( SDAI_Application_instance * inst, const Inverse_attribute * ia /*, iaList_t & iaList */ ) {
             /* looks for iAttrs in schemas/sdai_ap214e3/entity/SdaiGeometric_representation_context.cc, but the ctors don't populate it
              * shouldn't the parent class ctor populate it?
 ENTITY representation_context;
@@ -171,16 +173,22 @@ SUBTYPE OF (representation_context);
   coordinate_space_dimension : dimension_count;
 END_ENTITY; -- 10303-42: geometry_schema
              */
-            invAttrListNode * n = ( invAttrListNode * ) inst->iAttrs.GetHead();
-            while( n ) {
-                if( n->inverseADesc() == ia ) {
-                    return n;
+            SDAI_Application_instance::iAMap_t map = inst->getInvAttrs();
+            SDAI_Application_instance::iAMap_t::iterator iai = map.begin();
+            while( iai != map.end() ) {
+                if( iai->first == ia ) {
+                    return &( iai->second );
                 }
-                n = ( invAttrListNode * ) n->NextNode();
+                ++iai;
             }
-            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAttrs (";
-            std::cerr << ( void * )( & ( inst->iAttrs ) ) << ") - entity " << inst->eDesc->Name() << "." << std::endl;
-            return 0;
+            iai = map.begin();
+            //FIXME treat as unrecoverable?
+            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << ". Map contents:" << std::endl;
+            for( ; iai != map.end(); ++iai ) {
+                std::cerr << iai->first->Name() << ": " << (void*)(iai->second.a) << ", ";
+            }
+            std::cerr << std::endl;
+            return NULL;
         }
 
         /**  3c. compare the type of each item in R with types in A
@@ -208,13 +216,13 @@ END_ENTITY; -- 10303-42: geometry_schema
             const Inverse_attribute * iAttr;
             for( ; !supersIter.empty(); ++supersIter ) {
                 //look at attrs of *si
-                InverseAItr iai( ( *supersIter )->InverseAttr() );
+                InverseAItr iai( &( ( *supersIter )->InverseAttr() ) );
                 while( 0 != ( iAttr = iai.NextInverse_attribute() ) ) {
                     iaList.insert( iAttr );
                 }
             }
             // look at our own attrs
-            InverseAItr invAttrIter( ed->InverseAttr() );
+            InverseAItr invAttrIter( &( ed->InverseAttr() ) );
             while( 0 != ( iAttr = invAttrIter.NextInverse_attribute() ) ) {
                 iaList.insert( iAttr );
             }
@@ -272,7 +280,7 @@ END_ENTITY; -- 10303-42: geometry_schema
 
 
             // 1. find inverse attrs with recursion
-            getInverseAttrs( ai->eDesc, _iaList );
+            getInverseAttrs( ai->getEDesc(), _iaList );
 
             //2. find reverse refs, map id to type (stop if there are no inverse attrs or no refs)
             if( _iaList.size() == 0 || !mapRefsToTypes() ) {

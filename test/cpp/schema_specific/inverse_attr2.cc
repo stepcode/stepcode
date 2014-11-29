@@ -91,7 +91,7 @@ int main( int argc, char * argv[] ) {
     //find inverse attribute descriptors
     //first, find inverse attrs unique to this entity (i.e. not inherited)
     const EntityDescriptor * ed = registry.FindEntity( "window" );
-    InverseAItr iaIter( ed->InverseAttr() ); //iterator for inverse attributes
+    InverseAItr iaIter( &( ed->InverseAttr() ) ); //iterator for inverse attributes
     if( findInverseAttrs2( iaIter, instance_list, registry ) ) {
         inverseAttrsFound = true;
     }
@@ -100,7 +100,7 @@ int main( int argc, char * argv[] ) {
     const EntityDescriptor * super;
     while( 0 != ( super = edi.NextEntityDesc() ) ) {
         cout << "supertype " << super->Name() << endl;
-        InverseAItr superIaIter( super->InverseAttr() );
+        InverseAItr superIaIter( &( super->InverseAttr() ) );
         if( findInverseAttrs2( superIaIter, instance_list, registry ) ) {
             inverseAttrsFound = true;
         }

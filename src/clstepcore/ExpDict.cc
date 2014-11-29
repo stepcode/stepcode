@@ -554,9 +554,9 @@ const AttrDescriptor * AttrDescItr::NextAttrDesc() {
     return 0;
 }
 
-const Inverse_attribute * InverseAItr::NextInverse_attribute() {
+Inverse_attribute * InverseAItr::NextInverse_attribute() {
     if( cur ) {
-        const Inverse_attribute * ia = cur->Inverse_attr();
+        Inverse_attribute * ia = cur->Inverse_attr();
         cur = ( Inverse_attributeLinkNode * )( cur->NextNode() );
         return ia;
     }
@@ -811,6 +811,31 @@ EntityDescriptor::~EntityDescriptor() {
     delete _uniqueness_rules;
 }
 
+/** initialize inverse attrs
+ * call once per eDesc (once per EXPRESS entity type)
+ * must be called _after_ init_Sdai* functions for any ia->inverted_entity_id_'s
+ *
+ */
+void EntityDescriptor::InitIAttrs( entFinderFn entFinder ) {
+    InverseAItr iai( &( InverseAttr() ) );
+    Inverse_attribute * ia;
+    while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
+        const AttrDescriptor * ad;
+        const char * aid = ia->inverted_attr_id_();
+        const char * eid = ia->inverted_entity_id_();
+        const EntityDescriptor * e = entFinder( eid );
+        AttrDescItr adl( e->ExplicitAttr() ); //TODO does this include inherited attrs? redefined? etc...
+        while( ( 0 != ( ad = adl.NextAttrDesc() ) ) && !strcmp( aid, ad->Name() ) ) {
+            // loop condition side effects do everything
+        }
+        if( !ad ) {
+            std::cerr << "Inverse attr " << ia->Name() << " for " << Name() << ": cannot find AttrDescriptor " << aid << " for entity " << eid << "." << std::endl;
+            //FIXME should we abort? or is there a sensible recovery path?
+        }
+        ia->inverted_attr_( ad );
+    }
+}
+
 const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     std::string sstr;
     int count;
@@ -878,7 +903,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     }
 /////////
 
-    InverseAItr iai( _inverseAttr );
+    InverseAItr iai( &_inverseAttr );
 
     iai.ResetItr();
     const Inverse_attribute * ia = iai.NextInverse_attribute();

@@ -664,6 +664,7 @@ class SC_CORE_EXPORT Schema : public Dictionary_instance {
     protected:
         const char  * _name;
         EntityDescriptorList _entList; // list of entities in the schema
+        EntityDescriptorList _entsWithInverseAttrs;
         TypeDescriptorList _typeList; // list of types in the schema
         TypeDescriptorList _unnamed_typeList; // list of unnamed types in the schema (for cleanup)
         Interface_spec _interface; // list of USE and REF interfaces  (SDAI)
@@ -729,13 +730,29 @@ class SC_CORE_EXPORT Schema : public Dictionary_instance {
         EntityDescLinkNode * AddEntity( EntityDescriptor * ed ) {
             return _entList.AddNode( ed );
         }
+        /// must be called in addition to AddEntity()
+        EntityDescLinkNode * AddEntityWInverse( EntityDescriptor * ed ) {
+            return _entsWithInverseAttrs.AddNode( ed );
+        }
 
         TypeDescLinkNode * AddType( TypeDescriptor * td ) {
             return _typeList.AddNode( td );
         }
-
         TypeDescLinkNode * AddUnnamedType( TypeDescriptor * td ) {
             return _unnamed_typeList.AddNode( td );
+        }
+
+        const EntityDescriptorList * Entities() const {
+            return & _entList;
+        }
+        const EntityDescriptorList * EntsWInverse() const {
+            return & _entsWithInverseAttrs;
+        }
+        const TypeDescriptorList * Types() const {
+            return & _typeList;
+        }
+        const TypeDescriptorList * UnnamedTypes() const {
+            return & _unnamed_typeList;
         }
 
         // the whole schema
@@ -811,7 +828,7 @@ class SC_CORE_EXPORT Inverse_attributeLinkNode : public  SingleLinkNode {
         Inverse_attributeLinkNode();
         virtual ~Inverse_attributeLinkNode();
 
-        const Inverse_attribute * Inverse_attr() const {
+        Inverse_attribute * Inverse_attr() const {
             return _invAttr;
         }
         void Inverse_attr( Inverse_attribute * ia ) {
@@ -833,18 +850,21 @@ class SC_CORE_EXPORT Inverse_attributeList : public  SingleLinkList {
 
 class SC_CORE_EXPORT InverseAItr {
     protected:
-        const Inverse_attributeList & ial;
+        const Inverse_attributeList * ial;
         const Inverse_attributeLinkNode * cur;
 
     public:
-        InverseAItr( const Inverse_attributeList & iaList );
+        InverseAItr( const Inverse_attributeList * iaList );
         virtual ~InverseAItr();
 
-        void ResetItr() {
-            cur = ( Inverse_attributeLinkNode * )( ial.GetHead() );
+        void ResetItr( const Inverse_attributeList * iaList = 0 ) {
+            if( iaList ) {
+                ial = iaList;
+            }
+            cur = ( Inverse_attributeLinkNode * )( ial->GetHead() );
         }
 
-        const Inverse_attribute * NextInverse_attribute();
+        Inverse_attribute * NextInverse_attribute();
 };
 
 /**
@@ -1072,7 +1092,7 @@ class SC_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
         const char * _inverted_attr_id;
         const char * _inverted_entity_id;
     protected:
-        AttrDescriptor * _inverted_attr; // not implemented (?!)
+        const AttrDescriptor * _inverted_attr; // not implemented (?!) (perhaps this means "not used"?)
     public:
 
         Inverse_attribute(
@@ -1107,22 +1127,23 @@ class SC_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
             _inverted_entity_id = iei;
         }
 
-        /// FIXME not implemented (?!)
-        class AttrDescriptor * inverted_attr_() {
+        /// FIXME not implemented (?!) (perhaps this means "not set"?)
+        //set _inverted_attr in an extra init step in generated code? any other way to ensure pointers are valid?
+        const class AttrDescriptor * inverted_attr_() const {
                 return _inverted_attr;
         }
 
-        void inverted_attr_( AttrDescriptor * ia ) {
+        void inverted_attr_( const AttrDescriptor * ia ) {
             _inverted_attr = ia;
         }
 
         // below are obsolete (and not implemented anyway)
-        class AttrDescriptor * InverseAttribute() {
-                return _inverted_attr;
-        }
-        void InverseOf( AttrDescriptor * invAttr ) {
-            _inverted_attr = invAttr;
-        }
+//         class AttrDescriptor * InverseAttribute() {
+//                 return _inverted_attr;
+//         }
+//         void InverseOf( AttrDescriptor * invAttr ) {
+//             _inverted_attr = invAttr;
+//         }
 };
 
 /** \class SchRename
@@ -1473,9 +1494,14 @@ class SC_CORE_EXPORT EnumTypeDescriptor  :    public TypeDescriptor  {
  * will be building the same thing but using the new schema info.
  * nodes (i.e. EntityDesc nodes) for each entity.
  */
+
+class Registry;
+
 class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 
     protected:
+        //used in InitIAttrs so we don't have to #include registry.h
+
         SDAI_LOGICAL _abstractEntity;
         SDAI_LOGICAL _extMapping;
         // does external mapping have to be used to create an instance of
@@ -1487,6 +1513,7 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
         Inverse_attributeList _inverseAttr;  // OPTIONAL
         std::string _supertype_stmt;
     public:
+        typedef const EntityDescriptor * (*entFinderFn)(const char *);
         Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
         // pointer to a function that will create a new instance of a SDAI_Application_instance
@@ -1501,6 +1528,8 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
                         );
 
         virtual ~EntityDescriptor();
+
+        void InitIAttrs( entFinderFn entFinder );
 
         const char * GenerateExpress( std::string & buf ) const;
 

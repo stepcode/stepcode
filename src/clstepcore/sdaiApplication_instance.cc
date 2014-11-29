@@ -18,6 +18,7 @@
 #include <read_func.h> //for ReadTokenSeparator, used when comments are inside entities
 
 #include "sdaiApplication_instance.h"
+#include "superInvAttrIter.h"
 
 SDAI_Application_instance NilSTEPentity;
 
@@ -34,22 +35,22 @@ SDAI_Application_instance NilSTEPentity;
 
 SDAI_Application_instance::SDAI_Application_instance()
     :  _cur( 0 ),
+       eDesc( NULL ),
+       _complex( false ),
        STEPfile_id( 0 ),
        p21Comment( std::string( "" ) ),
-       eDesc( NULL ),
        headMiEntity( 0 ),
-       nextMiEntity( 0 ),
-       _complex( 0 ) {
+       nextMiEntity( 0 ) {
 }
 
 SDAI_Application_instance::SDAI_Application_instance( int fileid, int complex )
     :  _cur( 0 ),
+       eDesc( NULL ),
+       _complex( complex ),
        STEPfile_id( fileid ),
        p21Comment( std::string( "" ) ),
-       eDesc( NULL ),
        headMiEntity( 0 ),
-       nextMiEntity( 0 ),
-       _complex( complex ) {
+       nextMiEntity( 0 ) {
 }
 
 SDAI_Application_instance::~SDAI_Application_instance() {
@@ -72,14 +73,16 @@ SDAI_Application_instance::~SDAI_Application_instance() {
     }
 }
 
-void InitIAttrs() {
+
+/// initialize inverse attrs
+/// eDesc->InitIAttrs() must have been called previously
+/// call once per instance (*not* once per class)
+// should we pass schema name for eDesc->Name()?
+void SDAI_Application_instance::InitIAttrs() {
     assert( eDesc && "eDesc must be set; please report this bug." );
-    //for items in eDesc->iAttrs, create slot in iAttrs
-    //not necessary?! so where is instance-specific data stored???
-    //the callbacks store data in data members of generated classes
-    //that won't work for complex instances... what to do?
-    IMPLEMENT ME
-    /**
+    //instance-specific data was stored in data members of generated classes
+    //that won't work for complex instances
+    /*
      * add an iAMap to this class, mapping from inverse attr's to whatever they point to
      * this has the benefit of working equally well for regular and complex instances
      *
@@ -87,6 +90,11 @@ void InitIAttrs() {
      * maybe data accessors should be rewritten to use the map, and do away with the members?
      * should be pretty easy since we can calculate the IA names easily when writing the access methods
      */
+//     const Inverse_Attribute * ia;
+//TODO implement me!
+    //copy eDesc->iAMap to our iAMap
+    //then append supertypes iAMaps
+    //next, loop over iAMap setting pointers
 }
 
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
@@ -773,9 +781,9 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
     // DAVE: Can an entity be used in an Express TYPE so that this
     // EntityDescriptor would have type REFERENCE_TYPE -- it looks like NO
 
-    else if( se->eDesc ) {
+    else if( se->getEDesc() ) {
         // is se a descendant of ed?
-        if( se->eDesc->IsA( ed ) ) {
+        if( se->getEDesc()->IsA( ed ) ) {
             return SEVERITY_NULL;
         } else {
             if( se->IsComplex() ) {
@@ -921,26 +929,29 @@ int SDAI_Application_instance::AttributeCount()  {
 }
 
 /// used in getInvAttr() and setInvAttr() to verify that the struct and attr are both entityAggregate or both not
-bool validateIAS( const Inverse_Attribute * const ia, const iAstruct ias ) {
+bool validIAS( const Inverse_attribute * const ia, const iAstruct ias ) {
     if( ( ias.a && ias.i ) || ( !ias.a && !ias.i ) ) {
         return false;
     }
-    //TODO determine if ia should be an instance or an entityAggregate... how?!
-    std::cerr << "TODO: implement " << __PRETTY_FUNCTION__ << "!" << std::endl;
+//     //TODO determine if ia should be an instance or an entityAggregate... how?!
+//     std::cerr << "TODO: implement " << __PRETTY_FUNCTION__ << "!" << std::endl;
+    if( ia->inverted_attr_()->IsAggrType() == ( ias.a != 0 ) ) {
+        return true;
+    }
     return false;
 }
 
-const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_Attribute * const ia ) const {
-    const iAstruct ias{ 0, 0 };
+const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_attribute * const ia ) const {
+    iAstruct ias;
     iAMap_t::const_iterator it = iAMap.find( ia );
-    if( it != std::map::cend() ) {
-        ias = *it;
-        assert( validateIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
+    if( it != iAMap.end() ) {
+        ias = (*it).second;
+        assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
     }
     return ias;
 }
 
-void SDAI_Application_instance::setInvAttr( const Inverse_Attribute * const ia, const iAstruct ias )  {
-    assert( validateIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
-    iAMap.insert( ia, ias );
+void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias )  {
+    assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
+    iAMap.insert( iAMap_t::value_type( ia, ias ) );
 }

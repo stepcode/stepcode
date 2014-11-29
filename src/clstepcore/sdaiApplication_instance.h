@@ -13,13 +13,18 @@
 */
 
 #include <sc_export.h>
+#include <map>
+#include <iostream>
 
 //class STEPinvAttrList;
 class EntityAggregate;
-class Inverse_Attribute;
-typedef struct { /** exactly one of these must be non-null */
-    EntityAggregate * a;
-    SDAI_Application_instance * i;
+class Inverse_attribute;
+typedef struct {
+//     bool aggregate;
+    union {
+        EntityAggregate * a;
+        SDAI_Application_instance * i;
+    };
 } iAstruct;
 
 /** @class
@@ -29,15 +34,16 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
     private:
         int _cur;        // provides a built-in way of accessing attributes in order.
 
+    public:
+        typedef std::map< const Inverse_attribute * const, iAstruct> iAMap_t;
     protected:
         const EntityDescriptor * eDesc;
-        typedef std::map< const Inverse_Attribute * const, const iAstruct> iAMap_t;
         iAMap_t iAMap;
+        bool _complex;
 
     public: //TODO make these private?
         STEPattributeList attributes;
-        //STEPinvAttrList iAttrs;
-        int               STEPfile_id;
+        int               STEPfile_id;  //TODO are neg values ever used (signalling)? if not, make unsigned?
         ErrorDescriptor   _error;
         std::string       p21Comment;
 
@@ -57,8 +63,8 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         SDAI_Application_instance( int fileid, int complex = 0 );
         virtual ~SDAI_Application_instance();
 
-        virtual bool IsComplex() const {
-            return false;
+        bool IsComplex() const {
+            return _complex;
         }
         /// initialize inverse attribute list
         void InitIAttrs();
@@ -111,29 +117,32 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
             _cur = 0;
         }
 // ACCESS inverse attributes
-        const iAstruct getInvAttr( const Inverse_Attribute * const ia ) const;
-        void setInvAttr( const Inverse_Attribute * const ia, const iAstruct ias );
+        const iAstruct getInvAttr( const Inverse_attribute * const ia ) const;
+        void setInvAttr( const Inverse_attribute * const ia, const iAstruct ias );
+        const iAMap_t & getInvAttrs() const {
+            return iAMap;
+        }
 
 // READ
         virtual Severity STEPread( int id, int addFileId,
                                    class InstMgrBase * instance_set,
-                                   istream & in = cin, const char * currSch = NULL,
+                                   std::istream & in = std::cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
         virtual void STEPread_error( char c, int i, std::istream& in, const char * schnm );
 
 // WRITE
-        virtual void STEPwrite( ostream & out = cout, const char * currSch = NULL,
+        virtual void STEPwrite( std::ostream & out = std::cout, const char * currSch = NULL,
                                 int writeComments = 1 );
         virtual const char * STEPwrite( std::string & buf, const char * currSch = NULL );
 
-        void WriteValuePairs( ostream & out, const char * currSch = NULL,
+        void WriteValuePairs( std::ostream & out, const char * currSch = NULL,
                               int writeComments = 1, int mixedCase = 1 );
 
-        void         STEPwrite_reference( ostream & out = cout );
+        void         STEPwrite_reference( std::ostream & out = std::cout );
         const char * STEPwrite_reference( std::string & buf );
 
-        void beginSTEPwrite( ostream & out = cout ); ///< writes out the SCOPE section
-        void endSTEPwrite( ostream & out = cout );
+        void beginSTEPwrite( std::ostream & out = std::cout ); ///< writes out the SCOPE section
+        void endSTEPwrite( std::ostream & out = std::cout );
 
 // MULTIPLE INHERITANCE
         int MultipleInheritance() {

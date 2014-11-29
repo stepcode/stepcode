@@ -77,10 +77,16 @@ bool attrIsObj( Type t ) {
         / * const doesn't make sense for pointer types * /
         return false;
     } else */
-    if( !( ( TYPEget_type( t ) == number_ ) || ( TYPEget_type( t ) == real_ ) || ( TYPEget_type( t ) == integer_ ) ) ) {
-        return true;
-    } else {
-        return false;
+    Class_Of_Type class = TYPEget_type( t );
+    switch( class ) {
+        case number_:
+        case real_:
+        case integer_:
+        case boolean_:
+        case logical_:
+            return false;
+        default:
+            return true;
     }
 }
 /**************************************************************//**
@@ -109,10 +115,15 @@ void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file ) {
 
     if( attrIsObj( t ) ) {
         /* object or pointer, so provide const and non-const methods */
-        fprintf( file, "        const %s %s() const;\n", ctype, attrnm );
-        fprintf( file, "        %s %s();\n", ctype, attrnm );
+        if( TYPEis_entity( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+            /* it's a typedef, so prefacing with 'const' won't do what we desire */
+            fprintf( file, "        %s_c %s() const;\n", ctype, attrnm );
+        } else {
+                fprintf( file, "  const %s   %s() const;\n", ctype, attrnm );
+        }
+        fprintf( file, "        %s   %s();\n", ctype, attrnm );
     } else {
-        fprintf( file, "        %s %s() const;\n", ctype, attrnm );
+        fprintf( file, "        %s   %s() const;\n", ctype, attrnm );
     }
     fprintf( file, "        void %s( const %s x );\n", attrnm, ctype );
     if( VARget_inverse( a ) ) {
@@ -150,7 +161,11 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE *
     generate_attribute_func_name( a, funcnm );
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
-    fprintf( file, "\n%s%s %s::%s() ", ( returnsConst ? "const " : "" ), ctype, classnm, funcnm );
+    if( TYPEis_entity( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+        fprintf( file, "\n%s%s %s::%s() ", ctype, ( returnsConst ? "_c" : "" ), classnm, funcnm );
+    } else {
+        fprintf( file, "\n%s%s %s::%s() ", ( returnsConst ? "const " : "" ), ctype, classnm, funcnm );
+    }
     return;
 }
 
@@ -355,15 +370,16 @@ void ATTRprint_access_methods_log_bool_logging( const char * entnm, const char *
 /** print access methods for logical or boolean attribute */
 void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm, const char * funcnm,
                                         const char * ctype, Variable a, FILE * file ) {
-    fprintf( file, "{\n" );
-    ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
-    fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
-
-    ATTRprint_access_methods_get_head( entnm, a, file, true );
     fprintf( file, "const {\n" );
     ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
     fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
 
+/* don't need a const method for logical or boolean
+ * ATTRprint_access_methods_get_head( entnm, a, file, true );
+ * fprintf( file, "const {\n" );
+ * ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
+ * fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+*/
     ATTRprint_access_methods_put_head( entnm, a, file );
     fprintf( file, "{\n" );
     ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, true );

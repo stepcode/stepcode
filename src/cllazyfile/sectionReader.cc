@@ -308,7 +308,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         if( !comment.empty() ) {
             inst->AddP21Comment( comment );
         }
-        assert( inst->eDesc );
+        assert( inst->getEDesc() );
         _file.seekg( begin );
         findNormalString( "(" );
         _file.unget();

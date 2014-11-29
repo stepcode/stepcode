@@ -64,10 +64,7 @@ const char * TYPEget_utype( Type t )  {
     return ( TYPEis_entity( t ) ?  "SDAI_Application_instance_ptr" : TYPEget_ctype( t ) );
 }
 
-/**
-LISTmember
-
-determines if the given entity is a member of the list.
+/** determines if the given entity is a member of the list.
 RETURNS the member if it is a member; otherwise 0 is returned.
 */
 Generic LISTmember( const Linked_List list, Generic e ) {
@@ -79,10 +76,7 @@ Generic LISTmember( const Linked_List list, Generic e ) {
     return ( 0 );
 }
 
-/**
- compareOrigTypes
-
- Specialized function to catch if two enumerations, two selects, or two aggrs
+/** Specialized function to catch if two enumerations, two selects, or two aggrs
  of either, are of the same type.  The issue is that e.g. select B may be a
  rename of sel A (i.e., TYPE B = A;).  Such renamed types are implemented by
  exp2cxx with typedefs, so that they are in fact the same type.  TYPEget_-
@@ -121,10 +115,7 @@ static int compareOrigTypes( Type a, Type b ) {
     return ( !strcmp( TYPEget_name( t ), TYPEget_name( u ) ) );
 }
 
-/**
- utype_member
-
- determines if the given "link's" underlying type is a member of the list.
+/** determines if the given "link's" underlying type is a member of the list.
         RETURNS the underlying type if it is a member; otherwise 0 is returned.
 
  If "rename" is TRUE, we also consider check to match in certain cases where
@@ -151,9 +142,7 @@ const char * utype_member( const Linked_List list, const Type check, int rename 
     return 0;
 }
 
-/**
- *  SELgetnew_dmlist (const Type type)
- *  Returns a list of types which have unique underlying types
+/**  Returns a list of types which have unique underlying types
  *  The returned list includes all the types which have a data members
  *  in the select type.
  *
@@ -182,9 +171,7 @@ const char * SEL_ITEMget_dmtype( Type t, const Linked_List l ) {
 
 }
 
-/**
- *  SEL_ITEMget_dmname (Type t)
- *  Returns the name of the data member in the select class for the item of
+/** Returns the name of the data member in the select class for the item of
  *    the select having the type t.
  *  Logical and boolean are handled as exceptions because TYPEget_utype()
  *    returns "PSDAI::..." for them which is not a legal variable name.
@@ -219,10 +206,7 @@ const char * SEL_ITEMget_dmname( Type t ) {
     return ( StrToLower( TYPEget_utype( t ) ) );
 }
 
-/**
-duplicate_in_express_list
-
-determines if the given "link's" underlying type is a multiple member
+/** determines if the given "link's" underlying type is a multiple member
 of the list.
     RETURNS 1 if true, else 0.
 */
@@ -242,10 +226,7 @@ int duplicate_in_express_list( const Linked_List list, const Type check ) {
     return FALSE;
 }
 
-/**
-unique_types ( const Linked_List list )
-
-determines if any of the types in a select type resolve to the same
+/** determines if any of the types in a select type resolve to the same
 underlying Express type.
 RETURNS 1 if true, else 0.
 */
@@ -259,10 +240,7 @@ int unique_types( const Linked_List list ) {
 }
 
 
-/**
-duplicate_utype_member
-
-determines if the given "link's" C++ representation is used again in the list.
+/** determines if the given "link's" C++ representation is used again in the list.
     RETURNS 1 if true, else 0.
 */
 int duplicate_utype_member( const Linked_List list, const Type check ) {
@@ -297,10 +275,7 @@ int duplicate_utype_member( const Linked_List list, const Type check ) {
     return FALSE;
 }
 
-/**
-any_duplicates_in_select
-
-determines if any of the types in a select type resolve to the same
+/** determines if any of the types in a select type resolve to the same
 C++ representation for the underlying Express type.
 RETURNS 1 if true, else 0.
 */
@@ -313,10 +288,7 @@ int any_duplicates_in_select( const Linked_List list ) {
     return FALSE;
 }
 
-/**
-find_duplicate_list
-
-finds an instance of each kind of duplicate type found in the given list.
+/** finds an instance of each kind of duplicate type found in the given list.
 This list is returned as dup_list.  If a duplicate exists, the function
 returns TRUE, else FALSE.
 list should be unbound before calling, and freed afterwards.
@@ -344,12 +316,6 @@ int find_duplicate_list( const Type type, Linked_List * duplicate_list ) {
     return FALSE;
 }
 
-/*******************
-non_unique_types_string ( const Type type )
-
-returns a string containing the non-unique EXPRESS types deriveable
-from a select.  the returned string is in the form (TYPE | TYPE |...)
-*******************/
 /** In the functions below, we use a vector of ints to count paths in the
    select-graph to base types.  The names in this enum correspond to the
    indices in the vector, i.e., tvec[treal] == tvec[1], and contains the
@@ -368,7 +334,7 @@ enum __types {
     tnumber    /* NUMBER */
 };
 
-/* This function gets called recursively, to follow a select-graph to its
+/** This function gets called recursively, to follow a select-graph to its
    leaves.  It passes around the vector described above, to track paths to
    the leaf nodes.
 */
@@ -417,7 +383,7 @@ void non_unique_types_vector( const Type type, int * tvec ) {
     LISTod;
 }
 
-/* Uses non_unique_types_vector on the select to get a vector of base-type
+/** Uses non_unique_types_vector on the select to get a vector of base-type
    reference counts, then uses that to make a string of types, of the form
    (FOO_TYPE | BAR_TYPE | BAZ_TYPE), where FOO, BAR, and BAZ are EXPRESS
    types.  If all types are unique, the string (0) is generated.
@@ -1084,8 +1050,9 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f,
 
     fprintf( f, "\n    //  part 3\n" );
 
+    /*  go through all the unique attributes  */
     LISTdo_n( attrs, a, Variable, b ) {
-        /*  go through all the unique attributes  */
+        bool putVarIsUsed = false; /* used to suppress unused var warning */
         if( VARget_initializer( a ) == EXPRESSION_NULL ) {
             /*  only do for explicit attributes  */
             generate_attribute_func_name( a, funcnm );
@@ -1144,6 +1111,7 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f,
                                     TYPEtd_name( t ), StrToUpper( TYPEget_name( t ) ) );
                             fprintf( f, "    {  ((%s) _%s) ->%s( x );\n      return;\n    }\n",
                                     uent, SEL_ITEMget_dmname( t ),  funcnm );
+                            putVarIsUsed = true;
                         } else {
                             /*  warning printed above  */
                             fprintf( f, "  //  for %s  attribute access function"
@@ -1157,6 +1125,9 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f,
                     }
                 }
             } LISTod;
+            if( !putVarIsUsed ) {
+                fprintf(f, "    (void) x; //suppress unused var warning\n");
+            }
             PRINT_SELECTBUG_WARNING( f );
             fprintf( f, "}\n" );
         }
@@ -1507,22 +1478,18 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
             /*  if it's an entity, use Assign - done in Select class  */
             fprintf( f,
                      "        // set Underlying Type in Select class\n"
-                     "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n",
-                     dm );
+                     "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n", dm );
             fprintf( f,
-                     "        if (_%s && (_%s != S_ENTITY_NULL)\n "
-                     "          && (CurrentUnderlyingType () -> CanBe (_%s -> eDesc )) )\n"
-                     "            return severity ();\n",
-                     dm, dm, dm );
+                     "        if( _%s && ( _%s != S_ENTITY_NULL) &&\n "
+                     "              ( CurrentUnderlyingType()->CanBe( _%s->getEDesc() ) ) ) {\n"
+                     "            return severity();\n", dm, dm, dm );
             fprintf( f,
-                     "        else {\n "
+                     "        } else {\n "
                      "            Error (\"Reference to instance that is not indicated type\\n\");\n"
                      "            _%s = 0;\n"
                      "            nullify ();\n"
                      "            return severity (SEVERITY_USERMSG);\n"
-                     "        }\n",
-                     dm
-                   );
+                     "        }\n", dm );
             break;
 
         case string_:
@@ -1700,12 +1667,11 @@ void SELlib_print_protected( const Type type,  FILE * f ) {
     }
     if( TYPEis_select( t ) ) {
         fprintf( f,
-                 "  //  %s\n"  /*  item name  */
-                 "  if (%s -> CanBe (se -> eDesc))\n"
-                 "  {  \n"
-                 "    _%s.AssignEntity (se);\n"  /* underlying data member */
-                 "    return SetUnderlyingType (%s);\n"  /* td */
-                 "  }\n",
+                 "    //  %s\n"  /*  item name  */
+                 "    if( %s->CanBe( se->getEDesc() ) ) {\n"
+                 "        _%s.AssignEntity (se);\n"  /* underlying data member */
+                 "        return SetUnderlyingType (%s);\n"  /* td */
+                 "    }\n",
                  StrToUpper( TYPEget_name( t ) ),
                  TYPEtd_name( t ),
                  SEL_ITEMget_dmname( t ),

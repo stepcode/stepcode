@@ -22,6 +22,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "class_strings.h"
 #include "genCxxFilenames.h"
 #include <ordered_attrs.h>
+#include "rules.h"
 
 #include <sc_trace_fprintf.h>
 
@@ -205,7 +206,8 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     /*  end class definition  */
     fprintf( inc, "};\n" );
 
-    fprintf( inc, "\ntypedef %s * %s_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef       %s *   %s_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef const %s *   %s_ptr_c;\n", n, n );
 
 
     /*  Print ObjectStore Access Hook function  */
@@ -228,7 +230,8 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     fprintf( inc, "};\n" );
 
-    fprintf( inc, "\ntypedef %s_agg * %s_agg_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef       %s_agg *   %s_agg_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef const %s_agg *   %s_agg_ptr_c;\n", n, n );
 
     /* DAS brandnew below */
 
@@ -320,6 +323,9 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     }
 
     fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
+    fprintf( impl, "    std::string str;\n" );
+    /* moved from SCOPEPrint in classes_wrapper */
+    TYPEprint_new( type, impl, schema );
     TYPEprint_init( type, hdr, impl, schema );
     fprintf( impl, "}\n\n" );
 
@@ -440,9 +446,11 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
             strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
             fprintf( classes, "class %s;\n", nm );
-            fprintf( classes, "typedef %s * %s_ptr;\n", nm, nm );
+            fprintf( classes, "typedef       %s *   %s_ptr;\n", nm, nm );
+            fprintf( classes, "typedef const %s *   %s_ptr_c;\n", nm, nm );
             fprintf( classes, "class %s_agg;\n", nm );
-            fprintf( classes, "typedef %s_agg * %s_agg_ptr;\n", nm, nm );
+            fprintf( classes, "typedef       %s_agg *   %s_agg_ptr;\n", nm, nm );
+            fprintf( classes, "typedef const %s_agg *   %s_agg_ptr_c;\n", nm, nm );
         }
     } else {
         if( TYPEis_aggregate( t ) ) {
@@ -465,11 +473,12 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
              */
             strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
-            fprintf( classes, "typedef %s         %s;\n", TYPEget_ctype( t ), nm );
+            fprintf( classes, "typedef       %s       %s;\n", TYPEget_ctype( t ), nm );
             if( TYPEis_aggregate( t ) ) {
-                fprintf( classes, "typedef %s *         %sH;\n", nm, nm );
-                fprintf( classes, "typedef %s *         %s_ptr;\n", nm, nm );
-                fprintf( classes, "typedef %s_ptr         %s_var;\n", nm, nm );
+                fprintf( classes, "typedef       %s *     %sH;\n", nm, nm );
+                fprintf( classes, "typedef       %s *     %s_ptr;\n", nm, nm );
+                fprintf( classes, "typedef const %s *     %s_ptr_c;\n", nm, nm );
+                fprintf( classes, "typedef       %s_ptr   %s_var;\n", nm, nm );
             }
         }
     }
@@ -531,6 +540,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
         printEnumCreateHdr( files->inc, type );
         printEnumCreateBody( files->lib, type );
         fprintf( files->inc, "typedef       %s_agg *       %s_agg_ptr;\n", nm, nm );
+        fprintf( files->inc, "typedef const %s_agg *       %s_agg_ptr_c;\n", nm, nm );
         printEnumAggrCrHdr( files->inc, type );
         printEnumAggrCrBody( files->lib, type );
         return;
@@ -616,11 +626,6 @@ void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endC
  *  function is called for Types that have an Express name.
  */
 void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
-    Linked_List wheres;
-    char * whereRule, *whereRule_formatted = NULL;
-    size_t whereRule_formatted_size = 0;
-    char * ptr, *ptr2;
-
     Type tmpType = TYPEget_head( type );
     Type bodyType = tmpType;
 
@@ -723,86 +728,7 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
     /* add the type to the Schema dictionary entry */
     fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
 
-
-    wheres = type->where;
-
-    if( wheres ) {
-        fprintf( create, "        %s->_where_rules = new Where_rule__list;\n",
-                 TYPEtd_name( type ) );
-
-        LISTdo( wheres, w, Where )
-        whereRule = EXPRto_string( w->expr );
-        ptr2 = whereRule;
-
-        if( whereRule_formatted_size == 0 ) {
-            whereRule_formatted_size = 3 * BUFSIZ;
-            whereRule_formatted = ( char * )sc_malloc( sizeof( char ) * whereRule_formatted_size );
-        } else if( ( strlen( whereRule ) + 300 ) > whereRule_formatted_size ) {
-            sc_free( whereRule_formatted );
-            whereRule_formatted_size = strlen( whereRule ) + BUFSIZ;
-            whereRule_formatted = ( char * )sc_malloc( sizeof( char ) * whereRule_formatted_size );
-        }
-        whereRule_formatted[0] = '\0';
-        if( w->label ) {
-            strcpy( whereRule_formatted, w->label->name );
-            strcat( whereRule_formatted, ": (" );
-            ptr = whereRule_formatted + strlen( whereRule_formatted );
-            while( *ptr2 ) {
-                if( *ptr2 == '\n' )
-                    ;
-                else if( *ptr2 == '\\' ) {
-                    *ptr = '\\';
-                    ptr++;
-                    *ptr = '\\';
-                    ptr++;
-
-                } else if( *ptr2 == '(' ) {
-                    *ptr = *ptr2;
-                    ptr++;
-                } else {
-                    *ptr = *ptr2;
-                    ptr++;
-                }
-                ptr2++;
-            }
-            *ptr = '\0';
-
-            strcat( ptr, ");\\n" );
-        } else {
-            /* no label */
-            strcpy( whereRule_formatted, "(" );
-            ptr = whereRule_formatted + strlen( whereRule_formatted );
-
-            while( *ptr2 ) {
-                if( *ptr2 == '\n' )
-                    ;
-                else if( *ptr2 == '\\' ) {
-                    *ptr = '\\';
-                    ptr++;
-                    *ptr = '\\';
-                    ptr++;
-
-                } else if( *ptr2 == '(' ) {
-                    *ptr = *ptr2;
-                    ptr++;
-                } else {
-                    *ptr = *ptr2;
-                    ptr++;
-                }
-                ptr2++;
-            }
-            *ptr = '\0';
-            strcat( ptr, ");\\n" );
-        }
-        fprintf( create, "        wr = new Where_rule(\"%s\");\n", whereRule_formatted );
-        fprintf( create, "        %s->_where_rules->Append(wr);\n",
-                 TYPEtd_name( type ) );
-
-        sc_free( whereRule );
-        ptr2 = whereRule = 0;
-        LISTod
-        sc_free( whereRule_formatted );
-    }
+    WHEREprint( TYPEtd_name( type ), type->where, create, 0 );
 }
 
 /** Get the TypeDescriptor variable name that t's TypeDescriptor references (if

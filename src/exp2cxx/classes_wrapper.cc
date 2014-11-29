@@ -174,7 +174,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files->create, "\n  //  *****  Initialize the Types\n" );
         fprintf( files->classes, "\n// Types:\n" );
         SCOPEdo_types( scope, t, de ) {
-            TYPEprint_new( t, files->create, schema );
+            //moved to TYPEPrint_cc in classes_type
+//             TYPEprint_new( t, files->create, schema );
             TYPEprint_typedefs( t, files->classes );
             //print in namespace. Some logic copied from TypeDescriptorName()
             fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
@@ -243,74 +244,65 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     // Note - say we have sel B, rename of sel A (as above by enum's).  Here
     // we don't have to worry about printing B before A.  This is checked in
     // TYPEselect_print().
-    SCOPEdo_types( scope, t, de )
-    if( t->search_id == CANPROCESS ) {
-        // Only selects haven't been processed yet and may still be set to
-        // CANPROCESS.
-        if( TYPEis_select( t ) ) {
-            TYPEselect_print( t, files, schema );
-        }
-        if( TYPEis_enumeration( t ) ) {
-            TYPEprint_descriptions( t, files, schema );
-        }
+    SCOPEdo_types( scope, t, de ) {
+        if( t->search_id == CANPROCESS ) {
+            // Only selects haven't been processed yet and may still be set to
+            // CANPROCESS.
+            if( TYPEis_select( t ) ) {
+                TYPEselect_print( t, files, schema );
+            }
+            if( TYPEis_enumeration( t ) ) {
+                TYPEprint_descriptions( t, files, schema );
+            }
 
-        t->search_id = PROCESSED;
-    }
-    SCOPEod;
+            t->search_id = PROCESSED;
+        }
+    } SCOPEod
 
     fprintf( files -> inc, "\n/*        **************  ENTITIES          */\n" );
     fprintf( files -> lib, "\n/*        **************  ENTITIES          */\n" );
 
     fprintf( files->inc, "\n//        ***** Print Entity Classes          \n" );
-    LISTdo( list, e, Entity );
-    if( e->search_id == CANPROCESS ) {
-        ENTITYPrint( e, files, schema, col->externMapping( ENTITYget_name( e ) ) );
-        e->search_id = PROCESSED;
-    }
-    LISTod;
+    LISTdo( list, e, Entity ) {
+        if( e->search_id == CANPROCESS ) {
+            ENTITYPrint( e, files, schema, col->externMapping( ENTITYget_name( e ) ) );
+            e->search_id = PROCESSED;
+        }
+    } LISTod
 
     if( cnt <= 1 ) {
         int index = 0;
 
         // Do the model stuff:
         fprintf( files->inc, "\n//        ***** generate Model related pieces\n" );
-        fprintf( files->inc,
-                 "\nclass SdaiModel_contents_%s : public SDAI_Model_contents {\n",
-                 SCHEMAget_name( schema ) );
+        fprintf( files->inc, "\nclass SdaiModel_contents_%s : public SDAI_Model_contents {\n", SCHEMAget_name( schema ) );
         fprintf( files -> inc, "\n  public:\n" );
-        fprintf( files -> inc, "    SdaiModel_contents_%s();\n",
-                 SCHEMAget_name( schema ) );
+        fprintf( files -> inc, "    SdaiModel_contents_%s();\n", SCHEMAget_name( schema ) );
         LISTdo( list, e, Entity ) {
             MODELprint_new( e, files );
-        } LISTod;
+        } LISTod
 
-        fprintf( files->inc, "\n};\n" );
+        fprintf( files->inc, "\n};\n\n" );
 
-        fprintf( files->inc, "\n\ntypedef SdaiModel_contents_%s * SdaiModel_contents_%s_ptr;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
-        fprintf( files->inc, "typedef SdaiModel_contents_%s_ptr SdaiModel_contents_%s_var;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "typedef       SdaiModel_contents_%s *     SdaiModel_contents_%s_ptr;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "typedef const SdaiModel_contents_%s *     SdaiModel_contents_%s_ptr_c;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "typedef       SdaiModel_contents_%s_ptr   SdaiModel_contents_%s_var;\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->inc, "SDAI_Model_contents_ptr create_SdaiModel_contents_%s();\n", SCHEMAget_name( schema ) );
 
-        fprintf( files -> inc,
-                 "SDAI_Model_contents_ptr create_SdaiModel_contents_%s();\n",
-                 SCHEMAget_name( schema ) );
-        fprintf( files -> lib,
-                 "\nSDAI_Model_contents_ptr create_SdaiModel_contents_%s()\n",
-                 SCHEMAget_name( schema ) );
-        fprintf( files -> lib, "{ return new SdaiModel_contents_%s ; }\n",
-                 SCHEMAget_name( schema ) );
+        fprintf( files->lib, "\nSDAI_Model_contents_ptr create_SdaiModel_contents_%s() {\n", SCHEMAget_name( schema ) );
+        fprintf( files->lib, "    return new SdaiModel_contents_%s;\n}\n", SCHEMAget_name( schema ) );
 
-        fprintf( files -> lib, "\nSdaiModel_contents_%s::SdaiModel_contents_%s()\n",
-                 SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
-        fprintf( files -> lib,
-                 "{\n    SDAI_Entity_extent_ptr eep = (SDAI_Entity_extent_ptr)0;\n\n" );
-        LISTdo( list, e, Entity );
-        MODELPrintConstructorBody( e, files, schema );
-        LISTod;
+        fprintf( files->lib, "\nSdaiModel_contents_%s::SdaiModel_contents_%s() {\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+        fprintf( files->lib, "    SDAI_Entity_extent_ptr eep = (SDAI_Entity_extent_ptr)0;\n\n" );
+        LISTdo( list, e, Entity ) {
+            MODELPrintConstructorBody( e, files, schema );
+        } LISTod
         fprintf( files -> lib, "}\n" );
         index = 0;
-        LISTdo( list, e, Entity );
-        MODELPrint( e, files, schema, index );
-        index++;
-        LISTod;
+        LISTdo( list, e, Entity ) {
+            MODELPrint( e, files, schema, index );
+            index++;
+        } LISTod
     }
 
     LISTfree( list );
@@ -376,9 +368,9 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     FILE * libfile,
          * incfile,
          * schemafile = files->incall,
-           * schemainit = files->initall,
-             * initfile,
-             * createall = files->create;
+         * schemainit = files->initall,
+         * initfile,
+         * createall = files->create;
     Rule r;
     Function f;
     Procedure p;
@@ -386,8 +378,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
-    sprintf( schnm, "%s%s", SCHEMA_FILE_PREFIX,
-             StrToUpper( SCHEMAget_name( schema ) ) ); //TODO change file names to CamelCase?
+    sprintf( schnm, "%s%s", SCHEMA_FILE_PREFIX, StrToUpper( SCHEMAget_name( schema ) ) ); //TODO change file names to CamelCase?
     if( suffix == 0 ) {
         sprintf( sufnm, "%s", schnm );
     } else {
@@ -474,8 +465,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
-        fprintf( createall, "    %s::schema = new Schema(\"%s\");\n",
-                 SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
+        fprintf( createall, "    %s::schema = new Schema(\"%s\");\n", SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
 
         /* Add the SdaiModel_contents_<schema_name> class constructor to the
            schema descriptor create function for it */
@@ -489,8 +479,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, RULEto_string( r ) );
-            fprintf( createall, "gr = new Global_rule(\"%s\",%s::schema, str );\n",
-                     r->symbol.name, SCHEMAget_name( schema ) );
+            fprintf( createall, "gr = new Global_rule(\"%s\",%s::schema, str );\n", r->symbol.name, SCHEMAget_name( schema ) );
             fprintf( createall, "%s::schema->AddGlobal_rule(gr);\n", SCHEMAget_name( schema ) );
         }
         /**************/
@@ -532,8 +521,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     /**********  do the schemas ***********/
 
     /* really, create calls for entity constructors */
-    SCOPEPrint( schema, files, schema, ( ComplexCollect * )complexCol,
-                suffix );
+    SCOPEPrint( schema, files, schema, ( ComplexCollect * )complexCol, suffix );
 
 
     /**********  close the files    ***********/
@@ -565,31 +553,21 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
     DictionaryEntry de;
     Schema schema;
 
-    fprintf( schema_h,
-             "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName);\n" );
+    fprintf( schema_h, "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName);\n" );
     fprintf( schema_cc, "/*    Generated at %s:%d.    */\n\n", __FILE__, __LINE__ );
     fprintf( schema_cc, "%s%s%s%s",
              "// Generate a function to be called by Model to help it\n",
              "// create the necessary Model_contents without the\n",
              "// dictionary (Registry) handle since it doesn't have a\n",
              "// predetermined way to access to the handle.\n" );
-    fprintf( schema_cc,
-             "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName) {\n" );
+    fprintf( schema_cc, "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName) {\n" );
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     schema = ( Scope )DICTdo( &de );
-    fprintf( schema_cc,
-             "    if(!strcmp(schemaName, \"%s\"))\n",
-             SCHEMAget_name( schema ) );
-    fprintf( schema_cc,
-             "        return (SDAI_Model_contents_ptr) new SdaiModel_contents_%s; \n",
-             SCHEMAget_name( schema ) );
+    fprintf( schema_cc, "    if(!strcmp(schemaName, \"%s\"))\n", SCHEMAget_name( schema ) );
+    fprintf( schema_cc, "        return (SDAI_Model_contents_ptr) new SdaiModel_contents_%s; \n", SCHEMAget_name( schema ) );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
-        fprintf( schema_cc,
-                 "    else if(!strcmp(schemaName, \"%s\"))\n",
-                 SCHEMAget_name( schema ) );
-        fprintf( schema_cc,
-                 "        return (SDAI_Model_contents_ptr) new SdaiModel_contents_%s; \n",
-                 SCHEMAget_name( schema ) );
+        fprintf( schema_cc, "    else if(!strcmp(schemaName, \"%s\"))\n", SCHEMAget_name( schema ) );
+        fprintf( schema_cc, "        return (SDAI_Model_contents_ptr) new SdaiModel_contents_%s; \n", SCHEMAget_name( schema ) );
     }
     fprintf( schema_cc, "    else return (SDAI_Model_contents_ptr) 0;\n}\n" );
 }
@@ -606,8 +584,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ** Side Effects:  generates code
  ** Status:  24-Feb-1992 new -kcm
  ******************************************************************/
-void
-EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
+void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     char fnm [MAX_LEN], *np;
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
@@ -688,12 +665,18 @@ EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
         SCOPEPrint( schema, files, schema, &col, 0 );
     }
 
+    fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n");
+    fprintf( initfile, "    EntityDescItr edi( %s::schema->EntsWInverse() );\n", SCHEMAget_name( schema ) );
+    fprintf( initfile, "    EntityDescriptor * ed;\n");
+    fprintf( initfile, "    const char * nm = %s::schema->Name();\n", SCHEMAget_name( schema ) );
+    fprintf( initfile, "    while( 0 != ( ed = edi.NextEntityDesc() ) ) {\n");
+    fprintf( initfile, "        ed->InitIAttrs(reg.FindEntity, nm);\n");
+    fprintf( initfile, "    }\n}\n" );
 
     /**********  close the files    ***********/
     closeUnityFiles( files );
     FILEclose( libfile );
     FILEclose( incfile );
-    fprintf( initfile, "\n}\n" );
     FILEclose( initfile );
 
 }
@@ -716,7 +699,6 @@ void print_file( Express express ) {
     extern void RESOLUTIONsucceed( void );
     int separate_schemas = 1;
     ComplexCollect col( express );
-
     File_holder files;
 
     resolution_success();

@@ -162,9 +162,9 @@ Inverse_attributeLinkNode * Inverse_attributeList::AddNode( Inverse_attribute * 
     return node;
 }
 
-InverseAItr::InverseAItr( const Inverse_attributeList & iaList )
+InverseAItr::InverseAItr( const Inverse_attributeList * iaList )
     : ial( iaList ) {
-    cur = ( Inverse_attributeLinkNode * )( ial.GetHead() );
+    cur = ( Inverse_attributeLinkNode * )( ial->GetHead() );
 }
 
 InverseAItr::~InverseAItr() {

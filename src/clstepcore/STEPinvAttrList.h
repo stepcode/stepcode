@@ -2,6 +2,8 @@
 #ifndef _STEPinvAttrList_h
 #define _STEPinvAttrList_h 1
 
+/// FIXME remove these classes? not sure there's a use for them now...
+
 /** \file STEPinvAttrList.h
  * derived from STEPattributeList.h
  *
