@@ -20,6 +20,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <assert.h>
 #include <sc_mkdir.h>
 #include "classes.h"
+#include "classes_entity.h"
 #include "class_strings.h"
 #include "genCxxFilenames.h"
 #include <ordered_attrs.h>
@@ -1011,7 +1012,7 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
     DEBUG( "DONE ENTITYPrint_h\n" );
 }
 
-void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema, bool externMap ) {
+void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema, bool externMap ) {
     const char * name = ENTITYget_classname( entity );
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
@@ -1029,7 +1030,7 @@ void ENTITYPrint_cc( const Entity entity, FILE * header, FILE * impl, Linked_Lis
     
     fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
     fprintf( impl, "    std::string str;\n\n" );
-    ENTITYprint_descriptors( entity, impl, schema, externMap );
+    ENTITYprint_descriptors( entity, createall, impl, schema, externMap );
     ENTITYincode_print( entity, header, impl, schema );
     fprintf( impl, "}\n\n" );
 
@@ -1150,7 +1151,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
     fprintf( files->unity.entity.impl, "#include \"%s\"\n", names.impl );
 
     ENTITYPrint_h( entity, hdr, remaining, schema );
-    ENTITYPrint_cc( entity, hdr, impl, remaining, schema, externMap );
+    ENTITYPrint_cc( entity, files->create, hdr, impl, remaining, schema, externMap );
     FILEclose( hdr );
     FILEclose( impl );
 
@@ -1163,26 +1164,24 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
 
 /** create entity descriptors
  *
- *  Nov 2011 - MAP - print EntityDescriptor in namespace file, modify other generated code to use namespace
- *
  * originally part of ENTITYprint_new(), along with ENTITYprint_classes()
- * TODO WARNING need to add code for wr, ur, gr!!!
  *
  * \p entity the entity to print
- * \p create the file to write into
+ * \p createall the file to write eDesc into
+ * \p impl the file to write rules into
  * \p schema the current schema
  * \p externMap true if entity must be instantiated with external mapping (see Part 21, sect 11.2.5.1).
+ *
+ * eDesc is printed into createall because it must be initialized before other entity init fn's are called
+ * alternative is two init fn's per ent. call init1 for each ent, then repeat with init2
  */
-void ENTITYprint_descriptors( Entity entity, FILE * impl, Schema schema, bool externMap ) {
-
-    fprintf( impl, "    %s::%s%s = new EntityDescriptor(\n        ", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-    fprintf( impl, "  \"%s\", %s::schema, %s, ", PrettyTmpName( ENTITYget_name( entity ) ),
-             SCHEMAget_name( schema ), ( ENTITYget_abstract( entity ) ? "LTrue" : "LFalse" ) );
-    fprintf( impl, "%s,\n          ", externMap ? "LTrue" : "LFalse" );
-
-    fprintf( impl, "  (Creator) create_%s );\n", ENTITYget_classname( entity ) );
+void ENTITYprint_descriptors( Entity entity, FILE * createall, FILE * impl, Schema schema, bool externMap ) {
+    fprintf( createall, "    %s::%s%s = new EntityDescriptor( ", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( createall, "\"%s\", %s::schema, %s, ", PrettyTmpName( ENTITYget_name( entity ) ), SCHEMAget_name( schema ), ( ENTITYget_abstract( entity ) ? "LTrue" : "LFalse" ) );
+    fprintf( createall, "%s, (Creator) create_%s );\n", externMap ? "LTrue" : "LFalse", ENTITYget_classname( entity ) );
     /* add the entity to the Schema dictionary entry */
-    fprintf( impl, "    %s::schema->AddEntity(%s::%s%s);\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( createall, "    %s::schema->AddEntity(%s::%s%s);\n", SCHEMAget_name( schema ), SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+
     WHEREprint( ENTITYget_name( entity ), TYPEget_where( entity ), impl, schema, true );
     UNIQUEprint( entity, impl, schema );
 }
