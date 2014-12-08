@@ -536,9 +536,9 @@ IntAggregate * create_IntAggregate() {
     return new IntAggregate;
 }
 
-const EntityDescriptor * EntityDescItr::NextEntityDesc() {
+EntityDescriptor * EntityDescItr::NextEntityDesc_nc() {
     if( cur ) {
-        const EntityDescriptor * ed = cur->EntityDesc();
+        EntityDescriptor * ed = cur->EntityDesc();
         cur = ( EntityDescLinkNode * )( cur->NextNode() );
         return ed;
     }

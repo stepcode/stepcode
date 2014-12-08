@@ -172,7 +172,11 @@ class SC_CORE_EXPORT EntityDescItr {
             cur = ( EntityDescLinkNode * )( edl.GetHead() );
         }
 
-        const EntityDescriptor * NextEntityDesc();
+        inline const EntityDescriptor * NextEntityDesc() {
+            return NextEntityDesc_nc();
+        }
+        EntityDescriptor * NextEntityDesc_nc();
+
 };
 
 
