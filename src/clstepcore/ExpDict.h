@@ -758,6 +758,18 @@ class SC_CORE_EXPORT Schema : public Dictionary_instance {
         const TypeDescriptorList * UnnamedTypes() const {
             return & _unnamed_typeList;
         }
+        EntityDescriptorList * Entities() {
+            return & _entList;
+        }
+        EntityDescriptorList * EntsWInverse() {
+            return & _entsWithInverseAttrs;
+        }
+        TypeDescriptorList * Types() {
+            return & _typeList;
+        }
+        TypeDescriptorList * UnnamedTypes() {
+            return & _unnamed_typeList;
+        }
 
         // the whole schema
         void GenerateExpress( ostream & out ) const;
