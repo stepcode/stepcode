@@ -348,6 +348,18 @@ void closeUnityFiles( FILES * files ) {
     FILEclose( files->unity.entity.impl );
 }
 
+///write tail of initfile, close it
+void INITFileFinish( FILE * initfile, Schema schema ) {
+    fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n");
+    fprintf( initfile, "    EntityDescItr edi( *%s::schema->EntsWInverse() );\n", SCHEMAget_name( schema ) );
+    fprintf( initfile, "    EntityDescriptor * ed;\n");
+    fprintf( initfile, "    const char * nm = %s::schema->Name();\n", SCHEMAget_name( schema ) );
+    fprintf( initfile, "    while( 0 != ( ed = edi.NextEntityDesc_nc() ) ) {\n");
+    fprintf( initfile, "        ed->InitIAttrs( reg, nm );\n");
+    fprintf( initfile, "    }\n}\n" );
+    FILEclose( initfile );
+}
+
 /** ****************************************************************
  ** Procedure:  SCHEMAprint
  ** Parameters: const Schema schema - schema to print
@@ -528,8 +540,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     FILEclose( libfile );
     FILEclose( incfile );
     if( schema->search_id == PROCESSED ) {
-        fprintf( initfile, "\n}\n" );
-        FILEclose( initfile );
+        INITFileFinish( initfile, schema );
     } else {
         fclose( initfile );
     }
@@ -664,20 +675,11 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
         SCOPEPrint( schema, files, schema, &col, 0 );
     }
 
-    fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n");
-    fprintf( initfile, "    EntityDescItr edi( %s::schema->EntsWInverse() );\n", SCHEMAget_name( schema ) );
-    fprintf( initfile, "    EntityDescriptor * ed;\n");
-    fprintf( initfile, "    const char * nm = %s::schema->Name();\n", SCHEMAget_name( schema ) );
-    fprintf( initfile, "    while( 0 != ( ed = edi.NextEntityDesc() ) ) {\n");
-    fprintf( initfile, "        ed->InitIAttrs(reg.FindEntity, nm);\n");
-    fprintf( initfile, "    }\n}\n" );
-
     /**********  close the files    ***********/
     closeUnityFiles( files );
     FILEclose( libfile );
     FILEclose( incfile );
-    FILEclose( initfile );
-
+    INITFileFinish( initfile, schema );
 }
 
 /**
