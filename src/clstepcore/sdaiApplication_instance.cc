@@ -77,24 +77,19 @@ SDAI_Application_instance::~SDAI_Application_instance() {
 /// initialize inverse attrs
 /// eDesc->InitIAttrs() must have been called previously
 /// call once per instance (*not* once per class)
-// should we pass schema name for eDesc->Name()?
 void SDAI_Application_instance::InitIAttrs() {
     assert( eDesc && "eDesc must be set; please report this bug." );
-    //instance-specific data was stored in data members of generated classes
-    //that won't work for complex instances
-    /*
-     * add an iAMap to this class, mapping from inverse attr's to whatever they point to
-     * this has the benefit of working equally well for regular and complex instances
-     *
-     * NOTE how to ensure that data members are always synced with the map???
-     * maybe data accessors should be rewritten to use the map, and do away with the members?
-     * should be pretty easy since we can calculate the IA names easily when writing the access methods
-     */
-//     const Inverse_Attribute * ia;
-//TODO implement me!
-    //copy eDesc->iAMap to our iAMap
-    //then append supertypes iAMaps
-    //next, loop over iAMap setting pointers
+    InverseAItr iai( &( eDesc->InverseAttr() ) );
+    const Inverse_attribute * ia;
+    iAstruct s;  //FIXME at what point should this get set? here? later during construction? wait for lazyRefs?
+    while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
+        iAMap.insert( iAMap_t::value_type( ia, s ) );
+    }
+    superInvAttrIter siai( eDesc );
+    while( !siai.empty() ) {
+        ia = siai.next();
+        iAMap.insert( iAMap_t::value_type( ia, s ) );
+    }
 }
 
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {

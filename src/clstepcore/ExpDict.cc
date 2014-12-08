@@ -18,6 +18,7 @@
 
 #include <ExpDict.h>
 #include <STEPaggregate.h>
+#include <Registry.h>
 #include "sc_memmgr.h"
 
 
@@ -816,16 +817,16 @@ EntityDescriptor::~EntityDescriptor() {
  * must be called _after_ init_Sdai* functions for any ia->inverted_entity_id_'s
  *
  */
-void EntityDescriptor::InitIAttrs( entFinderFn entFinder ) {
+void EntityDescriptor::InitIAttrs( Registry & reg, const char * schNm ) {
     InverseAItr iai( &( InverseAttr() ) );
     Inverse_attribute * ia;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
         const AttrDescriptor * ad;
         const char * aid = ia->inverted_attr_id_();
         const char * eid = ia->inverted_entity_id_();
-        const EntityDescriptor * e = entFinder( eid );
+        const EntityDescriptor * e = reg.FindEntity( eid, schNm );
         AttrDescItr adl( e->ExplicitAttr() ); //TODO does this include inherited attrs? redefined? etc...
-        while( ( 0 != ( ad = adl.NextAttrDesc() ) ) && !strcmp( aid, ad->Name() ) ) {
+        while( ( 0 != ( ad = adl.NextAttrDesc() ) ) && strcmp( aid, ad->Name() ) ) {
             // loop condition side effects do everything
         }
         if( !ad ) {

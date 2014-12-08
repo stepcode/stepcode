@@ -1529,7 +1529,6 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
         Inverse_attributeList _inverseAttr;  // OPTIONAL
         std::string _supertype_stmt;
     public:
-        typedef const EntityDescriptor * (*entFinderFn)(const char *);
         Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
         // pointer to a function that will create a new instance of a SDAI_Application_instance
@@ -1545,7 +1544,7 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 
         virtual ~EntityDescriptor();
 
-        void InitIAttrs( entFinderFn entFinder );
+        void InitIAttrs( Registry & reg, const char * schNm );
 
         const char * GenerateExpress( std::string & buf ) const;
 
