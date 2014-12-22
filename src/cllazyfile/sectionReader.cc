@@ -314,6 +314,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         _file.unget();
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
         //TODO do something with 'sev'
+        inst->InitIAttrs();
     }
     return inst;
 }

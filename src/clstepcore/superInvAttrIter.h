@@ -18,7 +18,11 @@ protected:
     bool isempty; ///< if true, don't try to access invIter - it is not initialized
 public:
     /// WARNING this will not iterate over the ia's in the first ed, only in its supertypes! change that?
-    superInvAttrIter( const EntityDescriptor * ed ): sit( ed ), nextInv( 0 ), isempty( false ) {
+    superInvAttrIter( const EntityDescriptor * ed ): sit( ed ), invIter(0), nextInv( 0 ), isempty( false ) {
+        reset();
+    }
+    void reset( const EntityDescriptor * ed = 0 ) {
+        sit.reset( ed );
         if( invIter ) {
             delete invIter;
             invIter = 0;
@@ -46,7 +50,7 @@ public:
         if( isempty ) {
             return true;
         }
-        return ( sit.empty() && !nextInv );
+        return ( !sit.hasNext() && !nextInv );
     }
     const Inverse_attribute * next() {
         if( isempty ) {

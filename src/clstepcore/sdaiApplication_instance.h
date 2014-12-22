@@ -117,6 +117,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         }
 // ACCESS inverse attributes
         const iAstruct getInvAttr( const Inverse_attribute * const ia ) const;
+        const iAMap_t::value_type getInvAttr( const char * name ) const;
         void setInvAttr( const Inverse_attribute * const ia, const iAstruct ias );
         const iAMap_t & getInvAttrs() const {
             return iAMap;

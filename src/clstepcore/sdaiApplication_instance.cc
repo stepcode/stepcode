@@ -88,6 +88,7 @@ void SDAI_Application_instance::InitIAttrs() {
     superInvAttrIter siai( eDesc );
     while( !siai.empty() ) {
         ia = siai.next();
+        assert( ia );
         iAMap.insert( iAMap_t::value_type( ia, s ) );
     }
 }
@@ -923,30 +924,41 @@ int SDAI_Application_instance::AttributeCount()  {
     return  attributes.list_length();
 }
 
-/// used in getInvAttr() and setInvAttr() to verify that the struct and attr are both entityAggregate or both not
-bool validIAS( const Inverse_attribute * const ia, const iAstruct ias ) {
-    if( ( ias.a && ias.i ) || ( !ias.a && !ias.i ) ) {
-        return false;
-    }
-//     //TODO determine if ia should be an instance or an entityAggregate... how?!
-//     std::cerr << "TODO: implement " << __PRETTY_FUNCTION__ << "!" << std::endl;
-    if( ia->inverted_attr_()->IsAggrType() == ( ias.a != 0 ) ) {
-        return true;
-    }
-    return false;
-}
+// /// used in getInvAttr() and setInvAttr() to verify that the struct and attr are both entityAggregate or both not
+// bool validIAS( const Inverse_attribute * const ia, const iAstruct ias ) {
+// //     //TODO determine if ia should be an instance or an entityAggregate... how?!
+//         //don't think IsAggrType() is the correct test...
+// //     std::cerr << "TODO: implement " << __PRETTY_FUNCTION__ << "!" << std::endl;
+//     if( ia->inverted_attr_()->IsAggrType() == ( dynamic_cast<EntityAggregate * const >( ias.a ) != 0 ) ) {
+//         return true;
+//     }
+//     return false;
+// }
 
 const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_attribute * const ia ) const {
     iAstruct ias;
     iAMap_t::const_iterator it = iAMap.find( ia );
     if( it != iAMap.end() ) {
         ias = (*it).second;
-        assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
+//         assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
     }
     return ias;
 }
 
+const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::getInvAttr( const char * name ) const {
+    iAMap_t::const_iterator it = iAMap.begin();
+    for( ; it != iAMap.end(); ++it ) {
+        if( 0 == strcmp( it->first->Name(), name) ) {
+            return *it;
+        }
+    }
+    iAstruct z;
+    z.a = NULL;
+    iAMap_t::value_type nil( NULL, z );
+    return nil;
+}
+
 void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias )  {
-    assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
+//     assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
     iAMap.insert( iAMap_t::value_type( ia, ias ) );
 }

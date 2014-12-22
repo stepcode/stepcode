@@ -47,6 +47,7 @@
 //      note - doing this well will require major changes, since each inst automatically loads every instance that it references
 //TODO what about complex instances? scanning each on disk could be a bitch; should the compositional types be scanned during lazy loading?
 
+//TODO/FIXME in generated code, store ia data in map and eliminate data members that are currently used. modify accessors to use map.
 class lazyRefs {
     public:
         typedef std::set< instanceID > referentInstances_t;
@@ -76,7 +77,7 @@ class lazyRefs {
             potentialReferentInsts( edL );
             //3d - load each inst
             /*invAttrListNode * invNode*/
-            iAstruct * ias = invAttr( _inst, ia /*, iaList*/ );
+            iAstruct * ias = invAttr( _inst, ia );
             referentInstances_t::iterator insts = _referentInstances.begin();
             for( ; insts != _referentInstances.end(); ++insts ) {
                 loadInstIFFreferent( *insts, ias, ia );
@@ -85,13 +86,21 @@ class lazyRefs {
         }
 
         void loadInstIFFreferent( instanceID inst, iAstruct * ias, const Inverse_attribute * ia ) {
+            std::cout << "liir for inst #" << _inst->STEPfile_id << ", referent #" << inst << ", ia " << ia->Name() << "(" << (void*) ia;
+            std::cout << "), ias " << (void *) ias << std::endl;
             bool prevLoaded = _lim->isLoaded( inst );
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
             bool ref = refersToCurrentInst( ia, rinst );
             if( ref ) {
                 if( ia->inverted_attr_()->IsAggrType() ) {
+                    if( !ias->a ) {
+                        ias->a = new EntityAggregate;
+                        _inst->setInvAttr( ia, *ias );
+                        assert( invAttr( _inst, ia )->a == ias->a );
+                    }
                     EntityAggregate * ea = ias->a;
-                    assert( ea && "is it possible for this to be null here? if so, must create & assign");
+//                     assert( ias->a && "is it possible for this to be null here? if so, must create & assign");
+                    //FIXME InitIAttrs has been called, but this is null. what to do? init here? if not, where???
                     //TODO check if duplicate
                     ea->AddNode( new EntityNode( rinst ) );
                 } else {
@@ -183,12 +192,14 @@ END_ENTITY; -- 10303-42: geometry_schema
             }
             iai = map.begin();
             //FIXME treat as unrecoverable?
+            //need to call inst->InitIAttrs();
             std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << ". Map contents:" << std::endl;
             for( ; iai != map.end(); ++iai ) {
                 std::cerr << iai->first->Name() << ": " << (void*)(iai->second.a) << ", ";
             }
             std::cerr << std::endl;
-            return NULL;
+            abort();
+// //             return NULL;
         }
 
         /**  3c. compare the type of each item in R with types in A

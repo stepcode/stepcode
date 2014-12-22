@@ -92,7 +92,16 @@ unsigned long lazyInstMgr::getNumTypes() const {
 }
 
 void lazyInstMgr::openFile( std::string fname ) {
-    _files.push_back( new lazyFileReader( fname, this, _files.size() ) );
+    //don't want to hold a lock for the entire time we're reading the file.
+    //create a place in the vector and remember its location, then free lock
+    ///FIXME begin atomic op
+    size_t i = _files.size();
+    _files.push_back( (lazyFileReader * ) 0 );
+    ///FIXME end atomic op
+    lazyFileReader * lfr = new lazyFileReader( fname, this, i );
+    _files[i] = lfr;
+    /// TODO resolve inverse attr references
+    //between instances, or eDesc --> inst????
 }
 
 SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek ) {
