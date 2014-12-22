@@ -960,5 +960,10 @@ const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::
 
 void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias )  {
 //     assert( validIAS( ia, ias ) && "Exactly one member of iAstruct must be non-null, and this must match the type of the Inverse_Attribute." );
-    iAMap.insert( iAMap_t::value_type( ia, ias ) );
+    iAMap_t::iterator it = iAMap.find(ia);
+    if( it != iAMap.end() ) {
+        it->second = ias;
+    } else {
+        iAMap.insert( iAMap_t::value_type( ia, ias ) );
+    }
 }

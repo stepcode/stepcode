@@ -24,6 +24,7 @@ extern void SchemaInit( class Registry & );
 #include "schema.h"
 
 int main( int argc, char * argv[] ) {
+    int exitStatus = EXIT_SUCCESS;
     if( argc != 2 ) {
         cerr << "Wrong number of args!" << endl;
         exit( EXIT_FAILURE );
@@ -46,37 +47,27 @@ int main( int argc, char * argv[] ) {
     }
     cout << "instance #" << instance->StepFileId() << endl;
 
-//      superInvAttrIter it( instance->getEDesc() );
-// //      const Inverse_attributeList * l = &( instance->getEDesc()->InverseAttr() );
-// //      InverseAItr iai(l);
-//     const Inverse_attribute * ia;
-//     bool found = false;
-//     while( !found && ( ia = it.next() ) ) {
-//         if( !strcmp( ia->Name(), "isdefinedby" ) ) {
-//             found = true;
-//         }
-//     }
-//     if( found ) {
     SDAI_Application_instance::iAMap_t::value_type v = instance->getInvAttr("isdefinedby");
     iAstruct attr = v.second; //instance->getInvAttr(ia);
         if( attr.a && attr.a->EntryCount() ) {
             cout << "Map: found " << attr.a->EntryCount() << " inverse references." << endl;
         } else {
             cout << "Map: found no inverse references. ias " << (void *) &(v.second) << ", ia " << (void*) v.first << endl;
+            exitStatus = EXIT_FAILURE;
         }
-//     }
 
     EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
-    //fails because isdefinedby_ uses old data member rather than map lookup
+    //FIXME FIXME FIXME fails because isdefinedby_ uses old data member rather than map lookup
     if( attr.a != aggr ) {
         cout << "Error! got different EntityAggregate's when using map vs method" << endl;
+        exitStatus = EXIT_FAILURE;
     }
     if( aggr && aggr->EntryCount() ) {
         cout << "Found " << aggr->EntryCount() << " inverse references." << endl;
-        exit( EXIT_SUCCESS );
     } else {
         cout << "inverse attr is not defined" << endl;
-        exit( EXIT_FAILURE );
+        exitStatus = EXIT_FAILURE;
     }
+    exit( exitStatus );
 }
 

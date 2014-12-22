@@ -77,7 +77,7 @@ class lazyRefs {
             potentialReferentInsts( edL );
             //3d - load each inst
             /*invAttrListNode * invNode*/
-            iAstruct * ias = invAttr( _inst, ia );
+            iAstruct ias = invAttr( _inst, ia );
             referentInstances_t::iterator insts = _referentInstances.begin();
             for( ; insts != _referentInstances.end(); ++insts ) {
                 loadInstIFFreferent( *insts, ias, ia );
@@ -85,28 +85,28 @@ class lazyRefs {
             //3f - cache edL - TODO
         }
 
-        void loadInstIFFreferent( instanceID inst, iAstruct * ias, const Inverse_attribute * ia ) {
+        void loadInstIFFreferent( instanceID inst, iAstruct ias, const Inverse_attribute * ia ) {
             std::cout << "liir for inst #" << _inst->STEPfile_id << ", referent #" << inst << ", ia " << ia->Name() << "(" << (void*) ia;
-            std::cout << "), ias " << (void *) ias << std::endl;
+            std::cout << "), ias " << (void *) &ias << std::endl;
             bool prevLoaded = _lim->isLoaded( inst );
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
             bool ref = refersToCurrentInst( ia, rinst );
             if( ref ) {
                 if( ia->inverted_attr_()->IsAggrType() ) {
-                    if( !ias->a ) {
-                        ias->a = new EntityAggregate;
-                        _inst->setInvAttr( ia, *ias );
-                        assert( invAttr( _inst, ia )->a == ias->a );
+                    if( !ias.a ) {
+                        ias.a = new EntityAggregate;
+                        _inst->setInvAttr( ia, ias );
+                        assert( invAttr( _inst, ia ).a == ias.a );
                     }
-                    EntityAggregate * ea = ias->a;
+                    EntityAggregate * ea = ias.a;
 //                     assert( ias->a && "is it possible for this to be null here? if so, must create & assign");
                     //FIXME InitIAttrs has been called, but this is null. what to do? init here? if not, where???
                     //TODO check if duplicate
                     ea->AddNode( new EntityNode( rinst ) );
                 } else {
-                    SDAI_Application_instance * ai = ias->i;
+                    SDAI_Application_instance * ai = ias.i;
                     if( !ai ) {
-                        ias->i = rinst;
+                        ias.i = rinst;
                     } else if( ai->GetFileId() != inst ) {
                         std::cerr << "ERROR: two instances (" << rinst << " and " << ai->GetFileId() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
@@ -166,27 +166,12 @@ class lazyRefs {
             return -1;
         }
 
-        iAstruct * invAttr( SDAI_Application_instance * inst, const Inverse_attribute * ia /*, iaList_t & iaList */ ) {
-            /* looks for iAttrs in schemas/sdai_ap214e3/entity/SdaiGeometric_representation_context.cc, but the ctors don't populate it
-             * shouldn't the parent class ctor populate it?
-ENTITY representation_context;
-  context_identifier : identifier;
-  context_type : text;
-INVERSE
-  representations_in_context : SET [1:?] OF representation FOR context_of_items
-  ;
-END_ENTITY; -- 10303-43: representation_schema
-
-ENTITY geometric_representation_context
-SUBTYPE OF (representation_context);
-  coordinate_space_dimension : dimension_count;
-END_ENTITY; -- 10303-42: geometry_schema
-             */
+        iAstruct invAttr( SDAI_Application_instance * inst, const Inverse_attribute * ia /*, iaList_t & iaList */ ) {
             SDAI_Application_instance::iAMap_t map = inst->getInvAttrs();
             SDAI_Application_instance::iAMap_t::iterator iai = map.begin();
             while( iai != map.end() ) {
                 if( iai->first == ia ) {
-                    return &( iai->second );
+                    return iai->second;
                 }
                 ++iai;
             }
@@ -198,8 +183,10 @@ END_ENTITY; -- 10303-42: geometry_schema
                 std::cerr << iai->first->Name() << ": " << (void*)(iai->second.a) << ", ";
             }
             std::cerr << std::endl;
-            abort();
-// //             return NULL;
+//             abort();
+            iAstruct nil;
+            memset( &nil, 0, sizeof( nil ) );
+            return nil;
         }
 
         /**  3c. compare the type of each item in R with types in A
