@@ -4,6 +4,8 @@
 char * generate_attribute_name( Variable a, char * out );
 char * generate_attribute_func_name( Variable a, char * out );
 
+void DataMemberPrintAttr( Entity entity, Variable a, FILE * file );
+void ATTRnames_print( Entity entity, FILE * file, int attr_count_tmp );
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file, bool returnsConst );
 void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file );
 void ATTRsign_access_methods( Variable a, const char * objtype, FILE * file );

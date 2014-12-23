@@ -14,8 +14,10 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include <assert.h>
 #include <sc_mkdir.h>
-#include "classes.h"
 #include <ordered_attrs.h>
+#include <type.h>
+#include "classes.h"
+#include "classes_attribute.h"
 
 #include <sc_trace_fprintf.h>
 
@@ -89,6 +91,58 @@ bool attrIsObj( Type t ) {
             return true;
     }
 }
+
+/** print attr descriptors to the namespace
+ * \p attr_count_tmp is a _copy_ of attr_count
+ */
+void ATTRnames_print( Entity entity, FILE * file, int attr_count_tmp ) {
+    char attrnm [BUFSIZ];
+
+    LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
+        generate_attribute_name( v, attrnm );
+        fprintf( file, "    extern %s *%s%d%s%s;\n",
+                 ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
+                 ATTR_PREFIX, attr_count_tmp++,
+                 ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
+                 attrnm );
+    } LISTod
+}
+
+/** prints out the current attribute for an entity's c++ class definition
+ * \param entity  entity being processed
+ * \param a attribute being processed
+ * \param file file being written to
+ */
+void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
+    char attrnm [BUFSIZ];
+    const char * ctype, * etype;
+    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
+        ctype = TYPEget_ctype( VARget_type( a ) );
+        generate_attribute_name( a, attrnm );
+        if( !strcmp( ctype, "SCLundefined" ) ) {
+            printf( "WARNING:  in entity %s, ", ENTITYget_name( entity ) );
+            printf( " the type for attribute  %s is not fully implemented\n", attrnm );
+        }
+        if( TYPEis_entity( VARget_type( a ) ) ) {
+            fprintf( file, "        SDAI_Application_instance_ptr _%s;", attrnm );
+        } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
+            fprintf( file, "        %s_ptr _%s;", ctype, attrnm );
+        } else {
+            fprintf( file, "        %s _%s;", ctype, attrnm );
+        }
+        if( VARget_optional( a ) ) {
+            fprintf( file, "    //  OPTIONAL" );
+        }
+        if( isAggregate( a ) )        {
+            /*  if it's a named type, comment the type  */
+            if( ( etype = TYPEget_name ( TYPEget_nonaggregate_base_type( VARget_type( a ) ) ) ) ) {
+                fprintf( file, "          //  of  %s\n", etype );
+            }
+        }
+        fprintf( file, "\n" );
+    }
+}
+
 /**************************************************************//**
  ** Procedure:  ATTRsign_access_methods
  ** Parameters:  const Variable a --  attribute to print

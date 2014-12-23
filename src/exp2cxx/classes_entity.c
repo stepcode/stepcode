@@ -45,65 +45,13 @@ static int attr_count;  /**< number each attr to avoid inter-entity clashes
 
 /*************      Entity Generation      *************/
 
-/** print entity descriptors and attrdescriptors to the namespace in files->names
- * hopefully this file can be safely included everywhere, eliminating use of 'extern'
+/** print entity descriptors to the namespace in files->names
  *
  * Nov 2011 - MAP - This function was split out of ENTITYhead_print to enable
  *                  use of a separate header with a namespace.
  */
 void ENTITYnames_print( Entity entity, FILE * file ) {
-    char attrnm [BUFSIZ];
-    int attr_count_tmp = attr_count;
-
     fprintf( file, "    extern EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
-
-    /* DAS print all the attr descriptors and inverse attr descriptors for an
-     *       entity as defs in the .h file. */
-    LISTdo( ENTITYget_attributes( entity ), v, Variable )
-    generate_attribute_name( v, attrnm );
-    fprintf( file, "    extern %s *%s%d%s%s;\n",
-             ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-             ATTR_PREFIX, attr_count_tmp++,
-             ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
-             attrnm );
-    LISTod;
-}
-
-/** prints out the current attribute for an entity's c++ class definition
- * \param entity  entity being processed
- * \param a attribute being processed
- * \param file file being written to
- */
-void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
-    char attrnm [BUFSIZ];
-    const char * ctype, * etype;
-    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        ctype = TYPEget_ctype( VARget_type( a ) );
-        generate_attribute_name( a, attrnm );
-        if( !strcmp( ctype, "SCLundefined" ) ) {
-            printf( "WARNING:  in entity %s, ", ENTITYget_name( entity ) );
-            printf( " the type for attribute  %s is not fully implemented\n", attrnm );
-        }
-        if( TYPEis_entity( VARget_type( a ) ) ) {
-            fprintf( file, "        SDAI_Application_instance_ptr _%s;", attrnm );
-        } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
-            fprintf( file, "        %s_ptr _%s;", ctype, attrnm );
-        } else {
-            fprintf( file, "        %s _%s;", ctype, attrnm );
-        }
-        if( VARget_optional( a ) ) {
-            fprintf( file, "    //  OPTIONAL" );
-        }
-        if( isAggregate( a ) )        {
-            /*  if it's a named type, comment the type  */
-            if( ( etype = TYPEget_name
-                          ( TYPEget_nonaggregate_base_type( VARget_type( a ) ) ) ) ) {
-                fprintf( file, "          //  of  %s\n", etype );
-            }
-        }
-
-        fprintf( file, "\n" );
-    }
 }
 
 /** declares the global pointer to the EntityDescriptor representing a particular entity
@@ -120,15 +68,13 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
     fprintf( file, "EntityDescriptor * %s::%s%s = 0;\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-
-    LISTdo( ENTITYget_attributes( entity ), v, Variable )
-    generate_attribute_name( v, attrnm );
-    fprintf( file, "%s * %s::%s%d%s%s = 0;\n",
-             ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-             SCHEMAget_name( schema ), ATTR_PREFIX, attr_count_tmp++,
-             ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm );
-    LISTod
-
+    LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
+        generate_attribute_name( v, attrnm );
+        fprintf( file, "%s * %s::%s%d%s%s = 0;\n",
+                ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
+                SCHEMAget_name( schema ), ATTR_PREFIX, attr_count_tmp++,
+                ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm );
+    } LISTod
     fprintf( file, "\n");
 }
 
@@ -180,7 +126,7 @@ int get_attribute_number( Entity entity ) {
     LISTdo( local, a, Variable ) {
         /*  go to the child's first explicit attribute */
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
-                LISTdo_n( complete, p, Variable, b ) {
+            LISTdo_n( complete, p, Variable, b ) {
                 /*  cycle through all the explicit attributes until the
                 child's attribute is found  */
                 if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
@@ -190,14 +136,14 @@ int get_attribute_number( Entity entity ) {
                         found = 1;
                     }
                 }
-            } LISTod;
+            } LISTod
             if( found ) {
                 return i;
-            } else printf( "Internal error:  %s:%d\n"
-                            "Attribute %s not found.\n"
-                            , __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
+            } else {
+                fprintf( stderr, "Internal error at %s:%d: attribute %s not found\n", __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
+            }
         }
-    } LISTod;
+    } LISTod
     return -1;
 }
 
@@ -1007,6 +953,7 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
 
     fprintf( header, "namespace %s {\n", SCHEMAget_name( schema ) );
     ENTITYnames_print( entity, header );
+    ATTRnames_print( entity, header, attr_count );
     fprintf( header, "}\n\n" );
 
     DEBUG( "DONE ENTITYPrint_h\n" );
