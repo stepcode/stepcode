@@ -76,7 +76,6 @@ class lazyRefs {
             //3c - for each item in both _refMap and edL, add it to _referentInstances
             potentialReferentInsts( edL );
             //3d - load each inst
-            /*invAttrListNode * invNode*/
             iAstruct ias = invAttr( _inst, ia );
             referentInstances_t::iterator insts = _referentInstances.begin();
             for( ; insts != _referentInstances.end(); ++insts ) {
@@ -86,8 +85,6 @@ class lazyRefs {
         }
 
         void loadInstIFFreferent( instanceID inst, iAstruct ias, const Inverse_attribute * ia ) {
-            std::cout << "liir for inst #" << _inst->STEPfile_id << ", referent #" << inst << ", ia " << ia->Name() << "(" << (void*) ia;
-            std::cout << "), ias " << (void *) &ias << std::endl;
             bool prevLoaded = _lim->isLoaded( inst );
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
             bool ref = refersToCurrentInst( ia, rinst );
@@ -99,16 +96,16 @@ class lazyRefs {
                         assert( invAttr( _inst, ia ).a == ias.a );
                     }
                     EntityAggregate * ea = ias.a;
-//                     assert( ias->a && "is it possible for this to be null here? if so, must create & assign");
-                    //FIXME InitIAttrs has been called, but this is null. what to do? init here? if not, where???
                     //TODO check if duplicate
                     ea->AddNode( new EntityNode( rinst ) );
                 } else {
                     SDAI_Application_instance * ai = ias.i;
                     if( !ai ) {
                         ias.i = rinst;
+                        _inst->setInvAttr( ia, ias );
                     } else if( ai->GetFileId() != inst ) {
-                        std::cerr << "ERROR: two instances (" << rinst << " and " << ai->GetFileId() << ") refer to inst ";
+                        std::cerr << "ERROR: two instances (" << rinst << ", #" << rinst->GetFileId() << "=" << rinst->getEDesc()->Name();
+                        std::cerr << " and " << ai << ", #" << ai->GetFileId() <<"=" << ai->getEDesc()->Name() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
                         // TODO _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
                     }
@@ -175,17 +172,9 @@ class lazyRefs {
                 }
                 ++iai;
             }
-            iai = map.begin();
-            //FIXME treat as unrecoverable?
-            //need to call inst->InitIAttrs();
-            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << ". Map contents:" << std::endl;
-            for( ; iai != map.end(); ++iai ) {
-                std::cerr << iai->first->Name() << ": " << (void*)(iai->second.a) << ", ";
-            }
-            std::cerr << std::endl;
-//             abort();
+            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << std::endl;
+            abort();
             iAstruct nil;
-            memset( &nil, 0, sizeof( nil ) );
             return nil;
         }
 
