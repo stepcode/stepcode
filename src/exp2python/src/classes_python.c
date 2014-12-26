@@ -640,6 +640,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     bool generate_constructor = true; /*by default, generates a python constructor */
     bool single_inheritance = false;
     bool multiple_inheritance = false;
+    bool rename_python_property = false;
     Type t;
     Linked_List list;
     int num_parent = 0;
@@ -792,7 +793,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         LISTdo( ENTITYget_attributes( entity ), v, Variable )
         generate_attribute_name( v, attrnm );
         if( !VARis_derived( v ) && !VARget_inverse( v ) ) {
-            fprintf( file, "\t\tself.%s = %s\n", attrnm, attrnm );
+            fprintf( file, "\t\tself._%s = %s\n", attrnm, attrnm );
         }
         /*attr_count_tmp++; */
         LISTod
@@ -801,22 +802,32 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         */
         LISTdo( ENTITYget_attributes( entity ), v, Variable )
         generate_attribute_name( v, attrnm );
-        fprintf( file, "\n\t@apply\n" );
-        fprintf( file, "\tdef %s():\n", attrnm );
+        fprintf( file, "\n\t@property\n" );
+        if ( !strcmp(attrnm, "property") ) {
+            fprintf( file, "\tdef __%s(self):\n", attrnm );
+            rename_python_property = true;
+        } else {
+            fprintf( file, "\tdef %s(self):\n", attrnm );
+        }
         /* fget */
-        fprintf( file, "\t\tdef fget( self ):\n" );
         if( !VARis_derived( v ) ) {
-            fprintf( file, "\t\t\treturn self._%s\n", attrnm );
+            fprintf( file, "\t\treturn self._%s\n", attrnm );
         } else {
             /* evaluation of attribute */
-            fprintf( file, "\t\t\tattribute_eval = " );
+            fprintf( file, "\t\tattribute_eval = " );
             /* outputs expression initializer */
             ATTRIBUTE_INITIALIZER_out( v->initializer, 1, file );
             /* then returns the value */
-            fprintf( file, "\n\t\t\treturn attribute_eval\n" );
+            fprintf( file, "\n\t\treturn attribute_eval\n" );
         }
         /* fset */
-        fprintf( file, "\t\tdef fset( self, value ):\n" );
+        if ( !strcmp(attrnm, "property") ) {
+            fprintf( file, "\t@__%s.setter\n", attrnm );
+            fprintf( file, "\tdef __%s(self, value):\n", attrnm );
+        } else {
+            fprintf( file, "\t@%s.setter\n", attrnm );
+            fprintf( file, "\tdef %s(self, value):\n", attrnm );
+        }
         t = VARget_type( v );
 
         /* find attr type name */
@@ -830,9 +841,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
             /* if the argument is not optional */
             if( !VARget_optional( v ) ) {
                 fprintf( file, "\t\t# Mandatory argument\n" );
-                fprintf( file, "\t\t\tif value==None:\n" );
-                fprintf( file, "\t\t\t\traise AssertionError('Argument %s is mantatory and can not be set to None')\n", attrnm );
-                fprintf( file, "\t\t\tif not check_type(value," );
+                fprintf( file, "\t\tassert value != None, 'Argument \"value\" is mantatory and cannot be set to None'\n" );
+                fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n" );
@@ -842,8 +852,8 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
                     fprintf( file, "%s):\n", attr_type );
                 }
             } else {
-                fprintf( file, "\t\t\tif value != None: # OPTIONAL attribute\n\t" );
-                fprintf( file, "\t\t\tif not check_type(value," );
+                fprintf( file, "\t\tif value != None: # OPTIONAL attribute\n\t" );
+                fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n\t" );
@@ -855,34 +865,38 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
             }
             /* check wether attr_type is aggr or explicit */
             if( TYPEis_aggregate( t ) ) {
-                fprintf( file, "\t\t\t\tself._%s = ", attrnm );
+                fprintf( file, "\t\t\tself._%s = ", attrnm );
                 print_aggregate_type( file, t );
                 fprintf( file, "(value)\n" );
             } else if (attr_type && is_python_keyword(attr_type)) {
-                fprintf( file, "\t\t\t\tself._%s = %s_(value)\n", attrnm, attr_type );
+                fprintf( file, "\t\t\tself._%s = %s_(value)\n", attrnm, attr_type );
             } else {
-                fprintf( file, "\t\t\t\tself._%s = %s(value)\n", attrnm, attr_type );
+                fprintf( file, "\t\t\tself._%s = %s(value)\n", attrnm, attr_type );
             }
             if( VARget_optional( v ) ) {
-                fprintf( file, "\t\t\t\telse:\n" );
-                fprintf( file, "\t\t\t\t\tself._%s = value\n", attrnm );
+                fprintf( file, "\t\t\telse:\n" );
+                fprintf( file, "\t\t\t\tself._%s = value\n", attrnm );
             }
-            fprintf( file, "\t\t\telse:\n\t" );
-            fprintf( file, "\t\t\tself._%s = value\n", attrnm );
+            fprintf( file, "\t\telse:\n\t" );
+            fprintf( file, "\t\tself._%s = value\n", attrnm );
         }
         /* if the attribute is derived, prevent fset to attribute to be set */
+        /* TODO: this can be done by NOT writing the setter method */
         else if( VARis_derived( v ) ) {
-            fprintf( file, "\t\t# DERIVED argument\n" );
-            fprintf( file, "\t\t\traise AssertionError('Argument %s is DERIVED. It is computed and can not be set to any value')\n", attrnm );
+            fprintf( file, "\t# DERIVED argument\n" );
+            fprintf( file, "\t\traise AssertionError('Argument %s is DERIVED. It is computed and can not be set to any value')\n", attrnm );
         } else if( VARget_inverse( v ) ) {
-            fprintf( file, "\t\t# INVERSE argument\n" );
-            fprintf( file, "\t\t\traise AssertionError('Argument %s is INVERSE. It is computed and can not be set to any value')\n", attrnm );
+            fprintf( file, "\t# INVERSE argument\n" );
+            fprintf( file, "\t\traise AssertionError('Argument %s is INVERSE. It is computed and can not be set to any value')\n", attrnm );
         }
-        fprintf( file, "\t\treturn property(**locals())\n" );
         LISTod
     }
     /* before exiting, process where rules */
     WHEREPrint( entity->where, 0, file );
+
+    if ( rename_python_property ) {
+        fprintf( file, "\tproperty = __property\n" );
+    }
 }
 
 int
