@@ -18,6 +18,7 @@ New since v0.7:
      large files for faster "unitary" builds, if the compiler can handle it
    - unitary builds are faster than the previous builds
 * most compiler warnings fixed
+* performance fixes and other changes from BRL-CAD
 * finally, all tests pass!
 
 ************************************************************************
