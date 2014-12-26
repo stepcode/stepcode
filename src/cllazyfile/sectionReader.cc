@@ -324,8 +324,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     ErrorDescriptor err;
     std::vector<std::string *> typeNames;
     _file.get(); //move past the first '('
+    skipWS();
     while( _file.good() && ( _file.peek() != ')' ) ) {
-        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
+        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\\n" ) ) );
         if( typeNames.back()->empty() ) {
             delete typeNames.back();
             typeNames.pop_back();
