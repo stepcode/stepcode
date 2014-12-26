@@ -812,6 +812,34 @@ EntityDescriptor::~EntityDescriptor() {
     delete _uniqueness_rules;
 }
 
+// initialize one inverse attr; used in InitIAttrs, below
+void initIAttr( Inverse_attribute * ia, Registry & reg, const char * schNm, const char * name ) {
+    const AttrDescriptor * ad;
+    const char * aid = ia->inverted_attr_id_();
+    const char * eid = ia->inverted_entity_id_();
+    const EntityDescriptor * e = reg.FindEntity( eid, schNm );
+    AttrDescItr adl( e->ExplicitAttr() );
+    while( 0 != ( ad = adl.NextAttrDesc() ) ) {
+        if( !strcmp( aid, ad->Name() ) ) {
+            ia->inverted_attr_( ad );
+            return;
+        }
+    }
+    supertypesIterator sit(e);
+    for( ; !sit.empty(); ++sit ) {
+        AttrDescItr adi( sit.current()->ExplicitAttr() );
+        while( 0 != ( ad = adi.NextAttrDesc() ) ) {
+            if( !strcmp( aid, ad->Name() ) ) {
+                ia->inverted_attr_( ad );
+                return;
+            }
+        }
+    }
+    std::cerr << "Inverse attr " << ia->Name() << " for " << name << ": cannot find AttrDescriptor " << aid << " for entity " << eid << "." << std::endl;
+    //FIXME should we abort? or is there a sensible recovery path?
+    abort();
+}
+
 /** initialize inverse attrs
  * call once per eDesc (once per EXPRESS entity type)
  * must be called _after_ init_Sdai* functions for any ia->inverted_entity_id_'s
@@ -821,19 +849,7 @@ void EntityDescriptor::InitIAttrs( Registry & reg, const char * schNm ) {
     InverseAItr iai( &( InverseAttr() ) );
     Inverse_attribute * ia;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
-        const AttrDescriptor * ad;
-        const char * aid = ia->inverted_attr_id_();
-        const char * eid = ia->inverted_entity_id_();
-        const EntityDescriptor * e = reg.FindEntity( eid, schNm );
-        AttrDescItr adl( e->ExplicitAttr() ); //TODO does this include inherited attrs? redefined? etc...
-        while( ( 0 != ( ad = adl.NextAttrDesc() ) ) && strcmp( aid, ad->Name() ) ) {
-            // loop condition side effects do everything
-        }
-        if( !ad ) {
-            std::cerr << "Inverse attr " << ia->Name() << " for " << Name() << ": cannot find AttrDescriptor " << aid << " for entity " << eid << "." << std::endl;
-            //FIXME should we abort? or is there a sensible recovery path?
-        }
-        ia->inverted_attr_( ad );
+        initIAttr( ia, reg, schNm, _name );
     }
 }
 
