@@ -32,6 +32,9 @@ public:
         } else {
             invIter = new InverseAItr( &( sit.current()->InverseAttr() ) );
             nextInv = invIter->NextInverse_attribute();
+            if( !nextInv ) {
+                next();
+            }
         }
     }
     ~superInvAttrIter() {
