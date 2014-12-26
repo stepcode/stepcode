@@ -2,7 +2,6 @@
 set(SC_BASE_SOURCES
   sc_memmgr.cc
   sc_trace_fprintf.c
-  sc_getopt.cc
   sc_benchmark.cc
   sc_mkdir.c
  )
@@ -10,11 +9,16 @@ set(SC_BASE_SOURCES
 set(SC_BASE_HDRS
   sc_benchmark.h
   sc_memmgr.h
-  sc_getopt.h
   sc_trace_fprintf.h
   sc_stdbool.h
   sc_mkdir.h
  )
+
+if(NOT HAVE_GETOPT)
+  message(WARNING "getopt is not available, sc_getopt will be built.")
+  set(SC_BASE_HDRS ${SC_BASE_HDRS} sc_getopt.h)
+  set(SC_BASE_SOURCES ${SC_BASE_SOURCES} sc_getopt.cc)
+endif()
 
 if(MINGW OR MSVC OR BORLAND)
   add_definitions(-DSC_BASE_DLL_EXPORTS)
