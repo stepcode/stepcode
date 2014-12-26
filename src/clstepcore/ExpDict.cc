@@ -20,6 +20,7 @@
 #include <STEPaggregate.h>
 #include <Registry.h>
 #include "sc_memmgr.h"
+#include <SubSuperIterators.h>
 
 Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) {
     _bufsize = defaultSize;
