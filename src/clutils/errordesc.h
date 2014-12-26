@@ -90,17 +90,17 @@ class SC_UTILS_EXPORT ErrorDescriptor {
         std::string UserMsg() const {
             return _userMsg;
         }
-        void UserMsg( const char * );
+        void UserMsg( const char * msg );
         void UserMsg( const std::string msg ) {
             _userMsg.assign( msg );
         }
 
-        void AppendToUserMsg( const char * );
+        void AppendToUserMsg( const char * msg );
         void AppendToUserMsg( const char c );
         void AppendToUserMsg( const std::string & msg ) {
             _userMsg.append( msg );
         }
-        void PrependToUserMsg( const char * );
+        void PrependToUserMsg( const char * msg );
 
         std::string DetailMsg() const {
             return _detailMsg;
@@ -108,12 +108,12 @@ class SC_UTILS_EXPORT ErrorDescriptor {
         void DetailMsg( const std::string msg ) {
             _detailMsg.assign( msg );
         }
-        void DetailMsg( const char * );
-        void AppendToDetailMsg( const char * );
+        void DetailMsg( const char * msg );
+        void AppendToDetailMsg( const char * msg );
         void AppendToDetailMsg( const std::string & msg ) {
             _detailMsg.append( msg );
         }
-        void PrependToDetailMsg( const char * );
+        void PrependToDetailMsg( const char * msg );
         void AppendToDetailMsg( const char c );
 
         Severity AppendFromErrorArg( ErrorDescriptor * err ) {

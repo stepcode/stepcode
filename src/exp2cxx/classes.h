@@ -115,6 +115,7 @@ void            print_file( Express );
 void            resolution_success( void );
 void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
 const char   *  FundamentalType( const Type t, int report_reftypes );
+void            numberAttributes( Scope scope );
 
 /*Variable*/
 #define VARis_simple_explicit(a)  (!VARis_type_shifter(a))

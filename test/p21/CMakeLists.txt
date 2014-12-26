@@ -73,7 +73,7 @@ add_test(test_p21_entity_internal_comment ${p21read_ap214}    ${CMAKE_CURRENT_SO
 
 set_tests_properties(test_good_schema_name test_good_schema_name_asn test_mismatch_schema_name
   test_ignore_schema_name test_missing_and_required test_missing_and_required_strict test_p21_entity_internal_comment
-  PROPERTIES DEPENDS build_cpp_sdai_AP214E3_2010 LABELS exchange_file)
+  PROPERTIES DEPENDS build_cpp_sdai_ap214e3 LABELS exchange_file)
 
 set_tests_properties(test_mismatch_schema_name test_missing_and_required_strict PROPERTIES WILL_FAIL TRUE)
 

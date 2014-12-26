@@ -7,7 +7,7 @@
 #include "sc_version_string.h"
 #include "class_strings.h"
 
-/*******************************************************************
+/** \file classes_misc.c
 ** FedEx parser output module for generating C++  class definitions
 ** December  5, 1989
 ** release 2 17-Feb-1992
@@ -26,16 +26,11 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 extern int multiple_inheritance;
 
-
-/******************************************************************
- ** Procedure:  FILEcreate
- ** Description:  creates a file for c++ with header definitions
- ** Parameters:  filename
- ** Returns:  FILE* pointer to file created or NULL
- ** Side Effects:  creates a file with name filename
- ** Status:  complete
- ******************************************************************/
-
+/**
+ * creates a file for c++ header definitions, with name filename
+ * Returns:  FILE* pointer to file created or NULL
+ * Status:  complete
+ */
 FILE * FILEcreate( const char * filename ) {
     FILE * file;
     const char * fn;
@@ -56,54 +51,25 @@ FILE * FILEcreate( const char * filename ) {
 
 }
 
-/******************************************************************
- ** Procedure:  FILEclose
- ** Description:  closes a file opened with FILEcreate
- ** Parameters:  FILE*  file  --  pointer to file to close
- ** Returns:
- ** Side Effects:
- ** Status:  complete
- ******************************************************************/
-
-void
-FILEclose( FILE * file ) {
+/** closes a file opened with FILEcreate */
+void FILEclose( FILE * file ) {
     fprintf( file, "#endif\n" );
     fclose( file );
 }
 
 
-/******************************************************************
- ** Procedure:  isAggregate
- ** Parameters:  Attribute a
- ** Returns:  int   indicates whether the attribute is an aggregate
- ** Description:    indicates whether the attribute is an aggregate
- ** Side Effects:  none
- ** Status:  complete 1/15/91
- ******************************************************************/
-
+/**  indicates whether the attribute is an aggregate */
 int isAggregate( Variable a ) {
     return( TYPEinherits_from( VARget_type( a ), aggregate_ ) );
 }
 
+/**  indicates whether the attribute is an aggregate */
 int isAggregateType( const Type t ) {
     return( TYPEinherits_from( t, aggregate_ ) );
 }
 
-
-
-
-/******************************************************************
- ** Procedure:  AccessType
- ** Parameters:  const Type t --  type for attribute
- ** Returns:  a string which is the type used by the access functions to
-              the data member in the c++ class
- ** Description:  supplies the type for access functions in a c++ class
- ** Side Effects:
- ** Status:    3-Nov-1993 -kcm
-******************************************************************/
-
-const char *
-AccessType( Type t ) {
+/** \returns a pointer to a static buffer, containing a string which is the type used by the c++ data member access functions */
+const char * AccessType( Type t ) {
     Class_Of_Type class;
     static char nm [BUFSIZ];
     strncpy( nm, TypeName( t ), BUFSIZ - 4 );
@@ -131,17 +97,11 @@ AccessType( Type t ) {
     return nm;
 }
 
-/******************************************************************
- ** Procedure:  PrettyTmpName (char * oldname)
- ** Procedure:  PrettyNewName (char * oldname)
- ** Parameters:  oldname
- ** Returns:  a new capitalized name
- ** Description:  creates a new name with first character's in caps
- ** Side Effects:  PrettyNewName allocates memory for the new name
- ** Status:   OK  7-Oct-1992 kcm
- ******************************************************************/
-const char *
-PrettyTmpName( const char * oldname ) {
+/** \returns  pointer to a static buffer, containing a new capitalized name
+ *
+ * creates a new name with first character's in caps
+ */
+const char * PrettyTmpName( const char * oldname ) {
     int i = 0;
     static char newname [BUFSIZ];
     newname [0] = '\0';
@@ -162,8 +122,7 @@ PrettyTmpName( const char * oldname ) {
 }
 
 /* This function is out of date DAS */
-const char *
-EnumName( const char * oldname ) {
+const char * EnumName( const char * oldname ) {
     int j = 0;
     static char newname [MAX_LEN];
     if( !oldname ) {
@@ -179,8 +138,7 @@ EnumName( const char * oldname ) {
     return ( newname );
 }
 
-const char *
-SelectName( const char * oldname ) {
+const char * SelectName( const char * oldname ) {
     int j = 0;
     static char newname [MAX_LEN];
     if( !oldname ) {
@@ -197,11 +155,10 @@ SelectName( const char * oldname ) {
     return ( newname );
 }
 
-/* return fundamental type but as the string which corresponds to */
-/* the appropriate type descriptor */
-/* if report_reftypes is true, report REFERENCE_TYPE when appropriate */
-const char *
-FundamentalType( const Type t, int report_reftypes ) {
+/** \return fundamental type but as the string which corresponds to the appropriate type descriptor
+ * if report_reftypes is true, report REFERENCE_TYPE when appropriate
+ */
+const char * FundamentalType( const Type t, int report_reftypes ) {
     if( report_reftypes && TYPEget_head( t ) ) {
         return( "REFERENCE_TYPE" );
     }
@@ -243,10 +200,9 @@ FundamentalType( const Type t, int report_reftypes ) {
     }
 }
 
-/** this actually gets you the name of the variable that will be generated to
-   be a TypeDescriptor or subtype of TypeDescriptor to represent Type t in
-   the dictionary. */
-
+/** this actually gets you the name of the variable that will be generated to be a
+ * TypeDescriptor or subtype of TypeDescriptor to represent Type t in the dictionary.
+ */
 const char * TypeDescriptorName( Type t ) {
     static char b [BUFSIZ];
     Schema parent = t->superscope;
@@ -267,11 +223,10 @@ const char * TypeDescriptorName( Type t ) {
     return b;
 }
 
-/* this gets you the name of the type of TypeDescriptor (or subtype) that a
-   variable generated to represent Type t would be an instance of. */
-
-const char *
-GetTypeDescriptorName( Type t ) {
+/** this gets you the name of the type of TypeDescriptor (or subtype) that a
+ * variable generated to represent Type t would be an instance of.
+ */
+const char * GetTypeDescriptorName( Type t ) {
     switch( TYPEget_body( t )->type ) {
         case aggregate_:
             return "AggrTypeDescriptor";
@@ -314,8 +269,7 @@ GetTypeDescriptorName( Type t ) {
     return "";
 }
 
-int
-ENTITYhas_explicit_attributes( Entity e ) {
+int ENTITYhas_explicit_attributes( Entity e ) {
     Linked_List l = ENTITYget_attributes( e );
     int cnt = 0;
     LISTdo( l, a, Variable )
@@ -327,8 +281,7 @@ ENTITYhas_explicit_attributes( Entity e ) {
 
 }
 
-Entity
-ENTITYput_superclass( Entity entity ) {
+Entity ENTITYput_superclass( Entity entity ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
     Linked_List l = ENTITYget_supertypes( entity );
@@ -380,8 +333,7 @@ ENTITYput_superclass( Entity entity ) {
     return 0;
 }
 
-Entity
-ENTITYget_superclass( Entity entity ) {
+Entity ENTITYget_superclass( Entity entity ) {
     EntityTag tag;
     tag = ( EntityTag ) TYPEget_clientData( ENTITYget_type( entity ) );
     return ( tag ? tag -> superclass : 0 );
@@ -403,6 +355,7 @@ void ENTITYget_first_attribs( Entity entity, Linked_List result ) {
 ** these are not exclusive as far as I can tell! I added defs below DAS
 **
 **  . simple explicit
+**
 **  . type shifters    // not DERIVEd - redefines type in ancestor
 **                     // VARget_initializer(v) returns null
 **
@@ -415,28 +368,24 @@ void ENTITYget_first_attribs( Entity entity, Linked_List result ) {
 ** Only type shifters generate a new STEPattribute.
 ** Type shifters generate access functions and data members, for now.
 ** Overriding generate access functions and data members, for now. ???? DAS
-
-** //  type shifting attributes
-** //  ------------------------
-** // before printing new STEPattribute
-** // check to see if it's already printed in supertype
-** // still add new access function
 **
-** //  overriding attributes
-** //  ---------------------
-** // go through derived attributes
-** // if STEPattribute found with same name
-** // tell it to be * for reading and writing
+**   type shifting attributes
+**   ------------------------
+**  before printing new STEPattribute
+**  check to see if it's already printed in supertype
+**  still add new access function
+**
+**   overriding attributes
+**   ---------------------
+**  go through derived attributes
+**  if STEPattribute found with same name
+**  tell it to be * for reading and writing
 **/
-
-Variable
-VARis_type_shifter( Variable a ) {
+Variable VARis_type_shifter( Variable a ) {
     char * temp;
-
     if( VARis_derived( a ) || VARget_inverse( a ) ) {
         return 0;
     }
-
     temp = EXPRto_string( VARget_name( a ) );
     if( ! strncmp( StrToLower( temp ), "self\\", 5 ) ) {
         /*    a is a type shifter */
@@ -447,14 +396,10 @@ VARis_type_shifter( Variable a ) {
     return 0;
 }
 
-Variable
-VARis_overrider( Entity e, Variable a ) {
-
+Variable VARis_overrider( Entity e, Variable a ) {
     Variable other;
     char * tmp;
-
     tmp = VARget_simple_name( a );
-
     LISTdo( ENTITYget_supertypes( e ), s, Entity )
     if( ( other = ENTITYget_named_attribute( s, tmp ) )
             && other != a ) {
@@ -464,12 +409,10 @@ VARis_overrider( Entity e, Variable a ) {
     return 0;
 }
 
-/**
- * For a renamed type, returns the original (ancestor) type from which t
- * descends.  Return NULL if t is top level.
+/** For a renamed type, returns the original (ancestor) type
+ * from which t descends.  Return NULL if t is top level.
  */
-Type TYPEget_ancestor( Type t )
-{
+Type TYPEget_ancestor( Type t ) {
     Type i = t;
 
     if( !TYPEget_head( i ) ) {

@@ -125,7 +125,6 @@ const char   *  PrettyTmpName( const char * oldname );
 const char   *  EnumName( const char * oldname );
 const char   *  TypeDescriptorName( Type );
 char      *     TypeDescription( const Type t );
-const char   *  TypeName( Type t );
 const char   *  AccessType( Type t );
 const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );

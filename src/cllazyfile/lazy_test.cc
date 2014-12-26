@@ -100,20 +100,31 @@ void printDeps( lazyInstMgr & mgr ) {
 }
 
 ///prints info about a complex instance
-void dumpComplexInst( STEPcomplex * c, unsigned int depth ) {
+void dumpComplexInst( STEPcomplex * c ) {
+    int depth = 0;
     if( c ) {
-        std::cout << "attr list size: " << c->_attr_data_list.size() << ", depth " << depth << std::endl;
-        STEPcomplex_attr_data_list::iterator it;
-        for( it = c->_attr_data_list.begin(); it != c->_attr_data_list.end(); it++ ) {
-            std::cout << "*** Not printing complex instance attribute info - many eDesc pointers are invalid. ***" << std::endl; //FIXME!
+//         std::cout << "attr list size: " << c->_attr_data_list.size() << ", depth " << depth << std::endl;
+//         STEPcomplex_attr_data_list::iterator it;
+//         for( it = c->_attr_data_list.begin(); it != c->_attr_data_list.end(); it++ ) {
+//             std::cout << "*** Not printing complex instance attribute info - many eDesc pointers are invalid. ***" << std::endl; //FIXME!
 //             SDAI_Application_instance * attr = ( SDAI_Application_instance * ) *it;
-//             if( attr->IsComplex() ) {
-//                 dumpComplexInst( dynamic_cast<STEPcomplex *>( attr ), depth + 1 );
-//             } else if( attr->eDesc > ( void * ) 0xFF ) { //arbitrary number - invalid ones are usually 0x51
-//                 std::cout << "attr " << attr->eDesc->Name() << std::endl;
-//             } else {
-//                 std::cout << "attr has eDesc with pointer " << attr->eDesc << std::endl;
-//             }
+        STEPcomplex * complex = c->head;
+        while( complex ) {
+            if( complex->IsComplex() ) {
+                std::cout << "Complex component " << complex->getEDesc()->Name() << " at depth " << depth << " with attr list size ";
+                std::cout << complex->_attr_data_list.size() << std::endl;
+//                 dumpComplexInst( complex, depth + 1 );
+            } else {
+                //probably won't ever get here...
+                SDAI_Application_instance * ai = dynamic_cast< SDAI_Application_instance * >( complex );
+                if( ai ) {
+                    std::cout << "non-complex component at depth " << depth << ", " << ai->getEDesc()->Name() << std::endl;
+                } else {
+                    std::cout << "unknown component at depth " << depth << ": " << complex << std::endl;
+                }
+            }
+            complex = complex->sc;
+            depth++;
         }
     }
 }
@@ -143,6 +154,7 @@ int main( int argc, char ** argv ) {
     std::cout << ( float )( scanStats.physMemKB * 1000 ) / instances << " bytes per instance)" << std::endl << std::endl;
 
     fileInfo( *mgr, 0 );
+    //these are just common types
     countTypeInstances( *mgr, "CARTESIAN_POINT" );
     countTypeInstances( *mgr, "POSITIVE_LENGTH_MEASURE" );
     countTypeInstances( *mgr, "VERTEX_POINT" );
@@ -168,9 +180,9 @@ int main( int argc, char ** argv ) {
 
     instanceTypes_t::cvector * complexInsts = mgr->getInstances( "" );
     if( complexInsts && complexInsts->size() > 0 ) {
-        std::cout << "loading lazy instance #" << complexInsts->at( 0 ) << "." << std::endl;
+        std::cout << "loading complex instance #" << complexInsts->at( 0 ) << "." << std::endl;
         STEPcomplex * c = dynamic_cast<STEPcomplex *>( mgr->loadInstance( complexInsts->at( 0 ) ) );
-        dumpComplexInst( c, 0 );
+        dumpComplexInst( c );
         std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;
     }
 #else

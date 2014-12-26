@@ -1,4 +1,4 @@
-/** \file inverse_attr.cc
+/** \file inverse_attr2.cc
 ** 1-Jul-2012
 ** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
 **
@@ -55,7 +55,7 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
                     STEPattribute sa = attrlist[k];
                     if( sa.getADesc()->DomainType()->Type() == SET_TYPE ) {
                         STEPaggregate * aggr = sa.Aggregate();
-                        if( !aggr || aggr->is_null() != 0 ) { //this fails - and it appears that aggr is not initialized.
+                        if( !aggr || aggr->is_null() != 0 ) {
                             cout << "findInverseAttrs2 FAILED" << endl;
                             return false;
                         }
@@ -91,7 +91,7 @@ int main( int argc, char * argv[] ) {
     //find inverse attribute descriptors
     //first, find inverse attrs unique to this entity (i.e. not inherited)
     const EntityDescriptor * ed = registry.FindEntity( "window" );
-    InverseAItr iaIter( ed->InverseAttr() ); //iterator for inverse attributes
+    InverseAItr iaIter( &( ed->InverseAttr() ) ); //iterator for inverse attributes
     if( findInverseAttrs2( iaIter, instance_list, registry ) ) {
         inverseAttrsFound = true;
     }
@@ -100,7 +100,7 @@ int main( int argc, char * argv[] ) {
     const EntityDescriptor * super;
     while( 0 != ( super = edi.NextEntityDesc() ) ) {
         cout << "supertype " << super->Name() << endl;
-        InverseAItr superIaIter( super->InverseAttr() );
+        InverseAItr superIaIter( &( super->InverseAttr() ) );
         if( findInverseAttrs2( superIaIter, instance_list, registry ) ) {
             inverseAttrsFound = true;
         }

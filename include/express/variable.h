@@ -76,10 +76,11 @@ typedef struct Variable_ * Variable;
 /***************************/
 
 struct Variable_ {
-    Expression  name;    /**< Symbol is inside of 'name' */
+    Expression  name;        /**< Symbol is inside of 'name' */
     Type        type;
     Expression  initializer; /**< or 'derived' */
-    int         offset; /**< used for attr order in Entitys, and for decl order in LOCAL vars. these two uses should never conflict! */
+    int         offset;      /**< used for attr order in Entitys, and for decl order in LOCAL vars. these two uses should never conflict! */
+    int         idx;         /**< used in exp2cxx to simplify calculation of attrDescriptor names in generated code */
 
     struct {
         unsigned int optional    : 1; /**< OPTIONAL keyword */

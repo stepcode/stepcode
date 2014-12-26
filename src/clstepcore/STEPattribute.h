@@ -28,7 +28,7 @@
 
 typedef double real;
 
-class InstMgr;
+class InstMgrBase;
 class SDAI_Application_instance;
 class STEPaggregate;
 class SCLundefined;
@@ -42,10 +42,10 @@ class EntityDescriptor;
 extern SC_CORE_EXPORT int SetErrOnNull( const char * attrValue, ErrorDescriptor * error );
 
 extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId );
+        InstMgrBase * instances, int addFileId );
 
 extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId );
+        InstMgrBase * instances, int addFileId );
 
 extern SC_CORE_EXPORT Severity EntityValidLevel( SDAI_Application_instance * se,
         const TypeDescriptor * ed, ///< entity type that entity se needs to match. (this must be an EntityDescriptor)
@@ -55,13 +55,13 @@ extern SC_CORE_EXPORT Severity EntityValidLevel( const char * attrValue, ///< st
         const TypeDescriptor * ed, /**< entity type that entity in attrValue (if it exists) needs
                                              *  to match. (this must be an EntityDescriptor)
                                              */
-        ErrorDescriptor * err, InstMgr * im, int clearError );
+        ErrorDescriptor * err, InstMgrBase * im, int clearError );
 
 ////////////////////
 ////////////////////
 
 extern SC_CORE_EXPORT SDAI_Application_instance * STEPread_reference( const char * s, ErrorDescriptor * err,
-        InstMgr * instances, int addFileId );
+        InstMgrBase * instances, int addFileId );
 ////////////////////
 
 extern SC_CORE_EXPORT int QuoteInString( istream & in );
@@ -132,9 +132,9 @@ class SC_CORE_EXPORT STEPattribute {
 
 ///////////// Read, Write, Assign attr value
 
-        Severity StrToVal( const char * s, InstMgr * instances = 0,
+        Severity StrToVal( const char * s, InstMgrBase * instances = 0,
                            int addFileId = 0 );
-        Severity STEPread( istream & in = cin, InstMgr * instances = 0,
+        Severity STEPread( istream & in = cin, InstMgrBase * instances = 0,
                            int addFileId = 0, const char * currSch = NULL, bool strict = true );
 
         /// return the attr value as a string
@@ -146,19 +146,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         Severity set_null();
 
-        /** \fn Integer()
-         * \fn Real()
-         * \fn Number()
-         * \fn String()
-         * \fn Binary()
-         * \fn Entity()
-         * \fn Aggregate()
-         * \fn Enum()
-         * \fn Logical()
-         * \fn Boolean()
-         * \fn Select()
-         * \fn Undefined()
-         *
+        /**
          * These functions verify that the attribute contains the requested type and
          * returns a pointer. The pointer is null if the requested type does not match.
          *
@@ -166,6 +154,7 @@ class SC_CORE_EXPORT STEPattribute {
          * \sa NonRefType()
          * \sa is_null()
          */
+        ///@{
         SDAI_Integer              * Integer();
         SDAI_Real                 * Real();
         SDAI_Real                 * Number();
@@ -178,6 +167,7 @@ class SC_CORE_EXPORT STEPattribute {
         SDAI_BOOLEAN              * Boolean();
         SDAI_Select               * Select();
         SCLundefined              * Undefined();
+        ///@}
 
         /// allows direct access to the union containing attr data (dangerous!)
         attrUnion * Raw() {
@@ -232,7 +222,7 @@ class SC_CORE_EXPORT STEPattribute {
             _error.ClearErrorMsg();
         }
 
-        Severity ValidLevel( const char* attrValue, ErrorDescriptor* error, InstMgr* im, bool clearError = true );
+        Severity ValidLevel( const char* attrValue, ErrorDescriptor* error, InstMgrBase * im, bool clearError = true );
 
 ////////////////// Constructors
 

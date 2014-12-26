@@ -29,13 +29,21 @@ class DisplayNode;
 
 class InstMgr;
 
+class SC_CORE_EXPORT MgrNodeBase : public GenericNode {
+    public:
+        virtual inline SDAI_Application_instance * GetSTEPentity() {
+            abort();
+        };
+    virtual ~MgrNodeBase() {};
+};
+
 //////////////////////////////////////////////////////////////////////////////
 // class MgrNode
 // If you delete this object, it deletes the SDAI_Application_instance it represents,
 // the DisplayNode, and removes itself from any list it is in.
 //////////////////////////////////////////////////////////////////////////////
 
-class SC_CORE_EXPORT MgrNode : public GenericNode {
+class SC_CORE_EXPORT MgrNode : public MgrNodeBase {
         friend class GenNodeList;
         friend class MgrNodeList;
         friend class InstMgr;

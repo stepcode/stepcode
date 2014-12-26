@@ -12,7 +12,7 @@
 * and is not subject to copyright.
 */
 
-class InstMgr;
+class InstMgrBase;
 class STEPaggregate;
 class TypeDescriptor;
 
@@ -42,7 +42,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
 
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
     public:
@@ -52,22 +52,22 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
         }
 
         virtual Severity AggrValidLevel( const char * value, ErrorDescriptor * err,
-                                         const TypeDescriptor * elem_type, InstMgr * insts,
+                                         const TypeDescriptor * elem_type, InstMgrBase * insts,
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
 
         virtual Severity AggrValidLevel( istream & in, ErrorDescriptor * err,
-                                         const TypeDescriptor * elem_type, InstMgr * insts,
+                                         const TypeDescriptor * elem_type, InstMgrBase * insts,
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
 
 // INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err = 0,
                                    const TypeDescriptor * elem_type = 0,
-                                   InstMgr * insts = 0, int addFileId = 0 );
+                                   InstMgrBase * insts = 0, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type = 0,
-                                   InstMgr * insts = 0, int addFileId = 0,
+                                   InstMgrBase * insts = 0, int addFileId = 0,
                                    const char * currSch = 0 );
 // OUTPUT
         virtual const char * asStr( std::string & s ) const;
@@ -88,6 +88,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
  ** \class GenericAggregate
  ** This class supports LIST OF:
  **    SELECT_TYPE, BINARY_TYPE, GENERIC_TYPE, ENUM_TYPE, UNKNOWN_TYPE type
+ ** FIXME this class, as well as SelectAggregate, for SELECTs?!
  ******************************************************************/
 class SC_CORE_EXPORT GenericAggregate  :  public STEPaggregate {
     public:
@@ -97,9 +98,10 @@ class SC_CORE_EXPORT GenericAggregate  :  public STEPaggregate {
         GenericAggregate();
         virtual ~GenericAggregate();
 };
-typedef  GenericAggregate * GenericAggregateH;
-typedef  GenericAggregate * GenericAggregate_ptr;
-typedef  GenericAggregate_ptr GenericAggregate_var;
+typedef        GenericAggregate *   GenericAggregateH;
+typedef        GenericAggregate *   GenericAggregate_ptr;
+typedef  const GenericAggregate *   GenericAggregate_ptr_c;
+typedef        GenericAggregate_ptr GenericAggregate_var;
 
 /******************************************************************************
  **
@@ -109,7 +111,7 @@ class SC_CORE_EXPORT EntityAggregate  :  public  STEPaggregate {
     public:
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
 
@@ -119,9 +121,10 @@ class SC_CORE_EXPORT EntityAggregate  :  public  STEPaggregate {
         EntityAggregate();
         virtual ~EntityAggregate();
 };
-typedef   EntityAggregate * EntityAggregateH;
-typedef   EntityAggregate * EntityAggregate_ptr;
-typedef   EntityAggregate_ptr EntityAggregate_var;
+typedef         EntityAggregate *    EntityAggregateH;
+typedef         EntityAggregate *    EntityAggregate_ptr;
+typedef   const EntityAggregate *    EntityAggregate_ptr_c;
+typedef         EntityAggregate_ptr  EntityAggregate_var;
 
 /****************************************************************//**
  ** \class SelectAggregate
@@ -131,7 +134,7 @@ class SC_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
     public:
         virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
-                                    InstMgr * insts, int addFileId = 0,
+                                    InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
                                     const char * currSch = 0 );
 
@@ -141,9 +144,10 @@ class SC_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
         SelectAggregate();
         virtual ~SelectAggregate();
 };
-typedef  SelectAggregate  * SelectAggregateH;
-typedef  SelectAggregate  * SelectAggregate_ptr;
-typedef  SelectAggregate_ptr SelectAggregate_var;
+typedef        SelectAggregate  *   SelectAggregateH;
+typedef        SelectAggregate  *   SelectAggregate_ptr;
+typedef  const SelectAggregate  *   SelectAggregate_ptr_c;
+typedef        SelectAggregate_ptr  SelectAggregate_var;
 
 /****************************************************************//**
 ** \class StringAggregate
@@ -157,9 +161,10 @@ class SC_CORE_EXPORT StringAggregate  :  public STEPaggregate {
         StringAggregate();
         virtual ~StringAggregate();
 };
-typedef  StringAggregate * StringAggregateH;
-typedef  StringAggregate * StringAggregate_ptr;
-typedef  StringAggregate_ptr StringAggregate_var;
+typedef        StringAggregate *   StringAggregateH;
+typedef        StringAggregate *   StringAggregate_ptr;
+typedef  const StringAggregate *   StringAggregate_ptr_c;
+typedef        StringAggregate_ptr StringAggregate_var;
 
 
 /****************************************************************//**
@@ -174,9 +179,10 @@ class SC_CORE_EXPORT BinaryAggregate  :  public STEPaggregate {
         BinaryAggregate();
         virtual ~BinaryAggregate();
 };
-typedef  BinaryAggregate * BinaryAggregateH;
-typedef  BinaryAggregate * BinaryAggregate_ptr;
-typedef  BinaryAggregate_ptr BinaryAggregate_var;
+typedef        BinaryAggregate *   BinaryAggregateH;
+typedef        BinaryAggregate *   BinaryAggregate_ptr;
+typedef  const BinaryAggregate *   BinaryAggregate_ptr_c;
+typedef        BinaryAggregate_ptr BinaryAggregate_var;
 
 /**************************************************************//**
 ** \class EnumAggregate
@@ -190,9 +196,10 @@ class SC_CORE_EXPORT EnumAggregate  :  public STEPaggregate {
         EnumAggregate();
         virtual ~EnumAggregate();
 };
-typedef  EnumAggregate  * EnumAggregateH;
-typedef  EnumAggregate  * EnumAggregate_ptr;
-typedef  EnumAggregate_ptr EnumAggregate_var;
+typedef        EnumAggregate  *   EnumAggregateH;
+typedef        EnumAggregate  *   EnumAggregate_ptr;
+typedef  const EnumAggregate  *   EnumAggregate_ptr_c;
+typedef        EnumAggregate_ptr  EnumAggregate_var;
 
 class SC_CORE_EXPORT LOGICALS  : public EnumAggregate {
     public:
@@ -201,9 +208,10 @@ class SC_CORE_EXPORT LOGICALS  : public EnumAggregate {
         LOGICALS();
         virtual ~LOGICALS();
 };
-typedef  LOGICALS  * LogicalsH;
-typedef  LOGICALS  * LOGICALS_ptr;
-typedef  LOGICALS_ptr LOGICALS_var;
+typedef        LOGICALS  *   LogicalsH;
+typedef        LOGICALS  *   LOGICALS_ptr;
+typedef  const LOGICALS  *   LOGICALS_ptr_c;
+typedef        LOGICALS_ptr  LOGICALS_var;
 SC_CORE_EXPORT LOGICALS * create_LOGICALS();
 
 
@@ -215,8 +223,9 @@ class SC_CORE_EXPORT BOOLEANS  : public EnumAggregate {
         virtual ~BOOLEANS();
 };
 
-typedef  BOOLEANS  * BOOLEANS_ptr;
-typedef  BOOLEANS_ptr BOOLEANS_var;
+typedef        BOOLEANS  *   BOOLEANS_ptr;
+typedef  const BOOLEANS  *   BOOLEANS_ptr_c;
+typedef        BOOLEANS_ptr  BOOLEANS_var;
 
 SC_CORE_EXPORT BOOLEANS * create_BOOLEANS();
 
@@ -229,9 +238,10 @@ class SC_CORE_EXPORT RealAggregate  : public STEPaggregate  {
         RealAggregate();
         virtual ~RealAggregate();
 };
-typedef  RealAggregate  * RealAggregateH;
-typedef  RealAggregate  * RealAggregate_ptr;
-typedef  RealAggregate_ptr RealAggregate_var;
+typedef        RealAggregate  *   RealAggregateH;
+typedef        RealAggregate  *   RealAggregate_ptr;
+typedef  const RealAggregate  *   RealAggregate_ptr_c;
+typedef        RealAggregate_ptr  RealAggregate_var;
 
 class SC_CORE_EXPORT IntAggregate  : public STEPaggregate  {
 
@@ -242,9 +252,10 @@ class SC_CORE_EXPORT IntAggregate  : public STEPaggregate  {
         IntAggregate();
         virtual ~IntAggregate();
 };
-typedef  IntAggregate  * IntAggregateH;
-typedef  IntAggregate  * IntAggregate_ptr;
-typedef  IntAggregate_ptr IntAggregate_var;
+typedef        IntAggregate  *   IntAggregateH;
+typedef        IntAggregate  *   IntAggregate_ptr;
+typedef  const IntAggregate  *   IntAggregate_ptr_c;
+typedef        IntAggregate_ptr  IntAggregate_var;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -311,17 +322,17 @@ class SC_CORE_EXPORT EntityNode  : public STEPnode {
 // INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
 //  OUTPUT
         virtual const char * asStr( std::string & s );
         virtual const char * STEPwrite( std::string & s, const char * = 0 );
@@ -370,18 +381,18 @@ class SC_CORE_EXPORT SelectNode  : public STEPnode {
 //  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity StrToVal( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0,
+                                   InstMgrBase * insts, int addFileId = 0,
                                    const char * currSch = 0 );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0 );
+                                   InstMgrBase * insts, int addFileId = 0 );
         virtual Severity STEPread( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type,
-                                   InstMgr * insts, int addFileId = 0,
+                                   InstMgrBase * insts, int addFileId = 0,
                                    const char * currSch = 0 );
 //  OUTPUT
         virtual const char * asStr( std::string & s );

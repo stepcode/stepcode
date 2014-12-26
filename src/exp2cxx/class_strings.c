@@ -36,7 +36,7 @@ const char * ENTITYget_classname( Entity ent ) {
  * in many circumstances, this func will return a short string rather than using that buffer
  * buf_siz is ignored in those cases since it is meaningless
  */
-const char * TYPE_get_ctype( const Type t, char * retval, int buf_siz ) {
+const char * TYPE_get_ctype( const Type t, char * retval, size_t buf_siz ) {
     const char * ptr = "_ptr", * var = "_var", * agg = "_agg";
     const char * overflowMsg = "buffer overflow detected at %s:%d!";
     Class_Of_Type ctype;

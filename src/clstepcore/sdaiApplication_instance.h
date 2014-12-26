@@ -13,21 +13,39 @@
 */
 
 #include <sc_export.h>
+#include <map>
+#include <iostream>
 
-///////////////////////////////////////////////////////////////////////////////
-// SDAI_Application_instance used to be STEPentity
+//class STEPinvAttrList;
+class EntityAggregate;
+class Inverse_attribute;
+typedef struct {
+//     bool aggregate;
+    union {
+        EntityAggregate * a;
+        SDAI_Application_instance * i;
+    };
+} iAstruct;
 
+/** @class
+ * this used to be STEPentity
+ */
 class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
     private:
         int _cur;        // provides a built-in way of accessing attributes in order.
 
     public:
+        typedef std::map< const Inverse_attribute * const, iAstruct> iAMap_t;
+    protected:
+        const EntityDescriptor * eDesc;
+        iAMap_t iAMap;
+        bool _complex;
+
+    public: //TODO make these private?
         STEPattributeList attributes;
-        int               STEPfile_id;
+        int               STEPfile_id;  //TODO are neg values ever used (signalling)? if not, make unsigned?
         ErrorDescriptor   _error;
         std::string       p21Comment;
-        // registry additions
-        const EntityDescriptor * eDesc;
 
         /**
         ** head entity for multiple inheritance.  If it is null then this
@@ -40,18 +58,23 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         /// these form a chain of other entity parents for multiple inheritance
         SDAI_Application_instance * nextMiEntity;
 
-    protected:
-        int _complex;
-
     public:
         SDAI_Application_instance();
         SDAI_Application_instance( int fileid, int complex = 0 );
         virtual ~SDAI_Application_instance();
 
-        int IsComplex() const {
+        bool IsComplex() const {
             return _complex;
         }
+        /// initialize inverse attribute list
+        void InitIAttrs();
 
+        void setEDesc( const EntityDescriptor * const ed ) {
+            eDesc = ed;
+        }
+        const EntityDescriptor * getEDesc() const {
+            return eDesc;
+        }
         void StepFileId( int fid ) {
             STEPfile_id = fid;
         }
@@ -74,7 +97,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
         virtual const EntityDescriptor * IsA( const EntityDescriptor * ) const;
 
-        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgr * im,
+        virtual Severity ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
                                      int clearError = 1 );
         ErrorDescriptor & Error()    {
             return _error;
@@ -92,27 +115,34 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         void ResetAttributes() {
             _cur = 0;
         }
+// ACCESS inverse attributes
+        const iAstruct getInvAttr( const Inverse_attribute * const ia ) const;
+        const iAMap_t::value_type getInvAttr( const char * name ) const;
+        void setInvAttr( const Inverse_attribute * const ia, const iAstruct ias );
+        const iAMap_t & getInvAttrs() const {
+            return iAMap;
+        }
 
 // READ
         virtual Severity STEPread( int id, int addFileId,
-                                   class InstMgr * instance_set,
-                                   istream & in = cin, const char * currSch = NULL,
+                                   class InstMgrBase * instance_set,
+                                   std::istream & in = std::cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
         virtual void STEPread_error( char c, int i, std::istream& in, const char * schnm );
 
 // WRITE
-        virtual void STEPwrite( ostream & out = cout, const char * currSch = NULL,
+        virtual void STEPwrite( std::ostream & out = std::cout, const char * currSch = NULL,
                                 int writeComments = 1 );
         virtual const char * STEPwrite( std::string & buf, const char * currSch = NULL );
 
-        void WriteValuePairs( ostream & out, const char * currSch = NULL,
+        void WriteValuePairs( std::ostream & out, const char * currSch = NULL,
                               int writeComments = 1, int mixedCase = 1 );
 
-        void         STEPwrite_reference( ostream & out = cout );
+        void         STEPwrite_reference( std::ostream & out = std::cout );
         const char * STEPwrite_reference( std::string & buf );
 
-        void beginSTEPwrite( ostream & out = cout ); ///< writes out the SCOPE section
-        void endSTEPwrite( ostream & out = cout );
+        void beginSTEPwrite( std::ostream & out = std::cout ); ///< writes out the SCOPE section
+        void endSTEPwrite( std::ostream & out = std::cout );
 
 // MULTIPLE INHERITANCE
         int MultipleInheritance() {

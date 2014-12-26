@@ -10,12 +10,15 @@
 * and is not subject to copyright.
 */
 
-
+#include <map>
 #include <sdai.h>
 #include <instmgr.h>
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
 #include <read_func.h> //for ReadTokenSeparator, used when comments are inside entities
+
+#include "sdaiApplication_instance.h"
+#include "superInvAttrIter.h"
 
 SDAI_Application_instance NilSTEPentity;
 
@@ -32,22 +35,22 @@ SDAI_Application_instance NilSTEPentity;
 
 SDAI_Application_instance::SDAI_Application_instance()
     :  _cur( 0 ),
+       eDesc( NULL ),
+       _complex( false ),
        STEPfile_id( 0 ),
        p21Comment( std::string( "" ) ),
-       eDesc( NULL ),
        headMiEntity( 0 ),
-       nextMiEntity( 0 ),
-       _complex( 0 ) {
+       nextMiEntity( 0 ) {
 }
 
 SDAI_Application_instance::SDAI_Application_instance( int fileid, int complex )
     :  _cur( 0 ),
+       eDesc( NULL ),
+       _complex( complex ),
        STEPfile_id( fileid ),
        p21Comment( std::string( "" ) ),
-       eDesc( NULL ),
        headMiEntity( 0 ),
-       nextMiEntity( 0 ),
-       _complex( complex ) {
+       nextMiEntity( 0 ) {
 }
 
 SDAI_Application_instance::~SDAI_Application_instance() {
@@ -67,6 +70,27 @@ SDAI_Application_instance::~SDAI_Application_instance() {
 
     if( MultipleInheritance() ) {
         delete nextMiEntity;
+    }
+}
+
+
+/// initialize inverse attrs
+/// eDesc->InitIAttrs() must have been called previously
+/// call once per instance (*not* once per class)
+void SDAI_Application_instance::InitIAttrs() {
+    assert( eDesc && "eDesc must be set; please report this bug." );
+    InverseAItr iai( &( eDesc->InverseAttr() ) );
+    const Inverse_attribute * ia;
+    iAstruct s;
+    memset( &s, 0, sizeof s );
+    while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
+        iAMap.insert( iAMap_t::value_type( ia, s ) );
+    }
+    superInvAttrIter siai( eDesc );
+    while( !siai.empty() ) {
+        ia = siai.next();
+        assert( ia && "Null inverse attr!" );
+        iAMap.insert( iAMap_t::value_type( ia, s ) );
     }
 }
 
@@ -251,7 +275,7 @@ const EntityDescriptor * SDAI_Application_instance::IsA( const EntityDescriptor 
 /**
  * Checks the validity of the current attribute values for the entity
  */
-Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgr * im,
+Severity SDAI_Application_instance::ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
         int clearError ) {
     ErrorDescriptor err;
     if( clearError ) {
@@ -477,7 +501,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
  ** Status:
  ******************************************************************/
 Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
-        InstMgr * instance_set, istream & in,
+        InstMgrBase * instance_set, istream & in,
         const char * currSch, bool useTechCor, bool strict ) {
     STEPfile_id = id;
     char c = '\0';
@@ -631,7 +655,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId ) {
+        InstMgrBase * instances, int addFileId ) {
     char c;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
@@ -640,8 +664,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
     in >> c;
     switch( c ) {
         case '@':
-            err->AppendToDetailMsg(
-                "Use of @ instead of # to identify entity.\n" );
+            err->AppendToDetailMsg( "Use of @ instead of # to identify entity.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
             // no break statement here on purpose
         case '#': {
@@ -675,7 +698,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                 //  lookup which object has id as its instance id
                 SDAI_Application_instance * inst;
                 /* If there is a ManagerNode it should have a SDAI_Application_instance */
-                MgrNode * mn = 0;
+                MgrNodeBase * mn = 0;
                 mn = instances->FindFileId( id );
                 if( mn ) {
                     inst =  mn->GetSTEPentity() ;
@@ -715,7 +738,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
-        InstMgr * instances, int addFileId ) {
+        InstMgrBase * instances, int addFileId ) {
     istringstream in( ( char * )s );
     return ReadEntityRef( in, err, tokenList, instances, addFileId );
 }
@@ -755,9 +778,9 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
     // DAVE: Can an entity be used in an Express TYPE so that this
     // EntityDescriptor would have type REFERENCE_TYPE -- it looks like NO
 
-    else if( se->eDesc ) {
+    else if( se->getEDesc() ) {
         // is se a descendant of ed?
-        if( se->eDesc->IsA( ed ) ) {
+        if( se->getEDesc()->IsA( ed ) ) {
             return SEVERITY_NULL;
         } else {
             if( se->IsComplex() ) {
@@ -822,7 +845,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
                            // attrValue (if it exists) needs
                            // to match. (this must be an
                            // EntityDescriptor)
-                           ErrorDescriptor * err, InstMgr * im, int clearError ) {
+                           ErrorDescriptor * err, InstMgrBase * im, int clearError ) {
     char tmp [BUFSIZ];
     tmp[0] = '\0';
     char messageBuf [BUFSIZ];
@@ -834,7 +857,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
     }
 
     int fileId;
-    MgrNode * mn = 0;
+    MgrNodeBase * mn = 0;
 
     // fmtstr1 contains "#%d %ns" where n is BUFSIZ-1
     fmtstr1 << " #%d %" << BUFSIZ - 1 << "s ";
@@ -896,9 +919,40 @@ STEPattribute * SDAI_Application_instance::NextAttribute()  {
         return 0;
     }
     return &attributes [_cur - 1];
-
 }
 
 int SDAI_Application_instance::AttributeCount()  {
     return  attributes.list_length();
+}
+
+const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_attribute * const ia ) const {
+    iAstruct ias;
+    memset( &ias, 0, sizeof ias );
+    iAMap_t::const_iterator it = iAMap.find( ia );
+    if( it != iAMap.end() ) {
+        ias = (*it).second;
+    }
+    return ias;
+}
+
+const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::getInvAttr( const char * name ) const {
+    iAMap_t::const_iterator it = iAMap.begin();
+    for( ; it != iAMap.end(); ++it ) {
+        if( 0 == strcmp( it->first->Name(), name) ) {
+            return *it;
+        }
+    }
+    iAstruct z;
+    memset( &z, 0, sizeof z );
+    iAMap_t::value_type nil( NULL, z );
+    return nil;
+}
+
+void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias )  {
+    iAMap_t::iterator it = iAMap.find(ia);
+    if( it != iAMap.end() ) {
+        it->second = ias;
+    } else {
+        iAMap.insert( iAMap_t::value_type( ia, ias ) );
+    }
 }

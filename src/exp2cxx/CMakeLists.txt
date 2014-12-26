@@ -14,6 +14,7 @@ set(exp2cxx_SOURCES
   class_strings.c
   selects.c
   multpass.c
+  rules.c
   collect.cc
   complexlist.cc
   entlist.cc

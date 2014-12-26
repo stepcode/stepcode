@@ -118,8 +118,7 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
         } else {
             fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
         }
-    }
-    LISTod
+    } LISTod
 
     if( !refdict ) {
         return;
@@ -228,8 +227,7 @@ void MODELPrintConstructorBody( Entity entity, FILES * files, Schema schema ) {
 
     fprintf( files->lib, "    eep = new SDAI_Entity_extent;\n" );
 
-    fprintf( files->lib, "    eep->definition_(%s::%s%s);\n",
-             SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( files->lib, "    eep->definition_(%s::%s%s);\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
     fprintf( files->lib, "    _folders.Append(eep);\n\n" );
 }
 
@@ -239,11 +237,8 @@ void MODELPrint( Entity entity, FILES * files, Schema schema, int index ) {
     DEBUG( "Entering MODELPrint for %s\n", n );
 
     n = ENTITYget_classname( entity );
-    fprintf( files->lib, "\n%s__set_var SdaiModel_contents_%s::%s_get_extents()\n",
-             n, SCHEMAget_name( schema ), n );
-    fprintf( files->lib,
-             "{\n    return (%s__set_var)((_folders.retrieve(%d))->instances_());\n}\n",
-             n, index );
+    fprintf( files->lib, "\n%s__set_var SdaiModel_contents_%s::%s_get_extents() {\n", n, SCHEMAget_name( schema ), n );
+    fprintf( files->lib, "\n    return (%s__set_var)((_folders.retrieve(%d))->instances_());\n}\n", n, index );
     DEBUG( "DONE MODELPrint\n" )    ;
 }
 

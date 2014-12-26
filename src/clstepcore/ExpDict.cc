@@ -18,8 +18,9 @@
 
 #include <ExpDict.h>
 #include <STEPaggregate.h>
+#include <Registry.h>
 #include "sc_memmgr.h"
-
+#include <SubSuperIterators.h>
 
 Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) {
     _bufsize = defaultSize;
@@ -536,9 +537,9 @@ IntAggregate * create_IntAggregate() {
     return new IntAggregate;
 }
 
-const EntityDescriptor * EntityDescItr::NextEntityDesc() {
+EntityDescriptor * EntityDescItr::NextEntityDesc_nc() {
     if( cur ) {
-        const EntityDescriptor * ed = cur->EntityDesc();
+        EntityDescriptor * ed = cur->EntityDesc();
         cur = ( EntityDescLinkNode * )( cur->NextNode() );
         return ed;
     }
@@ -554,9 +555,9 @@ const AttrDescriptor * AttrDescItr::NextAttrDesc() {
     return 0;
 }
 
-const Inverse_attribute * InverseAItr::NextInverse_attribute() {
+Inverse_attribute * InverseAItr::NextInverse_attribute() {
     if( cur ) {
-        const Inverse_attribute * ia = cur->Inverse_attr();
+        Inverse_attribute * ia = cur->Inverse_attr();
         cur = ( Inverse_attributeLinkNode * )( cur->NextNode() );
         return ia;
     }
@@ -811,6 +812,47 @@ EntityDescriptor::~EntityDescriptor() {
     delete _uniqueness_rules;
 }
 
+// initialize one inverse attr; used in InitIAttrs, below
+void initIAttr( Inverse_attribute * ia, Registry & reg, const char * schNm, const char * name ) {
+    const AttrDescriptor * ad;
+    const char * aid = ia->inverted_attr_id_();
+    const char * eid = ia->inverted_entity_id_();
+    const EntityDescriptor * e = reg.FindEntity( eid, schNm );
+    AttrDescItr adl( e->ExplicitAttr() );
+    while( 0 != ( ad = adl.NextAttrDesc() ) ) {
+        if( !strcmp( aid, ad->Name() ) ) {
+            ia->inverted_attr_( ad );
+            return;
+        }
+    }
+    supertypesIterator sit(e);
+    for( ; !sit.empty(); ++sit ) {
+        AttrDescItr adi( sit.current()->ExplicitAttr() );
+        while( 0 != ( ad = adi.NextAttrDesc() ) ) {
+            if( !strcmp( aid, ad->Name() ) ) {
+                ia->inverted_attr_( ad );
+                return;
+            }
+        }
+    }
+    std::cerr << "Inverse attr " << ia->Name() << " for " << name << ": cannot find AttrDescriptor " << aid << " for entity " << eid << "." << std::endl;
+    //FIXME should we abort? or is there a sensible recovery path?
+    abort();
+}
+
+/** initialize inverse attrs
+ * call once per eDesc (once per EXPRESS entity type)
+ * must be called _after_ init_Sdai* functions for any ia->inverted_entity_id_'s
+ *
+ */
+void EntityDescriptor::InitIAttrs( Registry & reg, const char * schNm ) {
+    InverseAItr iai( &( InverseAttr() ) );
+    Inverse_attribute * ia;
+    while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
+        initIAttr( ia, reg, schNm, _name );
+    }
+}
+
 const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     std::string sstr;
     int count;
@@ -878,7 +920,7 @@ const char * EntityDescriptor::GenerateExpress( std::string & buf ) const {
     }
 /////////
 
-    InverseAItr iai( _inverseAttr );
+    InverseAItr iai( &_inverseAttr );
 
     iai.ResetItr();
     const Inverse_attribute * ia = iai.NextInverse_attribute();

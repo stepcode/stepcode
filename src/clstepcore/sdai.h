@@ -38,9 +38,10 @@ typedef std::string Express_id;
 class TypeDescriptor;
 class EntityDescriptor;
 class SelectTypeDescriptor;
-class InstMgr;
+class InstMgrBase;
 
 #include "STEPattributeList.h"
+#include "STEPinvAttrList.h"
 
 class STEPattributeList;
 class STEPattribute;
@@ -226,7 +227,7 @@ typedef SDAI_Application_instance * STEPentityH;
 
 extern SC_CORE_EXPORT SDAI_Application_instance *
 ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
-               InstMgr * instances, int addFileId );
+               InstMgrBase * instances, int addFileId );
 
 #define SdaiInteger SDAI_Integer
 #define SdaiReal SDAI_Real

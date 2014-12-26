@@ -22,6 +22,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "class_strings.h"
 #include "genCxxFilenames.h"
 #include <ordered_attrs.h>
+#include "rules.h"
 
 #include <sc_trace_fprintf.h>
 
@@ -205,7 +206,8 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     /*  end class definition  */
     fprintf( inc, "};\n" );
 
-    fprintf( inc, "\ntypedef %s * %s_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef       %s *   %s_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef const %s *   %s_ptr_c;\n", n, n );
 
 
     /*  Print ObjectStore Access Hook function  */
@@ -228,7 +230,8 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     fprintf( inc, "};\n" );
 
-    fprintf( inc, "\ntypedef %s_agg * %s_agg_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef       %s_agg *   %s_agg_ptr;\n", n, n );
+    fprintf( inc, "\ntypedef const %s_agg *   %s_agg_ptr_c;\n", n, n );
 
     /* DAS brandnew below */
 
@@ -320,6 +323,9 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     }
 
     fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
+    fprintf( impl, "    std::string str;\n" );
+    /* moved from SCOPEPrint in classes_wrapper */
+    TYPEprint_new( type, impl, schema, true );
     TYPEprint_init( type, hdr, impl, schema );
     fprintf( impl, "}\n\n" );
 
@@ -440,9 +446,11 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
             strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
             fprintf( classes, "class %s;\n", nm );
-            fprintf( classes, "typedef %s * %s_ptr;\n", nm, nm );
+            fprintf( classes, "typedef       %s *   %s_ptr;\n", nm, nm );
+            fprintf( classes, "typedef const %s *   %s_ptr_c;\n", nm, nm );
             fprintf( classes, "class %s_agg;\n", nm );
-            fprintf( classes, "typedef %s_agg * %s_agg_ptr;\n", nm, nm );
+            fprintf( classes, "typedef       %s_agg *   %s_agg_ptr;\n", nm, nm );
+            fprintf( classes, "typedef const %s_agg *   %s_agg_ptr_c;\n", nm, nm );
         }
     } else {
         if( TYPEis_aggregate( t ) ) {
@@ -465,11 +473,12 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
              */
             strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
 	    nm[BUFSIZ-1] = '\0';
-            fprintf( classes, "typedef %s         %s;\n", TYPEget_ctype( t ), nm );
+            fprintf( classes, "typedef       %s       %s;\n", TYPEget_ctype( t ), nm );
             if( TYPEis_aggregate( t ) ) {
-                fprintf( classes, "typedef %s *         %sH;\n", nm, nm );
-                fprintf( classes, "typedef %s *         %s_ptr;\n", nm, nm );
-                fprintf( classes, "typedef %s_ptr         %s_var;\n", nm, nm );
+                fprintf( classes, "typedef       %s *     %sH;\n", nm, nm );
+                fprintf( classes, "typedef       %s *     %s_ptr;\n", nm, nm );
+                fprintf( classes, "typedef const %s *     %s_ptr_c;\n", nm, nm );
+                fprintf( classes, "typedef       %s_ptr   %s_var;\n", nm, nm );
             }
         }
     }
@@ -531,18 +540,18 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
         printEnumCreateHdr( files->inc, type );
         printEnumCreateBody( files->lib, type );
         fprintf( files->inc, "typedef       %s_agg *       %s_agg_ptr;\n", nm, nm );
+        fprintf( files->inc, "typedef const %s_agg *       %s_agg_ptr_c;\n", nm, nm );
         printEnumAggrCrHdr( files->inc, type );
         printEnumAggrCrBody( files->lib, type );
         return;
     }
 
     if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        if( TYPEget_body( type )->type  == enumeration_ ) {
+        if( TYPEis_enumeration( type ) ) {
                 TYPEPrint( type, files, schema );
-                /*TYPEenum_inc_print( type, files -> inc );
-                TYPEenum_lib_print( type, files -> lib );*/
-        }
+        } /* so we don't do anything for non-enums??? */
     } else {
+        TYPEprint_new( type, files->create, schema, false );
         TYPEprint_init( type, files->inc, files->init, schema );
     }
 }
@@ -598,29 +607,18 @@ void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema 
     fprintf( impl, "    reg.AddType (*%s);\n", tdnm );
 }
 
-/** print name, fundamental type, and description initialization function
-   calls */
+/** print name, fundamental type, and description initialization function calls */
 void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endChars ) {
-
-    fprintf( f, "                  \"%s\",        // Name\n",
-             PrettyTmpName( TYPEget_name( type ) ) );
-    fprintf( f, "                  %s,        // FundamentalType\n",
-             FundamentalType( type, 1 ) );
-    fprintf( f, "                  %s::schema,        // Originating Schema\n",
-             SCHEMAget_name( schema ) );
-    fprintf( f, "                  \"%s\"%s        // Description\n",
-             TypeDescription( type ), endChars );
+    fprintf( f, "                  \"%s\",        // Name\n", PrettyTmpName( TYPEget_name( type ) ) );
+    fprintf( f, "                  %s,        // FundamentalType\n", FundamentalType( type, 1 ) );
+    fprintf( f, "                  %s::schema,        // Originating Schema\n", SCHEMAget_name( schema ) );
+    fprintf( f, "                  \"%s\"%s        // Description\n", TypeDescription( type ), endChars );
 }
 
 /** new space for a variable of type TypeDescriptor (or subtype).  This
  *  function is called for Types that have an Express name.
  */
-void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
-    Linked_List wheres;
-    char * whereRule, *whereRule_formatted = NULL;
-    size_t whereRule_formatted_size = 0;
-    char * ptr, *ptr2;
-
+void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR ) {
     Type tmpType = TYPEget_head( type );
     Type bodyType = tmpType;
 
@@ -630,179 +628,57 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema ) {
     if( TYPEis_select( type ) ) {
         char * temp;
         temp = non_unique_types_string( type );
-        fprintf( create,
-                 "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n",
-                 TYPEtd_name( type ),
-                 temp );
+        fprintf( create, "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n", TYPEtd_name( type ), temp );
         sc_free( temp );
         TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-        fprintf( create,
-                 "                  (SelectCreator) create_%s);        // Creator function\n",
-                 SelectName( TYPEget_name( type ) ) );
-    } else
+        fprintf( create, "                  (SelectCreator) create_%s);        // Creator function\n", SelectName( TYPEget_name( type ) ) );
+    } else {
         switch( TYPEget_body( type )->type ) {
             case boolean_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-                fprintf( create,
-                         "                  (EnumCreator) create_BOOLEAN);        // Creator function\n" );
+                fprintf( create, "                  (EnumCreator) create_BOOLEAN);        // Creator function\n" );
                 break;
-
             case logical_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-                fprintf( create,
-                         "                  (EnumCreator) create_LOGICAL);        // Creator function\n" );
+                fprintf( create, "                  (EnumCreator) create_LOGICAL);        // Creator function\n" );
                 break;
-
             case enumeration_:
-
-                fprintf( create, "        %s = new EnumTypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new EnumTypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-                /* get the type name of the underlying type - it is the type that
-                   needs to get created */
-
+                /* get the type name of the underlying type - it is the type that needs to get created */
                 tmpType = TYPEget_head( type );
                 if( tmpType ) {
-
                     bodyType = tmpType;
-
                     while( tmpType ) {
                         bodyType = tmpType;
                         tmpType = TYPEget_head( tmpType );
                     }
-
-                    fprintf( create,
-                             "                  (EnumCreator) create_%s);        // Creator function\n",
-                             TYPEget_ctype( bodyType ) );
-                } else
-                    fprintf( create,
-                             "                  (EnumCreator) create_%s);        // Creator function\n",
-                             TYPEget_ctype( type ) );
+                    fprintf( create, "                  (EnumCreator) create_%s);        // Creator function\n", TYPEget_ctype( bodyType ) );
+                } else {
+                    fprintf( create, "                  (EnumCreator) create_%s);        // Creator function\n", TYPEget_ctype( type ) );
+                }
                 break;
-
             case aggregate_:
             case array_:
             case bag_:
             case set_:
             case list_:
-
-                fprintf( create, "\n        %s = new %s (\n",
-                         TYPEtd_name( type ), GetTypeDescriptorName( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "\n        %s = new %s (\n", TYPEtd_name( type ), GetTypeDescriptorName( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, "," );
-
-                fprintf( create,
-                         "                  (AggregateCreator) create_%s);        // Creator function\n\n",
-                         ClassName( TYPEget_name( type ) ) );
+                fprintf( create, "                  (AggregateCreator) create_%s);        // Creator function\n\n", ClassName( TYPEget_name( type ) ) );
                 break;
-
             default:
-                fprintf( create, "        %s = new TypeDescriptor (\n",
-                         TYPEtd_name( type ) );
-
-                /* fill in it's values  */
+                fprintf( create, "        %s = new TypeDescriptor (\n", TYPEtd_name( type ) );
                 TYPEprint_nm_ft_desc( schema, type, create, ");" );
-
                 break;
         }
+    }
     /* add the type to the Schema dictionary entry */
     fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
 
-
-    wheres = type->where;
-
-    if( wheres ) {
-        fprintf( create, "        %s->_where_rules = new Where_rule__list;\n",
-                 TYPEtd_name( type ) );
-
-        LISTdo( wheres, w, Where )
-        whereRule = EXPRto_string( w->expr );
-        ptr2 = whereRule;
-
-        if( whereRule_formatted_size == 0 ) {
-            whereRule_formatted_size = 3 * BUFSIZ;
-            whereRule_formatted = ( char * )sc_malloc( sizeof( char ) * whereRule_formatted_size );
-        } else if( ( strlen( whereRule ) + 300 ) > whereRule_formatted_size ) {
-            sc_free( whereRule_formatted );
-            whereRule_formatted_size = strlen( whereRule ) + BUFSIZ;
-            whereRule_formatted = ( char * )sc_malloc( sizeof( char ) * whereRule_formatted_size );
-        }
-        whereRule_formatted[0] = '\0';
-        if( w->label ) {
-            strcpy( whereRule_formatted, w->label->name );
-            strcat( whereRule_formatted, ": (" );
-            ptr = whereRule_formatted + strlen( whereRule_formatted );
-            while( *ptr2 ) {
-                if( *ptr2 == '\n' )
-                    ;
-                else if( *ptr2 == '\\' ) {
-                    *ptr = '\\';
-                    ptr++;
-                    *ptr = '\\';
-                    ptr++;
-
-                } else if( *ptr2 == '(' ) {
-                    *ptr = *ptr2;
-                    ptr++;
-                } else {
-                    *ptr = *ptr2;
-                    ptr++;
-                }
-                ptr2++;
-            }
-            *ptr = '\0';
-
-            strcat( ptr, ");\\n" );
-        } else {
-            /* no label */
-            strcpy( whereRule_formatted, "(" );
-            ptr = whereRule_formatted + strlen( whereRule_formatted );
-
-            while( *ptr2 ) {
-                if( *ptr2 == '\n' )
-                    ;
-                else if( *ptr2 == '\\' ) {
-                    *ptr = '\\';
-                    ptr++;
-                    *ptr = '\\';
-                    ptr++;
-
-                } else if( *ptr2 == '(' ) {
-                    *ptr = *ptr2;
-                    ptr++;
-                } else {
-                    *ptr = *ptr2;
-                    ptr++;
-                }
-                ptr2++;
-            }
-            *ptr = '\0';
-            strcat( ptr, ");\\n" );
-        }
-        fprintf( create, "        wr = new Where_rule(\"%s\");\n", whereRule_formatted );
-        fprintf( create, "        %s->_where_rules->Append(wr);\n",
-                 TYPEtd_name( type ) );
-
-        sc_free( whereRule );
-        ptr2 = whereRule = 0;
-        LISTod
-        sc_free( whereRule_formatted );
-    }
+    WHEREprint( TYPEtd_name( type ), type->where, create, 0, needWR );
 }
 
 /** Get the TypeDescriptor variable name that t's TypeDescriptor references (if

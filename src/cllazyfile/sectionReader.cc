@@ -82,6 +82,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 
 
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
+// returns pointer to the contents of a static std::string
 const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
     static std::string str;
     char c;
@@ -246,13 +247,15 @@ instanceID sectionReader::readInstanceNumber() {
     return id;
 }
 
-//TODO: most of the rest of readdata1, all of readdata2
+/** load an instance and return a pointer to it.
+ * side effect: recursively loads any instances the specified instance depends upon
+ */
 SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
         const std::string & typeName, const std::string & schName, bool header ) {
     char c;
     const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
     std::string comment;
-    Severity sev;
+    Severity sev = SEVERITY_NULL;
     SDAI_Application_instance * inst = 0;
 
     tName = typeName.c_str();
@@ -305,12 +308,13 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         if( !comment.empty() ) {
             inst->AddP21Comment( comment );
         }
-        assert( inst->eDesc );
+        assert( inst->getEDesc() );
         _file.seekg( begin );
         findNormalString( "(" );
         _file.unget();
-        //TODO do something with 'sev'
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
+        //TODO do something with 'sev'
+        inst->InitIAttrs();
     }
     return inst;
 }
@@ -320,8 +324,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     ErrorDescriptor err;
     std::vector<std::string *> typeNames;
     _file.get(); //move past the first '('
+    skipWS();
     while( _file.good() && ( _file.peek() != ')' ) ) {
-        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\" ) ) );
+        typeNames.push_back( new std::string( getDelimitedKeyword( ";( /\\\n" ) ) );
         if( typeNames.back()->empty() ) {
             delete typeNames.back();
             typeNames.pop_back();
@@ -343,6 +348,9 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
         names[ i ] = typeNames[i]->c_str();
     }
     //TODO still need the schema name
-    return new STEPcomplex( ( const_cast<Registry *>( reg ) ), ( const char ** ) names, ( int ) fileid /*, schnm*/ );
+    STEPcomplex * sc = new STEPcomplex( ( const_cast<Registry *>( reg ) ), names, ( int ) fileid /*, schnm*/ );
+    delete[] names;
+    //TODO also delete contents of typeNames!
+    return sc;
 }
 
