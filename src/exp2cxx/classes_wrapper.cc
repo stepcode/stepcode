@@ -137,6 +137,19 @@ void print_file_trailer( FILES * files ) {
     FILEclose( files->names );
 }
 
+/* set attribute index to simplify attrdescriptor name calculation
+ *  and reduce/eliminate use of global attr_count
+ */
+void numberAttributes( Scope scope ) {
+    int count = 0;
+    Linked_List list = SCOPEget_entities_superclass_order( scope );
+    LISTdo( list, e, Entity ) {
+        LISTdo_n( ENTITYget_attributes( e ), v, Variable, b ) {
+            v->idx = count++;
+        } LISTod
+    } LISTod
+}
+
 /******************************************************************
  **  SCHEMA SECTION                      **/
 
@@ -662,6 +675,11 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( schemainit, "         %sInit (reg);\n", schnm );
 
     /**********  do all schemas ***********/
+    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
+        numberAttributes( schema );
+    }
+
     DICTdo_init( express->symbol_table, &de );
     bool first = true;
     while( 0 != ( schema = ( Scope )DICTdo( &de ) ) ) {

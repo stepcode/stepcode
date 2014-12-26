@@ -616,7 +616,7 @@ void TYPEselect_inc_print( const Type type, FILE * f ) {
     /* get the list of unique attributes from the entity items */
     LISTdo( attrs, a, Variable )
     if( VARget_initializer( a ) == EXPRESSION_NULL ) {
-        ATTRsign_access_methods( a, n, f );
+        ATTRsign_access_methods( a, f );
     }
     LISTod;
     LISTfree( attrs );

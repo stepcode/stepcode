@@ -74,6 +74,11 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
 
     /* TODO only print gr, wr, str as needed, from SCHEMAprint in classes_wrapper.cc? */
     fprintf( files->create, "    Global_rule_ptr gr;\n    Where_rule_ptr wr;\n    std::string str; //for large strings such as functions or global rules\n" );
+
+    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
+        numberAttributes( schema );
+    }
     while( !complete ) {
         complete = true;
         DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );

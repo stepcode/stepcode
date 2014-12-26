@@ -31,17 +31,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 extern int multiple_inheritance;
 extern int old_accessors;
 
-static int attr_count;  /**< number each attr to avoid inter-entity clashes
-                            several classes use attr_count for naming attr dictionary entry
-                            variables.  All but the last function generating code for a particular
-                            entity increment a copy of it for naming each attr in the entity.
-                            Here are the functions:
-                            \sa ENTITYnames_print( Entity entity, FILE * file )
-                            \sa LIBdescribe_entity( Entity entity, FILE * file, Schema schema )
-                            \sa LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema )
-                            \sa LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * file, Schema schema )
-                            \sa ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schema )
-                        */
+/* attribute numbering used to use a global variable attr_count.
+ * it could be tricky keep the numbering consistent when making
+ * changes, so this has been replaced with an added member in the
+ * Variable_ struct, idx, which is now set by numberAttributes()
+ * in classes_wrapper
+ */
 
 /*************      Entity Generation      *************/
 
@@ -64,7 +59,6 @@ void ENTITYnames_print( Entity entity, FILE * file ) {
  * \param schema schema being processed
  */
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
-    int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ];
 
     fprintf( file, "EntityDescriptor * %s::%s%s = 0;\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
@@ -72,7 +66,7 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         generate_attribute_name( v, attrnm );
         fprintf( file, "%s * %s::%s%d%s%s = 0;\n",
                 ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-                SCHEMAget_name( schema ), ATTR_PREFIX, attr_count_tmp++,
+                SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
                 ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm );
     } LISTod
     fprintf( file, "\n");
@@ -80,9 +74,11 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
 
 /** prints the member functions for the class representing an entity.  These go in the .cc file
  * \param entity entity being processed
+ * \param neededAttr attr's needed but not inherited through c++
  * \param file file being written to
+ * \param schema needed for name of namespace
  */
-void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file ) {
+void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
 
     Linked_List attr_list;
     char entnm [BUFSIZ];
@@ -94,22 +90,21 @@ void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file 
 
     /*  2. print access functions for attributes    */
     attr_list = ENTITYget_attributes( entity );
-    LISTdo( attr_list, a, Variable )
-    /*  do for EXPLICIT, REDEFINED, and INVERSE attributes - but not DERIVED */
-    if( ! VARis_derived( a ) )  {
+    LISTdo( attr_list, a, Variable ) {
+        /*  do for EXPLICIT, REDEFINED, and INVERSE attributes - but not DERIVED */
+        if( ! VARis_derived( a ) )  {
 
-        /*  retrieval  and  assignment   */
-        ATTRprint_access_methods( entnm, a, file );
-    }
-    LISTod;
+            /*  retrieval  and  assignment   */
+            ATTRprint_access_methods( entnm, a, file, schema );
+        }
+    } LISTod
     /* //////////////// */
     if( multiple_inheritance ) {
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
-                ATTRprint_access_methods( entnm, attr, file );
+                ATTRprint_access_methods( entnm, attr, file, schema );
             }
-        }
-        LISTod;
+        } LISTod
     }
     /* //////////////// */
     
@@ -270,7 +265,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     LISTdo( attr_list, a, Variable ) {
         if( VARget_initializer( a ) == EXPRESSION_NULL ) {
             /*  retrieval  and  assignment  */
-            ATTRsign_access_methods( a, entnm, file );
+            ATTRsign_access_methods( a, file );
         }
     } LISTod
 
@@ -280,7 +275,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
         /*  inherited in C++ */
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
-                ATTRsign_access_methods( attr, entnm, file );
+                ATTRsign_access_methods( attr, file );
             }
         } LISTod
     }
@@ -337,7 +332,6 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
     Entity principalSuper = 0;
 
     const char * entnm = ENTITYget_classname( entity );
-    int count = attr_count;
     bool first = true;
 
     /*  constructor definition  */
@@ -419,7 +413,7 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                 fprintf( file, "    %sa = new STEPattribute( * %s::",
                         ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
                         SCHEMAget_name( schema ) );
-                fprintf( file, "%s%d%s%s", ATTR_PREFIX, count, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
+                fprintf( file, "%s%d%s%s", ATTR_PREFIX, a->idx, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
                 fprintf( file, ", %s%s_%s );\n",
                         ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
                         ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
@@ -441,7 +435,6 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                 }
             }
         }
-        count++;
     } LISTod;
 
     initializeAttrs( entity, file );
@@ -504,7 +497,6 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
     char * parent = 0;
 
     const char * entnm;
-    int count = attr_count;
     bool first = true;
 
     if( multiple_inheritance ) {
@@ -588,7 +580,7 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                     fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
                             ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
                             SCHEMAget_name( schema ),
-                            ATTR_PREFIX, count,
+                            ATTR_PREFIX, a->idx,
                             ( VARis_type_shifter( a ) ? "R" : "" ),
                             attrnm,
                             ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
@@ -617,7 +609,6 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                     }
                 }
             }
-            count++;
         } LISTod
 
         initializeAttrs( entity, file );
@@ -644,7 +635,7 @@ bool TYPEis_builtin( const Type t ) {
     return false;
 }
 
-/** converts an Express name into the corresponding SCL
+/** converts an Express name into the corresponding SC
  *  dictionary name.  The difference between this and the
  *  generate_attribute_name() function is that for derived
  *  attributes the name will have the form <parent>.<attr_name>
@@ -758,7 +749,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
     if( TYPEget_name( v->type ) ) {
         if( ( !TYPEget_head( v->type ) ) &&
                 ( TYPEget_body( v->type )->type == entity_ ) ) {
-            fprintf( impl, "    %s::%s%d%s%s =", SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+            fprintf( impl, "    %s::%s%d%s%s =", SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
                      ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
                      attrnm );
             fprintf( impl, "\n      new %s( \"%s\",",
@@ -782,7 +773,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
             /* type reference */
             fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                      "(\"%s\",%s::%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
-                     SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+                     SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -812,7 +803,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
 
         fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s%s,\n          %s,%s%s,\n          *%s::%s%s);\n",
-                 SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+                 SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -838,7 +829,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
         print_typechain( header, impl, v->type, typename_buf, schema, v->name->symbol.name );
         fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s::%s%s);\n",
-                 SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+                 SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -863,7 +854,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
     fprintf( impl, "        %s::%s%s->Add%sAttr (%s::%s%d%s%s);\n",
              schema_name, ENT_PREFIX, TYPEget_name( entity ),
              ( VARget_inverse( v ) ? "Inverse" : "Explicit" ),
-             SCHEMAget_name( schema ), ATTR_PREFIX, attr_count,
+             SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
              ( VARis_derived( v ) ? "D" :
                ( VARis_type_shifter( v ) ? "R" :
                  ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -873,7 +864,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
         tmp = EXPRto_string( v->initializer );
         tmp2 = ( char * )sc_malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
         fprintf( impl, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
-                 schema_name, ATTR_PREFIX, attr_count,
+                 schema_name, ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -883,7 +874,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
     }
     if( VARget_inverse( v ) ) {
         fprintf( impl, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
-                 schema_name, ATTR_PREFIX, attr_count,
+                 schema_name, ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
@@ -891,7 +882,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
         if( v->type->symbol.name ) {
             fprintf( impl,
                      "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                     schema_name, ATTR_PREFIX, attr_count,
+                     schema_name, ATTR_PREFIX, v->idx,
                      ( VARis_derived( v ) ? "D" :
                        ( VARis_type_shifter( v ) ? "R" :
                          ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -902,7 +893,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                 case entity_:
                     fprintf( impl,
                              "        %s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                             ATTR_PREFIX, attr_count,
+                             ATTR_PREFIX, v->idx,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -916,7 +907,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                 case list_:
                     fprintf( impl,
                              "        %s::%s%d%s%s->inverted_entity_id_(\"%s\");\n",
-                             schema_name, ATTR_PREFIX, attr_count,
+                             schema_name, ATTR_PREFIX, v->idx,
                              ( VARis_derived( v ) ? "D" :
                                ( VARis_type_shifter( v ) ? "R" :
                                  ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm,
@@ -929,7 +920,6 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
             }
         }
     }
-    attr_count++;
 
     LISTod
 
@@ -953,7 +943,7 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
 
     fprintf( header, "namespace %s {\n", SCHEMAget_name( schema ) );
     ENTITYnames_print( entity, header );
-    ATTRnames_print( entity, header, attr_count );
+    ATTRnames_print( entity, header );
     fprintf( header, "}\n\n" );
 
     DEBUG( "DONE ENTITYPrint_h\n" );
@@ -973,7 +963,7 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
     if( multiple_inheritance ) {
         LIBstructor_print_w_args( entity, neededAttr, impl, schema );
     }
-    LIBmemberFunctionPrint( entity, neededAttr, impl );
+    LIBmemberFunctionPrint( entity, neededAttr, impl, schema );
     
     fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
     fprintf( impl, "    std::string str;\n\n" );
@@ -1045,7 +1035,7 @@ void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema
     if( multiple_inheritance ) {
         LIBstructor_print_w_args( entity, neededAttr, file, schema );
     }
-    LIBmemberFunctionPrint( entity, neededAttr, file );
+    LIBmemberFunctionPrint( entity, neededAttr, file, schema );
 }
 
 /** drives the functions for printing out code in lib,
