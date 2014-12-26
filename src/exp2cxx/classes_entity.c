@@ -176,10 +176,12 @@ void ENTITYhead_print( Entity entity, FILE * file ) {
     }
 }
 
-/** print an attr initializer */
+/** print an attr initializer
+ * skip inverse attrs
+ */
 void DataMemberInit( bool * first, Variable a, FILE * lib ) {
     char attrnm [BUFSIZ];
-    if( VARis_derived( a ) ) {
+    if( VARis_derived( a ) || VARget_inverse( a ) ) {
         return;
     }
     if( TYPEis_entity( VARget_type( a ) ) || TYPEis_aggregate( VARget_type( a ) ) ) {

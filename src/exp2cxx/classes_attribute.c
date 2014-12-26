@@ -109,6 +109,7 @@ void ATTRnames_print( Entity entity, FILE* file ) {
 }
 
 /** prints out the current attribute for an entity's c++ class definition
+ * skips inverse attrs, since they are now stored in a map
  * \param entity  entity being processed
  * \param a attribute being processed
  * \param file file being written to
@@ -116,7 +117,7 @@ void ATTRnames_print( Entity entity, FILE* file ) {
 void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
     char attrnm [BUFSIZ];
     const char * ctype, * etype;
-    if( VARget_initializer( a ) == EXPRESSION_NULL ) {
+    if( !VARget_inverse( a ) && ( VARget_initializer( a ) == EXPRESSION_NULL ) ) {
         ctype = TYPEget_ctype( VARget_type( a ) );
         generate_attribute_name( a, attrnm );
         if( !strcmp( ctype, "SCLundefined" ) ) {
@@ -435,7 +436,7 @@ void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm,
 
 /** print access methods for inverse attrs, using iAMap */
 void INVprint_access_methods( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
-                              Variable a, FILE * file, Schema schema ) {
+                              const char * ctype, Variable a, FILE * file, Schema schema ) {
     char iaName[BUFSIZ] = {0};
     snprintf( iaName, BUFSIZ - 1, "%s::%s%d%s%s", SCHEMAget_name( schema ), ATTR_PREFIX, a->idx,
               /* can it ever be anything but "I"? */
@@ -458,19 +459,19 @@ void INVprint_access_methods( const char * entnm, const char * attrnm, const cha
         fprintf( file, "{\n" );
         ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
         fprintf( file, "    iAstruct ias = getInvAttr( %s );\n", iaName );
-        fprintf( file, "    /* no 'new' - doesn't make sense to create an SDAI_Application_instance\n     * since it isn't generic like EntityAggregate */");
-        fprintf( file, "    return ias.e;\n}\n" );
+        fprintf( file, "    /* no 'new' - doesn't make sense to create an SDAI_Application_instance\n     * since it isn't generic like EntityAggregate */\n");
+        fprintf( file, "    return (%s) ias.i;\n}\n", ctype );
 
         ATTRprint_access_methods_get_head( entnm, a, file, true );
         fprintf( file, "const {\n" );
         ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
         fprintf( file, "    iAstruct ias = getInvAttr( %s );\n", iaName );
-        fprintf( file, "    return ias.e;\n}\n" );
+        fprintf( file, "    return (%s) ias.i;\n}\n", ctype );
 
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
         ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file);
-        fprintf( file, "    iAstruct ias;\n    ias.e = x;    setInvAttr( %s, ias );\n}\n", iaName );
+        fprintf( file, "    iAstruct ias;\n    ias.i = x;    setInvAttr( %s, ias );\n}\n", iaName );
     }
 }
 
@@ -502,7 +503,7 @@ void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file, Sche
     classType = TYPEget_type( t );
     strncpy( ctype, AccessType( t ), BUFSIZ );
     if( VARget_inverse( a ) ) {
-        INVprint_access_methods( entnm, attrnm, funcnm, nm, a, file, schema );
+        INVprint_access_methods( entnm, attrnm, funcnm, nm, ctype, a, file, schema );
         return;
     }
     if( isAggregate( a ) ) {
