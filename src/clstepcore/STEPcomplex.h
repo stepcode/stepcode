@@ -34,7 +34,7 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
         STEPcomplex * head;
         Registry * _registry;
         int visited; ///< used when reading (or as you wish?)
-        STEPcomplex_attr_data_list _attr_data_list;
+        STEPcomplex_attr_data_list _attr_data_list; //< what is this for?
     public:
         STEPcomplex( Registry * registry, int fileid );
         STEPcomplex( Registry * registry, const std::string ** names, int fileid,
@@ -42,10 +42,6 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
         STEPcomplex( Registry * registry, const char ** names, int fileid,
                      const char * schnm = 0 );
         virtual ~STEPcomplex();
-
-        virtual bool IsComplex() const {
-            return true;
-        }
 
         int EntityExists( const char * name, const char * currSch = 0 );
         STEPcomplex * EntityPart( const char * name, const char * currSch = 0 );

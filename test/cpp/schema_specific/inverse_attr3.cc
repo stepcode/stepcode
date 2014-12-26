@@ -57,7 +57,6 @@ int main( int argc, char * argv[] ) {
         }
 
     EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
-    //FIXME FIXME FIXME fails because isdefinedby_ uses old data member rather than map lookup
     if( attr.a != aggr ) {
         cout << "Error! got different EntityAggregate's when using map vs method" << endl;
         exitStatus = EXIT_FAILURE;

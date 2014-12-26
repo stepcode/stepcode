@@ -21,7 +21,6 @@
 #include <Registry.h>
 #include "sc_memmgr.h"
 
-
 Explicit_item_id__set::Explicit_item_id__set( int defaultSize ) {
     _bufsize = defaultSize;
     _buf = new Explicit_item_id_ptr[_bufsize];

@@ -228,9 +228,10 @@ STEPcomplex * STEPcomplex::EntityPart( const char * name, const char * currSch )
             if( scomp->eDesc->CurrName( name, currSch ) ) {
                 return scomp;
             }
-        } else
+        } else {
             cout << "Bug in STEPcomplex::EntityPart(): entity part has "
                  << "no EntityDescriptor\n";
+        }
         scomp = scomp->sc;
     }
     return 0;
