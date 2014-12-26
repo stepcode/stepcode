@@ -1,5 +1,26 @@
 STEPcode -- http://github.com/stepcode/stepcode -- http://stepcode.org
 ************************************************************************
+Release 0.8 (December, 2014)
+
+New since v0.7:
+* handle diamond inheritance, derived Attributes
+* rename fedex_python, fedex_plus to exp2py, exp2cxx
+* many changes to the pretty printer, due to use in reformatting draft
+    and IS schemas (Thanks Tom!)
+* parser was also changed due to errors caught while pretty printing
+   - we can be much more confident that the parser is correct now
+* fix incorrect quoting of timestamp in p21 header
+* fix various copy constructors and ShallowCopy() members
+* split generated code into many small files
+   - far easier to open generated code in editors
+   - support more compilers
+   - small files are combined (via #include statements) into a few
+     large files for faster "unitary" builds, if the compiler can handle it
+   - unitary builds are faster than the previous builds
+* most compiler warnings fixed
+* finally, all tests pass!
+
+************************************************************************
 Release 0.7 (April, 2013)
 
 New since v0.6:
