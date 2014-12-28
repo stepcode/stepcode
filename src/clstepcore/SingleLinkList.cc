@@ -14,10 +14,6 @@
 #include "sc_memmgr.h"
 #include <iostream>
 
-//
-SingleLinkNode * SingleLinkNode::NextNode()  const {
-    return next;
-}
 
 SingleLinkList::SingleLinkList() : head( 0 ), tail( 0 ) {
 }

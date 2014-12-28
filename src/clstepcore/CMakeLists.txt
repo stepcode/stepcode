@@ -32,7 +32,21 @@ set(LIBSTEPCORE_SRCS
   dispnode.cc
   dispnodelist.cc
   needFunc.cc
-  )
+  attrDescriptorList.cc
+  entityDescriptorList.cc
+  inverseAttributeList.cc
+  typeDescriptorList.cc
+  attrDescriptor.cc
+  derivedAttribute.cc
+  entityDescriptor.cc
+  enumTypeDescriptor.cc
+  inverseAttribute.cc
+  typeDescriptor.cc
+  schRename.cc
+  dictSchema.cc
+  whereRule.cc
+  uniquenessRule.cc
+)
 
 set(SC_CLSTEPCORE_HDRS
   baseType.h
@@ -59,7 +73,29 @@ set(SC_CLSTEPCORE_HDRS
   dispnodelist.h
   needFunc.h
   SubSuperIterators.h
-  )
+  attrDescriptorList.h
+  entityDescriptorList.h
+  inverseAttributeList.h
+  typeDescriptorList.h
+  attrDescriptor.h
+  derivedAttribute.h
+  entityDescriptor.h
+  enumTypeDescriptor.h
+  inverseAttribute.h
+  typeDescriptor.h
+  schRename.h
+  dictSchema.h
+  whereRule.h
+  uniquenessRule.h
+  dictionaryInstance.h
+  typeOrRuleVar.h
+  aggrCreatorTDs.h
+  explicitItemId.h
+  globalRule.h
+  implicitItemId.h
+  interfaceSpec.h
+  interfacedItem.h
+)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
