@@ -1421,7 +1421,9 @@ const char * RealNode::asStr( std::string & s ) {
 }
 
 const char * RealNode::STEPwrite( std::string & s, const char * ) {
-    if( value != S_REAL_NULL ) {
+    //use memcmp to work around -Wfloat-equal warning
+    SDAI_Real z = S_REAL_NULL;
+    if( 0 != memcmp( &value, &z, sizeof z ) ) {
         s = WriteReal( value );
     } else {
         s.clear();
