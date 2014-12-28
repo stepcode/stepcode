@@ -4,6 +4,7 @@
 #include <STEPcomplex.h>
 #include <complexSupport.h>
 #include <STEPattribute.h>
+#include <STEPaggregate.h>
 #include <sstream>
 #include "sc_memmgr.h"
 
@@ -148,15 +149,61 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
 }
 
 STEPcomplex::~STEPcomplex() {
-    STEPcomplex_attr_data attr_data;
+    STEPcomplex_attr_data_iter attr_data;
 
     if( sc ) {
         delete sc;
     }
-    for( attr_data = _attr_data_list.begin();
-            attr_data != _attr_data_list.end();
-            attr_data ++ ) {
-        delete *attr_data; //FIXME deletes void*, undefined
+    for( attr_data = _attr_data_list.begin(); attr_data != _attr_data_list.end(); attr_data ++ ) {
+        attrData_t attrData = *attr_data;
+        switch( attrData.type ) {
+            case INTEGER_TYPE:
+                delete attrData.i;
+                break;
+            case STRING_TYPE:
+                delete attrData.str;
+                break;
+            case BINARY_TYPE:
+                delete attrData.bin;
+                break;
+            case REAL_TYPE:
+            case NUMBER_TYPE:
+                delete  attrData.r;
+                break;
+            case BOOLEAN_TYPE:
+                delete  attrData.b;
+                break;
+            case LOGICAL_TYPE:
+                delete  attrData.l;
+                break;
+            case ENTITY_TYPE:
+                delete attrData.ai;
+                break;
+            case ENUM_TYPE:
+                if( attrData.e ) {
+                    delete attrData.e;
+                }
+                break;
+            case SELECT_TYPE:
+                if( attrData.s ) {
+                    delete attrData.s;
+                }
+                break;
+            case AGGREGATE_TYPE:
+            case ARRAY_TYPE:      // DAS
+            case BAG_TYPE:        // DAS
+            case SET_TYPE:        // DAS
+            case LIST_TYPE:       // DAS
+                if( attrData.a ) {
+                    delete attrData.a;
+                }
+                break;
+
+            default:
+                //should not be possible to get here.
+                std::cerr << "Possible data corruption detected: invalid attr data encountered in STEPcomplex destructor." << std::endl;
+                abort();
+        }
     }
     _attr_data_list.clear();
 }
@@ -428,18 +475,7 @@ void STEPcomplex::BuildAttrs( const char * s ) {
     eDesc = ( class EntityDescriptor * )_registry->FindEntity( s );
 
     if( eDesc ) {
-        const AttrDescriptorList * attrList;
-        SDAI_Integer * integer_data;
-        SDAI_String * string_data;
-        SDAI_Binary * binary_data;
-        SDAI_Real * real_data;
-        SDAI_BOOLEAN * boolean_data;
-        SDAI_LOGICAL * logical_data;
-        SDAI_Application_instance ** entity_data;
-        SDAI_Enum * enum_data;
-        SDAI_Select * select_data;
-        STEPaggregate * aggr_data;
-        attrList = &( eDesc->ExplicitAttr() );
+        const AttrDescriptorList * attrList = &( eDesc->ExplicitAttr() );
 
         //////////////////////////////////////////////
         // find out how many attrs there are
@@ -447,70 +483,61 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 
         STEPattribute * a = 0;
 
+        //_attr_data_list used to store everything as void *, but we couldn't correctly delete the contents in the dtor.
         AttrDescLinkNode * attrPtr = ( AttrDescLinkNode * )attrList->GetHead();
         while( attrPtr != 0 ) {
             const AttrDescriptor * ad = attrPtr->AttrDesc();
 
             if( ( ad->Derived() ) != LTrue ) {
-
-                switch( ad->NonRefType() ) {
+                attrData_t attrData;
+                attrData.type = ad->NonRefType();
+                switch( attrData.type ) {
                     case INTEGER_TYPE:
-                        integer_data = new SDAI_Integer;
-                        _attr_data_list.push_back( ( void * ) integer_data );
-                        a = new STEPattribute( *ad, integer_data );
+                        attrData.i = new SDAI_Integer;
+                        a = new STEPattribute( *ad, attrData.i );
                         break;
 
                     case STRING_TYPE:
-                        string_data = new SDAI_String;
-                        _attr_data_list.push_back( ( void * ) string_data );
-                        a = new STEPattribute( *ad, string_data );
+                        attrData.str = new SDAI_String;
+                        a = new STEPattribute( *ad, attrData.str );
                         break;
 
                     case BINARY_TYPE:
-                        binary_data = new SDAI_Binary;
-                        _attr_data_list.push_back( ( void * ) binary_data );
-                        a = new STEPattribute( *ad, binary_data );
+                        attrData.bin = new SDAI_Binary;
+                        a = new STEPattribute( *ad, attrData.bin );
                         break;
 
                     case REAL_TYPE:
                     case NUMBER_TYPE:
-                        real_data = new SDAI_Real;
-                        _attr_data_list.push_back( ( void * ) real_data );
-                        a = new STEPattribute( *ad,  real_data );
+                        attrData.r = new SDAI_Real;
+                        a = new STEPattribute( *ad,  attrData.r );
                         break;
 
                     case BOOLEAN_TYPE:
-                        boolean_data = new SDAI_BOOLEAN;
-                        _attr_data_list.push_back( ( void * ) boolean_data );
-                        a = new STEPattribute( *ad,  boolean_data );
+                        attrData.b = new SDAI_BOOLEAN;
+                        a = new STEPattribute( *ad,  attrData.b );
                         break;
 
                     case LOGICAL_TYPE:
-                        logical_data = new SDAI_LOGICAL;
-                        _attr_data_list.push_back( ( void * ) logical_data );
-                        a = new STEPattribute( *ad,  logical_data );
+                        attrData.l = new SDAI_LOGICAL;
+                        a = new STEPattribute( *ad,  attrData.l );
                         break;
 
                     case ENTITY_TYPE:
-                        entity_data = new( SDAI_Application_instance * );
-                        _attr_data_list.push_back( ( void * ) entity_data );
-                        a = new STEPattribute( *ad, entity_data );
+                        attrData.ai = new( SDAI_Application_instance * );
+                        a = new STEPattribute( *ad, attrData.ai );
                         break;
 
                     case ENUM_TYPE: {
-                        EnumTypeDescriptor * enumD =
-                            ( EnumTypeDescriptor * )ad->ReferentType();
-                        enum_data = enumD->CreateEnum();
-                        _attr_data_list.push_back( ( void * ) enum_data );
-                        a = new STEPattribute( *ad, enum_data );
+                        EnumTypeDescriptor * enumD = ( EnumTypeDescriptor * )ad->ReferentType();
+                        attrData.e = enumD->CreateEnum();
+                        a = new STEPattribute( *ad, attrData.e );
                         break;
                     }
                     case SELECT_TYPE: {
-                        SelectTypeDescriptor * selectD =
-                            ( SelectTypeDescriptor * )ad->ReferentType();
-                        select_data = selectD->CreateSelect();
-                        _attr_data_list.push_back( ( void * ) select_data );
-                        a = new STEPattribute( *ad, select_data );
+                        SelectTypeDescriptor * selectD = ( SelectTypeDescriptor * )ad->ReferentType();
+                        attrData.s = selectD->CreateSelect();
+                        a = new STEPattribute( *ad, attrData.s );
                         break;
                     }
                     case AGGREGATE_TYPE:
@@ -518,18 +545,19 @@ void STEPcomplex::BuildAttrs( const char * s ) {
                     case BAG_TYPE:        // DAS
                     case SET_TYPE:        // DAS
                     case LIST_TYPE: {     // DAS
-                        AggrTypeDescriptor * aggrD =
-                            ( AggrTypeDescriptor * )ad->ReferentType();
-                        aggr_data = aggrD->CreateAggregate();
-                        //_attr_data_list.push_back( ( void * ) aggr_data );
-                        _attr_data_list.push_back( aggr_data );
-                        a = new STEPattribute( *ad, aggr_data );
+                        AggrTypeDescriptor * aggrD = ( AggrTypeDescriptor * )ad->ReferentType();
+                        attrData.a = aggrD->CreateAggregate();
+                        a = new STEPattribute( *ad, attrData.a );
                         break;
                     }
                     default:
                         _error.AppendToDetailMsg( "STEPcomplex::BuildAttrs: Found attribute of unknown type. Creating default attribute.\n" );
                         _error.GreaterSeverity( SEVERITY_WARNING );
                         a = new STEPattribute();
+                        attrData.type = UNKNOWN_TYPE; //don't add to attr list
+                }
+                if( attrData.type != UNKNOWN_TYPE ) {
+                    _attr_data_list.push_back( attrData );
                 }
 
                 a -> set_null();
