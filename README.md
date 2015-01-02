@@ -35,12 +35,14 @@ SC's source has been reformatted with astyle. When making changes, try
 to match the current formatting. The main points are:
 
   - compact (java-style) brackets:
-        if( a == 3 ) {
-            c = 5;
-            function( a, b );
-        } else {
-            somefunc( );
-        }
+```C
+    if( a == 3 ) {
+        c = 5;
+        function( a, b );
+    } else {
+        somefunc( );
+    }
+```
   - indents are 4 spaces
   - no tab characters
   - line endings are LF (linux), not CRLF (windows)
