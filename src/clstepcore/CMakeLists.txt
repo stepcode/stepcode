@@ -11,7 +11,7 @@ set(LIBSTEPCORE_SRCS
   sdai.cc
   sdaiSelect.cc
   SingleLinkList.cc
-  Registry.inline.cc
+  Registry.cc
   ExpDict.cc
   ExpDict.inline.cc
   read_func.cc
