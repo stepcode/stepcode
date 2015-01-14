@@ -12,6 +12,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
 #include <sc_memmgr.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <sc_mkdir.h>
 #include <ordered_attrs.h>
@@ -20,6 +21,10 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "classes_attribute.h"
 
 #include <sc_trace_fprintf.h>
+
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
 
 extern int old_accessors;
 extern int print_logging;
@@ -437,8 +442,8 @@ void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm,
 /** print access methods for inverse attrs, using iAMap */
 void INVprint_access_methods( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
                               const char * ctype, Variable a, FILE * file, Schema schema ) {
-    char iaName[BUFSIZ] = {0};
-    snprintf( iaName, BUFSIZ - 1, "%s::%s%d%s%s", SCHEMAget_name( schema ), ATTR_PREFIX, a->idx,
+	char iaName[BUFSIZ] = { 0 };
+	snprintf(iaName, BUFSIZ - 1, "%s::%s%d%s%s", SCHEMAget_name(schema), ATTR_PREFIX, a->idx,
               /* can it ever be anything but "I"? */
              ( VARis_derived( a ) ? "D" : ( VARis_type_shifter( a ) ? "R" : ( VARget_inverse( a ) ? "I" : "" ) ) ), attrnm );
 
