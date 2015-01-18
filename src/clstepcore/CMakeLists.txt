@@ -46,6 +46,12 @@ set(LIBSTEPCORE_SRCS
   dictSchema.cc
   whereRule.cc
   uniquenessRule.cc
+  interfacedItem.cc
+  explicitItemId.cc
+  implicitItemId.cc
+  interfaceSpec.cc
+  typeOrRuleVar.cc
+  globalRule.cc
 )
 
 set(SC_CLSTEPCORE_HDRS
