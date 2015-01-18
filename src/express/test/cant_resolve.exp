@@ -1,0 +1,131 @@
+SCHEMA cant_resolve;
+
+(* derived from LongForm25IsoIec, a schema in PLIB Part 25 *)
+
+FUNCTION correct_parameters_for_explicit_program(a_model : dic_class_instance(*;
+  prop : property_bsu*)) : BOOLEAN;
+--   IF NOT ('ISO13584_25_IEC61360_5_LIBRARY_IMPLICIT_SCHEMA.' +
+--   'PROGRAM_REFERENCE_TYPE' IN data_type_typeof(prop)) THEN
+--     RETURN (FALSE);
+--   END_IF;
+  REPEAT i := 1 TO SIZEOF(a_model.properties);
+--     IF prop = a_model.properties[i].prop_def THEN
+      IF (*EXISTS(a_model.properties[i].its_value) AND (
+      'ISO13584_25_IEC61360_5_LIBRARY_IMPLICIT_SCHEMA.' + 'PROGRAM_REFERENCE' IN
+      TYPEOF(a_model.properties[i].its_value)) AND (SIZEOF(a_model.properties[i
+      ].its_value.out_parameters) = 0) AND (SIZEOF(a_model.properties[i].
+      its_value.inout_parameters) = 0) AND*)
+      (QUERY(in_p <* a_model.properties[i]
+      .its_value.in_parameters -- << ------------------- << has trouble with in_parameters << ---------------------------- << --
+      | NOT ('ISO13584_25_IEC61360_5_LIBRARY_IMPLICIT_SCHEMA.' + 'PROPERTY_BSU' IN TYPEOF(in_p))
+      (*OR NOT is_provided_once_property_value(a_model, in_p)*)) = []) THEN
+        RETURN (TRUE);
+--       ELSE
+--         RETURN (FALSE);
+      END_IF;
+--     END_IF;
+  END_REPEAT;
+  RETURN (FALSE);
+END_FUNCTION;
+
+ENTITY dic_class_instance
+(*ABSTRACT SUPERTYPE OF (ONEOF (dic_item_instance, dic_f_model_instance, dic_f_view_instance))*);
+--   class_def : class_bsu;
+  properties :  LIST OF property_value;
+--   case_of : SET OF class_bsu;
+-- WHERE
+--   wr1 : QUERY(prop <* SELF.properties | NOT applicable_properties(SELF.
+--     class_def, [prop.prop_def])) = [];
+--   wr2 : QUERY(prop <* SELF.properties | SIZEOF(QUERY(prop1 <* SELF.properties
+--      | prop1.prop_def = prop.prop_def)) = 1) = SELF.properties;
+--   wr3 : check_property_values_translations(QUERY(prop_val <* properties |
+--     'ISO13584_25_IEC61360_5_LIBRARY_IMPLICIT_SCHEMA.' + 'TRANSLATED_STRING_VALUE' IN
+--     TYPEOF(prop_val.its_value)));
+END_ENTITY;
+
+ENTITY property_value;
+  its_value : OPTIONAL primitive_value;
+--   prop_def : property_bsu;
+-- WHERE
+--   wr1 : EXISTS(SELF.its_value) AND compatible_type_and_value(SELF.prop_def,
+--     SELF.its_value) OR NOT EXISTS(SELF.its_value);
+END_ENTITY;
+
+-- need subtype program_reference
+TYPE primitive_value = SELECT
+  ((*simple_value,*) complex_value);
+END_TYPE;
+-- TYPE simple_value = SELECT
+--   (number_value, translatable_string_value, boolean_value);
+-- END_TYPE;
+TYPE complex_value = SELECT
+  (entity_instance_value, (*level_spec_value, *)dic_class_instance);
+END_TYPE;
+
+(*
+program_reference has in_parameters
+plib_entity_instance_value has in_parameters
+controlled_entity_instance_value has in_parameters
+entity_instance_value has in_parameters
+
+-- program_reference has in_parameters
+representation_reference has in_parameters
+property_value_external_item has in_parameters
+-- plib_entity_instance_value has in_parameters
+-- controlled_entity_instance_value has in_parameters
+-- entity_instance_value has in_parameters
+
+*)
+ENTITY representation_reference
+SUBTYPE OF (class_extension_external_item);
+--   SELF\external_item.used_protocol : data_protocol;
+  representation_id : OPTIONAL label;
+END_ENTITY;
+ENTITY property_value_external_item
+SUBTYPE OF (external_item);
+END_ENTITY;
+
+TYPE entity_instance_value = SELECT
+  ((*defined_entity_instance_value,*) controlled_entity_instance_value(*,
+  uncontrolled_entity_instance_value*));
+END_TYPE;
+TYPE controlled_entity_instance_value = SELECT
+  ((*step_entity_instance_value,*) plib_entity_instance_value);
+END_TYPE;
+
+TYPE plib_entity_instance_value = SELECT
+  (program_reference, representation_reference, property_value_external_item);
+END_TYPE;
+
+ENTITY external_item
+ABSTRACT SUPERTYPE OF (ONEOF ((*dictionary_external_item, *)
+class_extension_external_item, property_value_external_item));
+--   used_protocol : external_file_protocol;
+--   content : external_content;
+END_ENTITY;
+
+ENTITY class_extension_external_item
+ABSTRACT SUPERTYPE OF (ONEOF ((*dialogue_resource, *)representation_reference,
+program_reference))
+SUBTYPE OF (external_item);
+--   code : external_item_code_type;
+-- INVERSE
+--   belongs_to : model_class_extension FOR referenced_external_items;
+-- UNIQUE
+--   ur1 : code, belongs_to;
+END_ENTITY;
+
+ENTITY program_reference
+SUBTYPE OF (class_extension_external_item);
+--   SELF\external_item.used_protocol : program_protocol;
+--   syntactical_name : program_reference_name_type;
+  in_parameters :  LIST OF property_or_data_type_bsu;
+--   out_parameters :  LIST OF property_or_data_type_bsu;
+--   inout_parameters :  LIST OF property_or_data_type_bsu;
+END_ENTITY;
+
+--fabricated types
+TYPE property_or_data_type_bsu = STRING; END_TYPE;
+TYPE label = STRING; END_TYPE;
+
+END_SCHEMA;
