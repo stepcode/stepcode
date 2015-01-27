@@ -1,7 +1,8 @@
+sudo: false
 language: cpp
 compiler:
   - clang
-script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j2 && make -j2 test
+script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j3 && ctest -j2
 branches:
   only:
     - master
@@ -10,3 +11,6 @@ notifications:
   email: scl-dev@groups.google.com
   on_success: change
   on_failure: always
+os:
+  - linux
+  - osx
