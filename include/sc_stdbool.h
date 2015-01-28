@@ -34,7 +34,7 @@ typedef int _Bool;
  * and version 15.00.30729.01, which comes with Visual C++ 2008, do not
  * define _Bool.
  */
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && _MSC_VER<1800
 typedef int _Bool;
 #endif
 

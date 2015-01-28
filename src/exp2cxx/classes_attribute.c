@@ -12,6 +12,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
 #include <sc_memmgr.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 #include <sc_mkdir.h>
 #include <ordered_attrs.h>
@@ -20,6 +21,10 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include "classes_attribute.h"
 
 #include <sc_trace_fprintf.h>
+
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
 
 extern int old_accessors;
 extern int print_logging;

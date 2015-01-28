@@ -1045,8 +1045,8 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f,
     /* all the items in the select type  */
     Linked_List attrs = SEL_TYPEgetnew_attribute_list( type );
     /*  list of attributes with unique names */
-    Entity ent;
-    Variable uattr;     /*  attribute in underlying type  */
+    Entity ent = NULL;
+    Variable uattr = NULL;     /*  attribute in underlying type  */
 
     fprintf( f, "\n    //  part 3\n" );
 
