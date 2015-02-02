@@ -2,7 +2,7 @@ sudo: false
 language: cpp
 compiler:
   - clang
-script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j3 && ctest -j2
+script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j3 && ctest -j2; if [ $? -ne 0 ]; then echo; echo; echo "-----------------------------"; grep -niB20 "Test Failed" Testing/Temporary/LastTest.log; fi
 branches:
   only:
     - master
