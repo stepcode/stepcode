@@ -1,6 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #test part 21 files
 
+#necessary macros won't already be defined if SC_BUILD_SCHEMAS is set to ""
+if(NOT COMMAND SCHEMA_CMLIST)
+  include(${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake)
+endif(NOT COMMAND SCHEMA_CMLIST)
+
 #used to create a number of small files at test-time. you probably don't want to modify.
 set(P21_FILE_HEAD "
 ISO-10303-21;
