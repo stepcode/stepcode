@@ -8,7 +8,7 @@ branches:
 
 os: Windows Server 2012 R2
 
-clone_folder: c:\projects\STEPcode
+clone_folder: \projects\STEPcode
 
 #grab zip instead of git clone
 shallow_clone: true
@@ -34,7 +34,7 @@ environment:
 
 build_script:
   - ps: |
-    cd c:\projects\STEPcode
+    cd \projects\STEPcode
     mkdir build
     cd build
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR"
@@ -42,7 +42,7 @@ build_script:
 
 test_script:
   - cmd: echo Running CTest...
-  - cmd: cd c:\projects\STEPcode\build
+  - cmd: cd \projects\STEPcode\build
   - cmd: ctest -j2 -V .
 
 # we could upload a compiled zip somewhere (see Appveyor artifact documentation)
