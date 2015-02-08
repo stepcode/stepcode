@@ -33,12 +33,12 @@ environment:
 #   project: ALL_BUILD.vcxproj
 
 build_script:
-  - echo Running cmake...
-  - cd c:\projects\STEPcode
-  - mkdir build
-  - cd build
-  - cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR"
-  - cmake --build . --config Debug
+  - ps: |
+    cd c:\projects\STEPcode
+    mkdir build
+    cd build
+    cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR"
+    cmake --build . --config Debug
 
 test_script:
   - cmd: echo Running CTest...
