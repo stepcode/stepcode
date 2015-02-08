@@ -33,7 +33,7 @@ environment:
 #   project: ALL_BUILD.vcxproj
 
 build_script:
-  - ps: |
+- ps: |
     cd \projects\STEPcode
     mkdir build
     cd build
