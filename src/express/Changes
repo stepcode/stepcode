@@ -290,13 +290,13 @@ ERRORcreate_option.
 
 To actually set or unset an option, it suffices to say:
 
-	ERRORset_option(optarg,set);
+	ERRORset_option(sc_optarg,set);
 
 where set is a true/false value.  This is especially convenient with
 getopt, since you can use the same code to set or unset an option just
 by testing the option letter inside of the 'set' argument.  I.e.
 
-	ERRORset_option(optarg,c == 'w');
+	ERRORset_option(sc_optarg,c == 'w');
 
 To print all the options out, say:
 

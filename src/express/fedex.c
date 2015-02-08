@@ -117,12 +117,12 @@ int main( int argc, char ** argv ) {
         ( *EXPRESSinit_args )( argc, argv );
     }
 
-    optind = 1;
+    sc_optind = 1;
     while( ( c = sc_getopt( argc, argv, EXPRESSgetopt_options ) ) != -1 ) {
         switch( c ) {
             case 'd':
                 ERRORdebugging = 1;
-                switch( atoi( optarg ) ) {
+                switch( atoi( sc_optarg ) ) {
                     case 0:
                         fprintf( stderr, "\ndebug codes:\n" );
                         fprintf( stderr, "  0 - this help\n" );
@@ -164,7 +164,7 @@ int main( int argc, char ** argv ) {
                 buffer_messages = false;
                 break;
             case 'e':
-                input_filename = optarg;
+                input_filename = sc_optarg;
                 break;
             case 'r':
                 resolve = 0;
@@ -172,10 +172,10 @@ int main( int argc, char ** argv ) {
             case 'i':
             case 'w':
                 no_warnings = 0;
-                ERRORset_warning( optarg, c == 'w' );
+                ERRORset_warning( sc_optarg, c == 'w' );
                 break;
             case 'p':
-                for( cp = optarg; *cp; cp++ ) {
+                for( cp = sc_optarg; *cp; cp++ ) {
                     if( *cp == '#' ) {
                         print_objects_while_running |= OBJ_PASS_BITS;
                     } else if( *cp == 'E' ) {
@@ -192,7 +192,7 @@ int main( int argc, char ** argv ) {
             default:
                 rc = 1;
                 if( EXPRESSgetopt ) {
-                    rc = ( *EXPRESSgetopt )( c, optarg );
+                    rc = ( *EXPRESSgetopt )( c, sc_optarg );
                 }
                 if( rc == 1 ) {
                     if( ERRORusage_function ) {
@@ -205,7 +205,7 @@ int main( int argc, char ** argv ) {
         }
     }
     if( !input_filename ) {
-        input_filename = argv[optind];
+        input_filename = argv[sc_optind];
         if( !input_filename ) {
             EXPRESScleanup();
             if( no_need_to_work ) {
