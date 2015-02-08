@@ -1284,6 +1284,35 @@ char * TYPEget_express_type( const Type t ) {
 
 }
 
+/** Initialize an upper or lower bound for an aggregate. \sa AGGRprint_init */
+void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const char * aggr_name, const char * cname, Expression bound, int boundNr ) {
+    if( bound->symbol.resolved ) {
+        if( bound->type == Type_Funcall ) {
+            fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, EXPRto_string( bound ) );
+        } else {
+            fprintf( impl, "        %s->SetBound%d( %d );\n", var_name, boundNr, bound->u.integer );
+        }
+    } else { /* resolved == 0 seems to mean that this is Type_Runtime */
+        assert( cname && ( bound->e.op2 ) && ( bound->e.op2->symbol.name ) );
+        fprintf( impl, "        %s->SetBound%dFromMemberAccessor( &getBound%d_%s__%s );\n", var_name, boundNr, boundNr, cname, aggr_name );
+        fprintf( header, "inline SDAI_Integer getBound%d_%s__%s( SDAI_Application_instance* this_ptr ) {\n", boundNr, cname, aggr_name );
+        fprintf( header, "    %s * ths = (%s *) this_ptr;\n", cname, cname );
+        fprintf( header, "    ths->ResetAttributes();\n" );
+        fprintf( header, "    STEPattribute * a = ths->NextAttribute();\n" );
+        fprintf( header, "    while( strcmp( a->Name(), \"%s\" ) != 0 ) {\n", bound->e.op2->symbol.name );
+        fprintf( header, "        a = ths->NextAttribute();\n" );
+        fprintf( header, "        if( !a ) {\n" );
+        fprintf( header, "            break;\n" );
+        fprintf( header, "        }\n" );
+        fprintf( header, "    }\n" );
+        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", __FILE__,
+                 __LINE__, "(incorrect assumption of integer type?) Please report error to STEPcode: scl-dev at groups.google.com." );
+        fprintf( header, "    return *( a->Integer() );\n" ); /* always an integer? if not, would need to translate somehow due to return type... */
+        fprintf( header, "}\n" );
+    }
+
+}
+
 /**
  * For aggregates, initialize Bound1, Bound2, OptionalElements, UniqueElements.
  * Handles bounds that depend on attributes (via SetBound1FromMemberAccessor() ), or
@@ -1301,44 +1330,16 @@ void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_
         abort();
     }
     if( !TYPEget_head( t ) ) {
-        /* the code for lower and upper is almost identical */
+        const char * cname = 0;
+        if( ( t->superscope ) && ( t->superscope->symbol.name ) ) {
+            cname = ClassName( t->superscope->symbol.name );
+        }
+
         if( TYPEget_body( t )->lower ) {
-            if( TYPEget_body( t )->lower->symbol.resolved ) {
-                if( TYPEget_body( t )->lower->type == Type_Funcall ) {
-                    fprintf( impl, "        %s->SetBound1FromExpressFuncall(\"%s\");\n", var_name,
-                             EXPRto_string( TYPEget_body( t )->lower ) );
-                } else {
-                    fprintf( impl, "        %s->SetBound1(%d);\n", var_name, TYPEget_body( t )->lower->u.integer );
-                }
-            } else { /* resolved == 0 seems to mean that this is Type_Runtime */
-                assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->lower->e.op2 ) &&
-                        ( TYPEget_body( t )->lower->e.op2->symbol.name ) );
-                fprintf( impl, "        %s->SetBound1FromMemberAccessor( &getBound1_%s__%s );\n", var_name,
-                         ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( header, "inline SDAI_Integer getBound1_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
-                         ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( header, "    return ( (%s *) this_ptr)->%s_();\n}\n",
-                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->lower->e.op2->symbol.name );
-            }
+            AGGRprint_bound( header, impl, var_name, aggr_name, cname, TYPEget_body( t )->lower, 1 );
         }
         if( TYPEget_body( t )->upper ) {
-            if( TYPEget_body( t )->upper->symbol.resolved ) {
-                if( TYPEget_body( t )->upper->type == Type_Funcall ) {
-                    fprintf( impl, "        %s->SetBound2FromExpressFuncall(\"%s\");\n", var_name,
-                             EXPRto_string( TYPEget_body( t )->upper ) );
-                } else {
-                    fprintf( impl, "        %s->SetBound2(%d);\n", var_name, TYPEget_body( t )->upper->u.integer );
-                }
-            } else { /* resolved == 0 seems to mean that this is Type_Runtime */
-                assert( ( t->superscope ) && ( t->superscope->symbol.name ) && ( TYPEget_body( t )->upper->e.op2 ) &&
-                        ( TYPEget_body( t )->upper->e.op2->symbol.name ) );
-                fprintf( impl, "        %s->SetBound2FromMemberAccessor( &getBound2_%s__%s );\n", var_name,
-                         ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( header, "inline SDAI_Integer getBound2_%s__%s( SDAI_Application_instance* this_ptr ) {\n",
-                         ClassName( t->superscope->symbol.name ), aggr_name );
-                fprintf( header, "    return ( (%s *) this_ptr)->%s_();\n}\n",
-                         ClassName( t->superscope->symbol.name ), TYPEget_body( t )->upper->e.op2->symbol.name );
-            }
+            AGGRprint_bound( header, impl, var_name, aggr_name, cname, TYPEget_body( t )->upper, 2 );
         }
         if( TYPEget_body( t )->flags.unique ) {
             fprintf( impl, "        %s->UniqueElements(LTrue);\n", var_name );
