@@ -15,14 +15,14 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
-# couldn't be found by cmake
+# errors or couldn't be found by cmake
+#   - GENERATOR: "Visual Studio 9 2008"
+#     ARCH: 32
 #   - GENERATOR: "Visual Studio 10"
 #     ARCH: 32
 
 environment:
   matrix:
-  - GENERATOR: "Visual Studio 9 2008"
-    ARCH: 32
   - GENERATOR: "Visual Studio 11"
     ARCH: 32
   - GENERATOR: "Visual Studio 12"
@@ -45,6 +45,6 @@ build_script:
 test_script:
   - cmd: echo Running CTest...
   - cmd: cd c:\projects\STEPcode\build
-  - cmd: ctest -j2 -V .
+  - cmd: ctest -j2 . -C Debug
 
 # we could upload a compiled zip somewhere (see Appveyor artifact documentation)
