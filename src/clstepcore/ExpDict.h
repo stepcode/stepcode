@@ -11,7 +11,7 @@
  * Development of this software was funded by the United States Government,
  * and is not subject to copyright.
  *
- * As with Expdict.cc, this file has been split into many smaller files.
+ * As with Expdict.cc, this file has been split into many smaller files - see includes.
  */
 
 #include <sc_export.h>
@@ -33,43 +33,27 @@
 #include "typeDescriptorList.h"
 #include "entityDescriptorList.h"
 
+
 #include "typeDescriptor.h"
 #include "entityDescriptor.h"
 #include "enumTypeDescriptor.h"
-
 #include "attrDescriptor.h"
 #include "derivedAttribute.h"
 #include "inverseAttribute.h"
 
 #include "create_Aggr.h"
-
-
-// defined and created in Registry.inline.cc
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiINTEGER;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiREAL;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiNUMBER;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiSTRING;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiBINARY;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiBOOLEAN;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiLOGICAL;
-
 #include "dictionaryInstance.h"
 
 #include "uniquenessRule.h"
 #include "whereRule.h"
+
 #include "interfacedItem.h"
-
 #include "explicitItemId.h"
-
 #include "implicitItemId.h"
-
 #include "interfaceSpec.h"
-
 #include "typeOrRuleVar.h"
 #include "globalRule.h"
-
 #include "dictSchema.h"
-
 #include "schRename.h"
 
 #include "aggrTypeDescriptor.h"
