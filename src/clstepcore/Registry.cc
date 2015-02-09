@@ -1,6 +1,6 @@
 /*
 * NIST STEP Core Class Library
-* clstepcore/Registry.inline.cc
+* clstepcore/Registry.cc
 * April 1997
 * K. C. Morris
 * David Sauder

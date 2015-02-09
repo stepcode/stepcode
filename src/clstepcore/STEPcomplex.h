@@ -10,22 +10,30 @@
 
 #include <list>
 
-typedef std::list<void *>            STEPcomplex_attr_data_list;
-typedef std::list<void *>::iterator  STEPcomplex_attr_data;
-
-/** TODO add a method to ed to create iAttr structure
- * either call same method in all parents, or add their iAttrs in some other way
- * does not need to be ordered
- *
- * simply move iAttrs into eDesc? don't recall whether that data can be safely shared amongst multiple instances or not
- * if it can't be shared, we'd need to enforce copy-on-write somehow - perhaps making iAttrs protected with a getter
- * that requires an instance as an arg - i.e. inst->eDesc->iAttrSetup(inst)
- *
- * what about inheritance? should each eDesc include all iattrs, or assemble the list as necessary at runtime?
- * eDesc should assemble a complete list on demand at runtime...
- *
- * How to initialize iAttrs for SC's? BuildIAttrs( eDesc )
+/* attr's for SC's are created with a pointer to their data.
+ * STEPcomplex_attr_data_list is used to store the pointers for
+ * deletion. this list is composed of attrData_t's, which track
+ * types for ease of deletion
  */
+typedef struct {
+    PrimitiveType type;
+    union {
+        SDAI_Integer * i;
+        SDAI_String * str;
+        SDAI_Binary * bin;
+        SDAI_Real * r;
+        SDAI_BOOLEAN * b;
+        SDAI_LOGICAL * l;
+        SDAI_Application_instance ** ai;
+        SDAI_Enum * e;
+        SDAI_Select * s;
+        STEPaggregate * a;
+    };
+} attrData_t;
+typedef std::list< attrData_t >               STEPcomplex_attr_data_list;
+typedef STEPcomplex_attr_data_list::iterator  STEPcomplex_attr_data_iter;
+
+/** FIXME are inverse attr's initialized for STEPcomplex? */
 
 
 class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
@@ -34,7 +42,7 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
         STEPcomplex * head;
         Registry * _registry;
         int visited; ///< used when reading (or as you wish?)
-        STEPcomplex_attr_data_list _attr_data_list; //< what is this for?
+        STEPcomplex_attr_data_list _attr_data_list; ///< attrs are created with a pointer to data; this stores them for deletion
     public:
         STEPcomplex( Registry * registry, int fileid );
         STEPcomplex( Registry * registry, const std::string ** names, int fileid,

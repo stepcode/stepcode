@@ -26,7 +26,7 @@
 // in aggregate real handling (STEPaggregate.cc)  -- IMS 6 Jun 95
 const int Real_Num_Precision = REAL_NUM_PRECISION;
 
-/**************************************************************//**
+/**
 ** \class STEPattribute
 **    Functions for manipulating attribute
 **
@@ -38,12 +38,6 @@ const int Real_Num_Precision = REAL_NUM_PRECISION;
 **       for entities and enumerations.)
 **/
 
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-// STEPattribute Functions
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
 
 /// the value of the attribute is assigned from the supplied string
 Severity STEPattribute::StrToVal( const char * s, InstMgrBase * instances, int addFileId ) {
@@ -778,15 +772,21 @@ bool STEPattribute::is_null()  const {
     if( _redefAttr )  {
         return _redefAttr->is_null();
     }
+    /* for NUMBER_TYPE and REAL_TYPE, we want an exact comparison. however, doing so causes a compiler warning.
+     * workaround is to use memcmp. need a variable, but can't declare it within the switch without errors.
+     */
+    SDAI_Real z;
     switch( NonRefType() ) {
         case INTEGER_TYPE:
             return ( *( ptr.i ) == S_INT_NULL );
 
         case NUMBER_TYPE:
-            return ( *( ptr.r ) == S_NUMBER_NULL );
+            z = S_NUMBER_NULL;
+            return ( 0 == memcmp( ptr.r, &z, sizeof z ) );
 
         case REAL_TYPE:
-            return ( *( ptr.r ) == S_REAL_NULL );
+            z = S_REAL_NULL;
+            return ( 0 == memcmp( ptr.r, &z, sizeof z ) );
 
         case ENTITY_TYPE:
             return ( *( ptr.c ) == S_ENTITY_NULL );
