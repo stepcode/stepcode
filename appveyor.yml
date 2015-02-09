@@ -15,11 +15,13 @@ shallow_clone: true
 platform: x64
 configuration: Debug
 
+# couldn't be found by cmake
+#   - GENERATOR: "Visual Studio 10"
+#     ARCH: 32
+
 environment:
   matrix:
-  - GENERATOR: "Visual Studio 9"
-    ARCH: 32
-  - GENERATOR: "Visual Studio 10"
+  - GENERATOR: "Visual Studio 9 2008"
     ARCH: 32
   - GENERATOR: "Visual Studio 11"
     ARCH: 32
