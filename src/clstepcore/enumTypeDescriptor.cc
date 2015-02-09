@@ -1,5 +1,15 @@
 #include "enumTypeDescriptor.h"
 
+/*
+ * why have EnumTypeDescriptor + EnumerationTypeDescriptor ???
+ * this was in ExpDict.cc before splitting it up
+ */
+#ifdef NOT_YET
+EnumerationTypeDescriptor::EnumerationTypeDescriptor( ) {
+    _elements = new StringAggregate;
+}
+#endif
+
 EnumTypeDescriptor::EnumTypeDescriptor( const char * nm, PrimitiveType ft,
                                         Schema * origSchema,
                                         const char * d, EnumCreator f )

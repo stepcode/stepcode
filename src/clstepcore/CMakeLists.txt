@@ -1,106 +1,111 @@
 
 set(LIBSTEPCORE_SRCS
+  aggrTypeDescriptor.cc
+  attrDescriptor.cc
+  attrDescriptorList.cc
+  collect.cc
+  complexlist.cc
+  create_Aggr.cc
+  derivedAttribute.cc
+  dictSchema.cc
+  dispnode.cc
+  dispnodelist.cc
+  entityDescriptor.cc
+  entityDescriptorList.cc
+  entlist.cc
+  entnode.cc
+  enumTypeDescriptor.cc
+  explicitItemId.cc
+  globalRule.cc
+  implicitItemId.cc
+  instmgr.cc
+  interfaceSpec.cc
+  interfacedItem.cc
+  inverseAttribute.cc
+  inverseAttributeList.cc
+  match-ors.cc
+  mgrnode.cc
+  mgrnodearray.cc
+  mgrnodelist.cc
+  multlist.cc
+  needFunc.cc
+  non-ors.cc
+  orlist.cc
+  print.cc
+  read_func.cc
+  Registry.cc
+  schRename.cc
+  sdai.cc
   sdaiApplication_instance.cc
-  STEPcomplex.cc
+  sdaiSelect.cc
+  selectTypeDescriptor.cc
+  SingleLinkList.cc
   STEPaggregate.cc
   STEPattribute.cc
   STEPattribute.inline.cc
   STEPattributeList.cc
+  STEPcomplex.cc
   STEPinvAttrList.cc
   STEPundefined.cc
-  sdai.cc
-  sdaiSelect.cc
-  SingleLinkList.cc
-  Registry.cc
-  ExpDict.cc
-  ExpDict.inline.cc
-  read_func.cc
-  collect.cc
-  complexlist.cc
-  entlist.cc
-  multlist.cc
-  orlist.cc
-  entnode.cc
-  non-ors.cc
-  match-ors.cc
   trynext.cc
-  print.cc
-  instmgr.cc
-  mgrnode.cc
-  mgrnodearray.cc
-  mgrnodelist.cc
-  dispnode.cc
-  dispnodelist.cc
-  needFunc.cc
-  attrDescriptorList.cc
-  entityDescriptorList.cc
-  inverseAttributeList.cc
-  typeDescriptorList.cc
-  attrDescriptor.cc
-  derivedAttribute.cc
-  entityDescriptor.cc
-  enumTypeDescriptor.cc
-  inverseAttribute.cc
   typeDescriptor.cc
-  schRename.cc
-  dictSchema.cc
-  whereRule.cc
-  uniquenessRule.cc
-  interfacedItem.cc
-  explicitItemId.cc
-  implicitItemId.cc
-  interfaceSpec.cc
+  typeDescriptorList.cc
   typeOrRuleVar.cc
-  globalRule.cc
+  uniquenessRule.cc
+  whereRule.cc
 )
 
 set(SC_CLSTEPCORE_HDRS
+  aggrTypeDescriptor.h
+  attrDescriptor.h
+  attrDescriptorList.h
   baseType.h
   complexSupport.h
+  create_Aggr.h
+  derivedAttribute.h
+  dictSchema.h
   dictdefs.h
+  dictionaryInstance.h
+  dispnode.h
+  dispnodelist.h
+  entityDescriptor.h
+  entityDescriptorList.h
+  enumTypeDescriptor.h
   ExpDict.h
+  explicitItemId.h
+  globalRule.h
+  implicitItemId.h
+  instmgr.h
+  interfaceSpec.h
+  interfacedItem.h
+  inverseAttribute.h
+  inverseAttributeList.h
+  mgrnode.h
+  mgrnodearray.h
+  mgrnodelist.h
+  needFunc.h
   read_func.h
+  realTypeDescriptor.h
   Registry.h
-  sdaiApplication_instance.h
+  schRename.h
   sdai.h
+  sdaiApplication_instance.h
   sdaiSelect.h
+  selectTypeDescriptor.h
   SingleLinkList.h
   STEPaggregate.h
   STEPattribute.h
   STEPattributeList.h
-  STEPinvAttrList.h
   STEPcomplex.h
+  STEPinvAttrList.h
   STEPundefined.h
-  instmgr.h
-  mgrnode.h
-  mgrnodearray.h
-  mgrnodelist.h
-  dispnode.h
-  dispnodelist.h
-  needFunc.h
+  stringTypeDescriptor.h
   SubSuperIterators.h
-  attrDescriptorList.h
-  entityDescriptorList.h
-  inverseAttributeList.h
-  typeDescriptorList.h
-  attrDescriptor.h
-  derivedAttribute.h
-  entityDescriptor.h
-  enumTypeDescriptor.h
-  inverseAttribute.h
   typeDescriptor.h
-  schRename.h
-  dictSchema.h
-  whereRule.h
-  uniquenessRule.h
-  dictionaryInstance.h
+  typeDescriptorList.h
   typeOrRuleVar.h
-  aggrCreatorTDs.h
-  explicitItemId.h
-  globalRule.h
-  implicitItemId.h
-  interfaceSpec.h
-  interfacedItem.h
+  uniquenessRule.h
+  whereRule.h
 )
 
 include_directories(

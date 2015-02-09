@@ -3,6 +3,7 @@
 
 #include "dictionaryInstance.h"
 #include "whereRule.h"
+#include "entityDescriptorList.h"
 
 #include "sc_export.h"
 

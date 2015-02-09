@@ -83,4 +83,35 @@ private:
 typedef Explicit_item_id__set * Explicit_item_id__set_ptr;
 typedef Explicit_item_id__set_ptr Explicit_item_id__set_var;
 
+class SC_CORE_EXPORT Used_item : public Explicit_item_id {
+public:
+    Used_item() {}
+    Used_item( const char * foreign_schema, TypeDescriptor * ld,
+               const char * oi, const char * ni )
+    : Explicit_item_id( foreign_schema, ld, oi, ni ) {}
+    virtual ~Used_item() {}
+
+    const char * EXPRESS_type() {
+        return "USE";
+    }
+};
+
+typedef Used_item * Used_item_ptr;
+
+class SC_CORE_EXPORT Referenced_item : public Explicit_item_id {
+public:
+    Referenced_item() {}
+    Referenced_item( const char * foreign_schema, TypeDescriptor * ld,
+                     const char * oi, const char * ni )
+    : Explicit_item_id( foreign_schema, ld, oi, ni ) {}
+    virtual ~Referenced_item() {}
+
+    const char * EXPRESS_type() {
+        return "REFERENCE";
+    }
+};
+
+typedef Referenced_item * Referenced_item_ptr;
+
+
 #endif //EXPLICITITEMID_H

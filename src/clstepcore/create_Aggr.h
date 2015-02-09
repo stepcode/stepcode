@@ -2,6 +2,8 @@
 #define AGGRCREATORTD_H
 
 //typedef's for aggregate creators
+
+#include "sdai.h"
 #include "sc_export.h"
 
 
