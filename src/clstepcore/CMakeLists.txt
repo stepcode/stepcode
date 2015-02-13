@@ -44,6 +44,7 @@ set(LIBSTEPCORE_SRCS
   STEPaggrBinary.cc
   STEPaggrEntity.cc
   STEPaggrEnum.cc
+  STEPaggrGeneric.cc
   STEPaggrInt.cc
   STEPaggrReal.cc
   STEPaggrSelect.cc
@@ -103,6 +104,7 @@ set(SC_CLSTEPCORE_HDRS
   STEPaggrBinary.h
   STEPaggrEntity.h
   STEPaggrEnum.h
+  STEPaggrGeneric.h
   STEPaggrInt.h
   STEPaggrReal.h
   STEPaggrSelect.h
