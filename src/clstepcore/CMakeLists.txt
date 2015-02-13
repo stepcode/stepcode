@@ -41,6 +41,7 @@ set(LIBSTEPCORE_SRCS
   selectTypeDescriptor.cc
   SingleLinkList.cc
   STEPaggregate.cc
+  STEPaggrInt.cc
   STEPattribute.cc
   STEPattributeList.cc
   STEPcomplex.cc
@@ -93,6 +94,7 @@ set(SC_CLSTEPCORE_HDRS
   selectTypeDescriptor.h
   SingleLinkList.h
   STEPaggregate.h
+  STEPaggrInt.h
   STEPattribute.h
   STEPattributeList.h
   STEPcomplex.h
