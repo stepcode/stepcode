@@ -42,7 +42,6 @@ set(LIBSTEPCORE_SRCS
   SingleLinkList.cc
   STEPaggregate.cc
   STEPattribute.cc
-  STEPattribute.inline.cc
   STEPattributeList.cc
   STEPcomplex.cc
   STEPinvAttrList.cc
