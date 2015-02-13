@@ -45,6 +45,7 @@ set(LIBSTEPCORE_SRCS
   STEPaggrEnum.cc
   STEPaggrInt.cc
   STEPaggrReal.cc
+  STEPaggrSelect.cc
   STEPaggrString.cc
   STEPattribute.cc
   STEPattributeList.cc
@@ -102,6 +103,7 @@ set(SC_CLSTEPCORE_HDRS
   STEPaggrEnum.h
   STEPaggrInt.h
   STEPaggrReal.h
+  STEPaggrSelect.h
   STEPaggrString.h
   STEPattribute.h
   STEPattributeList.h
