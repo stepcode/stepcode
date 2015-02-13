@@ -149,24 +149,7 @@ typedef        SelectAggregate  *   SelectAggregate_ptr;
 typedef  const SelectAggregate  *   SelectAggregate_ptr_c;
 typedef        SelectAggregate_ptr  SelectAggregate_var;
 
-/****************************************************************//**
-** \class StringAggregate
-** This class supports LIST OF STRING type
-******************************************************************/
-class SC_CORE_EXPORT StringAggregate  :  public STEPaggregate {
-    public:
-        virtual SingleLinkNode * NewNode();
-        virtual STEPaggregate & ShallowCopy( const STEPaggregate & );
-
-        StringAggregate();
-        virtual ~StringAggregate();
-};
-typedef        StringAggregate *   StringAggregateH;
-typedef        StringAggregate *   StringAggregate_ptr;
-typedef  const StringAggregate *   StringAggregate_ptr_c;
-typedef        StringAggregate_ptr StringAggregate_var;
-
-
+#include "STEPaggrString.h"
 #include "STEPaggrBinary.h"
 #include "STEPaggrEnum.h"
 #include "STEPaggrReal.h"
@@ -344,38 +327,6 @@ class SC_CORE_EXPORT SelectNode  : public STEPnode {
             return STEPread( in, err, 0, 0, 0 );
         }
 };
-
-/**************************************************************//**
-** \class StringNode
-** This class is for the Nodes of StringAggregates
-******************************************************************/
-class SC_CORE_EXPORT StringNode  : public STEPnode {
-    public:
-        SDAI_String  value;
-//  INPUT
-        virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
-        virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
-
-        virtual Severity STEPread( const char * s, ErrorDescriptor * err );
-        virtual Severity STEPread( istream & in, ErrorDescriptor * err );
-
-//  OUTPUT
-        virtual const char * asStr( std::string & s );
-        virtual const char * STEPwrite( std::string & s, const char * = 0 );
-        virtual void    STEPwrite( ostream & out = cout );
-
-//  CONSTRUCTORS
-        StringNode( StringNode & sn );
-        StringNode( const char * sStr );
-        StringNode();
-        ~StringNode();
-
-        virtual SingleLinkNode   *  NewNode();
-};
-
-
-
-
 
 /******************************************************************
  **   FIXME The following classes are currently stubs
