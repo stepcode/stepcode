@@ -1,4 +1,5 @@
 #include "STEPaggrString.h"
+#include <sstream>
 
 /** \file STEPaggrString.cc
  * implement classes StringAggregate, StringNode

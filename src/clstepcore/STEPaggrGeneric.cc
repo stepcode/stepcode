@@ -1,4 +1,5 @@
 #include "STEPaggrGeneric.h"
+#include <sstream>
 
 /** \file STEPaggrGeneric.cc
  * implement classes GenericAggregate, GenericAggrNode

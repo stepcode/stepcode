@@ -1,4 +1,6 @@
 #include "STEPaggrSelect.h"
+#include "typeDescriptor.h"
+#include <sstream>
 
 /** \file STEPaggrSelect.cc
  * implement classes SelectAggregate, SelectNode

@@ -1,4 +1,5 @@
 #include "STEPaggrBinary.h"
+#include <sstream>
 
 /** \file STEPaggrBinary.cc
  * implement classes BinaryAggregate, BinaryNode

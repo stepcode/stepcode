@@ -1,4 +1,7 @@
 #include "STEPaggrEntity.h"
+#include "STEPattribute.h"
+#include "typeDescriptor.h"
+#include <sstream>
 
 /** \file STEPaggrEntity.cc
  * implement classes EntityAggregate, EntityNode

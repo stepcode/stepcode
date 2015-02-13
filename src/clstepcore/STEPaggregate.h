@@ -110,7 +110,7 @@ public:
 };
 typedef  STEPnode  * STEPnodeH;
 
-
+#include "STEPaggrGeneric.h"
 #include "STEPaggrEntity.h"
 #include "STEPaggrSelect.h"
 #include "STEPaggrString.h"

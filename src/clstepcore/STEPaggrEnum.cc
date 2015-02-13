@@ -1,4 +1,5 @@
 #include "STEPaggrEnum.h"
+#include <sstream>
 
 /** \file StepaggrEnum.cc
  * implement classes EnumAggregate, LOGICALS, BOOLEANS, EnumNode
