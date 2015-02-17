@@ -41,8 +41,15 @@ set(LIBSTEPCORE_SRCS
   selectTypeDescriptor.cc
   SingleLinkList.cc
   STEPaggregate.cc
+  STEPaggrBinary.cc
+  STEPaggrEntity.cc
+  STEPaggrEnum.cc
+  STEPaggrGeneric.cc
+  STEPaggrInt.cc
+  STEPaggrReal.cc
+  STEPaggrSelect.cc
+  STEPaggrString.cc
   STEPattribute.cc
-  STEPattribute.inline.cc
   STEPattributeList.cc
   STEPcomplex.cc
   STEPinvAttrList.cc
@@ -94,6 +101,14 @@ set(SC_CLSTEPCORE_HDRS
   selectTypeDescriptor.h
   SingleLinkList.h
   STEPaggregate.h
+  STEPaggrBinary.h
+  STEPaggrEntity.h
+  STEPaggrEnum.h
+  STEPaggrGeneric.h
+  STEPaggrInt.h
+  STEPaggrReal.h
+  STEPaggrSelect.h
+  STEPaggrString.h
   STEPattribute.h
   STEPattributeList.h
   STEPcomplex.h
