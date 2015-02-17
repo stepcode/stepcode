@@ -25,7 +25,7 @@
 char * entityName, _buf[512] = { 0 };
 
 /** prints usage info specific to print_attrs */
-void my_usage() {
+void my_usage(void) {
     EXPRESSusage( 0 );
     printf( "   ----\n\t-a <entity>: print attrs for <entity>\n" );
     exit( 2 );
