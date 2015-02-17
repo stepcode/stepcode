@@ -733,8 +733,17 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
         if( isAggregateType( t ) && t->u.type->body->base ) {
             fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
         }
-    }
-    LISTod;
+    } LISTod
+    /* above misses some attr's that are initialized in part 1 ctor below.
+     * hopefully this won't add duplicates...
+     */
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
+            if( isAggregateType( t )  && ( t->u.type->body->base ) ) {
+                    fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+            }
+        }
+    } LISTod
     fprintf( f, "   nullify();\n" );
     fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "//    *logStream << \"DAVE ERR exiting %s constructor.\" << std::endl;\n", n );
