@@ -28,7 +28,7 @@ class SC_DAI_EXPORT SDAI_Enum {
     public:
         virtual ~SDAI_Enum() {};
 
-        void PrintContents( ostream & out = cout ) const {
+        void PrintContents( ostream & out = std::cout ) const {
             DebugDisplay( out );
         }
 
@@ -52,7 +52,7 @@ class SC_DAI_EXPORT SDAI_Enum {
         }
 
         const char * asStr( std::string & s ) const;
-        void STEPwrite( ostream & out = cout )  const;
+        void STEPwrite( ostream & out = std::cout )  const;
         const char * STEPwrite( std::string & s ) const;
 
         Severity StrToVal( const char * s, ErrorDescriptor * err, int optional = 1 );
@@ -74,7 +74,7 @@ class SC_DAI_EXPORT SDAI_Enum {
         ///FIXME need to rewrite this function, but strange implementation...
         virtual int exists() const;
         virtual void nullify();
-        void DebugDisplay( ostream & out = cout ) const;
+        void DebugDisplay( ostream & out = std::cout ) const;
 
     protected:
         virtual Severity ReadEnum( istream & in, ErrorDescriptor * err,
