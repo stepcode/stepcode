@@ -36,7 +36,7 @@ typedef STEPaggregate_ptr STEPaggregate_var;
 
 class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
     protected:
-        int _null;
+        bool _null;
 
     protected:
 
@@ -47,7 +47,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
                                     const char * currSch = 0 );
     public:
 
-        int is_null() {
+        bool is_null() {
             return _null;
         }
 

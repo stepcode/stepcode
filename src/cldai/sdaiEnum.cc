@@ -357,6 +357,7 @@ int SDAI_Enum::put( const char * n ) {
 }
 
 /// return 0 if unset otherwise return 1
+/// WARNING it appears that exists() will return true after a call to nullify(). is this intended?
 int SDAI_Enum::exists() const {
     return !( v > no_elements() );
 }

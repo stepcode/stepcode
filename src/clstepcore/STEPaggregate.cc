@@ -37,7 +37,7 @@ STEPaggregate NilSTEPaggregate;
 
 
 STEPaggregate::STEPaggregate() {
-    _null = 1;
+    _null = true;
 }
 
 STEPaggregate::~STEPaggregate() {
@@ -121,7 +121,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
     c = in.peek(); // does not advance input
 
     if( in.eof() || c == '$' ) {
-        _null = 1;
+        _null = true;
         err->GreaterSeverity( SEVERITY_INCOMPLETE );
         return SEVERITY_INCOMPLETE;
     }
@@ -195,7 +195,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
         }
     }
     if( c == ')' ) {
-        _null = 0;
+        _null = false;
     } else { // expectation for end paren delim has not been met
         err->GreaterSeverity( SEVERITY_INPUT_ERROR );
         err->AppendToUserMsg( "Missing close paren for aggregate value" );
@@ -264,12 +264,12 @@ SingleLinkNode * STEPaggregate::NewNode() {
 
 void STEPaggregate::AddNode( SingleLinkNode * n ) {
     SingleLinkList::AppendNode( n );
-    _null = 0;
+    _null = false;
 }
 
 void STEPaggregate::Empty() {
     SingleLinkList::Empty();
-    _null = 1;
+    _null = true;
 }
 
 

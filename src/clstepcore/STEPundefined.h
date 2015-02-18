@@ -35,7 +35,7 @@ class SC_CORE_EXPORT SCLundefined  {
         virtual void    STEPwrite( ostream & out = cout );
 
         int set_null();
-        int is_null();
+        bool is_null();
         SCLundefined & operator= ( const SCLundefined & );
         SCLundefined & operator= ( const char * str );
         SCLundefined();

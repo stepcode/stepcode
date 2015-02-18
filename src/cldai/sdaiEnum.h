@@ -12,6 +12,7 @@
 * and is not subject to copyright.
 */
 
+#include <iostream>
 #include <sc_export.h>
 
 class SC_DAI_EXPORT SDAI_Enum {
@@ -60,8 +61,8 @@ class SC_DAI_EXPORT SDAI_Enum {
 
         virtual int put( int val );
         virtual int put( const char * n );
-        int is_null() const {
-            return !( exists() );
+        bool is_null() const {
+            return ( exists() == 0 );
         }
         void set_null() {
             nullify();
@@ -69,6 +70,8 @@ class SC_DAI_EXPORT SDAI_Enum {
         SDAI_Enum & operator= ( const int );
         SDAI_Enum & operator= ( const SDAI_Enum & );
 
+        /// WARNING it appears that exists() will return true after a call to nullify(). is this intended?
+        ///FIXME need to rewrite this function, but strange implementation...
         virtual int exists() const;
         virtual void nullify();
         void DebugDisplay( ostream & out = cout ) const;
