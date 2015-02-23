@@ -840,7 +840,7 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
     } LISTod
 
     /* dtor */
-    fprintf( f, "%s::~%s()\n{\n", n, n );
+    fprintf( f, "%s::~%s() {\n", n, n );
     /* delete objects that data members point to */
     LISTdo( dups, t, Type ) {
         if( isAggregateType( t ) && t->u.type->body->base ) {
@@ -850,6 +850,16 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
         }
     }
     LISTod;
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
+            if( isAggregateType( t )  && ( t->u.type->body->base ) ) {
+                fprintf( f, "   if( _%s ) {\n", SEL_ITEMget_dmname( t ) );
+                fprintf( f, "       delete _%s;\n", SEL_ITEMget_dmname( t ) );
+                fprintf( f, "       _%s = 0;\n    }\n", SEL_ITEMget_dmname( t ) );
+            }
+        }
+    } LISTod
+
     fprintf( f, "}\n\n" );
 
     fprintf( f, "%s_agg::%s_agg( SelectTypeDescriptor *s)\n"
@@ -1036,8 +1046,7 @@ void TYPEselect_lib_part_three_getter( const Type type, const char * classnm, co
 * a select class -- access functions for the data members of underlying entity
 * types.
 */
-void TYPEselect_lib_print_part_three( const Type type, FILE * f,
-                                 char * classnm ) {
+void TYPEselect_lib_print_part_three( const Type type, FILE * f, char * classnm ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
     char uent[BUFSIZ],  /*  name of underlying entity type  */
