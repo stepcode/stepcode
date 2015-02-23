@@ -11,8 +11,8 @@
 */
 
 #include <stdio.h> // to get the BUFSIZ #define
-#include <STEPundefined.h>
 #include <STEPattribute.h>
+#include <STEPundefined.h>
 #include "sc_memmgr.h"
 
 /** \class SCLundefined
@@ -149,7 +149,7 @@ int SCLundefined::set_null() {
     return 1;
 }
 
-int SCLundefined::is_null() {
+bool SCLundefined::is_null() {
     return ( val.empty() );
 }
 

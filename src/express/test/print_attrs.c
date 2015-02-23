@@ -16,7 +16,8 @@
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
-#include "express/express.h"
+#include <express/info.h>
+#include <express/express.h>
 #include <express/scope.h>
 #include <express/variable.h>
 #include "ordered_attrs.h"
@@ -25,7 +26,7 @@
 char * entityName, _buf[512] = { 0 };
 
 /** prints usage info specific to print_attrs */
-void my_usage() {
+void my_usage(void) {
     EXPRESSusage( 0 );
     printf( "   ----\n\t-a <entity>: print attrs for <entity>\n" );
     exit( 2 );
@@ -73,9 +74,9 @@ void find_and_print( Express model ) {
     Schema s;
     Entity e;
     DICTdo_init( model->symbol_table, &de );
-    while( 0 != ( s = DICTdo( &de ) ) ) {
+    while( 0 != ( s = (Schema) DICTdo( &de ) ) ) {
         printf( "Schema %s\n", s->symbol.name );
-        e = DICTlookup( s->symbol_table, entityName );
+        e = (Entity) DICTlookup( s->symbol_table, entityName );
         if( e ) {
             print_attrs( e );
         }

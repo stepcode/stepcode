@@ -95,8 +95,9 @@ class SC_CORE_EXPORT SDAI_Select {
         //linux has a regression if the pure virtual operator= is commented out
         virtual SDAI_Select & operator =( const SDAI_Select & other );
 
-        int set_null();
-        int is_null();
+        //FIXME set_null always returns true. why not void?!
+        bool set_null();
+        bool is_null();
 
 };        /** end class  **/
 

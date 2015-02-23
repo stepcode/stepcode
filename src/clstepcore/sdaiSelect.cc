@@ -592,11 +592,11 @@ const char * SDAI_Select::STEPwrite( std::string & s, const char * currSch )  co
     return const_cast<char *>( s.c_str() );
 }
 
-int SDAI_Select::set_null() {
+bool SDAI_Select::set_null() {
     nullify();
-    return 1;
+    return true;
 }
 
-int SDAI_Select::is_null() {
+bool SDAI_Select::is_null() {
     return ( !exists() );
 }

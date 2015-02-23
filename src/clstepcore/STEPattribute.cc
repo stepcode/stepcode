@@ -10,7 +10,6 @@
 */
 
 #include <iomanip>
-#include <sstream>
 #include <string>
 
 #include <read_func.h>
@@ -815,10 +814,8 @@ bool STEPattribute::is_null()  const {
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
-                 << "\n" << _POC_ "\n";
-            return SEVERITY_BUG;
-
+            //should be an error, but this is a const function - no way to report.
+            return true;
         case UNKNOWN_TYPE:
         default:
             return ( ptr.u -> is_null() );

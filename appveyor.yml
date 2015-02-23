@@ -34,12 +34,15 @@ environment:
 #   parallel: true
 #   project: ALL_BUILD.vcxproj
 
+#appveyor limits compile/test to 30 minutes
+# to reduce time, only test schemas with files: ifc2x3, ap214e3, ap209
+
 build_script:
 - ps: |
     cd c:\projects\STEPcode
     mkdir build
     cd build
-    cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR"
+    cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
     cmake --build . --config Debug
 
 test_script:
