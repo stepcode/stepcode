@@ -733,8 +733,17 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
         if( isAggregateType( t ) && t->u.type->body->base ) {
             fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
         }
-    }
-    LISTod;
+    } LISTod
+    /* above misses some attr's that are initialized in part 1 ctor below.
+     * hopefully this won't add duplicates...
+     */
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
+            if( isAggregateType( t )  && ( t->u.type->body->base ) ) {
+                    fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+            }
+        }
+    } LISTod
     fprintf( f, "   nullify();\n" );
     fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
     fprintf( f, "//    *logStream << \"DAVE ERR exiting %s constructor.\" << std::endl;\n", n );
@@ -743,101 +752,95 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
 
     /*  constructors with underlying types  */
     fprintf( f, "\n    //  part 1\n" );
-    LISTdo( SEL_TYPEget_items( type ), t, Type )
-    if( ( TYPEis_entity( t ) )
-            || ( !utype_member( dups, t, 1 ) ) ) {
-        /* if there is not more than one underlying type that maps to the same
-         * base type print out the constructor using the type from the TYPE
-         * statement as the underlying type.  Also skip enums/sels which are
-         * renames of other items.  That would create redundant constructors
-         * since renames are typedef'ed to the original type.
-             */
-        fprintf( f, "%s::%s( const %s& o,\n", n, n, AccessType( t ) );
-        for( j = 0; j < size; j++ ) {
-            fprintf( f, " " );
-        }
-        /* Did this for the heck of it, and to show how easy it would have
-           been to make it all pretty - DAR.  ;-) */
-        fprintf( f, "const SelectTypeDescriptor *typedescript )\n" );
-
-        fprintf( f, "  : " BASE_SELECT " (typedescript, %s)",
-                 TYPEtd_name( t ) );
-        initSelItems( type, f );
-        fprintf( f, "\n{\n" );
-        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
-        fprintf( f,
-                 "    *logStream << \"DAVE ERR entering %s constructor.\""
-                 " << std::endl;\n", n );
-        fprintf( f, "    }\n#endif\n" );
-
-        if( isAggregateType( t ) ) {
-            if( t->u.type->body->base ) {
-                fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
-            }
-            fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
-                     ( ( t->u.type->body->base ) ? "->" : "." ) );
-        } else {
-            fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
-        }
-        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
-        fprintf( f,
-                 "//    *logStream << \"DAVE ERR exiting %s constructor.\""
-                 " << std::endl;\n", n );
-        fprintf( f, "    }\n#endif\n" );
-
-        fprintf( f, "}\n\n" );
-    }
-    LISTod;
-    LISTdo( dups, t, Type )
-    /* if there is more than one underlying type that maps to the
-     *  same base type, print a constructor using the base type.
-     */
-    if( ! TYPEis_entity( t ) ) { /*  entities were done already */
-        if( isAggregateType( t ) )  {
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
+            /* if there is not more than one underlying type that maps to the same
+            * base type print out the constructor using the type from the TYPE
+            * statement as the underlying type.  Also skip enums/sels which are
+            * renames of other items.  That would create redundant constructors
+            * since renames are typedef'ed to the original type.
+                */
             fprintf( f, "%s::%s( const %s& o,\n", n, n, AccessType( t ) );
             for( j = 0; j < size; j++ ) {
                 fprintf( f, " " );
             }
+            /* Did this for the heck of it, and to show how easy it would have
+            been to make it all pretty - DAR.  ;-) */
             fprintf( f, "const SelectTypeDescriptor *typedescript )\n" );
-            fprintf( f, "  : " BASE_SELECT " ( typedescript, %s )",
-                     TYPEtd_name( t ) );
+
+            fprintf( f, "  : " BASE_SELECT " (typedescript, %s)", TYPEtd_name( t ) );
             initSelItems( type, f );
             fprintf( f, "\n{\n" );
+            fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream ) { " );
+            fprintf( f, "*logStream << \"DAVE ERR entering %s constructor.\" << std::endl; }\n", n );
+            fprintf( f, "#endif\n" );
+
+            if( isAggregateType( t ) ) {
+                if( t->u.type->body->base ) {
+                    fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+                }
+                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ),
+                        ( ( t->u.type->body->base ) ? "->" : "." ) );
+            } else {
+                fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            }
+            fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream ) { " );
+            fprintf( f, "*logStream << \"DAVE ERR exiting %s constructor.\" << std::endl; }\n", n );
+            fprintf( f, "#endif\n" );
+
+            fprintf( f, "}\n\n" );
+        }
+    } LISTod
+    LISTdo( dups, t, Type ) {
+        /* if there is more than one underlying type that maps to the
+        *  same base type, print a constructor using the base type.
+        */
+        if( ! TYPEis_entity( t ) ) { /*  entities were done already */
+            if( isAggregateType( t ) )  {
+                fprintf( f, "%s::%s( const %s& o,\n", n, n, AccessType( t ) );
+                for( j = 0; j < size; j++ ) {
+                    fprintf( f, " " );
+                }
+                fprintf( f, "const SelectTypeDescriptor *typedescript )\n" );
+                fprintf( f, "  : " BASE_SELECT " ( typedescript, %s )",
+                        TYPEtd_name( t ) );
+                initSelItems( type, f );
+                fprintf( f, "\n{\n" );
+                fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
+                fprintf( f,
+                        "    *logStream << \"DAVE ERR entering %s constructor.\""
+                        " << std::endl;\n", n );
+                fprintf( f, "    }\n#endif\n" );
+                if( t->u.type->body->base ) {
+                    fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
+                }
+                fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ), ( ( t->u.type->body->base ) ? "->" : "." ) );
+            } else {
+                fprintf( f, "%s::%s( const %s& o,\n", n, n, TYPEget_utype( t ) );
+                for( j = 0; j < size; j++ ) {
+                    fprintf( f, " " );
+                }
+                fprintf( f, "const SelectTypeDescriptor *typedescript )\n" );
+                fprintf( f, "  : " BASE_SELECT " ( typedescript, %s )",
+                        TYPEtd_name( t ) );
+                initSelItems( type, f );
+                fprintf( f, "\n{\n" );
+                fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            }
+            fprintf( f,
+                    "//  NOTE:  Underlying type defaults to %s instead of NULL\n",
+                    TYPEtd_name( t ) );
             fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
             fprintf( f,
-                     "    *logStream << \"DAVE ERR entering %s constructor.\""
-                     " << std::endl;\n", n );
+                    "//    *logStream << \"DAVE ERR exiting %s constructor.\""
+                    " << std::endl;\n", n );
             fprintf( f, "    }\n#endif\n" );
-            if( t->u.type->body->base ) {
-                fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
-            }
-            fprintf( f, "   _%s%sShallowCopy (*o);\n", SEL_ITEMget_dmname( t ), ( ( t->u.type->body->base ) ? "->" : "." ) );
-        } else {
-            fprintf( f, "%s::%s( const %s& o,\n", n, n, TYPEget_utype( t ) );
-            for( j = 0; j < size; j++ ) {
-                fprintf( f, " " );
-            }
-            fprintf( f, "const SelectTypeDescriptor *typedescript )\n" );
-            fprintf( f, "  : " BASE_SELECT " ( typedescript, %s )",
-                     TYPEtd_name( t ) );
-            initSelItems( type, f );
-            fprintf( f, "\n{\n" );
-            fprintf( f, "   _%s = o;\n", SEL_ITEMget_dmname( t ) );
+            fprintf( f, "}\n\n" );
         }
-        fprintf( f,
-                 "//  NOTE:  Underlying type defaults to %s instead of NULL\n",
-                 TYPEtd_name( t ) );
-        fprintf( f, "#ifdef SC_LOGGING\n    if( *logStream )\n    {\n" );
-        fprintf( f,
-                 "//    *logStream << \"DAVE ERR exiting %s constructor.\""
-                 " << std::endl;\n", n );
-        fprintf( f, "    }\n#endif\n" );
-        fprintf( f, "}\n\n" );
-    }
-    LISTod;
+    } LISTod
 
     /* dtor */
-    fprintf( f, "%s::~%s()\n{\n", n, n );
+    fprintf( f, "%s::~%s() {\n", n, n );
     /* delete objects that data members point to */
     LISTdo( dups, t, Type ) {
         if( isAggregateType( t ) && t->u.type->body->base ) {
@@ -847,6 +850,16 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
         }
     }
     LISTod;
+    LISTdo( SEL_TYPEget_items( type ), t, Type ) {
+        if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
+            if( isAggregateType( t )  && ( t->u.type->body->base ) ) {
+                fprintf( f, "   if( _%s ) {\n", SEL_ITEMget_dmname( t ) );
+                fprintf( f, "       delete _%s;\n", SEL_ITEMget_dmname( t ) );
+                fprintf( f, "       _%s = 0;\n    }\n", SEL_ITEMget_dmname( t ) );
+            }
+        }
+    } LISTod
+
     fprintf( f, "}\n\n" );
 
     fprintf( f, "%s_agg::%s_agg( SelectTypeDescriptor *s)\n"
@@ -1033,8 +1046,7 @@ void TYPEselect_lib_part_three_getter( const Type type, const char * classnm, co
 * a select class -- access functions for the data members of underlying entity
 * types.
 */
-void TYPEselect_lib_print_part_three( const Type type, FILE * f,
-                                 char * classnm ) {
+void TYPEselect_lib_print_part_three( const Type type, FILE * f, char * classnm ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
     char uent[BUFSIZ],  /*  name of underlying entity type  */
