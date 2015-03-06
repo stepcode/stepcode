@@ -260,7 +260,7 @@ const char * DirObj::ValidDirectories( const char * path ) {
     static char buf[MAXPATHLEN + 1];
 #endif
     strcpy( buf, path );
-    int i = strlen( path );
+    size_t i = strlen( path );
 
     while( !IsADirectory( RealPath( buf ) ) && i >= 0 ) {
         for( --i; buf[i] != '/' && i >= 0; --i ) {
