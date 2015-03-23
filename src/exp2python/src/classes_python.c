@@ -289,9 +289,14 @@ int Handle_FedPlus_Args( int i, char * arg ) {
 
 
 bool is_python_keyword( char * word ) {
+    int i;
+    const char* keyword_list[] = {"class", "pass", NULL};
     bool python_keyword = false;
-    if( strcmp( word, "class" ) == 0 ) {
-        python_keyword = true;
+
+    for( i = 0; keyword_list[i] != NULL; i++ ) {
+        if( strcmp( word, keyword_list[i] ) == 0 ) {
+            python_keyword = true;
+        }
     }
     return python_keyword;
 }
@@ -1415,7 +1420,11 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
             break;
         case entity_:
         case identifier_:
-            fprintf( file, "%s", e->symbol.name );
+            if( is_python_keyword( e->symbol.name ) ) {
+                fprintf( file, "%s_", e->symbol.name );
+            } else {
+                fprintf( file, "%s", e->symbol.name );
+            }
             break;
         case attribute_:
             fprintf( file, "%s", e->symbol.name );
