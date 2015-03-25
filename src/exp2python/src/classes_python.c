@@ -2199,6 +2199,7 @@ isMultiDimAggregateType( const Type t ) {
    reference since it has an Express name associated with it.
 */
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
+    return 1;
 }
 
 
@@ -2241,6 +2242,8 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             fprintf( files->lib, "%s = ", TYPEget_name( type ) );
             process_aggregate( files->lib, type );
             fprintf( files->lib, "\n" );
+        } else if( TYPEis_boolean( type ) ) {
+            fprintf( files->lib, "%s = bool\n", TYPEget_name( type ) );
         } else if( TYPEis_select( type ) ) {
             TYPEselect_lib_print( type, files -> lib );
         } else {
@@ -2269,7 +2272,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             /* then we process the where rules */
             WHEREPrint( type->where, 0, files->lib );
         }
-    } else {
+    } else { /* TODO: cleanup, currently this is deadcode */
         switch( TYPEget_body( type )->type ) {
             case enumeration_:
                 TYPEenum_lib_print( type, files -> lib );
