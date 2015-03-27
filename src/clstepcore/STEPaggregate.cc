@@ -19,8 +19,6 @@
 #include <ExpDict.h>
 #include "sc_memmgr.h"
 
-const int Real_Num_Precision = REAL_NUM_PRECISION; // from STEPattribute.h
-
 
 /**
  *    \file STEPaggregate.cc Functions for manipulating aggregate attributes
