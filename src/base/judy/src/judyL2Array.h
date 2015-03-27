@@ -166,7 +166,7 @@ class judyL2Array {
                 kv.value = *_lastSlot;
                 _success = true;
             } else {
-                kv.value = ( JudyValue ) 0;
+                kv.value = NULL;
                 _success = false;
             }
             kv.key = _buff[0];
