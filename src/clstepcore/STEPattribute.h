@@ -26,8 +26,6 @@
  */
 #define REAL_NUM_PRECISION 15
 
-typedef double real;
-
 class InstMgrBase;
 class SDAI_Application_instance;
 class STEPaggregate;
