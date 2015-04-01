@@ -289,9 +289,14 @@ int Handle_FedPlus_Args( int i, char * arg ) {
 
 
 bool is_python_keyword( char * word ) {
+    int i;
+    const char* keyword_list[] = {"class", "pass", NULL};
     bool python_keyword = false;
-    if( strcmp( word, "class" ) == 0 ) {
-        python_keyword = true;
+
+    for( i = 0; keyword_list[i] != NULL; i++ ) {
+        if( strcmp( word, keyword_list[i] ) == 0 ) {
+            python_keyword = true;
+        }
     }
     return python_keyword;
 }
@@ -1415,7 +1420,11 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
             break;
         case entity_:
         case identifier_:
-            fprintf( file, "%s", e->symbol.name );
+            if( is_python_keyword( e->symbol.name ) ) {
+                fprintf( file, "%s_", e->symbol.name );
+            } else {
+                fprintf( file, "%s", e->symbol.name );
+            }
             break;
         case attribute_:
             fprintf( file, "%s", e->symbol.name );
@@ -1951,27 +1960,26 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     } else {
         fprintf( f, "\n# ENUMERATION TYPE %s\n", TYPEget_name( type ) );
     }
-    /* first write all the values of the enum */
-    DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     /* then outputs the enum */
     if( is_python_keyword( TYPEget_name( type ) ) ) {
-        fprintf( f, "%s_ = ENUMERATION(", TYPEget_name( type ) );
+        fprintf( f, "%s_ = ENUMERATION('%s_','", TYPEget_name( type ), TYPEget_name( type ) );
     } else {
-        fprintf( f, "%s = ENUMERATION(", TYPEget_name( type ) );
+        fprintf( f, "%s = ENUMERATION('%s','", TYPEget_name( type ), TYPEget_name( type ) );
     }
-    /*  set up the dictionary info  */
 
+    /*  set up the dictionary info  */
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if( is_python_keyword( EXPget_name( expr ) ) ) {
-            fprintf( f, "\n'%s_',", EXPget_name( expr ) );
+            fprintf( f, "%s_ ", EXPget_name( expr ) );
         } else {
-            fprintf( f, "\n\t'%s',", EXPget_name( expr ) );
+            fprintf( f, "%s ", EXPget_name( expr ) );
         }
     }
-    fprintf( f, "\n\tscope = schema_scope)\n" );
+    fprintf( f, "')\n" );
 }
+
 
 
 void Type_Description( const Type, char * );
@@ -2190,6 +2198,7 @@ isMultiDimAggregateType( const Type t ) {
    reference since it has an Express name associated with it.
 */
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
+    return 1;
 }
 
 
@@ -2232,9 +2241,13 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             fprintf( files->lib, "%s = ", TYPEget_name( type ) );
             process_aggregate( files->lib, type );
             fprintf( files->lib, "\n" );
+        } else if( TYPEis_boolean( type ) ) {
+            fprintf( files->lib, "%s = bool\n", TYPEget_name( type ) );
         } else if( TYPEis_select( type ) ) {
             TYPEselect_lib_print( type, files -> lib );
-        } else {
+        } else if( TYPEis_enumeration( type ) ) {
+            TYPEenum_lib_print( type, files -> lib );
+        } else { 
             /* the defined datatype inherits from the base type */
             fprintf( files->lib, "# Defined datatype %s\n", TYPEget_name( type ) );
             fprintf( files->lib, "class %s(", TYPEget_name( type ) );
@@ -2260,7 +2273,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             /* then we process the where rules */
             WHEREPrint( type->where, 0, files->lib );
         }
-    } else {
+    } else { /* TODO: cleanup, currently this is deadcode */
         switch( TYPEget_body( type )->type ) {
             case enumeration_:
                 TYPEenum_lib_print( type, files -> lib );
