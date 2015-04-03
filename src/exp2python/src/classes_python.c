@@ -102,6 +102,8 @@ void CASEout( struct Case_Statement_ *c, int level, FILE * file );
 void LOOPpyout( struct Loop_ *loop, int level, FILE * file );
 void WHEREPrint( Linked_List wheres, int level , FILE * file );
 
+void Type_Description( const Type, char * );
+
 char * EXPRto_python( Expression e );
 
 /*
@@ -1980,29 +1982,6 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
         }
     }
     fprintf( f, "')\n" );
-}
-
-
-
-void Type_Description( const Type, char * );
-
-/* return printable version of entire type definition */
-/* return it in static buffer */
-char *
-TypeDescription( const Type t ) {
-    static char buf[4000];
-
-    buf[0] = '\0';
-
-    if( TYPEget_head( t ) ) {
-        Type_Description( TYPEget_head( t ), buf );
-    } else {
-        TypeBody_Description( TYPEget_body( t ), buf );
-    }
-
-    /* should also print out where clause here */
-
-    return buf + 1;
 }
 
 void strcat_expr( Expression e, char * buf ) {
