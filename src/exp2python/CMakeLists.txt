@@ -2,7 +2,6 @@ if(SC_PYTHON_GENERATOR)
 
   include_directories(
     ${SC_SOURCE_DIR}/include
-    ${SC_SOURCE_DIR}/include/exppp
     ${SC_SOURCE_DIR}/include/express
     ${SC_SOURCE_DIR}/src/base
    )
@@ -30,7 +29,7 @@ if(SC_PYTHON_GENERATOR)
     ../exp2cxx/write.cc
     ../exp2cxx/print.cc
    )
-  SC_ADDEXEC(exp2python "${exp2python_SOURCES}" "libexppp;express;base")
+  SC_ADDEXEC(exp2python "${exp2python_SOURCES}" "express;base")
 
   add_dependencies(exp2python version_string)
 endif(SC_PYTHON_GENERATOR)
