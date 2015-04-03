@@ -25,13 +25,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* #define NEWDICT */
 
 #include <stdlib.h>
-#include "classes.h"
+#include <errno.h>
 
 #ifdef __STDC__
 #include <stdarg.h>
 #else
 #include <varargs.h>
 #endif
+
+#include "sc_memmgr.h"
+#include "classes.h"
 
 #define EXPRESSION_out(e,p,f) EXPRESSION__out(e,p,OP_UNKNOWN,f)
 #define EXPRESSIONop2_out(oe,string,paren,pad,f) \
@@ -98,6 +101,8 @@ void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode,
 void CASEout( struct Case_Statement_ *c, int level, FILE * file );
 void LOOPpyout( struct Loop_ *loop, int level, FILE * file );
 void WHEREPrint( Linked_List wheres, int level , FILE * file );
+
+char * EXPRto_python( Expression e );
 
 /*
 Turn the string into a new string that will be printed the same as the
@@ -313,7 +318,8 @@ char *
 generate_attribute_name( Variable a, char * out ) {
     char * temp, *p, *q;
     int j;
-    temp = EXPRto_string( VARget_name( a ) );
+    Expression name = VARget_name( a );
+    temp = strdup( EXPget_name( name ) );
     p = temp;
     if( ! strncmp( StrToLower( p ), "self\\", 5 ) ) {
         p = p + 5;
@@ -377,8 +383,8 @@ char *
 generate_dict_attr_name( Variable a, char * out ) {
     char * temp, *p, *q;
     int j;
-
-    temp = EXPRto_string( VARget_name( a ) );
+    Expression name = VARget_name( a );
+    temp = strdup( EXPget_name( name ) );
     p = temp;
     if( ! strncmp( StrToLower( p ), "self\\", 5 ) ) {
         p = p + 5;
@@ -557,6 +563,118 @@ print_aggregate_type( FILE * file, Type t ) {
     }
 }
 
+
+#define BIGBUFSIZ   100000
+
+char* EXPRto_python( Expression e ) {
+    char * buf;
+    char * temp;
+    unsigned int bufsize = BIGBUFSIZ;
+
+    buf = ( char * )sc_malloc( bufsize );
+    if( !buf ) {
+        fprintf(stderr, "%s failed to allocate buffer: %s\n", __func__, strerror(errno) );
+        abort();
+    }
+
+    switch( TYPEis( e->type ) ) {
+        case integer_:
+            snprintf( buf, bufsize, "%d", e->u.integer );
+            break;
+        case real_:
+            if( e == LITERAL_PI ) {
+                strcpy( buf, "math.pi" );
+            } else if( e == LITERAL_E ) {
+                strcpy( buf, "math.e" );
+            } else {
+                snprintf( buf, bufsize, "%e", e->u.real );
+            }
+            break;
+        case binary_:
+            snprintf( buf, bufsize, "%u", e->u.binary );
+            break;
+        case logical_:
+             switch( e->u.logical ) {
+                case Ltrue:
+                    strcpy( buf, "True" );
+                    break;
+                case Lfalse:
+                    strcpy( buf, "False" );
+                    break;
+                default:
+                    strcpy( buf, "None" );
+                    break;
+            }
+           break;
+        case boolean_:
+            switch( e->u.logical ) {
+                case Ltrue:
+                    strcpy( buf, "True" );
+                    break;
+                case Lfalse:
+                    strcpy( buf, "False" );
+                    break;
+            }
+           break;
+        case string_:
+            if( TYPEis_encoded( e->type ) ) {
+				snprintf( buf, bufsize, "binascii.unhexlify('%s')", e->symbol.name );
+            } else {
+				temp = strliteral_py_dup( e->symbol.name );
+				strncpy( buf, temp, bufsize );
+				free(temp);
+            }
+            break;
+        case entity_:
+        case identifier_:
+        case attribute_:
+        case enumeration_:
+            snprintf( buf, bufsize, "%s.%s", TYPEget_name(e->type), e->symbol.name );
+            break;
+        case query_:
+			strcpy( buf, "# query_ NOT_IMPLEMENTED!" );
+            break;
+        case self_:
+            strcpy( buf, "self" );
+            break;
+        case funcall_:
+            snprintf( buf, bufsize, "%s(", e->symbol.name );
+            int i = 0;
+            LISTdo( e->u.funcall.list, arg, Expression )
+                i++;
+                if( i != 1 ) {
+                    strcat( buf, ", " );
+                }
+                temp = EXPRto_python( arg );
+                strcat( buf, temp );
+                free( temp );
+            LISTod
+            strcat( buf, ")" );
+            break;
+        case op_:
+			strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
+            break;
+        case aggregate_:
+            strcpy( buf, "# aggregate_ NOT_IMPLEMENTED!" );
+            break;
+        case oneof_: {
+            strcpy( buf, "# oneof_ NOT_IMPLEMENTED!" );
+            break;
+        }
+        default:
+            fprintf( stderr, "%s:%d: ERROR - unknown expression, type %d", e->symbol.filename, e->symbol.line, TYPEis( e->type ) );
+            abort();
+    }
+
+    temp = ( char * )sc_realloc( buf, 1 + strlen(buf) );
+    if( temp == 0 ) {
+        fprintf(stderr, "%s failed to realloc buffer: %s\n", __func__, strerror(errno) );
+        abort();
+    }
+
+    return temp;
+}
+
 /*
 *
 * A recursive function to export aggregate to python
@@ -565,14 +683,14 @@ print_aggregate_type( FILE * file, Type t ) {
 void
 process_aggregate( FILE * file, Type t ) {
     Expression lower = AGGR_TYPEget_lower_limit( t );
-    char * lower_str = EXPRto_string( lower );
+    char * lower_str = EXPRto_python( lower );
     Expression upper = AGGR_TYPEget_upper_limit( t );
     char * upper_str = NULL;
     Type base_type;
     if( upper == LITERAL_INFINITY ) {
         upper_str = "None";
     } else {
-        upper_str = EXPRto_string( upper );
+        upper_str = EXPRto_python( upper );
     }
     switch( TYPEget_body( t )->type ) {
         case array_:
@@ -1042,6 +1160,7 @@ void
 FUNCPrint( Function function, FILES * files, Schema schema ) {
     char * function_name = FUNCget_name( function );
     char * param_name;
+    Expression expr_name = EXPRESSION_NULL;
     Type t, return_type = FUNCget_return_type( function );
     fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", function_name );
 
@@ -1050,7 +1169,8 @@ FUNCPrint( Function function, FILES * files, Schema schema ) {
 
     /* write parameter list */
     LISTdo( FUNCget_parameters( function ), v, Variable )
-    param_name = EXPRto_string( VARget_name( v ) );
+    expr_name = VARget_name( v );
+    param_name = strdup( EXPget_name( expr_name ) );
     t = VARget_type( v );
     fprintf( files->lib, "%s,", param_name );
     LISTod
@@ -1059,7 +1179,8 @@ FUNCPrint( Function function, FILES * files, Schema schema ) {
     /* print function docstring */
     fprintf( files->lib, "\t'''\n" );
     LISTdo( FUNCget_parameters( function ), v, Variable )
-    param_name = EXPRto_string( VARget_name( v ) );
+    expr_name = VARget_name( v );
+    param_name = strdup( EXPget_name( expr_name ) );
     t = VARget_type( v );
     fprintf( files->lib, "\t:param %s\n", param_name );
     fprintf( files->lib, "\t:type %s:%s\n", param_name, GetAttrTypeName( t ) );
@@ -1311,7 +1432,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             fprintf( file, "%s", e->symbol.name );
             break;
         case enumeration_:
-            fprintf( file, "%s", e->symbol.name );
+            fprintf( file, "%s.%s", TYPEget_name(e->type), e->symbol.name );
             break;
         case query_:
 
@@ -1430,7 +1551,7 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
             fprintf( file, "%s", e->symbol.name );
             break;
         case enumeration_:
-            fprintf( file, "%s", e->symbol.name );
+            fprintf( file, "%s.%s", TYPEget_name(e->type), e->symbol.name );
             break;
         case query_:
 
@@ -1488,6 +1609,12 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
 
 void
 ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE * file ) {
+    /* TODO: refactor, eliminate Op_Subexpression for enumerations */
+    Type op1_type = EXPget_type( oe->op1 );
+    if ( TYPEis_enumeration( op1_type ) ) {
+        fprintf( file, "%s.%s", TYPEget_name( op1_type ), EXPget_name( oe->op2 ) ); 
+        return;
+    }
     switch( oe->op_code ) {
         case OP_AND:
             ATTRIBUTE_INITIALIZERop2_out( oe, " and ", paren, PAD, file );
@@ -1737,19 +1864,6 @@ ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int p
     }
 }
 
-int
-EXPRop_length( struct Op_Subexpression * oe ) {
-    switch( oe->op_code ) {
-        case OP_DOT:
-        case OP_GROUP:
-            return( 1 + EXPRlength( oe->op1 )
-                    + EXPRlength( oe->op2 ) );
-        default:
-            fprintf( stdout, "EXPRop_length: unknown op-expression" );
-    }
-    return 0;
-}
-
 void
 WHEREPrint( Linked_List wheres, int level , FILE * file ) {
     int where_rule_number = 0;
@@ -1788,118 +1902,6 @@ WHEREPrint( Linked_List wheres, int level , FILE * file ) {
     LISTod
 }
 
-int curpos;
-int indent2;
-char * exppp_bufp = 0;      /* pointer to write position in expppbuf */
-char * exppp_buf = 0;
-Symbol error_sym;   /* only used when printing errors */
-int exppp_buflen = 0;       /* remaining space in expppbuf */
-
-void
-expression_output( char * buf, int len ) {
-    FILE * exppp_fp = NULL;
-    FILE * fp = ( exppp_fp ? exppp_fp : stdout );
-
-    error_sym.line += count_newlines( buf );
-
-    if( exppp_buf ) {
-        /* output to string */
-        if( len > exppp_buflen ) {
-            /* should provide flag to enable complaint */
-            /* for now, just ignore */
-            return;
-        }
-        memcpy( exppp_bufp, buf, len + 1 );
-        exppp_bufp += len;
-        exppp_buflen -= len;
-    } else {
-        /* output to file */
-        fwrite( buf, 1, len, fp );
-    }
-}
-
-void
-#ifdef __STDC__
-raw_python( char * fmt, ... ) {
-#else
-raw_python( va_alist )
-va_dcl {
-    char * fmt;
-#endif
-    char * p;
-    char buf[10000];
-    int len;
-    va_list args;
-#ifdef __STDC__
-    va_start( args, fmt );
-#else
-    va_start( args );
-    fmt = va_arg( args, char * );
-#endif
-
-    vsprintf( buf, fmt, args );
-    len = strlen( buf );
-
-    expression_output( buf, len );
-
-    if( len ) {
-        /* reset cur position based on last newline seen */
-        if( 0 == ( p = strrchr( buf, '\n' ) ) ) {
-            curpos += len;
-        } else {
-            curpos = len + buf - p;
-        }
-    }
-}
-
-void
-#ifdef __STDC__
-wrap_python( char * fmt, ... ) {
-#else
-wrap_python( va_alist )
-va_dcl {
-    char * fmt;
-#endif
-    char * p;
-    char buf[10000];
-    int len;
-    int exppp_linelength;
-    va_list args;
-#ifdef __STDC__
-    va_start( args, fmt );
-#else
-    va_start( args );
-    fmt = va_arg( args, char * );
-#endif
-    exppp_linelength = 75;      /* leave some slop for closing
-    vsprintf( buf, fmt, args );
-    len = strlen( buf );
-
-    /* 1st condition checks if string cant fit into current line */
-    /* 2nd condition checks if string cant fit into any line */
-    /* I.e., if we still can't fit after indenting, don't bother to */
-    /* go to newline, just print a long line */
-    if( ( ( curpos + len ) > exppp_linelength ) &&
-    ( ( indent2 + len ) < exppp_linelength ) ) {
-        /* move to new continuation line */
-        char line[1000];
-        sprintf( line, "\n%*s", indent2, "" );
-        expression_output( line, 1 + indent2 );
-
-        curpos = indent2;       /* reset current position */
-    }
-
-    expression_output( buf, len );
-
-    if( len ) {
-        /* reset cur position based on last newline seen */
-        if( 0 == ( p = strrchr( buf, '\n' ) ) ) {
-            curpos += len;
-        } else {
-            curpos = len + buf - p;
-        }
-    }
-}
 
 /******************************************************************
  ** Procedure:  ENTITYPrint

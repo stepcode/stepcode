@@ -23,7 +23,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 
 #include "express.h"
-#include "exppp.h"
 #include "dict.h"
 
 #define MAX_LEN              240

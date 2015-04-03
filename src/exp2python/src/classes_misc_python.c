@@ -605,7 +605,7 @@ VARis_type_shifter( Variable a ) {
         return 0;
     }
 
-    temp = EXPRto_string( VARget_name( a ) );
+    temp = strdup( VARget_name( a ) );
     if( ! strncmp( StrToLower( temp ), "self\\", 5 ) ) {
         /*    a is a type shifter */
         free( temp );
