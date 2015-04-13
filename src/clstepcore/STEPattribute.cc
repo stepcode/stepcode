@@ -1374,7 +1374,7 @@ const char * STEPattribute::TypeName() const {
     if( _redefAttr )  {
         return _redefAttr->TypeName();
     }
-    return aDesc->TypeName();
+    return aDesc->TypeName().c_str();
 }
 
 BASE_TYPE STEPattribute::Type() const {

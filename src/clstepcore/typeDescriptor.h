@@ -174,7 +174,7 @@ class SC_CORE_EXPORT TypeDescriptor {
         // defined in an attribute it will be the _description
         // member variable since _name will be null. e.g. attr. def.
         // project_names : ARRAY [1..10] name;
-        const char * AttrTypeName( std::string & buf, const char * schnm = NULL ) const;
+        void AttrTypeName( std::string & buf, const char * schnm = NULL ) const;
 
         // Linked link of alternate names for the type:
         const SchRename * AltNameList() const {

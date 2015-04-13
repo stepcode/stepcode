@@ -10,7 +10,8 @@ const char * Inverse_attribute::AttrExprDefStr( std::string & s ) const {
         s.append( "OPTIONAL " );
     }
     if( DomainType() ) {
-        s.append( DomainType()->AttrTypeName( buf ) );
+        DomainType()->AttrTypeName( buf );
+        s.append( buf );
     }
     s.append( " FOR " );
     s.append( _inverted_attr_id );

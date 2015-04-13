@@ -70,7 +70,8 @@ Severity STEPaggregate::AggrValidLevel( const char * value, ErrorDescriptor * er
     istringstream in( ( char * )value ); // sz defaults to length of s
 
     ReadValue( in, err, elem_type, insts, addFileId, 0, 0 );
-    CheckRemainingInput( in, err, elem_type->AttrTypeName( buf ), tokenList );
+    elem_type->AttrTypeName( buf );
+    CheckRemainingInput( in, err, buf, tokenList );
     if( optional && ( err->severity() == SEVERITY_INCOMPLETE ) ) {
         err->severity( SEVERITY_NULL );
     }
@@ -88,7 +89,8 @@ Severity STEPaggregate::AggrValidLevel( istream & in, ErrorDescriptor * err,
     }
 
     ReadValue( in, err, elem_type, insts, addFileId, 0, 1 );
-    CheckRemainingInput( in, err, elem_type->AttrTypeName( buf ), tokenList );
+    elem_type->AttrTypeName( buf );
+    CheckRemainingInput( in, err, buf, tokenList );
     if( optional && ( err->severity() == SEVERITY_INCOMPLETE ) ) {
         err->severity( SEVERITY_NULL );
     }
@@ -169,7 +171,8 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
         // read up to the next delimiter and set errors if garbage is
         // found before specified delims (i.e. comma and quote)
-        CheckRemainingInput( in, &errdesc, elem_type->AttrTypeName( buf ), ",)" );
+        elem_type->AttrTypeName( buf );
+        CheckRemainingInput( in, &errdesc, buf, ",)" );
 
         if( errdesc.severity() < SEVERITY_INCOMPLETE ) {
             sprintf( errmsg, "  index:  %d\n", value_cnt );

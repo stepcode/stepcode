@@ -19,7 +19,8 @@ const char * Derived_attribute::AttrExprDefStr( std::string & s ) const {
     s.append( Name() );
     s.append( " : " );
     if( DomainType() ) {
-        s.append( DomainType()->AttrTypeName( buf ) );
+        DomainType()->AttrTypeName( buf );
+        s.append( buf );
     }
     if( _initializer ) { // this is supposed to exist for a derived attribute.
         s.append( " \n\t\t:= " );

@@ -122,10 +122,13 @@ void TypeDescriptor::addAltName( const char * schnm, const char * newnm ) {
     }
 }
 
-const char * TypeDescriptor::AttrTypeName( std::string & buf, const char * schnm ) const {
-    std::string sstr;
-    buf = Name( schnm ) ? StrToLower( Name( schnm ), sstr ) : _description;
-    return const_cast<char *>( buf.c_str() );
+void TypeDescriptor::AttrTypeName( std::string & buf, const char * schnm ) const {
+    const char * sn = Name( schnm );
+    if( sn ) {
+        StrToLower( sn , buf );
+    } else {
+        buf = _description;
+    }
 }
 
 const char * TypeDescriptor::GenerateExpress( std::string & buf ) const {
