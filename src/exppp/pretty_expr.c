@@ -140,7 +140,7 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
             if( i != 1 ) {
                 raw( ", " );
             }
-            EXPR_out( arg, 0 );
+            EXPR_out( arg, 1 );
             LISTod
 
             if( exppp_linelength == indent2 ) {
