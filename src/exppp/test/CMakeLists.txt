@@ -58,7 +58,14 @@ add_test(NAME test_exppp_div_slash
   -P ${CMAKE_CURRENT_SOURCE_DIR}/exppp_div_slash.cmake
   )
 
-set_tests_properties(test_exppp_unique_qualifiers test_exppp_inverse_qualifiers test_exppp_lost_var test_exppp_div_slash PROPERTIES DEPENDS build_exppp)
+add_test(NAME test_exppp_supertype_andor
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -DEXPPP=$<TARGET_FILE:exppp>
+  -DINFILE=${CMAKE_CURRENT_SOURCE_DIR}/exppp_supertype_andor.exp
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/exppp_supertype_andor.cmake
+  )
+
+  set_tests_properties(test_exppp_unique_qualifiers test_exppp_inverse_qualifiers test_exppp_lost_var test_exppp_div_slash test_exppp_supertype_andor PROPERTIES DEPENDS build_exppp)
 
 # Local Variables:
 # tab-width: 8
