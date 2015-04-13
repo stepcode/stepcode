@@ -97,43 +97,43 @@ class SC_CORE_EXPORT TypeDescriptor {
 
     protected:
 
-        // the name of the type (see above)
-        //
-        // NOTE - memory is not allocated for this, or for _description
-        // below.  It is assumed that at creation, _name will be made
-        // to point to a static location in memory.  The exp2cxx
-        // generated code, for example, places a literal string in its
-        // TypeDesc constructor calls.  This creates a location in me-
-        // mory static throughout the lifetime of the calling program.
+        /// the name of the type (see above)
+        ///
+        /// NOTE - memory is not allocated for this, or for _description
+        /// below.  It is assumed that at creation, _name will be made
+        /// to point to a static location in memory.  The exp2cxx
+        /// generated code, for example, places a literal string in its
+        /// TypeDesc constructor calls.  This creates a location in me-
+        /// mory static throughout the lifetime of the calling program.
         const char  * _name ;
 
-        // an alternate name of type - such as one given by a different
-        // schema which USEs/ REFERENCEs this.  (A complete list of
-        // alternate names is stored in altNames below.  _altname pro-
-        // vides storage space for the currently used one.)
+        /// an alternate name of type - such as one given by a different
+        /// schema which USEs/ REFERENCEs this.  (A complete list of
+        /// alternate names is stored in altNames below.  _altname pro-
+        /// vides storage space for the currently used one.)
         char _altname[BUFSIZ];
 
-        // contains list of renamings of type - used by other schemas
-        // which USE/ REFERENCE this
+        /// contains list of renamings of type - used by other schemas
+        /// which USE/ REFERENCE this
         const SchRename * altNames;
 
-        // the type of the type (see above).
-        // it is an enum see file clstepcore/baseType.h
+        /// the type of the type (see above).
+        /// it is an enum see file clstepcore/baseType.h
         PrimitiveType _fundamentalType;
 
         const Schema * _originatingSchema;
 
-        // further describes the type (see above)
-        // most often (or always) points at a subtype.
+        /// further describes the type (see above)
+        /// most often (or always) points at a subtype.
         const TypeDescriptor * _referentType;
 
-        // Express file description (see above)
-        // e.g. the right side of an Express TYPE stmt
-        // (See note above by _name regarding memory allocation.)
+        /// Express file description (see above)
+        /// e.g. the right side of an Express TYPE stmt
+        /// (See note above by _name regarding memory allocation.)
         const char  * _description;
 
     public:
-        // a Where_rule may contain only a comment
+        /// a Where_rule may contain only a comment
         Where_rule__list_var _where_rules; // initially a null pointer
 
         Where_rule__list_var & where_rules_() {
@@ -145,8 +145,8 @@ class SC_CORE_EXPORT TypeDescriptor {
         }
 
     protected:
-        // Functions used to check the current name of the type (may
-        // != _name if altNames has diff name for current schema).
+        /// Functions used to check the current name of the type (may
+        /// != _name if altNames has diff name for current schema).
         bool PossName( const char * ) const;
         bool OurName( const char * ) const;
         bool AltName( const char * ) const;
@@ -161,34 +161,34 @@ class SC_CORE_EXPORT TypeDescriptor {
 
         virtual const char * GenerateExpress( std::string & buf ) const;
 
-        // The name of this type.  If schnm != NULL, the name we're
-        // referred to by schema schnm (may be diff name in our alt-
-        // names list (based on schnm's USE/REF list)).
+        /// The name of this type.  If schnm != NULL, the name we're
+        /// referred to by schema schnm (may be diff name in our alt-
+        /// names list (based on schnm's USE/REF list)).
         const char * Name( const char * schnm = NULL ) const;
 
-        // The name that would be found on the right side of an
-        // attribute definition. In the case of a type defined like
-        // TYPE name = STRING END_TYPE;
-        // with attribute definition   employee_name : name;
-        // it would be the _name member variable. If it was a type
-        // defined in an attribute it will be the _description
-        // member variable since _name will be null. e.g. attr. def.
-        // project_names : ARRAY [1..10] name;
+        /// The name that would be found on the right side of an
+        /// attribute definition. In the case of a type defined like
+        /// TYPE name = STRING END_TYPE;
+        /// with attribute definition   employee_name : name;
+        /// it would be the _name member variable. If it was a type
+        /// defined in an attribute it will be the _description
+        /// member variable since _name will be null. e.g. attr. def.
+        /// project_names : ARRAY [1..10] name;
         void AttrTypeName( std::string & buf, const char * schnm = NULL ) const;
 
-        // Linked link of alternate names for the type:
+        /// Linked link of alternate names for the type:
         const SchRename * AltNameList() const {
             return altNames;
         }
 
-        // This is a fully expanded description of the type.
-        // This returns a string like the _description member variable
-        // except it is more thorough of a description where possible
-        // e.g. if the description contains a TYPE name it will also
-        // be explained.
+        /// This is a fully expanded description of the type.
+        /// This returns a string like the _description member variable
+        /// except it is more thorough of a description where possible
+        /// e.g. if the description contains a TYPE name it will also
+        /// be explained.
         const char * TypeString( std::string & s ) const;
 
-        // This TypeDescriptor's type
+        /// This TypeDescriptor's type
         PrimitiveType Type() const {
             return _fundamentalType;
         }
@@ -196,27 +196,27 @@ class SC_CORE_EXPORT TypeDescriptor {
             _fundamentalType = type;
         }
 
-        // This is the underlying Express base type of this type. It will
-        // be the type of the last TypeDescriptor following the
-        // _referentType member variable pointers. e.g.
-        // TYPE count = INTEGER;
-        // TYPE ref_count = count;
-        // TYPE count_set = SET OF ref_count;
-        //  each of the above will generate a TypeDescriptor and for
-        //  each one, PrimitiveType BaseType() will return INTEGER_TYPE.
-        //  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor
-        //  for Integer.
+        /// This is the underlying Express base type of this type. It will
+        /// be the type of the last TypeDescriptor following the
+        /// _referentType member variable pointers. e.g.
+        /// TYPE count = INTEGER;
+        /// TYPE ref_count = count;
+        /// TYPE count_set = SET OF ref_count;
+        ///  each of the above will generate a TypeDescriptor and for
+        ///  each one, PrimitiveType BaseType() will return INTEGER_TYPE.
+        ///  TypeDescriptor *BaseTypeDescriptor() returns the TypeDescriptor
+        ///  for Integer.
         PrimitiveType       BaseType() const;
         const TypeDescriptor * BaseTypeDescriptor() const;
         const char * BaseTypeName() const;
 
-        // the first PrimitiveType that is not REFERENCE_TYPE (the first
-        // TypeDescriptor *_referentType that does not have REFERENCE_TYPE
-        // for it's fundamentalType variable).  This would return the same
-        // as BaseType() for fundamental types.  An aggregate type
-        // would return AGGREGATE_TYPE then you could find out the type of
-        // an element by calling AggrElemType().  Select types
-        // would work the same?
+        /// the first PrimitiveType that is not REFERENCE_TYPE (the first
+        /// TypeDescriptor *_referentType that does not have REFERENCE_TYPE
+        /// for it's fundamentalType variable).  This would return the same
+        /// as BaseType() for fundamental types.  An aggregate type
+        /// would return AGGREGATE_TYPE then you could find out the type of
+        /// an element by calling AggrElemType().  Select types
+        /// would work the same?
 
         PrimitiveType   NonRefType() const;
         const TypeDescriptor * NonRefTypeDescriptor() const;
@@ -232,7 +232,7 @@ class SC_CORE_EXPORT TypeDescriptor {
             _fundamentalType = ftype;
         }
 
-        // The TypeDescriptor for the type this type is based on
+        /// The TypeDescriptor for the type this type is based on
         const TypeDescriptor * ReferentType() const {
             return _referentType;
         }
@@ -255,9 +255,9 @@ class SC_CORE_EXPORT TypeDescriptor {
             }
         }
 
-        // A description of this type's type. Basically you
-        // get the right side of a TYPE statement minus END_TYPE.
-        // For base type TypeDescriptors it is the same as _name.
+        /// A description of this type's type. Basically you
+        /// get the right side of a TYPE statement minus END_TYPE.
+        /// For base type TypeDescriptors it is the same as _name.
         const char * Description() const    {
             return _description;
         }
@@ -280,9 +280,8 @@ class SC_CORE_EXPORT TypeDescriptor {
             return ( CurrName( n, schNm ) ? this : 0 );
         }
         bool CurrName( const char *, const char * = 0 ) const;
+        /// Adds an additional name, newnm, to be use when schema schnm is USE/REFERENCE'ing us (added to altNames).
         void addAltName( const char * schnm, const char * newnm );
-        // Adds an additional name, newnm, to be use when schema schnm
-        // is USE/REFERENCE'ing us (added to altNames).
 };
 
 #endif //TYPEDESCRIPTOR_H
