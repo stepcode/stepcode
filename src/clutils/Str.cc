@@ -318,3 +318,7 @@ Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
     }
     return err->severity();
 }
+
+Severity CheckRemainingInput( std::istream & in, ErrorDescriptor * err, const std::string typeName, const char * tokenList ) {
+    return CheckRemainingInput( in, err, typeName.c_str(), tokenList );
+}

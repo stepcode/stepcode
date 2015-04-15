@@ -47,7 +47,8 @@ const char * AttrDescriptor::AttrExprDefStr( std::string & s ) const {
         s.append( "OPTIONAL " );
     }
     if( DomainType() ) {
-        s.append( DomainType()->AttrTypeName( buf ) );
+        DomainType()->AttrTypeName( buf );
+        s.append( buf );
     }
     return const_cast<char *>( s.c_str() );
 }
@@ -104,14 +105,13 @@ AttrDescriptor::Type() const {
  * right side of attr def
  * NOTE this returns a \'const char * \' instead of an std::string
  */
-const char * AttrDescriptor::TypeName() const {
+const std::string AttrDescriptor::TypeName() const {
     std::string buf;
 
     if( _domainType ) {
-        return _domainType->AttrTypeName( buf );
-    } else {
-        return "";
+        _domainType->AttrTypeName( buf );
     }
+    return buf;
 }
 
 /// an expanded right side of attr def

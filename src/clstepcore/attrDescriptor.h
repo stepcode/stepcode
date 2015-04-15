@@ -99,11 +99,13 @@ class SC_CORE_EXPORT AttrDescriptor {
         PrimitiveType   AggrElemType() const;
         const TypeDescriptor * AggrElemTypeDescriptor() const;
 
-        // The type of the attributes TypeDescriptor
+        /// The type of the attributes TypeDescriptor
         PrimitiveType Type() const;
-        const char * TypeName() const;  // right side of attr def
 
-        // an expanded right side of attr def
+        /// right side of attr def
+        const std::string TypeName() const;
+
+        /// an expanded right side of attr def
         const char * ExpandedTypeName( std::string & s ) const;
 
         int RefersToType() const    {

@@ -83,9 +83,10 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
             item->StrToVal( in, &errdesc, elem_type, insts, addFileId );
         }
 
+        elem_type->AttrTypeName( buf );
         // read up to the next delimiter and set errors if garbage is
         // found before specified delims (i.e. comma and quote)
-        CheckRemainingInput( in, &errdesc, elem_type->AttrTypeName( buf ), ",)" );
+        CheckRemainingInput( in, &errdesc, buf, ",)" );
 
         if( errdesc.severity() < SEVERITY_INCOMPLETE ) {
             sprintf( errmsg, "  index:  %d\n", value_cnt );
