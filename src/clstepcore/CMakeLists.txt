@@ -1,66 +1,127 @@
 
 set(LIBSTEPCORE_SRCS
-  sdaiApplication_instance.cc
-  STEPcomplex.cc
-  STEPaggregate.cc
-  STEPattribute.cc
-  STEPattribute.inline.cc
-  STEPattributeList.cc
-  STEPinvAttrList.cc
-  STEPundefined.cc
-  sdai.cc
-  sdaiSelect.cc
-  SingleLinkList.cc
-  SingleLinkList.inline.cc
-  Registry.inline.cc
-  ExpDict.cc
-  ExpDict.inline.cc
-  read_func.cc
+  aggrTypeDescriptor.cc
+  attrDescriptor.cc
+  attrDescriptorList.cc
   collect.cc
   complexlist.cc
+  create_Aggr.cc
+  derivedAttribute.cc
+  dictSchema.cc
+  dispnode.cc
+  dispnodelist.cc
+  entityDescriptor.cc
+  entityDescriptorList.cc
   entlist.cc
-  multlist.cc
-  orlist.cc
   entnode.cc
-  non-ors.cc
-  match-ors.cc
-  trynext.cc
-  print.cc
+  enumTypeDescriptor.cc
+  explicitItemId.cc
+  globalRule.cc
+  implicitItemId.cc
   instmgr.cc
+  interfaceSpec.cc
+  interfacedItem.cc
+  inverseAttribute.cc
+  inverseAttributeList.cc
+  match-ors.cc
   mgrnode.cc
   mgrnodearray.cc
   mgrnodelist.cc
-  dispnode.cc
-  dispnodelist.cc
+  multlist.cc
   needFunc.cc
-  )
+  non-ors.cc
+  orlist.cc
+  print.cc
+  read_func.cc
+  Registry.cc
+  schRename.cc
+  sdai.cc
+  sdaiApplication_instance.cc
+  sdaiSelect.cc
+  selectTypeDescriptor.cc
+  SingleLinkList.cc
+  STEPaggregate.cc
+  STEPaggrBinary.cc
+  STEPaggrEntity.cc
+  STEPaggrEnum.cc
+  STEPaggrGeneric.cc
+  STEPaggrInt.cc
+  STEPaggrReal.cc
+  STEPaggrSelect.cc
+  STEPaggrString.cc
+  STEPattribute.cc
+  STEPattributeList.cc
+  STEPcomplex.cc
+  STEPinvAttrList.cc
+  STEPundefined.cc
+  trynext.cc
+  typeDescriptor.cc
+  typeDescriptorList.cc
+  typeOrRuleVar.cc
+  uniquenessRule.cc
+  whereRule.cc
+)
 
 set(SC_CLSTEPCORE_HDRS
+  aggrTypeDescriptor.h
+  attrDescriptor.h
+  attrDescriptorList.h
   baseType.h
   complexSupport.h
+  create_Aggr.h
+  derivedAttribute.h
+  dictSchema.h
   dictdefs.h
+  dictionaryInstance.h
+  dispnode.h
+  dispnodelist.h
+  entityDescriptor.h
+  entityDescriptorList.h
+  enumTypeDescriptor.h
   ExpDict.h
-  read_func.h
-  Registry.h
-  sdaiApplication_instance.h
-  sdai.h
-  sdaiSelect.h
-  SingleLinkList.h
-  STEPaggregate.h
-  STEPattribute.h
-  STEPattributeList.h
-  STEPinvAttrList.h
-  STEPcomplex.h
-  STEPundefined.h
+  explicitItemId.h
+  globalRule.h
+  implicitItemId.h
   instmgr.h
+  interfaceSpec.h
+  interfacedItem.h
+  inverseAttribute.h
+  inverseAttributeList.h
   mgrnode.h
   mgrnodearray.h
   mgrnodelist.h
-  dispnode.h
-  dispnodelist.h
   needFunc.h
+  read_func.h
+  realTypeDescriptor.h
+  Registry.h
+  schRename.h
+  sdai.h
+  sdaiApplication_instance.h
+  sdaiSelect.h
+  selectTypeDescriptor.h
+  SingleLinkList.h
+  STEPaggregate.h
+  STEPaggrBinary.h
+  STEPaggrEntity.h
+  STEPaggrEnum.h
+  STEPaggrGeneric.h
+  STEPaggrInt.h
+  STEPaggrReal.h
+  STEPaggrSelect.h
+  STEPaggrString.h
+  STEPattribute.h
+  STEPattributeList.h
+  STEPcomplex.h
+  STEPinvAttrList.h
+  STEPundefined.h
+  stringTypeDescriptor.h
   SubSuperIterators.h
-  )
+  typeDescriptor.h
+  typeDescriptorList.h
+  typeOrRuleVar.h
+  uniquenessRule.h
+  whereRule.h
+)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}

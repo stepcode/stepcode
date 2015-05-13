@@ -103,7 +103,7 @@ class lazyRefs {
                     if( !ai ) {
                         ias.i = rinst;
                         _inst->setInvAttr( ia, ias );
-                    } else if( ai->GetFileId() != inst ) {
+                    } else if( ai->GetFileId() != (int)inst ) {
                         std::cerr << "ERROR: two instances (" << rinst << ", #" << rinst->GetFileId() << "=" << rinst->getEDesc()->Name();
                         std::cerr << " and " << ai << ", #" << ai->GetFileId() <<"=" << ai->getEDesc()->Name() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;

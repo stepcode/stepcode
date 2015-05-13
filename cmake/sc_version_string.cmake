@@ -1,10 +1,15 @@
 # creates sc_version_string.h, which defines sc_version()
 # sc_version() returns a pretty commit description and a build timestamp.
 
+# only update the file if the git commit has changed, because whenever the file is updated files including the header must rebuild
+# parallel rebuilds can result in race conditions and failures, particularly when running ctest in parallel
+
 # http://stackoverflow.com/questions/3780667
 # http://www.cmake.org/pipermail/cmake/2009-February/027014.html
 
 set(SC_IS_SUBBUILD "@SC_IS_SUBBUILD@")
+
+set(SC_VERSION_HEADER "${BINARY_DIR}/include/sc_version_string.h")
 
 #---------- find commit id ------------------
 #use git for a pretty commit id
@@ -69,11 +74,19 @@ set(header_string "/* sc_version_string.h - written by cmake. Changes will be lo
   "#endif\n"
  )
 
-file(WRITE sc_version_string.h.txt ${header_string})
-# copy the file to the final header only if the version changes
-# reduces needless rebuilds
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  sc_version_string.h.txt ${BINARY_DIR}/include/sc_version_string.h)
+#compare the new and old commit versions, don't update the file if only the timestamp differs
+if(EXISTS ${SC_VERSION_HEADER})
+  file(READ ${SC_VERSION_HEADER} OLD_VER_STRING LIMIT 600) #file is ~586 bytes
+  string(FIND "${OLD_VER_STRING}" "git commit id: ${GIT_COMMIT_ID}" COMMIT_MATCH )
+  # ${COMMIT_MATCH} == -1 if no match
+else()
+  set(COMMIT_MATCH -1)
+endif(EXISTS ${SC_VERSION_HEADER})
+
+if(${COMMIT_MATCH} LESS 1 )
+  file(WRITE ${SC_VERSION_HEADER} ${header_string})
+endif(${COMMIT_MATCH} LESS 1)
+
 if(NOT SC_IS_SUBBUILD)
   message("-- sc_version_string.h is up-to-date.")
 endif(NOT SC_IS_SUBBUILD)

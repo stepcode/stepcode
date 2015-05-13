@@ -198,14 +198,14 @@ Severity STEPfile::ReadHeader( istream & in ) {
             } else { //not ENTITY_NULL
                 //read the header instance
 
-                //check obj's Error Descriptor
-                objsev = AppendEntityErrorMsg( &( obj->Error() ) );
+                AppendEntityErrorMsg( &( obj->Error() ) );
 
                 //set file_id to reflect the appropriate Header Section Entity
                 fileid = HeaderId( const_cast<char *>( keywd.c_str() ) );
 
                 //read the values from the istream
                 objsev = obj->STEPread( fileid, 0, ( InstMgr * )0, in, NULL, true, _strict );
+                _error.GreaterSeverity( objsev );
                 if( !cmtStr.empty() ) {
                     obj->PrependP21Comment( cmtStr );
                 }

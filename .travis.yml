@@ -1,7 +1,8 @@
+sudo: false
 language: cpp
 compiler:
   - clang
-script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j2 && make -j2 test
+script: mkdir build && cd build && cmake .. -DSC_ENABLE_TESTING=ON && make -j3 && ctest -j2; if [ $? -ne 0 ]; then echo; echo; echo "-----------------------------"; grep -niB20 "Test Failed" Testing/Temporary/LastTest.log && false; fi
 branches:
   only:
     - master
@@ -10,3 +11,9 @@ notifications:
   email: scl-dev@groups.google.com
   on_success: change
   on_failure: always
+os:
+  - linux
+  - osx
+matrix:
+  allow_failures:
+    - os: osx

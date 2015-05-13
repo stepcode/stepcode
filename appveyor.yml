@@ -1,0 +1,53 @@
+version: '{build}'
+
+# for Appveyor CI (windows)
+
+branches:
+  only:
+    - master
+
+os: Windows Server 2012 R2
+
+clone_folder: c:\projects\STEPcode
+
+#grab zip instead of git clone
+shallow_clone: true
+platform: x64
+configuration: Debug
+
+# errors or couldn't be found by cmake
+#   - GENERATOR: "Visual Studio 9 2008"
+#     ARCH: 32
+#   - GENERATOR: "Visual Studio 10"
+#     ARCH: 32
+
+environment:
+  matrix:
+  - GENERATOR: "Visual Studio 11"
+    ARCH: 32
+  - GENERATOR: "Visual Studio 12"
+    ARCH: 32
+  - GENERATOR: "Visual Studio 12 Win64"
+    ARCH: 64
+
+# build:
+#   parallel: true
+#   project: ALL_BUILD.vcxproj
+
+#appveyor limits compile/test to 30 minutes
+# to reduce time, only test schemas with files: ifc2x3, ap214e3, ap209
+
+build_script:
+- ps: |
+    cd c:\projects\STEPcode
+    mkdir build
+    cd build
+    cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
+    cmake --build . --config Debug
+
+test_script:
+  - cmd: echo Running CTest...
+  - cmd: cd c:\projects\STEPcode\build
+  - cmd: ctest -j2 . -C Debug
+
+# we could upload a compiled zip somewhere (see Appveyor artifact documentation)

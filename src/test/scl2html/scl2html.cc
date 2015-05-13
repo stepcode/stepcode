@@ -84,7 +84,8 @@ void PrintAttrTypeWithAnchor( const TypeDescriptor * typeDesc, ofstream & outhtm
         outhtml << ".html\">";
     }
 
-    outhtml << typeDesc->AttrTypeName( buf );
+    typeDesc->AttrTypeName( buf );
+    outhtml << buf;
 
     if( base == sdaiAGGR ) {
         outhtml << " (contains elements of type ";

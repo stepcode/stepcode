@@ -12,7 +12,6 @@ set(SC_BASE_HDRS
   sc_memmgr.h
   sc_getopt.h
   sc_trace_fprintf.h
-  sc_stdbool.h
   sc_mkdir.h
  )
 

@@ -319,7 +319,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     return inst;
 }
 
-STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & sev ) {
+STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & ) {
     std::string buf;
     ErrorDescriptor err;
     std::vector<std::string *> typeNames;

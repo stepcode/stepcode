@@ -271,8 +271,8 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
 
     switch( selection->u.type->body->type ) {
         case entity_:
-            tmp = ENTITYfind_inherited_attribute( selection->u.type->body->entity,
-                                                  sref.name, &w );
+            /* goes through supertypes and their subtypes (!!) */
+            tmp = ENTITYfind_inherited_attribute( selection->u.type->body->entity, sref.name, &w );
             if( tmp ) {
                 if( w != NULL ) {
                     *where = w;
@@ -283,26 +283,56 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
             } else {
                 return 0;
             }
-        case select_:
+        case select_: {
+            Linked_List supert = LISTcreate();
+            Linked_List subt = LISTcreate();
+            Linked_List uniqSubs = LISTcreate();
             selection->search_id = s_id;
-            LISTdo( selection->u.type->body->list, t, Type )
-            if( EXP_resolve_op_dot_fuzzy( t, sref, e, v, dt, &w, s_id ) ) {
-                if( w != NULL ) {
-                    *where = w;
+            LISTdo( selection->u.type->body->list, t, Type ) {
+                int nr = EXP_resolve_op_dot_fuzzy( t, sref, e, v, dt, &w, s_id );
+                if( nr ) {
+                    if( w != NULL ) {
+                        /* only ever set due to ENTITYfind_inherited_attribute in case entity_.
+                         * it is set to a subtype of one of the current type's supertypes. not
+                         * sure of the circumstances in which this is beneficial.
+                         */
+                        *where = w;
+                        LISTadd_last( subt, (Generic) w );
+                    } else {
+                        LISTadd_last( supert, (Generic) t );
+                    }
+                    options += nr;
                 }
-                ++options;
+            } LISTod
+            /* go through supertypes and subtypes, comparing. for any subtypes in supertypes, remove item from subtypes
+             * would be possible to delete items from subt while going through the list... worth the effort?
+             */
+            LISTdo( subt, s, Symbol* ) {
+                bool found = false;
+                LISTdo_n( supert, t, Type, b ) {
+                    if( 0 == strcmp( s->name, t->symbol.name ) ) {
+                        found = true;
+                        break;
+                    }
+                } LISTod
+                if( !found ) {
+                    LISTadd_last( uniqSubs, (Generic) s );
+                }
+            } LISTod
+            if( ( LISTget_length( uniqSubs ) == 0 ) && ( LISTget_length( supert ) == 1 ) && ( options > 1 ) ) {
+                options = 1;
+                /* this ensures that v is set correctly and wasn't overwritten */
+                EXP_resolve_op_dot_fuzzy( (Type) LISTget_first( supert ), sref, e, v, dt, &w, s_id );
             }
-            LISTod;
-            switch( options ) {
-                case 0:
-                    return 0;
-                case 1:
-                    return 1;
-                default:
-                    /* found more than one, so ambiguous */
-                    *v = VARIABLE_NULL;
-                    return 1;
+            if( options > 1 ) {
+                /* found more than one, so ambiguous */
+                *v = VARIABLE_NULL;
             }
+            LISTfree( supert );
+            LISTfree( subt );
+            LISTfree( uniqSubs );
+            return options;
+        }
         case enumeration_:
             item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), sref.name );
             if( item ) {
@@ -318,7 +348,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
 Type EXPresolve_op_dot( Expression expr, Scope scope ) {
     Expression op1 = expr->e.op1;
     Expression op2 = expr->e.op2;
-    Variable v;
+    Variable v = 0;
     Expression item;
     Type op1type;
     bool all_enums = true; /* used by 'case select_' */
@@ -345,14 +375,14 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             return( Type_Runtime );
         case select_:
             __SCOPE_search_id++;
-            /* don't think this actually actually catches anything on the */
-            /* first go-round, but let's be consistent */
+            /* don't think this actually actually catches anything on the first go-round, but let's be consistent */
             op1type->search_id = __SCOPE_search_id;
             LISTdo( op1type->u.type->body->list, t, Type ) {
-                if( EXP_resolve_op_dot_fuzzy( t, op2->symbol, &item, &v, &dt, &where,
-                                              __SCOPE_search_id ) ) {
-                    ++options;
-                }
+                /* this used to increment options by 1 if EXP_resolve_op_dot_fuzzy found 1 or more possibilities.
+                 * thus the code for handling ambiguities was only used if the ambig was in the immediate type
+                 * and not a supertype. don't think that's right...
+                 */
+                options += EXP_resolve_op_dot_fuzzy( t, op2->symbol, &item, &v, &dt, &where, __SCOPE_search_id );
             }
             LISTod;
             switch( options ) {
@@ -368,8 +398,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                         ERRORreport_with_symbol( WARNING_case_skip_label, &op2->symbol, op2->symbol.name );
                     } else {
                         /* no possible resolutions */
-                        ERRORreport_with_symbol( ERROR_undefined_attribute,
-                                                 &op2->symbol, op2->symbol.name );
+                        ERRORreport_with_symbol( ERROR_undefined_attribute, &op2->symbol, op2->symbol.name );
                     }
                     resolve_failed( expr );
                     return( Type_Bad );
@@ -377,10 +406,13 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     /* only one possible resolution */
                     if( dt == OBJ_VARIABLE ) {
                         if( where ) {
-                            ERRORreport_with_symbol( ERROR_implicit_downcast, &op2->symbol,
-                                                     where->name );
+                            ERRORreport_with_symbol( ERROR_implicit_downcast, &op2->symbol, where->name );
                         }
 
+                        if( v == VARIABLE_NULL ) {
+                            fprintf( stderr, "EXPresolve_op_dot: nonsense value for Variable\n" );
+                            ERRORabort( 0 );
+                        }
                         op2->u.variable = v;
                         op2->return_type = v->type;
                         resolved_all( expr );
@@ -398,8 +430,8 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                 default:
                     /* compile-time ambiguous */
                     if( where ) {
-                        ERRORreport_with_symbol( ERROR_ambig_implicit_downcast,
-                                                 &op2->symbol, where->name );
+                        /* this is actually a warning, not an error */
+                        ERRORreport_with_symbol( ERROR_ambig_implicit_downcast, &op2->symbol, where->name );
                     }
                     return( Type_Runtime );
             }

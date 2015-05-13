@@ -1,6 +1,11 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 #test part 21 files
 
+#necessary macros won't already be defined if SC_BUILD_SCHEMAS is set to ""
+if(NOT COMMAND SCHEMA_CMLIST)
+  include(${SC_CMAKE_DIR}/schema_scanner/schemaScanner.cmake)
+endif(NOT COMMAND SCHEMA_CMLIST)
+
 #used to create a number of small files at test-time. you probably don't want to modify.
 set(P21_FILE_HEAD "
 ISO-10303-21;
@@ -121,10 +126,14 @@ INSTANCE_TEST(${mid} FAIL "AABB('z',2,.B.,1.2);"             )
 #p21read reports no errors on this one; I'm not certain whether that is right or wrong.
 #INSTANCE_TEST(${mid} FAIL "AABB(4,.BEE.,4.5);"               )
 
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/select_segfault_2.exp)
+add_test( test_select_segfault_2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/p21read_sdai_select_segfault_2
+                               ${CMAKE_CURRENT_SOURCE_DIR}/select_segfault_2.stp )
+set_tests_properties( test_select_segfault_2 PROPERTIES DEPENDS build_cpp_sdai_select_segfault_2 LABELS exchange_file )
+
 # Local Variables:
 # tab-width: 8
 # mode: cmake
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-
