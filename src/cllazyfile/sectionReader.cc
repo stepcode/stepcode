@@ -200,7 +200,7 @@ instanceID sectionReader::readInstanceNumber() {
     assert( std::numeric_limits<instanceID>::max() <= std::numeric_limits<unsigned long long int>::max() );
 
     size_t instanceIDLength = std::numeric_limits<instanceID>::digits10 + 1;
-    char * buffer = new char( instanceIDLength + 1 ); // +1 for the terminating character
+    char * buffer = new char[ instanceIDLength + 1 ]; // +1 for the terminating character
     
     std::stringstream errorMsg;
 
@@ -243,7 +243,7 @@ instanceID sectionReader::readInstanceNumber() {
 
         assert( id > 0 );
     }
-    delete buffer;
+    delete [] buffer;
     return id;
 }
 
