@@ -14,6 +14,11 @@
 #include <STEPattribute.h>
 #include <STEPaggregate.h>
 
+#ifdef _WIN32
+#define strcasecmp _strcmpi
+#endif // _WIN32
+
+
 /*
  * given inverted attr ia:
  * attr method                     value
