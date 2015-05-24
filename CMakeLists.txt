@@ -147,7 +147,7 @@ add_dependencies(core stepdai check-express stepeditor exp2cxx)
 # CONFIG_END_MESSAGES - list of messages to be printed after everything else is done.
 # THIS MUST BE LAST to ensure that they are visible to the user without scrolling.
 foreach(_msg ${CONFIG_END_MESSAGES})
-  message("${_msg}")
+  message(STATUS "${_msg}")
 endforeach(_msg ${CONFIG_END_MESSAGES})
 
 # Local Variables:
