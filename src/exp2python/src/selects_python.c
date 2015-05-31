@@ -23,7 +23,9 @@ extern int multiple_inheritance;
 **************************************************************************/
 #include <stdlib.h>
 #include "classes.h"
+#include <stdbool.h>
 
+bool is_python_keyword( char * word );
 int isAggregateType( const Type t );
 char * generate_attribute_name( Variable a, char * out );
 void ATTRsign_access_methods( Variable a, FILE * file );

@@ -49,11 +49,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define PAD 1
 #define NOPAD   0
 
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
+
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
 const char * ENTITYget_CORBAname( Entity ent );
 const char * GetTypeDescriptorName( Type t );
+void TYPEselect_lib_print( const Type type, FILE * f, Schema schema );
 
 int multiple_inheritance = 1;
 int print_logging = 0;
