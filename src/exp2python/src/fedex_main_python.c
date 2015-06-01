@@ -81,14 +81,8 @@ extern void print_fedex_version( void );
 
 static void exp2python_usage( void ) {
     fprintf( stderr, "usage: %s [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
-    //fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
-    //fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
-    //fprintf( stderr, "\t-c or -C generates C++ classes for use with CORBA (Orbix)\n" );
-    //fprintf( stderr, "\t-L prints logging code in the generated C++ classes\n" );
     fprintf( stderr, "\t-v produces the version description below\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
-    //fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
-    //fprintf( stderr, "\t-n do not pause for internal errors (useful with delta script)\n" );
     fprintf( stderr, "\t-w warning enable\n" );
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
@@ -117,6 +111,7 @@ void resolution_success( void ) {
 }
 
 int success( Express model ) {
+    (void) model; /* unused */
     printf( "Done.\n" );
     return( 0 );
 }
