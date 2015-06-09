@@ -23,7 +23,7 @@ extern int multiple_inheritance;
 **************************************************************************/
 #include <stdlib.h>
 #include "classes.h"
-#include <stdbool.h>
+#include <sc_stdbool.h>
 
 bool is_python_keyword( char * word );
 int isAggregateType( const Type t );
