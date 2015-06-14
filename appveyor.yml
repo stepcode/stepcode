@@ -45,15 +45,19 @@ build_script:
     cmake -version
     grep --version
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
-    dir *.sln *.vcxproj
-    cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
-
+    dir *.sln
+    dir *.vcxproj
+    #echo "filtering build output with grep"
+    #cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
+    msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:Configuration=Dev
 #msbuild libosmium.sln /p:Configuration=%config% /toolsversion:14.0 /p:Platform=x64 /p:PlatformToolset=v140
 #msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 test_script:
   - cmd: echo Running CTest...
   - cmd: cd c:\projects\STEPcode\build
-  - cmd: ctest -j2 . -C Debug
+  - cmd: ctest -j2 . -C Debug --output-on-failure | grep -ve "        Start ...:"
+
+# - cmd: grep -niB20 "Test Failed" Testing/Temporary/LastTest.log
 
 # we could upload a compiled zip somewhere (see Appveyor artifact documentation)
