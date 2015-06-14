@@ -1307,7 +1307,7 @@ SDAI_Application_instance * STEPfile::ReadInstance( istream & in, ostream & out,
         case SEVERITY_BUG:
 
         case SEVERITY_INCOMPLETE:
-            if( ( _fileType == VERSION_CURRENT ) ) {
+            if( _fileType == VERSION_CURRENT ) {
                 cerr << "ERROR in EXCHANGE FILE: incomplete instance #"
                      << obj -> STEPfile_id << ".\n";
                 if( _fileType != WORKING_SESSION ) {
