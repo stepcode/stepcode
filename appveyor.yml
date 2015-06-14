@@ -21,12 +21,14 @@ configuration: Debug
 #   - GENERATOR: "Visual Studio 10"
 #     ARCH: 32
 
+#no point in these without artifact support...
+#  - GENERATOR: "Visual Studio 11"
+    #ARCH: 32
+  #- GENERATOR: "Visual Studio 12"
+    #ARCH: 32
+
 environment:
   matrix:
-  - GENERATOR: "Visual Studio 11"
-    ARCH: 32
-  - GENERATOR: "Visual Studio 12"
-    ARCH: 32
   - GENERATOR: "Visual Studio 12 Win64"
     ARCH: 64
 
