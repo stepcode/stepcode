@@ -1845,7 +1845,6 @@ void
 TYPEenum_lib_print( const Type type, FILE * f ) {
     DictionaryEntry de;
     Expression expr;
-    char c_enum_ele [BUFSIZ];
     /* begin the new enum type */
     if( is_python_keyword( TYPEget_name( type ) ) ) {
         fprintf( f, "\n# ENUMERATION TYPE %s_\n", TYPEget_name( type ) );
@@ -1862,7 +1861,6 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     /*  set up the dictionary info  */
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
-        strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if( is_python_keyword( EXPget_name( expr ) ) ) {
             fprintf( f, "%s_ ", EXPget_name( expr ) );
         } else {
