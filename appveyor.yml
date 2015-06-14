@@ -43,9 +43,12 @@ build_script:
     mkdir build
     cd build
     cmake -version
+    grep --version
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
     dir *.sln *.vcxproj
-    cmake --build . --config Debug | select-string -NotMatch -SimpleMatch -pattern "CMake does not need to re-run because"
+    cmake --build . --config Debug
+
+#| grep -v "CMake does not need to re-run because"
 
 #msbuild libosmium.sln /p:Configuration=%config% /toolsversion:14.0 /p:Platform=x64 /p:PlatformToolset=v140
 #msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
