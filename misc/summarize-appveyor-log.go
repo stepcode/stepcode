@@ -14,8 +14,8 @@ import (
 func main() {
 	log := unwrap()
 	warns, errs := countMessages(log)
-	printMessages("warning", warns)
 	printMessages("error", errs)
+	printMessages("warning", warns)
 }
 
 /* the regex will match lines like
