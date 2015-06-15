@@ -1,6 +1,6 @@
 
 
-/** **********************************************************************
+/**
 ** \file express.c
 ** Express package manager.
 ************************************************************************/
@@ -682,6 +682,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
  * make the initial connections from one schema to another
  * dictated by USE/REF clauses that use dictionaries, i.e.,
  * because of partial schema references
+ * \sa connect_schema_lists()
  */
 static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list ) {
     Rename * r;
@@ -702,7 +703,7 @@ static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list
 
 /**
  * same as `connect_lists` except for full schemas
- * \sa connect_lists
+ * \sa connect_lists()
  */
 static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_List schema_list ) {
     Symbol * sym;

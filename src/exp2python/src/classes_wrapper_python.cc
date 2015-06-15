@@ -106,7 +106,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     if( t->search_id == CANPROCESS ) {
         // Only selects haven't been processed yet and may still be set to
         // CANPROCESS.
-        TYPEselect_print( t, files, schema );
+        //FIXME this function is not implemented!
+//         TYPEselect_print( t, files, schema );
         t->search_id = PROCESSED;
     }
     SCOPEod;
@@ -114,7 +115,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     // process each entity. This must be done *before* typedefs are defined
     LISTdo( list, e, Entity );
     if( e->search_id == CANPROCESS ) {
-        ENTITYPrint( e, files, schema );
+        ENTITYPrint( e, files );
         e->search_id = PROCESSED;
     }
     LISTod;
@@ -122,13 +123,13 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
 
     // process each function. This must be done *before* typedefs are defined
     LISTdo( function_list, f, Function );
-    FUNCPrint( f, files, schema );
+    FUNCPrint( f, files );
     LISTod;
     LISTfree( function_list );
 
     // process each rule. This must be done *before* typedefs are defined
     LISTdo( rule_list, r, Rule );
-    RULEPrint( r, files, schema );
+    RULEPrint( r, files );
     LISTod;
     LISTfree( rule_list );
 

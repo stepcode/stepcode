@@ -48,7 +48,7 @@ static void markDescs( Entity );
 static int checkItem( Type, Scope, Schema, int *, int );
 static int ENUMcanBeProcessed( Type, Schema );
 static int inSchema( Scope, Scope );
-static void addRenameTypedefs( Schema, FILE * );
+/* static void addRenameTypedefs( Schema, FILE * ); */
 static void addAggrTypedefs( Schema schema );
 static void addUseRefNames( Schema, FILE * );
 
@@ -70,8 +70,8 @@ void print_schemas_separate( Express express, FILES * files )
 
     /* First set all marks we'll be using to UNPROCESSED/NOTKNOWN: */
     initializeMarks( express );
-    //FIXME SdaiAll.cc:12:24: warning: unused variable ‘is’ [-Wunused-variable] (also for ui & ri)
-    //fprintf( files->create, "    Interface_spec_ptr is;\n    Used_item_ptr ui;\n    Referenced_item_ptr ri;\n    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" );
+    /* FIXME SdaiAll.cc:12:24: warning: unused variable ‘is’ [-Wunused-variable] (also for ui & ri) */
+    /* fprintf( files->create, "    Interface_spec_ptr is;\n    Used_item_ptr ui;\n    Referenced_item_ptr ri;\n    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" ); */
     while( !complete ) {
         complete = TRUE;
         DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
@@ -116,9 +116,7 @@ void print_schemas_separate( Express express, FILES * files )
         }
     }
 
-    /*******************
-    *******************/
-
+    /*
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         //fprintf( files->create,
@@ -129,8 +127,7 @@ void print_schemas_separate( Express express, FILES * files )
         //         "\t//////////////// REFERENCE statements\n" );
         //USEREFout( schema, schema->u.schema->refdict, schema->u.schema->ref_schemas, "REFERENCE", files->create );
     }
-    /*****************
-    *****************/
+    */
     /* Before closing, we have three more situations to deal with (i.e., three
     // types of declarations etc. which could only be printed at the end).
     // Each is explained in the header section of its respective function. */
@@ -144,26 +141,25 @@ void print_schemas_separate( Express express, FILES * files )
     // of addAggrTypedefs.) */
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
-        //addAggrTypedefs( schema, files->classes );
+        /* addAggrTypedefs( schema, files->classes ); */
         addAggrTypedefs( schema );
     }
 
     /* On our way out, print the necessary statements to add support for
     // complex entities.  (The 1st line below is a part of SchemaInit(),
-    // which hasn't been closed yet.  (That's done on 2nd line below.)) */
+    // which hasn't been closed yet.  (That's done on 2nd line below.)) * /
     //fprintf( files->initall, "\t reg.SetCompCollect( gencomplex() );\n" );
     //fprintf( files->initall, "}\n\n" );
     //fprintf( files->incall,  "\n#include <complexSupport.h>\n" );
-    //fprintf( files->incall,  "ComplexCollect *gencomplex();\n" );
+    //fprintf( files->incall,  "ComplexCollect *gencomplex();\n" ); */
 
     /* Function GetModelContents() is printed at the end of the schema.xx
     // files.  This is done in a separate loop through the schemas, in function
-    // below. */
-    //getMCPrint( express, files->incall, files->initall );
+    // below. * /
+    //getMCPrint( express, files->incall, files->initall ); */
 }
 
-static void initializeMarks( Express express )
-/*
+/**
  * Set all schema->search_id's to UNPROCESSED, meaning we haven't processed
  * all the ents and types in it yet.  Also, put an int=0 in each schema's
  * clientData field.  We'll use it to record what # file we're generating
@@ -172,7 +168,7 @@ static void initializeMarks( Express express )
  * an attribute/item which comes from another schema.  All other types can
  * be processed the first time, but that will be caught in checkTypes().)
  */
-{
+static void initializeMarks( Express express ) {
     DictionaryEntry de_sch, de_ent, de_type;
     Schema schema;
 
@@ -190,8 +186,7 @@ static void initializeMarks( Express express )
     }
 }
 
-static void unsetObjs( Schema schema )
-/*
+/**
  * Resets all the ents & types of schema which had been set to CANTPROCRSS
  * to NOTKNOWN.  This function is called every time print_schemas_separate
  * iterates through the schemas, printing to file what can be printed.  At
@@ -200,7 +195,7 @@ static void unsetObjs( Schema schema )
  * types which have already been marked PROCESSED will not have to be
  * revisited, and are not changed.
  */
-{
+static void unsetObjs( Schema schema ) {
     DictionaryEntry de;
 
     SCOPEdo_types( schema, t, de )
@@ -215,8 +210,7 @@ static void unsetObjs( Schema schema )
     SCOPEod
 }
 
-static int checkTypes( Schema schema )
-/*
+/**
  * Goes through the types contained in this schema checking for ones which
  * can't be processed.  This may be the case if:  (1) We have a select type
  * which has enumeration or select items which have not yet been defined
@@ -228,7 +222,7 @@ static int checkTypes( Schema schema )
  * CANTPROCESS.  If some types in schema *can* be processed now, we return
  * TRUE.  (See relevant header comments of checkEnts() below.)
  */
-{
+static int checkTypes( Schema schema ) {
     DictionaryEntry de;
     int retval = FALSE, unknowncnt;
     Type i;
@@ -259,43 +253,43 @@ static int checkTypes( Schema schema )
                 schema->search_id = UNPROCESSED;
             }
         } else if( TYPEis_select( type ) ) {
-            LISTdo( SEL_TYPEget_items( type ), i, Type )
-            if( !TYPEis_entity( i ) ) {
-                if( checkItem( i, type, schema, &unknowncnt, 0 ) ) {
-                    break;
+            LISTdo( SEL_TYPEget_items( type ), ii, Type ) {
+                if( !TYPEis_entity( ii ) ) {
+                    if( checkItem( ii, type, schema, &unknowncnt, 0 ) ) {
+                        break;
+                    }
+                    /* checkItem does most of the work of determining if
+                    // an item of a select will make the select type un-
+                    // processable.  It checks for conditions which would
+                    // make this true and sets values in type, schema, and
+                    // unknowncnt accordingly.  (See checkItem's commenting
+                    // below.)  It also return TRUE if ii has made type un-
+                    // processable.  If so, we break - there's no point
+                    // checking the other items of type any more. */
+                } else {
+                    /* Check if our select has an entity item which itself
+                    // has unprocessed selects or enums. */
+                    ent = ENT_TYPEget_entity( ii );
+                    if( ent->search_id == PROCESSED ) {
+                        continue;
+                    }
+                    /* If entity has been processed already, things must be
+                    // okay. (Note - but if it hasn't been processed yet we
+                    // may still be able to process type.  This is because
+                    // a sel type will only contain a pointer to an entity-
+                    // item (and we can create a pointer to a not-yet-pro-
+                    // cessed object), while it will contain actual objects
+                    // for the enum and select attributes of ent.) */
+                    attribs = ENTITYget_all_attributes( ent );
+                    LISTdo_n( attribs, attr, Variable, b ) {
+                        if( checkItem( attr->type, type, schema,
+                                    &unknowncnt, 1 ) ) {
+                            break;
+                        }
+                    } LISTod
+                    LISTfree( attribs );
                 }
-                /* checkItem does most of the work of determining if
-                // an item of a select will make the select type un-
-                // processable.  It checks for conditions which would
-                // make this true and sets values in type, schema, and
-                // unknowncnt accordingly.  (See checkItem's commenting
-                // below.)  It also return TRUE if i has made type un-
-                // processable.  If so, we break - there's no point
-                // checking the other items of type any more. */
-            } else {
-                /* Check if our select has an entity item which itself
-                // has unprocessed selects or enums. */
-                ent = ENT_TYPEget_entity( i );
-                if( ent->search_id == PROCESSED ) {
-                    continue;
-                }
-                /* If entity has been processed already, things must be
-                // okay. (Note - but if it hasn't been processed yet we
-                // may still be able to process type.  This is because
-                // a sel type will only contain a pointer to an entity-
-                // item (and we can create a pointer to a not-yet-pro-
-                // cessed object), while it will contain actual objects
-                // for the enum and select attributes of ent.) */
-                attribs = ENTITYget_all_attributes( ent );
-                LISTdo( attribs, attr, Variable )
-                if( checkItem( attr->type, type, schema,
-                               &unknowncnt, 1 ) ) {
-                    break;
-                }
-                LISTod
-                LISTfree( attribs );
-            }
-            LISTod
+            } LISTod
             /* One more condition - if we're a select which is a rename of
             // another select - we must also make sure the original select
             // is in this schema or has been processed.  Since a rename-
@@ -599,7 +593,7 @@ static void addAggrTypedefs( Schema schema )
             // 2D aggr's and higher only need type GenericAggr defined
             // which is built-in. */
             printf( "in addAggrTypedefs. %s is enum or select.\n", TYPEget_name( t ) );
-            //strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
+            /* strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
             //printf("%s;%s",nm,TYPEget_ctype( t ));
             //if( firsttime ) {
             //    fprintf( classes, "The first TIME\n" );
@@ -610,7 +604,7 @@ static void addAggrTypedefs( Schema schema )
             //fprintf( classes, "typedef %s\t%s;\n",
             //         TYPEget_ctype( t ), nm );
             //fprintf( classes, "typedef %s *\t%sH;\n", nm, nm );
-            //fprintf( classes, "typedef %s *\t%s_ptr;\n", nm, nm );
+            //fprintf( classes, "typedef %s *\t%s_ptr;\n", nm, nm ); */
         }
     }
     SCOPEod

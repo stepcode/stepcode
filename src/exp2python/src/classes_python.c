@@ -35,6 +35,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include "sc_memmgr.h"
 #include "classes.h"
+#include "expr.h"
 
 #define EXPRESSION_out(e,p,f) EXPRESSION__out(e,p,OP_UNKNOWN,f)
 #define EXPRESSIONop2_out(oe,string,paren,pad,f) \
@@ -49,11 +50,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define PAD 1
 #define NOPAD   0
 
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
+
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
 const char * ENTITYget_CORBAname( Entity ent );
 const char * GetTypeDescriptorName( Type t );
+void TYPEselect_lib_print( const Type type, FILE * f );
 
 int multiple_inheritance = 1;
 int print_logging = 0;
@@ -64,24 +70,25 @@ int old_accessors = 0;
    variables.  All but the last function generating code for a particular
    entity increment a copy of it for naming each attr in the entity.
    Here are the functions:
-   ENTITYhead_print (Entity entity, FILE* file,Schema schema)
+   ENTITYhead_print (Entity entity, FILE* file,Schema schema) // NOTE definition removed - not used in exp2python
    LIBdescribe_entity (Entity entity, FILE* file, Schema schema)
    LIBcopy_constructor (Entity ent, FILE* file)
-   LIBstructor_print (Entity entity, FILE* file, Schema schema)
-   LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema)
+   LIBstructor_print (Entity entity, FILE* file, Schema schema) // NOTE definition removed - not used in exp2python
+   LIBstructor_print_w_args (Entity entity, FILE* file, Schema schema) // NOTE definition removed - not used in exp2python
    ENTITYincode_print (Entity entity, FILE* file,Schema schema)
    DAS
  */
 static int attr_count;  /* number each attr to avoid inter-entity clashes */
-static int type_count;  /* number each temporary type for same reason above */
+/* static int type_count;  NOTE unused / * number each temporary type for same reason above */
 
 extern int any_duplicates_in_select( const Linked_List list );
 extern int unique_types( const Linked_List list );
 extern char * non_unique_types_string( const Type type );
-static void printEnumCreateHdr( FILE *, const Type );
-static void printEnumCreateBody( FILE *, const Type );
-static void printEnumAggrCrHdr( FILE *, const Type );
-static void printEnumAggrCrBody( FILE *, const Type );
+/* static void printEnumCreateHdr( FILE *, const Type ); //NOTE - unused
+ * static void printEnumCreateBody( FILE *, const Type );
+ * static void printEnumAggrCrHdr( FILE *, const Type );
+ * static void printEnumAggrCrBody( FILE *, const Type );
+ */
 void printAccessHookFriend( FILE *, const char * );
 void printAccessHookHdr( FILE *, const char * );
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema );
@@ -90,14 +97,14 @@ void TypeBody_Description( TypeBody body, char * buf );
 void STATEMENTSPrint( Linked_List stmts , int indent_level, FILE * file );
 void STATEMENTPrint( Statement s, int indent_level, FILE * file );
 void STATEMENTlist_out( Linked_List stmts, int indent_level, FILE * file );
-void EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file );
-void EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE * file );
+void EXPRESSION__out( Expression e, int paren, Op_Code previous_op , FILE * file );
+void EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op , FILE * file );
 void EXPRESSIONop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE * file );
-void EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE * file );
+void EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE* file );
 void ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * file );
-void ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE * file );
+void ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op , FILE * file );
 void ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE * file );
-void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE * file );
+void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE* file );
 void CASEout( struct Case_Statement_ *c, int level, FILE * file );
 void LOOPpyout( struct Loop_ *loop, int level, FILE * file );
 void WHEREPrint( Linked_List wheres, int level , FILE * file );
@@ -192,86 +199,86 @@ USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, 
     /* step 1: for each entry, store it in a schema-specific list */
     DICTdo_init( refdict, &de );
     while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
-        Linked_List list;
+        Linked_List list2;
 
-        list = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
-        if( !list ) {
-            list = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, list,
+        list2 = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
+        if( !list2 ) {
+            list2 = LISTcreate();
+            DICTdefine( dict, r->schema->symbol.name, list2,
                         ( Symbol * )0, OBJ_UNKNOWN );
         }
-        LISTadd_last( list, r );
+        LISTadd_last( list2, r );
     }
 
     /* step 2: for each list, print out the renames */
     DICTdo_init( dict, &de );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
-        LISTdo( list, r, struct Rename * )
+        LISTdo( list, ren, struct Rename * ) {
 
-        /*
-           Interface_spec_ptr is;
-           Used_item_ptr ui;
-           is = new Interface_spec(const char * cur_sch_id);
-           schemadescriptor->use_interface_list_()->Append(is);
-           ui = new Used_item(TypeDescriptor *ld, const char *oi, const char *ni) ;
-           is->_explicit_items->Append(ui);
-        */
+            /*
+            Interface_spec_ptr is;
+            Used_item_ptr ui;
+            is = new Interface_spec(const char * cur_sch_id);
+            schemadescriptor->use_interface_list_()->Append(is);
+            ui = new Used_item(TypeDescriptor *ld, const char *oi, const char *ni) ;
+            is->_explicit_items->Append(ui);
+            */
 
-        /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
-        if( first_time ) {
-            fprintf( file, "\t// %s FROM %s (selected objects)\n", type, r->schema->symbol.name );
-            fprintf( file, "\tis = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( r->schema->symbol.name ) );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "\t%s%s->use_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "\t%s%s->ref_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+            /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
+            if( first_time ) {
+                fprintf( file, "\t// %s FROM %s (selected objects)\n", type, ren->schema->symbol.name );
+                fprintf( file, "\tis = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( ren->schema->symbol.name ) );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "\t%s%s->use_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "\t%s%s->ref_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                }
             }
-        }
 
-        if( first_time ) {
-            first_time = false;
-        }
-        if( r->type == OBJ_TYPE ) {
-            sprintf( td_name, "%s", TYPEtd_name( ( Type )r->object ) );
-        } else if( r->type == OBJ_FUNCTION ) {
-            sprintf( td_name, "/* Function not implemented */ 0" );
-        } else if( r->type == OBJ_PROCEDURE ) {
-            sprintf( td_name, "/* Procedure not implemented */ 0" );
-        } else if( r->type == OBJ_RULE ) {
-            sprintf( td_name, "/* Rule not implemented */ 0" );
-        } else if( r->type == OBJ_ENTITY ) {
-            sprintf( td_name, "%s%s%s",
-                     SCOPEget_name( ( ( Entity )r->object )->superscope ),
-                     ENT_PREFIX, ENTITYget_name( ( Entity )r->object ) );
-        } else {
-            sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", r->type );
-        }
-        if( r->old != r->nnew ) {
-            fprintf( file, "\t// object %s AS %s\n", r->old->name,
-                     r->nnew->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "\tui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-            } else {
-                fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", r->schema->symbol.name, td_name, r->old->name, r->nnew->name );
-                fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+            if( first_time ) {
+                first_time = false;
             }
-        } else {
-            fprintf( file, "\t// object %s\n", r->old->name );
-            if( !strcmp( type, "USE" ) ) {
-                fprintf( file, "\tui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
-                fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+            if( ren->type == OBJ_TYPE ) {
+                sprintf( td_name, "%s", TYPEtd_name( ( Type )ren->object ) );
+            } else if( ren->type == OBJ_FUNCTION ) {
+                sprintf( td_name, "/* Function not implemented */ 0" );
+            } else if( ren->type == OBJ_PROCEDURE ) {
+                sprintf( td_name, "/* Procedure not implemented */ 0" );
+            } else if( ren->type == OBJ_RULE ) {
+                sprintf( td_name, "/* Rule not implemented */ 0" );
+            } else if( ren->type == OBJ_ENTITY ) {
+                sprintf( td_name, "%s%s%s",
+                        SCOPEget_name( ( ( Entity )ren->object )->superscope ),
+                        ENT_PREFIX, ENTITYget_name( ( Entity )ren->object ) );
             } else {
-                fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", r->schema->symbol.name, td_name, r->nnew->name );
-                fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
-                fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", ren->type );
             }
-        }
-        LISTod
+            if( ren->old != ren->nnew ) {
+                fprintf( file, "\t// object %s AS %s\n", ren->old->name,
+                        ren->nnew->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "\tui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->old->name, ren->nnew->name );
+                    fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->old->name, ren->nnew->name );
+                    fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                }
+            } else {
+                fprintf( file, "\t// object %s\n", ren->old->name );
+                if( !strcmp( type, "USE" ) ) {
+                    fprintf( file, "\tui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->nnew->name );
+                    fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
+                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                } else {
+                    fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->nnew->name );
+                    fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
+                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
+                }
+            }
+        } LISTod
     }
     HASHdestroy( dict );
 }
@@ -410,100 +417,17 @@ generate_dict_attr_name( Variable a, char * out ) {
 /******************************************************************
 **      Entity Generation                */
 
-/******************************************************************
- ** Procedure:  ENTITYhead_print
- ** Parameters:  const Entity entity
- **   FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the beginning of the entity class definition for the
- **               c++ code and the declaration of extern attr descriptors for
- **       the registry.  In the .h file
- ** Side Effects:  generates c++ code
- ** Status:  good 1/15/91
- **          added registry things 12-Apr-1993
- ******************************************************************/
+/*  ENTITYhead_print
+ * NOTE removed - not translated from c++ to py, not used
+ */
 
-void
-ENTITYhead_print( Entity entity, FILE * file, Schema schema ) {
-    char entnm [BUFSIZ];
-    char attrnm [BUFSIZ];
-    Linked_List list;
-    int attr_count_tmp = attr_count;
-    Entity super = 0;
+/* DataMemberPrint
+ * NOTE removed - not used
+ */
 
-    strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
-    entnm[BUFSIZ-1] = '\0';
-
-    /* DAS print all the attr descriptors and inverse attr descriptors for an
-       entity as extern defs in the .h file. */
-    LISTdo( ENTITYget_attributes( entity ), v, Variable )
-    generate_attribute_name( v, attrnm );
-    fprintf( file, "extern %s *%s%d%s%s;\n",
-             ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-             ATTR_PREFIX, attr_count_tmp++,
-             ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
-             attrnm );
-
-
-    LISTod
-
-    fprintf( file, "\nclass %s  :  ", entnm );
-
-    /* inherit from either supertype entity class or root class of
-       all - i.e. SCLP23(Application_instance) */
-
-    if( multiple_inheritance ) {
-        list = ENTITYget_supertypes( entity );
-        if( ! LISTempty( list ) ) {
-            super = ( Entity )LISTpeek_first( list );
-        }
-    } else { /* the old way */
-        super = ENTITYput_superclass( entity );
-    }
-
-    if( super ) {
-        fprintf( file, "  public %s  {\n ", ENTITYget_classname( super ) );
-    } else {
-        fprintf( file, "  public SCLP23(Application_instance) {\n" );
-    }
-
-
-}
-
-/******************************************************************
- ** Procedure:  DataMemberPrint
- ** Parameters:  const Entity entity  --  entity being processed
- **   FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints out the data members for an entity's c++ class
- **               definition
- ** Side Effects:  generates c++ code
- ** Status:  ok 1/15/91
- ******************************************************************/
-
-void
-DataMemberPrint( Entity entity, FILE * file, Schema schema ) {
-}
-
-/******************************************************************
- ** Procedure:  MemberFunctionSign
- ** Parameters:  Entity *entity --  entity being processed
- **     FILE* file  --  file being written to
- ** Returns:
- ** Description:  prints the signature for member functions
-                  of an entity's class definition
- **       DAS prints the end of the entity class def and the creation
- **       function that the EntityTypeDescriptor uses.
- ** Side Effects:  prints c++ code to a file
- ** Status:  ok 1/1/5/91
- **  updated 17-Feb-1992 to print only the signature
-             and not the function definitions
- ******************************************************************/
-
-void
-MemberFunctionSign( Entity entity, FILE * file ) {
-
-}
+/* MemberFunctionSign
+ * NOTE removed - not used
+ */
 
 /******************************************************************
  ** Procedure:    LIBdescribe_entity (entity, file, schema)
@@ -575,7 +499,7 @@ char* EXPRto_python( Expression e ) {
 
     buf = ( char * )sc_malloc( bufsize );
     if( !buf ) {
-        fprintf(stderr, "%s failed to allocate buffer: %s\n", __func__, strerror(errno) );
+        fprintf(stderr, "%s failed to allocate buffer: %s\n", __FUNCTION__, strerror(errno) );
         abort();
     }
 
@@ -593,7 +517,7 @@ char* EXPRto_python( Expression e ) {
             }
             break;
         case binary_:
-            snprintf( buf, bufsize, "%u", e->u.binary );
+            snprintf( buf, bufsize, "%s", e->u.binary );
             break;
         case logical_:
              switch( e->u.logical ) {
@@ -640,19 +564,21 @@ char* EXPRto_python( Expression e ) {
             strcpy( buf, "self" );
             break;
         case funcall_:
-            snprintf( buf, bufsize, "%s(", e->symbol.name );
-            int i = 0;
-            LISTdo( e->u.funcall.list, arg, Expression )
-                i++;
-                if( i != 1 ) {
-                    strcat( buf, ", " );
-                }
-                temp = EXPRto_python( arg );
-                strcat( buf, temp );
-                free( temp );
-            LISTod
-            strcat( buf, ")" );
-            break;
+        {
+                int i = 0;
+                snprintf( buf, bufsize, "%s(", e->symbol.name );
+                LISTdo( e->u.funcall.list, arg, Expression ) {
+                    i++;
+                    if( i != 1 ) {
+                        strcat( buf, ", " );
+                    }
+                    temp = EXPRto_python( arg );
+                    strcat( buf, temp );
+                    free( temp );
+                } LISTod
+                strcat( buf, ")" );
+                break;
+        }
         case op_:
 			strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
             break;
@@ -670,7 +596,7 @@ char* EXPRto_python( Expression e ) {
 
     temp = ( char * )sc_realloc( buf, 1 + strlen(buf) );
     if( temp == 0 ) {
-        fprintf(stderr, "%s failed to realloc buffer: %s\n", __func__, strerror(errno) );
+        fprintf(stderr, "%s failed to realloc buffer: %s\n", __FUNCTION__, strerror(errno) );
         abort();
     }
 
@@ -740,13 +666,12 @@ int count_supertypes(Entity f) {
     return top_count;
 }
 
-int
-cmp_python_mro( Entity e1, Entity e2 ) {
+int cmp_python_mro( void * e1, void * e2 ) {
     int e1_chain_len, e2_chain_len;
 
     /* TODO: This should do something more intelligent */
-    e1_chain_len = count_supertypes(e1);
-    e2_chain_len = count_supertypes(e2);
+    e1_chain_len = count_supertypes( ( Entity ) e1);
+    e2_chain_len = count_supertypes( ( Entity ) e2);
 
     if (e1_chain_len == e2_chain_len) {
         return 0;
@@ -758,13 +683,13 @@ cmp_python_mro( Entity e1, Entity e2 ) {
 }
 
 void
-LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
+LIBdescribe_entity( Entity entity, FILE * file ) {
     int attr_count_tmp = attr_count;
     char attrnm [BUFSIZ], parent_attrnm[BUFSIZ];
     char * attr_type;
     bool generate_constructor = true; /*by default, generates a python constructor */
     bool single_inheritance = false;
-    bool multiple_inheritance = false;
+    bool ent_multiple_inheritance = false;
     bool rename_python_property = false;
     Type t;
     Linked_List list;
@@ -804,10 +729,10 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         LISTod;
         if( num_parent == 1 ) {
             single_inheritance = true;
-            multiple_inheritance = false;
+            ent_multiple_inheritance = false;
         } else {
             single_inheritance = false;
-            multiple_inheritance = true;
+            ent_multiple_inheritance = true;
         }
     } else {
         /*inherit from BaseEntityClass by default, in order to enable decorators */
@@ -852,7 +777,7 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         attr_count_tmp++;
     }
     LISTod
-    if( ( attr_count_tmp == 0 ) && !single_inheritance && !multiple_inheritance ) {
+    if( ( attr_count_tmp == 0 ) && !single_inheritance && !ent_multiple_inheritance ) {
         fprintf( file, "\t# This class does not define any attribute.\n" );
         fprintf( file, "\tpass\n" );
         generate_constructor = false;
@@ -870,24 +795,24 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         num_parent = 0;
         index_attribute = 0;
         if( ! LISTempty( list ) ) {
-            LISTdo( list, e, Entity )
-            /*  search attribute names for superclass */
-            LISTdo( ENTITYget_all_attributes( e ), v2, Variable )
-            generate_attribute_name( v2, parent_attrnm );
-            if( !VARis_derived( v2 ) && !VARget_inverse( v2 ) ) {
-                fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
-                index_attribute++;
+            LISTdo( list, e, Entity ) {
+                /*  search attribute names for superclass */
+                LISTdo_n( ENTITYget_all_attributes( e ), v2, Variable, b ) {
+                    generate_attribute_name( v2, parent_attrnm );
+                    if( !VARis_derived( v2 ) && !VARget_inverse( v2 ) ) {
+                        fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
+                        index_attribute++;
+                    }
+                } LISTod
+                num_parent++;
+            } LISTod
+        }
+        LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
+            generate_attribute_name( v, attrnm );
+            if( !VARis_derived( v ) && !VARget_inverse( v ) ) {
+                fprintf( file, "%s,", attrnm );
             }
-            LISTod
-            num_parent++;
-            LISTod;
-        }
-        LISTdo( ENTITYget_attributes( entity ), v, Variable )
-        generate_attribute_name( v, attrnm );
-        if( !VARis_derived( v ) && !VARget_inverse( v ) ) {
-            fprintf( file, "%s,", attrnm );
-        }
-        LISTod
+        } LISTod
         /* close constructor method */
         if( generate_constructor ) {
             fprintf( file, " ):\n" );
@@ -896,23 +821,23 @@ LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
         list = ENTITYget_supertypes( entity );
         index_attribute = 0;
         if( ! LISTempty( list ) ) {
-            LISTdo( list, e, Entity )
-            if (is_python_keyword(ENTITYget_name( e ))) {
-                fprintf( file, "\t\t%s_.__init__(self , ", ENTITYget_name( e ) );
-            } else {
-                fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
-            }
-            /*  search and write attribute names for superclass */
-            LISTdo( ENTITYget_all_attributes( e ), v2, Variable )
-            generate_attribute_name( v2, parent_attrnm );
-            if( !VARis_derived( v2 ) && !VARget_inverse( v2 ) ) {
-                fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
-                index_attribute++;
-            }
-            LISTod
-            num_parent++;
-            fprintf( file, ")\n" ); /*separator for parent classes names */
-            LISTod;
+            LISTdo( list, e, Entity ) {
+                if (is_python_keyword(ENTITYget_name( e ))) {
+                    fprintf( file, "\t\t%s_.__init__(self , ", ENTITYget_name( e ) );
+                } else {
+                    fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
+                }
+                /*  search and write attribute names for superclass */
+                LISTdo_n( ENTITYget_all_attributes( e ), v2, Variable, b ) {
+                    generate_attribute_name( v2, parent_attrnm );
+                    if( !VARis_derived( v2 ) && !VARget_inverse( v2 ) ) {
+                        fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
+                        index_attribute++;
+                    }
+                } LISTod
+                num_parent++;
+                fprintf( file, ")\n" ); /*separator for parent classes names */
+            } LISTod
         }
         /* init variables in constructor */
         LISTdo( ENTITYget_attributes( entity ), v, Variable )
@@ -1037,54 +962,40 @@ get_local_attribute_number( Entity entity ) {
     return i;
 }
 
-int
-get_attribute_number( Entity entity ) {
+int get_attribute_number( Entity entity ) {
     int i = 0;
     int found = 0;
     Linked_List local, complete;
     complete = ENTITYget_all_attributes( entity );
     local = ENTITYget_attributes( entity );
 
-    LISTdo( local, a, Variable )
-    /*  go to the child's first explicit attribute */
-    if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
-        LISTdo( complete, p, Variable )
-        /*  cycle through all the explicit attributes until the
-        child's attribute is found  */
-        if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
-            if( p != a ) {
-                ++i;
+    LISTdo( local, a, Variable ) {
+        /*  go to the child's first explicit attribute */
+        if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
+            LISTdo_n( complete, p, Variable, b ) {
+                /*  cycle through all the explicit attributes until the
+                child's attribute is found  */
+                if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
+                    if( p != a ) {
+                        ++i;
+                    } else {
+                        found = 1;
+                    }
+                }
+            } LISTod
+            if( found ) {
+                return i;
             } else {
-                found = 1;
+                /* In this case, a is a Variable - so macro VARget_name (a) expands  *
+                * to an Expression. The first element of an Expression is a Symbol. *
+                * The first element of a Symbol is char * name.                     */
+                printf( "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
             }
         }
-        LISTod;
-        if( found ) {
-            return i;
-        } else printf( "Internal error:  %s:%d\n"
-                           "Attribute %s not found. \n"
-                           /* In this case, a is a Variable - so macro VARget_name (a) expands  *
-                            * to an Expression. The first element of an Expression is a Symbol. *
-                            * The first element of a Symbol is char * name.                     */
-                           , __FILE__, __LINE__, VARget_name( a )->symbol.name );
-    }
-
-    LISTod;
+    } LISTod
     return -1;
 }
 
-void
-LIBstructor_print( Entity entity, FILE * file, Schema schema ) {
-}
-
-/********************/
-/* print the constructor that accepts a SCLP23(Application_instance) as an argument used
-   when building multiply inherited entities.
-*/
-
-void
-LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
-}
 
 /******************************************************************
  ** Procedure:  ENTITYlib_print
@@ -1098,8 +1009,8 @@ LIBstructor_print_w_args( Entity entity, FILE * file, Schema schema ) {
  ** Status:  ok 1/15/91
  ******************************************************************/
 void
-ENTITYlib_print( Entity entity, FILE * file, Schema schema ) {
-    LIBdescribe_entity( entity, file, schema );
+ENTITYlib_print( Entity entity, FILE * file ) {
+    LIBdescribe_entity( entity, file );
 }
 
 /*FIXME should return bool */
@@ -1123,13 +1034,6 @@ TYPEis_builtin( const Type t ) {
 }
 
 
-void
-print_typechain( FILE * f, const Type t, char * buf, Schema schema ) {
-}
-
-void
-ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
-}
 
 /******************************************************************
  ** Procedure:  RULEPrint
@@ -1141,7 +1045,7 @@ ENTITYincode_print( Entity entity, FILE * file, Schema schema ) {
  ** Status:  started 2012/3/1
  ******************************************************************/
 void
-RULEPrint( Rule rule, FILES * files, Schema schema ) {
+RULEPrint( Rule rule, FILES * files ) {
     char * n = RULEget_name( rule );
     fprintf( files->lib, "\n####################\n # RULE %s #\n####################\n", n );
     /* write function definition */
@@ -1159,34 +1063,31 @@ RULEPrint( Rule rule, FILES * files, Schema schema ) {
  ** Status:  started 2012/3/1
  ******************************************************************/
 void
-FUNCPrint( Function function, FILES * files, Schema schema ) {
+FUNCPrint( Function function, FILES * files ) {
     char * function_name = FUNCget_name( function );
     char * param_name;
     Expression expr_name = EXPRESSION_NULL;
-    Type t, return_type = FUNCget_return_type( function );
     fprintf( files->lib, "\n####################\n # FUNCTION %s #\n####################\n", function_name );
 
     /* write function definition */
     fprintf( files->lib, "def %s(", function_name );
 
     /* write parameter list */
-    LISTdo( FUNCget_parameters( function ), v, Variable )
-    expr_name = VARget_name( v );
-    param_name = strdup( EXPget_name( expr_name ) );
-    t = VARget_type( v );
-    fprintf( files->lib, "%s,", param_name );
-    LISTod
+    LISTdo( FUNCget_parameters( function ), v, Variable ) {
+        expr_name = VARget_name( v );
+        param_name = strdup( EXPget_name( expr_name ) );
+        fprintf( files->lib, "%s,", param_name );
+    } LISTod
     fprintf( files->lib, "):\n" );
 
     /* print function docstring */
     fprintf( files->lib, "\t'''\n" );
-    LISTdo( FUNCget_parameters( function ), v, Variable )
-    expr_name = VARget_name( v );
-    param_name = strdup( EXPget_name( expr_name ) );
-    t = VARget_type( v );
-    fprintf( files->lib, "\t:param %s\n", param_name );
-    fprintf( files->lib, "\t:type %s:%s\n", param_name, GetAttrTypeName( t ) );
-    LISTod
+    LISTdo( FUNCget_parameters( function ), v, Variable ) {
+        expr_name = VARget_name( v );
+        param_name = strdup( EXPget_name( expr_name ) );
+        fprintf( files->lib, "\t:param %s\n", param_name );
+        fprintf( files->lib, "\t:type %s:%s\n", param_name, GetAttrTypeName( VARget_type( v ) ) );
+    } LISTod
     fprintf( files->lib, "\t'''\n" );
 
     /* process statements. The indent_level is set to 1 (the number of tabs \t) */
@@ -1285,33 +1186,33 @@ CASEout( struct Case_Statement_ *c, int level, FILE * file ) {
     EXPRESSION_out( c->selector, 0, file );
     fprintf( file, "\n" );
     /* pass 2: print them */
-    LISTdo( c->cases, ci, Case_Item )
-    if( ci->labels ) {
-        LISTdo( ci->labels, label, Expression )
-        /* print label(s) */
-        python_indent( file, level );
-        if( if_number == 0 ) {
-            fprintf( file, "if " );
+    LISTdo( c->cases, ci, Case_Item ) {
+        if( ci->labels ) {
+            LISTdo_n( ci->labels, label, Expression, b ) {
+                /* print label(s) */
+                python_indent( file, level );
+                if( if_number == 0 ) {
+                    fprintf( file, "if " );
+                } else {
+                    fprintf( file, "elif" );
+                }
+                fprintf( file, " case_selector == " );
+                EXPRESSION_out( label, 0, file );
+                fprintf( file, ":\n" );
+
+                /* print action */
+                STATEMENTPrint( ci->action, level + 1, file );
+                if_number++;
+            } LISTod
         } else {
-            fprintf( file, "elif" );
+            /* print OTHERWISE */
+            python_indent( file, level );
+            fprintf( file,  "else:\n" );
+
+            /* print action */
+            STATEMENTPrint( ci->action, level + 1, file );
         }
-        fprintf( file, " case_selector == " );
-        EXPRESSION_out( label, 0, file );
-        fprintf( file, ":\n" );
-
-        /* print action */
-        STATEMENTPrint( ci->action, level + 1, file );
-        if_number++;
-        LISTod
-    } else {
-        /* print OTHERWISE */
-        python_indent( file, level );
-        fprintf( file,  "else:\n" );
-
-        /* print action */
-        STATEMENTPrint( ci->action, level + 1, file );
-    }
-    LISTod
+    } LISTod
 }
 
 void
@@ -1496,7 +1397,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
 **     include, and initialization files for a specific entity class
 ******************************************************************/
 void
-EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
+EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
     int i;  /* trusty temporary */
     switch( TYPEis( e->type ) ) {
         case integer_:
@@ -1610,7 +1511,7 @@ EXPRESSION__out( Expression e, int paren, int previous_op , FILE * file ) {
 }
 
 void
-ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE * file ) {
+ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, FILE* file ) {
     /* TODO: refactor, eliminate Op_Subexpression for enumerations */
     Type op1_type = EXPget_type( oe->op1 );
     if ( TYPEis_enumeration( op1_type ) ) {
@@ -1710,7 +1611,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, int previ
 
 /* print expression that has op and operands */
 void
-EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FILE * file ) {
+EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, FILE* file ) {
     switch( oe->op_code ) {
         case OP_AND:
             EXPRESSIONop2_out( oe, " and ", paren, PAD, file );
@@ -1803,7 +1704,7 @@ EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, int previous_op , FI
 }
 
 void
-EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE * file ) {
+EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE * file ) {
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
@@ -1822,7 +1723,7 @@ EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int 
 }
 
 void
-ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, int previous_op, FILE * file ) {
+ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE * file ) {
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
@@ -1917,11 +1818,11 @@ WHEREPrint( Linked_List wheres, int level , FILE * file ) {
  ******************************************************************/
 
 void
-ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
+ENTITYPrint( Entity entity, FILES * files ) {
     char * n = ENTITYget_name( entity );
     DEBUG( "Entering ENTITYPrint for %s\n", n );
     fprintf( files->lib, "\n####################\n # ENTITY %s #\n####################\n", n );
-    ENTITYlib_print( entity, files -> lib, schema );
+    ENTITYlib_print( entity, files -> lib );
     DEBUG( "DONE ENTITYPrint\n" )    ;
 }
 
@@ -1930,34 +1831,20 @@ ENTITYPrint( Entity entity, FILES * files, Schema schema ) {
  **         TYPE GENERATION             **/
 
 
-/******************************************************************
- ** Procedure:  TYPEprint_enum
- ** Parameters: const Type type - type to print
- **     FILE*      f    - file on which to print
- ** Returns:
- ** Requires:   TYPEget_class(type) == TYPE_ENUM
- ** Description:  prints code to represent an enumerated type in c++
- ** Side Effects:  prints to header file
- ** Status:  ok 1/15/91
- ** Changes: Modified to check for appropiate key words as described
- **          in "SDAI C++ Binding for PDES, Inc. Prototyping" by
- **          Stephen Clark.
- ** - Changed to match CD2 Part 23, 1/14/97 DAS
- ** Change Date: 5/22/91  CD
- ******************************************************************/
+/* TYPEprint_enum
+ * FIXME implement or remove
+*/
 const char *
 EnumCElementName( Type type, Expression expr )  {
-}
-
-char *
-CheckEnumSymbol( char * s ) {
+    (void) type;
+    (void) expr;
+    return NULL;
 }
 
 void
 TYPEenum_lib_print( const Type type, FILE * f ) {
     DictionaryEntry de;
     Expression expr;
-    char c_enum_ele [BUFSIZ];
     /* begin the new enum type */
     if( is_python_keyword( TYPEget_name( type ) ) ) {
         fprintf( f, "\n# ENUMERATION TYPE %s_\n", TYPEget_name( type ) );
@@ -1974,7 +1861,6 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     /*  set up the dictionary info  */
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
-        strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         if( is_python_keyword( EXPget_name( expr ) ) ) {
             fprintf( f, "%s_ ", EXPget_name( expr ) );
         } else {
@@ -2146,9 +2032,6 @@ Type_Description( const Type t, char * buf ) {
     }
 }
 
-void
-TYPEprint_typedefs( Type t, FILE * classes ) {
-}
 
 /* return 1 if it is a multidimensional aggregate at the level passed in
    otherwise return 0;  If it refers to a type that is a multidimensional
@@ -2179,6 +2062,9 @@ isMultiDimAggregateType( const Type t ) {
    reference since it has an Express name associated with it.
 */
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
+    (void) t; /* unused - FIXME implement or eliminate this function */
+    (void) buf;
+    (void) schema;
     return 1;
 }
 
@@ -2217,7 +2103,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     }
 
     if( TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
-        char * output = FundamentalType( type, 0 );
+        const char * output = FundamentalType( type, 0 );
         if( TYPEis_aggregate( type ) ) {
             fprintf( files->lib, "%s = ", TYPEget_name( type ) );
             process_aggregate( files->lib, type );

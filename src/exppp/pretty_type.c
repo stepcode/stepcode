@@ -1,4 +1,4 @@
-/** \file type.c
+/** \file pretty_type.c
  * split out of exppp.c 9/21/13
  */
 

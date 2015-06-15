@@ -12,15 +12,15 @@
 # this makes compilation faster, but sometimes runs into compiler limitations
 if(NOT DEFINED SC_UNITY_BUILD)
   if(BORLAND)
-    message(".. Will not do unity build for this compiler.")
+    message( STATUS "Will not do unity build for this compiler.")
     set(SC_UNITY_BUILD FALSE)
   else()
-    message(".. Assuming compiler is capable of unity build.")
+    message( STATUS "Assuming compiler is capable of unity build.")
     set(SC_UNITY_BUILD TRUE)
   endif(BORLAND)
-  message(".. Override by setting SC_UNITY_BUILD; TRUE will result in *huge* translation units, higher memory use in compilation, and faster build times.")
+  message( STATUS "Override by setting SC_UNITY_BUILD; TRUE will result in *huge* translation units, higher memory use in compilation, and faster build times.")
 else(NOT DEFINED SC_UNITY_BUILD)
-  message(".. Respecting user-defined SC_UNITY_BUILD value of ${SC_UNITY_BUILD}.")
+  message( STATUS "Respecting user-defined SC_UNITY_BUILD value of ${SC_UNITY_BUILD}.")
 endif(NOT DEFINED SC_UNITY_BUILD)
 
 
@@ -47,7 +47,7 @@ set(CMAKE_C_COMPILER \"${CMAKE_C_COMPILER}\" CACHE STRING \"compiler\")
 set(CMAKE_CXX_COMPILER \"${CMAKE_CXX_COMPILER}\" CACHE STRING \"compiler\")
 ")
 
-message("-- Compiling schema scanner...")
+message( STATUS "Compiling schema scanner...")
 
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SC_BINARY_DIR}/schemas)
 execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${SCANNER_BUILD_DIR})
@@ -72,7 +72,7 @@ if(NOT ${_ss_build_stat} STREQUAL "0")
   message(FATAL_ERROR "Scanner build status: ${_ss_build_stat}. stdout:\n${_ss_build_out}\nstderr:\n${_ss_build_err}")
 endif(NOT ${_ss_build_stat} STREQUAL "0")
 
-message("-- Schema scanner built. Running it...")
+message( STATUS "Schema scanner built. Running it...")
 
 # not sure if it makes sense to install this or not...
 if(WIN32)

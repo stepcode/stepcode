@@ -1,7 +1,8 @@
 
 
-/** **********************************************************************
+/**
 ** Module:  Entity \file entity.c
+*
 ** This module is used to represent Express entity definitions.
 **  An entity definition consists of a name, a set of attributes, a
 **  collection of uniqueness sets, a specification of the entity's
@@ -12,6 +13,7 @@
 **  of the entity.  Thus, the uniqueness set { name, ssn } indicates
 **  that no two instances of the entity may share both the same
 **  values for both name and ssn.
+*
 ** Constants:
 **  ENTITY_NULL - the null entity
 **
@@ -409,9 +411,9 @@ static void ENTITY_get_all_attributes( Entity entity, Linked_List result ) {
  ** \return all attributes of this entity
  **
  ** Retrieve the attribute list of an entity.
- ** \sa ENTITY_get_all_attributes
+ ** \sa ENTITY_get_all_attributes()
  **
- ** Notes:   If an entity has neither defines nor inherits any
+ ** \note   If an entity has neither defines nor inherits any
  **      attributes, this call returns an empty list.  Note
  **      that this is distinct from the constant LIST_NULL.
  */
@@ -428,7 +430,7 @@ Linked_List ENTITYget_all_attributes( Entity entity ) {
 ** \return the named attribute of this entity
 ** Retrieve an entity attribute by name.
 **
-** Notes:   If the entity has no attribute with the given name,
+** \note   If the entity has no attribute with the given name,
 **  VARIABLE_NULL is returned.
 */
 Variable ENTITYget_named_attribute( Entity entity, char * name ) {
@@ -455,7 +457,7 @@ Variable ENTITYget_named_attribute( Entity entity, char * name ) {
 ** \return offset to given attribute
 ** Retrieve offset to an entity attribute.
 **
-** Notes:   If the entity does not include the attribute, -1
+** \note   If the entity does not include the attribute, -1
 **  is returned.
 */
 int ENTITYget_attribute_offset( Entity entity, Variable attribute ) {
@@ -485,7 +487,7 @@ int ENTITYget_attribute_offset( Entity entity, Variable attribute ) {
 ** \return offset to named attribute of this entity
 ** Retrieve offset to an entity attribute by name.
 **
-** Notes:   If the entity has no attribute with the given name,
+** \note   If the entity has no attribute with the given name,
 **      -1 is returned.
 */
 int ENTITYget_named_attribute_offset( Entity entity, char * name ) {

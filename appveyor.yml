@@ -21,12 +21,14 @@ configuration: Debug
 #   - GENERATOR: "Visual Studio 10"
 #     ARCH: 32
 
+#no point in these without artifact support...
+#  - GENERATOR: "Visual Studio 11"
+    #ARCH: 32
+  #- GENERATOR: "Visual Studio 12"
+    #ARCH: 32
+
 environment:
   matrix:
-  - GENERATOR: "Visual Studio 11"
-    ARCH: 32
-  - GENERATOR: "Visual Studio 12"
-    ARCH: 32
   - GENERATOR: "Visual Studio 12 Win64"
     ARCH: 64
 
@@ -42,12 +44,23 @@ build_script:
     cd c:\projects\STEPcode
     mkdir build
     cd build
+    cmake -version
+    grep --version
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
-    cmake --build . --config Debug
+    dir *.sln
+    dir *.vcxproj
+    echo "filtering build output with grep"
+    cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
+
+#msbuld seems to provide no benefits, and I can't filter its output...
+#msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:Configuration=Debug /p:Platform=x64
+# /toolsversion:14.0 /p:PlatformToolset=v140
 
 test_script:
   - cmd: echo Running CTest...
   - cmd: cd c:\projects\STEPcode\build
-  - cmd: ctest -j2 . -C Debug
+  - cmd: ctest -j2 . -C Debug --output-on-failure | grep -ve "        Start ...:"
+
+# - cmd: grep -niB20 "Test Failed" Testing/Temporary/LastTest.log
 
 # we could upload a compiled zip somewhere (see Appveyor artifact documentation)

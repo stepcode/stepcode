@@ -1,4 +1,4 @@
-/** \file rule.c
+/** \file pretty_rule.c
  * split out of exppp.c 9/21/13
  */
 
