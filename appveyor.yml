@@ -49,11 +49,12 @@ build_script:
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
     dir *.sln
     dir *.vcxproj
-    #echo "filtering build output with grep"
-    #cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
-    msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:Configuration=Dev
-#msbuild libosmium.sln /p:Configuration=%config% /toolsversion:14.0 /p:Platform=x64 /p:PlatformToolset=v140
-#msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    echo "filtering build output with grep"
+    cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
+
+#msbuld seems to provide no benefits, and I can't filter its output...
+#msbuild SC.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:Configuration=Debug /p:Platform=x64
+# /toolsversion:14.0 /p:PlatformToolset=v140
 
 test_script:
   - cmd: echo Running CTest...
