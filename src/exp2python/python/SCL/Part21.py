@@ -46,22 +46,23 @@ logger.addHandler(logging.NullHandler())
 # Common Code for Lexer / Parser
 ####################################################################################################
 class Base:
-    tokens = ('INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
+    tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
               'ENTITY_INSTANCE_NAME', 'ENUMERATION', 'PART21_END', 'PART21_START', 'HEADER_SEC',
-              'ENDSEC', 'DATA_SEC')
+              'ENDSEC', 'DATA_SEC']
 
 ####################################################################################################
 # Lexer 
 ####################################################################################################
 class Lexer(Base):
-    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
-        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
-                             errorlog=logger)
-        self.entity_keywords = []
+    states = (('compatibility', 'inclusive'),)
+
+    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024, extra_tokens=None):
+        if extra_tokens: self.tokens += extra_tokens
+        self.entity_mapping = {}
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
-
-    states = (('compatibility', 'inclusive'),)
+        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
+                             errorlog=logger)
 
     def __getattr__(self, name):
         if name == 'lineno':
@@ -90,7 +91,10 @@ class Lexer(Base):
             return None
 
     def register_entities(self, entities):
-        self.entity_keywords.extend(entities)
+        if isinstance(entities, list):
+            entities = {k: k for k in entities}
+
+        self.entity_mapping.update(entities)
     
     # Comment (ignored)
     def t_ANY_COMMENT(self, t):
@@ -115,24 +119,24 @@ class Lexer(Base):
 
     # Keywords
     def t_compatibility_STANDARD_KEYWORD(self, t):
-        r'(?:!|)[A-Z_][0-9A-Za-z_]*'
+        r'(?:!|)[A-Za-z_][0-9A-Za-z_]*'
         t.value = t.value.upper()
         if t.value == 'DATA':
             t.type = 'DATA_SEC'
+        elif t.value in self.entity_mapping:
+            t.type = self.entity_mapping[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
-        elif t.value in self.entity_keywords:
-            t.type = t.value
         return t
 
     def t_ANY_STANDARD_KEYWORD(self, t):
         r'(?:!|)[A-Z_][0-9A-Z_]*'
         if t.value == 'DATA':
             t.type = 'DATA_SEC'
+        elif t.value in self.entity_mapping:
+            t.type = self.entity_mapping[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
-        elif t.value in self.entity_keywords:
-            t.type = t.value
         return t
 
     def t_ANY_newline(self, t):
