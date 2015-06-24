@@ -203,6 +203,8 @@ class TypedParameter:
 # Parser
 ####################################################################################################
 class Parser(Base):
+    start = 'exchange_file'
+
     def __init__(self, lexer=None, debug=0):
         self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
 
