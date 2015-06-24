@@ -74,6 +74,8 @@ class Lexer(Base):
 
     def input(self, s):
         startidx = s.find('ISO-10303-21;', 0, self.header_limit)
+        # TODO: It would be better to raise a suitable exception and
+        #       let the application decide how to handle it.
         if startidx == -1:
             sys.exit('Aborting... ISO-10303-21; header not found')
         self.lexer.input(s[startidx:])
@@ -211,6 +213,8 @@ class Parser(Base):
     def parse(self, p21_data, **kwargs):
         self.lexer.input(p21_data)
         self.refs = {}
+        self.in_p21_exchange_structure = False
+
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
                                        **{ k: kwargs[k] for k in kwargs if k != 'debug'})
@@ -219,8 +223,22 @@ class Parser(Base):
         return result
 
     def p_exchange_file(self, p):
-        """exchange_file : PART21_START header_section data_section_list PART21_END"""
+        """exchange_file : p21_start header_section data_section_list part21_end"""
         p[0] = P21File(p[2], p[3])
+
+    def p_p21_start(self, p):
+        """p21_start : PART21_START"""
+        if self.in_p21_exchange_structure:
+            raise SyntaxError
+        self.in_p21_exchange_structure = True
+        p[0] = p[1]
+
+    def p_p21_end(self, p):
+        """p21_end : PART21_END"""
+        if not self.in_p21_exchange_structure:
+            raise SyntaxError
+        self.in_p21_exchange_structure = False
+        p[0] = p[1]
 
     # TODO: Specialise the first 3 header entities
     def p_header_section(self, p):
