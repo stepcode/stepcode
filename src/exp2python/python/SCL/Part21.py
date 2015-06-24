@@ -225,7 +225,7 @@ class Parser(Base):
         return result
 
     def p_exchange_file(self, p):
-        """exchange_file : p21_start header_section data_section_list part21_end"""
+        """exchange_file : p21_start header_section data_section_list p21_end"""
         p[0] = P21File(p[2], p[3])
 
     def p_p21_start(self, p):
