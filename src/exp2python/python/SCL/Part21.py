@@ -34,7 +34,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import logging
 import ply.lex as lex
 import ply.yacc as yacc
@@ -74,10 +73,8 @@ class Lexer(Base):
 
     def input(self, s):
         startidx = s.find('ISO-10303-21;', 0, self.header_limit)
-        # TODO: It would be better to raise a suitable exception and
-        #       let the application decide how to handle it.
         if startidx == -1:
-            sys.exit('Aborting... ISO-10303-21; header not found')
+            raise ValueError('ISO-10303-21 header not found')
         self.lexer.input(s[startidx:])
         self.lexer.lineno += s[0:startidx].count('\n')
 
@@ -260,7 +257,7 @@ class Parser(Base):
         """check_entity_instance_name : ENTITY_INSTANCE_NAME"""
         if p[1] in self.refs:
             logger.error('Line %i, duplicate entity instance name: %s', p.lineno(1), p[1])
-            sys.exit('Aborting...')
+            raise ValueError('Duplicate entity instance name')
         else:
             self.refs[p[1]] = None
             p[0] = p[1]
