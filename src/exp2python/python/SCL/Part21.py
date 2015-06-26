@@ -34,7 +34,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import logging
 import ply.lex as lex
 import ply.yacc as yacc
@@ -46,22 +45,23 @@ logger.addHandler(logging.NullHandler())
 # Common Code for Lexer / Parser
 ####################################################################################################
 class Base:
-    tokens = ('INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
+    tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
               'ENTITY_INSTANCE_NAME', 'ENUMERATION', 'PART21_END', 'PART21_START', 'HEADER_SEC',
-              'ENDSEC', 'DATA_SEC')
+              'ENDSEC', 'DATA_SEC']
 
 ####################################################################################################
 # Lexer 
 ####################################################################################################
 class Lexer(Base):
-    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
-        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
-                             errorlog=logger)
-        self.entity_keywords = []
+    states = (('compatibility', 'inclusive'),)
+
+    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024, extra_tokens=None):
+        if extra_tokens: self.tokens += extra_tokens
+        self.entity_mapping = {}
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
-
-    states = (('compatibility', 'inclusive'),)
+        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
+                             errorlog=logger)
 
     def __getattr__(self, name):
         if name == 'lineno':
@@ -74,7 +74,7 @@ class Lexer(Base):
     def input(self, s):
         startidx = s.find('ISO-10303-21;', 0, self.header_limit)
         if startidx == -1:
-            sys.exit('Aborting... ISO-10303-21; header not found')
+            raise ValueError('ISO-10303-21 header not found')
         self.lexer.input(s[startidx:])
         self.lexer.lineno += s[0:startidx].count('\n')
 
@@ -90,7 +90,10 @@ class Lexer(Base):
             return None
 
     def register_entities(self, entities):
-        self.entity_keywords.extend(entities)
+        if isinstance(entities, list):
+            entities = {k: k for k in entities}
+
+        self.entity_mapping.update(entities)
     
     # Comment (ignored)
     def t_ANY_COMMENT(self, t):
@@ -115,24 +118,24 @@ class Lexer(Base):
 
     # Keywords
     def t_compatibility_STANDARD_KEYWORD(self, t):
-        r'(?:!|)[A-Z_][0-9A-Za-z_]*'
+        r'(?:!|)[A-Za-z_][0-9A-Za-z_]*'
         t.value = t.value.upper()
         if t.value == 'DATA':
             t.type = 'DATA_SEC'
+        elif t.value in self.entity_mapping:
+            t.type = self.entity_mapping[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
-        elif t.value in self.entity_keywords:
-            t.type = t.value
         return t
 
     def t_ANY_STANDARD_KEYWORD(self, t):
         r'(?:!|)[A-Z_][0-9A-Z_]*'
         if t.value == 'DATA':
             t.type = 'DATA_SEC'
+        elif t.value in self.entity_mapping:
+            t.type = self.entity_mapping[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
-        elif t.value in self.entity_keywords:
-            t.type = t.value
         return t
 
     def t_ANY_newline(self, t):
@@ -197,6 +200,8 @@ class TypedParameter:
 # Parser
 ####################################################################################################
 class Parser(Base):
+    start = 'exchange_file'
+
     def __init__(self, lexer=None, debug=0):
         self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
 
@@ -207,6 +212,8 @@ class Parser(Base):
     def parse(self, p21_data, **kwargs):
         self.lexer.input(p21_data)
         self.refs = {}
+        self.in_p21_exchange_structure = False
+
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
                                        **{ k: kwargs[k] for k in kwargs if k != 'debug'})
@@ -215,8 +222,22 @@ class Parser(Base):
         return result
 
     def p_exchange_file(self, p):
-        """exchange_file : PART21_START header_section data_section_list PART21_END"""
+        """exchange_file : p21_start header_section data_section_list p21_end"""
         p[0] = P21File(p[2], p[3])
+
+    def p_p21_start(self, p):
+        """p21_start : PART21_START"""
+        if self.in_p21_exchange_structure:
+            raise SyntaxError
+        self.in_p21_exchange_structure = True
+        p[0] = p[1]
+
+    def p_p21_end(self, p):
+        """p21_end : PART21_END"""
+        if not self.in_p21_exchange_structure:
+            raise SyntaxError
+        self.in_p21_exchange_structure = False
+        p[0] = p[1]
 
     # TODO: Specialise the first 3 header entities
     def p_header_section(self, p):
@@ -236,7 +257,7 @@ class Parser(Base):
         """check_entity_instance_name : ENTITY_INSTANCE_NAME"""
         if p[1] in self.refs:
             logger.error('Line %i, duplicate entity instance name: %s', p.lineno(1), p[1])
-            sys.exit('Aborting...')
+            raise ValueError('Duplicate entity instance name')
         else:
             self.refs[p[1]] = None
             p[0] = p[1]
