@@ -39,6 +39,19 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 logger = logging.getLogger(__name__)
+
+# ensure Python 2.6 compatibility
+if not hasattr(logging, 'NullHandler'):
+    class NullHandler(logging.Handler):
+        def handle(self, record):
+            pass
+        def emit(self, record):
+            pass
+        def createLock(self):
+            self.lock = None
+        
+    setattr(logging, 'NullHandler', NullHandler)
+        
 logger.addHandler(logging.NullHandler())
 
 ####################################################################################################
@@ -216,7 +229,7 @@ class Parser(Base):
 
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
-                                       **{ k: kwargs[k] for k in kwargs if k != 'debug'})
+                                       ** dict((k, v) for k, v in kwargs.iteritems() if k != 'debug'))
         else:
             result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
