@@ -408,34 +408,60 @@ class Parser(object):
         pass
 
 def test_debug():
+    import os.path
+
     logging.basicConfig()
     logger.setLevel(logging.DEBUG)
 
-    s = open('io1-tu-203.stp', 'r').read()
     parser = Parser()
-
-    try:
-        r = parser.parse(s, debug=1)
-    except SystemExit:
-        pass
-
-    return (parser, r)
+    parser.reset()
+    
+    logger.info("***** parser debug *****")
+    p = os.path.expanduser('~/projects/src/stepcode/data/ap214e3/s1-c5-214/s1-c5-214.stp')
+    with open(p, 'rU') as f:
+        s = f.read()
+        try:
+            parser.parse(s, debug=1)
+        except SystemExit:
+            pass
+        
+    logger.info("***** finished *****")
 
 def test():
+    import os, os.path, itertools, codecs
+    
     logging.basicConfig()
-    logger.setLevel(logging.ERROR)
+    logger.setLevel(logging.INFO)
 
-    s = open('io1-tu-203.stp', 'r').read()
     parser = Parser()
+    compat_list = []
 
-    try:
-        r = parser.parse(s)
-    except SystemExit:
-        pass
+    def parse_check(p):
+        logger.info("processing {0}".format(p))
+        parser.reset()
+        with open(p, 'rU') as f:
+            iso_wrapper = codecs.EncodedFile(f, 'iso-8859-1')
+            s = iso_wrapper.read()
+            parser.parse(s)
 
-    return (parser, r)
+    logger.info("***** standard test *****")
+    for d, _, files in os.walk(os.path.expanduser('~/projects/src/stepcode')):
+        for f in itertools.ifilter(lambda x: x.endswith('.stp'), files):
+            p = os.path.join(d, f)
+            try:
+                parse_check(p)
+            except LexError:
+                logger.exception('Lexer issue, adding {0} to compatibility test list'.format(os.path.basename(p)))
+                compat_list.append(p)
 
+    lexer =  Lexer(compatibility_mode=True)
+    parser = Parser(lexer=lexer)
+    
+    logger.info("***** compatibility test *****")
+    for p in compat_list:
+        parse_check(p)
+            
+    logger.info("***** finished *****")
 
 if __name__ == '__main__':
     test()
-
