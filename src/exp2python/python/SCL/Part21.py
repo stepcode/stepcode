@@ -35,8 +35,10 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+
 import ply.lex as lex
 import ply.yacc as yacc
+from ply.lex import LexError
 
 logger = logging.getLogger(__name__)
 
@@ -64,16 +66,21 @@ base_tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'S
 ####################################################################################################
 # Lexer 
 ####################################################################################################
-    states = (('compatibility', 'inclusive'),)
-        self.entity_mapping = {}
 class Lexer(object):
     tokens = list(base_tokens)
+    states = (('slurp', 'exclusive'),)
         
     def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
+        self.schema_dict = {}
+        self.active_schema = {}
+        self.input_length = 0
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
+        self.register_schema('default', base_tokens)
+        self.activate_schema('default')
         self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
                              errorlog=logger)
+        self.reset()
 
     def __getattr__(self, name):
         if name == 'lineno':
@@ -84,83 +91,94 @@ class Lexer(object):
             raise AttributeError
 
     def input(self, s):
-        startidx = s.find('ISO-10303-21;', 0, self.header_limit)
-        if startidx == -1:
-            raise ValueError('ISO-10303-21 header not found')
-        self.lexer.input(s[startidx:])
-        self.lexer.lineno += s[0:startidx].count('\n')
+        self.lexer.input(s)
+        self.input_length += len(s)
 
-        if self.compatibility_mode:
-            self.lexer.begin('compatibility')
-        else:
-            self.lexer.begin('INITIAL')
- 
+    def reset(self):
+        self.lexer.lineno = 1
+        self.lexer.begin('slurp')
+        
     def token(self):
         try:
             return next(self.lexer)
         except StopIteration:
             return None
 
-    def register_entities(self, entities):
+    def activate_schema(self, schema_name):
+        if schema_name in self.schema_dict:
+            self.active_schema = self.schema_dict[schema_name]
+        else:
+            raise ValueError('schema not registered')
+
+    def register_schema(self, schema_name, entities):
+        if schema_name in self.schema_dict:
+            raise ValueError('schema already registered')
+
         if isinstance(entities, list):
             entities = dict((k, k) for k in entities)
 
-        self.entity_mapping.update(entities)
+        self.schema_dict[schema_name] = entities
+  
+    def t_slurp_PART21_START(self, t):
+        r'ISO-10303-21;'
+        t.lexer.begin('INITIAL')
+        return t
+    
+    def t_slurp_error(self, t):
+        offset = t.value.find('\nISO-10303-21;', 0, self.header_limit)
+        if offset == -1 and self.header_limit < len(t.value): # not found within header_limit
+            raise LexError("Scanning error. try increasing lexer header_limit parameter",
+                           "{0}...".format(t.value[0:20]))
+        elif offset == -1: # not found before EOF
+            t.lexer.lexpos = self.input_length
+        else: # found ISO-10303-21;
+            offset += 1  # also skip the \n
+            t.lexer.lineno += t.value[0:offset].count('\n')
+            t.lexer.skip(offset)
     
     # Comment (ignored)
-    def t_ANY_COMMENT(self, t):
+    def t_COMMENT(self, t):
         r'/\*(.|\n)*?\*/'
         t.lexer.lineno += t.value.count('\n')
     
-    def t_ANY_PART21_START(self, t):
-        r'ISO-10303-21;'
-        return t
-
-    def t_ANY_PART21_END(self, t):
+    def t_PART21_END(self, t):
         r'END-ISO-10303-21;'
+        t.lexer.begin('slurp')
         return t
 
-    def t_ANY_HEADER_SEC(self, t):
+    def t_HEADER_SEC(self, t):
         r'HEADER;'
         return t
 
-    def t_ANY_ENDSEC(self, t):
+    def t_ENDSEC(self, t):
         r'ENDSEC;'
         return t
 
     # Keywords
-    def t_compatibility_STANDARD_KEYWORD(self, t):
+    def t_STANDARD_KEYWORD(self, t):
         r'(?:!|)[A-Za-z_][0-9A-Za-z_]*'
-        t.value = t.value.upper()
-        if t.value == 'DATA':
-            t.type = 'DATA_SEC'
-        elif t.value in self.entity_mapping:
-            t.type = self.entity_mapping[t.value]
+        if self.compatibility_mode:
+            t.value = t.value.upper()
+        elif not t.value.isupper():
+            raise LexError('Scanning error. Mixed/lower case keyword detected, please use compatibility_mode=True', t.value)
+        
+        if t.value in self.active_schema:
+            t.type = self.active_schema[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
         return t
 
-    def t_ANY_STANDARD_KEYWORD(self, t):
-        r'(?:!|)[A-Z_][0-9A-Z_]*'
-        if t.value == 'DATA':
-            t.type = 'DATA_SEC'
-        elif t.value in self.entity_mapping:
-            t.type = self.entity_mapping[t.value]
-        elif t.value.startswith('!'):
-            t.type = 'USER_DEFINED_KEYWORD'
-        return t
-
-    def t_ANY_newline(self, t):
+    def t_newline(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
-
+        
     # Simple Data Types
-    t_ANY_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
-    t_ANY_INTEGER = r'[+-]*[0-9][0-9]*'
-    t_ANY_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
-    t_ANY_BINARY = r'"[0-3][0-9A-F]*"'
-    t_ANY_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
-    t_ANY_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
+    t_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
+    t_INTEGER = r'[+-]*[0-9][0-9]*'
+    t_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
+    t_BINARY = r'"[0-3][0-9A-F]*"'
+    t_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
+    t_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
 
     # Punctuation
     literals = '()=;,*$'
@@ -222,11 +240,12 @@ class Parser(object):
         except AttributeError: pass
 
         self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
+        self.reset()
     
     def parse(self, p21_data, **kwargs):
+        #TODO: will probably need to change this function if the lexer is ever to support t_eof
+        self.lexer.reset()
         self.lexer.input(p21_data)
-        self.refs = {}
-        self.in_p21_exchange_structure = False
 
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
@@ -235,24 +254,24 @@ class Parser(object):
             result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
 
+    def reset(self):
+        self.refs = {}
+        self.is_in_exchange_structure = False
+        
     def p_exchange_file(self, p):
-        """exchange_file : p21_start header_section data_section_list p21_end"""
+        """exchange_file : check_p21_start_token header_section data_section_list check_p21_end_token"""
         p[0] = P21File(p[2], p[3])
 
-    def p_p21_start(self, p):
-        """p21_start : PART21_START"""
-        if self.in_p21_exchange_structure:
-            raise SyntaxError
-        self.in_p21_exchange_structure = True
+    def p_check_start_token(self, p):
+        """check_p21_start_token : PART21_START"""
+        self.is_in_exchange_structure = True
         p[0] = p[1]
-
-    def p_p21_end(self, p):
-        """p21_end : PART21_END"""
-        if not self.in_p21_exchange_structure:
-            raise SyntaxError
-        self.in_p21_exchange_structure = False
+    
+    def p_check_end_token(self, p):
+        """check_p21_end_token : PART21_END"""
+        self.is_in_exchange_structure = False
         p[0] = p[1]
-
+    
     # TODO: Specialise the first 3 header entities
     def p_header_section(self, p):
         """header_section : HEADER_SEC header_entity header_entity header_entity ENDSEC"""
@@ -270,8 +289,8 @@ class Parser(object):
     def p_check_entity_instance_name(self, p):
         """check_entity_instance_name : ENTITY_INSTANCE_NAME"""
         if p[1] in self.refs:
-            logger.error('Line %i, duplicate entity instance name: %s', p.lineno(1), p[1])
-            raise ValueError('Duplicate entity instance name')
+            logger.error('Line: {0}, SyntaxError - Duplicate Entity Instance Name: {1}'.format(p.lineno(1), p[1]))
+            raise SyntaxError
         else:
             self.refs[p[1]] = None
             p[0] = p[1]
@@ -279,6 +298,11 @@ class Parser(object):
     def p_simple_entity_instance(self, p):
         """simple_entity_instance : check_entity_instance_name '=' simple_record ';'"""
         p[0] = SimpleEntity(p[1], *p[3])
+
+    def p_entity_instance_error(self, p):
+        """simple_entity_instance  : error '=' simple_record ';'
+           complex_entity_instance : error '=' subsuper_record ';'"""
+        pass
 
     def p_complex_entity_instance(self, p):
         """complex_entity_instance : check_entity_instance_name '=' subsuper_record ';'"""
@@ -337,12 +361,12 @@ class Parser(object):
         p[0] = []
 
     def p_data_start(self, p):
-        """data_start : DATA_SEC '(' parameter_list ')' ';'"""
+        """data_start : DATA '(' parameter_list ')' ';'"""
         pass
 
     def p_data_start_empty(self, p):
-        """data_start : DATA_SEC '(' ')' ';'
-                      | DATA_SEC ';'"""
+        """data_start : DATA '(' ')' ';'
+                      | DATA ';'"""
         pass
 
     def p_data_section(self, p):
@@ -351,10 +375,13 @@ class Parser(object):
 
     def p_entity_instance_list(self, p):
         """entity_instance_list : entity_instance_list entity_instance
-                                | empty"""
+                                | entity_instance"""
         try: p[0] = p[1] + [p[2],]
-        except IndexError: pass # p[2] doesn't exist, p[1] is None
-        except TypeError: p[0] = [p[2],] # p[1] is None, p[2] is valid
+        except IndexError: p[0] = [p[1],]
+
+    def p_entity_instance_list_empty(self, p):
+        """entity_instance_list : empty"""
+        p[0] = []
 
     def p_entity_instance(self, p):
         """entity_instance : simple_entity_instance
