@@ -71,13 +71,12 @@ class Lexer(object):
     states = (('slurp', 'exclusive'),)
         
     def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
+        self.base_tokens = list(base_tokens)
         self.schema_dict = {}
         self.active_schema = {}
         self.input_length = 0
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
-        self.register_schema('default', base_tokens)
-        self.activate_schema('default')
         self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
                              errorlog=logger)
         self.reset()
@@ -114,6 +113,9 @@ class Lexer(object):
         if schema_name in self.schema_dict:
             raise ValueError('schema already registered')
 
+        for k in entities:
+            if k in self.base_tokens: raise ValueError('schema cannot override base_tokens')
+        
         if isinstance(entities, list):
             entities = dict((k, k) for k in entities)
 
@@ -162,7 +164,9 @@ class Lexer(object):
         elif not t.value.isupper():
             raise LexError('Scanning error. Mixed/lower case keyword detected, please use compatibility_mode=True', t.value)
         
-        if t.value in self.active_schema:
+        if t.value in self.base_tokens:
+            t.type = t.value
+        elif t.value in self.active_schema:
             t.type = self.active_schema[t.value]
         elif t.value.startswith('!'):
             t.type = 'USER_DEFINED_KEYWORD'
