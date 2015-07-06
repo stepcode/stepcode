@@ -70,7 +70,7 @@ class Lexer(object):
     tokens = list(base_tokens)
     states = (('slurp', 'exclusive'),)
         
-    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
+    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=4096):
         self.base_tokens = list(base_tokens)
         self.schema_dict = {}
         self.active_schema = {}
