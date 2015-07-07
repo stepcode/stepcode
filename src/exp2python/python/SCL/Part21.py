@@ -227,7 +227,7 @@ class P21Header:
 class HeaderEntity:
     def __init__(self, type_name, *params):
         self.type_name = type_name
-        self.params = list(*params) if params else []
+        self.params = list(params) if params else []
 
 class Section:
     def __init__(self, entities):
@@ -237,17 +237,17 @@ class SimpleEntity:
     def __init__(self, ref, type_name, *params):
         self.ref = ref
         self.type_name = type_name
-        self.params = list(*params) if params else []
+        self.params = list(params) if params else []
 
 class ComplexEntity:
     def __init__(self, ref, *params):
         self.ref = ref
-        self.params = list(*params) if params else []
+        self.params = list(params) if params else []
 
 class TypedParameter:
     def __init__(self, type_name, *params):
         self.type_name = type_name
-        self.params = list(*params) if params else None
+        self.params = list(params) if params else None
 
 ####################################################################################################
 # Parser
