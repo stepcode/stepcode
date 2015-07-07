@@ -177,10 +177,29 @@ class Lexer(object):
         t.lexer.lineno += len(t.value)
         
     # Simple Data Types
-    t_REAL = r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
-    t_INTEGER = r'[+-]*[0-9][0-9]*'
-    t_STRING = r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
-    t_BINARY = r'"[0-3][0-9A-F]*"'
+    def t_REAL(self, t):
+        r'[+-]*[0-9][0-9]*\.[0-9]*(?:E[+-]*[0-9][0-9]*)?'
+        t.value = float(t.value)
+        return t
+
+    def t_INTEGER(self, t):
+        r'[+-]*[0-9][0-9]*'
+        t.value = int(t.value)
+        return t
+
+    def t_STRING(self, t):
+        r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
+        t.value = t.value.strip("'")
+        return t
+
+    def t_BINARY(self, t):
+        r'"[0-3][0-9A-F]*"'
+        try:
+            t.value = int(t.value.strip('"')[1:], base=16)
+        except ValueError:
+            t.value = None
+        return t
+
     t_ENTITY_INSTANCE_NAME = r'\#[0-9]+'
     t_ENUMERATION = r'\.[A-Z_][A-Z0-9_]*\.'
 
