@@ -189,13 +189,13 @@ class Lexer(object):
 
     def t_STRING(self, t):
         r"'(?:[][!\"*$%&.#+,\-()?/:;<=>@{}|^`~0-9a-zA-Z_\\ ]|'')*'"
-        t.value = t.value.strip("'")
+        t.value = t.value[1:-1]
         return t
 
     def t_BINARY(self, t):
         r'"[0-3][0-9A-F]*"'
         try:
-            t.value = int(t.value.strip('"')[1:], base=16)
+            t.value = int(t.value[2:-1], base=16)
         except ValueError:
             t.value = None
         return t
