@@ -39,25 +39,37 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 logger = logging.getLogger(__name__)
+
+# ensure Python 2.6 compatibility
+if not hasattr(logging, 'NullHandler'):
+    class NullHandler(logging.Handler):
+        def handle(self, record):
+            pass
+        def emit(self, record):
+            pass
+        def createLock(self):
+            self.lock = None
+        
+    setattr(logging, 'NullHandler', NullHandler)
+        
 logger.addHandler(logging.NullHandler())
 
 ####################################################################################################
 # Common Code for Lexer / Parser
 ####################################################################################################
-class Base:
-    tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
-              'ENTITY_INSTANCE_NAME', 'ENUMERATION', 'PART21_END', 'PART21_START', 'HEADER_SEC',
-              'ENDSEC', 'DATA_SEC']
+base_tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'STRING', 'BINARY',
+               'ENTITY_INSTANCE_NAME', 'ENUMERATION', 'PART21_END', 'PART21_START', 'HEADER_SEC',
+               'ENDSEC', 'DATA']
 
 ####################################################################################################
 # Lexer 
 ####################################################################################################
-class Lexer(Base):
     states = (('compatibility', 'inclusive'),)
-
-    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024, extra_tokens=None):
-        if extra_tokens: self.tokens += extra_tokens
         self.entity_mapping = {}
+class Lexer(object):
+    tokens = list(base_tokens)
+        
+    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=1024):
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
         self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
@@ -91,7 +103,7 @@ class Lexer(Base):
 
     def register_entities(self, entities):
         if isinstance(entities, list):
-            entities = {k: k for k in entities}
+            entities = dict((k, k) for k in entities)
 
         self.entity_mapping.update(entities)
     
@@ -199,16 +211,18 @@ class TypedParameter:
 ####################################################################################################
 # Parser
 ####################################################################################################
-class Parser(Base):
+class Parser(object):
+    tokens = list(base_tokens)
     start = 'exchange_file'
-
+    
     def __init__(self, lexer=None, debug=0):
+        self.lexer = lexer if lexer else Lexer()
+
+        try: self.tokens = lexer.tokens
+        except AttributeError: pass
+
         self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
-
-        if lexer is None:
-            lexer = Lexer()
-        self.lexer = lexer
-
+    
     def parse(self, p21_data, **kwargs):
         self.lexer.input(p21_data)
         self.refs = {}
@@ -216,7 +230,7 @@ class Parser(Base):
 
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
-                                       **{ k: kwargs[k] for k in kwargs if k != 'debug'})
+                                       ** dict((k, v) for k, v in kwargs.iteritems() if k != 'debug'))
         else:
             result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
