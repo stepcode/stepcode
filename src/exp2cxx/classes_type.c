@@ -15,6 +15,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* #define NEWDICT */
 
 #include <sc_memmgr.h>
+#include <path2str.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <sc_mkdir.h>
@@ -1305,7 +1306,7 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
         fprintf( header, "            break;\n" );
         fprintf( header, "        }\n" );
         fprintf( header, "    }\n" );
-        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", __FILE__,
+        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", path2str( __FILE__ ),
                  __LINE__, "(incorrect assumption of integer type?) Please report error to STEPcode: scl-dev at groups.google.com." );
         fprintf( header, "    return *( a->Integer() );\n" ); /* always an integer? if not, would need to translate somehow due to return type... */
         fprintf( header, "}\n" );

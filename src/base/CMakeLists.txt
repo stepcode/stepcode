@@ -5,6 +5,7 @@ set(SC_BASE_SOURCES
   sc_getopt.cc
   sc_benchmark.cc
   sc_mkdir.c
+  path2str.c
  )
 
 set(SC_BASE_HDRS
@@ -13,6 +14,7 @@ set(SC_BASE_HDRS
   sc_getopt.h
   sc_trace_fprintf.h
   sc_mkdir.h
+  path2str.h
  )
 
 if(MINGW OR MSVC OR BORLAND)
