@@ -59,7 +59,7 @@ cmake_push_check_state()
   if( UNIX )
     set( CMAKE_REQUIRED_FLAGS "-pthread -std=c++0x" )
   else( UNIX )
-    # vars probably need set for MSVC11, embarcadero, etc
+    # vars probably need set for embarcadero, etc
   endif( UNIX )
   CHECK_CXX_SOURCE_RUNS( "${TEST_STD_THREAD}" HAVE_STD_THREAD )   #quotes are *required*!
 cmake_pop_check_state()
