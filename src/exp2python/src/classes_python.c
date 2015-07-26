@@ -973,8 +973,7 @@ int get_attribute_number( Entity entity ) {
         /*  go to the child's first explicit attribute */
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             LISTdo_n( complete, p, Variable, b ) {
-                /*  cycle through all the explicit attributes until the
-                child's attribute is found  */
+                /*  cycle through all the explicit attributes until the child's attribute is found  */
                 if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
                     if( p != a ) {
                         ++i;

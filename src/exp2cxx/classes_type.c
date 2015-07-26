@@ -43,6 +43,10 @@ int isMultiDimAggregateType( const Type t );
 void Type_Description( const Type, char * );
 void TypeBody_Description( TypeBody body, char * buf );
 
+/** write representation of expression to end of buf
+ *
+ * TODO: add buflen arg and check for overflow
+ */
 void strcat_expr( Expression e, char * buf ) {
     if( e == LITERAL_INFINITY ) {
         strcat( buf, "?" );
@@ -65,7 +69,10 @@ void strcat_expr( Expression e, char * buf ) {
     }
 }
 
-/** print t's bounds to end of buf */
+/** print t's bounds to end of buf
+ *
+ * TODO: add buflen arg and check for overflow
+ */
 void strcat_bounds( TypeBody b, char * buf ) {
     if( !b->upper ) {
         return;
@@ -94,7 +101,6 @@ void strcat_bounds( TypeBody b, char * buf ) {
  ** Change Date: 5/22/91  CD
  ******************************************************************/
 const char * EnumCElementName( Type type, Expression expr )  {
-
     static char buf [BUFSIZ];
     sprintf( buf, "%s__",
              EnumName( TYPEget_name( type ) ) );
@@ -104,7 +110,6 @@ const char * EnumCElementName( Type type, Expression expr )  {
 }
 
 char * CheckEnumSymbol( char * s ) {
-
     static char b [BUFSIZ];
     if( strcmp( s, "sdaiTRUE" )
             && strcmp( s, "sdaiFALSE" )

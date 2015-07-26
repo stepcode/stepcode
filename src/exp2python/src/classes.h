@@ -129,7 +129,7 @@ const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
 void            SCHEMAprint( Schema schema, FILES* files, int suffix );
-Type            TYPEget_ancestor( Type );
+Type            TYPEget_ancestor( Type t );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 
 /*Variable*/
