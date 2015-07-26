@@ -60,7 +60,7 @@ CheckWord( const char * word ) {
         high = nwords - 1;
 
     /*  word is obviously not in list, if it is longer than any of the words in the list  */
-    if( strlen( word ) > 12 ) {
+    if( strlen( word ) > 18 ) {
         return ( word );
     }
 
