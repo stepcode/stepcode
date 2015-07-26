@@ -145,7 +145,5 @@ void            print_schemas_separate( Express, FILES * );
 void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
 
-void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file );
-
 #endif
 
