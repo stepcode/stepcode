@@ -367,6 +367,9 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
  * Prints a bunch of lines for enumeration creation functions (i.e., "cre-
  * ate_SdaiEnum1()").  Since this is done both for an enum and for "copies"
  * of it (when "TYPE enum2 = enum1"), I placed this code in a separate fn.
+ *
+ * NOTE - "Print ObjectStore Access Hook function" comment seen at one of
+ * the calls seems to imply it's ObjectStore specific...
  */
 static void printEnumCreateHdr( FILE * inc, const Type type ) {
     const char * nm = TYPEget_ctype( type );

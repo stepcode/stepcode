@@ -1,75 +1,9 @@
 
-/************************************************************************
-** Driver for Fed-X Express parser.
-************************************************************************/
+/* Driver for exp2python (generation of python from EXPRESS) */
 
 /*
  * This software was developed by U.S. Government employees as part of
  * their official duties and is not subject to copyright.
- *
- * $Log: fedex_main.c,v $
- * Revision 3.0.1.3  1997/11/05 23:12:18  sauderd
- * Adding a new state DP3.1 and associated revision
- *
- * Revision 3.0.1.2  1997/09/26 15:59:10  sauderd
- * Finished implementing the -a option (changed from -e) to generate the early
- * bound access functions the old way. Implemented the change to generate them
- * the new correct way by default.
- *
- * Revision 3.0.1.1  1997/09/18 21:18:41  sauderd
- * Added a -e or -E option to generate attribute get and put functions the old
- * way (without an underscore). It sets the variable old_accessors. This doesn't
- * currently do anything. It needs to be implemented to generate attr funcs
- * correctly.
- *
- * Revision 3.0.1.0  1997/04/16 19:29:03  dar
- * Setting the first branch
- *
- * Revision 3.0  1997/04/16  19:29:02  dar
- * STEP Class Library Pre Release 3.0
- *
- * Revision 2.1.0.5  1997/03/11  15:33:59  sauderd
- * Changed code so that if exp2python is passed the -c or -C option it would
- * generate implementation objects for Orbix (CORBA). Look for code that is
- * inside stmts such as if(corba_binding)
- *
- * Revision 2.1.0.4  1996/09/25 22:56:55  sauderd
- * Added a command line argument for logging SCL use. The option added is -l or
- * -L. It also says the option in the usage stmt when you run exp2python without
- * an argument. Added the options to the EXPRESSgetopt_options string.
- *
- * Revision 2.1.0.3  1996/06/18 18:14:17  sauderd
- * Changed the line that gets printed when you run exp2python with no
- * arguments to include the option for single inheritance.
- *
- * Revision 2.1.0.2  1995/05/19 22:40:03  sauderd
- * Added a command line argument -s or -S for generating code based on the old
- * method as opposed to the new method of multiple inheritance.
- *
- * Revision 2.1.0.1  1995/05/16  19:52:18  lubell
- * setting state to dp21
- *
- * Revision 2.1.0.0  1995/05/12  18:53:48  lubell
- * setting branch
- *
- * Revision 2.1  1995/05/12  18:53:47  lubell
- * changing version to 2.1
- *
- * Revision 1.7  1995/03/16  20:58:50  sauderd
- * ? changes.
- *
- * Revision 1.6  1992/09/29  15:46:55  libes
- * added messages for KC
- *
- * Revision 1.5  1992/08/27  23:28:52  libes
- * moved Descriptor "new"s to precede assignments
- * punted SELECT type
- *
- * Revision 1.4  1992/08/19  18:49:59  libes
- * registry support
- *
- * Revision 1.3  1992/06/05  19:55:28  libes
- * Added * to typedefs.  Replaced warning kludges with ERRORoption.
  */
 
 #include <stdlib.h>

@@ -4,8 +4,6 @@
 
 #include "complexSupport.h"
 
-extern int corba_binding;
-
 void use_ref( Schema, Express, FILES * );
 
 /******************************************************************

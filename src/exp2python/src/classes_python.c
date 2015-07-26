@@ -57,13 +57,11 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
-const char * ENTITYget_CORBAname( Entity ent );
 const char * GetTypeDescriptorName( Type t );
 void TYPEselect_lib_print( const Type type, FILE * f );
 
 int multiple_inheritance = 1;
 int print_logging = 0;
-int corba_binding = 0;
 int old_accessors = 0;
 
 /* several classes use attr_count for naming attr dictionary entry
@@ -175,9 +173,6 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     }
     if( ( char )i == 'L' ) {
         print_logging = 1;
-    }
-    if( ( ( char )i == 'c' ) || ( ( char )i == 'C' ) ) {
-        corba_binding = 1;
     }
     return 0;
 }

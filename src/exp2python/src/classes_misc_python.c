@@ -19,7 +19,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
 
 extern int multiple_inheritance;
-/*extern int corba_binding; */
 
 /******************************************************************
 **      The following functions will be used        ***
