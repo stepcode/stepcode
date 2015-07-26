@@ -36,7 +36,7 @@ FILE * FILEcreate( const char * filename ) {
     const char * fn;
 
     if( ( file = fopen( filename, "w" ) ) == NULL ) {
-        printf( "**Error in SCHEMAprint:  unable to create file %s ** \n", filename );
+        fprintf( stderr, "**Error in SCHEMAprint:  unable to create file %s ** \n", filename );
         return ( NULL );
     }
 
@@ -262,7 +262,7 @@ const char * GetTypeDescriptorName( Type t ) {
         case generic_:
             return "TypeDescriptor";
         default:
-            printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( t )->type );
+            fprintf( stderr, "Error at %s:%d - type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( t )->type );
             abort();
     }
     /* NOTREACHED */
@@ -318,9 +318,7 @@ Entity ENTITYput_superclass( Entity entity ) {
                 ignore = e;
             }
             if( ignore ) {
-                printf( "WARNING:  multiple inheritance not implemented.\n" );
-                printf( "\tin ENTITY %s\n\tSUPERTYPE %s IGNORED.\n\n",
-                        ENTITYget_name( entity ), ENTITYget_name( e ) );
+                fprintf( stderr, "WARNING:  multiple inheritance not implemented. In ENTITY %s, SUPERTYPE %s ignored.\n", ENTITYget_name( entity ), ENTITYget_name( e ) );
             }
             LISTod;
         }

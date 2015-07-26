@@ -71,10 +71,8 @@ CheckWord( const char * word ) {
         } else if( cond > 0 ) {
             low = i + 1;
         } else { /*  word is a reserved word, capitalize it  */
-            printf( "** warning: reserved word  %s  ", word );
-            *( word + 0 ) = toupper( *( word + 0 ) );
-            printf( "is changed to  %s **\n", word );
-
+            fprintf( stderr, "Warning: reserved word %s capitalized\n", word );
+            *word = toupper( *word );
         }
     }
 #endif
@@ -176,7 +174,7 @@ FILEcreate( const char * filename ) {
     /* const char * fn; */
 
     if( ( file = fopen( filename, "w" ) ) == NULL ) {
-        printf( "**Error in SCHEMAprint:  unable to create file %s ** \n", filename );
+        fprintf( stderr, "Error in SCHEMAprint:  unable to create file %s\n", filename );
         return ( NULL );
     }
 
@@ -465,7 +463,7 @@ GetTypeDescriptorName( Type t ) {
         case generic_:
             return "TypeDescriptor";
         default:
-            printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( t )->type );
+            fprintf( stderr, "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, TYPEget_body( t )->type );
             abort();
     }
 }

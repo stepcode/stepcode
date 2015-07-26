@@ -987,9 +987,9 @@ int get_attribute_number( Entity entity ) {
                 return i;
             } else {
                 /* In this case, a is a Variable - so macro VARget_name (a) expands  *
-                * to an Expression. The first element of an Expression is a Symbol. *
-                * The first element of a Symbol is char * name.                     */
-                printf( "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
+                 * to an Expression. The first element of an Expression is a Symbol. *
+                 * The first element of a Symbol is char * name.                     */
+                fprintf( stderr, "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
             }
         }
     } LISTod
@@ -1976,7 +1976,7 @@ TypeBody_Description( TypeBody body, char * buf ) {
                     }
                     break;
                 default:
-                    printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, body->type );
+                    fprintf( stderr, "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, body->type );
                     abort();
             }
 

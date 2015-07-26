@@ -115,8 +115,7 @@ char * CheckEnumSymbol( char * s ) {
     } else {
         strcpy( b, s );
         strcat( b, "_" );
-        printf( "** warning:  the enumerated value %s is already being used ", s );
-        printf( " and has been changed to %s **\n", b );
+        fprintf( stderr, "Warning in %s: the enumerated value %s is already being used and has been changed to %s\n", __FUNCTION__, s, b );
         return ( b );
     }
 }
@@ -1280,7 +1279,7 @@ char * TYPEget_express_type( const Type t ) {
 
     /*  default returns undefined   */
 
-    printf( "WARNING2:  type  %s  is undefined\n", TYPEget_name( t ) );
+    fprintf( stderr, "Warning in %s: type %s is undefined\n", __FUNCTION__, TYPEget_name( t ) );
     return ( "SCLundefined" );
 
 }
@@ -1326,8 +1325,7 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
  */
 void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_name, const char * aggr_name ) {
     if( !header ) {
-        fprintf( stderr, "ERROR at %s:%d! 'header' is null for aggregate %s.",
-                 __FILE__, __LINE__, t->symbol.name );
+        fprintf( stderr, "ERROR at %s:%d! 'header' is null for aggregate %s.", __FILE__, __LINE__, t->symbol.name );
         abort();
     }
     if( !TYPEget_head( t ) ) {
