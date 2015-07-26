@@ -3,6 +3,9 @@
 #include "sc_memmgr.h"
 #include <string.h>
 
+/* for windows, rewrite backslashes in paths
+ * that will be written to generated code
+ */
 const char * path2str_fn( const char * fileMacro ) {
     static char * result = 0;
     static size_t rlen = 0;

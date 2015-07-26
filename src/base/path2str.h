@@ -15,6 +15,6 @@ SC_BASE_EXPORT const char * path2str_fn( const char * fileMacro );
 #  define path2str(path) path2str_fn(path)
 #else
 #  define path2str(path) path
-#endif //defined( _WIN32 ) || defined ( __WIN32__ )
+#endif /* defined( _WIN32 ) || defined ( __WIN32__ ) */
 
-#endif //PATH2STR_H
+#endif /* PATH2STR_H */
