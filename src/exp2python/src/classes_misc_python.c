@@ -429,28 +429,27 @@ Entity ENTITYput_superclass( Entity entity ) {
             /* find the first parent that has attributes (in the parent or any of its
             ancestors).  Make super point at that parent and print warnings for
              all the rest of the parents. DAS */
-            LISTdo( l, e, Entity )
-            /*  if there's no super class yet,
-            or if the entity super class [the variable] super is pointing at
-            doesn't have any attributes: make super point at the current parent.
-            As soon as the parent pointed to by super has attributes, stop
-            assigning super and print ignore messages for the remaining parents.
-            */
-            if( ( ! super ) || ( ! ENTITYhas_explicit_attributes( super ) ) ) {
-                ignore = super;
-                super = e;
-                ++ super_cnt;
-            }  else {
-                ignore = e;
-            }
-            if( ignore ) {
-                printf( "WARNING:  multiple inheritance not implemented.\n" );
-                printf( "\tin ENTITY %s\n\tSUPERTYPE %s IGNORED.\n\n",
-                        ENTITYget_name( entity ), ENTITYget_name( e ) );
-            }
-            LISTod;
+            LISTdo( l, e, Entity ) {
+                /*  if there's no super class yet,
+                or if the entity super class [the variable] super is pointing at
+                doesn't have any attributes: make super point at the current parent.
+                As soon as the parent pointed to by super has attributes, stop
+                assigning super and print ignore messages for the remaining parents.
+                */
+                if( ( ! super ) || ( ! ENTITYhas_explicit_attributes( super ) ) ) {
+                    ignore = super;
+                    super = e;
+                    ++ super_cnt;
+                }  else {
+                    ignore = e;
+                }
+                if( ignore ) {
+                    printf( "WARNING:  multiple inheritance not implemented.\n" );
+                    printf( "\tin ENTITY %s\n\tSUPERTYPE %s IGNORED.\n\n",
+                            ENTITYget_name( entity ), ENTITYget_name( e ) );
+                }
+            } LISTod
         }
-
         tag = ( EntityTag ) malloc( sizeof( struct EntityTag_ ) );
         tag -> superclass = super;
         TYPEput_clientData( ENTITYget_type( entity ), tag );
