@@ -18,6 +18,7 @@ function( add_schema_dependent_test name sdai_lib exe_args )
 
   add_executable( tst_${name} "${name}.cc" )
   set_target_properties( tst_${name} PROPERTIES COMPILE_FLAGS "-I${sdai_src_path} ${ARGV3}" EXCLUDE_FROM_ALL ON )
+  message(INFO "schema test ${name}: include '${sdai_src_path}'")
   if(NOT "${ARGV4}" MATCHES "NONE")
     DEFINE_DLL_IMPORTS( "tst_${name}" "${ARGV4}" )
   endif(NOT "${ARGV4}" MATCHES "NONE")
