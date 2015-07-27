@@ -64,6 +64,23 @@ cmake_push_check_state()
   CHECK_CXX_SOURCE_RUNS( "${TEST_STD_THREAD}" HAVE_STD_THREAD )   #quotes are *required*!
 cmake_pop_check_state()
 
+set( TEST_STD_CHRONO "
+#include <iostream>
+#include <chrono>
+int main() {
+    std::chrono::seconds sec(1);
+    std::cout << \"1s is \"<< std::chrono::duration_cast<std::chrono::milliseconds>(sec).count() << \" ms\" << std::endl;
+}
+" )
+cmake_push_check_state()
+  if( UNIX )
+    set( CMAKE_REQUIRED_FLAGS "-std=c++0x" )
+  else( UNIX )
+    # vars probably need set for embarcadero, etc
+  endif( UNIX )
+  CHECK_CXX_SOURCE_RUNS( "${TEST_STD_CHRONO}" HAVE_STD_CHRONO )   #quotes are *required*!
+cmake_pop_check_state()
+
 # Now that all the tests are done, configure the sc_cf.h file:
 get_property(CONFIG_H_FILE_CONTENTS GLOBAL PROPERTY SC_CONFIG_H_CONTENTS)
 file(WRITE ${CONFIG_H_FILE} "${CONFIG_H_FILE_CONTENTS}")

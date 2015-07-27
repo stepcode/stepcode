@@ -24,5 +24,6 @@
 #cmakedefine HAVE_SSIZE_T 1
 
 #cmakedefine HAVE_STD_THREAD 1
+#cmakedefine HAVE_STD_CHRONO 1
 
 #endif /* SCL_CF_H */
