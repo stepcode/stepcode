@@ -41,16 +41,16 @@ function(add_schema_dependent_test name sdai_lib exe_args )
   message(STATUS "include dir for ${sdai_lib}: ${sdai_src_path}")
   add_executable(tst_${name} "${name}.cc")
   set_target_properties(tst_${name} PROPERTIES EXCLUDE_FROM_ALL ON)
-  if("${CMAKE_VERSION}" VERSION_GREATER "2.8.7")
+  if(${CMAKE_VERSION} VERSION_GREATER 2.8.7)
     # INCLUDE_DIRECTORIES property added in cmake 2.8.8
     set_property(TARGET tst_${name} APPEND PROPERTY INCLUDE_DIRECTORIES ${sdai_src_path} ${ARGV3})
   else()
     foreach(ipath ${sdai_src_path} ${ARGV3})
-      set_property(TARGET tst_${name} APPEND PROPERTY COMPILE_FLAGS "-I${ipath}")
+      set_property(TARGET tst_${name} APPEND_STRING PROPERTY COMPILE_FLAGS " -I${ipath} ")
     endforeach(ipath ${sdai_src_path} ${ARGV3})
-  endif("${CMAKE_VERSION}" VERSION_GREATER "2.8.7")
+  endif(${CMAKE_VERSION} VERSION_GREATER 2.8.7)
   if(NOT ${ARGV4} STREQUAL "")
-    set_property(TARGET tst_${name} APPEND PROPERTY COMPILE_FLAGS ${ARGV4} )
+    set_property(TARGET tst_${name} APPEND_STRING PROPERTY COMPILE_FLAGS ${ARGV4} )
   endif(NOT ${ARGV4} STREQUAL "")
   if(NOT "${ARGV5}" MATCHES "NONE")
     DEFINE_DLL_IMPORTS("tst_${name}" "${ARGV5}")
@@ -68,7 +68,7 @@ function(add_schema_dependent_test name sdai_lib exe_args )
     COMMAND $<TARGET_FILE:tst_${name}> ${exe_args} )
   set_tests_properties( test_${name} PROPERTIES DEPENDS build_cpp_${name}
     LABELS cpp_schema_specific )
-endfunction( add_schema_dependent_test name sdai_lib exe_args )
+endfunction(add_schema_dependent_test name sdai_lib exe_args )
 
 #if you need a schema that won't be built automatically (i.e. not in sc/data), put it in here
 #temporarily disabling testing ensures that the schema will be built before these tests run
@@ -77,7 +77,7 @@ SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp)
 SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp)
 set(SC_ENABLE_TESTING ON)
 
-add_schema_dependent_test( "aggregate_bound_runtime" "array_bounds_expr"
+add_schema_dependent_test("aggregate_bound_runtime" "array_bounds_expr"
   "${SC_SOURCE_DIR}/test/p21/test_array_bounds.p21" "" "" "stepcore")
 
 #can't use the macro for this one because it depends on the test above and needs WILL_FAIL
