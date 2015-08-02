@@ -6,6 +6,7 @@
 #include <utility>
 #include <vector>
 
+#include "sc_export.h"
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
 #include "ExpDict.h"
@@ -53,7 +54,7 @@
 //TODO what about complex instances? scanning each on disk could be a bitch; should the compositional types be scanned during lazy loading?
 
 //TODO/FIXME in generated code, store ia data in map and eliminate data members that are currently used. modify accessors to use map.
-class lazyRefs {
+class SC_LAZYFILE_EXPORT lazyRefs {
     public:
         typedef std::set< instanceID > referentInstances_t;
     protected:

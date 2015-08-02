@@ -1,6 +1,7 @@
 #ifndef INSTMGRHELPER_H
 #define INSTMGRHELPER_H
 
+#include "sc_export.h"
 #include <lazyInstMgr.h>
 #include <instmgr.h>
 
@@ -14,7 +15,7 @@
  * This class is used when creating SDAI_Application_instance's and using a lazyInstMgr. It is returned
  * by instMgrAdapter. SDAI_Application_instance only uses the GetSTEPentity function.
  */
-class mgrNodeHelper: public MgrNodeBase {
+class SC_LAZYFILE_EXPORT mgrNodeHelper: public MgrNodeBase {
     protected:
         lazyInstMgr * _lim;
         instanceID _id;
@@ -40,7 +41,7 @@ class mgrNodeHelper: public MgrNodeBase {
  * when an instance is looked up, this uses lazyInstMgr to load it, and then returns a pointer to it.
  */
 
-class instMgrAdapter: public InstMgrBase {
+class SC_LAZYFILE_EXPORT instMgrAdapter: public InstMgrBase {
     protected:
         mgrNodeHelper _mn;
     public:
