@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"sort"
 )
 
 //uses stdin and stdout
@@ -27,10 +28,10 @@ func countMessages(log []string) (warns, errs map[string][]string) {
 	warns = make(map[string][]string)
 	errs = make(map[string][]string)
 	tstamp := `\[\d\d:\d\d:\d\d\] `
-	fname := " *(.*)"
-	fline := `\((\d+)\): `
-	msgNr := `([A-Z]\d+): `
-	msgTxt := `([^\[]*) `
+	fname := " *(.*)"               // $1
+	fline := `(?:\((\d+)\)| ): `    // $2 - either line number in parenthesis or a space, followed by a colon
+	msgNr := `([A-Z]+\d+): `	// $3 - C4251, LNK2005, etc
+	msgTxt := `([^\[]*) `		// $4
 	tail := `\[[^\[\]]*\]`
 	warnRe := regexp.MustCompile(tstamp + fname + fline + `warning ` + msgNr + msgTxt + tail)
 	errRe := regexp.MustCompile(tstamp + fname + fline + `(?:fatal )?error ` + msgNr + msgTxt + tail)
@@ -84,8 +85,15 @@ func countMessages(log []string) (warns, errs map[string][]string) {
 }
 
 func printMessages(typ string, m map[string][]string) {
-	for k, v := range m {
-		for i, l := range v {
+	//sort keys
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	//fmt.Println(keys)
+	for _, k := range keys {
+		for i, l := range m[k] {
 			//first string is an example,  not a location
 			if i == 0 {
 				fmt.Printf("%s %s (i.e. \"%s\")\n", typ, k, l)
