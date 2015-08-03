@@ -12,15 +12,15 @@
 * and is not subject to copyright.
 */
 
-#include <sc_export.h>
 #include <map>
 #include <iostream>
 
-//class STEPinvAttrList;
+#include <sc_export.h>
+#include <sdaiDaObject.h>
+
 class EntityAggregate;
 class Inverse_attribute;
 typedef struct {
-//     bool aggregate;
     union {
         EntityAggregate * a;
         SDAI_Application_instance * i;

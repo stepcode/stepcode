@@ -213,6 +213,8 @@ typedef SDAI_Model_contents_ptr SDAI_Model_contents_var;
 
 //  ENTITY
 extern SC_CORE_EXPORT SDAI_Application_instance NilSTEPentity;
+//FIXME why 3 of these? remove 2?
+//in libexpress, ENTITY_NULL is also used but refers to something different
 #define ENTITY_NULL        &NilSTEPentity
 #define NULL_ENTITY        &NilSTEPentity
 #define S_ENTITY_NULL        &NilSTEPentity

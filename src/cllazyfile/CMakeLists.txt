@@ -33,7 +33,7 @@ include_directories(
   ${SC_SOURCE_DIR}/src/base/judy/src
   )
 
-SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base")
+SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base;stepeditor")
 SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" )
 set_property(TARGET lazy_test APPEND PROPERTY COMPILE_DEFINITIONS "NO_REGISTRY")
 if(TARGET lazy_test-static)
