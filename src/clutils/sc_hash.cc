@@ -294,7 +294,7 @@ struct Element * SC_HASHsearch( Hash_TableP table, const struct Element * item, 
 
 Address SC_HASHhash( char * Key, Hash_TableP table ) {
     Address     h, address;
-    register unsigned char * k = ( unsigned char * )Key;
+    unsigned char * k = ( unsigned char * )Key;
 
     h = 0;
     /*
