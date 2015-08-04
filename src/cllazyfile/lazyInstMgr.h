@@ -73,8 +73,8 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         void openFile( std::string fname );
 
         void addLazyInstance( namedLazyInstance inst );
-        instMgrAdapter * getAdapter() {
-            return _ima;
+        InstMgrBase * getAdapter() {
+            return ( InstMgrBase * ) _ima;
         }
 
         instanceRefs_t * getFwdRefs() {
