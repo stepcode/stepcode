@@ -6,9 +6,6 @@ set( clLazyFile_SRCS
   p21HeaderSectionReader.cc
   sectionReader.cc
   lazyP21DataSectionReader.cc
-  ../base/judy/src/judy.c
-  ../base/judy/src/judyLArray.h
-  ../base/judy/src/judySArray.h
   )
 
 set( SC_CLLAZYFILE_HDRS
