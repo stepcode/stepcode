@@ -1,7 +1,9 @@
 #ifndef INSTMGRHELPER_H
 #define INSTMGRHELPER_H
 
-#include "sc_export.h"
+#include <sc_export.h>
+
+#include <mgrnode.h>
 #include <lazyInstMgr.h>
 #include <instmgr.h>
 
