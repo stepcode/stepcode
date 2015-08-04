@@ -19,13 +19,13 @@
 class GenericNode;
 class DisplayNode;
 #include <sdai.h>
-//class SDAI_Application_instance;
 
 #include <gennode.h>
 #include <gennodelist.h>
-//#include <gennode.inline.h>
 
 #include <editordefines.h>
+
+#include <sc_nullptr.h>
 
 class InstMgr;
 
@@ -33,6 +33,7 @@ class SC_CORE_EXPORT MgrNodeBase : public GenericNode {
     public:
         virtual inline SDAI_Application_instance * GetSTEPentity() {
             abort();
+            return nullptr;
         };
     virtual ~MgrNodeBase() {};
 };

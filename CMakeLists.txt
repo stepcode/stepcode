@@ -114,6 +114,9 @@ elseif(BORLAND)
   add_definitions(-D__BORLAND__ -D__WIN32__)
 else()
   add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
+  if(HAVE_NULLPTR)
+    list(APPEND CMAKE_CXX_FLAGS -std=c++11)
+  endif(HAVE_NULLPTR)
 endif()
 
 include_directories(

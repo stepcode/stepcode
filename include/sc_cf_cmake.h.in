@@ -25,5 +25,6 @@
 
 #cmakedefine HAVE_STD_THREAD 1
 #cmakedefine HAVE_STD_CHRONO 1
+#cmakedefine HAVE_NULLPTR 1
 
 #endif /* SCL_CF_H */

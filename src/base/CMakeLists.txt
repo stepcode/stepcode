@@ -14,6 +14,7 @@ set(SC_BASE_HDRS
   sc_getopt.h
   sc_trace_fprintf.h
   sc_mkdir.h
+  sc_nullptr.h
   path2str.h
  )
 

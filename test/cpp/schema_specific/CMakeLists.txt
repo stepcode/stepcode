@@ -96,7 +96,7 @@ add_schema_dependent_test( "attribute" "inverse_attr" "${SC_SOURCE_DIR}/test/p21
 
 if(HAVE_STD_THREAD)
   if(UNIX)
-    set(thread_flags "-pthread -std=c++0x" )
+    set(thread_flags "-pthread -std=c++11" )
     set(thread_libs "pthread")
   endif(UNIX)
   # for best results, use a large file. as1-oc-214.stp is currently the largest file in the repo that sc works with.

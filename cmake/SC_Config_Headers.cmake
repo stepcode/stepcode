@@ -57,7 +57,7 @@ int main() {
 " )
 cmake_push_check_state()
   if( UNIX )
-    set( CMAKE_REQUIRED_FLAGS "-pthread -std=c++0x" )
+    set( CMAKE_REQUIRED_FLAGS "-pthread -std=c++11" )
   else( UNIX )
     # vars probably need set for embarcadero, etc
   endif( UNIX )
@@ -74,11 +74,25 @@ int main() {
 " )
 cmake_push_check_state()
   if( UNIX )
-    set( CMAKE_REQUIRED_FLAGS "-std=c++0x" )
+    set( CMAKE_REQUIRED_FLAGS "-std=c++11" )
   else( UNIX )
     # vars probably need set for embarcadero, etc
   endif( UNIX )
   CHECK_CXX_SOURCE_RUNS( "${TEST_STD_CHRONO}" HAVE_STD_CHRONO )   #quotes are *required*!
+cmake_pop_check_state()
+
+set( TEST_NULLPTR "
+#include <cstddef>
+std::nullptr_t f() {return nullptr;}
+int main() {return !!f();}
+" )
+cmake_push_check_state()
+  if( UNIX )
+    set( CMAKE_REQUIRED_FLAGS "-std=c++11" )
+  else( UNIX )
+    # vars probably need set for embarcadero, etc
+  endif( UNIX )
+  CHECK_CXX_SOURCE_RUNS( "${TEST_NULLPTR}" HAVE_NULLPTR )   #quotes are *required*!
 cmake_pop_check_state()
 
 # Now that all the tests are done, configure the sc_cf.h file:
