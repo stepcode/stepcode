@@ -6,6 +6,7 @@
 
 #ifdef __cplusplus
 #include <iostream>
+#include <iosfwd>
 #include <string>
 
 #include "sc_memmgr.h"

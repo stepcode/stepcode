@@ -1,5 +1,5 @@
 #ifndef STEPENTITY_H
-#define STEPENTITY_H 1
+#define STEPENTITY_H
 
 /*
 * NIST STEP Core Class Library
@@ -197,4 +197,4 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 typedef SDAI_Application_instance * SDAI_Application_instance_ptr;
 typedef SDAI_Application_instance_ptr SDAI_Application_instance_var;
 
-#endif
+#endif //STEPENTITY_H

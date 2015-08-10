@@ -946,7 +946,7 @@ const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::
     }
     iAstruct z;
     memset( &z, 0, sizeof z );
-    iAMap_t::value_type nil( nullptr, z );
+    iAMap_t::value_type nil( (Inverse_attribute *) nullptr, z );
     return nil;
 }
 
