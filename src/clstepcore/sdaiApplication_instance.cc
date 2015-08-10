@@ -24,6 +24,13 @@
 
 SDAI_Application_instance NilSTEPentity;
 
+bool isNilSTEPentity( const SDAI_Application_instance * ai ) {
+    if( ai && ai == &NilSTEPentity ) {
+        return true;
+    }
+    return false;
+}
+
 /**************************************************************//**
 ** \file sdaiApplication_instance.cc  Functions for manipulating entities
 **

@@ -196,5 +196,6 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 // current style of CORBA handles for Part 23 - NOTE - used for more than CORBA
 typedef SDAI_Application_instance * SDAI_Application_instance_ptr;
 typedef SDAI_Application_instance_ptr SDAI_Application_instance_var;
+SC_CORE_EXPORT bool isNilSTEPentity( const SDAI_Application_instance * ai );
 
 #endif //STEPENTITY_H
