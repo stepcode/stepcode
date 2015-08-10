@@ -78,9 +78,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         void setEDesc( const EntityDescriptor * const ed ) {
             eDesc = ed;
         }
-        const EntityDescriptor * getEDesc() const {
-            return eDesc;
-        }
+        const EntityDescriptor * getEDesc() const;
         void StepFileId( int fid ) {
             STEPfile_id = fid;
         }
