@@ -5,6 +5,8 @@ set(SC_BASE_SOURCES
   sc_getopt.cc
   sc_benchmark.cc
   sc_mkdir.c
+  path2str.c
+  judy/src/judy.c
  )
 
 set(SC_BASE_HDRS
@@ -13,7 +15,19 @@ set(SC_BASE_HDRS
   sc_getopt.h
   sc_trace_fprintf.h
   sc_mkdir.h
+  sc_nullptr.h
+  path2str.h
+  judy/src/judy.h
+  judy/src/judyLArray.h
+  judy/src/judyL2Array.h
+  judy/src/judySArray.h
+  judy/src/judyS2Array.h
  )
+
+include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/judy/src
+  )
 
 if(MINGW OR MSVC OR BORLAND)
   add_definitions(-DSC_BASE_DLL_EXPORTS)

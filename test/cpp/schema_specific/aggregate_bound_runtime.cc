@@ -1,5 +1,4 @@
 
-#include "sc_version_string.h"
 #include <STEPfile.h>
 #include <sdai.h>
 #include <STEPattribute.h>

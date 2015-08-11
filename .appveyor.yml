@@ -47,8 +47,6 @@ build_script:
     cmake -version
     grep --version
     cmake .. -DSC_ENABLE_TESTING=ON -G"$env:GENERATOR" -DSC_BUILD_SCHEMAS="ifc2x3;ap214e3;ap209"
-    dir *.sln
-    dir *.vcxproj
     echo "filtering build output with grep"
     cmake --build . --config Debug | grep -ve "CMake does not need to re-run because" -e "ZERO_CHECK.ZERO_CHECK" -e "^  Creating directory"
 
@@ -59,7 +57,7 @@ build_script:
 test_script:
   - cmd: echo Running CTest...
   - cmd: cd c:\projects\STEPcode\build
-  - cmd: ctest -j2 . -C Debug --output-on-failure | grep -ve "        Start ...:"
+  - cmd: ctest -j2 . -C Debug --output-on-failure
 
 # - cmd: grep -niB20 "Test Failed" Testing/Temporary/LastTest.log
 

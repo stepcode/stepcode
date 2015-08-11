@@ -126,8 +126,7 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
         ctype = TYPEget_ctype( VARget_type( a ) );
         generate_attribute_name( a, attrnm );
         if( !strcmp( ctype, "SCLundefined" ) ) {
-            printf( "WARNING:  in entity %s, ", ENTITYget_name( entity ) );
-            printf( " the type for attribute  %s is not fully implemented\n", attrnm );
+            fprintf( stderr, "Warning: in entity %s, the type for attribute %s is not fully implemented\n", ENTITYget_name( entity ), attrnm );
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
             fprintf( file, "        SDAI_Application_instance_ptr _%s;", attrnm );

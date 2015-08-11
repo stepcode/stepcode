@@ -11,6 +11,7 @@
 
 #include "Registry.h"
 #include "sc_memmgr.h"
+#include "sc_export.h"
 
 #include "judyLArray.h"
 #include "judySArray.h"
@@ -20,7 +21,7 @@
 class Registry;
 class instMgrAdapter;
 
-class lazyInstMgr {
+class SC_LAZYFILE_EXPORT lazyInstMgr {
     protected:
         /** multimap from instance number to instances that it refers to
          * \sa instanceRefs_pair
@@ -72,8 +73,8 @@ class lazyInstMgr {
         void openFile( std::string fname );
 
         void addLazyInstance( namedLazyInstance inst );
-        instMgrAdapter * getAdapter() {
-            return _ima;
+        InstMgrBase * getAdapter() {
+            return ( InstMgrBase * ) _ima;
         }
 
         instanceRefs_t * getFwdRefs() {

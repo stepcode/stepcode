@@ -15,6 +15,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* #define NEWDICT */
 
 #include <sc_memmgr.h>
+#include <path2str.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <sc_mkdir.h>
@@ -42,6 +43,10 @@ int isMultiDimAggregateType( const Type t );
 void Type_Description( const Type, char * );
 void TypeBody_Description( TypeBody body, char * buf );
 
+/** write representation of expression to end of buf
+ *
+ * TODO: add buflen arg and check for overflow
+ */
 void strcat_expr( Expression e, char * buf ) {
     if( e == LITERAL_INFINITY ) {
         strcat( buf, "?" );
@@ -64,7 +69,10 @@ void strcat_expr( Expression e, char * buf ) {
     }
 }
 
-/** print t's bounds to end of buf */
+/** print t's bounds to end of buf
+ *
+ * TODO: add buflen arg and check for overflow
+ */
 void strcat_bounds( TypeBody b, char * buf ) {
     if( !b->upper ) {
         return;
@@ -93,7 +101,6 @@ void strcat_bounds( TypeBody b, char * buf ) {
  ** Change Date: 5/22/91  CD
  ******************************************************************/
 const char * EnumCElementName( Type type, Expression expr )  {
-
     static char buf [BUFSIZ];
     sprintf( buf, "%s__",
              EnumName( TYPEget_name( type ) ) );
@@ -103,7 +110,6 @@ const char * EnumCElementName( Type type, Expression expr )  {
 }
 
 char * CheckEnumSymbol( char * s ) {
-
     static char b [BUFSIZ];
     if( strcmp( s, "sdaiTRUE" )
             && strcmp( s, "sdaiFALSE" )
@@ -114,8 +120,7 @@ char * CheckEnumSymbol( char * s ) {
     } else {
         strcpy( b, s );
         strcat( b, "_" );
-        printf( "** warning:  the enumerated value %s is already being used ", s );
-        printf( " and has been changed to %s **\n", b );
+        fprintf( stderr, "Warning in %s: the enumerated value %s is already being used and has been changed to %s\n", __FUNCTION__, s, b );
         return ( b );
     }
 }
@@ -362,6 +367,9 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
  * Prints a bunch of lines for enumeration creation functions (i.e., "cre-
  * ate_SdaiEnum1()").  Since this is done both for an enum and for "copies"
  * of it (when "TYPE enum2 = enum1"), I placed this code in a separate fn.
+ *
+ * NOTE - "Print ObjectStore Access Hook function" comment seen at one of
+ * the calls seems to imply it's ObjectStore specific...
  */
 static void printEnumCreateHdr( FILE * inc, const Type type ) {
     const char * nm = TYPEget_ctype( type );
@@ -1279,7 +1287,7 @@ char * TYPEget_express_type( const Type t ) {
 
     /*  default returns undefined   */
 
-    printf( "WARNING2:  type  %s  is undefined\n", TYPEget_name( t ) );
+    fprintf( stderr, "Warning in %s: type %s is undefined\n", __FUNCTION__, TYPEget_name( t ) );
     return ( "SCLundefined" );
 
 }
@@ -1305,7 +1313,7 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
         fprintf( header, "            break;\n" );
         fprintf( header, "        }\n" );
         fprintf( header, "    }\n" );
-        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", __FILE__,
+        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", path2str( __FILE__ ),
                  __LINE__, "(incorrect assumption of integer type?) Please report error to STEPcode: scl-dev at groups.google.com." );
         fprintf( header, "    return *( a->Integer() );\n" ); /* always an integer? if not, would need to translate somehow due to return type... */
         fprintf( header, "}\n" );
@@ -1325,8 +1333,7 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
  */
 void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_name, const char * aggr_name ) {
     if( !header ) {
-        fprintf( stderr, "ERROR at %s:%d! 'header' is null for aggregate %s.",
-                 __FILE__, __LINE__, t->symbol.name );
+        fprintf( stderr, "ERROR at %s:%d! 'header' is null for aggregate %s.", __FILE__, __LINE__, t->symbol.name );
         abort();
     }
     if( !TYPEget_head( t ) ) {

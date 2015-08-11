@@ -57,13 +57,11 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
 Variable VARis_type_shifter( Variable a );
-const char * ENTITYget_CORBAname( Entity ent );
 const char * GetTypeDescriptorName( Type t );
 void TYPEselect_lib_print( const Type type, FILE * f );
 
 int multiple_inheritance = 1;
 int print_logging = 0;
-int corba_binding = 0;
 int old_accessors = 0;
 
 /* several classes use attr_count for naming attr dictionary entry
@@ -165,125 +163,6 @@ char * strliteral_py_dup( char * orig_buf ) {
     return new_buf;
 }
 
-
-void
-USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {
-    Dictionary dict;
-    DictionaryEntry de;
-    struct Rename * r;
-    Linked_List list;
-    char td_name[BUFSIZ];
-    char sch_name[BUFSIZ];
-
-    strncpy( sch_name, PrettyTmpName( SCHEMAget_name( schema ) ), BUFSIZ );
-
-    LISTdo( reflist, s, Schema ) {
-        fprintf( file, "\t// %s FROM %s; (all objects)\n", type, s->symbol.name );
-        fprintf( file, "\tis = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( s->symbol.name ) );
-        fprintf( file, "\tis->all_objects_(1);\n" );
-        if( !strcmp( type, "USE" ) ) {
-            fprintf( file, "\t%s%s->use_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-        } else {
-            fprintf( file, "\t%s%s->ref_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-        }
-    }
-    LISTod
-
-    if( !refdict ) {
-        return;
-    }
-    dict = DICTcreate( 10 );
-
-    /* sort each list by schema */
-
-    /* step 1: for each entry, store it in a schema-specific list */
-    DICTdo_init( refdict, &de );
-    while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
-        Linked_List list2;
-
-        list2 = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
-        if( !list2 ) {
-            list2 = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, list2,
-                        ( Symbol * )0, OBJ_UNKNOWN );
-        }
-        LISTadd_last( list2, r );
-    }
-
-    /* step 2: for each list, print out the renames */
-    DICTdo_init( dict, &de );
-    while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
-        bool first_time = true;
-        LISTdo( list, ren, struct Rename * ) {
-
-            /*
-            Interface_spec_ptr is;
-            Used_item_ptr ui;
-            is = new Interface_spec(const char * cur_sch_id);
-            schemadescriptor->use_interface_list_()->Append(is);
-            ui = new Used_item(TypeDescriptor *ld, const char *oi, const char *ni) ;
-            is->_explicit_items->Append(ui);
-            */
-
-            /* note: SCHEMAget_name(r->schema) equals r->schema->symbol.name) */
-            if( first_time ) {
-                fprintf( file, "\t// %s FROM %s (selected objects)\n", type, ren->schema->symbol.name );
-                fprintf( file, "\tis = new Interface_spec(\"%s\",\"%s\");\n", sch_name, PrettyTmpName( ren->schema->symbol.name ) );
-                if( !strcmp( type, "USE" ) ) {
-                    fprintf( file, "\t%s%s->use_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                } else {
-                    fprintf( file, "\t%s%s->ref_interface_list_()->Append(is);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                }
-            }
-
-            if( first_time ) {
-                first_time = false;
-            }
-            if( ren->type == OBJ_TYPE ) {
-                sprintf( td_name, "%s", TYPEtd_name( ( Type )ren->object ) );
-            } else if( ren->type == OBJ_FUNCTION ) {
-                sprintf( td_name, "/* Function not implemented */ 0" );
-            } else if( ren->type == OBJ_PROCEDURE ) {
-                sprintf( td_name, "/* Procedure not implemented */ 0" );
-            } else if( ren->type == OBJ_RULE ) {
-                sprintf( td_name, "/* Rule not implemented */ 0" );
-            } else if( ren->type == OBJ_ENTITY ) {
-                sprintf( td_name, "%s%s%s",
-                        SCOPEget_name( ( ( Entity )ren->object )->superscope ),
-                        ENT_PREFIX, ENTITYget_name( ( Entity )ren->object ) );
-            } else {
-                sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", ren->type );
-            }
-            if( ren->old != ren->nnew ) {
-                fprintf( file, "\t// object %s AS %s\n", ren->old->name,
-                        ren->nnew->name );
-                if( !strcmp( type, "USE" ) ) {
-                    fprintf( file, "\tui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->old->name, ren->nnew->name );
-                    fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
-                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                } else {
-                    fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"%s\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->old->name, ren->nnew->name );
-                    fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
-                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                }
-            } else {
-                fprintf( file, "\t// object %s\n", ren->old->name );
-                if( !strcmp( type, "USE" ) ) {
-                    fprintf( file, "\tui = new Used_item(\"%s\", %s, \"\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->nnew->name );
-                    fprintf( file, "\tis->explicit_items_()->Append(ui);\n" );
-                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ui);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                } else {
-                    fprintf( file, "\tri = new Referenced_item(\"%s\", %s, \"\", \"%s\");\n", ren->schema->symbol.name, td_name, ren->nnew->name );
-                    fprintf( file, "\tis->explicit_items_()->Append(ri);\n" );
-                    fprintf( file, "\t%s%s->interface_().explicit_items_()->Append(ri);\n", SCHEMA_PREFIX, SCHEMAget_name( schema ) );
-                }
-            }
-        } LISTod
-    }
-    HASHdestroy( dict );
-}
-
-
 int Handle_FedPlus_Args( int i, char * arg ) {
     (void) arg; /* unused param */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
@@ -294,9 +173,6 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     }
     if( ( char )i == 'L' ) {
         print_logging = 1;
-    }
-    if( ( ( char )i == 'c' ) || ( ( char )i == 'C' ) ) {
-        corba_binding = 1;
     }
     return 0;
 }
@@ -973,8 +849,7 @@ int get_attribute_number( Entity entity ) {
         /*  go to the child's first explicit attribute */
         if( ( ! VARget_inverse( a ) ) && ( ! VARis_derived( a ) ) )  {
             LISTdo_n( complete, p, Variable, b ) {
-                /*  cycle through all the explicit attributes until the
-                child's attribute is found  */
+                /*  cycle through all the explicit attributes until the child's attribute is found  */
                 if( !found && ( ! VARget_inverse( p ) ) && ( ! VARis_derived( p ) ) ) {
                     if( p != a ) {
                         ++i;
@@ -987,9 +862,9 @@ int get_attribute_number( Entity entity ) {
                 return i;
             } else {
                 /* In this case, a is a Variable - so macro VARget_name (a) expands  *
-                * to an Expression. The first element of an Expression is a Symbol. *
-                * The first element of a Symbol is char * name.                     */
-                printf( "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
+                 * to an Expression. The first element of an Expression is a Symbol. *
+                 * The first element of a Symbol is char * name.                     */
+                fprintf( stderr, "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
             }
         }
     } LISTod
@@ -1976,7 +1851,7 @@ TypeBody_Description( TypeBody body, char * buf ) {
                     }
                     break;
                 default:
-                    printf( "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, body->type );
+                    fprintf( stderr, "Error in %s, line %d: type %d not handled by switch statement.", __FILE__, __LINE__, body->type );
                     abort();
             }
 

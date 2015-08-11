@@ -83,10 +83,9 @@
 extern void print_fedex_version( void );
 
 static void exp2cxx_usage( void ) {
-    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-c|-C] [-L] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-L] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
-    fprintf( stderr, "\t-c or -C generates C++ classes for use with CORBA (Orbix)\n" );
     fprintf( stderr, "\t-L prints logging code in the generated C++ classes\n" );
     fprintf( stderr, "\t-v produces the version description below\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
@@ -132,7 +131,7 @@ void EXPRESSinit_init( void ) {
     EXPRESSsucceed = success;
     EXPRESSgetopt = Handle_FedPlus_Args;
     /* so the function getopt (see man 3 getopt) will not report an error */
-    strcat( EXPRESSgetopt_options, "sSlLcCaA" );
+    strcat( EXPRESSgetopt_options, "sSlLaA" );
     ERRORusage_function = exp2cxx_usage;
 }
 

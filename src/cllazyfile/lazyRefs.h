@@ -6,10 +6,10 @@
 #include <utility>
 #include <vector>
 
+#include "sc_export.h"
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
 #include "ExpDict.h"
-#include "sdaiApplication_instance.h"
 #include "SubSuperIterators.h"
 #include <STEPattribute.h>
 #include <STEPaggregate.h>
@@ -18,7 +18,7 @@
 #define strcasecmp _strcmpi
 #endif // _WIN32
 
-
+class SDAI_Application_instance;
 /*
  * given inverted attr ia:
  * attr method                     value
@@ -53,7 +53,7 @@
 //TODO what about complex instances? scanning each on disk could be a bitch; should the compositional types be scanned during lazy loading?
 
 //TODO/FIXME in generated code, store ia data in map and eliminate data members that are currently used. modify accessors to use map.
-class lazyRefs {
+class SC_LAZYFILE_EXPORT lazyRefs {
     public:
         typedef std::set< instanceID > referentInstances_t;
     protected:
@@ -131,7 +131,7 @@ class lazyRefs {
             bool found = false;
             if( sa.getADesc()->IsAggrType() ) {
                 //aggregate - search for current inst id
-                EntityAggregate * aggr = dynamic_cast< EntityAggregate * >( sa.Aggregate());
+                EntityAggregate * aggr = dynamic_cast< EntityAggregate * >( sa.Aggregate() );
                 assert( aggr );
                 EntityNode * en = ( EntityNode * ) aggr->GetHead();
                 while( en ) {
@@ -179,7 +179,7 @@ class lazyRefs {
             }
             std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << std::endl;
             abort();
-            iAstruct nil;
+            iAstruct nil = {nullptr};
             return nil;
         }
 

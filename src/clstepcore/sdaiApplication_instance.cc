@@ -20,7 +20,16 @@
 #include "sdaiApplication_instance.h"
 #include "superInvAttrIter.h"
 
+#include <sc_nullptr.h>
+
 SDAI_Application_instance NilSTEPentity;
+
+bool isNilSTEPentity( const SDAI_Application_instance * ai ) {
+    if( ai && ai == &NilSTEPentity ) {
+        return true;
+    }
+    return false;
+}
 
 /**************************************************************//**
 ** \file sdaiApplication_instance.cc  Functions for manipulating entities
@@ -163,8 +172,11 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
     }
 }
 
-// BUG implement this -- FIXME function is never used
+const EntityDescriptor* SDAI_Application_instance::getEDesc() const {
+    return eDesc;
+}
 
+// BUG implement this -- FIXME function is never used
 SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entName ) {
     std::string s1, s2;
 
@@ -944,7 +956,7 @@ const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::
     }
     iAstruct z;
     memset( &z, 0, sizeof z );
-    iAMap_t::value_type nil( NULL, z );
+    iAMap_t::value_type nil( (Inverse_attribute *) nullptr, z );
     return nil;
 }
 

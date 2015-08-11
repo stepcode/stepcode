@@ -13,7 +13,7 @@
  * \sa lazyP21DataSectionReader
  * \sa lazyP28DataSectionReader
  */
-class lazyDataSectionReader: public sectionReader {
+class SC_LAZYFILE_EXPORT lazyDataSectionReader: public sectionReader {
     protected:
         bool _error, _completelyLoaded;
         std::string _sectionIdentifier;

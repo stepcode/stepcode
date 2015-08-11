@@ -17,7 +17,6 @@
 #include "lazyFileReader.h"
 #include "lazyInstMgr.h"
 #include "lazyTypes.h"
-#include "instMgrHelper.h"
 
 #include "current_function.hpp"
 
@@ -303,8 +302,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             inst = reg->ObjCreate( tName, sName );
             break;
     }
-
-    if( inst != & NilSTEPentity ) {
+    if( !isNilSTEPentity( inst ) ) {
         if( !comment.empty() ) {
             inst->AddP21Comment( comment );
         }

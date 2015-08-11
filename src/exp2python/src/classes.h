@@ -129,7 +129,7 @@ const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
 void            SCHEMAprint( Schema schema, FILES* files, int suffix );
-Type            TYPEget_ancestor( Type );
+Type            TYPEget_ancestor( Type t );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 
 /*Variable*/
@@ -144,8 +144,6 @@ Variable VARis_overrider( Entity e, Variable a );
 void            print_schemas_separate( Express, FILES * );
 void            getMCPrint( Express, FILE *, FILE * );
 int             sameSchema( Scope, Scope );
-
-void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file );
 
 #endif
 

@@ -8,6 +8,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"sort"
 )
 
 //uses stdin and stdout
@@ -18,24 +19,26 @@ func main() {
 	printMessages("warning", warns)
 }
 
-/* the regex will match lines like
-[ 00:03:42] c:\projects\stepcode\src\base\sc_benchmark.h(45): war*ning C4251: 'benchmark::descr' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'benchmark' [C:\projects\STEPcode\build\src\base\base.vcxproj]
+/* categorizes warnings and errors based upon the MSVC message number (i.e. C4244)
+ * the regex will match lines like
+[ 00:03:42] c:\projects\stepcode\src\base\sc_benchmark.h(45): warning C4251: 'benchmark::descr' : class 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>' needs to have dll-interface to be used by clients of class 'benchmark' [C:\projects\STEPcode\build\src\base\base.vcxproj]
 [00:03:48] C:\projects\STEPcode\src\base\sc_benchmark.cc(61): warning C4244: '=' : conversion from 'SIZE_T' to 'long', possible loss of data [C:\projects\STEPcode\build\src\base\base.vcxproj]*
 */
-func countMessages(log string) (warns, errs map[string][]string) {
+func countMessages(log []string) (warns, errs map[string][]string) {
 	warns = make(map[string][]string)
 	errs = make(map[string][]string)
 	tstamp := `\[\d\d:\d\d:\d\d\] `
-	fname := " *(.*)"
-	fline := `\((\d+)\): `
-	msgNr := `([A-Z]\d+): `
-	msgTxt := `([^\[]*) `
+	fname := " *(.*)"               // $1
+	fline := `(?:\((\d+)\)| ): `    // $2 - either line number in parenthesis or a space, followed by a colon
+	msgNr := `([A-Z]+\d+): `	// $3 - C4251, LNK2005, etc
+	msgTxt := `([^\[]*) `		// $4
 	tail := `\[[^\[\]]*\]`
 	warnRe := regexp.MustCompile(tstamp + fname + fline + `warning ` + msgNr + msgTxt + tail)
 	errRe := regexp.MustCompile(tstamp + fname + fline + `(?:fatal )?error ` + msgNr + msgTxt + tail)
-	reScanner := bufio.NewScanner(strings.NewReader(log))
-	for reScanner.Scan() {
-		line := reScanner.Text()
+	//reScanner := bufio.NewScanner(strings.NewReader(...log))
+	//for reScanner.Scan() {
+		//line := reScanner.Text()
+	for _,line := range log {
 		if warnRe.MatchString(line) {
 			key := warnRe.ReplaceAllString(line, "$3")
 			path := strings.ToLower(warnRe.ReplaceAllString(line, "$1:$2"))
@@ -82,8 +85,15 @@ func countMessages(log string) (warns, errs map[string][]string) {
 }
 
 func printMessages(typ string, m map[string][]string) {
-	for k, v := range m {
-		for i, l := range v {
+	//sort keys
+	keys := make([]string, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+	//fmt.Println(keys)
+	for _, k := range keys {
+		for i, l := range m[k] {
 			//first string is an example,  not a location
 			if i == 0 {
 				fmt.Printf("%s %s (i.e. \"%s\")\n", typ, k, l)
@@ -94,22 +104,28 @@ func printMessages(typ string, m map[string][]string) {
 	}
 }
 
-func unwrap() (log string) {
-	//read stdin, write stdout
-	newline := true
+//
+func unwrap() (log []string) {
+	startNewLine := true
 	unwrapScanner := bufio.NewScanner(os.Stdin)
+	var lineOut string
 	for unwrapScanner.Scan() {
-		lastNewline := newline
-		line := unwrapScanner.Text()
-		newline = (len(line) < 240)
+		lastNewline := startNewLine
+		lineIn := unwrapScanner.Text()
+		startNewLine = (len(lineIn) < 240) || strings.HasSuffix(lineIn,"vcxproj]")
 		if !lastNewline {
-			log += fmt.Sprintf("%s", line[11:])
+			lineOut += lineIn[11:]
 		} else {
-			log += fmt.Sprintf("%s", line)
+			lineOut = lineIn
 		}
-		if newline {
-			log += fmt.Sprintf("\n")
+		if startNewLine {
+			log = append(log,lineOut)
+			lineOut = ""
+			//log += fmt.Sprintf("\n")
 		}
+	}
+	if len(lineOut) > 0 {
+		log = append(log,lineOut)
 	}
 	if err := unwrapScanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading appveyor log:", err)

@@ -1,5 +1,5 @@
 #ifndef STEPENTITY_H
-#define STEPENTITY_H 1
+#define STEPENTITY_H
 
 /*
 * NIST STEP Core Class Library
@@ -12,15 +12,15 @@
 * and is not subject to copyright.
 */
 
-#include <sc_export.h>
 #include <map>
 #include <iostream>
 
-//class STEPinvAttrList;
+#include <sc_export.h>
+#include <sdaiDaObject.h>
+
 class EntityAggregate;
 class Inverse_attribute;
 typedef struct {
-//     bool aggregate;
     union {
         EntityAggregate * a;
         SDAI_Application_instance * i;
@@ -78,9 +78,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         void setEDesc( const EntityDescriptor * const ed ) {
             eDesc = ed;
         }
-        const EntityDescriptor * getEDesc() const {
-            return eDesc;
-        }
+        const EntityDescriptor * getEDesc() const;
         void StepFileId( int fid ) {
             STEPfile_id = fid;
         }
@@ -196,5 +194,6 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 // current style of CORBA handles for Part 23 - NOTE - used for more than CORBA
 typedef SDAI_Application_instance * SDAI_Application_instance_ptr;
 typedef SDAI_Application_instance_ptr SDAI_Application_instance_var;
+SC_CORE_EXPORT bool isNilSTEPentity( const SDAI_Application_instance * ai );
 
-#endif
+#endif //STEPENTITY_H
