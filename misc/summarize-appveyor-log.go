@@ -4,19 +4,44 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"regexp"
-	"strings"
 	"sort"
+	"strings"
+)
+
+const (
+	headerKey = "Authorization"
+	headerVal = "Bearer %s"
+	projUrl = "https://ci.appveyor.com/api/projects/mpictor/stepcode"
+	//"https://ci.appveyor.com/api/buildjobs/2rjxdv1rnb8jcg8y/log"
+	logUrl = "https://ci.appveyor.com/api/buildjobs/%s/log"
 )
 
 //uses stdin and stdout
 func main() {
-	log := unwrap()
+	rawlog, build, err := getLog()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+		return
+	}
+	defer rawlog.Close()
+	log := unwrap(rawlog)
 	warns, errs := countMessages(log)
-	printMessages("error", errs)
-	printMessages("warning", warns)
+	fi, err := os.Create(fmt.Sprintf("appveyor-%d.smy", build))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "ERROR: %s\n", err)
+		return
+	}
+	printMessages("error", errs, fi)
+	printMessages("warning", warns, fi)
+
+	fmt.Printf("done\n")
+
 }
 
 /* categorizes warnings and errors based upon the MSVC message number (i.e. C4244)
@@ -28,17 +53,14 @@ func countMessages(log []string) (warns, errs map[string][]string) {
 	warns = make(map[string][]string)
 	errs = make(map[string][]string)
 	tstamp := `\[\d\d:\d\d:\d\d\] `
-	fname := " *(.*)"               // $1
-	fline := `(?:\((\d+)\)| ): `    // $2 - either line number in parenthesis or a space, followed by a colon
-	msgNr := `([A-Z]+\d+): `	// $3 - C4251, LNK2005, etc
-	msgTxt := `([^\[]*) `		// $4
+	fname := " *(.*)"            // $1
+	fline := `(?:\((\d+)\)| ): ` // $2 - either line number in parenthesis or a space, followed by a colon
+	msgNr := `([A-Z]+\d+): `     // $3 - C4251, LNK2005, etc
+	msgTxt := `([^\[]*) `        // $4
 	tail := `\[[^\[\]]*\]`
 	warnRe := regexp.MustCompile(tstamp + fname + fline + `warning ` + msgNr + msgTxt + tail)
 	errRe := regexp.MustCompile(tstamp + fname + fline + `(?:fatal )?error ` + msgNr + msgTxt + tail)
-	//reScanner := bufio.NewScanner(strings.NewReader(...log))
-	//for reScanner.Scan() {
-		//line := reScanner.Text()
-	for _,line := range log {
+	for _, line := range log {
 		if warnRe.MatchString(line) {
 			key := warnRe.ReplaceAllString(line, "$3")
 			path := strings.ToLower(warnRe.ReplaceAllString(line, "$1:$2"))
@@ -84,52 +106,115 @@ func countMessages(log []string) (warns, errs map[string][]string) {
 	return
 }
 
-func printMessages(typ string, m map[string][]string) {
+func printMessages(typ string, m map[string][]string, w io.Writer) {
 	//sort keys
 	keys := make([]string, 0, len(m))
 	for key := range m {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
-	//fmt.Println(keys)
 	for _, k := range keys {
 		for i, l := range m[k] {
 			//first string is an example,  not a location
 			if i == 0 {
-				fmt.Printf("%s %s (i.e. \"%s\")\n", typ, k, l)
+				fmt.Fprintf(w, "%s %s (i.e. \"%s\")\n", typ, k, l)
 			} else if len(l) > 1 { //not sure where blank lines are coming from...
-				fmt.Printf("  >> %s\n", l)
+				fmt.Fprintf(w, "  >> %s\n", l)
 			}
 		}
 	}
 }
 
 //
-func unwrap() (log []string) {
+func unwrap(r io.Reader) (log []string) {
 	startNewLine := true
-	unwrapScanner := bufio.NewScanner(os.Stdin)
+	unwrapScanner := bufio.NewScanner(r)
 	var lineOut string
 	for unwrapScanner.Scan() {
 		lastNewline := startNewLine
 		lineIn := unwrapScanner.Text()
-		startNewLine = (len(lineIn) < 240) || strings.HasSuffix(lineIn,"vcxproj]")
+		startNewLine = (len(lineIn) < 240) || strings.HasSuffix(lineIn, "vcxproj]")
 		if !lastNewline {
 			lineOut += lineIn[11:]
 		} else {
 			lineOut = lineIn
 		}
 		if startNewLine {
-			log = append(log,lineOut)
+			log = append(log, lineOut)
 			lineOut = ""
-			//log += fmt.Sprintf("\n")
 		}
 	}
 	if len(lineOut) > 0 {
-		log = append(log,lineOut)
+		log = append(log, lineOut)
 	}
 	if err := unwrapScanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "Error reading appveyor log:", err)
 	}
+	return
+}
+
+//http://json2struct.mervine.net/
+type AppVeyorBuild struct {
+	Build struct {
+		BuildNumber int `json:"buildNumber"`
+		Jobs        []struct {
+			JobID string `json:"jobId"`
+		} `json:"jobs"`
+	} `json:"build"`
+}
+
+func getLog() (log io.ReadCloser, build int, err error) {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", projUrl, nil)
+	if err != nil {
+		return
+	}
+	apikey := os.Getenv("APPVEYOR_API_KEY")
+	//api key isn't necessary for read-only queries on public projects
+	//if len(apikey) < 1 {
+	//	fmt.Printf("Env var APPVEYOR_API_KEY is not set.")
+	//}
+	req.Header.Add(headerKey, fmt.Sprintf(headerVal,apikey))
+	resp, err := client.Do(req)
+	if err != nil {
+		return
+	}
+
+	build, job := decode(resp.Body)
+	fmt.Printf("build #%d, jobId %s\n", build, job)
+	resp, err = http.Get(fmt.Sprintf(logUrl, job))
+	if err != nil {
+		return
+	}
+	logName := fmt.Sprintf("appveyor-%d.log", build)
+	fi, err := os.Create(logName)
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(fi, resp.Body)
+	if err != nil {
+		return
+	}
+	log, err = os.Open(logName)
+	if err != nil {
+		log = nil
+	}
+	return
+}
+
+func decode(r io.Reader) (num int, job string) {
+	dec := json.NewDecoder(r)
+	var av AppVeyorBuild
+	err := dec.Decode(&av)
+	if err != io.EOF && err != nil {
+		fmt.Printf("err %s\n", err)
+		return
+	}
+	if len(av.Build.Jobs) != 1 {
+		return
+	}
+	num = av.Build.BuildNumber
+	job = av.Build.Jobs[0].JobID
 	return
 }
 
