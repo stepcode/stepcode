@@ -1,5 +1,5 @@
 Travis-CI build status:
-[![Build Status](https://travis-ci.org/stepcode/stepcode.svg?branch=master)](https://travis-ci.org/stepcode/stepcode)
+[![Build Status](https://travis-ci.org/stepcode/stepcode.svg?branch=master)](https://travis-ci.org/stepcode/stepcode) [![Build status](https://ci.appveyor.com/api/projects/status/3fbr9t9gfa812oqu?svg=true)](https://ci.appveyor.com/project/mpictor/stepcode)
 
 ***********************************************************************
 STEPcode v0.8 -- stepcode.org, github.com/stepcode/stepcode
