@@ -13,13 +13,15 @@
 #include <Registry.h>
 #include "sc_memmgr.h"
 
-const TypeDescriptor  * t_sdaiINTEGER = NULL;
-const TypeDescriptor  * t_sdaiREAL = NULL;
-const TypeDescriptor  * t_sdaiNUMBER = NULL;
-const TypeDescriptor  * t_sdaiSTRING = NULL;
-const TypeDescriptor  * t_sdaiBINARY = NULL;
-const TypeDescriptor  * t_sdaiBOOLEAN = NULL;
-const TypeDescriptor  * t_sdaiLOGICAL = NULL;
+/* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
+ *                                                        Name, FundamentalType, Originating Schema, Description */
+const TypeDescriptor * const t_sdaiINTEGER  = new TypeDescriptor( "INTEGER", sdaiINTEGER, 0, "INTEGER" );
+const TypeDescriptor * const t_sdaiREAL     = new TypeDescriptor( "REAL",    sdaiREAL,    0, "Real"    );
+const TypeDescriptor * const t_sdaiNUMBER   = new TypeDescriptor( "NUMBER",  sdaiNUMBER,  0, "Number"  );
+const TypeDescriptor * const t_sdaiSTRING   = new TypeDescriptor( "STRING",  sdaiSTRING,  0, "String"  );
+const TypeDescriptor * const t_sdaiBINARY   = new TypeDescriptor( "BINARY",  sdaiBINARY,  0, "Binary"  );
+const TypeDescriptor * const t_sdaiBOOLEAN  = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN, 0, "Boolean" );
+const TypeDescriptor * const t_sdaiLOGICAL  = new TypeDescriptor( "LOGICAL", sdaiLOGICAL, 0, "Logical" );
 
 static int uniqueNames( const char *, const SchRename * );
 
@@ -29,43 +31,6 @@ Registry::Registry( CF_init initFunct )
     primordialSwamp = SC_HASHcreate( 1000 );
     active_schemas = SC_HASHcreate( 10 );
     active_types = SC_HASHcreate( 100 );
-
-    if( !t_sdaiINTEGER ) {
-        t_sdaiINTEGER = new TypeDescriptor( "INTEGER",    // Name
-                                            sdaiINTEGER, // FundamentalType
-                                            0, // Originating Schema
-                                            "INTEGER" );  // Description;
-    }
-    if( !t_sdaiREAL ) {
-        t_sdaiREAL = new TypeDescriptor( "REAL", sdaiREAL,
-                                         0, // Originating Schema
-                                         "Real" );
-    }
-    if( !t_sdaiSTRING ) {
-        t_sdaiSTRING = new TypeDescriptor( "STRING", sdaiSTRING,
-                                           0, // Originating Schema
-                                           "String" );
-    }
-    if( !t_sdaiBINARY ) {
-        t_sdaiBINARY = new TypeDescriptor( "BINARY", sdaiBINARY,
-                                           0, // Originating Schema
-                                           "Binary" );
-    }
-    if( !t_sdaiBOOLEAN ) {
-        t_sdaiBOOLEAN = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN,
-                                            0, // Originating Schema
-                                            "Boolean" );
-    }
-    if( !t_sdaiLOGICAL ) {
-        t_sdaiLOGICAL = new TypeDescriptor( "LOGICAL", sdaiLOGICAL,
-                                            0, // Originating Schema
-                                            "Logical" );
-    }
-    if( !t_sdaiNUMBER ) {
-        t_sdaiNUMBER = new TypeDescriptor( "NUMBER", sdaiNUMBER,
-                                           0, // Originating Schema
-                                           "Number" );
-    }
 
     initFunct( *this );
     SC_HASHlistinit( active_types, &cur_type );
@@ -80,35 +45,6 @@ Registry::~Registry() {
     SC_HASHdestroy( active_schemas );
     SC_HASHdestroy( active_types );
     delete col;
-
-    if( t_sdaiINTEGER ) {
-        delete t_sdaiINTEGER;
-        t_sdaiINTEGER = NULL;
-    }
-    if( t_sdaiREAL ) {
-        delete t_sdaiREAL;
-        t_sdaiREAL = NULL;
-    }
-    if( t_sdaiSTRING ) {
-        delete t_sdaiSTRING;
-        t_sdaiSTRING = NULL;
-    }
-    if( t_sdaiBINARY ) {
-        delete t_sdaiBINARY;
-        t_sdaiBINARY = NULL;
-    }
-    if( t_sdaiBOOLEAN ) {
-        delete t_sdaiBOOLEAN;
-        t_sdaiBOOLEAN = NULL;
-    }
-    if( t_sdaiLOGICAL ) {
-        delete t_sdaiLOGICAL;
-        t_sdaiLOGICAL = NULL;
-    }
-    if( t_sdaiNUMBER ) {
-        delete t_sdaiNUMBER;
-        t_sdaiNUMBER = NULL;
-    }
 }
 
 void Registry::DeleteContents() {
