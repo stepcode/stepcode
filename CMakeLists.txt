@@ -115,7 +115,7 @@ elseif(BORLAND)
 else()
   add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
   if(HAVE_NULLPTR)
-    list(APPEND CMAKE_CXX_FLAGS -std=c++11)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   endif(HAVE_NULLPTR)
 endif()
 
