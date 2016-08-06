@@ -28,10 +28,7 @@ macro(DEFINE_DLL_IMPORTS tgt libs)
   endif(MSVC OR BORLAND)
 endmacro(DEFINE_DLL_IMPORTS tgt libs)
 
-#SC_ADDEXEC(execname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
-# optional 4th argument of "TESTABLE", passed to EXCLUDE_OR_INSTALL macro
-# optional args can also be used by MSVC-specific code, but it looks like these two uses
-# will not conflict because the MSVC args must contain "STRICT"
+#SC_ADDEXEC(execname "source files" "linked libs" ["TESTABLE"] ["NO_INSTALL"])
 macro(SC_ADDEXEC execname srcslist libslist)
 
   string(TOUPPER "${execname}" EXECNAME_UPPER)
@@ -66,10 +63,7 @@ macro(SC_ADDEXEC execname srcslist libslist)
 
 endmacro(SC_ADDEXEC execname srcslist libslist)
 
-#SC_ADDLIB(libname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
-# optional 4th argument of "TESTABLE", passed to EXCLUDE_OR_INSTALL macro
-# optional args can also be used by MSVC-specific code, but it looks like these two uses
-# will not conflict because the MSVC args must contain "STRICT"
+#SC_ADDLIB(libname "source files" "linked libs" ["TESTABLE"] ["NO_INSTALL"] ["SO_SRCS ..."] ["STATIC_SRCS ..."])
 macro(SC_ADDLIB libname srcslist libslist)
 
   string(TOUPPER "${libname}" LIBNAME_UPPER)
