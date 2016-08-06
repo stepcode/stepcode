@@ -32,7 +32,7 @@ macro(VERIFY_FILES filelist warn resultvar)
     MD5(${filefullname} ${filevar}_md5)
     if(NOT "${${filevar}_md5}" STREQUAL "${baseline_${filevar}_md5}")
       if("${warn}" STREQUAL "1")
-      message("\n${filename} differs from baseline: baseline md5 hash is ${baseline_${filevar}_md5} and current hash is ${${filevar}_md5}\n")
+	message("\n${filename} differs from baseline: baseline md5 hash is ${baseline_${filevar}_md5} and current hash is ${${filevar}_md5}\n")
       endif("${warn}" STREQUAL "1")
       set(${resultvar} 0)
     endif(NOT "${${filevar}_md5}" STREQUAL "${baseline_${filevar}_md5}")
@@ -58,20 +58,6 @@ macro(WRITE_MD5_SUMS filelist outfile)
     file(APPEND ${outfile} "set(baseline_${filevar}_md5 ${${filevar}_md5})\n")
   endforeach(fileitem ${filelist})
 endmacro(WRITE_MD5_SUMS)
-
-
-macro(GET_GENERATOR_EXEC_VERSIONS)
-  # Read lemon version
-  execute_process(COMMAND ${LEMON_EXECUTABLE} -x OUTPUT_VARIABLE lemon_version)
-  string(REPLACE "Lemon version " "" lemon_version "${lemon_version}")
-  string(STRIP "${lemon_version}" lemon_version)
-  # Read re2c version
-  execute_process(COMMAND ${RE2C_EXECUTABLE} -V OUTPUT_VARIABLE re2c_version)
-  string(STRIP "${re2c_version}" re2c_version)
-  # Read perplex version
-  execute_process(COMMAND ${PERPLEX_EXECUTABLE} -v OUTPUT_VARIABLE perplex_version)
-  string(STRIP "${perplex_version}" perplex_version)
-endmacro(GET_GENERATOR_EXEC_VERSIONS)
 
 # Local Variables:
 # tab-width: 8

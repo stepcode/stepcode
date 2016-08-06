@@ -2,72 +2,57 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${SC_SOURCE_DIR}/src/base
- )
+  )
 
 # Set up the information we need to feed the generated source management
 # scripts
 set(BASELINE_INFORMATION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/generated/verification_info.cmake")
 set(PROJECT_CMAKE_DIR "${SC_SOURCE_DIR}/cmake")
-set(INPUT_FILELIST expscan.l expparse.y)
-set(TEMPLATE_FILELIST ${LEMON_TEMPLATE} ${PERPLEX_TEMPLATE})
-set(BUILD_OUTPUT_FILELIST
-  ${CMAKE_CURRENT_BINARY_DIR}/expscan.c
-  ${CMAKE_CURRENT_BINARY_DIR}/expscan.h
-  ${CMAKE_CURRENT_BINARY_DIR}/expparse.c
-  ${CMAKE_CURRENT_BINARY_DIR}/expparse.h
- )
-set(CACHED_FILES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generated")
-string(REPLACE "${CMAKE_CURRENT_BINARY_DIR}" "${CACHED_FILES_DIR}" CACHED_FILELIST "${BUILD_OUTPUT_FILELIST}")
-set(SYNC_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.cmake")
-set(SYNC_TARGET_NAME "express_sync_generated_files")
+set(MD5_FILELIST
+  "${CMAKE_CURRENT_SOURCE_DIR}/expscan.l"
+  "${CMAKE_CURRENT_SOURCE_DIR}/expparse.y"
+  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.h"
+  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.c"
+  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.h"
+  )
+configure_file(${SC_SOURCE_DIR}/cmake/md5_gen.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake @ONLY)
+configure_file(${SC_SOURCE_DIR}/cmake/md5_verify.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake @ONLY)
+
+# Convenience target to generate an updated verification_info.cmake file
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
+  )
+add_custom_target(express_md5gen DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel)
+
+# Target for actually checking cached MD5 sums against files
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
+  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
+  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
+  DEPENDS ${MD5_FILELIST}
+  )
+add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel)
+
 
 # Depending on whether we're using pre-generated sources or building them on
 # the fly, set up targets and source lists.
 if(SC_GENERATE_LP_SOURCES)
-  LEMON_TARGET(ExpParser expparse.y expparse.c expparse.h)
-  PERPLEX_TARGET(ExpScanner expscan.l ${CMAKE_CURRENT_BINARY_DIR}/expscan.c ${CMAKE_CURRENT_BINARY_DIR}/expscan.h)
+  LEMON_TARGET(ExpParser expparse.y)
+  PERPLEX_TARGET(ExpScanner expscan.l)
   ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner ExpParser)
   set(EXPRESS_GENERATED_SRCS
-    ${LEMON_ExpParser_OUTPUT_SOURCE}
-    ${PERPLEX_ExpScanner_OUTPUTS}
-   )
-  configure_file(${SC_SOURCE_DIR}/cmake/manage_generated.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.cmake @ONLY)
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.sentinel
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.cmake
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.sentinel
-    DEPENDS ${INPUT_FILELIST} ${TEMPLATE_FILELIST} ${CACHED_FILELIST} ${PERPLEX_ExpScanner_OUTPUTS} ${LEMON_ExpParser_OUTPUT_SOURCE} generated/verification_info.cmake ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-   )
-  add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_manage_generated.sentinel)
-
-  configure_file(${SC_SOURCE_DIR}/cmake/sync_generated.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.cmake @ONLY)
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.sentinel
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.cmake
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.sentinel
-    DEPENDS ${INPUT_FILELIST} ${TEMPLATE_FILELIST} ${PERPLEX_ExpScanner_OUTPUTS} ${LEMON_ExpParser_OUTPUT_SOURCE} ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-   )
-  add_custom_target(express_sync_generated_files DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_sync_generated.sentinel)
-
+    ${LEMON_ExpParser_SRC}
+    ${PERPLEX_ExpScanner_SRC}
+    )
 else(SC_GENERATE_LP_SOURCES)
-
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
   set(EXPRESS_GENERATED_SRCS
     generated/expparse.c
     generated/expscan.c
-   )
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
-  configure_file(${SC_SOURCE_DIR}/cmake/verify_generated.cmake.in
-    ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.cmake @ONLY)
-  add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.sentinel
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.cmake
-    COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.sentinel
-    DEPENDS ${INPUT_FILELIST} ${CACHED_FILELIST} generated/verification_info.cmake ${PROJECT_CMAKE_DIR}/Generated_Source_Utils.cmake
-   )
-  add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_verify_generated.sentinel)
-
+    )
 endif(SC_GENERATE_LP_SOURCES)
 
 set(EXPRESS_SOURCES
@@ -110,14 +95,29 @@ set(CHECK_EXPRESS_SOURCES
   inithook.c
  )
 
-set(EXPRESS_PRIVATE_HDRS
+SET(EXPRESS_PRIVATE_HDRS
+  exptoks.h
   stack.h
- )
+  )
 
 SC_ADDLIB(express "${EXPRESS_SOURCES}" "base")
-add_dependencies(express express_verify)
-add_dependencies(express version_string)
-SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base")
+if(SC_GENERATE_LP_SOURCES)
+  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+endif(SC_GENERATE_LP_SOURCES)
+
+if(SC_GENERATE_LP_SOURCES)
+  add_custom_command(TARGET express POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
+    )
+else(SC_GENERATE_LP_SOURCES)
+  add_dependencies(express express_verify)
+endif(SC_GENERATE_LP_SOURCES)
+
+if(NOT SC_IS_SUBBUILD)
+  add_dependencies(express version_string)
+endif(NOT SC_IS_SUBBUILD)
+SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base"  ${SC_EXEC_NOINSTALL})
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)
