@@ -1,3 +1,12 @@
+# BIN and LIB directories
+if(NOT DEFINED BIN_DIR)
+  set(BIN_DIR bin)
+endif(NOT DEFINED BIN_DIR)
+
+if(NOT DEFINED LIB_DIR)
+  set(LIB_DIR lib)
+endif(NOT DEFINED LIB_DIR)
+
 # testing and compilation options, build output dirs, install dirs, etc
 # included by root CMakeLists
 
@@ -70,6 +79,13 @@ if(SC_ENABLE_TESTING)
   include(CTest)
   ENABLE_TESTING()
 endif(SC_ENABLE_TESTING)
+
+#---------------------------------------------------------------------
+# Executable install option
+OPTION_WITH_DEFAULT(SC_SKIP_EXEC_INSTALL "Skip installing executables" OFF)
+if(SC_SKIP_EXEC_INSTALL)
+  set(SC_EXEC_NOINSTALL "NO_INSTALL")
+endif(SC_SKIP_EXEC_INSTALL)
 
 #---------------------------------------------------------------------
 # The following logic is what allows binaries to run successfully in

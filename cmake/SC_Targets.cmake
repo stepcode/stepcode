@@ -28,60 +28,42 @@ macro(DEFINE_DLL_IMPORTS tgt libs)
   endif(MSVC OR BORLAND)
 endmacro(DEFINE_DLL_IMPORTS tgt libs)
 
-#EXCLUDE_OR_INSTALL(target destination ARGV3)
-# installs ${target} in ${destination} unless testing is enabled AND ${arg_3} == "TESTABLE",
-# in which case the EXCLUDE_FROM_ALL property is set for testing.
-# EXCLUDE_FROM_ALL cannot be set on targets that are to be installed,
-# so either test the target or install it - but not both
-macro(EXCLUDE_OR_INSTALL target dest arg_3)
-  if(NOT ((SC_ENABLE_TESTING) AND ("${arg_3}" STREQUAL "TESTABLE")))
-    INSTALL(TARGETS ${target} DESTINATION ${dest})
-  else(NOT ((SC_ENABLE_TESTING) AND ("${arg_3}" STREQUAL "TESTABLE")))
-    set_target_properties(${target} PROPERTIES EXCLUDE_FROM_ALL ON)
-  endif(NOT ((SC_ENABLE_TESTING) AND ("${arg_3}" STREQUAL "TESTABLE")))
-endmacro(EXCLUDE_OR_INSTALL target dest arg_3)
-
 #SC_ADDEXEC(execname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
 # optional 4th argument of "TESTABLE", passed to EXCLUDE_OR_INSTALL macro
 # optional args can also be used by MSVC-specific code, but it looks like these two uses
 # will not conflict because the MSVC args must contain "STRICT"
 macro(SC_ADDEXEC execname srcslist libslist)
-  if(SC_BUILD_SHARED_LIBS)
-    add_executable(${execname} ${srcslist})
-    target_link_libraries(${execname} ${libslist})
-    DEFINE_DLL_IMPORTS(${execname} "${libslist}")  #add import definitions for all libs that the executable is linked to
-    EXCLUDE_OR_INSTALL(${execname} "bin" "${ARGV3}")
-    # Enable extra compiler flags if local executables and/or global options dictate
-    set(LOCAL_COMPILE_FLAGS "")
-    foreach(extraarg ${ARGN})
-      if(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
-        set(LOCAL_COMPILE_FLAGS "${LOCAL_COMPILE_FLAGS} ${STRICT_FLAGS}")
-      endif(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
-    endforeach(extraarg ${ARGN})
-    if(LOCAL_COMPILE_FLAGS)
-      set_target_properties(${execname} PROPERTIES COMPILE_FLAGS ${LOCAL_COMPILE_FLAGS})
-    endif(LOCAL_COMPILE_FLAGS)
-  endif(SC_BUILD_SHARED_LIBS)
-  if(SC_BUILD_STATIC_LIBS)
-    if(NOT SC_BUILD_SHARED_LIBS)
-      set(staticexecname "${execname}")
-    else()
-      set(staticexecname "${execname}-static")
-    endif(NOT SC_BUILD_SHARED_LIBS)
-    add_executable(${staticexecname} ${srcslist})
-    target_link_libraries(${staticexecname} ${libslist})
-    EXCLUDE_OR_INSTALL(${staticexecname} "bin" "${ARGV3}")
-    # Enable extra compiler flags if local executables and/or global options dictate
-    set(LOCAL_COMPILE_FLAGS "")
-    foreach(extraarg ${ARGN})
-      if(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
-        set(LOCAL_COMPILE_FLAGS "${LOCAL_COMPILE_FLAGS} ${STRICT_FLAGS}")
-      endif(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
-    endforeach(extraarg ${ARGN})
-    if(LOCAL_COMPILE_FLAGS)
-      set_target_properties(${staticexecname} PROPERTIES COMPILE_FLAGS ${LOCAL_COMPILE_FLAGS})
-    endif(LOCAL_COMPILE_FLAGS)
-  endif(SC_BUILD_STATIC_LIBS)
+
+  string(TOUPPER "${execname}" EXECNAME_UPPER)
+  if(${ARGC} GREATER 3)
+    CMAKE_PARSE_ARGUMENTS(${EXECNAME_UPPER} "NO_INSTALL;TESTABLE" "" "" ${ARGN})
+  endif(${ARGC} GREATER 3)
+
+  add_executable(${execname} ${srcslist})
+  target_link_libraries(${execname} ${libslist})
+  DEFINE_DLL_IMPORTS(${execname} "${libslist}")  #add import definitions for all libs that the executable is linked to
+  if(NOT ${EXECNAME_UPPER}_NO_INSTALL AND NOT ${EXECNAME_UPPER}_TESTABLE)
+    install(TARGETS ${execname}
+      RUNTIME DESTINATION ${BIN_DIR}
+      LIBRARY DESTINATION ${LIB_DIR}
+      ARCHIVE DESTINATION ${LIB_DIR}
+      )
+  endif(NOT ${EXECNAME_UPPER}_NO_INSTALL AND NOT ${EXECNAME_UPPER}_TESTABLE)
+  if(NOT SC_ENABLE_TESTING AND ${EXECNAME_UPPER}_TESTABLE)
+    set_target_properties( ${execname} PROPERTIES EXCLUDE_FROM_ALL ON )
+  endif(NOT SC_ENABLE_TESTING AND ${EXECNAME_UPPER}_TESTABLE)
+
+  # Enable extra compiler flags if local executables and/or global options dictate
+  set(LOCAL_COMPILE_FLAGS "")
+  foreach(extraarg ${ARGN})
+    if(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
+      set(LOCAL_COMPILE_FLAGS "${LOCAL_COMPILE_FLAGS} ${STRICT_FLAGS}")
+    endif(${extraarg} MATCHES "STRICT" AND SC-ENABLE_STRICT)
+  endforeach(extraarg ${ARGN})
+  if(LOCAL_COMPILE_FLAGS)
+    set_target_properties(${execname} PROPERTIES COMPILE_FLAGS ${LOCAL_COMPILE_FLAGS})
+  endif(LOCAL_COMPILE_FLAGS)
+
 endmacro(SC_ADDEXEC execname srcslist libslist)
 
 #SC_ADDLIB(libname "source files" "linked libs" ["TESTABLE"] ["MSVC flag" ...])
@@ -89,6 +71,12 @@ endmacro(SC_ADDEXEC execname srcslist libslist)
 # optional args can also be used by MSVC-specific code, but it looks like these two uses
 # will not conflict because the MSVC args must contain "STRICT"
 macro(SC_ADDLIB libname srcslist libslist)
+
+  string(TOUPPER "${libname}" LIBNAME_UPPER)
+  if(${ARGC} GREATER 3)
+    CMAKE_PARSE_ARGUMENTS(${LIBNAME_UPPER} "NO_INSTALL;TESTABLE" "" "SO_SRCS;STATIC_SRCS" ${ARGN})
+  endif(${ARGC} GREATER 3)
+
   string(REGEX REPLACE "-framework;" "-framework " libslist "${libslist1}")
   if(SC_BUILD_SHARED_LIBS)
     add_library(${libname} SHARED ${srcslist})
@@ -98,7 +86,16 @@ macro(SC_ADDLIB libname srcslist libslist)
       DEFINE_DLL_IMPORTS(${libname} "${libslist}")
     endif(NOT "${libs}" MATCHES "NONE")
     set_target_properties(${libname} PROPERTIES VERSION ${SC_ABI_VERSION} SOVERSION ${SC_ABI_SOVERSION})
-    EXCLUDE_OR_INSTALL(${libname} "lib" "${ARGV3}")
+    if(NOT ${LIBNAME_UPPER}_NO_INSTALL AND NOT ${LIBNAME_UPPER}_TESTABLE)
+      install(TARGETS ${libname}
+	RUNTIME DESTINATION ${BIN_DIR}
+	LIBRARY DESTINATION ${LIB_DIR}
+	ARCHIVE DESTINATION ${LIB_DIR}
+	)
+    endif(NOT ${LIBNAME_UPPER}_NO_INSTALL AND NOT ${LIBNAME_UPPER}_TESTABLE)
+    if(NOT SC_ENABLE_TESTING AND ${LIBNAME_UPPER}_TESTABLE)
+      set_target_properties( ${libname} PROPERTIES EXCLUDE_FROM_ALL ON )
+    endif(NOT SC_ENABLE_TESTING AND ${LIBNAME_UPPER}_TESTABLE)
     if(APPLE)
       set_target_properties(${libname} PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
     endif(APPLE)
@@ -124,7 +121,16 @@ macro(SC_ADDLIB libname srcslist libslist)
       # http://www.cmake.org/Wiki/CMake_FAQ#How_do_I_make_my_shared_and_static_libraries_have_the_same_root_name.2C_but_different_suffixes.3F
       set_target_properties(${staticlibname} PROPERTIES PREFIX "lib")
     endif(WIN32)
-    EXCLUDE_OR_INSTALL(${staticlibname} "lib" "${ARGV3}")
+    if(NOT ${LIBNAME_UPPER}_NO_INSTALL AND NOT ${LIBNAME_UPPER}_TESTABLE)
+      install(TARGETS ${libname}-static
+	RUNTIME DESTINATION ${BIN_DIR}
+	LIBRARY DESTINATION ${LIB_DIR}
+	ARCHIVE DESTINATION ${LIB_DIR}
+	)
+    endif(NOT ${LIBNAME_UPPER}_NO_INSTALL AND NOT ${LIBNAME_UPPER}_TESTABLE)
+    if(NOT SC_ENABLE_TESTING AND ${LIBNAME_UPPER}_TESTABLE)
+      set_target_properties( ${libname}-static PROPERTIES EXCLUDE_FROM_ALL ON )
+    endif(NOT SC_ENABLE_TESTING AND ${LIBNAME_UPPER}_TESTABLE)
     if(APPLE)
       set_target_properties(${staticlibname} PROPERTIES LINK_FLAGS "-flat_namespace -undefined suppress")
     endif(APPLE)
