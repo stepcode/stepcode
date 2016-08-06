@@ -62,11 +62,11 @@ endif(COMMAND CMAKE_POLICY)
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
 set(SC_CMAKE_DIR "${SC_SOURCE_DIR}/cmake")
-if(NOT IS_SUBBUILD)
+if(NOT SC_IS_SUBBUILD)
   set(CMAKE_MODULE_PATH "${SC_CMAKE_DIR};${CMAKE_MODULE_PATH}")
-else(NOT IS_SUBBUILD)
+else(NOT SC_IS_SUBBUILD)
   set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${SC_CMAKE_DIR}")
-endif(NOT IS_SUBBUILD)
+endif(NOT SC_IS_SUBBUILD)
 
 # testing and compilation options, build output dirs, install dirs, uninstall, package creation, etc
 include(${SC_CMAKE_DIR}/SC_Build_opts.cmake)
@@ -95,10 +95,12 @@ if(NOT DEFINED SC_BUILD_SCHEMAS)
   set(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built")
 endif(NOT DEFINED SC_BUILD_SCHEMAS)
 
-list(APPEND CONFIG_END_MESSAGES
-  ".. Don't worry about any messages above about missing headers or failed tests, as long as"
-  "    you see 'Configuring done' below. Headers and features vary by compiler."
-  ".. Generating step can take a while if you are building several schemas.")
+if(NOT SC_IS_SUBBUILD)
+  list(APPEND CONFIG_END_MESSAGES
+    ".. Don't worry about any messages above about missing headers or failed tests, as long as"
+    "    you see 'Configuring done' below. Headers and features vary by compiler."
+    ".. Generating step can take a while if you are building several schemas.")
+endif(NOT SC_IS_SUBBUILD)
 
 # create config headers sc_cf.h and sc_version_string.h
 include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)

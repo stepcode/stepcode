@@ -74,18 +74,10 @@ set(header_string "/* sc_version_string.h - written by cmake. Changes will be lo
   "#endif\n"
  )
 
-#compare the new and old commit versions, don't update the file if only the timestamp differs
-if(EXISTS ${SC_VERSION_HEADER})
-  file(READ ${SC_VERSION_HEADER} OLD_VER_STRING LIMIT 600) #file is ~586 bytes
-  string(FIND "${OLD_VER_STRING}" "git commit id: ${GIT_COMMIT_ID}" COMMIT_MATCH )
-  # ${COMMIT_MATCH} == -1 if no match
-else()
-  set(COMMIT_MATCH -1)
-endif(EXISTS ${SC_VERSION_HEADER})
-
-if(${COMMIT_MATCH} LESS 1 )
-  file(WRITE ${SC_VERSION_HEADER} ${header_string})
-endif(${COMMIT_MATCH} LESS 1)
+#don't update the file unless somethig changed
+file(WRITE ${SC_VERSION_HEADER}.tmp ${header_string})
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SC_VERSION_HEADER}.tmp ${SC_VERSION_HEADER})
+execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${SC_VERSION_HEADER}.tmp)
 
 if(NOT SC_IS_SUBBUILD)
   message("-- sc_version_string.h is up-to-date.")

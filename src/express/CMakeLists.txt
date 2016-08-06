@@ -127,9 +127,9 @@ else(SC_GENERATE_LP_SOURCES)
   add_dependencies(express express_verify)
 endif(SC_GENERATE_LP_SOURCES)
 
-if(NOT SC_IS_SUBBUILD)
+if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
   add_dependencies(express version_string)
-endif(NOT SC_IS_SUBBUILD)
+endif(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
 SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base"  ${SC_EXEC_NOINSTALL})
 
 if(SC_ENABLE_TESTING)

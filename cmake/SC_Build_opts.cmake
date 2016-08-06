@@ -54,6 +54,9 @@ OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so
 # Should we use C++11?
 OPTION_WITH_DEFAULT(SC_ENABLE_CXX11 "Build with C++ 11 features" ON)
 
+# Get version from git
+OPTION_WITH_DEFAULT(SC_GIT_VERSION "Build using version from git" ON)
+
 option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
 
