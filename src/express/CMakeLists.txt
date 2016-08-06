@@ -43,9 +43,17 @@ if(SC_GENERATE_LP_SOURCES)
   LEMON_TARGET(ExpParser expparse.y)
   PERPLEX_TARGET(ExpScanner expscan.l)
   ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner ExpParser)
-  set(EXPRESS_GENERATED_SRCS
+  set(SCL_SO_SRCS
     ${LEMON_ExpParser_SRC}
     ${PERPLEX_ExpScanner_SRC}
+    )
+
+  LEMON_TARGET(ExpParser_static expparse.y)
+  PERPLEX_TARGET(ExpScanner_static expscan.l)
+  ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner_static ExpParser_static)
+  set(SCL_STATIC_SRCS
+    ${LEMON_ExpParser_static_SRC}
+    ${PERPLEX_ExpScanner_static_SRC}
     )
 else(SC_GENERATE_LP_SOURCES)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
@@ -53,10 +61,11 @@ else(SC_GENERATE_LP_SOURCES)
     generated/expparse.c
     generated/expscan.c
     )
+  set(SCL_SO_SRCS ${EXPRESS_GENERATED_SRCS})
+  set(SCL_STATIC_SRCS ${EXPRESS_GENERATED_SRCS})
 endif(SC_GENERATE_LP_SOURCES)
 
 set(EXPRESS_SOURCES
-  ${EXPRESS_GENERATED_SRCS}
   symbol.c
   type.c
   variable.c
@@ -100,10 +109,14 @@ SET(EXPRESS_PRIVATE_HDRS
   stack.h
   )
 
-SC_ADDLIB(express "${EXPRESS_SOURCES}" "base")
+SC_ADDLIB(express "${EXPRESS_SOURCES}" "base" SO_SRCS "${SCL_SO_SRCS}" STATIC_SRCS "${SCL_STATIC_SRCS}")
 if(SC_GENERATE_LP_SOURCES)
   set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
   set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+  if (TARGET express-static)
+    set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_static_INCLUDE_DIR}")
+    set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_static_INCLUDE_DIR}")
+  endif (TARGET express-static)
 endif(SC_GENERATE_LP_SOURCES)
 
 if(SC_GENERATE_LP_SOURCES)
