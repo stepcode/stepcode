@@ -51,6 +51,9 @@ OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 OPTION_WITH_DEFAULT(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
 
+# Should we use C++11?
+OPTION_WITH_DEFAULT(SC_ENABLE_CXX11 "Build with C++ 11 features" ON)
+
 option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
 
