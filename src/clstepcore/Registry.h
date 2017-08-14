@@ -21,13 +21,13 @@
 
 
 // defined and created in Registry.cc
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiINTEGER;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiREAL;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiNUMBER;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiSTRING;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiBINARY;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiBOOLEAN;
-extern SC_CORE_EXPORT const TypeDescriptor  * t_sdaiLOGICAL;
+extern SC_CORE_EXPORT const TypeDescriptor * const  t_sdaiINTEGER;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiREAL;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiNUMBER;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiSTRING;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiBINARY;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiBOOLEAN;
+extern SC_CORE_EXPORT const TypeDescriptor * const t_sdaiLOGICAL;
 
 typedef struct Hash_Table * HashTable;
 
