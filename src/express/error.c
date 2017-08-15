@@ -67,6 +67,9 @@
 #include "express/info.h"
 #include "express/linklist.h"
 
+#if defined( _WIN32 ) || defined ( __WIN32__ )
+#  define snprintf _snprintf
+#endif
 
 bool __ERROR_buffer_errors = false;
 const char * current_filename = "stdin";
@@ -112,12 +115,41 @@ static struct heap_element {
 static int ERROR_with_lines = 0;    /**< number of warnings & errors that have occurred with a line number */
 static char * ERROR_string;
 static char * ERROR_string_base;
+static char * ERROR_string_end;
 
 static bool ERROR_unsafe = false;
 static jmp_buf ERROR_safe_env;
 
 
 #define error_file stderr /**< message buffer file */
+
+static int ERROR_vprintf( const char *format, va_list ap ) {
+    int result = snprintf( ERROR_string, ERROR_string_end - ERROR_string, format, ap );
+    if(result < 0) {
+        ERROR_string = ERROR_string_end;
+    } else if(result > (ERROR_string_end - ERROR_string)) {
+        ERROR_string = ERROR_string_end;
+    } else {
+        ERROR_string = ERROR_string + result;
+    }
+    return result;
+}
+
+static int ERROR_printf( const char *format, ... ) {
+    int result;
+    va_list ap;
+    va_start( ap, format );
+    result = ERROR_vprintf( format, ap );
+    va_end( ap );
+    return result;
+}
+
+static void ERROR_nexterror() {
+    if( ERROR_string == ERROR_string_end ) {
+        return;
+    }
+    ERROR_string++;
+}
 
 /** Initialize the Error module */
 void ERRORinitialize( void ) {
@@ -127,6 +159,7 @@ void ERRORinitialize( void ) {
         ERRORcreate( "%s, expecting %s in %s %s", SEVERITY_EXIT );
 
     ERROR_string_base = ( char * )sc_malloc( ERROR_MAX_SPACE );
+    ERROR_string_end = ERROR_string_base + ERROR_MAX_SPACE;
     ERROR_start_message_buffer();
 
 
@@ -377,20 +410,14 @@ va_dcl {
             heap[child].msg = ERROR_string;
 
             if( what->severity >= SEVERITY_ERROR ) {
-                sprintf( ERROR_string, "%s:%d: --ERROR PE%03d: ", sym->filename, sym->line, what->serial );
-                ERROR_string += strlen( ERROR_string );
-                vsprintf( ERROR_string, what->message, args );
-                ERROR_string += strlen( ERROR_string );
-                *ERROR_string++ = '\n';
-                *ERROR_string++ = '\0';
+                ERROR_printf( "%s:%d: --ERROR PE%03d: ", sym->filename, sym->line, what->serial );
+                ERROR_vprintf( what->message, args );
+                ERROR_nexterror();
                 ERRORoccurred = true;
             } else {
-                sprintf( ERROR_string, "%s:%d: WARNING PW%03d: ", sym->filename, sym->line, what->serial );
-                ERROR_string += strlen( ERROR_string );
-                vsprintf( ERROR_string, what->message, args );
-                ERROR_string += strlen( ERROR_string );
-                *ERROR_string++ = '\n';
-                *ERROR_string++ = '\0';
+                ERROR_printf( "%s:%d: WARNING PW%03d: ", sym->filename, sym->line, what->serial );
+                ERROR_vprintf( what->message, args );
+                ERROR_nexterror();
             }
             if( what->severity >= SEVERITY_EXIT ||
                     ERROR_string + ERROR_MAX_STRLEN > ERROR_string_base + ERROR_MAX_SPACE ||
@@ -410,7 +437,6 @@ va_dcl {
                 ERRORoccurred = true;
             } else {
                 fprintf( error_file, "%s:%d: WARNING PW%03d: ", sym->filename, sym->line, what->serial );
-                ERROR_string += strlen( ERROR_string ) + 1;
                 vfprintf( error_file, what->message, args );
                 fprintf( error_file, "\n" );
             }
