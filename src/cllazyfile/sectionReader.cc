@@ -47,7 +47,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
         }
         if( c == '\'' ) {
             //push past string
-            _file.unget();
+            _file.seekg( _file.tellg() - std::streampos(1) );
             GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
@@ -129,7 +129,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 }
                 break;
             case '\'':
-                _file.unget();
+                _file.seekg( _file.tellg() - std::streampos(1) );
                 GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
                 break;
             case '=':
@@ -155,7 +155,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                     if( _file.get() == ';' ) {
                         return _file.tellg();
                     } else {
-                        _file.unget();
+                        _file.seekg( _file.tellg() - std::streampos(1) );
                     }
                 }
             default:
@@ -186,7 +186,7 @@ instanceID sectionReader::readInstanceNumber() {
     if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
         findNormalString( "*/" );
     } else {
-        _file.unget();
+        _file.seekg( _file.tellg() - std::streampos(1) );
     }
     skipWS();
     c = _file.get();
@@ -210,7 +210,7 @@ instanceID sectionReader::readInstanceNumber() {
             digits++;
 
         } else {
-            _file.unget();
+            _file.seekg( _file.tellg() - std::streampos(1) );
             break;
         }
 
@@ -309,7 +309,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         assert( inst->getEDesc() );
         _file.seekg( begin );
         findNormalString( "(" );
-        _file.unget();
+        _file.seekg( _file.tellg() - std::streampos(1) );
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
         //TODO do something with 'sev'
         inst->InitIAttrs();
