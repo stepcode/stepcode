@@ -78,9 +78,10 @@ set(header_string "/* sc_version_string.h - written by cmake. Changes will be lo
  )
 
 #don't update the file unless somethig changed
-file(WRITE ${SC_VERSION_HEADER}.tmp ${header_string})
-execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SC_VERSION_HEADER}.tmp ${SC_VERSION_HEADER})
-execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${SC_VERSION_HEADER}.tmp)
+string(RANDOM tmpsuffix)
+file(WRITE ${SC_VERSION_HEADER}.${tmpsuffix} ${header_string})
+execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SC_VERSION_HEADER}.${tmpsuffix} ${SC_VERSION_HEADER})
+execute_process(COMMAND ${CMAKE_COMMAND} -E remove ${SC_VERSION_HEADER}.${tmpsuffix})
 
 if(NOT SC_IS_SUBBUILD)
   message("-- sc_version_string.h is up-to-date.")
