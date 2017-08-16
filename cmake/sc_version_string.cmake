@@ -8,6 +8,7 @@
 # http://www.cmake.org/pipermail/cmake/2009-February/027014.html
 
 set(SC_IS_SUBBUILD "@SC_IS_SUBBUILD@")
+set(SC_ENABLE_TESTING "@SC_ENABLE_TESTING@")
 
 set(SC_VERSION_HEADER "${BINARY_DIR}/include/sc_version_string.h")
 
@@ -47,7 +48,9 @@ string(REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
 #once cmake_minimum_required is >= 2.8.11, we can use TIMESTAMP:
 #string(TIMESTAMP date_time_string)
 
-if(UNIX)
+if(SC_ENABLE_TESTING)
+  set (date_time_string "NA - disabled for testing")
+elseif(UNIX)
   execute_process(COMMAND date "+%d %b %Y %H:%M" OUTPUT_VARIABLE date_time_string OUTPUT_STRIP_TRAILING_WHITESPACE)
 elseif(WIN32)
   execute_process(COMMAND cmd /c date /t OUTPUT_VARIABLE currentDate OUTPUT_STRIP_TRAILING_WHITESPACE)
