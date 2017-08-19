@@ -80,7 +80,7 @@ std::cout << \"1s is \"<< std::chrono::duration_cast<std::chrono::milliseconds>(
   set( TEST_NULLPTR "
 #include <cstddef>
 std::nullptr_t f() {return nullptr;}
-int main() {return !!f();}
+int main() {return !(f() == f());}
   " )
   cmake_push_check_state()
   if( UNIX )
