@@ -13,8 +13,22 @@ void lazyFileReader::initP21() {
         lazyDataSectionReader * r;
         r = new lazyP21DataSectionReader( this, _file, _file.tellg(), _parent->countDataSections() );
         if( !r->success() ) {
-            delete r; //last read attempt failed
+#ifndef NDEBUG
+            std::streampos startp = r->sectionStart(), endp = r->sectionEnd(), offs = 10;
+            char tmp[11] = {0};
+            std::cerr << "Corrupted data section? Start/end offsets: " << startp << "/" << endp << std::endl;
+            _file.seekg( startp );
+            _file.read( tmp, 10 );
+            std::cerr << "Starts with " << tmp << std::endl;
+            if( endp - startp > offs ) {
+                _file.seekg( endp - offs );
+                _file.read( tmp, 10 );
+                std::cerr << "Ends with " << tmp << std::endl;
+            }
+#else
             std::cerr << "Corrupted data section" << std::endl;
+#endif //ndef NDEBUG
+            delete r; //last read attempt failed
             break;
         }
         _parent->registerDataSection( r );
