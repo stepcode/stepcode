@@ -45,7 +45,7 @@ STEPattribute & STEPattributeList::operator []( int n ) {
     // else
     cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
          << __LINE__ << "\n" << _POC_ << "\n\n";
-    return *( STEPattribute * ) 0;
+    return nullptr;
 }
 
 int STEPattributeList::list_length() {

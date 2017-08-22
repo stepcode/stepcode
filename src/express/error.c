@@ -362,6 +362,7 @@ va_dcl {
     what->message = "%s";
     ERRORreport_with_symbol( what, &sym, buf );
     what->message = savemsg;
+    va_end( args );
 }
 
 void
