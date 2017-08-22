@@ -119,6 +119,12 @@ if(SC_GENERATE_LP_SOURCES)
   endif (TARGET express-static)
 endif(SC_GENERATE_LP_SOURCES)
 
+# Adds a section to libexpress so gdb can find pretty printers. To take
+# advantage, add 'add-auto-load-safe-path /path/to/stepcode' to ~/.gdbinit
+if( NOT ${CMAKE_BUILD_TYPE} MATCHES "Release")
+  set_property(TARGET express APPEND PROPERTY COMPILE_DEFINITIONS EXPRESS_PYEMBEDPATH="${CMAKE_CURRENT_SOURCE_DIR}/libexpress-gdb-printers.py")
+endif()
+
 if(SC_GENERATE_LP_SOURCES)
   add_custom_command(TARGET express POST_BUILD
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake

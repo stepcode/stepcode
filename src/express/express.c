@@ -86,6 +86,14 @@
 #include "express/lexact.h"
 #include "express/exp_kw.h"
 
+/* Adds a section to libexpress so gdb can find pretty printers. To take
+   advantage, add 'add-auto-load-safe-path /path/to/stepcode' to ~/.gdbinit
+*/
+#if defined(EXPRESS_PYEMBEDPATH)
+# include "gdb_script_autoload.h"
+  DEFINE_GDB_PY_SCRIPT(EXPRESS_PYEMBEDPATH)
+#endif //EXPRESS_PYEMBEDPATH
+
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
 void Parse( void * parser, int tokenID, YYSTYPE data, parse_data_t parseData );
