@@ -5,13 +5,15 @@
   
   This is for Kate, the KDE editor. Rename to express.xml and place in the syntax directory (on Debian, this is /usr/share/kde4/apps/katepart/syntax )
 -->
-<language name="EXPRESS" version="0.1" kateversion="2.5" section="Database" extensions="*.exp;*.EXP;*.p11" mimetype="text/x-express" casesensitive="0" author="Mark Pictor (mpictor@gmail.com)" license="">
+<language name="EXPRESS" version="0.1" kateversion="2.5" section="3D" extensions="*.exp;*.EXP;*.p11" mimetype="text/x-express" casesensitive="0" author="Mark Pictor (mpictor@gmail.com)" license="">
   <highlighting>
     <list name="keywords">
       <item> of </item>
       <item> or </item>
+      <item> xor </item>
       <item> to </item>
       <item> where </item>
+      <item> unique </item>
       <item> subtype </item>
       <item> supertype </item>
       <item> abstract </item>
