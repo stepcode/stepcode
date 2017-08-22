@@ -68,33 +68,28 @@ typedef struct Statement_  * Statement,
 
 typedef struct Scope_ * Increment;
 
-/****************/
-/* modules used */
-/****************/
 
 #include "expr.h"
 #include "alg.h"
 
-/***************************/
-/* hidden type definitions */
-/***************************/
-
-#define STMT_ASSIGN 0x1
-#define STMT_CASE   0x2
-#define STMT_COMPOUND   0x4
-#define STMT_COND   0x8
-#define STMT_LOOP   0x10
-#define STMT_PCALL  0x20
-#define STMT_RETURN 0x40
-#define STMT_ALIAS  0x80
-#define STMT_SKIP   0x100
-#define STMT_ESCAPE 0x200
+typedef enum {
+    STMT_ASSIGN   =   0x1,
+    STMT_CASE     =   0x2,
+    STMT_COMPOUND =   0x4,
+    STMT_COND     =   0x8,
+    STMT_LOOP     =  0x10,
+    STMT_PCALL    =  0x20,
+    STMT_RETURN   =  0x40,
+    STMT_ALIAS    =  0x80,
+    STMT_SKIP     = 0x100,
+    STMT_ESCAPE   = 0x200
+} Statement_type;
 
 /* these should probably all be expression types */
 
 struct Statement_ {
     Symbol symbol;  /**< can hold pcall or alias name but otherwise is not used for anything */
-    int type;   /**< one of STMT_XXX above */
+    Statement_type type;   /**< one of STMT_XXX above */
     /* hey, is there nothing in common beside symbol and private data?? */
     union u_statement {
         struct Alias_     *     alias;
@@ -234,7 +229,7 @@ extern SC_EXPRESS_EXPORT Statement    CONDcreate PROTO( ( Expression, Linked_Lis
 extern SC_EXPRESS_EXPORT Statement    LOOPcreate PROTO( ( struct Scope_ *, Expression, Expression, Linked_List ) );
 extern SC_EXPRESS_EXPORT Statement    PCALLcreate PROTO( ( Linked_List ) );
 extern SC_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
-extern SC_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void         STMTinitialize PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
         Expression end, Expression increment ) );
 
