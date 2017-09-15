@@ -60,7 +60,7 @@ class AP203Parser(SCL.Part21.Parser):
 
     def __init__(self, ...):
         SCL.Part21.Parser.__init__(self)
-        # schema entities would be passed to the underlying lexer to faciliate exact rule matches
+        # schema entities would be passed to the underlying lexer to facilitate exact rule matches
         self.lexer.register_entities(self.entities)    
     
     # validating form

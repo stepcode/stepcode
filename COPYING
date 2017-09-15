@@ -4,7 +4,7 @@ on the date those changes were committed to whichever repository
 they were committed to first (i.e. BRL-CAD on SourceForge.net, 
 mpictor/StepClassLibrary or stepcode/stepcode on github).
 
-Modifications which were first commited to the repository on github
+Modifications which were first committed to the repository on github
 are licensed under the 3-clause BSD license below. Changes committed
 to BRL-CAD either contain license information mentioning BRL-CAD 
 near the top of the file, or are licensed under the same terms that

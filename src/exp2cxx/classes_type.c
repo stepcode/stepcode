@@ -94,7 +94,7 @@ void strcat_bounds( TypeBody b, char * buf ) {
  ** Description:  prints code to represent an enumerated type in c++
  ** Side Effects:  prints to header file
  ** Status:  ok 1/15/91
- ** Changes: Modified to check for appropiate key words as described
+ ** Changes: Modified to check for appropriate key words as described
  **          in "SDAI C++ Binding for PDES, Inc. Prototyping" by
  **          Stephen Clark.
  ** - Changed to match CD2 Part 23, 1/14/97 DAS

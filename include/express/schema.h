@@ -88,7 +88,7 @@ struct Schema_ {
     Linked_List reflist;
     Linked_List uselist;
     /** \var refdict, usedict
-     * dictionarys into which are entered renames for each specific
+     * dictionaries into which are entered renames for each specific
      * object specified in a rename clause (even if it uses the same
      * name */
     Dictionary refdict;

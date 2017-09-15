@@ -983,7 +983,7 @@ void TYPEselect_lib_part_three_getter( const Type type, const char * classnm, co
                     /* if the underlying type is that item's type, call the underlying_item's
                      * member function if it is the same attribute */
                     if( VARis_overrider( ENT_TYPEget_entity( t ), uattr ) ) {
-                        /*  update attribute_func_name because is has been overriden */
+                        /*  update attribute_func_name because is has been overridden */
                         generate_attribute_func_name( uattr, funcnm );
                     } else {
                         generate_attribute_func_name( a, funcnm );

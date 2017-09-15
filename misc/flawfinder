@@ -703,7 +703,7 @@ c_ruleset = {
   "lstrcpyn|wcsncpy|_tcsncpy|_mbsnbcpy" :
      (c_buffer,
       1, # Low risk level, because this is often used correctly when FIXING security
-      # problems, and raising it to a higher risk levle would cause many false positives.
+      # problems, and raising it to a higher risk level would cause many false positives.
       "Easily used incorrectly; doesn't always \\0-terminate or " +
          "check for invalid pointers",
       "",

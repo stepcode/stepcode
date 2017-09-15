@@ -48,7 +48,7 @@ void populateAttrList( oaList & list, Entity ent ) {
     } LISTod
 }
 
-///compare attr name and creator, remove all but first occurence
+///compare attr name and creator, remove all but first occurrence
 ///this is necessary for diamond inheritance
 void dedupList( oaList & list ) {
     oaList::iterator it, jt;

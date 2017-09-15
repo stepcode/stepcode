@@ -26,7 +26,7 @@
  * CADDETC certified
  *
  * Revision 1.6  1993/02/16  03:27:02  libes
- * removed artifical begin/end nesting for improved reconstruction (printing)
+ * removed artificial begin/end nesting for improved reconstruction (printing)
  * of original Express file
  *
  * Revision 1.5  1992/08/18  17:13:43  libes

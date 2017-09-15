@@ -35,7 +35,7 @@
 #include "../SEarritr.h"
 
 // PrintAttrTypeWithAnchor()
-// Given an atribute, print out its immediate type (not fundamental).
+// Given an attribute, print out its immediate type (not fundamental).
 // Ah, but if life were so simple.  If this attribute is _not_ of a
 // fundamental type, put in an anchor to somewhere with info on the type.
 // This could be either the index page Type list, or an entity's page if
@@ -162,9 +162,9 @@ void PrintParentAttrsHTML( const EntityDescriptor * ent,
         grandpaNode = ( EntityDescLinkNode * )grandpaNode->NextNode();
     }
 
-    // Now print the parent's atributes.  This calls PrintAttrsHTML() to
+    // Now print the parent's attributes.  This calls PrintAttrsHTML() to
     // actually print any existing attributes, but to see if there are
-    // any, we'll check to see if the head of the atribute descriptor list
+    // any, we'll check to see if the head of the attribute descriptor list
     // exists.  Conversely, once grabbing the head we could print out
     // the attributes by following the list (attrNode->NextNode()).
     const AttrDescriptorList * attrList = &( parent->ExplicitAttr() );

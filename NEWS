@@ -176,7 +176,7 @@ There were also some issues with the configure script and some
 makefiles which are addressed, as well as a new macro that is at 
 least required for gcc.
 
-Remaing problem: The p21 file scanner of SCL currently 
+Remaining problem: The p21 file scanner of SCL currently 
 does not allow for comments within the parameter list of 
 data records. Only comments outside of data records are 
 accepted.
@@ -987,7 +987,7 @@ the attribute value field in the entity editor.
 If there wasn't a value in the attribute previously, then the field will 
 contain just the type specifier, e.g., Str1() if Str1 is the type selected.
 
-If a value exists in the field, it is modified to accomodate the new 
+If a value exists in the field, it is modified to accommodate the new 
 specifier.  This means the following:
  o  If the value in the field starts with a single-quote ('), it is 
         assumed to be a string literal, and is completely wrapped in the new 
