@@ -246,7 +246,7 @@ ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
 /******************************************************************************
 AGGREGATE TYPES
 
-    Aggregate types are accessed generically.  (There are not seperate
+    Aggregate types are accessed generically.  (There are not separate
     classes for the different types of aggregates.)  Aggregates are
     implemented through the STEPaggregate class.
 

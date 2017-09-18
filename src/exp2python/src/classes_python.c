@@ -767,7 +767,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
             /* if the argument is not optional */
             if( !VARget_optional( v ) ) {
                 fprintf( file, "\t\t# Mandatory argument\n" );
-                fprintf( file, "\t\tassert value != None, 'Argument \"value\" is mantatory and cannot be set to None'\n" );
+                fprintf( file, "\t\tassert value != None, 'Argument \"value\" is mandatory and cannot be set to None'\n" );
                 fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );

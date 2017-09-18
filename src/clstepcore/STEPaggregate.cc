@@ -355,7 +355,7 @@ const char * STEPnode::asStr( std::string & s ) {
  * cause e.g. type X may be defined in schema A, and may be USEd in schema
  * B and renamed to Y (i.e., "USE from A (X as Y)").  Thus, if currSch = B,
  * Y will have to be written out rather than X.  Actually, this concern
- * only applies for SelectNode.  To accomodate those cases, all the signa-
+ * only applies for SelectNode.  To accommodate those cases, all the signa-
  * tures of STEPwrite(std::string) contain currSch.  (As an additional note,
  * 2D aggregates should make use of currSch in case they are 2D aggrs of
  * selects.  But since currently (3/27/97) the SCL handles 2D+ aggrs using

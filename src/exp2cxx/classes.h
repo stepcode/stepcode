@@ -76,7 +76,7 @@ typedef  struct file_holder  {
 }  File_holder, FILES;
 
 /**  these fields are used so that ENTITY types are processed in order
- *   when appearing in differnt schemas
+ *   when appearing in different schemas
  */
 typedef struct EntityTag_ * EntityTag;
 struct EntityTag_ {

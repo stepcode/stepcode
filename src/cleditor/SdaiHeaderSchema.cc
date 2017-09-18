@@ -62,7 +62,7 @@ SdaiSection_language::SdaiSection_language( SDAI_Application_instance * se, int 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -72,7 +72,7 @@ SdaiSection_language::SdaiSection_language( SDAI_Application_instance * se, int 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -144,7 +144,7 @@ SdaiFile_population::SdaiFile_population( SDAI_Application_instance * se, int * 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -154,7 +154,7 @@ SdaiFile_population::SdaiFile_population( SDAI_Application_instance * se, int * 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -164,7 +164,7 @@ SdaiFile_population::SdaiFile_population( SDAI_Application_instance * se, int * 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -264,7 +264,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -274,7 +274,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -284,7 +284,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -294,7 +294,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -304,7 +304,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -314,7 +314,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -324,7 +324,7 @@ SdaiFile_name::SdaiFile_name( SDAI_Application_instance * se, int * addAttrs ) {
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -452,7 +452,7 @@ SdaiSection_context::SdaiSection_context( SDAI_Application_instance * se, int * 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -462,7 +462,7 @@ SdaiSection_context::SdaiSection_context( SDAI_Application_instance * se, int * 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -530,7 +530,7 @@ SdaiFile_description::SdaiFile_description( SDAI_Application_instance * se, int 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -540,7 +540,7 @@ SdaiFile_description::SdaiFile_description( SDAI_Application_instance * se, int 
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
@@ -604,7 +604,7 @@ SdaiFile_schema::SdaiFile_schema( SDAI_Application_instance * se, int * addAttrs
     /*access functions still work. */
     attributes.push( a );
     /* Put attribute on the attributes list for the */
-    /* main inheritance heirarchy. */
+    /* main inheritance hierarchy. */
     if( !addAttrs || addAttrs[0] ) {
         se->attributes.push( a );
     }
