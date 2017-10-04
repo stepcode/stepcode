@@ -789,7 +789,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                     fprintf( file, "%s):\n\t", attr_type );
                 }
             }
-            /* check wether attr_type is aggr or explicit */
+            /* check whether attr_type is aggr or explicit */
             if( TYPEis_aggregate( t ) ) {
                 fprintf( file, "\t\t\tself._%s = ", attrnm );
                 print_aggregate_type( file, t );

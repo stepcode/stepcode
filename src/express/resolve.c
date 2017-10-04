@@ -361,7 +361,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 expr->return_type = f->u.func->return_type;
 
                 /* do argument typechecking here if requested */
-                /* currently, we just check arg count; necesary */
+                /* currently, we just check arg count; necessary */
                 /* to NVL code later which assumes args are present */
                 if( LISTget_length( expr->u.funcall.list ) !=
                         f->u.func->pcount ) {
