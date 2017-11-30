@@ -242,7 +242,7 @@ Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
     /**
     ** This section of code is used to read a value belonging to a select
     ** contained in another select. If you have read the text part of the
-    ** TYPED_PARAMETER and it needs to fall down thru some levels of contained
+    ** TYPED_PARAMETER and it needs to fall down through some levels of contained
     ** select types, then the text is passed down to each select in the utype
     ** parameter as STEPread is called on each contained select type.DAS 2/4/97
     */

@@ -217,7 +217,7 @@ class TestARRAY(unittest.TestCase):
             self.fail('ExpectedException not thrown')
     
     def test_array_optional(self):
-        # if OPTIONAL is not set explicitely to True
+        # if OPTIONAL is not set explicitly to True
         # then each value must be set
         a = ARRAY(1,3,REAL)
         try:

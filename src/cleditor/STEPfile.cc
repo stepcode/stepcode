@@ -101,7 +101,7 @@ float STEPfile::GetWriteProgress() const {
  * returns an error descriptor.
  * It expects to find the "HEADER;" symbol at the beginning of the istream.
  *
- * side effects: The function  gobbles all characters up to and including the
+ * side effects: The function gobbles all characters up to and including the
  * next "ENDSEC;" from in.
  * The STEPfile::_headerInstances may change.
  */

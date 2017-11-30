@@ -451,7 +451,7 @@ def extract_c_parameters(text, pos=0):
 # so will get confused by patterns like  gettext("hi") + function("bye")
 # In practice, this doesn't seem to be a problem; gettext() is usually
 # wrapped around the entire parameter.
-# The ?s makes it posible to match multi-line strings.
+# The ?s makes it possible to match multi-line strings.
 gettext_pattern = re.compile(r'(?s)^\s*' + 'gettext' + r'\s*\((.*)\)\s*$')
 undersc_pattern = re.compile(r'(?s)^\s*' + '_(T(EXT)?)?' + r'\s*\((.*)\)\s*$')
 
