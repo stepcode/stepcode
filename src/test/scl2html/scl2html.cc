@@ -135,7 +135,7 @@ int PrintAttrsHTML( const EntityDescriptor * ent, ofstream & outhtml ) {
 // PrintParentAttrsHTML()
 // This function, given an entity and its parent, recursively travels up
 // the inheritance tree of the entity, printing to the HTML file a
-// description-list structre showing all ancestors.  For each ancestor,
+// description-list structure showing all ancestors.  For each ancestor,
 // the attributes are printed using the PrintAttrsHTML() function above.
 void PrintParentAttrsHTML( const EntityDescriptor * ent,
                            const EntityDescriptor * parent, ofstream & outhtml ) {
@@ -245,7 +245,7 @@ main() {
 
     // These are all pointers we need to wander around the registry
     // information.  We'll want to not only look at the current entity
-    // and its attributes, but also which entites are super- and subclasses
+    // and its attributes, but also which entities are super- and subclasses
     // of the current entity.  Here, supers isn't really used beyond checking
     // for ancestors, but we'll use subs to list subclasses and make links
     // to them.

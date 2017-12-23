@@ -22,7 +22,7 @@ extern int multiple_inheritance;
 
 /******************************************************************
 **      The following functions will be used        ***
-***     through out the the program exp2python      ***/
+***     throughout the program exp2python           ***/
 
 
 /******************************************************************

@@ -206,7 +206,7 @@ instanceID sectionReader::readInstanceNumber() {
     do {
         c = _file.get();
         if( isdigit( c ) ) {
-            buffer[ digits ] = c; //copy the charcter into the buffer
+            buffer[ digits ] = c; //copy the character into the buffer
             digits++;
 
         } else {

@@ -56,7 +56,7 @@ void print_schemas_separate( Express express, FILES * files )
 /*
  * Generates the C++ files corresponding to a list of schemas.  Does so in
  * multiple passes through the schemas.  In each pass it checks for enti-
- * ties which are subtypes of entites in other schemas which have not yet
+ * ties which are subtypes of entities in other schemas which have not yet
  * been processed.  Such entities cannot be processed in that pass until
  * their supertypes have been defined.  It also checks for entities which
  * have enum or select attributes which have not been processed, and for

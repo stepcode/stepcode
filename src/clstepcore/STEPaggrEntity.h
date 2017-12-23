@@ -57,7 +57,7 @@ public:
 
     virtual SingleLinkNode   *  NewNode();
 
-    // Calling these funtions is an error.
+    // Calling these functions is an error.
     Severity StrToVal( const char * s, ErrorDescriptor * err ) {
         cerr << "Internal error:  " << __FILE__ <<  __LINE__
         << "\n" << _POC_ "\n";

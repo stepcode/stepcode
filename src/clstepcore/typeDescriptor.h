@@ -53,7 +53,7 @@
  * part_label and label would be the value of the respective
  * _name member variables for the 2 TypeDescriptors.
  * \var _referentType
- * will point at another TypeDescriptor furthur specifying
+ * will point at another TypeDescriptor further specifying
  *  the type in all cases except when the type is directly
  *  an enum or select.  i.e. in the following... _referentType for
  *  the 1st type does not point at anything and for the 2nd it does:
@@ -74,7 +74,7 @@
  ** var _referentType
  * For the TypeDescriptors describing the EXPRESS base types this will
  * be a null pointer.  For all other TypeDescriptors this will point
- * to another TypeDescriptor which furthur describes the type. e.g.
+ * to another TypeDescriptor which further describes the type. e.g.
  * TYPE part_label = label END_TYPE; TYPE label = STRING END_TYPE;
  * part_label's _referentType will point to the TypeDescriptor for
  * label.  label's _referentType will point to the TypeDescriptor

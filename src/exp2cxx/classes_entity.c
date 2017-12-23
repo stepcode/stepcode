@@ -1065,7 +1065,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         /*  create list of attr that have to be inherited in EXPRESS */
         collectAttributes( required, entity, ALL_BUT_FIRST );
 
-        /*  build list of unique attr that are required but havn't been */
+        /*  build list of unique attr that are required but haven't been */
         /*  inherited */
         LISTdo( required, attr, Variable ) {
             if( !listContainsVar( existing, attr ) &&
