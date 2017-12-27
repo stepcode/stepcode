@@ -158,7 +158,7 @@ Class x;		->		Class_of_what x;
 					i.e., 
 					Class_of_Type x;
 
-Similary, OBJget_class is now specific to whatever class you are using.
+Similarly, OBJget_class is now specific to whatever class you are using.
 
 I.e.,
 
@@ -496,7 +496,7 @@ foreach schema
 Original code did not check for redefining keywords.  Fixed.
 ======================================================================
 USE and REFERENCE are handled by having separate lists and
-dictionaries to remember schemas and invididual objects that are USEd
+dictionaries to remember schemas and individual objects that are USEd
 and REFd.  'rename' structures are used to point to the remote object.
 (This avoids the need for copying dictionaries, which enabled large
 time/space savings.)

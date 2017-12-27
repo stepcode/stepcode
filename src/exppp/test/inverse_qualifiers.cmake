@@ -13,7 +13,7 @@ endif( NOT ${CMD_RESULT} EQUAL 0 )
 file( READ ${ofile} pretty_out LIMIT 1024 )
 
 #  SELF\product_occurrence.occurrence_contexts : SET [1 : ?] OF assembly_component_relationship FOR related_view;
-# one backslash baloons into 4 x(
+# one backslash balloons into 4 x(
 string( REGEX MATCH " *SELF *\\\\ *product_occurrence *\\. *occurrence_contexts *: *SET *\\[ *1 *:" match_result ${pretty_out} )
 
 if( match_result STREQUAL "" )

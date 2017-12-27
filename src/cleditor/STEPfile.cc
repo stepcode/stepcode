@@ -341,7 +341,7 @@ SDAI_Application_instance * STEPfile::HeaderDefaultFileSchema() {
  * If the _headerInstances contain no instances, then copy the instances
  * from im onto the _headerInstances.
  * This only works for an instance manager which contains the following
- * header section entites. The file id numbers are important.
+ * header section entities. The file id numbers are important.
  *
  * #1 = FILE_DESCRIPTION
  * #2 = FILE_NAME

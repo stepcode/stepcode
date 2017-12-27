@@ -13,7 +13,7 @@ endif( NOT ${CMD_RESULT} EQUAL 0 )
 file( READ ${ofile} pretty_out LIMIT 1024 )
 
 #      ur1 : SELF\shape_aspect_relationship.name;
-# one backslash baloons into 4, and I can't figure out how to escape the semicolon x(
+# one backslash balloons into 4, and I can't figure out how to escape the semicolon x(
 string( REGEX MATCH "[uU][rR]1 *: *SELF *\\\\ *shape_aspect_relationship *\\. *name" match_result ${pretty_out} )
 
 if( match_result STREQUAL "" )

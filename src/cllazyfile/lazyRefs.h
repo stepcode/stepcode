@@ -48,7 +48,7 @@ class SDAI_Application_instance;
  * BENEFIT: no need to write lazyInstMgr::getTypeStr() (however, it might be necessary in the future regardless)
  */
 
-//TODO screen out intances that appear to be possible inverse refs but aren't actually
+//TODO screen out instances that appear to be possible inverse refs but aren't actually
 //      note - doing this well will require major changes, since each inst automatically loads every instance that it references
 //TODO what about complex instances? scanning each on disk could be a bitch; should the compositional types be scanned during lazy loading?
 

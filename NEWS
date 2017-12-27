@@ -252,7 +252,7 @@ the TD for label.
 
 - Fixed the casting operator for the class representing EXPRESS
 enumeration types. It was returning the last element of the enum type
-as the the default when the enum was unset. This choice predated enums
+as the default when the enum was unset. This choice predated enums
 having an unset enum value. It now returns <enum_name>_unset as the
 default when the enum is unset.
 
@@ -794,7 +794,7 @@ When this case of multiple inheritance is encountered attributes are
 duplicated.  This case of multiple inheritance may possibly be
 avoided by modifying the EXPRESS schema by breaking some links in the 
 inheritance hierarchy.  This will not have an adverse affect on the
-implemementation.  The user may choose to use the current or previous
+implementation.  The user may choose to use the current or previous
 method of handling multiple inheritance.  The current method is the
 default behavior.  The previous method is obtained by supplying the 
 -s (or -S) option with the exp2cxx code generator or the mkProbe
