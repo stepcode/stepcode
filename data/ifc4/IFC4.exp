@@ -10219,7 +10219,7 @@ ENTITY IfcTransformer
                                (PredefinedType <> IfcTransformerTypeEnum.USERDEFINED) OR 
                                ((PredefinedType = IfcTransformerTypeEnum.USERDEFINED) AND EXISTS (SELF\IfcObject.ObjectType));
 	CorrectTypeAssigned : (SIZEOF(IsTypedBy) = 0) OR 
-                                ('IFC4.IFCTRANFORMERTYPE' IN TYPEOF(SELF\IfcObject.IsTypedBy[1].RelatingType));
+                                ('IFC4.IFCTRANSFORMERTYPE' IN TYPEOF(SELF\IfcObject.IsTypedBy[1].RelatingType));
 END_ENTITY;
 
 ENTITY IfcTransformerType
