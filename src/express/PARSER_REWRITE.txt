@@ -1,0 +1,43 @@
+Overview
+========
+
+I'm rewriting the parser - now using RE2C and Lemon (rather than flex/bison previously discussed).
+
+The principle aim behind this, more than a thousand lines of Python output rewrite - blocked.  I 
+need the parser to do more work.
+
+Features:
+LEXER P1: Comments are stripped (in theory, these could be passed to e.g. an Express text editor)
+LEXER P2: Named scopes are resolved
+LEXER P3: Tokens are returned, and Anonymous scopes added
+PARSER: Single pass.
+
+Tests: 
+  * test/unitary_schemas (ok, 2 expected failures)
+  * data/*/*.exp (ok, no failures)
+  
+Generally, I believe there should be a more feature complete test set: Fully automated checking of 
+parse trees.  Although I don't fully understand how this should be achieved yet.
+
+Next steps:
+  1. Refactor to improve lexer actions
+  2. Integrate parser
+  3. General error handling strategy (to be discussed)
+
+Requirements
+============
+
+RE2C - versions before 1.0 have significant bugs, I used 1.0.3 - not the version in BRL-CAD.
+Lemon - I would guess any recent version would work (I haven't tested yet).
+
+building
+
+$ re2c -W -Wno-match-empty-string -r -c --tags -t expscan.h -o expscan.c expscan.l
+$ lemon -p -c expparser.y 
+
+compile bstrlib.o, lexsupport.o and the above outputs
+
+a main is defined in expparser.y for the moment.
+
+./test some/express/file.exp
+

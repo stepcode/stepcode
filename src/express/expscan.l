@@ -1,335 +1,1021 @@
+#include <stdio.h>
+#include <stdlib.h>
 
-/*
- * Lex source for Fed-X lexical analyzer.
- *
- * This software was developed by U.S. Government employees as part of
- * their official duties and is not subject to copyright.
- *
- * $Log: expscan.l,v $
- * Revision 1.12  1997/05/29 20:17:34  sauderd
- * Made some changes to Symbol (to be Symbol_) and false and true to be False
- * and True. These changes affect the generated expscan.c file so that it will
- * compile.
- *
- * Revision 1.11  1994/11/22 18:32:39  clark
- * Part 11 IS; group reference
- *
- * Revision 1.10  1994/05/12  17:22:23  libes
- * added #ifdefs for flex
- *
- * Revision 1.9  1994/05/12  17:18:10  libes
- * made flex understand multiple files
- *
- * Revision 1.8  1994/05/11  19:50:00  libes
- * numerous fixes
- *
- * Revision 1.7  1993/10/15  18:47:26  libes
- * CADDETC certified
- *
- * Revision 1.5  1993/02/22  21:46:33  libes
- * fixed unmatched_open_comment handler
- *
- * Revision 1.4  1992/08/18  17:11:36  libes
- * rm'd extraneous error messages
- *
- * Revision 1.3  1992/06/08  18:05:20  libes
- * prettied up interface to print_objects_when_running
- *
- * Revision 1.2  1992/05/31  08:30:54  libes
- * multiple files
- *
- * Revision 1.1  1992/05/28  03:52:25  libes
- * Initial revision
- *
- * Revision 1.4  1992/05/05  19:49:03  libes
- * final alpha
- *
- * Revision 1.3  1992/02/12  07:02:49  libes
- * do sub/supertypes
- *
- * Revision 1.2  1992/02/09  00:49:04  libes
- * does ref/use correctly
- *
- * Revision 1.1  1992/02/05  08:40:30  libes
- * Initial revision
- *
- * Revision 1.0.1.1  1992/01/22  02:47:57  libes
- * copied from ~pdes
- *
- * Revision 4.9  1991/06/14  20:49:12  libes
- * removed old infinity, added backslash
- *
- * Revision 4.8.1.1  1991/05/16  04:07:57  libes
- * made scanner (under lex) understand hooks for doing include directive
- *
- * Revision 4.8.1.0  1991/05/16  01:10:15  libes
- * branch for fixes to old code
- *
- * Revision 4.8  1991/05/03  21:09:02  libes
- * Added sanity check to make sure lex/flex match -DLEX/FLEX
- *
- * Revision 4.7  1991/05/02  05:49:18  libes
- * fixed bug in testing for exceeding open_comment[nesting_level]
- *
- * Revision 4.6  1991/04/29  19:44:40  libes
- * Print all open comments rather than just one.
- *
- * Revision 4.5  1991/04/29  15:39:02  libes
- * Changed commenting style (back) as per SNC who claims that N9 meant to
- * say that tail remarks cannot occur in an open comment, nor can nested
- * comments begin in a tail remark.
- *
- * Revision 4.4  1991/04/29  15:01:46  libes
- * Add bounds checking to nesting level history
- *
- * Revision 4.3  1991/04/26  20:12:50  libes
- * Made scanner work with lex
- * 	Simulated exclusive states with inclusive states
- * 	Fixed line counting
- * Speeded up whitespace matching
- * Convert unknown chars to whitespace
- * Disabled default rule matching (enabled "jamming")
- * Enabled detection/diagnostics of unterminated comments and strings literals
- * Enabled detection/diagnostics of unexpected close comments
- * Disabled detection/diagnostics of nested comments
- *
- * Revision 4.2  1990/12/18  14:00:04  clark
- * Cosmetic changes
- *
- * Revision 4.1  90/09/13  16:29:00  clark
- * BPR 2.1 alpha
- * 
- */
+#include "expparser.h"
+#include "lexsupport.h"
 
-#include "express/basic.h"
-#include "express/error.h"
-#include "express/lexact.h"
-#include "express/express.h"
-#include "expparse.h"
-#include "expscan.h"
+/*!types:re2c*/
 
-enum { INITIAL, code, comment, return_end_schema };
+void yy_push_state(int new_state, struct exp_scanner *scanner);
+int yy_exch_state(int new_state, struct exp_scanner *scanner);
+void yy_pop_state(struct exp_scanner *scanner);
+int yy_top_state(struct exp_scanner *scanner);
 
-extern int	yylineno;
-extern bool	yyeof;
-static int	nesting_level = 0;
+void yyreset(struct exp_scanner *s, int new_mode);
 
-/* can't imagine this will ever be more than 2 or 3 - DEL */
-#define MAX_NESTED_COMMENTS 20
-static struct Symbol_ open_comment[MAX_NESTED_COMMENTS];
+int scope_alloc(struct scopeList *stack, const char *typ, int tok);
+void scope_push(struct YYSTATE *pState, int idx, struct exp_scanner *scanner);
+int scope_pop(struct YYSTATE *state, struct exp_scanner *scanner);
+int scope_find(struct YYSTATE *state, int itype, const char *sname, struct exp_scanner *scanner);
+int resolve_symbol(struct YYSTATE *state, const char *sym, struct exp_scanner *scanner);
 
-static_inline
-int
-SCANnextchar(char* buffer)
+void add_symbol(struct scope_def *scope, const char *sym, int tok);
+
+void brkt_push(struct intList *nesting);
+int brkt_pop(struct intList *nesting);
+
+void lexdebug(int state, unsigned char symbol);
+
+#define IBUFSZ 128
+
+int yylex(void *pScanner, struct YYSTYPE *plval, struct YYSTATE *pState)
 {
-    extern bool SCANread(void);
-#ifdef keep_nul
-    static int escaped = 0;
+    int scanner_modes[] = {yycP1, yycP2, yycP3};
+    size_t midx;
+    unsigned char ibuffer[IBUFSZ];
+    unsigned char *id;
+    /*!stags:re2c format = 'unsigned char *@@;'; */
+    int *brkt_nesting;
+    struct scope_def *sp, *scope;
+    int idx, tok, ibufchk = 0;
+    struct exp_scanner *yyscanner = pScanner;
+    
+    plval->scope_idx = -1;
+    
+    /*!rules:re2c
+
+    re2c:yyfill:enable = 0;
+    re2c:cond:divider = '/****************** @@ *****************/';         
+
+    digit = [0-9] ;
+    xdigit = digit | [A-Fa-f] ;
+    letter = [A-Za-z] ;
+    not_paren_star_special = [!"#$%&+,-./:;<=>?@[\\\]^_`{|}~'] ;
+    
+    WS = [ \t\r\n] ;
+    BREAK = WS | ";" ;
+
+    NOT_PAREN_STAR = letter | digit | not_paren_star_special ;
+    SPECIAL = not_paren_star_special | [()*] ;
+    
+    SIMPLE_ID = letter ( letter | digit | "_" )* ;        
+        
+    <P1> "(*" {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        yy_push_state(yycCOMMENT, yyscanner);
+        continue;
+    }
+        
+    <P1> "--" ( NOT_PAREN_STAR | [ \r\t)(*] )* / "\n" {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        continue;
+    }
+
+    <P1> "--" { yyerror("invalid characters in tail remark! '%.*s'", pState->lineno, 20, yyscanner->cur); }
+
+    <P1> "'" ("''" | NOT_PAREN_STAR \ ['] | [)(*] | WS )* "'" { continue; }
+
+    <P1> "'" { yyerror("invalid string literal! '%.*s'", pState->lineno, 20, yyscanner->cur); }
+
+    <P1> ( NOT_PAREN_STAR \ ['-] )+ { continue; }
+
+    <P1> [)(*'-] { continue; }
+
+    <COMMENT> "(*" {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        yy_push_state(yycCOMMENT, yyscanner);
+        continue;
+    }
+    <COMMENT> "*"+ ")" {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        yy_pop_state(yyscanner);
+        continue;
+    }
+    <COMMENT> "*"+ {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        continue;
+    }
+    <COMMENT> NOT_PAREN_STAR+ {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        continue;
+    }
+    <COMMENT> [)(] {
+        memset(yyscanner->tok, ' ', yyscanner->cur - yyscanner->tok);
+        continue;
+    }
+
+    
+    <P2> 'SCHEMA' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_SCHEMA_REF);
+    
+        idx = scope_alloc(pState->scope_stack, "SCHEMA", T_SCHEMA);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+        
+        continue;
+    }
+    <P2> 'FUNCTION' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_FUNCTION_REF);
+
+        idx = scope_alloc(pState->scope_stack, "FUNCTION", T_FUNCTION);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+
+        continue;
+    }
+    <P2> 'PROCEDURE' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_PROCEDURE_REF);
+        
+        idx = scope_alloc(pState->scope_stack, "PROCEDURE", T_PROCEDURE);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+        
+        continue;
+    }
+    <P2> 'RULE' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_RULE_REF);
+        
+        idx = scope_alloc(pState->scope_stack, "RULE", T_RULE);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+        
+        continue;
+    }
+    <P2> 'ENTITY' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_ENTITY_REF);
+        
+        idx = scope_alloc(pState->scope_stack, "ENTITY", T_ENTITY);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+        
+        continue;
+    }
+    <P2> 'TYPE' WS+ @id SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - id, id);
+        add_symbol(pState->scope_stack->entry + yyscanner->scope_top, ibuffer, T_TYPE_REF);
+        
+        idx = scope_alloc(pState->scope_stack, "TYPE", T_TYPE);
+        scope_push(pState, idx, yyscanner);
+        sp = pState->scope_stack->entry + idx;
+        sp->sname = strndup(id, yyscanner->cur - id);
+        
+        continue;
+    }
+
+    <P2> 'END_' ('SCHEMA'|'FUNCTION'|'PROCEDURE'|'RULE'|'ENTITY'|'TYPE') / BREAK {
+        scope_pop(pState, yyscanner);
+        continue;
+    }
+
+    <P2> "'" ("''" | NOT_PAREN_STAR \ ['] | [)(*] | WS )* "'" { continue; }
+    <P2> SIMPLE_ID { continue; }
+    <P2> * { continue; }
+
+
+    <TYPE> "=" { return T_EQ; }
+    <TYPE> 'ENUMERATION' / WS {
+        yy_push_state(yycENUM, yyscanner);
+        return T_ENUMERATION;
+    }
+    <TYPE> 'EXTENSIBLE' / WS { return T_EXTENSIBLE; }
+    <TYPE> 'WHERE' / WS {
+        yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+        yy_push_state(yycLABEL_OPT, yyscanner);
+        return T_WHERE;
+    }
+    <TYPE> ";" / WS* 'WHERE' { return T_SEMICOLON; }
+    <TYPE> ";" {
+        yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+        yy_push_state(yycLABEL_OPT, yyscanner);
+        return T_SEMICOLON;
+    }
+    <TYPE> ";" / WS* 'END_TYPE' { return T_SEMICOLON; }
+    <TYPE> 'END_TYPE' / BREAK {
+        yy_pop_state(yyscanner);
+        scope_pop(pState, yyscanner);
+        return T_END_TYPE;
+    }
+    <TYPE> "" { yy_push_state(yycSTMT, yyscanner); continue; }
+
+    <ENUM> "(" { yy_push_state(yycENUM_ID_LIST, yyscanner); return T_LPAREN; }
+    <ENUM> ")" { yy_pop_state(yyscanner); return T_RPAREN; }
+    <ENUM> "" :=> P3
+
+    <ENTITY> 'DERIVE' / WS {
+        yyscanner->in_explicit_attr = false;
+        yyscanner->in_inverse_clause = false;
+        yyscanner->in_rules_clause = false;
+        yyscanner->id_ref_typ = T_SIMPLE_REF;
+        yy_push_state(yycID_LIST, yyscanner);
+        return T_DERIVE;
+    }
+    <ENTITY> 'INVERSE' / WS {
+        yyscanner->in_explicit_attr = false;
+        yyscanner->in_inverse_clause = true;
+        yyscanner->in_rules_clause = false;
+        yyscanner->id_ref_typ = T_SIMPLE_REF;
+        yy_push_state(yycID_LIST, yyscanner);
+        return T_INVERSE;
+    }
+    <ENTITY> 'UNIQUE' / WS {
+        yyscanner->in_explicit_attr = false;
+        yyscanner->in_inverse_clause = false;
+        yyscanner->in_rules_clause = true;
+        yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+        yy_push_state(yycLABEL_OPT, yyscanner);
+        return T_UNIQUE;
+    }
+    <ENTITY> 'WHERE' / WS {
+        yyscanner->in_explicit_attr = false;
+        yyscanner->in_inverse_clause = false;
+        yyscanner->in_rules_clause = true;
+        yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+        yy_push_state(yycLABEL_OPT, yyscanner);
+        return T_WHERE;
+    }
+    <ENTITY> ":" / [^=<] {
+        if (yyscanner->in_inverse_clause || yyscanner->in_explicit_attr) {
+            yyscanner->scope_aux = scope_pop(pState, yyscanner);
+        }
+        if (!yyscanner->in_inverse_clause) {
+            yy_push_state(yycSTMT, yyscanner);
+        } else {
+            yy_push_state(yycINV_FOR_STMT, yyscanner);
+        }
+        return T_COLON;
+    }
+    <ENTITY> ";" / WS* ('DERIVE'|'INVERSE'|'UNIQUE'|'WHERE'|'END_ENTITY') BREAK {
+        if (yyscanner->scope_aux) {
+            scope_push(pState, yyscanner->scope_aux, yyscanner);
+            yyscanner->scope_aux = 0;
+        }
+        return T_SEMICOLON;
+    }
+    <ENTITY> ";" {
+        if (yyscanner->scope_aux) {
+            scope_push(pState, yyscanner->scope_aux, yyscanner);
+            yyscanner->scope_aux = 0;
+        }
+        if (!yyscanner->in_rules_clause) {
+            yy_push_state(yycID_LIST, yyscanner);        
+        } else {
+            yy_push_state(yycLABEL_OPT, yyscanner);
+        }
+        return T_SEMICOLON;
+    }
+    <ENTITY> 'END_ENTITY' / BREAK {
+        scope_pop(pState, yyscanner);
+        yy_pop_state(yyscanner);
+        return T_END_ENTITY;
+    }
+    <ENTITY> "" :=> P3
+
+    <ARG_LIST> [(;] {
+        /* TODO: bracket_count */
+        yyscanner->id_ref_typ = T_PARAMETER_REF;
+        yy_push_state(yycID_LIST, yyscanner);
+        return ( *yyscanner->tok == '(' ) ? T_LPAREN : T_SEMICOLON;
+    }
+    <ARG_LIST> ")" {
+        /* TODO: bracket_count */
+        yy_pop_state(yyscanner);
+        return T_RPAREN;
+    }
+    <ARG_LIST> 'VAR' / WS {
+        yyscanner->id_ref_typ = T_PARAMETER_REF;
+        yy_push_state(yycID_LIST, yyscanner);
+        return T_VAR;
+    }
+    <ARG_LIST> "" :=> P3
+
+    <RULE> 'WHERE'/ WS {
+        yyscanner->in_rules_clause = true;
+        yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+        yy_push_state(yycLABEL_OPT, yyscanner);
+        return T_WHERE;
+    }
+    <RULE> ";" {
+        if (!yyscanner->in_rules_clause) {
+            /* TODO: is this branch ever followed? */
+            yyscanner->id_ref_typ = T_SIMPLE_REF;
+            yy_push_state(yycSTMT, yyscanner);
+        } else {
+            yyscanner->id_ref_typ = T_RULE_LABEL_REF;
+            yy_push_state(yycLABEL_OPT, yyscanner);
+        }
+        return T_SEMICOLON;
+    }
+    <RULE> ";" / WS* 'WHERE' WS { return T_SEMICOLON; }
+    <RULE> ";" / WS* 'END_RULE' { return T_SEMICOLON; }
+    <RULE> 'END_RULE' / BREAK {
+        yyscanner->in_rules_clause = false;
+        scope_pop(pState, yyscanner);
+        return T_END_RULE;
+    }
+    <RULE> "" { yy_push_state(yycSTMT, yyscanner); continue; }
+
+    <QUERY> ")" {
+        brkt_nesting = yyscanner->brkt_nesting->entry + yyscanner->brkt_nesting->qty;
+        if (!--*brkt_nesting) {
+            brkt_pop(yyscanner->brkt_nesting);
+            scope_pop(pState, yyscanner);
+            yy_pop_state(yyscanner);
+        }
+        return T_RPAREN;
+    }
+    <QUERY> "(" {
+        brkt_nesting = yyscanner->brkt_nesting->entry + yyscanner->brkt_nesting->qty;
+        ++*brkt_nesting;
+        return T_LPAREN;
+    }
+    <QUERY> "" :=> P3
+
+    <REDECL> 'RENAMED' / WS {
+        yyscanner->id_ref_typ = T_SIMPLE_REF;
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_RENAMED;
+    }
+    <REDECL> [,:] { --yyscanner->cur; yy_pop_state(yyscanner); continue; }
+    <REDECL> "" :=> P3
+
+    <STMT> ";" { --yyscanner->cur; yy_pop_state(yyscanner); continue; }
+    <STMT> "" :=> P3
+
+    <INV_FOR_STMT> 'FOR' / WS { yy_push_state(yycINV_FOR, yyscanner); return T_FOR; }
+    <INV_FOR_STMT> ";" { --yyscanner->cur; yy_pop_state(yyscanner); continue; }
+    <INV_FOR_STMT> "" :=> P3
+
+    <P3> "%" [01]+ { return T_BINARY_LITERAL; }
+
+    <P3> digit+ { return T_INTEGER_LITERAL; }
+
+    <P3> digit+ "." digit* ([eE] [+-]? digit+)? { return T_REAL_LITERAL; }
+
+    <P3> "'" ("''" | NOT_PAREN_STAR \ ['] | [)(*] | WS )* "'" { return T_STRING_LITERAL; }
+
+    <P3> "\"" ( xdigit{4} )+ "\"" { return T_ENCODED_STRING_LITERAL; }
+    <P3> "\"" { yyerror("invalid encoded string literal! '%.*s'", pState->lineno, 20, yyscanner->cur); }
+
+    <P3> 'SCHEMA'/ WS {
+        yyscanner->scope_ref_typ = T_SCHEMA;
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_SCHEMA;
+    }
+    <P3> 'END_SCHEMA' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_SCHEMA;
+    }
+
+    <P3> 'TYPE' / WS {
+        yyscanner->scope_ref_typ = T_TYPE;
+        yy_push_state(yycTYPE, yyscanner);
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_TYPE;
+    }
+
+    <P3> 'ENTITY' / WS {
+        yyscanner->scope_ref_typ = T_ENTITY;
+        yyscanner->id_ref_typ = T_SIMPLE_REF;
+        yyscanner->in_inverse_clause = false;
+        yyscanner->in_explicit_attr = true;
+        yyscanner->in_rules_clause = false;
+        yyscanner->scope_aux = 0;
+        
+        yy_push_state(yycENTITY, yyscanner);
+        yy_push_state(yycSTMT, yyscanner);
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        
+        return T_ENTITY;
+    }
+
+    <P3> 'FUNCTION' / WS* SIMPLE_ID WS* "(" {
+        yyscanner->scope_ref_typ = T_FUNCTION;
+        yy_push_state(yycARG_LIST, yyscanner);
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_FUNCTION;
+    }
+    <P3> 'FUNCTION' / WS {
+        yyscanner->scope_ref_typ = T_FUNCTION;
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_FUNCTION;
+    }
+    <P3> 'END_FUNCTION' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_FUNCTION;
+    }
+
+    <P3> 'PROCEDURE' / WS* SIMPLE_ID WS* "(" {
+        yyscanner->scope_ref_typ = T_PROCEDURE;
+        yy_push_state(yycARG_LIST, yyscanner);
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_PROCEDURE;
+    }
+    <P3> 'PROCEDURE' / WS {
+        yyscanner->scope_ref_typ = T_PROCEDURE;
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_PROCEDURE;
+    }
+    <P3> 'END_PROCEDURE' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_PROCEDURE;
+    }
+
+    <P3> 'RULE' / WS {
+        yyscanner->scope_ref_typ = T_RULE;
+        yy_push_state(yycRULE, yyscanner);
+        yy_push_state(yycSTMT, yyscanner);
+        yy_push_state(yycSEARCH_SCOPE, yyscanner);
+        return T_RULE;
+    }
+
+    <P3> 'ALIAS' / WS {
+        idx = scope_alloc(pState->scope_stack, "ALIAS", T_ALIAS);
+        scope = pState->scope_stack->entry + idx;
+
+        ibufchk = snprintf(ibuffer, sizeof(ibuffer), "QANON_%08lX", yyscanner->anon_scope_cnt);
+        scope->sname = strdup(ibuffer);
+        scope_push(pState, idx, yyscanner);
+        yyscanner->anon_scope_cnt++;
+        
+        yyscanner->id_ref_typ = T_VARIABLE_REF;
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_ALIAS;
+    }
+    <P3> 'END_ALIAS' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_ALIAS;
+    }
+
+    <P3> 'SUBTYPE_CONSTRAINT' / WS {
+        /* _ref not supported, as only used in remarks */
+        yyscanner->id_ref_typ = T_INVALID;
+        
+        yy_push_state(yycSUBTYPE_CONS, yyscanner);
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_SUBTYPE_CONSTRAINT;
+    }
+
+    <P3> 'END_SUBTYPE_CONSTRAINT' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_SUBTYPE_CONSTRAINT;
+    }
+
+    <P3> 'REPEAT' / WS+ SIMPLE_ID WS* ":=" {
+        idx = scope_alloc(pState->scope_stack, "REPEAT", T_REPEAT);
+        scope = pState->scope_stack->entry + idx;
+
+        ibufchk = snprintf(ibuffer, sizeof(ibuffer), "REP_ANON_%08lX", yyscanner->anon_scope_cnt);
+        scope->sname = strdup(ibuffer);
+        scope_push(pState, idx, yyscanner);
+        yyscanner->anon_scope_cnt++;
+        
+        yyscanner->id_ref_typ = T_VARIABLE_REF;
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_REPEAT;
+    }
+    <P3> 'REPEAT' / WS {
+        idx = scope_alloc(pState->scope_stack, "REPEAT", T_REPEAT);
+        scope = pState->scope_stack->entry + idx;
+
+        ibufchk = snprintf(ibuffer, sizeof(ibuffer), "REP_ANON_%08lX", yyscanner->anon_scope_cnt);
+        scope->sname = strdup(ibuffer);
+        scope_push(pState, idx, yyscanner);
+        yyscanner->anon_scope_cnt++;
+        return T_REPEAT;
+    }
+    <P3> 'END_REPEAT' / BREAK {
+        scope_pop(pState, yyscanner);
+        return T_END_REPEAT;
+    }
+
+    <P3> 'QUERY' / WS* "(" {
+        /* TODO: clean up this mess! */
+        idx = scope_alloc(pState->scope_stack, "QUERY", T_QUERY);
+        scope = pState->scope_stack->entry + idx;
+
+        ibufchk = snprintf(ibuffer, sizeof(ibuffer), "QRY_ANON_%08lX", yyscanner->anon_scope_cnt);
+        scope->sname = strdup(ibuffer);
+        scope_push(pState, idx, yyscanner);
+
+        brkt_push(yyscanner->brkt_nesting);
+        brkt_nesting = yyscanner->brkt_nesting->entry + yyscanner->brkt_nesting->qty;
+        ++*brkt_nesting;
+        
+        yyscanner->anon_scope_cnt++;
+        
+        yyscanner->id_ref_typ = T_VARIABLE_REF;
+        yy_push_state(yycQUERY, yyscanner);
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_QUERY;
+    }
+
+    <P3> 'CONSTANT' / WS {
+        yy_push_state(yycCONSTANT, yyscanner);
+        return T_CONSTANT;
+    }
+
+    <P3> 'LOCAL' / WS {
+        yyscanner->id_ref_typ = T_VARIABLE_REF;
+        yy_push_state(yycLOCAL, yyscanner);
+        yy_push_state(yycID_LIST, yyscanner);
+        return T_LOCAL;
+    }
+
+        /* recognise type_ref '.' */
+    <P3> SIMPLE_ID / WS* "." WS* SIMPLE_ID WS* [^.] {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        tok = resolve_symbol(pState, ibuffer, yyscanner);
+        if (tok == T_TYPE_REF)
+            yy_push_state(yycENUM_REF, yyscanner);
+        return tok;
+    }
+
+        /* recognise group_qualifier */
+    <P3> "\\" / WS* SIMPLE_ID {
+        yy_push_state(yycENTITY_REF, yyscanner);
+        return T_BACKSLASH;
+    }
+
+        /* return only T_SIMPLE_ID for all occurences of type_label */
+    <P3> 'GENERIC_ENTITY' / WS* ":" [^=<] {
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_GENERIC_ENTITY;
+    }
+
+    <P3> 'AGGREGATE' / WS* ":" [^=<] {
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_AGGREGATE;
+    }
+
+    <P3> 'GENERIC' / WS* ":" [^=<] {
+        yy_push_state(yycID_CUR_SCOPE, yyscanner);
+        return T_GENERIC;
+    }
+
+    <P3> "." / WS* SIMPLE_ID {
+        yy_push_state(yycDOT_ATTR, yyscanner);
+        return T_DOT;
+    }
+
+    <P3> SIMPLE_ID {
+        int i;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        for (i=0; reserved_keywords[i].kw != NULL; i++) {
+            if (!strcasecmp(ibuffer, reserved_keywords[i].kw)) {
+                return reserved_keywords[i].token;
+            }
+        }
+        
+        tok = resolve_symbol(pState, ibuffer, yyscanner);
+        plval->cstr = strdup(ibuffer);
+        return tok;
+    }
+
+        /* special characters */
+    <P3> "+" { return T_PLUS; }
+    <P3> "-" { return T_MINUS; }
+    <P3> "*" { return T_TIMES; }
+    <P3> "/" { return T_RDIV; }
+    <P3> "**" { return T_EXP; }
+
+    <P3> "=" { return T_EQ; }
+    <P3> "<>" { return T_NEQ; }
+    <P3> ">" { return T_GT; }
+    <P3> "<" { return T_LT; }
+    <P3> ">=" { return T_GTEQ; }
+    <P3> "<=" { return T_LTEQ; }
+
+    <P3> "(" { return T_LPAREN; }
+    <P3> ")" { return T_RPAREN; }
+    <P3> "{" { return T_LCURL; }
+    <P3> "}" { return T_RCURL; }
+    <P3> "[" { return T_LBRKT; }
+    <P3> "]" { return T_RBRKT; }
+
+    <P3> "," { return T_COMMA; }
+    <P3> ":" { return T_COLON; }
+    <P3> ";" { return T_SEMICOLON; }
+
+    <P3> "\\" { return T_BACKSLASH; }
+    <P3> "." { return T_DOT; }
+    <P3> "<*" { return T_ALL_IN; }
+    <P3> "|" { return T_PIPE; }
+    <P3> ":=" { return T_ASSIGN; }
+    <P3> "||" { return T_CONCAT; }
+    <P3> ":=:" { return T_INST_EQ; }
+    <P3> ":<>:" { return T_INST_NEQ; }
+
+    <P3> "?" { return T_QMARK; }
+
+    <P3> [!"#$%&@^_`'] { return T_INVALID; }
+    
+    <*> ( WS \ [\n] )+ { continue; }
+    <*> [\n] { pState->lineno++; continue; }
+
+    <SEARCH_SCOPE> SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        idx = scope_find(pState, yyscanner->scope_ref_typ, ibuffer, yyscanner);
+        scope_push(pState, idx, yyscanner);
+        yy_pop_state(yyscanner);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+
+    <ID_CUR_SCOPE> SIMPLE_ID {
+        struct scope_def *sp = pState->scope_stack->entry + yyscanner->scope_top;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        add_symbol(sp, ibuffer, yyscanner->id_ref_typ);
+        yy_pop_state(yyscanner);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+    <ID_CUR_SCOPE> [(:] { return ( *yyscanner->tok == '(' ) ? T_LPAREN : T_COLON; }
+
+    <ID_LIST> SIMPLE_ID / WS* [,:)] {
+        struct scope_def *sp = pState->scope_stack->entry + yyscanner->scope_top;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        add_symbol(sp, ibuffer, yyscanner->id_ref_typ);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+    <ID_LIST> 'SELF' / WS* "\\" { yy_push_state(yycREDECL, yyscanner); return T_SELF; }
+    <ID_LIST> "," { return T_COMMA; }
+    <ID_LIST> "" { yy_pop_state(yyscanner); continue; }
+    
+    <ENUM_ID_LIST> SIMPLE_ID / WS* [,)] {
+        struct scope_def *sp = pState->scope_stack->entry + yyscanner->scope_top;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        add_symbol(sp, ibuffer, T_ENUMERATION_REF);
+        add_symbol(pState->scope_stack->entry + sp->parent, ibuffer, T_ENUMERATION_REF);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+    <ENUM_ID_LIST> "," { return T_COMMA; }
+    <ENUM_ID_LIST> ")" { --yyscanner->cur; yy_pop_state(yyscanner); continue; }
+
+    <LABEL_OPT> SIMPLE_ID / WS* ":" {
+        struct scope_def *sp = pState->scope_stack->entry + yyscanner->scope_top;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        add_symbol(sp, ibuffer, yyscanner->id_ref_typ);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+    <LABEL_OPT> "" { yy_exch_state(yycSTMT, yyscanner); continue; }
+
+    <ENUM_REF> "." { return T_DOT; }        
+    <ENUM_REF> SIMPLE_ID {
+        yy_pop_state(yyscanner);
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        plval->cstr = strdup(ibuffer);
+        return T_ENUMERATION_REF;
+    }
+
+    <ENTITY_REF> SIMPLE_ID {
+        yy_pop_state(yyscanner);
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        plval->cstr = strdup(ibuffer);
+        return T_ENTITY_REF;
+    }
+
+    <DOT_ATTR> SIMPLE_ID {
+        yy_pop_state(yyscanner);
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_REF;
+    }
+
+    <CONSTANT> ":" { yy_push_state(yycSTMT, yyscanner); return T_COLON; }
+    <CONSTANT> ";" { return T_SEMICOLON; }
+    <CONSTANT> ";" / WS* 'END_CONSTANT' { return T_SEMICOLON; }
+    <CONSTANT> 'END_CONSTANT' / BREAK {
+        yy_pop_state(yyscanner);
+        return T_END_CONSTANT;
+    }
+    <CONSTANT> SIMPLE_ID / WS* ":" {
+        struct scope_def *sp = pState->scope_stack->entry + yyscanner->scope_top;
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        add_symbol(sp, ibuffer, T_CONSTANT_REF);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_ID;
+    }
+
+    <LOCAL> ":" { yy_push_state(yycSTMT, yyscanner); return T_COLON; }
+    <LOCAL> ";" {
+        yyscanner->id_ref_typ = T_VARIABLE_REF;
+        yy_push_state(yycID_LIST, yyscanner);
+        return T_SEMICOLON;
+    }
+    <LOCAL> ";" / WS* 'END_LOCAL' { return T_SEMICOLON; }
+    <LOCAL> 'END_LOCAL' / BREAK {
+        yy_pop_state(yyscanner);
+        return T_END_LOCAL;
+    }
+
+    <INV_FOR> SIMPLE_ID / WS* "." {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        plval->cstr = strdup(ibuffer);
+        return T_ENTITY_REF;
+    }
+    <INV_FOR> SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        plval->cstr = strdup(ibuffer);
+        return T_SIMPLE_REF;
+    }
+    <INV_FOR> ";" { --yyscanner->cur; yy_pop_state(yyscanner); continue; }
+
+    <SUBTYPE_CONS> 'FOR' / WS { return T_FOR; }        
+    <SUBTYPE_CONS> SIMPLE_ID {
+        ibufchk = snprintf(ibuffer, IBUFSZ, "%.*s", yyscanner->cur - yyscanner->tok, yyscanner->tok);
+        idx = scope_find(pState, T_ENTITY, ibuffer, yyscanner);
+        scope_push(pState, idx, yyscanner);
+        plval->cstr = strdup(ibuffer);
+        return T_ENTITY_REF;
+    }
+    <SUBTYPE_CONS> ";" { yy_pop_state(yyscanner); return T_SEMICOLON; }
+
+    <P1,P3,COMMENT,SEARCH_SCOPE,ID_CUR_SCOPE,ENUM_ID_LIST,ENUM_REF,
+     ENTITY_REF,DOT_ATTR,CONSTANT,LOCAL,INV_FOR,SUBTYPE_CONS> * {
+        yyerror("unregonised input: '%.*s'", pState->lineno, 20, yyscanner->tok);
+    }
+    
+    */
+
+    switch(yyscanner->mode) {
+        case yycP3:
+            goto lbl_p3;
+        case yycP1:
+            goto lbl_prescan;
+        case yycP2:
+            yyerror("internal error - scanner should not be able to reach mode P2 here!", pState->lineno);
+        default:
+            yyerror("invalid scanning mode!", pState->lineno);
+    }
+    
+lbl_prescan:
+    for (midx=0; midx < sizeof(scanner_modes); midx++ ) {
+        yyreset(yyscanner, scanner_modes[midx]);
+        pState->lineno = 1;
+
+lbl_p3:
+        while (yyscanner->cur < yyscanner->lim) {
+            if (ibufchk >= IBUFSZ)
+                yyerror("id buffer overflow - undefined behaviour!", pState->lineno);
+            
+            yyscanner->tok = yyscanner->cur;
+        
+            /*!use:re2c
+                re2c:define:YYCTYPE = 'unsigned char';
+                re2c:define:YYDEBUG = 'lexdebug' ;
+                re2c:define:YYGETCONDITION = 'yy_top_state(yyscanner)' ;
+                re2c:define:YYGETCONDITION:naked = 1 ;
+                re2c:define:YYSETCONDITION = '(void)(@@);' ;
+                re2c:define:YYSETCONDITION:naked = 1 ;
+                re2c:define:YYCURSOR = 'yyscanner->cur' ;
+                re2c:define:YYLIMIT = 'yyscanner->lim' ;
+                re2c:define:YYMARKER = 'yyscanner->mrk' ;
+                re2c:define:YYCTXMARKER = 'yyscanner->ctx' ;
+            */        
+        }
+        
+        if (yyscanner->mode == yycP3)
+            break;
+    }
+    
+    return 0;
+}
+
+void yyreset(struct exp_scanner *s, int new_mode) {
+    s->cur = s->tok = s->mrk = s->ctx = s->buffer->data;
+    memset(s->cond_stack->entry, 0, sizeof(int) * s->cond_stack->mlen);
+    s->cond_top = 0;
+    s->cond_stack->entry[0] = new_mode;
+    s->mode = new_mode;
+}
+
+void scope_push(struct YYSTATE *pState, int idx, struct exp_scanner *scanner) {
+    struct scopeList *stack = pState->scope_stack;
+    struct scope_def *scope = stack->entry + idx;
+    scope->parent = scanner->scope_top;
+    if (idx < 0) {
+        yyerror("+++scope_push() internal error, pushing nonsense!", pState->lineno);
+    }
+    scanner->scope_top = idx;
+}
+
+int scope_pop(struct YYSTATE *pState, struct exp_scanner *scanner) {
+    struct scopeList *stack = pState->scope_stack;
+    int idx = scanner->scope_top;
+    struct scope_def *scope = stack->entry + idx;
+    if (scope->parent < 0) {
+        yyerror("+++scope_pop() internal error, popping of the stack", 0);
+    }
+    scanner->scope_top = scope->parent;
+    return idx;
+}
+
+int scope_find(struct YYSTATE *pState, int itype, const char *sname, struct exp_scanner *scanner) {
+    struct scopeList *stack = pState->scope_stack;
+    struct scope_def *s;
+    int i, idx = -1, pidx = scanner->scope_top;
+    
+    /* need to match parent, name and type */
+    for (i = 0; i < stack->qty; i++) {
+        s = stack->entry + i;
+        if (s->parent == pidx && s->itype == itype && !strcasecmp(s->sname, sname)) {
+            idx = i;
+            break;
+        }
+    }
+    
+    if (idx < 0)
+        yyerror("+++ scope_find failed, internal error!\n", 0);
+    
+    return idx;
+}
+
+
+int scope_alloc(struct scopeList *stack, const char *typ, int tok) {
+    struct scope_def *sp;
+    const char *nx;
+    char *np;
+    int chk;
+
+    /* TODO: error checking */
+    chk = scopeListAllocMin(stack, stack->qty+1);
+    if (chk != BSTR_OK)
+        goto err_out;
+
+    sp = stack->entry + stack->qty;
+    sp->sname = NULL;
+    sp->stype = strdup(typ);
+    for (nx = typ, np = sp->stype; *nx; nx++, np++)
+        *np = toupper((unsigned char) *nx);
+    sp->itype = tok;
+    sp->symbols = bstrListCreate();
+    sp->tokens = intListCreate();
+    sp->parent = 0xDEADBEEF;
+    
+    if (!sp->symbols || !sp->tokens)
+        goto err_out;
+    return stack->qty++;
+    
+err_out:
+    yyerror("scope_alloc failure!", 0);
+}
+
+
+void add_symbol(struct scope_def *scope, const char *sym, int tok) {
+    struct bstrList *sl = scope->symbols;
+    struct intList *il = scope->tokens;
+    /* TODO: check for error */
+    bstrListAllocMin(sl, sl->qty+1);
+    intListAllocMin(il, il->qty+1);
+    sl->entry[sl->qty++] = bfromcstr(sym);
+    il->entry[il->qty++] = tok;
+}
+
+int resolve_symbol(struct YYSTATE *pState, const char *sym, struct exp_scanner *scanner) {
+    struct scopeList *stack = pState->scope_stack;
+    struct bstrList *sl;
+    struct intList *il;
+    int i, cnt = 0, itype = T_SIMPLE_REF;
+    struct scope_def *s = stack->entry + scanner->scope_top;
+    
+    while (s->itype != T_DOCROOT && !cnt) {
+        il = s->tokens;
+        sl = s->symbols;
+        for (i = 0; i < sl->qty; i++) {
+            if (!strcasecmp(sl->entry[i]->data, sym) && il->entry[i] != T_ENUMERATION_REF) {
+                itype = il->entry[i];
+                cnt++;
+            }
+        }
+        s = stack->entry + s->parent;
+    }
+
+    if (cnt > 1) {
+        yyerror("conflicting token types for id '%s'", 0, sym);
+    } else if (cnt > 0) {
+        return itype;
+    }
+
+    /* fallback - check for T_ENUMERATION_REF */
+    s = stack->entry + scanner->scope_top;
+    while (s->itype != T_DOCROOT) {
+        il = s->tokens;
+        sl = s->symbols;
+        for (i = 0; i < sl->qty; i++) {
+            if (!strcasecmp(sl->entry[i]->data, sym)) {
+                itype = il->entry[i];
+                cnt++;
+            }
+        }
+        s = stack->entry + s->parent;
+    }
+    
+    if (cnt > 1) {
+        yyerror("conflicting token types for id '%s'", 0, sym);
+    } 
+    
+    return itype;
+}
+
+void brkt_push(struct intList *nesting) {
+    int *brkt_count;
+    nesting->qty++;
+    brkt_count = nesting->entry + nesting->qty;
+    *brkt_count = 0;
+}
+
+int brkt_pop(struct intList *nesting) {
+    nesting->qty--;
+    return 0;
+}
+
+
+void yy_push_state(int new_state, struct exp_scanner *scanner) {
+    int *p;
+    size_t sz;
+    
+    if (scanner->cond_top + 1 < scanner->cond_stack->mlen) {
+        scanner->cond_stack->entry[++scanner->cond_top] = new_state;        
+    } else {
+        sz = scanner->cond_stack->mlen + 10;
+        p = realloc(scanner->cond_stack->entry, sz * sizeof(int));
+        if (!p)
+            yyerror("condition stack overflow!", 0);
+        scanner->cond_stack->entry = p;
+        scanner->cond_stack->mlen = sz;
+        scanner->cond_stack->entry[++scanner->cond_top] = new_state;
+    }
+}
+
+int yy_exch_state(int new_state, struct exp_scanner *scanner) {
+    int old_state;
+    
+    if (scanner->cond_top >= scanner->cond_stack->mlen)
+        yyerror("fatal, lexer condition stack is invalid!", 0);
+        
+    old_state = scanner->cond_stack->entry[scanner->cond_top];
+    scanner->cond_stack->entry[scanner->cond_top] = new_state;        
+    return old_state;
+}
+
+void yy_pop_state(struct exp_scanner *scanner) {
+    if (!scanner->cond_top)
+        yyerror("fatal, lexer trying invalid condition stack pop!", 0);
+    
+    scanner->cond_top--;
+    /* scanner->cond_stack->entry[scanner->cond_top--] = 0; */
+}
+
+int yy_top_state(struct exp_scanner *scanner) {
+    return scanner->cond_stack->entry[scanner->cond_top];
+}
+
+
+#if 0
+int main(int argc, char **argv)
+{
+    FILE *fp;
+    YYSTYPE yylval;
+    YYLTYPE yylloc;
+    struct exp_scanner *scanner;
+    struct scopeList *scope_stack;
+    
+    if (argc < 2) {
+        fprintf(stderr, "no input files\n");
+        return 1;
+    }
+
+    fp = fopen(argv[1], "r");
+    if (!fp)
+        yyerror("failed to open input!", 0);
+
+    yylex_init(&scanner, fp);
+
+    scope_stack = scopeListCreate();
+    scanner->scope_top = scope_alloc(pState->scope_stack, "DOCROOT", T_DOCROOT);
+    scope_stack->entry[scanner->scope_top].parent = -1;        
+    
+    while(lex(&yylval, &yylloc, scanner, scope_stack) != 0)
+        ;
+    
+    fclose(fp);
+}
 #endif
 
-    if (SCANtext_ready || SCANread()) {
-#ifdef keep_nul
-	if (!*SCANcurrent) {
-	    buffer[0] = SCAN_ESCAPE;
-	    *SCANcurrent = '0';
-	    return 1;
-	} else if ((*SCANcurrent == SCAN_ESCAPE) && !escaped) {
-	    escaped = 1;
-	    buffer[0] = SCAN_ESCAPE;
-	    return 1;
-	}
-	SCANbuffer.numRead--;
-#endif
-	buffer[0] = *(SCANcurrent++);
-	if (!isascii(buffer[0])) {
-	    ERRORreport_with_line(NONASCII_CHAR,yylineno,
-				  0xff & buffer[0]);
-	    buffer[0] = ' ';	/* substitute space */
-	}
-	return 1;
-    } else
-	return 0;
-}
-
-#define NEWLINE (yylineno++)
-
-/* when lex looks ahead over a newline, error messages get thrown off */
-/* Fortunately, we know when that occurs, so adjust for it by this hack */
-#define LINENO_FUDGE (yylineno - 1)
-
-/* added for re-initializing parser -snc 22-Apr-1992 */
-void
-SCAN_lex_init(char *filename, FILE *fp) {
-
-        /* return to initial scan buffer */
-        SCAN_current_buffer = 0;
-        *(SCANcurrent = SCANbuffer.text) = '\0';
-        SCANbuffer.readEof = false;
-        SCANbuffer.file = fp;
-	SCANbuffer.filename = (filename ? filename : "");
-	current_filename = SCANbuffer.filename;
-}
-%%
-digit	= [0-9];
-integer	= digit+;
-letter	= [A-Za-z];
-id_char	= [A-Za-z0-9_];
-
-<> => code
-
-/* Added * at the end of next rule (to make lexer faster) - DEL */
-<*>[\t ]* { IGNORE_TOKEN; }
-<*>'\n' {
-    NEWLINE;
-    IGNORE_TOKEN;
-}
-
-<code>"--"[^\n]*'\n' {
-    NEWLINE;
-    SCANsave_comment(yytext);
-    IGNORE_TOKEN;
-}
-
-<*>"(*" => comment {
-    /* nested comment errors will occur with most deeply nested - DEL */
-    if (nesting_level < MAX_NESTED_COMMENTS) {
-	open_comment[nesting_level].line = yylineno;
-	open_comment[nesting_level].filename = current_filename;
-    }
-    nesting_level++;
-    IGNORE_TOKEN;
-}
-
-<code> {
-
-/* real literal (like, think it'll fly?!) */
-(integer)'.'(integer)?([eE][+-]?(integer))? {
-    return SCANprocess_real_literal(yytext);
-}
-
-/* integer literal */
-integer {
-    return SCANprocess_integer_literal(yytext);
-}
-
-/* binary literal */
-'%'[01]+ {
-    return SCANprocess_binary_literal(yytext);
-}
-
-/* identifier/keyword */
-(letter)(id_char)* {
-    return SCANprocess_identifier_or_keyword(yytext);
-}
-
-/* bad identifier */
-[_A-Za-z]id_char* {
-    ERRORreport_with_line(BAD_IDENTIFIER, yylineno, yytext);
-    return SCANprocess_identifier_or_keyword(yytext);
-}
-
-/* string literal */
-"'"([^'\n]|"''")*"'" {
-    /* ' keep font-lock happy */
-    return SCANprocess_string(yytext);
-}
-
-"'"([^'\n]|"''")*'\n' {
-    ERRORreport_with_line(UNTERMINATED_STRING, LINENO_FUDGE);
-    NEWLINE;
-    return SCANprocess_string(yytext);
-}
-
-'"'[^\"\n]*'"' {
-    return SCANprocess_encoded_string(yytext);
-}
-
-'"'[^\"\n]*'\n' {
-    ERRORreport_with_line(UNTERMINATED_STRING, LINENO_FUDGE);
-    NEWLINE;
-    return SCANprocess_encoded_string(yytext);
-}
-
-';'[ \t]*"--"[^\n]*'\n' {
-    NEWLINE;
-    return SCANprocess_semicolon(yytext, 1);
-}
-
-";"	{ return SCANprocess_semicolon(yytext, 0); }
-":="	{ return TOK_ASSIGNMENT; }
-":"	{ return TOK_COLON; }
-","	{ return TOK_COMMA; }
-"||"	{ return TOK_CONCAT_OP; }
-"."	{ return TOK_DOT; }
-"="	{ return TOK_EQUAL; }
-"**"	{ return TOK_EXP; }
-"|"	{ return TOK_SUCH_THAT; }
-"<*"	{ return TOK_ALL_IN; }
-">="	{ return TOK_GREATER_EQUAL; }
-">"	{ return TOK_GREATER_THAN; }
-"?"	{ return TOK_QUESTION_MARK; }
-":=:"	{ return TOK_INST_EQUAL; }
-":<>:"	{ return TOK_INST_NOT_EQUAL; }
-"["	{ return TOK_LEFT_BRACKET; }
-"{"	{ return TOK_LEFT_CURL; }
-"("	{ return TOK_LEFT_PAREN; }
-"<="	{ return TOK_LESS_EQUAL; }
-"<"	{ return TOK_LESS_THAN; }
-"-"	{ return TOK_MINUS; }
-"<>"	{ return TOK_NOT_EQUAL; }
-"+"	{ return TOK_PLUS; }
-"/"	{ return TOK_REAL_DIV; }
-"]"	{ return TOK_RIGHT_BRACKET; }
-"}"	{ return TOK_RIGHT_CURL; }
-")"	{ return TOK_RIGHT_PAREN; }
-"*"	{ return TOK_TIMES; }
-"\\"	{ return TOK_BACKSLASH; }
-
-} /* <code> */
-
-<return_end_schema>'X' => code {
-    return TOK_END_SCHEMA;
-}
-
-<comment>"*)" {
-    if (0 == --nesting_level) {
-	YYSETCONDITION(code);
-    }
-    IGNORE_TOKEN;
-}
-
-<code>"*)" {
-    ERRORreport_with_line(UNMATCHED_CLOSE_COMMENT, yylineno);
-    IGNORE_TOKEN;
-}	
-
-<comment> {
-
-'\n' {
-    NEWLINE;
-    IGNORE_TOKEN;
-}
-[^*()\n]* { IGNORE_TOKEN; }
-[*()] { IGNORE_TOKEN; }
-
-} /* <comment> */
-
-/* As per N15, 7.1.5.3, all other recognized chars are incorrect - DEL */
-<code>[$%&@\^{}~] {
-    ERRORreport_with_line(UNEXPECTED_CHARACTER,yylineno,yytext[0]);
-    IGNORE_TOKEN;
-}
-
-/* ... and unrecognized characters are treated as whitespace - DEL */
-<*>[^] { IGNORE_TOKEN; }
-
-%%
-void
-SCANskip_to_end_schema(perplex_t scanner)
-{
-    while (yylex(scanner) != TOK_END_SCHEMA);
-
-    perplexUnput(scanner, 'X');	/* any old character */
-
-    YYSETCONDITION(return_end_schema);
+void lexdebug(int state, unsigned char symbol) {
+    if (state)
+        fprintf(stderr, "DBG(%i): %c\n", (state), (symbol));
 }

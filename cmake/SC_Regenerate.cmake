@@ -26,7 +26,7 @@ endif (NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "AUTO" AND NOT "${SC_GENERATE_
 # If the generators have not been turned off, we need to check for them
 if(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
   find_package(LEMON ${_verbosity})
-  find_package(RE2C ${_verbosity})
+  find_package(RE2C 1.0.3 ${_verbosity})
   find_package(PERPLEX ${_verbosity})
   if(LEMON_EXECUTABLE AND LEMON_TEMPLATE AND PERPLEX_EXECUTABLE AND PERPLEX_TEMPLATE AND RE2C_EXECUTABLE)
     # Templates may be anywhere - make sure we have a stable path if a relative
