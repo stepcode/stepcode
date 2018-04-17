@@ -71,7 +71,7 @@ typedef HashEntry       DictionaryEntry;
 /********************/
 /* global variables */
 /********************/
-
+/*TODO: surely this is not a good thing?! */
 extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT lookup routines to type of object found */
 
 /*******************************/
@@ -79,9 +79,7 @@ extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT look
 /*******************************/
 
 #define DICTcreate(estimated_max_size)  HASHcreate(estimated_max_size)
-/** should really can DICTdo_init and rename do_type_init to do_init! */
-#define DICTdo_init(dict,de)        HASHlistinit((dict),(de))
-#define DICTdo_type_init(dict,de,t) HASHlistinit_by_type((dict),(de),(t))
+#define DICTdo_init(dict,de,t) HASHlistinit_by_type((dict),(de),(t))
 #define DICTdo_end(hash_entry)      HASHlistend(hash_entry)
 
 /** modify dictionary entry in-place */
@@ -99,9 +97,11 @@ extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT look
 
 extern SC_EXPRESS_EXPORT void     DICTinitialize( void );
 extern SC_EXPRESS_EXPORT void     DICTcleanup( void );
+/* TODO: why is there DICT_define and DICTdefine? with the same signature and almost same name?! */
 extern SC_EXPRESS_EXPORT int      DICTdefine( Dictionary, char *, void *, Symbol *, char );
 extern SC_EXPRESS_EXPORT int      DICT_define( Dictionary, char *, void *, Symbol *, char );
 extern SC_EXPRESS_EXPORT void     DICTundefine( Dictionary, char * );
+/* TODO: could DICTlookup be implemented more generically using function pointers? */
 extern SC_EXPRESS_EXPORT void *   DICTlookup( Dictionary, char * );
 extern SC_EXPRESS_EXPORT void *   DICTlookup_symbol( Dictionary, char *, Symbol ** );
 extern SC_EXPRESS_EXPORT void *   DICTdo( DictionaryEntry * );

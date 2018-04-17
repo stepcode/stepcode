@@ -499,7 +499,7 @@ static void RENAMEresolve_enum( Type t, Schema s ) {
     DictionaryEntry de;
     Expression      x;
 
-    DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
+    DICTdo_init( t->symbol_table, &de, OBJ_EXPRESSION );
     while( 0 != ( x = ( Expression )DICTdo( &de ) ) ) {
         /*      SCHEMAadd_use(s, v*/
         /*          raw(x->symbol.name);*/
@@ -668,7 +668,7 @@ void EXPRESSresolve( Express model ) {
     }
 
     /* connect the object in each rename clause to the real object */
-    DICTdo_type_init( model->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
     while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
         if( is_not_resolvable( schema ) ) {
             continue;
@@ -703,7 +703,7 @@ void EXPRESSresolve( Express model ) {
         fprintf( stderr, "pass %d: resolving sub and supertypes\n", EXPRESSpass );
     }
 
-    DICTdo_type_init( model->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
     while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
         if( is_not_resolvable( schema ) ) {
             continue;
@@ -734,7 +734,7 @@ void EXPRESSresolve( Express model ) {
         fprintf( stderr, "pass %d: resolving implied USE's\n", EXPRESSpass );
     }
 
-    DICTdo_type_init( model->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
     while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
         if( is_not_resolvable( schema ) ) {
             continue;
@@ -746,7 +746,7 @@ void EXPRESSresolve( Express model ) {
         }
 
         if( schema->u.schema->usedict ) {
-            DICTdo_init( schema->u.schema->usedict, &fg )
+            DICTdo_init( schema->u.schema->usedict, &fg, '*' )
             while( 0 != ( r = ( Rename )DICTdo( &fg ) ) ) {
                 if( ( r->type = OBJ_TYPE ) && ( ( Type )r->object )->body &&
                         TYPEis_enumeration( ( Type )r->object ) ) {
@@ -771,7 +771,7 @@ void EXPRESSresolve( Express model ) {
     }
 
     /* mark everything resolved if possible */
-    DICTdo_init( model->symbol_table, &de );
+    DICTdo_init( model->symbol_table, &de, '*' );
     while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
         if( is_resolvable( schema ) ) {
             resolved_all( schema );

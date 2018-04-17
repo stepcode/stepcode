@@ -497,7 +497,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
         /**************/
         /* add global RULEs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
+        DICTdo_init( schema->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, RULEto_string( r ) );
@@ -506,7 +506,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         }
         /**************/
         /* add FUNCTIONs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_FUNCTION );
+        DICTdo_init( schema->symbol_table, &de, OBJ_FUNCTION );
         while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, FUNCto_string( f ) );
@@ -514,7 +514,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         }
 
         /* add PROCEDUREs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_PROCEDURE );
+        DICTdo_init( schema->symbol_table, &de, OBJ_PROCEDURE );
         while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
             fprintf( createall, "    str.clear();\n" );
             format_for_std_stringout( createall, PROCto_string( p ) );
@@ -582,7 +582,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
              "// dictionary (Registry) handle since it doesn't have a\n",
              "// predetermined way to access to the handle.\n" );
     fprintf( schema_cc, "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName) {\n" );
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     schema = ( Scope )DICTdo( &de );
     fprintf( schema_cc, "    if(!strcmp(schemaName, \"%s\"))\n", SCHEMAget_name( schema ) );
     fprintf( schema_cc, "        return (SDAI_Model_contents_ptr) new SdaiModel_contents_%s; \n", SCHEMAget_name( schema ) );
@@ -673,12 +673,12 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( schemainit, "         %sInit (reg);\n", schnm );
 
     /**********  do all schemas ***********/
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         numberAttributes( schema );
     }
 
-    DICTdo_init( express->symbol_table, &de );
+    DICTdo_init( express->symbol_table, &de, '*' );
     bool first = true;
     while( 0 != ( schema = ( Scope )DICTdo( &de ) ) ) {
         if( !first ) {

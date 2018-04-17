@@ -73,7 +73,7 @@ void find_and_print( Express model ) {
     DictionaryEntry de;
     Schema s;
     Entity e;
-    DICTdo_init( model->symbol_table, &de );
+    DICTdo_init( model->symbol_table, &de, '*' );
     while( 0 != ( s = (Schema) DICTdo( &de ) ) ) {
         printf( "Schema %s\n", s->symbol.name );
         e = (Entity) DICTlookup( s->symbol_table, entityName );

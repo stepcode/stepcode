@@ -15,7 +15,7 @@ void EXPRESSout( Express e ) {
 
     exppp_init();
 
-    DICTdo_init( e->symbol_table, &de );
+    DICTdo_init( e->symbol_table, &de, '*' );
     while( 0 != ( s = ( Schema )DICTdo( &de ) ) ) {
         ( void ) SCHEMAout( s );
     }

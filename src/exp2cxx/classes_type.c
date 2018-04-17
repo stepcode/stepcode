@@ -258,7 +258,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
 
     fprintf( f, "const char *\n%s::element_at (int n) const  {\n", n );
     fprintf( f, "  switch (n)  {\n" );
-    DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
+    DICTdo_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
 	c_enum_ele[BUFSIZ-1] = '\0';
@@ -279,7 +279,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     fprintf( f, "\n%s::operator %s () const {\n", n,
              EnumName( TYPEget_name( type ) ) );
     fprintf( f, "  switch (v) {\n" );
-    DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
+    DICTdo_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
         fprintf( f, "        case %s        :  ", c_enum_ele );

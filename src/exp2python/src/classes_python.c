@@ -1093,7 +1093,7 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         DictionaryEntry de;
 
         /* TODO: if incr != 0 && ((incr > 0 && start < stop) || (incr < 0 && start > stop)): */
-        DICTdo_init( loop->scope->symbol_table, &de );
+        DICTdo_init( loop->scope->symbol_table, &de, '*' );
         v = ( Variable )DICTdo( &de );
         fprintf( file, "for %s in range(", v->name->symbol.name );
         EXPRESSION_out( loop->scope->u.incr->init, 0 , file );
@@ -1729,7 +1729,7 @@ TYPEenum_lib_print( const Type type, FILE * f ) {
     }
 
     /*  set up the dictionary info  */
-    DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
+    DICTdo_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         if( is_python_keyword( EXPget_name( expr ) ) ) {
             fprintf( f, "%s_ ", EXPget_name( expr ) );

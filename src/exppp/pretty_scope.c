@@ -47,14 +47,14 @@ void SCOPErules_out( Scope s, int level ) {
     DictionaryEntry de;
 
     if( exppp_alphabetize == false ) {
-        DICTdo_type_init( s->symbol_table, &de, OBJ_RULE );
+        DICTdo_init( s->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
             RULE_out( r, level );
         }
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( s->symbol_table, &de, OBJ_RULE );
+        DICTdo_init( s->symbol_table, &de, OBJ_RULE );
         while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
             SCOPEadd_inorder( alpha, r );
         }
@@ -74,14 +74,14 @@ void SCOPEfuncs_out( Scope s, int level ) {
     DictionaryEntry de;
 
     if( exppp_alphabetize == false ) {
-        DICTdo_type_init( s->symbol_table, &de, OBJ_FUNCTION );
+        DICTdo_init( s->symbol_table, &de, OBJ_FUNCTION );
         while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
             FUNC_out( f, level );
         }
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( s->symbol_table, &de, OBJ_FUNCTION );
+        DICTdo_init( s->symbol_table, &de, OBJ_FUNCTION );
         while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
             SCOPEadd_inorder( alpha, f );
         }
@@ -101,14 +101,14 @@ void SCOPEprocs_out( Scope s, int level ) {
     DictionaryEntry de;
 
     if( exppp_alphabetize == false ) {
-        DICTdo_type_init( s->symbol_table, &de, OBJ_PROCEDURE );
+        DICTdo_init( s->symbol_table, &de, OBJ_PROCEDURE );
         while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
             PROC_out( p, level );
         }
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( s->symbol_table, &de, OBJ_PROCEDURE );
+        DICTdo_init( s->symbol_table, &de, OBJ_PROCEDURE );
         while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
             SCOPEadd_inorder( alpha, p );
         }
@@ -188,7 +188,7 @@ void SCOPEconsts_out( Scope s, int level ) {
     Dictionary d = s->symbol_table;
 
     /* checks length of constant names */
-    DICTdo_type_init( d, &de, OBJ_VARIABLE );
+    DICTdo_init( d, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
         if( !v->flags.constant ) {
             continue;
@@ -215,7 +215,7 @@ void SCOPEconsts_out( Scope s, int level ) {
     indent2 = level + max_indent + strlen( ": ab" ) + exppp_continuation_indent;
 
     if( !exppp_alphabetize ) {
-        DICTdo_type_init( d, &de, OBJ_VARIABLE );
+        DICTdo_init( d, &de, OBJ_VARIABLE );
         while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
             if( !v->flags.constant ) {
                 continue;
@@ -225,7 +225,7 @@ void SCOPEconsts_out( Scope s, int level ) {
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( d, &de, OBJ_VARIABLE );
+        DICTdo_init( d, &de, OBJ_VARIABLE );
         while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
             if( !v->flags.constant ) {
                 continue;
@@ -258,7 +258,7 @@ void SCOPElocals_out( Scope s, int level ) {
     size_t max_indent = 0;
     Dictionary d = s->symbol_table;
 
-    DICTdo_type_init( d, &de, OBJ_VARIABLE );
+    DICTdo_init( d, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
         if( v->flags.constant ) {
             continue;
@@ -280,7 +280,7 @@ void SCOPElocals_out( Scope s, int level ) {
     raw( "%*sLOCAL\n", level, "" );
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
 
-    DICTdo_type_init( d, &de, OBJ_VARIABLE );
+    DICTdo_init( d, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
         if( v->flags.constant ) {
             continue;
@@ -325,14 +325,14 @@ void SCOPEentities_out( Scope s, int level ) {
     DictionaryEntry de;
 
     if( exppp_alphabetize == false ) {
-        DICTdo_type_init( s->symbol_table, &de, OBJ_ENTITY );
+        DICTdo_init( s->symbol_table, &de, OBJ_ENTITY );
         while( 0 != ( e = ( Entity )DICTdo( &de ) ) ) {
             ENTITY_out( e, level );
         }
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( s->symbol_table, &de, OBJ_ENTITY );
+        DICTdo_init( s->symbol_table, &de, OBJ_ENTITY );
         while( 0 != ( e = ( Entity )DICTdo( &de ) ) ) {
             SCOPEadd_inorder( alpha, e );
         }
@@ -351,14 +351,14 @@ void SCOPEtypes_out( Scope s, int level ) {
     Type t;
 
     if( exppp_alphabetize == false ) {
-        DICTdo_type_init( s->symbol_table, &de, OBJ_TYPE );
+        DICTdo_init( s->symbol_table, &de, OBJ_TYPE );
         while( 0 != ( t = ( Type )DICTdo( &de ) ) ) {
             TYPE_out( t, level );
         }
     } else {
         Linked_List alpha = LISTcreate();
 
-        DICTdo_type_init( s->symbol_table, &de, OBJ_TYPE );
+        DICTdo_init( s->symbol_table, &de, OBJ_TYPE );
         while( 0 != ( t = ( Type )DICTdo( &de ) ) ) {
             SCOPEadd_inorder( alpha, t );
         }

@@ -74,7 +74,7 @@ void print_schemas_separate( Express express, FILES * files )
     /* fprintf( files->create, "    Interface_spec_ptr is;\n    Used_item_ptr ui;\n    Referenced_item_ptr ri;\n    Uniqueness_rule_ptr ur;\n    Where_rule_ptr wr;\n    Global_rule_ptr gr;\n" ); */
     while( !complete ) {
         complete = TRUE;
-        DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+        DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
         while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
             if( schema->search_id == UNPROCESSED ) {
                 /* i.e., if the schema has more ents/types to process in it */
@@ -117,7 +117,7 @@ void print_schemas_separate( Express express, FILES * files )
     }
 
     /*
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         //fprintf( files->create,
         //         "\t//////////////// USE statements\n" );
@@ -131,7 +131,7 @@ void print_schemas_separate( Express express, FILES * files )
     /* Before closing, we have three more situations to deal with (i.e., three
     // types of declarations etc. which could only be printed at the end).
     // Each is explained in the header section of its respective function. */
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         /* (These two tasks are totally unrelated but are done in the same loop
         // for efficiency.) */
@@ -139,7 +139,7 @@ void print_schemas_separate( Express express, FILES * files )
     }
     /* Third situation:  (Must be dealt with after first, see header comments
     // of addAggrTypedefs.) */
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         /* addAggrTypedefs( schema, files->classes ); */
         addAggrTypedefs( schema );
@@ -172,7 +172,7 @@ static void initializeMarks( Express express ) {
     DictionaryEntry de_sch, de_ent, de_type;
     Schema schema;
 
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         schema->search_id = UNPROCESSED;
         schema->clientData = ( int * )malloc( sizeof( int ) );
@@ -627,7 +627,7 @@ static void addUseRefNames( Schema schema, FILE * create )
     static int firsttime = TRUE;
 
     if( ( useRefDict = schema->u.schema->usedict ) != NULL ) {
-        DICTdo_init( useRefDict, &de );
+        DICTdo_init( useRefDict, &de, '*' );
         while( ( rnm = ( Rename * )DICTdo( &de ) ) != 0 ) {
             oldnm = ( ( Scope )rnm->object )->symbol.name;
             if( ( strcmp( oldnm, rnm->nnew->name ) ) ) {
@@ -657,7 +657,7 @@ static void addUseRefNames( Schema schema, FILE * create )
         }
     }
     if( ( useRefDict = schema->u.schema->refdict ) != NULL ) {
-        DICTdo_init( useRefDict, &de );
+        DICTdo_init( useRefDict, &de, '*' );
         while( ( rnm = ( Rename * )DICTdo( &de ) ) != 0 ) {
             oldnm = ( ( Scope )rnm->object )->symbol.name;
             if( ( strcmp( oldnm, rnm->nnew->name ) ) ) {

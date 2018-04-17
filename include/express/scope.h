@@ -115,16 +115,16 @@ struct Scope_ {
 #define SCOPEput_clientData(s,d)    ((s)->clientData = (d))
 
 
-#define SCOPEdo_types(s,t,de) DICTdo_type_init(s->symbol_table,&de,OBJ_TYPE);{\
+#define SCOPEdo_types(s,t,de) DICTdo_init(s->symbol_table,&de,OBJ_TYPE);{\
                 Type t; \
                   while (0 != (t = (Type)DICTdo(&de))) {
-#define SCOPEdo_entities(s,t,de) DICTdo_type_init(s->symbol_table,&de,OBJ_ENTITY); { \
+#define SCOPEdo_entities(s,t,de) DICTdo_init(s->symbol_table,&de,OBJ_ENTITY); { \
                 Entity t; \
                   while (0 != (t = (Entity)DICTdo(&de))) {
-#define SCOPEdo_functions(s,t,de) DICTdo_type_init(s->symbol_table,&de,OBJ_FUNCTION); { \
+#define SCOPEdo_functions(s,t,de) DICTdo_init(s->symbol_table,&de,OBJ_FUNCTION); { \
                 Entity t; \
                   while (0 != (t = (Entity)DICTdo(&de))) {
-#define SCOPEdo_rules(s,t,de) DICTdo_type_init(s->symbol_table,&de,OBJ_RULE); { \
+#define SCOPEdo_rules(s,t,de) DICTdo_init(s->symbol_table,&de,OBJ_RULE); { \
                 Entity t; \
                   while (0 != (t = (Entity)DICTdo(&de))) {
 

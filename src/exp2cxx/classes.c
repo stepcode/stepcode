@@ -128,7 +128,7 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
     /* sort each list by schema */
 
     /* step 1: for each entry, store it in a schema-specific list */
-    DICTdo_init( refdict, &de );
+    DICTdo_init( refdict, &de, '*' );
     while( 0 != ( r = ( struct Rename * )DICTdo( &de ) ) ) {
         Linked_List wlist;
 
@@ -141,7 +141,7 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
     }
 
     /* step 2: for each list, print out the renames */
-    DICTdo_init( dict, &de );
+    DICTdo_init( dict, &de, '*' );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
         LISTdo( list, re, struct Rename * ) {

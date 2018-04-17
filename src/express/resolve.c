@@ -808,7 +808,7 @@ void ENTITYresolve_expressions( Entity e ) {
         status |= is_resolve_failed( attr->name );
     } LISTod;
 
-    DICTdo_type_init( e->symbol_table, &de, OBJ_VARIABLE );
+    DICTdo_init( e->symbol_table, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
         if( !is_resolve_failed( v->name ) ) {
             TYPEresolve_expressions( v->type, e );
@@ -934,7 +934,7 @@ void SCOPEresolve_types( Scope s ) {
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
-    DICTdo_init( s->symbol_table, &de );
+    DICTdo_init( s->symbol_table, &de, '*' );
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( DICT_type ) {
             case OBJ_TYPE:

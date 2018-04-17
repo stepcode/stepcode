@@ -21,7 +21,7 @@ void LOOPout( struct Loop_ *loop, int level ) {
     if( loop->scope ) {
         DictionaryEntry de;
 
-        DICTdo_init( loop->scope->symbol_table, &de );
+        DICTdo_init( loop->scope->symbol_table, &de, '*' );
         v = ( Variable )DICTdo( &de );
         wrap( " %s := ", v->name->symbol.name );
         EXPR_out( loop->scope->u.incr->init, 0 );

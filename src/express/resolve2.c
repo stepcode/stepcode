@@ -7,6 +7,9 @@
 #include "express/schema.h"
 #include "express/resolve.h"
 
+
+/********************************new****************************************/
+
 void SCOPEresolve_subsupers( Scope scope ) {
     DictionaryEntry de;
     void *x;
@@ -20,7 +23,7 @@ void SCOPEresolve_subsupers( Scope scope ) {
                  scope->symbol.name, OBJget_type( scope->type ) );
     }
 
-    DICTdo_init( scope->symbol_table, &de );
+    DICTdo_init( scope->symbol_table, &de, '*' );
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( type = DICT_type ) {
             case OBJ_ENTITY:
@@ -58,7 +61,7 @@ void SCOPEresolve_expressions_statements( Scope s ) {
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
-    DICTdo_init( s->symbol_table, &de );
+    DICTdo_init( s->symbol_table, &de, '*' );
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( DICT_type ) {
             case OBJ_SCHEMA:

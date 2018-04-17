@@ -232,7 +232,7 @@ getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
              "// predetermined way to access to the handle.\n" );
     fprintf( schema_cc,
              "\nSCLP23(Model_contents_ptr) GetModelContents(char *schemaName)\n{\n" );
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     schema = ( Scope )DICTdo( &de );
     fprintf( schema_cc,
              "    if(!strcmp(schemaName, \"%s\"))\n",
@@ -285,7 +285,7 @@ EXPRESSPrint( Express express, FILES * files ) {
     }
 
     /**********  do all schemas ***********/
-    DICTdo_init( express->symbol_table, &de );
+    DICTdo_init( express->symbol_table, &de, '*' );
     while( 0 != ( schema = ( Scope )DICTdo( &de ) ) ) {
         SCOPEPrint( schema, files, schema );
     }

@@ -147,12 +147,12 @@ void TYPE_body_out( Type t, int level ) {
              * to a temporary array.  This is trivial since all buckets
              * will get filled with one and only one object.
              */
-            DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
+            DICTdo_init( t->symbol_table, &de, OBJ_EXPRESSION );
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 count++;
             }
             names = ( char ** )sc_malloc( count * sizeof( char * ) );
-            DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
+            DICTdo_init( t->symbol_table, &de, OBJ_EXPRESSION );
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 names[expr->u.integer - 1] = expr->symbol.name;
             }

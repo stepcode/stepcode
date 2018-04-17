@@ -38,7 +38,7 @@ ComplexCollect::ComplexCollect( Express express )
     initEnts( express );
 
     // Next loop through all the entities, building ComplexLists:
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         SCOPEdo_entities( schema, ent, de_ent )
         if( ent->search_id == TRUE ) {
@@ -96,7 +96,7 @@ static void initEnts( Express express )
     DictionaryEntry de_sch, de_ent;
     Schema schema;
 
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         SCOPEdo_entities( schema, ent, de_ent )
         ent->search_id = FALSE;
@@ -256,7 +256,7 @@ static Entity findEnt( Entity ent0, char * name )
     // If we still haven't found it, look through all the entities in the
     // express file:
     express = schema->superscope;
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( sch = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         if( sch == schema ) {
             // Don't redo the schema which contains ent0 - we did it already.

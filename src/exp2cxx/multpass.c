@@ -75,13 +75,13 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /* TODO only print gr, wr, str as needed, from SCHEMAprint in classes_wrapper.cc? */
     fprintf( files->create, "    Global_rule_ptr gr;\n    Where_rule_ptr wr;\n    std::string str; //for large strings such as functions or global rules\n" );
 
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         numberAttributes( schema );
     }
     while( !complete ) {
         complete = true;
-        DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+        DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
         while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
             if( schema->search_id == UNPROCESSED ) {
                 /* i.e., if the schema has more ents/types to process in it */
@@ -126,7 +126,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /*******************
     *******************/
 
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         fprintf( files->create,
                  "//////////////// USE statements\n" );
@@ -141,7 +141,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     /* Before closing, we have three more situations to deal with (i.e., three
     // types of declarations etc. which could only be printed at the end).
     // Each is explained in the header section of its respective function. */
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         /* (These two tasks are totally unrelated but are done in the same loop
         // for efficiency.) */
@@ -150,7 +150,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     }
     /* Third situation:  (Must be dealt with after first, see header comments
     // of addAggrTypedefs.) */
-    DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         addAggrTypedefs( schema, files->classes );
     }
@@ -186,7 +186,7 @@ static void initializeMarks( Express express )
     DictionaryEntry de_sch, de_ent, de_type;
     Schema schema;
 
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         schema->search_id = UNPROCESSED;
         schema->clientData = ( int * )sc_malloc( sizeof( int ) );
@@ -204,7 +204,7 @@ static void cleanupMarks( Express express ) {
     DictionaryEntry de_sch;
     Schema schema;
 
-    DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
+    DICTdo_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         if( schema->clientData ) {
             sc_free( schema->clientData );
@@ -695,7 +695,7 @@ static void addUseRefNames( Schema schema, FILE * create ) {
     static bool firsttime = true;
 
     if( ( useRefDict = schema->u.schema->usedict ) != NULL ) {
-        DICTdo_init( useRefDict, &de );
+        DICTdo_init( useRefDict, &de, '*' );
         while( ( rnm = ( Rename * )DICTdo( &de ) ) != 0 ) {
             oldnm = ( ( Scope )rnm->object )->symbol.name;
             if( ( strcmp( oldnm, rnm->nnew->name ) ) ) {
@@ -724,7 +724,7 @@ static void addUseRefNames( Schema schema, FILE * create ) {
         }
     }
     if( ( useRefDict = schema->u.schema->refdict ) != NULL ) {
-        DICTdo_init( useRefDict, &de );
+        DICTdo_init( useRefDict, &de, '*' );
         while( ( rnm = ( Rename * )DICTdo( &de ) ) != 0 ) {
             oldnm = ( ( Scope )rnm->object )->symbol.name;
             if( ( strcmp( oldnm, rnm->nnew->name ) ) ) {

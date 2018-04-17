@@ -26,7 +26,7 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
     /* sort each list by schema */
 
     /* step 1: for each entry, store it in a schema-specific list */
-    DICTdo_init( refdict, &de );
+    DICTdo_init( refdict, &de, '*' );
     while( 0 != ( ren = ( struct Rename * )DICTdo( &de ) ) ) {
         Linked_List nameList;
 
@@ -41,7 +41,7 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
     /* step 2: for each list, print out the renames */
     level = 6;  /* no special reason, feels good */
     indent2 = level + exppp_continuation_indent;
-    DICTdo_init( dict, &de );
+    DICTdo_init( dict, &de, '*' );
     while( 0 != ( list = ( Linked_List )DICTdo( &de ) ) ) {
         bool first_time = true;
         LISTdo( list, r, struct Rename * ) {
