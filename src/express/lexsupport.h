@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include "bstrlib.h"
 
+#include "dict.h"
+
 #define yyerror_helper(fmt, lineno, ...) \
     do { fprintf(stderr, "error, line %i: " fmt "\n", (lineno), __VA_ARGS__); exit(1); } while (0)
 #define yyerror(...) yyerror_helper(__VA_ARGS__, 0)
@@ -36,12 +38,34 @@ struct exp_scanner {
 };
 
 struct scope_def {
+    int parent;
+    
+    /* TODO: absort into symbol */
     char *sname;
     char *stype;
     int itype;
-    int parent;
+    
+    /* TODO: absorb into symbol_table */
     struct bstrList *symbols;
     struct intList *tokens;
+    
+    /* migration to existing API */
+    Symbol symbol;
+    Dictionary symbol_table;
+    ClientData clientData;
+    
+    /* DISCUSS: C11 adds anonymous unions - IMO ideal in a structure like this */
+    union {
+        struct Procedure_ * proc;
+        struct Function_ * func;
+        struct Rule_ * rule;
+        struct Entity_ * entity;
+        struct Schema_ * schema;
+        struct Express_ * express;
+        struct Increment_ * incr;
+        struct TypeHead_ * type;
+        /* TBD: struct Query_ * query; */
+    } u;
 };
 
 struct scopeList {
