@@ -197,9 +197,7 @@ extern SC_EXPRESS_EXPORT Hash_Table   HASHcreate( unsigned );
 extern SC_EXPRESS_EXPORT Hash_Table   HASHcopy( Hash_Table );
 extern SC_EXPRESS_EXPORT void HASHdestroy( Hash_Table );
 extern SC_EXPRESS_EXPORT Element  HASHsearch( Hash_Table, Element, Action );
-/* TODO: simplification - rename HASHlistinit_by_type and factor out existing HASHlistinit */
-extern SC_EXPRESS_EXPORT void HASHlistinit( Hash_Table, HashEntry * );
-extern SC_EXPRESS_EXPORT void HASHlistinit_by_type( Hash_Table, HashEntry *, char );
+extern SC_EXPRESS_EXPORT void HASHlistinit( Hash_Table, HashEntry *, char );
 extern SC_EXPRESS_EXPORT Element  HASHlist( HashEntry * );
 
 #endif /*HASH_H*/

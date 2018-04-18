@@ -203,7 +203,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
      * Modified Jan 2012 by MAP - moving enums to own dictionary */
     if( scope->enum_table ) {
-        HASHlistinit_by_type( scope->enum_table, &de, OBJ_TYPE );
+        HASHlistinit( scope->enum_table, &de, OBJ_TYPE );
         Type t;
         while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
             // First check for one exception:  Say enumeration type B is defined
@@ -239,7 +239,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files->inc, "//    ***** Redefined Enumerations:\n" );
         /* The following was `SCOPEdo_types( scope, t, de ) ... SCOPEod;`
         * Modified Jan 2012 by MAP - moving enums to own dictionary */
-        HASHlistinit_by_type( scope->enum_table, &de, OBJ_TYPE );
+        HASHlistinit( scope->enum_table, &de, OBJ_TYPE );
         Type t;
         while( 0 != ( t = ( Type ) DICTdo( &de ) ) ) {
             if( t->search_id == CANPROCESS && TYPEis_enumeration( t ) ) {

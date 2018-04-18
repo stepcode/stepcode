@@ -79,7 +79,7 @@ extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT look
 /*******************************/
 
 #define DICTcreate(estimated_max_size)  HASHcreate(estimated_max_size)
-#define DICTdo_init(dict,de,t) HASHlistinit_by_type((dict),(de),(t))
+#define DICTdo_init(dict,de,t) HASHlistinit((dict),(de),(t))
 #define DICTdo_end(hash_entry)      HASHlistend(hash_entry)
 
 /** modify dictionary entry in-place */

@@ -180,21 +180,8 @@ HASHcreate( unsigned count ) {
     return( table );
 }
 
-/* initialize pointer to beginning of hash table so we can step through it */
-/* on repeated calls to HASHlist - DEL */
 void
-HASHlistinit( Hash_Table table, HashEntry * he ) {
-    he->i = he->j = 0;
-    he->p = 0;
-    he->table = table;
-    he->type = '*';
-#if 0
-    table->in_use = 1;
-#endif
-}
-
-void
-HASHlistinit_by_type( Hash_Table table, HashEntry * he, char type ) {
+HASHlistinit( Hash_Table table, HashEntry * he, char type ) {
     he->i = he->j = 0;
     he->p = 0;
     he->table = table;
@@ -554,7 +541,7 @@ main() {
     e = HASHsearch( t, &e1, HASH_INSERT );
     e = HASHsearch( t, &e2, HASH_INSERT );
     e = HASHsearch( t, &e3, HASH_INSERT );
-    HASHlistinit( t, &he );
+    HASHlistinit( t, &he, '*' );
     for( ;; ) {
         e = HASHlist( &he );
         if( !e ) {
