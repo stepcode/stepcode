@@ -59,6 +59,10 @@ typedef struct Symbol_ Symbol;
 
 struct Symbol_ {
     char * name;
+#ifdef YYDEBUG
+    char * stype;
+#endif
+    int itype;
     const char * filename;
     int line;
     char resolved;
@@ -89,6 +93,6 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /***********************/
 
 extern SC_EXPRESS_EXPORT void SYMBOLinitialize( void );
-SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int line, const char * filename );
+SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int ref_typ, int line, const char * filename );
 
 #endif    /*  SYMBOL_H  */

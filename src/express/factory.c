@@ -222,9 +222,10 @@ TypeBody TYPEBODYcreate( enum type_enum type ) {
     return tb;
 }
 
-Symbol * SYMBOLcreate( char * name, int line, const char * filename ) {
+Symbol * SYMBOLcreate( char * name, int ref_typ, int line, const char * filename ) {
     Symbol * sym = SYMBOL_new();
     sym->name = name;
+    sym->ref_typ = ref_typ;
     sym->line = line;
     sym->filename = filename; /* NOTE this used the global 'current_filename',
                                * instead of 'filename'. This func is only
