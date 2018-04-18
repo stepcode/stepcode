@@ -2772,7 +2772,7 @@ static void yy_reduce(
 
         /* define both in enum scope and scope of */
         /* 1st visibility */
-        DICT_define(CURRENT_SCOPE->symbol_table, x->symbol.name,
+        DICTdefine_enum(CURRENT_SCOPE->symbol_table, x->symbol.name,
             (Generic)x, &x->symbol, OBJ_EXPRESSION);
         DICTdefine(PREVIOUS_SCOPE->enum_table, x->symbol.name,
             (Generic)x, &x->symbol, OBJ_EXPRESSION);

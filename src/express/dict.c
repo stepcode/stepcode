@@ -113,7 +113,7 @@ int DICTdefine( Dictionary dict, char * name, void *obj, Symbol * sym, char type
  * their unusual behavior with respect to scoping and visibility rules
  * \sa DICTdefine()
  */
-int DICT_define( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
+int DICTdefine_enum( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
 
     e.key = name;
