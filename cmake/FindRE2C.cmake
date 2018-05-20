@@ -6,10 +6,20 @@
 find_program(RE2C_EXECUTABLE re2c DOC "path to the re2c executable")
 mark_as_advanced(RE2C_EXECUTABLE)
 
-execute_process(COMMAND "${RE2C_EXECUTABLE} -V" OUTPUT_VARIABLE RE2C_VERSION)
+if(RE2C_EXECUTABLE)
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(RE2C DEFAULT_MSG RE2C_EXECUTABLE RE2C_VERSION)
+execute_process(COMMAND ${RE2C_EXECUTABLE} -v
+                OUTPUT_VARIABLE RE2C_version_output
+                ERROR_VARIABLE  RE2C_version_error
+                RESULT_VARIABLE RE2C_version_result
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+                
+if(NOT ${RE2C_version_result} EQUAL 0)
+    message(SEND_ERROR
+           "Command \"${RE2C_EXECUTABLE} -v\" failed with output:\n${RE2C_version_output}\n${RE2C_version_error}")
+else()
+    string(REGEX REPLACE "^re2c ([0-9]+[^ ]*)( .*)?$" "\\1" RE2C_VERSION "${RE2C_version_output}")
+endif()
 
 # Provide a macro to generate custom build rules:
 
@@ -82,36 +92,58 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(RE2C DEFAULT_MSG RE2C_EXECUTABLE RE2C_VERSION)
 # RE2C_TARGET (public macro)
 #============================================================
 #
-# TODO - rework this macro to make use of CMakeParseArguments, see
-# http://www.cmake.org/pipermail/cmake/2012-July/051309.html
 if(NOT COMMAND RE2C_TARGET)
   macro(RE2C_TARGET Name Input Output)
-    set(RE2C_TARGET_usage "RE2C_TARGET(<Name> <Input> <Output> [COMPILE_FLAGS <string>]")
-    if(${ARGC} GREATER 3)
-      if(${ARGC} EQUAL 5)
-	if("${ARGV3}" STREQUAL "COMPILE_FLAGS")
-	  set(RE2C_EXECUTABLE_opts  "${ARGV4}")
-	  SEPARATE_ARGUMENTS(RE2C_EXECUTABLE_opts)
-	else()
-	  message(SEND_ERROR ${RE2C_TARGET_usage})
-	endif()
-      else()
-	message(SEND_ERROR ${RE2C_TARGET_usage})
-      endif()
+    set(LVAR_PREFIX "RE2C_${Name}") 
+    set(RE2C_EXECUTABLE_opts "")
+    
+    set(_re2c_args COMPILE_FLAGS DEFINES_FILE WORKING_DIR)
+    cmake_parse_arguments(RE2C_TARGET_ARG "" "${_re2c_args}" "" ${ARGN})
+    
+    if(NOT "${RE2C_TARGET_ARG_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(SEND_ERROR "RE2C_TARGET(<Name> <Input> <Output>
+                                [COMPILE_FLAGS <string>]
+                                [DEFINES_FILE <string>]
+                                [WORKING_DIR <string>])")
+    else()
+        # default working directory
+        if("${RE2C_TARGET_ARG_WORKING_DIR}" STREQUAL "")
+            set(RE2C_TARGET_ARG_WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}/${LVAR_PREFIX}")
+        endif()
+        file(MAKE_DIRECTORY ${RE2C_TARGET_ARG_WORKING_DIR})
+
+        if(NOT "${RE2C_TARGET_ARG_COMPILE_FLAGS}" STREQUAL "")
+            set(RE2C_EXECUTABLE_opts "${RE2C_TARGET_ARG_COMPILE_FLAGS}")
+            separate_arguments(RE2C_EXECUTABLE_opts)
+        endif()
+
+        file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${Input}" RE2C_TARGET_input)
+        file(TO_NATIVE_PATH "${RE2C_TARGET_ARG_WORKING_DIR}/${Output}" RE2C_TARGET_output)
+        set(RE2C_TARGET_all_outputs "${RE2C_TARGET_output}")
+        
+        if(NOT "${RE2C_TARGET_ARG_DEFINES_FILE}" STREQUAL "")
+            file(TO_NATIVE_PATH "${RE2C_TARGET_ARG_WORKING_DIR}/${RE2C_TARGET_ARG_DEFINES_FILE}"
+                ${LVAR_PREFIX}_OUTPUT_HEADER)
+            list(APPEND RE2C_TARGET_all_outputs ${${LVAR_PREFIX}_OUTPUT_HEADER})
+            list(APPEND RE2C_EXECUTABLE_opts -t ${RE2C_TARGET_ARG_DEFINES_FILE})
+        else()
+            set(${LVAR_PREFIX}_OUTPUT_HEADER "")
+        endif()
+        
+        add_custom_command(OUTPUT ${RE2C_TARGET_all_outputs}
+            COMMAND ${RE2C_EXECUTABLE}
+            ARGS ${RE2C_EXECUTABLE_opts} -o ${RE2C_TARGET_output} ${RE2C_TARGET_input}
+            DEPENDS ${RE2C_TARGET_input}
+            COMMENT "[RE2C][${Name}] Building scanner with ${RE2C_EXECUTABLE}"
+            WORKING_DIRECTORY "${RE2C_TARGET_ARG_WORKING_DIR}")
+
+        set(${LVAR_PREFIX}_DEFINED TRUE)    
+        set(${LVAR_PREFIX}_OUTPUTS ${RE2C_TARGET_output})
+        set(${LVAR_PREFIX}_INPUT ${RE2C_TARGET_input})
+        set(${LVAR_PREFIX}_COMPILE_FLAGS ${RE2C_EXECUTABLE_opts})
+        set(${LVAR_PREFIX}_INCLUDE_DIR "${RE2C_TARGET_ARG_WORKING_DIR}")
     endif()
-
-    add_custom_command(OUTPUT ${Output}
-      COMMAND ${RE2C_EXECUTABLE}
-      ARGS ${RE2C_EXECUTABLE_opts} -o${Output} ${Input}
-      DEPENDS ${Input} ${RE2C_EXECUTABLE_TARGET}
-      COMMENT "[RE2C][${Name}] Building scanner with ${RE2C_EXECUTABLE}"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
-
-    set(RE2C_${Name}_DEFINED TRUE)
-    set(RE2C_${Name}_OUTPUTS ${Output})
-    set(RE2C_${Name}_INPUT ${Input})
-    set(RE2C_${Name}_COMPILE_FLAGS ${RE2C_EXECUTABLE_opts})
-    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${Output}")
+    
   endmacro(RE2C_TARGET)
 endif(NOT COMMAND RE2C_TARGET)
 #============================================================
@@ -136,6 +168,12 @@ if(NOT COMMAND ADD_RE2C_LEMON_DEPENDENCY)
   endmacro(ADD_RE2C_LEMON_DEPENDENCY)
 endif(NOT COMMAND ADD_RE2C_LEMON_DEPENDENCY)
 #============================================================
+
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(RE2C REQUIRED_VARS RE2C_EXECUTABLE
+                                  VERSION_VAR RE2C_VERSION)
 
 # RE2C_Util.cmake ends here
 

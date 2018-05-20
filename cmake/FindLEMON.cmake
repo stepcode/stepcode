@@ -47,42 +47,16 @@
 find_program(LEMON_EXECUTABLE lemon DOC "path to the lemon executable")
 mark_as_advanced(LEMON_EXECUTABLE)
 
-if (LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-  # look for the template in share
-  if (DATA_DIR AND EXISTS "${DATA_DIR}/lemon/lempar.c")
-    set (LEMON_TEMPLATE "${DATA_DIR}/lemon/lempar.c")
-  elseif (EXISTS "share/lemon/lempar.c")
-    set (LEMON_TEMPLATE "share/lemon/lempar.c")
-  elseif (EXISTS "/usr/share/lemon/lempar.c")
-    set (LEMON_TEMPLATE "/usr/share/lemon/lempar.c")
-  endif (DATA_DIR AND EXISTS "${DATA_DIR}/lemon/lempar.c")
-endif (LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-
-if (LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-  # look for the template in bin dir
-  get_filename_component(lemon_path ${LEMON_EXECUTABLE} PATH)
-  if (lemon_path)
-    if (EXISTS ${lemon_path}/lempar.c)
-      set (LEMON_TEMPLATE "${lemon_path}/lempar.c")
-    endif (EXISTS ${lemon_path}/lempar.c)
-    if (EXISTS /usr/share/lemon/lempar.c)
-      set (LEMON_TEMPLATE "/usr/share/lemon/lempar.c")
-    endif (EXISTS /usr/share/lemon/lempar.c)
-  endif (lemon_path)
-endif(LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-
-if (LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-  # fallback
-  set (LEMON_TEMPLATE "lempar.c")
-  if (NOT EXISTS ${LEMON_TEMPLATE})
-    message(WARNING "Lemon's lempar.c template file could not be found automatically, set LEMON_TEMPLATE")
-  endif (NOT EXISTS ${LEMON_TEMPLATE})
-endif (LEMON_EXECUTABLE AND NOT LEMON_TEMPLATE)
-
-mark_as_advanced(LEMON_TEMPLATE)
-
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(LEMON DEFAULT_MSG LEMON_EXECUTABLE LEMON_TEMPLATE)
+if (LEMON_EXECUTABLE)
+    get_filename_component(lemon_dir ${LEMON_EXECUTABLE} DIRECTORY)
+    find_file(LEMON_TEMPLATE lempar.c 
+              PATHS "${lemon_dir}" "/usr/share/lemon"
+              NO_DEFAULT_PATH)
+    mark_as_advanced(LEMON_TEMPLATE)
+    
+    if(NOT LEMON_TEMPLATE)
+        message(SEND_ERROR "failed to find lemon template (lempar.c)")
+    endif()
 
 # Define the macro
 #  LEMON_TARGET(<Name> <LemonInput> <LemonSource> <LemonHeader>
@@ -101,6 +75,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(LEMON DEFAULT_MSG LEMON_EXECUTABLE LEMON_TEMPL
 #   add_executable(Foo main.cpp ${LEMON_MyParser_OUTPUTS})
 #  ====================================================================
 
+# TODO: simplify, remove the variable indirection below
 include(CMakeParseArguments)
 
 if(NOT COMMAND LEMON_TARGET)
@@ -109,9 +84,8 @@ if(NOT COMMAND LEMON_TARGET)
     get_filename_component(IN_FILE_WE ${Input} NAME_WE)
     set(LVAR_PREFIX ${Name}_${IN_FILE_WE})
 
-    if(${ARGC} GREATER 3)
-      CMAKE_PARSE_ARGUMENTS(${LVAR_PREFIX} "" "OUT_SRC_FILE;OUT_HDR_FILE;WORKING_DIR;EXTRA_ARGS" "" ${ARGN})
-    endif(${ARGC} GREATER 3)
+    set(LT_ARGS OUT_SRC_FILE OUT_HDR_FILE WORKING_DIR EXTRA_ARGS)
+    CMAKE_PARSE_ARGUMENTS(${LVAR_PREFIX} "" "${LT_ARGS}" "" ${ARGN})
 
     # Need a working directory
     if("${${LVAR_PREFIX}_WORKING_DIR}" STREQUAL "")
@@ -199,6 +173,11 @@ if(NOT COMMAND LEMON_TARGET)
 
   endmacro(LEMON_TARGET)
 endif(NOT COMMAND LEMON_TARGET)
+
+endif()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(LEMON REQUIRED_VARS LEMON_EXECUTABLE LEMON_TEMPLATE)
 
 #============================================================
 # FindLEMON.cmake ends here
