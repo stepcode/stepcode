@@ -8,7 +8,7 @@
 #include "express/type.h"
 
 struct freelist_head HASH_Table_fl;
-struct freelist_head HASH_Element_fl;
+struct freelist_head HASH_Entry_fl;
 
 struct freelist_head LINK_fl;
 struct freelist_head LIST_fl;
@@ -53,9 +53,9 @@ struct freelist_head INCR_fl;
 
 void MEMORYinitialize() {
     _ALLOCinitialize();
-    
-    ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 50, 50 );
-    ALLOCinitialize( &HASH_Element_fl, sizeof( struct Element_ ), 500, 100 );
+
+    ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 500, 100 );
+    ALLOCinitialize( &HASH_Entry_fl, sizeof( Hash_Entry ), 2500, 500 );
 
     ALLOCinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );
     ALLOCinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );

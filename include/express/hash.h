@@ -80,27 +80,10 @@
  *
  */
 
-#include "basic.h"  /* get basic definitions */
+#include "sc_export.h"
+#include "sc_fwd.h"
 
-/*************/
-/* constants */
-/*************/
-
-#define HASH_NULL   (Hash_Table)NULL
-
-#define SEGMENT_SIZE        256
-#define SEGMENT_SIZE_SHIFT  8   /**< log2(SEGMENT_SIZE)   */
-#define DIRECTORY_SIZE      256
-#define DIRECTORY_SIZE_SHIFT    8   /**< log2(DIRECTORY_SIZE) */
-#define PRIME1          37
-#define PRIME2          1048583
-#define MAX_LOAD_FACTOR 5
-
-/*****************/
-/* packages used */
-/*****************/
-
-#include <sc_export.h>
+#include "basic.h"
 #include "alloc.h"
 
 /************/
@@ -109,95 +92,63 @@
 
 typedef enum { HASH_FIND, HASH_INSERT, HASH_DELETE } Action;
 
-typedef unsigned long Address;
-
 /****************/
 /* abstractions */
 /****************/
 
-typedef struct Element_ {
-    char    *    key;
-    char    *    data;
-    struct Element_ * next;
-    Symbol  *  symbol; /**< for debugging hash conflicts */
-    char       type;   /**< user-supplied type */
-} * Element;
+struct Hash_Table_;
+typedef struct Hash_Table_ *Hash_Table;
 
-typedef Element * Segment;
-
-typedef struct Hash_Table_ {
-#if 0
-    int     in_use;     /**< If someone is traversing the hash table */
-#endif
-    unsigned int    p;      /**< Next bucket to be split  */
-    unsigned int    maxp;   /**< upper bound on p during expansion    */
-    unsigned int    KeyCount;       /**< current # keys   */
-    unsigned int    SegmentCount;   /**< current # segments   */
-    unsigned int    MinLoadFactor;
-    unsigned int    MaxLoadFactor;
-    Segment Directory[DIRECTORY_SIZE];
-} * Hash_Table;
-
-typedef struct {
-    unsigned int i;  /**< segment index (i think) */
-    unsigned int j;  /**< key index in segment (ditto) */
-    Element p;       /**< usually the next element to be returned */
-    Hash_Table table;
+typedef struct Hash_Entry_ {
+    unsigned char    *key;
+    void *data;
+    Symbol  *symbol;
     char type;
-    Element e;  /**< originally thought of as a place for
-                 * the caller of HASHlist to temporarily stash the return value
-                 * to allow the caller (i.e., DICTdo) to be macroized, but now
-                 * conveniently used by HASHlist, which both stores the ultimate
-                 * value here as well as returns it via the return value of HASHlist
-                 */
-} HashEntry;
+    struct Hash_Entry_ *next;
+} Hash_Entry;
+
+typedef struct Hash_Iterator_ {
+    Hash_Table table;
+    unsigned int hash;
+    Hash_Entry *p;
+    char type;
+} Hash_Iterator;
 
 /********************/
 /* global variables */
 /********************/
 
 extern SC_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
-extern SC_EXPRESS_EXPORT struct freelist_head HASH_Element_fl;
+extern SC_EXPRESS_EXPORT struct freelist_head HASH_Entry_fl;
 
 /******************************/
 /* macro function definitions */
 /******************************/
 
-/*
-** Fast arithmetic, relying on powers of 2
-*/
-
-/**
-The centerline compiler was having problems with MUL and DIV. Where DIV
-was called like this DIV(NewAddress, SEGMENT_SIZE) it is now being called like
-DIV(NewAddress, SEGMENT_SIZE_SHIFT). The compiler was mentioning some kind of
-problem with ##. I wonder if maybe the precompiler was expanding SEGMENT_SIZE
-(which is also defined as a macro) before turning it into SEGMENT_SIZE_SHIFT.
-SEGMENT_SIZE and DIRECTORY_SIZE were used to call these macros. They are both
-defined to be 8 though so it seems these are always being used the same way.
-This change only seems to have affected hash.h and hash.c
-*/
-/* #define MUL(x,y)     ((x) << (y##_SHIFT)) */
-#define MUL(x,y)        ((x) << (y))
-/* #define DIV(x,y)     ((x) >> (y##_SHIFT)) */
-#define DIV(x,y)        ((x) >> (y))
-#define MOD(x,y)        ((x) & ((y)-1))
-
-#define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
-#define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)x)
-#define HASH_Element_new()  (struct Element_ *)ALLOC_new(&HASH_Element_fl)
-#define HASH_Element_destroy(x) ALLOC_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
+/* maybe this could be migrated to the implementation */
+#ifndef HASH_TESTING
+#  define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
+#  define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)x)
+#  define HASH_Element_new()  (struct Element_ *)ALLOC_new(&HASH_Element_fl)
+#  define HASH_Element_destroy(x) ALLOC_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
+#else
+#  define HASH_Table_new()      calloc(1, sizeof(struct Hash_Table_))
+#  define HASH_Table_destroy(x) free(x)
+#  define HASH_Entry_new()      calloc(1, sizeof(Hash_Entry))
+#  define HASH_Entry_destroy(x) free(x)
+#endif
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void HASHinitialize( void );
-extern SC_EXPRESS_EXPORT Hash_Table   HASHcreate( unsigned );
-extern SC_EXPRESS_EXPORT Hash_Table   HASHcopy( Hash_Table );
-extern SC_EXPRESS_EXPORT void HASHdestroy( Hash_Table );
-extern SC_EXPRESS_EXPORT Element  HASHsearch( Hash_Table, Element, Action );
-extern SC_EXPRESS_EXPORT void HASHlistinit( Hash_Table, HashEntry *, char );
-extern SC_EXPRESS_EXPORT Element  HASHlist( HashEntry * );
+extern SC_EXPRESS_EXPORT void        HASHinitialize( void );
+extern SC_EXPRESS_EXPORT Hash_Table  HASHcreate( void );
+extern SC_EXPRESS_EXPORT Hash_Table  HASHcopy( Hash_Table );
+extern SC_EXPRESS_EXPORT void        HASHdestroy( Hash_Table );
+extern SC_EXPRESS_EXPORT Hash_Entry* HASHsearch( Hash_Table, Hash_Entry, Action );
+extern SC_EXPRESS_EXPORT void        HASHdelete( Hash_Table, Hash_Entry * );
+extern SC_EXPRESS_EXPORT void        HASHdo_init( Hash_Table, Hash_Iterator *, char );
+extern SC_EXPRESS_EXPORT Hash_Entry* HASHdo( Hash_Iterator * );
 
 #endif /*HASH_H*/
