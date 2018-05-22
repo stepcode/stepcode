@@ -442,18 +442,31 @@ HASHdo_init(Hash_Table tbl, Hash_Iterator *it, char type) {
 /* provide a way to step through the hash */
 Hash_Entry *
 HASHdo( Hash_Iterator * it ) {
+    Hash_Entry *q;
     int SegmentDir, SegmentIndex;
 
-    for (; it->hash < (it->table->DirectorySize << SEGMENT_WIDTH); it->hash++) {
+    for (; it->hash < (it->table->maxp + it->table->p); it->hash++) {
         SegmentDir = it->hash >> SEGMENT_WIDTH;
         SegmentIndex = it->hash % SEGMENT_SZ;
 
-        /* segments are initialised in HASHcreate and HASHexpand_table */
+        /* only used segments are initialised */
         assert(it->table->Directory[SegmentDir] != NULL);
         
-        it->p = it->table->Directory[SegmentDir][SegmentIndex];
-        if (it->p && (it->type == '*' || it->type))
-            return it->p;
+        if (!it->p)
+            it->p = it->table->Directory[SegmentDir][SegmentIndex];
+        
+        while (it->p != NULL) {
+            q = it->p;
+            if (q && (it->type == OBJ_ANY || it->type == q->type)) {
+                it->p = q->next;
+                if (!it->p)
+                    it->hash++;
+                return q;
+            }
+            
+            it->p = q->next;
+        }
+        
     }
     
     return NULL;

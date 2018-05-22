@@ -15,6 +15,7 @@ int main(int argc, char *argv[]) {
     unsigned int i;
     Hash_Table tbl;
     Hash_Entry *ep;
+    Hash_Iterator it;
 
     if (argc < 2)
         error("no input files");
@@ -54,6 +55,13 @@ int main(int argc, char *argv[]) {
             error("error, hsearch HASH_FIND failed!");
     }
     
+    i = 0;
+    HASHdo_init(tbl, &it, OBJ_ANY);
+    while (HASHdo(&it))
+        i++;
+    
+    if (i != testdata->qty)
+        error("error, HASHdo test failed! expected: %d, got: %d", i, testdata->qty);
     
     HASHdestroy(tbl);
     bstrListDestroy(testdata);

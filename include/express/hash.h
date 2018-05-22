@@ -83,8 +83,7 @@
 #include "sc_export.h"
 #include "sc_fwd.h"
 
-#include "basic.h"
-#include "alloc.h"
+#include "expbasic.h"
 
 /************/
 /* typedefs */
