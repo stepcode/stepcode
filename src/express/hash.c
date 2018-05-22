@@ -217,8 +217,10 @@ HASHsearch(Hash_Table tbl, Hash_Entry item, Action action) {
         q = *p;
     }
     
-    /* use HASHdelete */
+    /* TODO: remove HASH_DELETE to force compile error */
     assert(action != HASH_DELETE);
+    if (action == HASH_DELETE)
+        return NULL;
     
     /* found, not found - search only, alloc or fail */
     if (q != NULL || action == HASH_FIND || (q = HASH_Entry_new()) == NULL)
@@ -280,7 +282,9 @@ HASHdelete(Hash_Table tbl, Hash_Entry *item) {
     }
     
     /* ensure no undefined assignment behaviour */
-    assert(q != NULL && q != item);
+    assert(q != item);
+    if (!q)
+        return;
     
     *p = q->next;
     item->data = q->data;
