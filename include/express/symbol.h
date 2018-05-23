@@ -43,30 +43,27 @@
 /* packages used */
 /*****************/
 
-#include <sc_export.h>
+#include "sc_export.h"
+
 #include "basic.h"  /* get basic definitions */
 #include "alloc.h"
 
-/************/
-/* typedefs */
-/************/
-
-typedef struct Symbol_ Symbol;
-
 /***************************/
-/* hidden type definitions */
+/* type definitions        */
 /***************************/
 
-struct Symbol_ {
-    char * name;
-#ifdef YYDEBUG
-    char * stype;
-#endif
-    int itype;
-    const char * filename;
+typedef struct Symbol_ {
+    unsigned char *name;
+    void *data;             /* the AST for this symbol            */
+    char type;              /* the OBJ_ type, see expbasic.h      */
+    int ref_typ;            /* the lexer ref_type for this symbol */
+    
+    const char *filename;
     int line;
-    char resolved;
-};
+    char resolved;          /* if imported TYPE or ENTITY is unresolved */
+    
+    struct Symbol_ *next;   /* symbol table clashes */
+} Symbol;
 
 /****************/
 /* modules used */
@@ -85,6 +82,7 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 #define SYMBOL_new()        (struct Symbol_ *)ALLOC_new(&SYMBOL_fl)
 #define SYMBOL_destroy(x)   ALLOC_destroy(&SYMBOL_fl,(Freelist *)x)
 
+/* TODO: gets called from e.g. type.c, should be set by parser */
 #define SYMBOLset(obj)      obj->symbol.line = yylineno; \
                 obj->symbol.filename = current_filename
 

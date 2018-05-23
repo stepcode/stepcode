@@ -81,9 +81,9 @@
  */
 
 #include "sc_export.h"
-#include "sc_fwd.h"
 
 #include "expbasic.h"
+#include "symbol.h"
 
 /************/
 /* typedefs */
@@ -98,18 +98,10 @@ typedef enum { HASH_FIND, HASH_INSERT, HASH_DELETE } Action;
 struct Hash_Table_;
 typedef struct Hash_Table_ *Hash_Table;
 
-typedef struct Hash_Entry_ {
-    unsigned char    *key;
-    void *data;
-    Symbol  *symbol;
-    char type;
-    struct Hash_Entry_ *next;
-} Hash_Entry;
-
 typedef struct Hash_Iterator_ {
     Hash_Table table;
     unsigned int hash;
-    Hash_Entry *p;
+    Symbol *p;
     char type;
 } Hash_Iterator;
 
@@ -118,7 +110,6 @@ typedef struct Hash_Iterator_ {
 /********************/
 
 extern SC_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
-extern SC_EXPRESS_EXPORT struct freelist_head HASH_Entry_fl;
 
 /******************************/
 /* macro function definitions */
@@ -128,26 +119,24 @@ extern SC_EXPRESS_EXPORT struct freelist_head HASH_Entry_fl;
 #ifndef HASH_TESTING
 #  define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
 #  define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)x)
-#  define HASH_Element_new()  (struct Element_ *)ALLOC_new(&HASH_Element_fl)
-#  define HASH_Element_destroy(x) ALLOC_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
 #else
 #  define HASH_Table_new()      calloc(1, sizeof(struct Hash_Table_))
 #  define HASH_Table_destroy(x) free(x)
-#  define HASH_Entry_new()      calloc(1, sizeof(Hash_Entry))
-#  define HASH_Entry_destroy(x) free(x)
+#  define SYMBOL_new()          calloc(1, sizeof(Symbol))
+#  define SYMBOL_destroy(x)     free(x)
 #endif
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void        HASHinitialize( void );
-extern SC_EXPRESS_EXPORT Hash_Table  HASHcreate( void );
-extern SC_EXPRESS_EXPORT Hash_Table  HASHcopy( Hash_Table );
-extern SC_EXPRESS_EXPORT void        HASHdestroy( Hash_Table );
-extern SC_EXPRESS_EXPORT Hash_Entry* HASHsearch( Hash_Table, Hash_Entry, Action );
-extern SC_EXPRESS_EXPORT void        HASHdelete( Hash_Table, Hash_Entry * );
-extern SC_EXPRESS_EXPORT void        HASHdo_init( Hash_Table, Hash_Iterator *, char );
-extern SC_EXPRESS_EXPORT Hash_Entry* HASHdo( Hash_Iterator * );
+extern SC_EXPRESS_EXPORT void       HASHinitialize( void );
+extern SC_EXPRESS_EXPORT Hash_Table HASHcreate( void );
+extern SC_EXPRESS_EXPORT Hash_Table HASHcopy( Hash_Table );
+extern SC_EXPRESS_EXPORT void       HASHdestroy( Hash_Table );
+extern SC_EXPRESS_EXPORT Symbol *   HASHsearch( Hash_Table, Symbol, Action );
+extern SC_EXPRESS_EXPORT void       HASHdelete( Hash_Table, Symbol * );
+extern SC_EXPRESS_EXPORT void       HASHdo_init( Hash_Table, Hash_Iterator *, char );
+extern SC_EXPRESS_EXPORT Symbol *   HASHdo( Hash_Iterator * );
 
 #endif /*HASH_H*/

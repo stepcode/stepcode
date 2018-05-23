@@ -14,8 +14,8 @@ int main(int argc, char *argv[]) {
     struct bstrList *testdata;
     unsigned int i, qty;
     Hash_Table tbl;
-    Hash_Entry *ep;
-    Hash_Entry e;
+    Symbol *ep;
+    Symbol e;
     Hash_Iterator it;
 
     if (argc < 2)
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
         
-        ep = HASHsearch(tbl, (Hash_Entry) {.key = id->data, .data = id}, HASH_INSERT);
+        ep = HASHsearch(tbl, (Symbol) {.name = id->data, .data = id}, HASH_INSERT);
         if (!ep)
             error("HASHsearch HASH_INSERT failed!");
     }
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         if (!id->slen)
             continue;
         
-        ep = HASHsearch(tbl, (Hash_Entry) {.key = id->data, .data = id}, HASH_FIND);
+        ep = HASHsearch(tbl, (Symbol) {.name = id->data, .data = id}, HASH_FIND);
         if (!ep)
             error("HASHsearch HASH_FIND failed!");
     }
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
      *  time_interval_with_bounds] 
      * 
      */
-    e = (Hash_Entry) {.key = "fea_column_normalised_orthotropic_symmetric_tensor4_3d"};
+    e = (Symbol) {.name = "fea_column_normalised_orthotropic_symmetric_tensor4_3d"};
     HASHdelete(tbl, &e);
     
     i = 0;
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
     if (i != qty)
         error("HASHdelete failed (#, #, x, #, #, #, #), expected %d, got %d", qty, i);
     
-    e = (Hash_Entry) {.key = "ifcorthogonalcomplement"};
+    e = (Symbol) {.name = "ifcorthogonalcomplement"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
      *  language,
      *  physical_state_domain]
      */
-    e = (Hash_Entry) {.key = "ifcfurniture"};
+    e = (Symbol) {.name = "ifcfurniture"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
     if (i != qty)
         error("HASHdelete failed (#, x, #, #, #), expected %d, got %d", qty, i);
     
-    e = (Hash_Entry) {.key = "physical_state_domain"};
+    e = (Symbol) {.name = "physical_state_domain"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
      *  erroneous_data,
      *  ifclinearvelocitymeasure]
      */
-    e = (Hash_Entry) {.key = "action_resource_relationship"};
+    e = (Symbol) {.name = "action_resource_relationship"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]) {
      * [choose_representation_context_identifier,
      *  dependent_instantiable_text_style]
      */
-    e = (Hash_Entry) {.key = "choose_representation_context_identifier"};
+    e = (Symbol) {.name = "choose_representation_context_identifier"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
     if (i != qty)
         error("HASHdelete failed (x, #), expected %d, got %d", qty, i);
     
-    e = (Hash_Entry) {.key = "dependent_instantiable_text_style"};
+    e = (Symbol) {.name = "dependent_instantiable_text_style"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
     /*
      * [connector_based_interconnect_definition]
      */
-    e = (Hash_Entry) {.key = "connector_based_interconnect_definition"};
+    e = (Symbol) {.name = "connector_based_interconnect_definition"};
     HASHdelete(tbl, &e);
 
     i = 0;
@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
     if (i != qty)
         error("HASHdelete failed (x,), expected %d, got %d", qty, i);
 
-    e = (Hash_Entry) {.key = "connector_based_interconnect_definition"};
+    e = (Symbol) {.name = "connector_based_interconnect_definition"};
     HASHdelete(tbl, &e);
 
     i = 0;
