@@ -111,21 +111,6 @@ typedef struct Hash_Iterator_ {
 
 extern SC_EXPRESS_EXPORT struct freelist_head HASH_Table_fl;
 
-/******************************/
-/* macro function definitions */
-/******************************/
-
-/* maybe this could be migrated to the implementation */
-#ifndef HASH_TESTING
-#  define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
-#  define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)x)
-#else
-#  define HASH_Table_new()      calloc(1, sizeof(struct Hash_Table_))
-#  define HASH_Table_destroy(x) free(x)
-#  define SYMBOL_new()          calloc(1, sizeof(Symbol))
-#  define SYMBOL_destroy(x)     free(x)
-#endif
-
 /***********************/
 /* function prototypes */
 /***********************/
@@ -139,4 +124,4 @@ extern SC_EXPRESS_EXPORT void       HASHdelete( Hash_Table, Symbol * );
 extern SC_EXPRESS_EXPORT void       HASHdo_init( Hash_Table, Hash_Iterator *, char );
 extern SC_EXPRESS_EXPORT Symbol *   HASHdo( Hash_Iterator * );
 
-#endif /*HASH_H*/
+#endif /* HASH_H */
