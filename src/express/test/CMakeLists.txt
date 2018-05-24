@@ -75,6 +75,16 @@ add_test(NAME build_check_express
     --config $<CONFIGURATION>
     )
 
+add_executable(check-scanner "scanner_test.c;${RE2C_ExpScanner_OUTPUTS};../lexsupport.c;../hash.c;../../auxlib/bstrlib.c")
+set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
+set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+set_property(TARGET check-scanner PROPERTY COMPILE_DEFINITIONS "HASH_TESTING")
+
+add_test(NAME test_scanner
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND $<TARGET_FILE:check-scanner> "${CMAKE_CURRENT_SOURCE_DIR}/../../../test/unitary_schemas/ur_redecl.exp"
+  )
+  
 add_test(NAME test_plib_parse_err
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMAND $<TARGET_FILE:check-express> "${CMAKE_CURRENT_SOURCE_DIR}/plib_parse_err.exp"

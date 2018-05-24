@@ -138,6 +138,8 @@ typedef char * Binary;
 #define OBJ_SCHEMA_BITS     0x80
 #define OBJ_VARIABLE_BITS   0x100
 #define OBJ_WHERE_BITS      0x200
+#define OBJ_ALIAS_BITS      0x400
+
 
 #define OBJ_ANYTHING_BITS   0x0fffffff
 #define OBJ_UNFINDABLE_BITS 0x10000000  /**< should never be found */

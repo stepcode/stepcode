@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "sc_memmgr.h"
+
 #include "lexsupport.h"
-#include "expparser.h"
+#include "expparse.h"
 #include "expscan.h"
 
 struct kw_token_def reserved_keywords[] = {
@@ -134,11 +136,11 @@ struct kw_token_def reserved_keywords[] = {
 
 
 struct intList *intListCreate (void) {
-    struct intList * il = malloc(sizeof(struct intList));
+    struct intList * il = sc_malloc(sizeof(struct intList));
 	if (il) {
-		il->entry = malloc(sizeof(int));
+		il->entry = sc_malloc(sizeof(int));
 		if (!il->entry) {
-			free(il);
+			sc_free(il);
 			il = NULL;
 		} else {
             il->entry[0] = 0;
@@ -164,7 +166,7 @@ int intListAllocMin (struct intList * il, int msz) {
 	if (il->mlen == msz) return BSTR_OK;
 	nsz = ((size_t) msz) * sizeof(int);
 	if (nsz < (size_t) msz) return BSTR_ERR;
-	l = realloc(il->entry, nsz);
+	l = sc_realloc(il->entry, nsz);
 	if (!l) return BSTR_ERR;
 	il->mlen = msz;
 	il->entry = l;
@@ -173,11 +175,11 @@ int intListAllocMin (struct intList * il, int msz) {
 }
 
 struct scopeList *scopeListCreate (void) {
-    struct scopeList * sl = malloc(sizeof(struct scopeList));
+    struct scopeList * sl = sc_malloc(sizeof(struct scopeList));
 	if (sl) {
-		sl->entry = malloc(sizeof(struct scope_def));
+		sl->entry = sc_malloc(sizeof(struct scope_def));
 		if (!sl->entry) {
-			free(sl);
+			sc_free(sl);
 			sl = NULL;
 		} else {
 			sl->qty = 0;
@@ -202,37 +204,45 @@ int scopeListAllocMin (struct scopeList * sl, int msz) {
 	if (sl->mlen == msz) return BSTR_OK;
 	nsz = ((size_t) msz) * sizeof(struct scope_def);
 	if (nsz < (size_t) msz) return BSTR_ERR;
-	l = realloc(sl->entry, nsz);
+	l = sc_realloc(sl->entry, nsz);
 	if (!l) return BSTR_ERR;
 	sl->mlen = msz;
 	sl->entry = l;
 	return BSTR_OK;
 }
 
-int yylexInit(void *pScanner, struct YYSTATE *pState, FILE *fp) {
-    struct exp_scanner *scanner = pScanner;
+void yylexReset(struct exp_scanner *s, int new_mode) {
+    s->cur = s->tok = s->mrk = s->ctx = s->buffer->data;
+    memset(s->cond_stack->entry, 0, sizeof(int) * s->cond_stack->mlen);
+    s->cond_top = 0;
+    s->cond_stack->entry[0] = new_mode;
+    s->mode = new_mode;
+}
+
+int yylexInit(struct exp_scanner *pScanner, struct YYSTATE *pState, FILE *fp) {
     bstring buf;
     
     buf = bread((bNread) fread, fp);
     if (!buf)
         yyerror("failed to read input!", 0);
 
-    scanner->scope_top = scope_alloc(pState->scope_stack, "DOCROOT", T_DOCROOT);
-    pState->scope_stack->entry[scanner->scope_top].parent = -1;
+    pScanner->state = pState;
+    pScanner->scope_top = scope_alloc(pState->scope_stack, "DOCROOT", T_DOCROOT);
+    pState->scope_stack->entry[pScanner->scope_top].parent = -1;
 
-    scanner->buffer = buf; 
-    scanner->lim = buf->data + buf->slen;
-    scanner->anon_scope_cnt = 1;
+    pScanner->buffer = buf; 
+    pScanner->lim = buf->data + buf->slen;
+    pScanner->anon_scope_cnt = 1;
 
-    yyreset(scanner, yycP1);    
+    yylexReset(pScanner, yycP1);    
     return 0;
 }
 
-void *yylexAlloc() {
+struct exp_scanner *yylexAlloc() {
     int chk;
     struct exp_scanner *scanner;
     
-    scanner = malloc(sizeof *scanner);
+    scanner = sc_malloc(sizeof *scanner);
     if (scanner) {
         memset(scanner, 0, sizeof *scanner);
 
@@ -255,7 +265,7 @@ err_out:
 
 
 struct YYSTATE *yystateAlloc() {
-    struct YYSTATE *pState = malloc(sizeof(struct YYSTATE));
+    struct YYSTATE *pState = sc_malloc(sizeof(struct YYSTATE));
 
     if (pState) {
         pState->scope_stack = scopeListCreate();
@@ -264,3 +274,34 @@ struct YYSTATE *yystateAlloc() {
     
     return pState;
 }
+
+int scope_alloc(struct scopeList *stack, const char *typ, int scope_type) {
+    struct scope_def *sp;
+    const char *nx;
+    char *np;
+    int chk;
+
+    /* TODO: error checking */
+    chk = scopeListAllocMin(stack, stack->qty+1);
+    if (chk != BSTR_OK)
+        goto err_out;
+
+    sp = stack->entry + stack->qty;
+    /* TODO: really this doesn't need a symbol - we only have the "name", which could be assigned later or here */
+    sp->symbol.name = NULL;
+    sp->type = scope_type;
+    sp->parent = 0xDEADBEEF;
+    sp->symbol_table = HASHcreate();
+
+#ifdef YYDEBUG
+    sp->symbol.stype = strdup(typ);
+    for (nx = typ, np = sp->stype; *nx; nx++, np++)
+        *np = toupper((unsigned char) *nx);
+#endif
+
+    return stack->qty++;
+    
+err_out:
+    yyerror("scope_alloc failure!", 0);
+}
+

@@ -1,10 +1,15 @@
 #ifndef __LEXSUPPORT_H
 #define __LEXSUPPORT_H
 
+#include <stdlib.h>
 #include <stdbool.h>
+
 #include "bstrlib.h"
 
-#include "dict.h"
+#include "express/expbasic.h"
+#include "express/linklist.h"
+
+#include "token_type.h"
 
 #define yyerror_helper(fmt, lineno, ...) \
     do { fprintf(stderr, "error, line %i: " fmt "\n", (lineno), __VA_ARGS__); exit(1); } while (0)
@@ -16,45 +21,43 @@ struct intList {
 };
 
 struct exp_scanner {
-    /* lexing pass, top level start condition */
+    /* lexing pass / debug flag */
     int mode;
+    bool debug;
     /* start condition stack */
     struct intList *cond_stack;
     int cond_top;
-    /* pointers into the buffer */
+    /* pointers into the buffer and location */
     unsigned char *cur, *lim, *tok, *ctx, *mrk;
-    /* bstrlib buffer */
+    int lineno;
+    /* buffer and input reference */
     bstring buffer;
+    const char *filename;    
     /* flags for rules based scope */
     bool in_explicit_attr, in_rules_clause, in_inverse_clause;
     /* lexical scopes */
     int scope_aux, scope_top;
-    /* token type and scope debugging */
-    int id_ref_typ, scope_ref_typ;
+    /* token ref type */
+    int id_ref_typ;
+    /* scope type bits */
+    int scope_typ;
     /* list of counters for brackets within each scope */
     struct intList *brkt_nesting;
     /* counter for anonymous scope names */
     unsigned int anon_scope_cnt;
+    /* shared state - lexical scopes */
+    struct YYSTATE *state;
 };
 
 struct scope_def {
     int parent;
     
-    /* TODO: absort into symbol */
-    char *sname;
-    char *stype;
-    int itype;
-    
-    /* TODO: absorb into symbol_table */
-    struct bstrList *symbols;
-    struct intList *tokens;
-    
-    /* migration to existing API */
     Symbol symbol;
-    Dictionary symbol_table;
+    int type;
+    
+    Hash_Table symbol_table;
     ClientData clientData;
     
-    /* DISCUSS: C11 adds anonymous unions - IMO ideal in a structure like this */
     union {
         struct Procedure_ * proc;
         struct Function_ * func;
@@ -73,15 +76,12 @@ struct scopeList {
     struct scope_def *entry;
 };
 
-struct YYSTYPE {
-    int scope_idx;
-    union {
-        char *cstr;
-    };
-};
+/* TODO: migrate definitions here? */
+
+struct YYSTYPE;
 
 struct YYSTATE {
-    int lineno;
+    int lineno; /* TODO: remove when parser rebuilds automatically */
     struct scopeList *scope_stack;
 };
 
@@ -92,11 +92,23 @@ struct kw_token_def {
 
 extern struct kw_token_def reserved_keywords[];
 
-void *yylexAlloc();
-int yylex(void *pScanner, struct YYSTYPE *plval, struct YYSTATE *pState);
-int yylexInit(void *pScanner, struct YYSTATE *pState, FILE *fp);
+/* lemon doesn't provide a header */
+void *yyparseAlloc(void * (*mallocptr)(size_t));
+void yyparseFree(void *, void (*freeptr)(void *));
+void yyparseInit(void *);
+void yyparse(void *, int, struct YYSTYPE *, struct YYSTATE *);
+void yyparseTrace(FILE *, char *);
+
+struct exp_scanner *yylexAlloc();
+void yylexFree(struct exp_scanner *);
+int yylexInit(struct exp_scanner *, struct YYSTATE *, FILE *);
+
+int yylex(struct exp_scanner *, struct YYSTYPE *);
+void yylexTrace(struct exp_scanner *, bool);
+void yylexReset(struct exp_scanner *s, int new_mode);
 
 struct YYSTATE *yystateAlloc();
+void yystateFree();
 
 struct intList * intListCreate (void);
 int intListDestroy (struct intList * il);
@@ -105,5 +117,7 @@ int intListAllocMin (struct intList * il, int msz);
 struct scopeList * scopeListCreate (void);
 int scopeListDestroy (struct scopeList * sl);
 int scopeListAllocMin (struct scopeList * sl, int msz);
+
+int scope_alloc(struct scopeList *stack, const char *typ, int tok);
 
 #endif /* __LEXSUPPORT_H */
