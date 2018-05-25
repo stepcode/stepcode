@@ -80,11 +80,15 @@ set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_Ex
 set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
 set_property(TARGET check-scanner PROPERTY COMPILE_DEFINITIONS "HASH_TESTING")
 
-add_test(NAME test_scanner
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-  COMMAND $<TARGET_FILE:check-scanner> "${CMAKE_CURRENT_SOURCE_DIR}/../../../test/unitary_schemas/ur_redecl.exp"
-  )
-  
+file(GLOB unit_tests RELATIVE "${CMAKE_BINARY_DIR}" "../../../test/unitary_schemas/*.exp")
+file(GLOB extended_tests RELATIVE "${CMAKE_BINARY_DIR}" "../../../data/*/*.exp")
+    
+foreach(expfile ${unit_tests} ${extended_tests})
+    get_filename_component(id_suffix "${expfile}" NAME_WE)
+    add_test(NAME "test_scanner:${id_suffix}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+             COMMAND $<TARGET_FILE:check-scanner> "${expfile}")
+endforeach()
+
 add_test(NAME test_plib_parse_err
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMAND $<TARGET_FILE:check-express> "${CMAKE_CURRENT_SOURCE_DIR}/plib_parse_err.exp"
