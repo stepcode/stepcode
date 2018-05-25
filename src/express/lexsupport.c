@@ -305,3 +305,137 @@ err_out:
     yyerror("scope_alloc failure!", 0);
 }
 
+void scope_push(struct YYSTATE *pState, int idx, struct exp_scanner *pScanner) {
+    struct scopeList *stack = pState->scope_stack;
+    struct scope_def *scope = stack->entry + idx;
+    scope->parent = pScanner->scope_top;
+    if (idx < 0) {
+        yyerror("+++scope_push() internal error, pushing nonsense!", pScanner->lineno);
+    }
+    pScanner->scope_top = idx;
+}
+
+int scope_pop(struct YYSTATE *pState, struct exp_scanner *pScanner) {
+    struct scopeList *stack = pState->scope_stack;
+    int idx = pScanner->scope_top;
+    struct scope_def *scope = stack->entry + idx;
+    if (scope->parent < 0) {
+        yyerror("+++scope_pop() internal error, popping of the stack", 0);
+    }
+    pScanner->scope_top = scope->parent;
+    return idx;
+}
+
+int scope_find(struct YYSTATE *pState, int itype, const char *sname, struct exp_scanner *pScanner) {
+    struct scopeList *stack = pState->scope_stack;
+    struct scope_def *s;
+    int i, idx = -1, pidx = pScanner->scope_top;
+    
+    /* need to match parent, name and type */
+    for (i = 0; i < stack->qty; i++) {
+        s = stack->entry + i;
+        if (s->parent == pidx && s->type == itype && !strcasecmp(s->symbol.name, sname)) {
+            idx = i;
+            break;
+        }
+    }
+    
+    if (idx < 0)
+        yyerror("+++ scope_find failed, internal error!\n", 0);
+    
+    return idx;
+}
+
+void add_symbol(struct scope_def *scope, const char *id, int ref_tok, struct exp_scanner *pScanner) {
+    Symbol e, *ep;
+    int type;
+    
+    switch (ref_tok) {
+        case T_SCHEMA_REF:
+            type = OBJ_SCHEMA;
+            break;
+        case T_FUNCTION_REF:
+            type = OBJ_FUNCTION;
+            break;            
+        case T_PROCEDURE_REF:
+            type = OBJ_PROCEDURE;
+            break;
+        case T_RULE_REF:
+            type = OBJ_RULE;
+            break;
+        case T_ENTITY_REF:
+            type = OBJ_ENTITY;
+            break;
+        case T_TYPE_REF:
+            type = OBJ_TYPE;  
+            break;
+        case T_ENUMERATION_REF:
+            type = OBJ_ENUM;
+            break;
+        case T_RULE_LABEL_REF:
+            type = OBJ_TAG;  /* TODO: check, confirm rule labels are tags */
+            break;
+        case T_VARIABLE_REF:
+        case T_PARAMETER_REF: /* TODO: check - parameter maps to variable? */
+            type = OBJ_VARIABLE;
+            break;
+        default:  /* T_CONSTANT_REF, T_INVALID, T_SIMPLE_REF */
+            type = OBJ_UNKNOWN; /* TODO: check for CONSTANT */
+    }
+    e = (Symbol) {.name = strdup(id), .type = type, .ref_tok = ref_tok,
+                  .filename = pScanner->filename, .line = pScanner->lineno};
+    ep = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    if (!ep)
+        yyerror("failed to insert symbol into symbol table", pScanner->lineno);
+}
+
+int resolve_symbol(struct YYSTATE *pState, const char *id, struct exp_scanner *pScanner) {
+    Symbol *qry, *sym;
+    bool is_enum;
+    int cnt_enum = 0, cnt = 0, chk;
+    struct scopeList *stack = pState->scope_stack;
+    struct scope_def *s = stack->entry + pScanner->scope_top;
+    
+    /* basic resolution */
+    qry = NULL;
+    while (s->type != T_DOCROOT) {
+        qry = HASHsearch(s->symbol_table, (Symbol) {.name = id}, HASH_FIND);
+        if (qry)
+            break;
+        s = stack->entry + s->parent;
+    }
+    
+    /* failure, not found */
+    if (!qry)
+        return T_INVALID;
+        
+    sym = qry;
+    while (qry) {
+        if (!strcasecmp(qry->name, id)) {
+            cnt++;
+            if (qry->type == T_ENUMERATION_REF)
+                cnt_enum++;
+            }
+        qry = qry->next;
+    }
+    
+    chk = cnt - cnt_enum;
+    if (chk > 1 || (!chk && cnt_enum > 1)) {
+        yyerror("conflicting token types for id '%s'", pScanner->lineno, id);
+    }
+    
+    is_enum = chk > 0 ? false : true;
+    qry = sym;
+    while (qry) {
+        if (!strcasecmp(sym->name, id)) {
+            if ((!is_enum && qry->type != T_ENUMERATION_REF) ||
+                (is_enum && qry->type == T_ENUMERATION_REF))
+                break;
+        }
+        qry = qry->next;
+    }
+    
+    return qry->type;
+}
+
+

@@ -119,5 +119,12 @@ int scopeListDestroy (struct scopeList * sl);
 int scopeListAllocMin (struct scopeList * sl, int msz);
 
 int scope_alloc(struct scopeList *stack, const char *typ, int tok);
+void scope_push(struct YYSTATE *pState, int idx, struct exp_scanner *scanner);
+int scope_pop(struct YYSTATE *state, struct exp_scanner *scanner);
+int scope_find(struct YYSTATE *state, int itype, const char *sname, struct exp_scanner *scanner);
+int resolve_symbol(struct YYSTATE *state, const char *sym, struct exp_scanner *scanner);
+void add_symbol(struct scope_def *scope, const char *id, int tok, struct exp_scanner *pScanner);
+
+
 
 #endif /* __LEXSUPPORT_H */
