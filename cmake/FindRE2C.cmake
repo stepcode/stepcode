@@ -93,55 +93,43 @@ endif()
 #============================================================
 #
 if(NOT COMMAND RE2C_TARGET)
-  macro(RE2C_TARGET Name Input Output)
-    set(LVAR_PREFIX "RE2C_${Name}") 
-    set(RE2C_EXECUTABLE_opts "")
-    
-    set(_re2c_args COMPILE_FLAGS DEFINES_FILE WORKING_DIR)
+  macro(RE2C_TARGET Name RE2CInput RE2COutput)
+    set(_re2c_args COMPILE_FLAGS DEFINES_FILE)
     cmake_parse_arguments(RE2C_TARGET_ARG "" "${_re2c_args}" "" ${ARGN})
     
     if(NOT "${RE2C_TARGET_ARG_UNPARSED_ARGUMENTS}" STREQUAL "")
-        message(SEND_ERROR "RE2C_TARGET(<Name> <Input> <Output>
+        message(SEND_ERROR "RE2C_TARGET(<Name> <RE2CInput> <RE2COutput>
                                 [COMPILE_FLAGS <string>]
-                                [DEFINES_FILE <string>]
-                                [WORKING_DIR <string>])")
+                                [DEFINES_FILE <string>])")
     else()
-        # default working directory
-        if("${RE2C_TARGET_ARG_WORKING_DIR}" STREQUAL "")
-            set(RE2C_TARGET_ARG_WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}/${LVAR_PREFIX}")
-        endif()
-        file(MAKE_DIRECTORY ${RE2C_TARGET_ARG_WORKING_DIR})
-
         if(NOT "${RE2C_TARGET_ARG_COMPILE_FLAGS}" STREQUAL "")
             set(RE2C_EXECUTABLE_opts "${RE2C_TARGET_ARG_COMPILE_FLAGS}")
             separate_arguments(RE2C_EXECUTABLE_opts)
-        endif()
-
-        file(TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/${Input}" RE2C_TARGET_input)
-        file(TO_NATIVE_PATH "${RE2C_TARGET_ARG_WORKING_DIR}/${Output}" RE2C_TARGET_output)
-        set(RE2C_TARGET_all_outputs "${RE2C_TARGET_output}")
-        
-        if(NOT "${RE2C_TARGET_ARG_DEFINES_FILE}" STREQUAL "")
-            file(TO_NATIVE_PATH "${RE2C_TARGET_ARG_WORKING_DIR}/${RE2C_TARGET_ARG_DEFINES_FILE}"
-                ${LVAR_PREFIX}_OUTPUT_HEADER)
-            list(APPEND RE2C_TARGET_all_outputs ${${LVAR_PREFIX}_OUTPUT_HEADER})
-            list(APPEND RE2C_EXECUTABLE_opts -t ${RE2C_TARGET_ARG_DEFINES_FILE})
         else()
-            set(${LVAR_PREFIX}_OUTPUT_HEADER "")
+            set(RE2C_EXECUTABLE_opts "")
+        endif()
+
+        if(NOT "${RE2C_TARGET_ARG_DEFINES_FILE}" STREQUAL "")
+            list(APPEND RE2C_EXECUTABLE_opts -t ${RE2C_TARGET_ARG_DEFINES_FILE})
         endif()
         
-        add_custom_command(OUTPUT ${RE2C_TARGET_all_outputs}
+        add_custom_command(
+            OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${RE2COutput}
             COMMAND ${RE2C_EXECUTABLE}
-            ARGS ${RE2C_EXECUTABLE_opts} -o ${RE2C_TARGET_output} ${RE2C_TARGET_input}
-            DEPENDS ${RE2C_TARGET_input}
+            ARGS ${RE2C_EXECUTABLE_opts} -o ${RE2COutput} ${CMAKE_CURRENT_SOURCE_DIR}/${RE2CInput}
+            DEPENDS ${RE2CInput}
             COMMENT "[RE2C][${Name}] Building scanner with ${RE2C_EXECUTABLE}"
-            WORKING_DIRECTORY "${RE2C_TARGET_ARG_WORKING_DIR}")
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        )
 
-        set(${LVAR_PREFIX}_DEFINED TRUE)    
-        set(${LVAR_PREFIX}_OUTPUTS ${RE2C_TARGET_output})
-        set(${LVAR_PREFIX}_INPUT ${RE2C_TARGET_input})
-        set(${LVAR_PREFIX}_COMPILE_FLAGS ${RE2C_EXECUTABLE_opts})
-        set(${LVAR_PREFIX}_INCLUDE_DIR "${RE2C_TARGET_ARG_WORKING_DIR}")
+        set(RE2C_${Name}_DEFINED TRUE)    
+        set(RE2C_${Name}_OUTPUTS ${RE2COutput})
+        if("${RE2C_TARGET_ARG_DEFINES_FILE}" STREQUAL "")
+            set(RE2C_${Name}_OUTPUT_HEADER "")
+        else()
+            set(RE2C_${Name}_OUTPUT_HEADER "${RE2C_TARGET_ARG_DEFINES_FILE}")
+        endif()
+        set(RE2C_${Name}_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     endif()
     
   endmacro(RE2C_TARGET)
@@ -159,12 +147,12 @@ if(NOT COMMAND ADD_RE2C_LEMON_DEPENDENCY)
       message(SEND_ERROR "RE2C target `${RE2CTarget}' does not exists.")
     endif()
 
-    if(NOT LEMON_${LemonTarget}_HDR)
+    if(NOT LEMON_${LemonTarget}_OUTPUT_HEADER)
       message(SEND_ERROR "Lemon target `${LemonTarget}' does not exists.")
     endif()
 
     set_source_files_properties(${RE2C_${RE2CTarget}_OUTPUTS}
-      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_HDR})
+      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_OUTPUT_HEADER})
   endmacro(ADD_RE2C_LEMON_DEPENDENCY)
 endif(NOT COMMAND ADD_RE2C_LEMON_DEPENDENCY)
 #============================================================

@@ -40,16 +40,19 @@ add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_ver
 # Depending on whether we're using pre-generated sources or building them on
 # the fly, set up targets and source lists.
 if(SC_GENERATE_LP_SOURCES)
-  LEMON_TARGET(ExpParser expparse.y)
-  PERPLEX_TARGET(ExpScanner expscan.l)
-  ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner ExpParser)
+  LEMON_TARGET(ExpParser expparse.y expparse.c
+               COMPILE_FLAGS "-p -c"
+               DEFINES_FILE "expparse.h")
+  RE2C_TARGET(ExpScanner expscan.l expscan.c
+              COMPILE_FLAGS "-W -Wno-match-empty-string -r -c --tags"
+              DEFINES_FILE "expscan.h")
+  ADD_RE2C_LEMON_DEPENDENCY(ExpScanner ExpParser)
 
-  add_library(objlib_expscan_c OBJECT ${PERPLEX_ExpScanner_SRC})
+  add_library(objlib_expscan_c OBJECT ${RE2C_ExpScanner_OUTPUTS})
   set_property(TARGET objlib_expscan_c PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_SRC})
+  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_OUTPUTS})
   set_property(TARGET objlib_expparse_c PROPERTY POSITION_INDEPENDENT_CODE ON)
-
 else(SC_GENERATE_LP_SOURCES)
   add_subdirectory(generated)
   include_directories(generated)
@@ -80,6 +83,7 @@ set(EXPRESS_SOURCES
   ordered_attrs.cc
   info.c
   factory.c
+  lexsupport.c
  )
 
 set(EXPRESS_OBJS)
@@ -98,11 +102,12 @@ list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expparse_c>)
 
 if(SC_GENERATE_LP_SOURCES)
   set_property(TARGET objlib_expparse_c objlib_express_c objlib_lexact_c 
-	       APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+               APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
   set_property(TARGET objlib_expscan_c objlib_express_c objlib_lexact_c
                APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
   # OBJECT libraries are not targets, and so an explicit dependency is required
-  set_source_files_properties(express.c lexact.c PROPERTIES OBJECT_DEPENDS "${PERPLEX_ExpScanner_HDR};${LEMON_ExpParser_HDR}")
+  set_source_files_properties(express.c lexact.c PROPERTIES OBJECT_DEPENDS
+	  "${RE2C_ExpScanner_OUTPUT_HEADER};${LEMON_ExpParser_OUTPUT_HEADER}")
 endif()
 
 # TODO
@@ -122,6 +127,7 @@ set(CHECK_EXPRESS_SOURCES
 SET(EXPRESS_PRIVATE_HDRS
   exptoks.h
   stack.h
+  lexsupport.h
   )
 
 variable_watch(SC_ADDLIB_EXPRESS_ARG_LINK_LIBRARIES)

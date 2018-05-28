@@ -75,101 +75,78 @@ if (LEMON_EXECUTABLE)
 #   add_executable(Foo main.cpp ${LEMON_MyParser_OUTPUTS})
 #  ====================================================================
 
-# TODO: simplify, remove the variable indirection below
 include(CMakeParseArguments)
 
 if(NOT COMMAND LEMON_TARGET)
-  macro(LEMON_TARGET Name Input)
+  macro(LEMON_TARGET Name LemonInput LemonOutput)
+    set(LT_ARGS DEFINES_FILE COMPILE_FLAGS)
+    CMAKE_PARSE_ARGUMENTS(LEMON_TARGET_ARG "" "${LT_ARGS}" "" ${ARGN})
 
-    get_filename_component(IN_FILE_WE ${Input} NAME_WE)
-    set(LVAR_PREFIX ${Name}_${IN_FILE_WE})
+    if(NOT "${LEMON_TARGET_ARG_COMPILE_FLAGS}" STREQUAL "")
+        set(LEMON_EXECUTABLE_opts "${LEMON_TARGET_ARG_COMPILE_FLAGS}")
+        separate_arguments(LEMON_EXECUTABLE_opts)
+    else()
+        set(LEMON_EXECUTABLE_opts "")
+    endif()
 
-    set(LT_ARGS OUT_SRC_FILE OUT_HDR_FILE WORKING_DIR EXTRA_ARGS)
-    CMAKE_PARSE_ARGUMENTS(${LVAR_PREFIX} "" "${LT_ARGS}" "" ${ARGN})
-
-    # Need a working directory
-    if("${${LVAR_PREFIX}_WORKING_DIR}" STREQUAL "")
-      set(${LVAR_PREFIX}_WORKING_DIR "${CMAKE_CURRENT_BINARY_DIR}/${LVAR_PREFIX}")
-    endif("${${LVAR_PREFIX}_WORKING_DIR}" STREQUAL "")
-    file(MAKE_DIRECTORY ${${LVAR_PREFIX}_WORKING_DIR})
-
-    # Output source file
-    if ("${${LVAR_PREFIX}_OUT_SRC_FILE}" STREQUAL "")
-      set(${LVAR_PREFIX}_OUT_SRC_FILE ${${LVAR_PREFIX}_WORKING_DIR}/${IN_FILE_WE}.c)
-    else ("${${LVAR_PREFIX}_OUT_SRC_FILE}" STREQUAL "")
-      get_filename_component(specified_out_dir ${${LVAR_PREFIX}_OUT_SRC_FILE} PATH)
-      if(NOT "${specified_out_dir}" STREQUAL "")
-	message(FATAL_ERROR "\nFull path specified for OUT_SRC_FILE - should be filename only.\n")
-      endif(NOT "${specified_out_dir}" STREQUAL "")
-      set(${LVAR_PREFIX}_OUT_SRC_FILE ${${LVAR_PREFIX}_WORKING_DIR}/${${LVAR_PREFIX}_OUT_SRC_FILE})
-    endif ("${${LVAR_PREFIX}_OUT_SRC_FILE}" STREQUAL "")
-
-    # Output header file
-    if ("${${LVAR_PREFIX}_OUT_HDR_FILE}" STREQUAL "")
-      set(${LVAR_PREFIX}_OUT_HDR_FILE ${${LVAR_PREFIX}_WORKING_DIR}/${IN_FILE_WE}.h)
-    else ("${${LVAR_PREFIX}_OUT_HDR_FILE}" STREQUAL "")
-      get_filename_component(specified_out_dir ${${LVAR_PREFIX}_OUT_HDR_FILE} PATH)
-      if(NOT "${specified_out_dir}" STREQUAL "")
-	message(FATAL_ERROR "\nFull path specified for OUT_HDR_FILE - should be filename only.\n")
-      endif(NOT "${specified_out_dir}" STREQUAL "")
-      set(${LVAR_PREFIX}_OUT_HDR_FILE ${${LVAR_PREFIX}_WORKING_DIR}/${${LVAR_PREFIX}_OUT_HDR_FILE})
-    endif ("${${LVAR_PREFIX}_OUT_HDR_FILE}" STREQUAL "")
-
+    # check for LemonOutput
+    get_filename_component(_basename ${LemonOutput} NAME_WE)
+    get_filename_component(_out_src_file ${LemonOutput} NAME)
+    get_filename_component(_out_dir ${LemonOutput} PATH)
+    if(NOT "${_out_dir}" STREQUAL "")
+        message(WARNING "Full path specified for LemonOutput - should be filename only")
+    endif()
+    
+    # set report file
+    set(_out_rpt_file "${_basename}.out")
+    
+    # check for DEFINES_FILE
+    if ("${LEMON_TARGET_ARG_DEFINES_FILE}" STREQUAL "")
+        set(_out_hdr_file "${_basename}.h")
+    else()
+        get_filename_component(_out_dir ${LEMON_TARGET_ARG_DEFINES_FILE} PATH)
+        get_filename_component(_out_hdr_file ${LEMON_TARGET_ARG_DEFINES_FILE} NAME)
+        if(NOT "${_out_dir}" STREQUAL "")
+            message(WARNING "Full path specified for DEFINES_FILE - should be filename only")
+        endif()
+    endif()
+    
     # input file
-    get_filename_component(in_full ${Input} ABSOLUTE)
-    if("${in_full}" STREQUAL "${Input}")
-      set(lemon_in_file ${Input})
-    else("${in_full}" STREQUAL "${Input}")
-      set(lemon_in_file "${CMAKE_CURRENT_SOURCE_DIR}/${Input}")
-    endif("${in_full}" STREQUAL "${Input}")
+    get_filename_component(_in_y_path ${LemonInput} ABSOLUTE)
+    get_filename_component(_in_y_file ${LemonInput} NAME)
 
-
-    # names of lemon output files will be based on the name of the input file
-    set(LEMON_GEN_SOURCE ${${LVAR_PREFIX}_WORKING_DIR}/${IN_FILE_WE}.c)
-    set(LEMON_GEN_HEADER ${${LVAR_PREFIX}_WORKING_DIR}/${IN_FILE_WE}.h)
-    set(LEMON_GEN_OUT ${${LVAR_PREFIX}_WORKING_DIR}/${IN_FILE_WE}.out)
-
-    # copy input to bin directory and run lemon
-    get_filename_component(INPUT_NAME ${Input} NAME)
+    # TODO: is this really necessary?
     add_custom_command(
-      OUTPUT ${LEMON_GEN_OUT} ${LEMON_GEN_SOURCE} ${LEMON_GEN_HEADER}
-      COMMAND ${CMAKE_COMMAND} -E copy ${lemon_in_file} ${${LVAR_PREFIX}_WORKING_DIR}/${INPUT_NAME}
-      COMMAND ${LEMON_EXECUTABLE} -T${LEMON_TEMPLATE} ${${LVAR_PREFIX}_WORKING_DIR}/${INPUT_NAME} ${${LVAR_PREFIX}__EXTRA_ARGS}
-      DEPENDS ${Input} ${LEMON_TEMPLATE} ${LEMON_EXECUTABLE_TARGET}
-      WORKING_DIRECTORY ${${LVAR_PREFIX}_WORKING_DIR}
-      COMMENT "[LEMON][${Name}] Building parser with ${LEMON_EXECUTABLE}"
-      )
-
-    # rename generated outputs
-    if(NOT "${${LVAR_PREFIX}_OUT_SRC_FILE}" STREQUAL "${LEMON_GEN_SOURCE}")
-      add_custom_command(
-	OUTPUT ${${LVAR_PREFIX}_OUT_SRC_FILE}
-	COMMAND ${CMAKE_COMMAND} -E copy ${LEMON_GEN_SOURCE} ${${LVAR_PREFIX}_OUT_SRC_FILE}
-	DEPENDS ${LemonInput} ${LEMON_EXECUTABLE_TARGET} ${LEMON_GEN_SOURCE}
-	)
-      set(LEMON_${Name}_OUTPUTS ${${LVAR_PREFIX}_OUT_SRC_FILE} ${LEMON_${Name}_OUTPUTS})
-    endif(NOT "${${LVAR_PREFIX}_OUT_SRC_FILE}" STREQUAL "${LEMON_GEN_SOURCE}")
-    if(NOT "${${LVAR_PREFIX}_OUT_HDR_FILE}" STREQUAL "${LEMON_GEN_HEADER}")
-      add_custom_command(
-	OUTPUT ${${LVAR_PREFIX}_OUT_HDR_FILE}
-	COMMAND ${CMAKE_COMMAND} -E copy ${LEMON_GEN_HEADER} ${${LVAR_PREFIX}_OUT_HDR_FILE}
-	DEPENDS ${LemonInput} ${LEMON_EXECUTABLE_TARGET} ${LEMON_GEN_HEADER}
-	)
-      set(LEMON_${Name}_OUTPUTS ${${LVAR_PREFIX}_OUT_HDR_FILE} ${LEMON_${Name}_OUTPUTS})
-    endif(NOT "${${LVAR_PREFIX}_OUT_HDR_FILE}" STREQUAL "${LEMON_GEN_HEADER}")
-
-    set(LEMON_${Name}_OUTPUTS ${LEMON_${Name}_OUTPUTS} ${LEMON_GEN_OUT})
+        OUTPUT ${_in_y_file}
+        COMMAND ${CMAKE_COMMAND} -E copy ${_in_y_path} ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    
+    # execute lemon
+    add_custom_command(
+        OUTPUT ${_out_src_file}
+        COMMAND ${LEMON_EXECUTABLE} -T${LEMON_TEMPLATE} ${LEMON_EXECUTABLE_opts} ${_in_y_file}
+        DEPENDS ${_in_y_file}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMENT "[LEMON][${Name}] Building parser with ${LEMON_EXECUTABLE}"
+    )
+    
+    # rename the header
+    add_custom_command(
+        OUTPUT ${_out_hdr_file}
+        COMMAND ${CMAKE_COMMAND} ARGS -E rename ${_basename}.h ${_out_hdr_file}
+        DEPENDS ${_out_src_file}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+    
+    # set the return values
+    set(LEMON_${Name}_DEFINED TRUE)
+    set(LEMON_${Name}_OUTPUT_HEADER "${CMAKE_CURRENT_BINARY_DIR}/${_out_hdr_file}")
+    set(LEMON_${Name}_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    set(LEMON_${Name}_OUTPUTS "${_out_src_file}")
 
     # make sure we clean up generated output and copied input
     set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${LEMON_${Name}_OUTPUTS}")
-    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${${LVAR_PREFIX}_WORKING_DIR}/${INPUT_NAME}")
-
-    # macro ran successfully
-    set(LEMON_${Name}_DEFINED TRUE)
-
-    set(LEMON_${Name}_SRC ${${LVAR_PREFIX}_OUT_SRC_FILE})
-    set(LEMON_${Name}_HDR ${${LVAR_PREFIX}_OUT_HDR_FILE})
-    set(LEMON_${Name}_INCLUDE_DIR ${${LVAR_PREFIX}_WORKING_DIR})
+    set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_in_y_file}")
 
   endmacro(LEMON_TARGET)
 endif(NOT COMMAND LEMON_TARGET)
