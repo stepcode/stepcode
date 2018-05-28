@@ -464,7 +464,7 @@ int yylex(struct exp_scanner *pScanner, struct YYSTYPE *plval)
     }
 
     <P3> 'REPEAT' / WS+ SIMPLE_ID WS* ":=" {
-        idx = scope_alloc(pState->scope_stack, "REPEAT", T_REPEAT);
+        idx = scope_alloc(pState->scope_stack, "REPEAT", OBJ_REPEAT_BITS);
         scope = pState->scope_stack->entry + idx;
 
         ibufchk = snprintf(ibuffer, sizeof(ibuffer), "REP_ANON_%08lX", pScanner->anon_scope_cnt);
@@ -477,7 +477,7 @@ int yylex(struct exp_scanner *pScanner, struct YYSTYPE *plval)
         return T_REPEAT;
     }
     <P3> 'REPEAT' / WS {
-        idx = scope_alloc(pState->scope_stack, "REPEAT", T_REPEAT);
+        idx = scope_alloc(pState->scope_stack, "REPEAT", OBJ_REPEAT_BITS);
         scope = pState->scope_stack->entry + idx;
 
         ibufchk = snprintf(ibuffer, sizeof(ibuffer), "REP_ANON_%08lX", pScanner->anon_scope_cnt);
@@ -493,7 +493,7 @@ int yylex(struct exp_scanner *pScanner, struct YYSTYPE *plval)
 
     <P3> 'QUERY' / WS* "(" {
         /* TODO: clean up this mess! */
-        idx = scope_alloc(pState->scope_stack, "QUERY", T_QUERY);
+        idx = scope_alloc(pState->scope_stack, "QUERY", OBJ_QUERY_BITS);
         scope = pState->scope_stack->entry + idx;
 
         ibufchk = snprintf(ibuffer, sizeof(ibuffer), "QRY_ANON_%08lX", pScanner->anon_scope_cnt);

@@ -128,6 +128,7 @@ typedef char * Binary;
 
 /** these represent a different way of selecting classes of objects
  * these are particularly useful when looking for multiple types concurrently */
+
 #define OBJ_TYPE_BITS       0x1
 #define OBJ_ENTITY_BITS     0x2
 #define OBJ_FUNCTION_BITS   0x4
@@ -139,6 +140,8 @@ typedef char * Binary;
 #define OBJ_VARIABLE_BITS   0x100
 #define OBJ_WHERE_BITS      0x200
 #define OBJ_ALIAS_BITS      0x400
+#define OBJ_REPEAT_BITS     0x800
+#define OBJ_QUERY_BITS      0x1000
 
 
 #define OBJ_ANYTHING_BITS   0x0fffffff
@@ -150,6 +153,7 @@ typedef char * Binary;
 
 /* OBJ_UNUSED should die, but until it does, allow it to work */
 #define OBJ_UNUSED_BITS     OBJ_UNFINDABLE_BITS
+#define OBJ_DOCROOT_BITS    OBJ_UNFINDABLE_BITS
 
 #endif /*EXPRESS_BASIC_H*/
 

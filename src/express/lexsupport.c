@@ -227,7 +227,7 @@ int yylexInit(struct exp_scanner *pScanner, struct YYSTATE *pState, FILE *fp) {
         yyerror("failed to read input!", 0);
 
     pScanner->state = pState;
-    pScanner->scope_top = scope_alloc(pState->scope_stack, "DOCROOT", T_DOCROOT);
+    pScanner->scope_top = scope_alloc(pState->scope_stack, "DOCROOT", OBJ_DOCROOT_BITS);
     pState->scope_stack->entry[pScanner->scope_top].parent = -1;
 
     pScanner->buffer = buf; 
@@ -398,22 +398,23 @@ int resolve_symbol(struct YYSTATE *pState, const char *id, struct exp_scanner *p
     
     /* basic resolution */
     qry = NULL;
-    while (s->type != T_DOCROOT) {
+    while (s->type != OBJ_DOCROOT_BITS) {
         qry = HASHsearch(s->symbol_table, (Symbol) {.name = id}, HASH_FIND);
         if (qry)
             break;
         s = stack->entry + s->parent;
     }
     
-    /* failure, not found */
+    /* not found, probably an attribute */
     if (!qry)
-        return T_INVALID;
+        return T_SIMPLE_REF;
         
+    /* check for enums */
     sym = qry;
     while (qry) {
         if (!strcasecmp(qry->name, id)) {
             cnt++;
-            if (qry->type == T_ENUMERATION_REF)
+            if (qry->ref_tok == T_ENUMERATION_REF)
                 cnt_enum++;
             }
         qry = qry->next;
@@ -428,14 +429,14 @@ int resolve_symbol(struct YYSTATE *pState, const char *id, struct exp_scanner *p
     qry = sym;
     while (qry) {
         if (!strcasecmp(sym->name, id)) {
-            if ((!is_enum && qry->type != T_ENUMERATION_REF) ||
-                (is_enum && qry->type == T_ENUMERATION_REF))
+            if ((!is_enum && qry->ref_tok != T_ENUMERATION_REF) ||
+                (is_enum && qry->ref_tok == T_ENUMERATION_REF))
                 break;
         }
         qry = qry->next;
     }
     
-    return qry->type;
+    return qry->ref_tok;
 }
 
 

@@ -75,10 +75,24 @@ add_test(NAME build_check_express
     --config $<CONFIGURATION>
     )
 
-add_executable(check-scanner "scanner_test.c;${RE2C_ExpScanner_OUTPUTS};../lexsupport.c;../hash.c;../../auxlib/bstrlib.c")
-set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
-set_property(TARGET check-scanner APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
-set_property(TARGET check-scanner PROPERTY COMPILE_DEFINITIONS "HASH_TESTING")
+set(SHARED_SRC ../lexsupport.c ../hash.c ../../auxlib/bstrlib.c)
+
+add_executable(check-scanner scanner_test.c $<TARGET_OBJECTS:objlib_expscan_c> ${SHARED_SRC})
+add_dependencies(check-scanner express)
+
+add_executable(check-parser
+               parser_test.c
+               $<TARGET_OBJECTS:objlib_expscan_c>
+               $<TARGET_OBJECTS:objlib_expparse_c>
+               ${SHARED_SRC})
+add_dependencies(check-parser express)
+
+set_property(TARGET check-scanner check-parser
+             APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
+set_property(TARGET check-scanner check-parser
+             APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+set_property(TARGET check-scanner check-parser
+             PROPERTY COMPILE_DEFINITIONS "HASH_TESTING")
 
 file(GLOB unit_tests RELATIVE "${CMAKE_BINARY_DIR}" "../../../test/unitary_schemas/*.exp")
 file(GLOB extended_tests RELATIVE "${CMAKE_BINARY_DIR}" "../../../data/*/*.exp")
@@ -87,6 +101,8 @@ foreach(expfile ${unit_tests} ${extended_tests})
     get_filename_component(id_suffix "${expfile}" NAME_WE)
     add_test(NAME "test_scanner:${id_suffix}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
              COMMAND $<TARGET_FILE:check-scanner> "${expfile}")
+    add_test(NAME "test_parser:${id_suffix}" WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+             COMMAND $<TARGET_FILE:check-parser> "${expfile}")
 endforeach()
 
 add_test(NAME test_plib_parse_err
