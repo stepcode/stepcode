@@ -41,7 +41,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     SCOPEod
 
     /* Defined Types with defined ancestor head
-     * TODO: recusive approach
+     * TODO: recursive approach
      */
     SCOPEdo_types( scope, t, de )
     if ( ( t->search_id == CANPROCESS )
