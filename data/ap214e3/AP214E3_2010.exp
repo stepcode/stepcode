@@ -4409,7 +4409,7 @@ WHERE
     item_identified_representation_usage.identified_item)) OR (
     'AUTOMOTIVE_DESIGN.' + 'DIMENSIONAL_SIZE' IN TYPEOF(SELF\
     item_identified_representation_usage.definition)) AND ((SELF\
-    item_identified_representation_usage.definition.name = 'heigth') OR (SELF\
+    item_identified_representation_usage.definition.name = 'height') OR (SELF\
     item_identified_representation_usage.definition.name = 'length') OR (SELF\
     item_identified_representation_usage.definition.name = 'width'));
   wr7 : NOT ('AUTOMOTIVE_DESIGN.' + 'RADIUS_DIMENSION' IN TYPEOF(SELF\
