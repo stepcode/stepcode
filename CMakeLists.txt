@@ -52,13 +52,9 @@ set(SC_ABI_VERSION ${SC_ABI_SOVERSION}.0.0)
 
 # Minimum required version of CMake
 cmake_minimum_required(VERSION 3.6.3)
-# TODO: rework to remove these
-if(COMMAND CMAKE_POLICY)
-  CMAKE_POLICY(SET CMP0003 NEW)
-  if ("${CMAKE_VERSION}" VERSION_GREATER 2.99)
-    CMAKE_POLICY(SET CMP0026 OLD)
-  endif ("${CMAKE_VERSION}" VERSION_GREATER 2.99)
-endif(COMMAND CMAKE_POLICY)
+cmake_policy(SET CMP0003 NEW)
+cmake_policy(SET CMP0026 NEW)
+cmake_policy(SET CMP0057 NEW)
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
@@ -108,6 +104,9 @@ include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)
 
 
 ################
+
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 11)
 
 if(MSVC)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
