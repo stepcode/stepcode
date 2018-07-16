@@ -56,13 +56,8 @@ if(SC_GENERATE_LP_SOURCES)
     ${PERPLEX_ExpScanner_static_SRC}
     )
 else(SC_GENERATE_LP_SOURCES)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/generated)
-  set(EXPRESS_GENERATED_SRCS
-    generated/expparse.c
-    generated/expscan.c
-    )
-  set(SCL_SO_SRCS ${EXPRESS_GENERATED_SRCS})
-  set(SCL_STATIC_SRCS ${EXPRESS_GENERATED_SRCS})
+  add_subdirectory(generated)
+  include_directories(generated)
 endif(SC_GENERATE_LP_SOURCES)
 
 set(EXPRESS_SOURCES
@@ -79,7 +74,7 @@ set(EXPRESS_SOURCES
   resolve.c
   lexact.c
   linklist.c
-  error.c
+#  error.c
   dict.c
   hash.c
   memory.c
@@ -89,6 +84,19 @@ set(EXPRESS_SOURCES
   info.c
   exp_kw.c
  )
+
+set(EXPRESS_OBJS)
+foreach(_src ${EXPRESS_SOURCES})
+    string(REPLACE "." "_" _suffix ${_src})
+    set(_objlib "objlib_${_suffix}")
+    add_library(${_objlib} OBJECT ${_src})
+    # TODO: probably PIC should be used everywhere...
+    set_property(TARGET ${_objlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
+    list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:${_objlib}>)
+endforeach()
+
+list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expscan_c>)
+list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expparse_c>)
 
 # TODO
 # Currently, fedex.c provides the main() for multiple programs. These programs
@@ -109,14 +117,13 @@ SET(EXPRESS_PRIVATE_HDRS
   stack.h
   )
 
-SC_ADDLIB(express "${EXPRESS_SOURCES}" "base" SO_SRCS "${SCL_SO_SRCS}" STATIC_SRCS "${SCL_STATIC_SRCS}")
+SC_ADDLIB(express "error.c" "base" SO_SRCS "${EXPRESS_OBJS}")
+
 if(SC_GENERATE_LP_SOURCES)
-  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
-  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
-  if (TARGET express-static)
-    set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_static_INCLUDE_DIR}")
-    set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_static_INCLUDE_DIR}")
-  endif (TARGET express-static)
+  set_property(TARGET express
+               APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
+  set_property(TARGET express
+               APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
 endif(SC_GENERATE_LP_SOURCES)
 
 if(SC_GENERATE_LP_SOURCES)
