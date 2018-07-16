@@ -60,6 +60,9 @@ OPTION_WITH_DEFAULT(SC_GIT_VERSION "Build using version from git" ON)
 option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
 
+option(DEBUGGING_GENERATED_SOURCES "disable md5 verification of generated sources" OFF)
+mark_as_advanced(DEBUGGING_GENERATED_SOURCES)
+
 #---------------------------------------------------------------------
 # Coverage option
 OPTION_WITH_DEFAULT(SC_ENABLE_COVERAGE "Enable code coverage test" OFF)
@@ -79,11 +82,10 @@ endif(SC_ENABLE_COVERAGE)
 # Testing option
 OPTION_WITH_DEFAULT(SC_ENABLE_TESTING "Enable unittesting framework" OFF)
 if(SC_ENABLE_TESTING)
-  if(NOT DEFINED SC_BUILD_SCHEMAS)
+  if(NOT ${SC_BUILD_EXPRESS_ONLY} AND NOT DEFINED SC_BUILD_SCHEMAS)
     set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
   endif()
   include(CTest)
-  ENABLE_TESTING()
 endif(SC_ENABLE_TESTING)
 
 #---------------------------------------------------------------------
