@@ -42,7 +42,7 @@ project(SC)
 
 # SC version
 set(SC_VERSION_MAJOR 0)
-set(SC_VERSION_MINOR 7-dev)
+set(SC_VERSION_MINOR 8-dev)
 set(SC_VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR})
 
 # SC ABI version. SC_ABI_SOVERSION should be incremented
