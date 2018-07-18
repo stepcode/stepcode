@@ -1,5 +1,20 @@
 include_directories(..)
 
+set(EXPRESS_CORE_OBJ
+    $<TARGET_OBJECTS:objlib_memory_c>
+    $<TARGET_OBJECTS:objlib_error_c>
+    $<TARGET_OBJECTS:objlib_hash_c>
+    $<TARGET_OBJECTS:objlib_linklist_c>
+# extra
+    $<TARGET_OBJECTS:objlib_dict_c>
+    $<TARGET_OBJECTS:objlib_object_c>
+    $<TARGET_OBJECTS:objlib_info_c>
+)
+
+add_executable(test_expr test_expr.c
+    $<TARGET_OBJECTS:objlib_expr_c>
+    ${EXPRESS_CORE_OBJ})
+
 add_test(NAME build_check_express
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMAND ${CMAKE_COMMAND} --build .

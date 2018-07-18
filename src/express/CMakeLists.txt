@@ -74,7 +74,7 @@ set(EXPRESS_SOURCES
   resolve.c
   lexact.c
   linklist.c
-#  error.c
+  error.c
   dict.c
   hash.c
   memory.c
@@ -117,7 +117,7 @@ SET(EXPRESS_PRIVATE_HDRS
   stack.h
   )
 
-SC_ADDLIB(express "error.c" "base" SO_SRCS "${EXPRESS_OBJS}")
+SC_ADDLIB(express "dummy.c" "base" SO_SRCS "${EXPRESS_OBJS}")
 
 if(SC_GENERATE_LP_SOURCES)
   set_property(TARGET express
