@@ -65,7 +65,7 @@ typedef SDAI_PID_ptr SDAI_PID_var;
 // The Direct Access Protocol supports direct access to persistent data
 // through typed attributes organized in data objects that are defined
 // in a Data Definition Language (DDL). An object using this protocol
-// whould represent its persistent data as one or more interconnected
+// would represent its persistent data as one or more interconnected
 // data objects, For uniformity, the persistent data of an object is
 // described as a single data object; however, that data object might be
 // the root of a graph of data objects interconnected by stored data

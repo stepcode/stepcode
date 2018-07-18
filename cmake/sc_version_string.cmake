@@ -77,7 +77,7 @@ set(header_string "/* sc_version_string.h - written by cmake. Changes will be lo
   "#endif\n"
  )
 
-#don't update the file unless somethig changed
+#don't update the file unless something changed
 string(RANDOM tmpsuffix)
 file(WRITE ${SC_VERSION_HEADER}.${tmpsuffix} ${header_string})
 execute_process(COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SC_VERSION_HEADER}.${tmpsuffix} ${SC_VERSION_HEADER})
@@ -93,4 +93,3 @@ endif(NOT SC_IS_SUBBUILD)
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

@@ -514,7 +514,7 @@ Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
             STEPread_content( in, instances, 0, addFileId );
         }
 
-        else { // ERROR  -- the type wasn\'t one of the choices
+        else { // ERROR  -- the type wasn't one of the choices
             err->AppendToDetailMsg(
                 "The type of the SELECT type is not valid.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
