@@ -74,7 +74,7 @@ set(EXPRESS_SOURCES
   resolve.c
   lexact.c
   linklist.c
-#  error.c
+  error.c
   dict.c
   hash.c
   memory.c
@@ -121,7 +121,7 @@ variable_watch(SC_ADDLIB_EXPRESS_ARG_LINK_LIBRARIES)
 variable_watch(SC_ADDLIB_EXPRESS-STATIC_ARG_LINK_LIBRARIES)
 
 if($CACHE{SC_BUILD_SHARED_LIBS})
-  SC_ADDLIB(express SHARED SOURCES "error.c" ${EXPRESS_OBJS} LINK_LIBRARIES base)
+  SC_ADDLIB(express SHARED SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base)
   if(WIN32)
     target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
   endif()
@@ -144,7 +144,7 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
 endif()
 
 if($CACHE{SC_BUILD_STATIC_LIBS})
-  SC_ADDLIB(express-static STATIC SOURCES "error.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
+  SC_ADDLIB(express-static STATIC SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
 
   if(SC_GENERATE_LP_SOURCES)
     set_property(TARGET express-static
