@@ -68,17 +68,17 @@ Statement STMTcreate( int type ) {
 
 /** Initialize the Statement module. */
 void STMTinitialize( void ) {
-    MEMinitialize( &STMT_fl, sizeof( struct Statement_ ), 500, 100 );
+    ALLOCinitialize( &STMT_fl, sizeof( struct Statement_ ), 500, 100 );
 
-    MEMinitialize( &ALIAS_fl, sizeof( struct Alias_ ), 10, 10 );
-    MEMinitialize( &ASSIGN_fl, sizeof( struct Assignment_ ), 100, 30 );
-    MEMinitialize( &CASE_fl, sizeof( struct Case_Statement_ ), 100, 30 );
-    MEMinitialize( &COMP_STMT_fl, sizeof( struct Compound_Statement_ ), 100, 30 );
-    MEMinitialize( &COND_fl, sizeof( struct Conditional_ ), 100, 30 );
-    MEMinitialize( &LOOP_fl, sizeof( struct Loop_ ), 100, 30 );
-    MEMinitialize( &PCALL_fl, sizeof( struct Procedure_Call_ ), 100, 30 );
-    MEMinitialize( &RET_fl, sizeof( struct Return_Statement_ ), 100, 30 );
-    MEMinitialize( &INCR_fl, sizeof( struct Increment_ ), 100, 30 );
+    ALLOCinitialize( &ALIAS_fl, sizeof( struct Alias_ ), 10, 10 );
+    ALLOCinitialize( &ASSIGN_fl, sizeof( struct Assignment_ ), 100, 30 );
+    ALLOCinitialize( &CASE_fl, sizeof( struct Case_Statement_ ), 100, 30 );
+    ALLOCinitialize( &COMP_STMT_fl, sizeof( struct Compound_Statement_ ), 100, 30 );
+    ALLOCinitialize( &COND_fl, sizeof( struct Conditional_ ), 100, 30 );
+    ALLOCinitialize( &LOOP_fl, sizeof( struct Loop_ ), 100, 30 );
+    ALLOCinitialize( &PCALL_fl, sizeof( struct Procedure_Call_ ), 100, 30 );
+    ALLOCinitialize( &RET_fl, sizeof( struct Return_Statement_ ), 100, 30 );
+    ALLOCinitialize( &INCR_fl, sizeof( struct Increment_ ), 100, 30 );
 
     OBJcreate( OBJ_ALIAS, SCOPE_get_symbol, "alias scope", OBJ_UNUSED_BITS );
     OBJcreate( OBJ_INCREMENT, SCOPE_get_symbol, "increment scope", OBJ_UNUSED_BITS );

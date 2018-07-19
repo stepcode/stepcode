@@ -316,8 +316,8 @@ Symbol * TYPE_get_symbol( void *t ) {
 
 /** Initialize the Type module */
 void TYPEinitialize() {
-    MEMinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
-    MEMinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
+    ALLOCinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
+    ALLOCinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
     OBJcreate( OBJ_TYPE, TYPE_get_symbol, "type", OBJ_TYPE_BITS );
     /*  OBJcreate(OBJ_TYPE,TYPE_get_symbol,"(headless) type", OBJ_UNFINDABLE_BITS);*/
     OBJcreate( OBJ_TAG, TYPE_get_symbol, "tag", OBJ_TYPE_BITS );

@@ -223,10 +223,10 @@ extern SC_EXPRESS_EXPORT Error ERROR_corrupted_type;
 /* macro function definitions */
 /******************************/
 
-#define TYPEHEAD_new()      (struct TypeHead_ *)MEM_new(&TYPEHEAD_fl)
-#define TYPEHEAD_destroy(x) MEM_destroy(&TYPEHEAD_fl,(Freelist *)x)
-#define TYPEBODY_new()      (struct TypeBody_ *)MEM_new(&TYPEBODY_fl)
-#define TYPEBODY_destroy(x) MEM_destroy(&TYPEBODY_fl,(Freelist *)x)
+#define TYPEHEAD_new()      (struct TypeHead_ *)ALLOC_new(&TYPEHEAD_fl)
+#define TYPEHEAD_destroy(x) ALLOC_destroy(&TYPEHEAD_fl,(Freelist *)x)
+#define TYPEBODY_new()      (struct TypeBody_ *)ALLOC_new(&TYPEBODY_fl)
+#define TYPEBODY_destroy(x) ALLOC_destroy(&TYPEBODY_fl,(Freelist *)x)
 
 #define TYPEis(t)       ((t)->u.type->body->type)
 #define TYPEis_identifier(t)    ((t)->u.type->body->type == identifier_)

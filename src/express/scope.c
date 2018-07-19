@@ -50,7 +50,7 @@ Symbol * SCOPE_get_symbol( void *s ) {
 
 void SCOPEinitialize( void ) {
     OBJcreate( OBJ_SCHEMA, SCOPE_get_symbol, "schema", OBJ_SCHEMA_BITS );
-    MEMinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
+    ALLOCinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
 }
 
 /**

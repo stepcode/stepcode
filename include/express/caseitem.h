@@ -83,8 +83,8 @@ extern SC_EXPRESS_EXPORT struct freelist_head CASE_IT_fl;
 /* function prototypes */
 /***********************/
 
-#define CASE_IT_new()       (struct Case_Item_ *)MEM_new(&CASE_IT_fl)
-#define CASE_IT_destroy(x)  MEM_destroy(&CASE_IT_fl,(Freelist *)x)
+#define CASE_IT_new()       (struct Case_Item_ *)ALLOC_new(&CASE_IT_fl)
+#define CASE_IT_destroy(x)  ALLOC_destroy(&CASE_IT_fl,(Freelist *)x)
 
 extern SC_EXPRESS_EXPORT Case_Item    CASE_ITcreate( Linked_List, struct Statement_ * );
 extern SC_EXPRESS_EXPORT void     CASE_ITinitialize( void );

@@ -109,8 +109,8 @@ extern SC_EXPRESS_EXPORT int ENTITY_MARK;
 /* macro function definitions */
 /******************************/
 
-#define ENTITY_new()        (struct Entity_ *)MEM_new(&ENTITY_fl)
-#define ENTITY_destroy(x)   MEM_destroy(&ENTITY_fl,(Freelist *)(char *)x)
+#define ENTITY_new()        (struct Entity_ *)ALLOC_new(&ENTITY_fl)
+#define ENTITY_destroy(x)   ALLOC_destroy(&ENTITY_fl,(Freelist *)(char *)x)
 
 #define ENTITYget_symbol(e) SCOPEget_symbol(e)
 /* returns a function (i.e., which can be passed to other functions) */

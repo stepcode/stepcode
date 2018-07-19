@@ -117,12 +117,12 @@ extern SC_EXPRESS_EXPORT int __SCOPE_search_id;
 #define SCHEMAget_name(schema)      SCOPEget_name(schema)
 #define SCHEMAget_symbol(schema)    SCOPEget_symbol(schema)
 
-#define REN_new()   (struct Rename *)MEM_new(&REN_fl)
-#define REN_destroy(x)  MEM_destroy(&REN_fl,(Freelist *)x)
-#define SCOPE_new() (struct Scope_ *)MEM_new(&SCOPE_fl)
-#define SCOPE_destroy(x)    MEM_destroy(&SCOPE_fl,(Freelist *)x)
-#define SCHEMA_new()    (struct Schema_ *)MEM_new(&SCHEMA_fl)
-#define SCHEMA_destroy(x)   MEM_destroy(&SCHEMA_fl,(Freelist *)x)
+#define REN_new()   (struct Rename *)ALLOC_new(&REN_fl)
+#define REN_destroy(x)  ALLOC_destroy(&REN_fl,(Freelist *)x)
+#define SCOPE_new() (struct Scope_ *)ALLOC_new(&SCOPE_fl)
+#define SCOPE_destroy(x)    ALLOC_destroy(&SCOPE_fl,(Freelist *)x)
+#define SCHEMA_new()    (struct Schema_ *)ALLOC_new(&SCHEMA_fl)
+#define SCHEMA_destroy(x)   ALLOC_destroy(&SCHEMA_fl,(Freelist *)x)
 
 /* the following is simply to make the resulting code easier to read */
 /* otherwise, you'd see "entity->superscope" even when you KNOW */

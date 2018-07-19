@@ -320,7 +320,7 @@ Entity ENTITYcopy( Entity e ) {
 
 /** Initialize the Entity module. */
 void ENTITYinitialize() {
-    MEMinitialize( &ENTITY_fl, sizeof( struct Entity_ ), 500, 100 );
+    ALLOCinitialize( &ENTITY_fl, sizeof( struct Entity_ ), 500, 100 );
     OBJcreate( OBJ_ENTITY, SCOPE_get_symbol, "entity",
                OBJ_ENTITY_BITS );
 }

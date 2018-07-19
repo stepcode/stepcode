@@ -54,7 +54,7 @@ typedef void * ClientData;
 /* packages used throughout */
 /****************************/
 
-#include "memory.h"
+#include "alloc.h"
 
 typedef struct Scope_ * Type;
 typedef struct Scope_ * Scope;

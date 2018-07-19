@@ -38,7 +38,7 @@
 
 #include <sc_export.h>
 #include "basic.h"
-#include "memory.h"
+#include "alloc.h"
 
 /************/
 /* typedefs */
@@ -78,10 +78,10 @@ extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
 /* macro function definitions */
 /******************************/
 
-#define LINK_new()  (struct Link_ *)MEM_new(&LINK_fl)
-#define LINK_destroy(x) MEM_destroy(&LINK_fl,(Freelist *)x)
-#define LIST_new()  (struct Linked_List_ *)MEM_new(&LIST_fl)
-#define LIST_destroy(x) MEM_destroy(&LIST_fl,(Freelist *)x)
+#define LINK_new()  (struct Link_ *)ALLOC_new(&LINK_fl)
+#define LINK_destroy(x) ALLOC_destroy(&LINK_fl,(Freelist *)x)
+#define LIST_new()  (struct Linked_List_ *)ALLOC_new(&LIST_fl)
+#define LIST_destroy(x) ALLOC_destroy(&LIST_fl,(Freelist *)x)
 
 /** accessing links */
 #define LINKdata(link)  (link)->data

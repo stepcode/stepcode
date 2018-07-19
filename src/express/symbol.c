@@ -39,7 +39,7 @@ struct freelist_head SYMBOL_fl;
 
 /** Initialize the Symbol module */
 void SYMBOLinitialize( void ) {
-    MEMinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
+    ALLOCinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
 }
 
 Symbol * SYMBOLcreate( char * name, int line, const char * filename ) {

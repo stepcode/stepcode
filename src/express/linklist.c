@@ -29,8 +29,8 @@ struct freelist_head LINK_fl;
 struct freelist_head LIST_fl;
 
 void LISTinitialize( void ) {
-    MEMinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );
-    MEMinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );
+    ALLOCinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );
+    ALLOCinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );
     ERROR_empty_list = ERRORcreate( "Empty list in %s.", SEVERITY_ERROR );
 }
 
