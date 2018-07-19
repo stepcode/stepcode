@@ -61,7 +61,7 @@
 #include "express/hash.h"
 #include "express/express.h"
 #include "express/dict.h"
-#include "express/memory.h"
+#include "express/alloc.h"
 #include "token_type.h"
 #include "expparse.h"
 #include "expscan.h"

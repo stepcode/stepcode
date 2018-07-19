@@ -1,6 +1,4 @@
-#define MEMORY_C
-
-/* mem.c - memory allocator for fixed size blocks */
+/* alloc.c - memory allocator for fixed size blocks */
 
 /*
 
@@ -37,7 +35,7 @@ Now you can say things like:
 #include <sc_memmgr.h>
 #include <stdlib.h>
 #include <string.h>
-#include "express/memory.h"
+#include "express/alloc.h"
 #include "express/error.h"
 
 /* just in case we are compiling by hand */
@@ -77,7 +75,7 @@ Freelist * create_freelist( struct freelist_head * flh, int bytes ) {
 }
 
 void
-_MEMinitialize() {
+_ALLOCinitialize() {
 #ifdef DEBUG_MALLOC
     malloc_debug( 2 );
 #endif
@@ -89,7 +87,7 @@ _MEMinitialize() {
  * \param alloc1 number to allocate initially
  * \param alloc2 number to allocate if we run out
  */
-void MEMinitialize( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) {
+void ALLOCinitialize( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) {
     flh->size_elt = size;   /* kludge for calloc-like behavior */
 #ifndef NOSTAT
     flh->alloc = flh->dealloc = flh->create = 0;
@@ -116,7 +114,7 @@ void MEMinitialize( struct freelist_head * flh, unsigned int size, int alloc1, i
 #endif
 }
 
-Generic MEM_new( struct freelist_head * flh ) {
+Generic ALLOC_new( struct freelist_head * flh ) {
     Generic obj;
 
 #ifndef NOSTAT
@@ -151,7 +149,7 @@ Generic MEM_new( struct freelist_head * flh ) {
 #endif
 }
 
-void MEM_destroy( struct freelist_head * flh, Freelist * link ) {
+void ALLOC_destroy( struct freelist_head * flh, Freelist * link ) {
 #ifndef NOSTAT
     flh->dealloc++;
 #endif

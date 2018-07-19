@@ -64,8 +64,8 @@ Symbol * RENAME_get_symbol( Generic r ) {
 /** Initialize the Schema module. */
 void SCHEMAinitialize( void ) {
     OBJcreate( OBJ_RENAME, RENAME_get_symbol, "rename clause", OBJ_UNUSED_BITS );
-    MEMinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
-    MEMinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
+    ALLOCinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
+    ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
 }
 
 /** Create and return an empty scope inside a parent scope. */

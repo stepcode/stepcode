@@ -43,7 +43,7 @@
 /* packages used */
 /*****************/
 
-#include "memory.h"
+#include "alloc.h"
 #include "symbol.h"
 
 /************/
@@ -110,8 +110,8 @@ extern SC_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
 /* macro function definitions */
 /******************************/
 
-#define ERROR_OPT_new() (struct Error_Warning_ *)MEM_new(&ERROR_OPT_fl)
-#define ERROR_OPT_destroy(x)    MEM_destroy(&ERROR_OPT_fl,(Freelist *)(Generic)x)
+#define ERROR_OPT_new() (struct Error_Warning_ *)ALLOC_new(&ERROR_OPT_fl)
+#define ERROR_OPT_destroy(x)    ALLOC_destroy(&ERROR_OPT_fl,(Freelist *)(Generic)x)
 
 /***********************/
 /* function prototypes */

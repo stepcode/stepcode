@@ -105,8 +105,8 @@ extern SC_EXPRESS_EXPORT struct freelist_head VAR_fl;
 /* macro function definitions */
 /******************************/
 
-#define VAR_new()   (struct Variable_ *)MEM_new(&VAR_fl)
-#define VAR_destroy(x)  MEM_destroy(&VAR_fl,(Freelist *)(Generic)x)
+#define VAR_new()   (struct Variable_ *)ALLOC_new(&VAR_fl)
+#define VAR_destroy(x)  ALLOC_destroy(&VAR_fl,(Freelist *)(Generic)x)
 
 #define VARget_name(v)          ((v)->name)
 #define VARput_name(v,n)        ((v)->name = (n))

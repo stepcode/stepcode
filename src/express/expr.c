@@ -152,10 +152,10 @@ Symbol * EXP_get_symbol( Generic e ) {
 
 /** Description: Initialize the Expression module. */
 void EXPinitialize( void ) {
-    MEMinitialize( &EXP_fl, sizeof( struct Expression_ ), 500, 200 );
-    MEMinitialize( &OP_fl, sizeof( struct Op_Subexpression ), 500, 100 );
-    MEMinitialize( &QUERY_fl, sizeof( struct Query_ ), 50, 10 );
-    MEMinitialize( &QUAL_ATTR_fl, sizeof( struct Query_ ), 20, 10 );
+    ALLOCinitialize( &EXP_fl, sizeof( struct Expression_ ), 500, 200 );
+    ALLOCinitialize( &OP_fl, sizeof( struct Op_Subexpression ), 500, 100 );
+    ALLOCinitialize( &QUERY_fl, sizeof( struct Query_ ), 50, 10 );
+    ALLOCinitialize( &QUAL_ATTR_fl, sizeof( struct Query_ ), 20, 10 );
     OBJcreate( OBJ_EXPRESSION, EXP_get_symbol, "expression", OBJ_EXPRESSION_BITS );
     OBJcreate( OBJ_AMBIG_ENUM, EXP_get_symbol, "ambiguous enumeration", OBJ_UNUSED_BITS );
 

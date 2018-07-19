@@ -79,10 +79,10 @@ Symbol * WHERE_get_symbol( Generic w ) {
 
 /** Initialize the Algorithm module. */
 void ALGinitialize( void ) {
-    MEMinitialize( &FUNC_fl, sizeof( struct Function_ ),  100, 50 );
-    MEMinitialize( &RULE_fl, sizeof( struct Rule_ ),      100, 50 );
-    MEMinitialize( &PROC_fl, sizeof( struct Procedure_ ), 100, 50 );
-    MEMinitialize( &WHERE_fl, sizeof( struct Where_ ),    100, 50 );
+    ALLOCinitialize( &FUNC_fl, sizeof( struct Function_ ),  100, 50 );
+    ALLOCinitialize( &RULE_fl, sizeof( struct Rule_ ),      100, 50 );
+    ALLOCinitialize( &PROC_fl, sizeof( struct Procedure_ ), 100, 50 );
+    ALLOCinitialize( &WHERE_fl, sizeof( struct Where_ ),    100, 50 );
     OBJcreate( OBJ_RULE, SCOPE_get_symbol, "rule", OBJ_UNUSED_BITS );
     OBJcreate( OBJ_PROCEDURE, SCOPE_get_symbol, "procedure", OBJ_PROCEDURE_BITS );
     OBJcreate( OBJ_FUNCTION, SCOPE_get_symbol, "function", OBJ_FUNCTION_BITS );

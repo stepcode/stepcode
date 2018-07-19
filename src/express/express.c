@@ -274,7 +274,7 @@ void EXPRESSinitialize( void ) {
     Procedure
     proc_insert,    proc_remove;
 
-    _MEMinitialize();
+    _ALLOCinitialize();
     ERRORinitialize();
     OBJinitialize();
 

@@ -101,7 +101,7 @@
 /*****************/
 
 #include <sc_export.h>
-#include "memory.h"
+#include "alloc.h"
 
 /************/
 /* typedefs */
@@ -183,10 +183,10 @@ This change only seems to have affected hash.h and hash.c
 #define DIV(x,y)        ((x) >> (y))
 #define MOD(x,y)        ((x) & ((y)-1))
 
-#define HASH_Table_new()    (struct Hash_Table_ *)MEM_new(&HASH_Table_fl)
-#define HASH_Table_destroy(x)   MEM_destroy(&HASH_Table_fl,(Freelist *)(Generic)x)
-#define HASH_Element_new()  (struct Element_ *)MEM_new(&HASH_Element_fl)
-#define HASH_Element_destroy(x) MEM_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
+#define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
+#define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)(Generic)x)
+#define HASH_Element_new()  (struct Element_ *)ALLOC_new(&HASH_Element_fl)
+#define HASH_Element_destroy(x) ALLOC_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
 
 
 /***********************/

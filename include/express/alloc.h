@@ -1,5 +1,5 @@
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef ALLOC_H
+#define ALLOC_H
 
 /*
  * This work was supported by the United States Government, and is
@@ -30,7 +30,7 @@
 
 #include <sc_export.h>
 
-/** \file memory.h - defs for fixed size block memory allocator */
+/** \file alloc.h - defs for fixed size block memory allocator */
 
 typedef long Align;
 
@@ -75,11 +75,11 @@ extern SC_EXPRESS_EXPORT int yylineno;
         fprintf(stderr,"fedex: out of space");\
     } else {}
 
-SC_EXPRESS_EXPORT void    _MEMinitialize PROTO( ( void ) );
-SC_EXPRESS_EXPORT void    MEMinitialize PROTO( ( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) );
-SC_EXPRESS_EXPORT void    MEM_destroy PROTO( ( struct freelist_head *, Freelist * ) );
-SC_EXPRESS_EXPORT Generic MEM_new PROTO( ( struct freelist_head * ) );
+SC_EXPRESS_EXPORT void    _ALLOCinitialize PROTO( ( void ) );
+SC_EXPRESS_EXPORT void    ALLOCinitialize PROTO( ( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 ) );
+SC_EXPRESS_EXPORT void    ALLOC_destroy PROTO( ( struct freelist_head *, Freelist * ) );
+SC_EXPRESS_EXPORT Generic ALLOC_new PROTO( ( struct freelist_head * ) );
 
-#endif /* MEMORY_H */
+#endif /* ALLOC_H */
 
 

@@ -189,7 +189,7 @@ void ERRORcleanup( void ) {
 void ERRORinitialize_after_LIST( void ) {
     ERRORwarnings = LISTcreate();
 
-    MEMinitialize( &ERROR_OPT_fl, sizeof( struct Error_Warning_ ), 5, 5 );
+    ALLOCinitialize( &ERROR_OPT_fl, sizeof( struct Error_Warning_ ), 5, 5 );
 }
 
 void ERRORcreate_warning( char * name, Error error ) {

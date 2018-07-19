@@ -97,7 +97,7 @@ Symbol * VAR_get_symbol( Generic v ) {
 
 /** Initialize the Variable module. */
 void VARinitialize() {
-    MEMinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
+    ALLOCinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
     /*  OBJcreate(OBJ_VARIABLE,VAR_get_symbol,"variable",OBJ_UNUSED_BITS);*/
     OBJcreate( OBJ_VARIABLE, VAR_get_symbol, "variable", OBJ_VARIABLE_BITS );
 }
