@@ -159,9 +159,6 @@ Type Type_Set_Of_String;
 Type Type_Set_Of_Generic;
 Type Type_Bag_Of_Generic;
 
-struct freelist_head TYPEHEAD_fl;
-struct freelist_head TYPEBODY_fl;
-
 Error ERROR_corrupted_type = ERROR_none;
 
 static Error ERROR_undefined_tag;

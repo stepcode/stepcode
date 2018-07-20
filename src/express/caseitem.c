@@ -32,7 +32,6 @@
 #include <sc_memmgr.h>
 #include "express/caseitem.h"
 
-struct freelist_head CASE_IT_fl;
 
 /** Initialize the Case Item module. */
 void

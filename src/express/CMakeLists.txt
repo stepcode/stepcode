@@ -78,6 +78,7 @@ set(EXPRESS_SOURCES
   dict.c
   hash.c
   alloc.c
+  memory.c
   object.c
   express.c
   ordered_attrs.cc

@@ -90,11 +90,6 @@ Error ERROR_integer_expression_expected = ERROR_none;
 Error ERROR_implicit_downcast = ERROR_none;
 Error ERROR_ambig_implicit_downcast = ERROR_none;
 
-struct freelist_head EXP_fl;
-struct freelist_head OP_fl;
-struct freelist_head QUERY_fl;
-struct freelist_head QUAL_ATTR_fl;
-
 void EXPop_init();
 static Error ERROR_internal_unrecognized_op_in_EXPresolve;
 /* following two could probably be combined */

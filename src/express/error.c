@@ -91,7 +91,6 @@ int malloc_debug_resolve = 0;
 int debug = 0;
 
 struct Linked_List_ * ERRORwarnings;
-struct freelist_head ERROR_OPT_fl;
 
 void ( *ERRORusage_function )( void );
 
