@@ -52,8 +52,6 @@
 #include "express/resolve.h"
 
 struct freelist_head REN_fl;
-struct freelist_head SCOPE_fl;
-struct freelist_head SCHEMA_fl;
 
 int __SCOPE_search_id = 0;
 

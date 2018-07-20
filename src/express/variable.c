@@ -89,8 +89,6 @@
 #include "express/object.h"
 char * opcode_print( Op_Code o );
 
-struct freelist_head VAR_fl;
-
 Symbol * VAR_get_symbol( void *v ) {
     return( &( ( Variable )v )->name->symbol );
 }

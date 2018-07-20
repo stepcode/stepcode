@@ -25,8 +25,6 @@
 #include "express/linklist.h"
 
 Error ERROR_empty_list = ERROR_none;
-struct freelist_head LINK_fl;
-struct freelist_head LIST_fl;
 
 void LISTinitialize( void ) {
     ALLOCinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );

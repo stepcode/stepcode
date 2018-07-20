@@ -111,9 +111,6 @@
 #include <stdlib.h>
 #include "express/hash.h"
 
-struct freelist_head HASH_Table_fl;
-struct freelist_head HASH_Element_fl;
-
 /*
 ** Internal routines
 */

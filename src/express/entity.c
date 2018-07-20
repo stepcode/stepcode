@@ -118,7 +118,6 @@
 #include "express/express.h"
 #include "express/object.h"
 
-struct freelist_head ENTITY_fl;
 int ENTITY_MARK = 0;
 
 /** returns true if variable is declared (or redeclared) directly by entity */
