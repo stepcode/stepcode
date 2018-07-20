@@ -84,6 +84,7 @@ set(EXPRESS_SOURCES
   ordered_attrs.cc
   info.c
   exp_kw.c
+  factory.c
  )
 
 set(EXPRESS_OBJS)
