@@ -1,6 +1,11 @@
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+
 #include "express/expr.h"
 
 /* core */
+#include "express/alloc.h"
 #include "express/memory.h"
 #include "express/error.h"
 #include "express/hash.h"
@@ -8,8 +13,10 @@
 
 /* non-core */
 #include "express/dict.h"
-#include "express/object.h"
-#include "express/info.h"
+
+#include "fff.h"
+
+DEFINE_FFF_GLOBALS
 
 /*
  * missing header definition
@@ -17,29 +24,9 @@
 Type EXPresolve_op_dot( Expression expr, Scope scope );
 
 /*
- * TODO: keep interface, but refactor for test
- */
-void EXPRESSinitialize( void ) {}
-
-/*
- * TODO: move to error.c
- */
-int EXPRESS_fail( Express model ) { return 1; }
-
-/*
- * TODO: move to memory.c
- */
-Type TYPEcreate( enum type_enum type ) { return NULL; }
-Type TYPEcreate_name( Symbol * symbol ) { return NULL; }
-TypeBody TYPEBODYcreate( enum type_enum type ) { return NULL; }
-
-Schema SCHEMAcreate( void ) { return NULL; }
-Symbol *SYMBOLcreate( char * name, int line, const char * filename ) { return NULL; }
-
-/*
  * mock globals
- * TODO: what needs initialising?
  */
+
 char * EXPRESSprogram_name;
 int yylineno;
 int __SCOPE_search_id;
@@ -65,49 +52,49 @@ Error WARNING_case_skip_label;
 Error ERROR_undefined_attribute;
 
 /*
- * TODO: mock functions
+ * mock functions
  */
-Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name, struct Symbol_ ** down_sym ) { return NULL; }
 
-void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {}
+FAKE_VALUE_FUNC(int, EXPRESS_fail, Express)
+FAKE_VALUE_FUNC(Variable, ENTITYfind_inherited_attribute, struct Scope_ *, char *, struct Symbol_ **)
+FAKE_VALUE_FUNC(Variable, ENTITYresolve_attr_ref, Entity, Symbol *, Symbol *)
+FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, char *, int)
+FAKE_VALUE_FUNC(Variable, VARcreate, Expression, Type)
+FAKE_VOID_FUNC(EXP_resolve, Expression, Scope, Type)
 
-Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref ) { return NULL; }
+void setup() {
+    Type_Identifier = TYPEcreate(identifier_);    
+}
 
-struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name, int down ) { return NULL; }
+/*
+ * mock resolve operation
+ */ 
+void EXP_resolve_handler(Expression exp, Scope cxt, Type typ) {
+    (void) typ;
+    Type res_typ = DICTlookup(cxt->symbol_table, exp->symbol.name); 
+    exp->type = res_typ;
+    exp->return_type = res_typ;
+    exp->symbol.resolved = RESOLVED;
+}
 
-Scope SCOPEcreate_tiny( char type ) { return NULL; }
-
-Variable VARcreate( Expression name, Type type ) { return NULL; }
-
-
-int main(int argc, char *argv[]) {
+int test_resolve_op_dot() {
     Schema scope;
     Symbol *e_type_id, *enum_id, *s_type_id;
-    Type enum_typ, select_typ;
+    Type enum_typ, select_typ, chk_typ;
     TypeBody tb;
     Expression expr, op1, op2, exp_enum_id;
 
     /*
-     * setup
+     * boilerplate: create objects, populate symbol tables
      */
-    EXPRESSinitialize();
-    Type_Identifier = TYPEcreate(identifier_);
-
-    /* TODO: SCHEMAcreate should do this */
     scope = SCHEMAcreate();
-    if (!scope->symbol_table)
-        scope->symbol_table = DICTcreate(50);
-    if (!scope->enum_table)
-        scope->enum_table = DICTcreate(50);
-    
-    /*
-     * initial code to faciliate code path under test (use of DICT_type)
-     */
+
     s_type_id = SYMBOLcreate("sel1", 1, "test1");
     e_type_id = SYMBOLcreate("enum1", 1, "test1");
     enum_id = SYMBOLcreate("val1", 1, "test1");
     
     enum_typ = TYPEcreate_name(e_type_id);
+    enum_typ->symbol_table = DICTcreate(50);
     
     exp_enum_id = EXPcreate(enum_typ);
     exp_enum_id->symbol = *enum_id;
@@ -120,14 +107,8 @@ int main(int argc, char *argv[]) {
     
     DICT_define(scope->symbol_table, e_type_id->name, enum_typ, &enum_typ->symbol, OBJ_TYPE);
     
-    /*
-     * TODO: someone did half a job with OBJ_ENUM / OBJ_EXPRESSION
-     * now it's confusing when reading the source
-     */
+    /* TODO: OBJ_ENUM / OBJ_EXPRESSION are used interchangeably, this is confusing. */
     DICT_define(scope->enum_table, exp_enum_id->symbol.name, exp_enum_id, &exp_enum_id->symbol, OBJ_EXPRESSION);
-    
-    if (!enum_typ->symbol_table)
-        enum_typ->symbol_table = DICTcreate(50);
     DICT_define(enum_typ->symbol_table, enum_id->name, exp_enum_id, enum_id, OBJ_EXPRESSION);
     
     select_typ = TYPEcreate_name(s_type_id);
@@ -142,13 +123,67 @@ int main(int argc, char *argv[]) {
     expr = BIN_EXPcreate(OP_DOT, op1, op2);    
 
     /*
-     * test: enum_ref '.' enum_id
+     * test: sel_ref '.' enum_id
+     * expectation: enum_typ
      */
-    EXPresolve_op_dot(expr, scope);
+    EXP_resolve_fake.custom_fake = EXP_resolve_handler;
     
-    /* in case of error will exit via abort() */
+    chk_typ = EXPresolve_op_dot(expr, scope);
+
+    assert(EXP_resolve_fake.call_count == 1);
+    assert(expr->e.op1->type == select_typ);
+    assert(chk_typ == enum_typ);
+    
+    /* in case of error SIGABRT will be raised (and non-zero returned) */
     
     return 0;
+}
+
+struct test_def {
+    const char *name;
+    int (*testfunc) (void);
+};
+
+int main(int argc, char *argv[]) {
+    int status;
+ 
+    struct test_def tests[] = {
+        {"resolve_op_dot", test_resolve_op_dot}
+    };
+    
+    /* enable libexpress allocator */
+    MEMinit();
+    
+    argc--;
+    status = 0;
+    if (argc) {
+        int test_counter = argc;
+        
+        /* selected tests */
+        for (int i=1; i <= argc; i++) {
+            for (unsigned int j=0; j < (sizeof tests / sizeof tests[0]); j++) {
+                const char *test_name = tests[j].name;
+                int (*test_ptr) (void) = tests[j].testfunc;
+                
+                if (!strcmp(argv[i], test_name)) {
+                    test_counter--;
+                    setup();
+                    status |= test_ptr();
+                }
+            }
+        }
+        
+        if (test_counter)
+            fprintf(stderr, "WARNING: some tests not found...\n");
+    } else {
+        /* all tests */
+        for (unsigned int j=0; j < (sizeof tests / sizeof tests[0]); j++) {
+            int (*test_ptr) (void) = tests[j].testfunc;
+            status |= test_ptr();
+        }
+    }
+
+    return status;
 }
 
 /* TODO: additional test for entity_ attribute, variable */
