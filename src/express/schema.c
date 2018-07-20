@@ -66,41 +66,6 @@ void SCHEMAinitialize( void ) {
     ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
 }
 
-/** Create and return an empty scope inside a parent scope. */
-Scope SCOPEcreate( char type ) {
-    Scope d = SCOPE_new();
-    d->symbol_table = DICTcreate( 50 );
-    d->type = type;
-    return d;
-}
-
-Scope SCOPEcreate_tiny( char type ) {
-    Scope d = SCOPE_new();
-    d->symbol_table = DICTcreate( 1 );
-    d->type = type;
-    return d;
-}
-
-void SCOPEdestroy( Scope scope ) {
-    SCOPE_destroy( scope );
-}
-
-/**
- * create a scope without a symbol table
- * used for simple types
- */
-Scope SCOPEcreate_nostab( char type ) {
-    Scope d = SCOPE_new();
-    d->type = type;
-    return d;
-}
-
-/** Create and return a schema. */
-Schema SCHEMAcreate( void ) {
-    Scope s = SCOPEcreate( OBJ_SCHEMA );
-    s->u.schema = SCHEMA_new();
-    return s;
-}
 
 /**  SCHEMAget_name
 ** \param  schema schema to examine
