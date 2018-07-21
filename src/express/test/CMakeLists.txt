@@ -14,7 +14,8 @@ set(EXPRESS_CORE_OBJ
 )
 
 add_executable(test_expr test_expr.c $<TARGET_OBJECTS:objlib_expr_c> ${EXPRESS_CORE_OBJ})
-add_test(NAME expr_resolve_op_dot COMMAND test_expr resolve_op_dot) 
+add_test(NAME exp_resolve_select_enum_member COMMAND test_expr resolve_select_enum_member)
+add_test(NAME exp_resolve_entity_attribute COMMAND test_expr resolve_entity_attribute)
 
 add_test(NAME build_check_express
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
