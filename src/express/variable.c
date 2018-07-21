@@ -120,20 +120,3 @@ extern char * VARget_simple_name( Variable v ) {
     }
     return EXPget_name( e );
 }
-
-/**  VARcreate
-** \param name name of variable to create
-** \param type type of new variable
-** \return the Variable created
-** Create and return a new variable.
-**
-** \note The reference class of the variable is, by default,
-**      dynamic.  Special flags associated with the variable
-**      (e.g., optional) are initially false.
-*/
-Variable VARcreate( Expression name, Type type ) {
-    Variable v = VAR_new();
-    v->name = name;
-    v->type = type;
-    return v;
-}
