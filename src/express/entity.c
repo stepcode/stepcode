@@ -286,27 +286,6 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
 }
 
 /**
-** low-level function for type Entity
-**
-** \note The attribute list of a new entity is defined as an
-**  empty list; all other aspects of the entity are initially
-**  undefined (i.e., have appropriate NULL values).
-*/
-Entity ENTITYcreate( Symbol * sym ) {
-    Scope s = SCOPEcreate( OBJ_ENTITY );
-
-    s->u.entity = ENTITY_new();
-    s->u.entity->attributes = LISTcreate();
-    s->u.entity->inheritance = ENTITY_INHERITANCE_UNINITIALIZED;
-
-    /* it's so useful to have a type hanging around for each entity */
-    s->u.entity->type = TYPEcreate_name( sym );
-    s->u.entity->type->u.type->body = TYPEBODYcreate( entity_ );
-    s->u.entity->type->u.type->body->entity = s;
-    return( s );
-}
-
-/**
  * currently, this is only used by USEresolve
  * low-level function for type Entity
  */
