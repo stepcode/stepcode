@@ -1,13 +1,8 @@
-#include <stdio.h>
-#include <string.h>
 #include <assert.h>
 
 #include "express/expr.h"
 
 /* core */
-#include "express/alloc.h"
-#include "express/memory.h"
-#include "express/error.h"
 #include "express/hash.h"
 #include "express/linklist.h"
 
@@ -15,6 +10,7 @@
 #include "express/dict.h"
 #include "express/variable.h"
 
+#include "driver.h"
 #include "fff.h"
 
 /*
@@ -214,53 +210,8 @@ int test_resolve_entity_attribute() {
     return 0;
 }
 
-struct test_def {
-    const char *name;
-    int (*testfunc) (void);
+struct test_def tests[] = {
+    {"resolve_select_enum_member", test_resolve_select_enum_member},
+    {"resolve_entity_attribute", test_resolve_entity_attribute},
+    {NULL}
 };
-
-int main(int argc, char *argv[]) {
-    int status;
- 
-    struct test_def tests[] = {
-        {"resolve_select_enum_member", test_resolve_select_enum_member},
-        {"resolve_entity_attribute", test_resolve_entity_attribute}
-    };
-    
-    /* enable libexpress allocator */
-    MEMinit();
-    
-    argc--;
-    status = 0;
-    if (argc) {
-        int test_counter = argc;
-        
-        /* selected tests */
-        for (int i=1; i <= argc; i++) {
-            for (unsigned int j=0; j < (sizeof tests / sizeof tests[0]); j++) {
-                const char *test_name = tests[j].name;
-                int (*test_ptr) (void) = tests[j].testfunc;
-                
-                if (!strcmp(argv[i], test_name)) {
-                    test_counter--;
-                    setup();
-                    status |= test_ptr();
-                }
-            }
-        }
-        
-        if (test_counter)
-            fprintf(stderr, "WARNING: some tests not found...\n");
-    } else {
-        /* all tests */
-        for (unsigned int j=0; j < (sizeof tests / sizeof tests[0]); j++) {
-            int (*test_ptr) (void) = tests[j].testfunc;
-            setup();
-            status |= test_ptr();
-        }
-    }
-
-    return status;
-}
-
-

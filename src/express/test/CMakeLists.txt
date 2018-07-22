@@ -13,9 +13,20 @@ set(EXPRESS_CORE_OBJ
     $<TARGET_OBJECTS:objlib_info_c>
 )
 
-add_executable(test_expr test_expr.c $<TARGET_OBJECTS:objlib_expr_c> ${EXPRESS_CORE_OBJ})
+add_executable(test_expr driver.c test_expr.c $<TARGET_OBJECTS:objlib_expr_c> ${EXPRESS_CORE_OBJ})
+
 add_test(NAME exp_resolve_select_enum_member COMMAND test_expr resolve_select_enum_member)
 add_test(NAME exp_resolve_entity_attribute COMMAND test_expr resolve_entity_attribute)
+
+add_executable(test_express driver.c test_express.c $<TARGET_OBJECTS:objlib_express_c> ${EXPRESS_CORE_OBJ})
+
+add_executable(test_resolve driver.c test_resolve.c $<TARGET_OBJECTS:objlib_resolve_c> ${EXPRESS_CORE_OBJ})
+
+add_executable(test_schema driver.c test_schema.c $<TARGET_OBJECTS:objlib_schema_c> ${EXPRESS_CORE_OBJ})
+
+add_executable(test_scope driver.c test_scope.c $<TARGET_OBJECTS:objlib_scope_c> ${EXPRESS_CORE_OBJ})
+
+add_executable(test_type driver.c test_type.c $<TARGET_OBJECTS:objlib_type_c> ${EXPRESS_CORE_OBJ})
 
 add_test(NAME build_check_express
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
