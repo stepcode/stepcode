@@ -84,7 +84,6 @@
 #include "expscan.h"
 #include "parse_data.h"
 #include "express/lexact.h"
-#include "express/exp_kw.h"
 
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
@@ -104,6 +103,9 @@ extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
 int ( *EXPRESSgetopt )( int, char * ) = NULL;
 bool    EXPRESSignore_duplicate_schemas      = false;
 
+Function funcdef(char *name, int pcount, Type ret_typ);
+void procdef(char *name, int pcount);
+void BUILTINSinitialize();
 Dictionary EXPRESSbuiltins; /* procedures/functions */
 
 Error ERROR_bail_out        = ERROR_none;
@@ -262,18 +264,6 @@ void PASSinitialize() {
 
 /** Initialize the Express package. */
 void EXPRESSinitialize( void ) {
-    Function
-    func_abs,   func_acos,  func_asin,  func_atan,
-                func_blength,
-                func_cos,   func_exists,    func_exp,   func_format,
-                func_hibound,   func_hiindex,   func_length,    func_lobound,
-                func_log,   func_log10, func_log2,  func_loindex,
-                func_odd,   func_rolesof,   func_sin,   func_sizeof,
-                func_sqrt,  func_tan,   func_typeof,
-                func_value, func_value_in,  func_value_unique;
-    Procedure
-    proc_insert,    proc_remove;
-
     _ALLOCinitialize();
     ERRORinitialize();
     OBJinitialize();
@@ -303,59 +293,8 @@ void EXPRESSinitialize( void ) {
     STMTinitialize();
 
     SCANinitialize();
-
-    EXPRESSbuiltins = DICTcreate( 35 );
-#define funcdef(x,y,c,r) \
-            x = ALGcreate(OBJ_FUNCTION);\
-            x->symbol.name = y;\
-            x->u.func->pcount = c; \
-            x->u.func->return_type = r; \
-            x->u.func->builtin = true; \
-            resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_FUNCTION);
-#define procdef(x,y,c)  x = ALGcreate(OBJ_PROCEDURE);\
-            x->symbol.name = y;\
-            x->u.proc->pcount = c; \
-            x->u.proc->builtin = true; \
-            resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_PROCEDURE);
-    /* third arg is # of parameters */
-
-    /* eventually everything should be data-driven, but for now */
-    /* uppercase def's are global to allow passing necessary information */
-    /* into resolver */
-    procdef( proc_insert, KW_INSERT, 3 );
-    procdef( proc_remove, KW_REMOVE, 2 );
-
-    funcdef( func_abs,    KW_ABS,    1, Type_Number );
-    funcdef( func_acos,   KW_ACOS,   1, Type_Real );
-    funcdef( func_asin,   KW_ASIN,   1, Type_Real );
-    funcdef( func_atan,   KW_ATAN,   2, Type_Real );
-    funcdef( func_blength, KW_BLENGTH, 1, Type_Integer );
-    funcdef( func_cos,    KW_COS,    1, Type_Real );
-    funcdef( func_exists, KW_EXISTS, 1, Type_Boolean );
-    funcdef( func_exp,    KW_EXP,    1, Type_Real );
-    funcdef( func_format, KW_FORMAT, 2, Type_String );
-    funcdef( func_hibound, KW_HIBOUND, 1, Type_Integer );
-    funcdef( func_hiindex, KW_HIINDEX, 1, Type_Integer );
-    funcdef( func_length, KW_LENGTH, 1, Type_Integer );
-    funcdef( func_lobound, KW_LOBOUND, 1, Type_Integer );
-    funcdef( func_log,    KW_LOG,    1, Type_Real );
-    funcdef( func_log10,  KW_LOG10,  1, Type_Real );
-    funcdef( func_log2,   KW_LOG2,   1, Type_Real );
-    funcdef( func_loindex, KW_LOINDEX, 1, Type_Integer );
-    funcdef( FUNC_NVL,    KW_NVL,    2, Type_Generic );
-    funcdef( func_odd,    KW_ODD,    1, Type_Logical );
-    funcdef( func_rolesof, KW_ROLESOF, 1, Type_Set_Of_String );
-    funcdef( func_sin,    KW_SIN,    1, Type_Real );
-    funcdef( func_sizeof, KW_SIZEOF, 1, Type_Integer );
-    funcdef( func_sqrt,   KW_SQRT,   1, Type_Real );
-    funcdef( func_tan,    KW_TAN,    1, Type_Real );
-    funcdef( func_typeof, KW_TYPEOF, 1, Type_Set_Of_String );
-    funcdef( FUNC_USEDIN, KW_USEDIN,  2, Type_Bag_Of_Generic );
-    funcdef( func_value,  KW_VALUE,   1, Type_Number );
-    funcdef( func_value_in, KW_VALUE_IN,    2, Type_Logical );
-    funcdef( func_value_unique, KW_VALUE_UNIQUE, 1, Type_Logical );
+   
+    BUILTINSinitialize();
 
     ERROR_bail_out = ERRORcreate( "Aborting due to internal error(s)", SEVERITY_DUMP );
     ERROR_syntax = ERRORcreate( "%s in %s %s", SEVERITY_EXIT );
@@ -890,4 +829,61 @@ void EXPRESSresolve( Express model ) {
             resolved_all( schema );
         }
     }
+}
+
+Function funcdef(char *name, int pcount, Type ret_typ) {
+    Function f = ALGcreate(OBJ_FUNCTION);
+    f->symbol.name = name;
+    f->u.func->pcount = pcount;
+    f->u.func->return_type = ret_typ;
+    f->u.func->builtin = true;
+    resolved_all(f);
+    DICTdefine(EXPRESSbuiltins, name, f, 0, OBJ_FUNCTION);
+    return f;
+}
+
+void procdef(char *name, int pcount) {
+    Procedure p = ALGcreate(OBJ_PROCEDURE);
+    p->symbol.name = name;
+    p->u.proc->pcount = pcount;
+    p->u.proc->builtin = true;
+    resolved_all(p);
+    DICTdefine(EXPRESSbuiltins, name, p, 0, OBJ_PROCEDURE);
+}
+
+void BUILTINSinitialize() {
+    EXPRESSbuiltins = DICTcreate( 35 );
+    procdef("INSERT", 3 );
+    procdef("REMOVE", 2 );
+
+    funcdef("ABS",    1, Type_Number );
+    funcdef("ACOS",   1, Type_Real );
+    funcdef("ASIN",   1, Type_Real );
+    funcdef("ATAN",   2, Type_Real );
+    funcdef("BLENGTH", 1, Type_Integer );
+    funcdef("COS",    1, Type_Real );
+    funcdef("EXISTS", 1, Type_Boolean );
+    funcdef("EXP",    1, Type_Real );
+    funcdef("FORMAT", 2, Type_String );
+    funcdef("HIBOUND", 1, Type_Integer );
+    funcdef("HIINDEX", 1, Type_Integer );
+    funcdef("LENGTH", 1, Type_Integer );
+    funcdef("LOBOUND", 1, Type_Integer );
+    funcdef("LOG",    1, Type_Real );
+    funcdef("LOG10",  1, Type_Real );
+    funcdef("LOG2",   1, Type_Real );
+    funcdef("LOINDEX", 1, Type_Integer );
+    funcdef("ODD",    1, Type_Logical );
+    funcdef("ROLESOF", 1, Type_Set_Of_String );
+    funcdef("SIN",    1, Type_Real );
+    funcdef("SIZEOF", 1, Type_Integer );
+    funcdef("SQRT",   1, Type_Real );
+    funcdef("TAN",    1, Type_Real );
+    funcdef("TYPEOF", 1, Type_Set_Of_String );
+    funcdef("VALUE",   1, Type_Number );
+    funcdef("VALUE_IN",    2, Type_Logical );
+    funcdef("VALUE_UNIQUE", 1, Type_Logical );
+
+    FUNC_NVL = funcdef("NVL",    2, Type_Generic );
+    FUNC_USEDIN = funcdef("USEDIN",  2, Type_Bag_Of_Generic );
 }
