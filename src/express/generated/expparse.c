@@ -3397,14 +3397,14 @@ static void yy_reduce(
       case 155: /* rename ::= TOK_IDENTIFIER */
 #line 1342 "expparse.y"
 {
-    (*interface_func)(CURRENT_SCOPE, interface_schema, yymsp[0].minor.yy0, yymsp[0].minor.yy0);
+    (*interface_func)(CURRENT_SCOPE, interface_schema, yymsp[0].minor.yy0.symbol, yymsp[0].minor.yy0.symbol);
 }
 #line 3403 "expparse.c"
         break;
       case 156: /* rename ::= TOK_IDENTIFIER TOK_AS TOK_IDENTIFIER */
 #line 1346 "expparse.y"
 {
-    (*interface_func)(CURRENT_SCOPE, interface_schema, yymsp[-2].minor.yy0, yymsp[0].minor.yy0);
+    (*interface_func)(CURRENT_SCOPE, interface_schema, yymsp[-2].minor.yy0.symbol, yymsp[0].minor.yy0.symbol);
 }
 #line 3410 "expparse.c"
         break;

@@ -1340,11 +1340,11 @@ initializer(A) ::= TOK_ASSIGNMENT expression(B).
  */
 rename ::= TOK_IDENTIFIER(A).
 {
-    (*interface_func)(CURRENT_SCOPE, interface_schema, A, A);
+    (*interface_func)(CURRENT_SCOPE, interface_schema, A.symbol, A.symbol);
 }
 rename ::= TOK_IDENTIFIER(A) TOK_AS TOK_IDENTIFIER(B).
 {
-    (*interface_func)(CURRENT_SCOPE, interface_schema, A, B);
+    (*interface_func)(CURRENT_SCOPE, interface_schema, A.symbol, B.symbol);
 }
 
 rename_list(A) ::= rename(B).
