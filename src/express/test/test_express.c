@@ -7,6 +7,9 @@
 #include "express/linklist.h"
 
 /* non-core */
+#include "express/resolve.h"
+#include "express/schema.h"
+
 #include "../token_type.h"
 #include "../parse_data.h"
 #include "expscan.h"
@@ -20,16 +23,6 @@
 
 Error ERROR_circular_reference;
 Error ERROR_undefined_schema;
-
-Type Type_Number;
-Type Type_Real;
-Type Type_Integer;
-Type Type_Boolean;
-Type Type_String;
-Type Type_Logical;
-Type Type_Set_Of_String;
-Type Type_Generic;
-Type Type_Bag_Of_Generic;
 
 int yylineno;
 Express yyexpresult;
@@ -51,12 +44,10 @@ FAKE_VOID_FUNC0(SYMBOLinitialize)
 FAKE_VOID_FUNC0(SCOPEinitialize)
 FAKE_VOID_FUNC0(TYPEinitialize)
 FAKE_VOID_FUNC0(VARinitialize)
-FAKE_VOID_FUNC0(ALGinitialize)
 FAKE_VOID_FUNC0(ENTITYinitialize)
 FAKE_VOID_FUNC0(SCHEMAinitialize)
 FAKE_VOID_FUNC0(CASE_ITinitialize)
 FAKE_VOID_FUNC0(EXPinitialize)
-FAKE_VOID_FUNC0(STMTinitialize)
 FAKE_VOID_FUNC0(SCANinitialize)
 FAKE_VOID_FUNC0(EXPKWinitialize)
 FAKE_VOID_FUNC0(RESOLVEcleanup)
@@ -65,6 +56,7 @@ FAKE_VOID_FUNC0(EXPcleanup)
 FAKE_VOID_FUNC0(SCANcleanup)
 FAKE_VOID_FUNC0(parserInitState)
 FAKE_VOID_FUNC(SCAN_lex_init, char *, FILE *)
+FAKE_VOID_FUNC(ParseTrace, FILE *, char *)
 FAKE_VOID_FUNC(Parse, void *, int, YYSTYPE, parse_data_t)
 FAKE_VOID_FUNC(perplexFree, perplex_t)
 FAKE_VOID_FUNC(ParseFree, void *, free_func_t)
@@ -78,7 +70,6 @@ FAKE_VALUE_FUNC(void *, ParseAlloc, malloc_func_t)
 FAKE_VALUE_FUNC(char *, SCANstrdup, const char *)
 FAKE_VALUE_FUNC(perplex_t, perplexFileScanner, FILE *)
 FAKE_VALUE_FUNC(int, yylex, perplex_t)
-FAKE_VALUE_FUNC(Scope, ALGcreate, char)
 
 void setup() {
     RESET_FAKE(RESOLVEinitialize);
@@ -86,12 +77,10 @@ void setup() {
     RESET_FAKE(SCOPEinitialize);
     RESET_FAKE(TYPEinitialize);
     RESET_FAKE(VARinitialize);
-    RESET_FAKE(ALGinitialize);
     RESET_FAKE(ENTITYinitialize);
     RESET_FAKE(SCHEMAinitialize);
     RESET_FAKE(CASE_ITinitialize);
     RESET_FAKE(EXPinitialize);
-    RESET_FAKE(STMTinitialize);
     RESET_FAKE(SCANinitialize);
     RESET_FAKE(EXPKWinitialize);
     RESET_FAKE(RESOLVEcleanup);
@@ -100,6 +89,7 @@ void setup() {
     RESET_FAKE(SCANcleanup);
     RESET_FAKE(parserInitState);
     RESET_FAKE(SCAN_lex_init);
+    RESET_FAKE(ParseTrace);
     RESET_FAKE(Parse);
     RESET_FAKE(perplexFree);
     RESET_FAKE(ParseFree);
@@ -112,19 +102,45 @@ void setup() {
     RESET_FAKE(SCANstrdup);
     RESET_FAKE(perplexFileScanner);
     RESET_FAKE(yylex);
-    RESET_FAKE(ALGcreate);
 }
 
-int test_something() {
-    /*SCOPEfind_for_rename();
+int test_express_rename_resolve() {
+    Schema cur_schema, ref_schema;
+    Rename *use_ref;
+    Entity ent;
+    Symbol *cur_schema_id, *ent_id, *ent_ref, *ref_schema_id;
+
+    cur_schema_id = SYMBOLcreate("cur_schema", 1, "cur.exp");
+    ent_id = SYMBOLcreate("line", 1, "cur.exp");
+    ent_ref = SYMBOLcreate("line", 1, "ref.exp");
+    ref_schema_id = SYMBOLcreate("ref_schema", 1, "ref.exp");
     
-    RENAMEresolve();*/
+    cur_schema = SCHEMAcreate();
+    cur_schema->symbol = *cur_schema_id;
+    cur_schema->u.schema->uselist = LISTcreate();
     
-    return 1;    
+    ref_schema = SCHEMAcreate();
+    ref_schema->symbol = *ref_schema_id;
+    
+    ent = ENTITYcreate(ent_id);
+    DICTdefine(ref_schema->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
+    
+    /* TODO: create RENcreate(...), refactor SCHEMAadd_use() */
+    use_ref = REN_new();
+    use_ref->schema_sym = ref_schema_id;
+    use_ref->old = ent_ref;
+    use_ref->nnew = ent_ref;
+    use_ref->rename_type = use;
+    LISTadd_last(cur_schema->u.schema->uselist, (Generic) use_ref);
+    use_ref->schema = ref_schema;
+    
+    RENAMEresolve(use_ref, cur_schema);
+    
+    assert(use_ref->type == OBJ_ENTITY);
+    return 0;
 }
 
 struct test_def tests[] = {
-    {"resolve_select_enum_member", test_something},
-    {"resolve_entity_attribute", test_something},
+    {"express_rename_resolve", test_express_rename_resolve},
     {NULL}
 };

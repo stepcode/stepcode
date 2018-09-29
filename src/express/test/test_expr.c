@@ -14,33 +14,12 @@
 #include "fff.h"
 
 /*
- * missing header definition
- */
-Type EXPresolve_op_dot( Expression expr, Scope scope );
-
-/*
  * mock globals
  */
 
 char * EXPRESSprogram_name;
 int yylineno;
 int __SCOPE_search_id;
-
-Type Type_Unknown;
-Type Type_Identifier;
-Type Type_Real;
-Type Type_Integer;
-Type Type_Dont_Care;
-Type Type_Bad;
-Type Type_Runtime;
-Type Type_Logical;
-Type Type_Generic;
-Type Type_Binary;
-Type Type_Entity;
-Type Type_Aggregate;
-Type Type_Expression;
-Type Type_Query;
-Type Type_Attribute;
 
 Error ERROR_warn_unsupported_lang_feat;
 Error WARNING_case_skip_label;
@@ -59,8 +38,8 @@ FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, c
 FAKE_VOID_FUNC(EXP_resolve, Expression, Scope, Type)
 
 void setup() {
-    Type_Identifier = TYPEcreate(identifier_);
-    Type_Attribute = TYPEcreate(attribute_);
+    ERRORwarnings = LISTcreate();
+    EXPinitialize();
     
     RESET_FAKE(EXPRESS_fail);
     RESET_FAKE(ENTITYfind_inherited_attribute);
