@@ -152,10 +152,6 @@ int EXPRESS_succeed( Express model ) {
     return 0;
 }
 
-Symbol * EXPRESS_get_symbol( void *e ) {
-    return( &( ( Express )e )->symbol );
-}
-
 Express EXPRESScreate() {
     Express model = SCOPEcreate( OBJ_EXPRESS );
     model->u.express = ( struct Express_ * )sc_calloc( 1, sizeof( struct Express_ ) );
@@ -259,14 +255,12 @@ static void EXPRESS_PATHfree( void ) {
 
 /** inform object system about bit representation for handling pass diagnostics */
 void PASSinitialize() {
-    OBJcreate( OBJ_PASS, UNK_get_symbol, "pass", OBJ_PASS_BITS );
 }
 
 /** Initialize the Express package. */
 void EXPRESSinitialize( void ) {
     _ALLOCinitialize();
     ERRORinitialize();
-    OBJinitialize();
 
     HASHinitialize();   /* comes first - used by just about everything else! */
     DICTinitialize();
@@ -312,8 +306,6 @@ void EXPRESSinitialize( void ) {
     ERROR_warn_small_real = ERRORcreate( "REALs with extremely small magnitude may be interpreted as zero by other EXPRESS parsers "
                                          "(IEEE 754 float denormals are sometimes rounded to zero) - fabs(%f) <= FLT_MIN.", SEVERITY_WARNING );
 
-    OBJcreate( OBJ_EXPRESS, EXPRESS_get_symbol, "express file", OBJ_UNUSED_BITS );
-
 /* I don't think this should be a mere warning; exppp crashes if this warning is suppressed.
  *     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
  */
@@ -339,7 +331,6 @@ void EXPRESScleanup( void ) {
     ERRORdestroy( ERROR_warn_small_real );
 
     DICTcleanup();
-    OBJcleanup();
     ERRORcleanup();
     RESOLVEcleanup();
     TYPEcleanup();

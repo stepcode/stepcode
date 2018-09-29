@@ -80,9 +80,6 @@ void STMTinitialize( void ) {
     ALLOCinitialize( &RET_fl, sizeof( struct Return_Statement_ ), 100, 30 );
     ALLOCinitialize( &INCR_fl, sizeof( struct Increment_ ), 100, 30 );
 
-    OBJcreate( OBJ_ALIAS, SCOPE_get_symbol, "alias scope", OBJ_UNUSED_BITS );
-    OBJcreate( OBJ_INCREMENT, SCOPE_get_symbol, "increment scope", OBJ_UNUSED_BITS );
-
     STATEMENT_SKIP = STMTcreate( STMT_SKIP );
     STATEMENT_ESCAPE = STMTcreate( STMT_ESCAPE );
 }

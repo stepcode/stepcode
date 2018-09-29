@@ -55,13 +55,8 @@ struct freelist_head REN_fl;
 
 int __SCOPE_search_id = 0;
 
-Symbol * RENAME_get_symbol( void *r ) {
-    return ( ( Rename * )r )->old;
-}
-
 /** Initialize the Schema module. */
 void SCHEMAinitialize( void ) {
-    OBJcreate( OBJ_RENAME, RENAME_get_symbol, "rename clause", OBJ_UNUSED_BITS );
     ALLOCinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
     ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
 }

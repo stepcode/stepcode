@@ -73,20 +73,12 @@ Scope ALGcreate( char type ) {
 ** Description: Initialize the Algorithm module.
 */
 
-Symbol * WHERE_get_symbol( void *w ) {
-    return( ( ( Where )w )->label );
-}
-
 /** Initialize the Algorithm module. */
 void ALGinitialize( void ) {
     ALLOCinitialize( &FUNC_fl, sizeof( struct Function_ ),  100, 50 );
     ALLOCinitialize( &RULE_fl, sizeof( struct Rule_ ),      100, 50 );
     ALLOCinitialize( &PROC_fl, sizeof( struct Procedure_ ), 100, 50 );
     ALLOCinitialize( &WHERE_fl, sizeof( struct Where_ ),    100, 50 );
-    OBJcreate( OBJ_RULE, SCOPE_get_symbol, "rule", OBJ_UNUSED_BITS );
-    OBJcreate( OBJ_PROCEDURE, SCOPE_get_symbol, "procedure", OBJ_PROCEDURE_BITS );
-    OBJcreate( OBJ_FUNCTION, SCOPE_get_symbol, "function", OBJ_FUNCTION_BITS );
-    OBJcreate( OBJ_WHERE, WHERE_get_symbol, "where", OBJ_WHERE_BITS );
 }
 
 void ALGput_full_text( Scope s, int start, int end ) {
