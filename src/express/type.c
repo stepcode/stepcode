@@ -258,8 +258,6 @@ return( false );
 
 /** Initialize the Type module */
 void TYPEinitialize() {
-    ALLOCinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
-    ALLOCinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
     /* Very commonly-used read-only types */
     Type_Unknown = TYPEcreate( unknown_ );
     Type_Dont_Care = TYPEcreate( special_ );

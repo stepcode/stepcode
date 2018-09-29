@@ -132,12 +132,6 @@ static long     HashAccesses, HashCollisions;
 
 void
 HASHinitialize() {
-    if( HASH_Table_fl.size_elt == 0 ) {
-        ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 50, 50 );
-    }
-    if( HASH_Element_fl.size_elt == 0 ) {
-        ALLOCinitialize( &HASH_Element_fl, sizeof( struct Element_ ), 500, 100 );
-    }
 }
 
 Hash_Table

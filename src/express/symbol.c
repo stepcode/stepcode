@@ -37,5 +37,4 @@
 
 /** Initialize the Symbol module */
 void SYMBOLinitialize( void ) {
-    ALLOCinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
 }

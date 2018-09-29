@@ -75,10 +75,6 @@ Scope ALGcreate( char type ) {
 
 /** Initialize the Algorithm module. */
 void ALGinitialize( void ) {
-    ALLOCinitialize( &FUNC_fl, sizeof( struct Function_ ),  100, 50 );
-    ALLOCinitialize( &RULE_fl, sizeof( struct Rule_ ),      100, 50 );
-    ALLOCinitialize( &PROC_fl, sizeof( struct Procedure_ ), 100, 50 );
-    ALLOCinitialize( &WHERE_fl, sizeof( struct Where_ ),    100, 50 );
 }
 
 void ALGput_full_text( Scope s, int start, int end ) {

@@ -45,7 +45,6 @@
 #include "express/resolve.h"
 
 void SCOPEinitialize( void ) {
-    ALLOCinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
 }
 
 /**

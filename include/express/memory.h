@@ -1,6 +1,6 @@
 #ifndef __MEMORY_H
 #define __MEMORY_H
 
-void MEMinit();
+void MEMORYinitialize();
 
 #endif // __MEMORY_H

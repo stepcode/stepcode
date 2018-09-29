@@ -27,8 +27,6 @@
 Error ERROR_empty_list = ERROR_none;
 
 void LISTinitialize( void ) {
-    ALLOCinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );
-    ALLOCinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );
     ERROR_empty_list = ERRORcreate( "Empty list in %s.", SEVERITY_ERROR );
 }
 

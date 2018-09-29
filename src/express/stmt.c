@@ -43,18 +43,6 @@
 #include <sc_memmgr.h>
 #include "express/stmt.h"
 
-struct freelist_head STMT_fl;
-
-struct freelist_head ALIAS_fl;
-struct freelist_head ASSIGN_fl;
-struct freelist_head CASE_fl;
-struct freelist_head COMP_STMT_fl;
-struct freelist_head COND_fl;
-struct freelist_head LOOP_fl;
-struct freelist_head PCALL_fl;
-struct freelist_head RET_fl;
-struct freelist_head INCR_fl;
-
 Statement STATEMENT_ESCAPE = STATEMENT_NULL;
 Statement STATEMENT_SKIP = STATEMENT_NULL;
 
@@ -68,18 +56,6 @@ Statement STMTcreate( int type ) {
 
 /** Initialize the Statement module. */
 void STMTinitialize( void ) {
-    ALLOCinitialize( &STMT_fl, sizeof( struct Statement_ ), 500, 100 );
-
-    ALLOCinitialize( &ALIAS_fl, sizeof( struct Alias_ ), 10, 10 );
-    ALLOCinitialize( &ASSIGN_fl, sizeof( struct Assignment_ ), 100, 30 );
-    ALLOCinitialize( &CASE_fl, sizeof( struct Case_Statement_ ), 100, 30 );
-    ALLOCinitialize( &COMP_STMT_fl, sizeof( struct Compound_Statement_ ), 100, 30 );
-    ALLOCinitialize( &COND_fl, sizeof( struct Conditional_ ), 100, 30 );
-    ALLOCinitialize( &LOOP_fl, sizeof( struct Loop_ ), 100, 30 );
-    ALLOCinitialize( &PCALL_fl, sizeof( struct Procedure_Call_ ), 100, 30 );
-    ALLOCinitialize( &RET_fl, sizeof( struct Return_Statement_ ), 100, 30 );
-    ALLOCinitialize( &INCR_fl, sizeof( struct Increment_ ), 100, 30 );
-
     STATEMENT_SKIP = STMTcreate( STMT_SKIP );
     STATEMENT_ESCAPE = STMTcreate( STMT_ESCAPE );
 }
