@@ -4,6 +4,7 @@
 #include "driver.h"
 
 #include "express/memory.h"
+#include "express/factory.h"
 
 extern struct test_def tests[];
 
@@ -11,7 +12,8 @@ int main(int argc, char *argv[]) {
     int status;
      
     /* enable libexpress allocator */
-    MEMinit();
+    MEMORYinitialize();
+    FACTORYinitialize();
     
     argc--;
     status = 0;
