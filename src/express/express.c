@@ -74,6 +74,7 @@
 #include <setjmp.h>
 #include <errno.h>
 
+#include "express/memory.h"
 #include "express/basic.h"
 #include "express/express.h"
 #include "express/resolve.h"
@@ -259,7 +260,7 @@ void PASSinitialize() {
 
 /** Initialize the Express package. */
 void EXPRESSinitialize( void ) {
-    _ALLOCinitialize();
+    MEMORYinitialize();
     ERRORinitialize();
 
     HASHinitialize();   /* comes first - used by just about everything else! */

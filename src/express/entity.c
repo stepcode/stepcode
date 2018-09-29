@@ -298,7 +298,6 @@ Entity ENTITYcopy( Entity e ) {
 
 /** Initialize the Entity module. */
 void ENTITYinitialize() {
-    ALLOCinitialize( &ENTITY_fl, sizeof( struct Entity_ ), 500, 100 );
 }
 
 /**

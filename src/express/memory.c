@@ -19,6 +19,7 @@ struct freelist_head SYMBOL_fl;
 
 struct freelist_head SCOPE_fl;
 struct freelist_head SCHEMA_fl;
+struct freelist_head REN_fl;
 
 struct freelist_head TYPEHEAD_fl;
 struct freelist_head TYPEBODY_fl;
@@ -50,7 +51,7 @@ struct freelist_head PCALL_fl;
 struct freelist_head RET_fl;
 struct freelist_head INCR_fl;
 
-void MEMinit() {
+void MEMORYinitialize() {
     _ALLOCinitialize();
     
     ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 50, 50 );
@@ -78,6 +79,7 @@ void MEMinit() {
     ALLOCinitialize( &ENTITY_fl, sizeof( struct Entity_ ), 500, 100 );
     
     ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
+    ALLOCinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
     
     ALLOCinitialize( &CASE_IT_fl, sizeof( struct Case_Item_ ), 500, 100 );
 

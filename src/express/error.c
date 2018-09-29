@@ -187,8 +187,6 @@ void ERRORcleanup( void ) {
 /** Need the LIST routines to complete ERROR initialization */
 void ERRORinitialize_after_LIST( void ) {
     ERRORwarnings = LISTcreate();
-
-    ALLOCinitialize( &ERROR_OPT_fl, sizeof( struct Error_Warning_ ), 5, 5 );
 }
 
 void ERRORcreate_warning( char * name, Error error ) {

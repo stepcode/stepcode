@@ -143,10 +143,6 @@ Expression EXPcreate_from_symbol( Type type, Symbol * symbol ) {
 
 /** Description: Initialize the Expression module. */
 void EXPinitialize( void ) {
-    ALLOCinitialize( &EXP_fl, sizeof( struct Expression_ ), 500, 200 );
-    ALLOCinitialize( &OP_fl, sizeof( struct Op_Subexpression ), 500, 100 );
-    ALLOCinitialize( &QUERY_fl, sizeof( struct Query_ ), 50, 10 );
-    ALLOCinitialize( &QUAL_ATTR_fl, sizeof( struct Query_ ), 20, 10 );
 
 #ifdef does_not_appear_to_be_necessary_or_even_make_sense
     LITERAL_EMPTY_SET = EXPcreate_simple( Type_Set );

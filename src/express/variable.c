@@ -91,7 +91,6 @@ char * opcode_print( Op_Code o );
 
 /** Initialize the Variable module. */
 void VARinitialize() {
-    ALLOCinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
 }
 
 /** VARget_simple_name

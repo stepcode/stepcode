@@ -36,7 +36,6 @@
 /** Initialize the Case Item module. */
 void
 CASE_ITinitialize( void ) {
-    ALLOCinitialize( &CASE_IT_fl, sizeof( struct Case_Item_ ), 500, 100 );
 }
 
 /**

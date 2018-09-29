@@ -51,14 +51,10 @@
 #include "express/object.h"
 #include "express/resolve.h"
 
-struct freelist_head REN_fl;
-
 int __SCOPE_search_id = 0;
 
 /** Initialize the Schema module. */
 void SCHEMAinitialize( void ) {
-    ALLOCinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
-    ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
 }
 
 
