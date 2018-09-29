@@ -44,12 +44,7 @@
 #include "express/scope.h"
 #include "express/resolve.h"
 
-Symbol * SCOPE_get_symbol( Generic s ) {
-    return( &( ( Scope )s )->symbol );
-}
-
 void SCOPEinitialize( void ) {
-    OBJcreate( OBJ_SCHEMA, SCOPE_get_symbol, "schema", OBJ_SCHEMA_BITS );
     ALLOCinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
 }
 

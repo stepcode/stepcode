@@ -89,15 +89,9 @@
 #include "express/object.h"
 char * opcode_print( Op_Code o );
 
-Symbol * VAR_get_symbol( Generic v ) {
-    return( &( ( Variable )v )->name->symbol );
-}
-
 /** Initialize the Variable module. */
 void VARinitialize() {
     ALLOCinitialize( &VAR_fl, sizeof( struct Variable_ ), 100, 50 );
-    /*  OBJcreate(OBJ_VARIABLE,VAR_get_symbol,"variable",OBJ_UNUSED_BITS);*/
-    OBJcreate( OBJ_VARIABLE, VAR_get_symbol, "variable", OBJ_VARIABLE_BITS );
 }
 
 /** VARget_simple_name
