@@ -110,7 +110,6 @@ static bool found_self;  /**< remember whether we've seen a SELF in a WHERE clau
 /* function prototypes */
 /***********************/
 
-extern void VAR_resolve_expressions( Variable, Entity );
 extern void VAR_resolve_types( Variable v );
 
 /** Initialize the Fed-X second pass. */
@@ -818,7 +817,6 @@ void VAR_resolve_types( Variable v ) {
 **
 ** Resolve all references in a statement.
 */
-void STMTresolve( Statement statement, Scope scope );
 
 void STMTlist_resolve( Linked_List list, Scope scope ) {
     LISTdo( list, s, Statement )
