@@ -56,10 +56,9 @@
  */
 
 #include <assert.h>
-#include <sc_memmgr.h>
 #include <stdlib.h>
+
 #include "express/resolve.h"
-#include "stack.h"
 #include "express/schema.h"
 #include "express/express.h"
 

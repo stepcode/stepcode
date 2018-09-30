@@ -40,7 +40,6 @@
  *
  */
 
-#include <sc_memmgr.h>
 #include "express/stmt.h"
 
 Statement STATEMENT_ESCAPE = STATEMENT_NULL;

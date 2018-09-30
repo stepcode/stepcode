@@ -113,7 +113,6 @@
  *
  */
 
-#include <sc_memmgr.h>
 #include "express/entity.h"
 #include "express/express.h"
 #include "express/object.h"

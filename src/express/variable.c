@@ -83,8 +83,8 @@
  *
  */
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
+
 #include "express/variable.h"
 #include "express/object.h"
 char * opcode_print( Op_Code o );

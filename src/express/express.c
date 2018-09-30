@@ -68,12 +68,12 @@
  *
  */
 
-#include "sc_memmgr.h"
 #include <ctype.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <errno.h>
 
+#include "sc_memmgr.h"
 #include "express/memory.h"
 #include "express/basic.h"
 #include "express/express.h"

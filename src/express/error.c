@@ -51,8 +51,6 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include "sc_cf.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>

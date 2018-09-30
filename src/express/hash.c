@@ -105,10 +105,11 @@
  *
  */
 
-#include <sc_memmgr.h>
 #include <assert.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+
+#include "sc_memmgr.h"
 #include "express/hash.h"
 
 /*

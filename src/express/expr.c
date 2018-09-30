@@ -70,12 +70,12 @@
  *
  */
 
-#include <sc_memmgr.h>
+#include <limits.h>
+#include <assert.h>
+
 #include "express/expr.h"
 #include "express/resolve.h"
 
-#include <assert.h>
-#include <limits.h>
 
 struct EXPop_entry EXPop_table[OP_LAST];
 

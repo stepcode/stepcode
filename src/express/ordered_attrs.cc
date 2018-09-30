@@ -1,8 +1,10 @@
 /// \file ordered_attrs.cc - create a list of attributes in the proper order for part 21, taking into account derivation, diamond inheritance, and (TODO) redefinition
 
-#include "ordered_attrs.h"
 #include <vector>
-#include <assert.h>
+#include <cassert>
+#include <cstring>
+
+#include "ordered_attrs.h"
 
 #ifdef _WIN32
 #  define strcasecmp _stricmp
