@@ -266,4 +266,6 @@ extern SC_EXPRESS_EXPORT void     EXPcleanup PROTO( ( void ) );
 extern SC_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
 extern SC_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
 
+Type EXPresolve_op_dot PROTO( ( Expression, Scope ) );
+
 #endif /*EXPRESSION_H*/
