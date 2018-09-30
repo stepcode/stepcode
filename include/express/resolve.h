@@ -82,6 +82,7 @@ extern SC_EXPRESS_EXPORT void TYPE_resolve( Type * );
 extern SC_EXPRESS_EXPORT void EXP_resolve( Expression, Scope, Type );
 extern SC_EXPRESS_EXPORT void ALGresolve( Scope );
 extern SC_EXPRESS_EXPORT void SCHEMAresolve( Scope );
+extern SC_EXPRESS_EXPORT void RENAMEresolve( Rename *, Schema );
 
 /*
  * for unit tests, no extern / export

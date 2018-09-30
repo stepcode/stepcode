@@ -148,5 +148,7 @@ extern SC_EXPRESS_EXPORT void     SCOPEdestroy( Scope );
 extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use( Scope );
 extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref( Scope );
 
+void SCHEMA_get_entities_ref( Scope, Linked_List );
+
 #endif /*  SCHEMA_H */
 

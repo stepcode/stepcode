@@ -179,7 +179,7 @@ Linked_List SCHEMAget_entities_use( Scope scope ) {
 }
 
 /** return ref'd entities */
-static void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
+void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
     Rename * rename;
     DictionaryEntry de;
 
