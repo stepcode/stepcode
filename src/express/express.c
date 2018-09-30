@@ -78,6 +78,7 @@
 #include "express/basic.h"
 #include "express/express.h"
 #include "express/resolve.h"
+#include "express/factory.h"
 #include "stack.h"
 #include "express/scope.h"
 #include "token_type.h"
@@ -275,6 +276,7 @@ void EXPRESSinitialize( void ) {
     SYMBOLinitialize();
 
     SCOPEinitialize();
+    FACTORYinitialize();
     TYPEinitialize();   /* cannot come before SCOPEinitialize */
     VARinitialize();
 
