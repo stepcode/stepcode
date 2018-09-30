@@ -82,6 +82,7 @@ extern SC_EXPRESS_EXPORT void TYPE_resolve PROTO( ( Type * ) );
 extern SC_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
 extern SC_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );
 extern SC_EXPRESS_EXPORT void SCHEMAresolve PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void RENAMEresolve PROTO( ( Rename *, Schema ) );
 
 /*
  * for unit tests, no extern / export

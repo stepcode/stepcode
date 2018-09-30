@@ -446,8 +446,6 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     return yyexpresult;
 }
 
-static void RENAMEresolve( Rename * r, Schema s );
-
 /**
  * find the final object to which a rename points
  * i.e., follow chain of USEs or REFs
@@ -499,7 +497,7 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
     return 0;
 }
 
-static void RENAMEresolve( Rename * r, Schema s ) {
+void RENAMEresolve( Rename * r, Schema s ) {
     Generic remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
