@@ -111,39 +111,8 @@ static_inline int OPget_number_of_operands( Op_Code op ) {
     }
 }
 
-Expression EXPcreate( Type type ) {
-    Expression e;
-    e = EXP_new();
-    SYMBOLset( e );
-    e->type = type;
-    e->return_type = Type_Unknown;
-    return( e );
-}
-
-/**
- * use this when the return_type is the same as the type
- * For example, for constant integers
- */
-Expression EXPcreate_simple( Type type ) {
-    Expression e;
-    e = EXP_new();
-    SYMBOLset( e );
-    e->type = e->return_type = type;
-    return( e );
-}
-
-Expression EXPcreate_from_symbol( Type type, Symbol * symbol ) {
-    Expression e;
-    e = EXP_new();
-    e->type = type;
-    e->return_type = Type_Unknown;
-    e->symbol = *symbol;
-    return e;
-}
-
 /** Description: Initialize the Expression module. */
 void EXPinitialize( void ) {
-
 #ifdef does_not_appear_to_be_necessary_or_even_make_sense
     LITERAL_EMPTY_SET = EXPcreate_simple( Type_Set );
     LITERAL_EMPTY_SET->u.list = LISTcreate();
@@ -880,78 +849,6 @@ void EXPop_init() {
     EXPop_create( OP_TIMES, "*",      EXPresolve_op_plus_like );
     EXPop_create( OP_XOR, "XOR",      EXPresolve_op_logical );
     EXPop_create( OP_UNKNOWN, "UNKNOWN OP",   EXPresolve_op_unknown );
-}
-
-
-/**
-** \param op operation
-** \param operand1 - first operand
-** \param operand2 - second operand
-** \param operand3 - third operand
-** \returns Ternary_Expression  - the expression created
-** Create a ternary operation Expression.
-*/
-Expression TERN_EXPcreate( Op_Code op, Expression operand1, Expression operand2, Expression operand3 ) {
-    Expression e = EXPcreate( Type_Expression );
-
-    e->e.op_code = op;
-    e->e.op1 = operand1;
-    e->e.op2 = operand2;
-    e->e.op3 = operand3;
-    return e;
-}
-
-/**
-** \fn BIN_EXPcreate
-** \param op       operation
-** \param operand1 - first operand
-** \param operand2 - second operand
-** \returns Binary_Expression   - the expression created
-** Create a binary operation Expression.
-*/
-Expression BIN_EXPcreate( Op_Code op, Expression operand1, Expression operand2 ) {
-    Expression e = EXPcreate( Type_Expression );
-
-    e->e.op_code = op;
-    e->e.op1 = operand1;
-    e->e.op2 = operand2;
-    return e;
-}
-
-/**
-** \param op operation
-** \param operand  operand
-** \returns the expression created
-** Create a unary operation Expression.
-*/
-Expression UN_EXPcreate( Op_Code op, Expression operand ) {
-    Expression e = EXPcreate( Type_Expression );
-
-    e->e.op_code = op;
-    e->e.op1 = operand;
-    return e;
-}
-
-/**
-** \param local local identifier for source elements
-** \param aggregate source aggregate to query
-** \returns the query expression created
-** Create a query Expression.
-** NOTE Dec 2011 - MP - function description did not match actual params. Had to guess.
-*/
-Expression QUERYcreate( Symbol * local, Expression aggregate ) {
-    Expression e = EXPcreate_from_symbol( Type_Query, local );
-    Scope s = SCOPEcreate_tiny( OBJ_QUERY );
-    Expression e2 = EXPcreate_from_symbol( Type_Attribute, local );
-
-    Variable v = VARcreate( e2, Type_Attribute );
-
-    DICTdefine( s->symbol_table, local->name, ( Generic )v, &e2->symbol, OBJ_VARIABLE );
-    e->u.query = QUERY_new();
-    e->u.query->scope = s;
-    e->u.query->local = v;
-    e->u.query->aggregate = aggregate;
-    return e;
 }
 
 /**
