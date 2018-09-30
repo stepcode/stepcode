@@ -72,6 +72,7 @@ set(EXPRESS_SOURCES
   scope.c
   schema.c
   resolve.c
+  resolve2.c
   lexact.c
   linklist.c
   error.c

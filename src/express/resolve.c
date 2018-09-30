@@ -77,11 +77,6 @@ Error ERROR_ambiguous_group = ERROR_none;
 Error WARNING_fn_skip_branch = ERROR_none;
 Error WARNING_case_skip_label = ERROR_none;
 
-
-static void ENTITYresolve_subtypes PROTO( ( Schema ) );
-static void ENTITYresolve_supertypes PROTO( ( Entity ) );
-static void TYPEresolve_expressions PROTO( ( Type, Scope ) );
-
 static Error ERROR_wrong_arg_count;
 static Error ERROR_supertype_resolve;
 static Error ERROR_subtype_resolve;
@@ -115,7 +110,6 @@ static bool found_self;  /**< remember whether we've seen a SELF in a WHERE clau
 /* function prototypes */
 /***********************/
 
-static int WHEREresolve PROTO( ( Linked_List, Scope, int ) );
 extern void VAR_resolve_expressions PROTO( ( Variable, Entity ) );
 extern void VAR_resolve_types PROTO( ( Variable v ) );
 
@@ -940,21 +934,6 @@ void STMTresolve( Statement statement, Scope scope ) {
     }
 }
 
-void ALGresolve_expressions_statements( Scope s, Linked_List statements ) {
-    int status = 0;
-
-    if( print_objects_while_running & OBJ_ALGORITHM_BITS &
-            OBJget_bits( s->type ) ) {
-        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
-                 s->symbol.name, OBJget_type( s->type ) );
-    }
-
-    SCOPEresolve_expressions_statements( s );
-    STMTlist_resolve( statements, s );
-
-    s->symbol.resolved = status;
-}
-
 static Variable ENTITY_get_local_attribute( Entity e, char * name ) {
     LISTdo( e->u.entity->attributes, a, Variable )
     if( streq( VARget_simple_name( a ), name ) ) {
@@ -1194,52 +1173,8 @@ void SCOPEresolve_types( Scope s ) {
     }
 }
 
-
-
-/********************************new****************************************/
-
-void SCOPEresolve_subsupers( Scope scope ) {
-    DictionaryEntry de;
-    Generic x;
-    char type;
-    Symbol * sym;
-    Type t;
-
-    if( print_objects_while_running & OBJ_SCOPE_BITS &
-            OBJget_bits( scope->type ) ) {
-        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
-                 scope->symbol.name, OBJget_type( scope->type ) );
-    }
-
-    DICTdo_init( scope->symbol_table, &de );
-    while( 0 != ( x = DICTdo( &de ) ) ) {
-        switch( type = DICT_type ) {
-            case OBJ_ENTITY:
-                ENTITYresolve_supertypes( ( Entity )x );
-                ENTITYresolve_subtypes( ( Entity )x );
-                break;
-            case OBJ_FUNCTION:
-            case OBJ_PROCEDURE:
-            case OBJ_RULE:
-                SCOPEresolve_subsupers( ( Scope )x );
-                break;
-            case OBJ_TYPE:
-                t = ( Type )x;
-                TYPEresolve( &t );
-                break;
-            default:
-                /* ignored everything else */
-                break;
-        }
-        sym = OBJget_symbol( x, type );
-        if( is_resolve_failed_raw( sym ) ) {
-            resolve_failed( scope );
-        }
-    }
-}
-
 /** for each supertype, find the entity it refs to */
-static void ENTITYresolve_supertypes( Entity e ) {
+void ENTITYresolve_supertypes( Entity e ) {
     Entity ref_entity;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
@@ -1296,7 +1231,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
     } LISTod;
 }
 
-static void ENTITYresolve_subtypes( Entity e ) {
+void ENTITYresolve_subtypes( Entity e ) {
     int i;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
@@ -1389,7 +1324,7 @@ void ENTITYresolve_types( Entity e ) {
 }
 
 /** resolve all expressions in type definitions */
-static void TYPEresolve_expressions( Type t, Scope s ) {
+void TYPEresolve_expressions( Type t, Scope s ) {
     TypeBody body;
 
     /* meaning of self in a type declaration refers to the type itself, so */
@@ -1427,58 +1362,7 @@ static void TYPEresolve_expressions( Type t, Scope s ) {
     self = self_old;
 }
 
-void SCOPEresolve_expressions_statements( Scope s ) {
-    DictionaryEntry de;
-    Generic x;
-    Variable v;
-
-    if( print_objects_while_running & OBJ_SCOPE_BITS &
-            OBJget_bits( s->type ) ) {
-        fprintf( stderr, "pass %d: %s (%s)\n", EXPRESSpass,
-                 s->symbol.name, OBJget_type( s->type ) );
-    }
-
-    DICTdo_init( s->symbol_table, &de );
-    while( 0 != ( x = DICTdo( &de ) ) ) {
-        switch( DICT_type ) {
-            case OBJ_SCHEMA:
-                if( is_not_resolvable( ( Schema )x ) ) {
-                    break;
-                }
-                SCOPEresolve_expressions_statements( ( Scope )x );
-                break;
-            case OBJ_ENTITY:
-                ENTITYresolve_expressions( ( Entity )x );
-                break;
-            case OBJ_FUNCTION:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.func->body );
-                break;
-            case OBJ_PROCEDURE:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.proc->body );
-                break;
-            case OBJ_RULE:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.rule->body );
-
-                WHEREresolve( RULEget_where( ( Scope )x ), ( Scope )x, 0 );
-                break;
-            case OBJ_VARIABLE:
-                v = ( Variable )x;
-                TYPEresolve_expressions( v->type, s );
-                if( v->initializer ) {
-                    EXPresolve( v->initializer, s, v->type );
-                }
-                break;
-            case OBJ_TYPE:
-                TYPEresolve_expressions( ( Type )x, s );
-                break;
-            default:
-                /* ignored everything else */
-                break;
-        }
-    }
-}
-
-static int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
+int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     int status = 0;
 
     LISTdo( list, w, Where )

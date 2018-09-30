@@ -83,4 +83,15 @@ extern SC_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
 extern SC_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );
 extern SC_EXPRESS_EXPORT void SCHEMAresolve PROTO( ( Scope ) );
 
+/*
+ * for unit tests, no extern / export
+ */
+void ENTITYresolve_subtypes PROTO( ( Schema ) );
+void ENTITYresolve_supertypes PROTO( ( Entity ) );
+void ENTITYresolve_expressions PROTO( ( Entity e ) );
+void ALGresolve_expressions_statements PROTO( ( Scope, Linked_List ) );
+int  WHEREresolve PROTO( ( Linked_List, Scope, int ) );
+void TYPEresolve_expressions PROTO( ( Type, Scope ) );
+void STMTlist_resolve PROTO( ( Linked_List, Scope ) );
+
 #endif /*RESOLVE_H*/
