@@ -144,4 +144,6 @@ extern SC_EXPRESS_EXPORT Linked_List  SCOPEget_functions( Scope );
 extern SC_EXPRESS_EXPORT void     SCOPE_get_rules( Scope, Linked_List );
 extern SC_EXPRESS_EXPORT Linked_List  SCOPEget_rules( Scope );
 
+Generic SCOPE_find PROTO( ( Scope, char *, int ) );
+
 #endif /* SCOPE_H */
