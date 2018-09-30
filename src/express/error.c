@@ -51,11 +51,9 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <setjmp.h>
 #include <signal.h>
-#include <string.h>
 
 #ifdef __STDC__
 #include <stdarg.h>
@@ -63,6 +61,7 @@
 #include <varargs.h>
 #endif
 
+#include "sc_memmgr.h"
 #include "express/error.h"
 #include "express/info.h"
 #include "express/linklist.h"

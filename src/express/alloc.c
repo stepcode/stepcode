@@ -32,9 +32,10 @@ Now you can say things like:
     foo_destroy(foo1);
 
 */
-#include <sc_memmgr.h>
+
 #include <stdlib.h>
 #include <string.h>
+
 #include "express/alloc.h"
 #include "express/error.h"
 

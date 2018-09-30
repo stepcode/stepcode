@@ -29,7 +29,6 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <sc_memmgr.h>
 #include "express/caseitem.h"
 
 

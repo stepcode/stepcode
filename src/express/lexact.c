@@ -51,11 +51,12 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
+
+#include "sc_memmgr.h"
 #include "express/lexact.h"
-#include "string.h"
 #include "express/linklist.h"
 #include "stack.h"
 #include "express/hash.h"

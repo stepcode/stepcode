@@ -32,7 +32,6 @@
  * Initial revision
  */
 
-#include <sc_memmgr.h>
 #include "express/symbol.h"
 
 /** Initialize the Symbol module */

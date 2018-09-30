@@ -123,9 +123,8 @@ This module implements the type abstraction.  It is
  */
 
 #include <assert.h>
-#include <sc_memmgr.h>
-#include "express/type.h"
 
+#include "express/type.h"
 
 Error ERROR_corrupted_type = ERROR_none;
 

@@ -71,12 +71,13 @@
  *
  */
 
-#include <sc_cf.h>
-#include <sc_memmgr.h>
-#include <sc_export.h>
-#include "sc_version_string.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+#include "sc_cf.h"
+#include "sc_memmgr.h"
+#include "sc_export.h"
+#include "sc_version_string.h"
 #include "sc_getopt.h"
 #include "express/error.h"
 #include "express/express.h"
