@@ -22,6 +22,7 @@ set(schema_scanner_src
   ${SC_ROOT}/src/express/generated/expparse.c
   ${SC_ROOT}/src/express/generated/expscan.c
   ${SC_ROOT}/src/express/alg.c
+  ${SC_ROOT}/src/express/alloc.c
   ${SC_ROOT}/src/express/caseitem.c
   ${SC_ROOT}/src/express/dict.c
   ${SC_ROOT}/src/express/entity.c
@@ -29,6 +30,7 @@ set(schema_scanner_src
   ${SC_ROOT}/src/express/exp_kw.c
   ${SC_ROOT}/src/express/expr.c
   ${SC_ROOT}/src/express/express.c
+  ${SC_ROOT}/src/express/factory.c
   ${SC_ROOT}/src/express/hash.c
   ${SC_ROOT}/src/express/lexact.c
   ${SC_ROOT}/src/express/linklist.c
@@ -36,6 +38,7 @@ set(schema_scanner_src
   ${SC_ROOT}/src/express/object.c
   ${SC_ROOT}/src/express/info.c
   ${SC_ROOT}/src/express/resolve.c
+  ${SC_ROOT}/src/express/resolve2.c
   ${SC_ROOT}/src/express/schema.c
   ${SC_ROOT}/src/express/scope.c
   ${SC_ROOT}/src/express/stmt.c

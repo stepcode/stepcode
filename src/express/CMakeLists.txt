@@ -48,6 +48,12 @@ if(SC_GENERATE_LP_SOURCES)
     ${PERPLEX_ExpScanner_SRC}
     )
 
+  add_library(objlib_expscan_c OBJECT ${PERPLEX_ExpScanner_SRC})
+  set_property(TARGET objlib_expscan_c PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_SRC})
+  set_property(TARGET objlib_expparse_c PROPERTY POSITION_INDEPENDENT_CODE ON)
+
   LEMON_TARGET(ExpParser_static expparse.y)
   PERPLEX_TARGET(ExpScanner_static expscan.l)
   ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner_static ExpParser_static)
@@ -122,9 +128,9 @@ SET(EXPRESS_PRIVATE_HDRS
 SC_ADDLIB(express "dummy.c" "base" SO_SRCS "${EXPRESS_OBJS}")
 
 if(SC_GENERATE_LP_SOURCES)
-  set_property(TARGET express
-               APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
-  set_property(TARGET express
+  set_property(TARGET objlib_expparse_c objlib_lexact_c objlib_express_c
+               APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+  set_property(TARGET objlib_expscan_c objlib_lexact_c objlib_express_c
                APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
 endif(SC_GENERATE_LP_SOURCES)
 
