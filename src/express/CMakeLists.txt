@@ -43,18 +43,13 @@ if(SC_GENERATE_LP_SOURCES)
   LEMON_TARGET(ExpParser expparse.y)
   PERPLEX_TARGET(ExpScanner expscan.l)
   ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner ExpParser)
-  set(SCL_SO_SRCS
-    ${LEMON_ExpParser_SRC}
-    ${PERPLEX_ExpScanner_SRC}
-    )
 
-  LEMON_TARGET(ExpParser_static expparse.y)
-  PERPLEX_TARGET(ExpScanner_static expscan.l)
-  ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner_static ExpParser_static)
-  set(SCL_STATIC_SRCS
-    ${LEMON_ExpParser_static_SRC}
-    ${PERPLEX_ExpScanner_static_SRC}
-    )
+  add_library(objlib_expscan_c OBJECT ${PERPLEX_ExpScanner_SRC})
+  set_property(TARGET objlib_expscan_c PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_SRC})
+  set_property(TARGET objlib_expparse_c PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 else(SC_GENERATE_LP_SOURCES)
   add_subdirectory(generated)
   include_directories(generated)
@@ -100,6 +95,16 @@ endforeach()
 list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expscan_c>)
 list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expparse_c>)
 
+
+if(SC_GENERATE_LP_SOURCES)
+  set_property(TARGET objlib_expparse_c objlib_express_c objlib_lexact_c 
+	       APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+  set_property(TARGET objlib_expscan_c objlib_express_c objlib_lexact_c
+               APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+  # OBJECT libraries are not targets, and so an explicit dependency is required
+  set_source_files_properties(express.c lexact.c PROPERTIES OBJECT_DEPENDS "${PERPLEX_ExpScanner_HDR};${LEMON_ExpParser_HDR}")
+endif()
+
 # TODO
 # Currently, fedex.c provides the main() for multiple programs. These programs
 # provide custom behavior by defining EXPRESSinit_init (called by fedex.c's
@@ -129,10 +134,6 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
   endif()
 
   if(SC_GENERATE_LP_SOURCES)
-    set_property(TARGET express
-                 APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
-    set_property(TARGET express
-                 APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
     add_custom_command(TARGET express POST_BUILD
       COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
     )
@@ -149,10 +150,6 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
   SC_ADDLIB(express-static STATIC SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
 
   if(SC_GENERATE_LP_SOURCES)
-    set_property(TARGET express-static
-                 APPEND PROPERTY INCLUDE_DIRECTORIES "${RE2C_ExpScanner_INCLUDE_DIR}")
-    set_property(TARGET express-static
-                 APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
     add_custom_command(TARGET express-static POST_BUILD
       COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
     )

@@ -1,5 +1,9 @@
 include_directories(..)
 
+if(SC_GENERATE_LP_SOURCES)
+  include_directories("${PERPLEX_ExpScanner_INCLUDE_DIR}" "${LEMON_ExpParser_INCLUDE_DIR}")
+endif(SC_GENERATE_LP_SOURCES)
+
 set(EXPRESS_CORE_OBJ
     # base
     $<TARGET_OBJECTS:objlib_alloc_c>

@@ -2439,5 +2439,8 @@ while_control(A) ::= TOK_WHILE expression(B).
 
 %stack_overflow {
     fprintf(stderr, "Express parser experienced stack overflow.\n");
-    fprintf(stderr, "Last token had value %x\n", yypMinor->yy0.val);
+    /* 
+     * fprintf(stderr, "Last token had value %x\n", yypMinor->yy0.val);
+     * fprintf(stderr, "Last token had value %x\n", yypParser->yytos->minor.yy0.val);
+     */
 }
