@@ -99,7 +99,7 @@ char * SCHEMAout( Schema s ) {
             fprintf( stdout, "%s: writing schema file %s\n", EXPRESSprogram_name, exppp_filename_buffer );
         }
         if( !( exppp_fp = f = fopen( exppp_filename_buffer, "w" ) ) ) {
-            ERRORreport( ERROR_file_unwriteable, exppp_filename_buffer, strerror( errno ) );
+            ERRORreport( FILE_UNWRITABLE, exppp_filename_buffer, strerror( errno ) );
             return 0;
         }
     }

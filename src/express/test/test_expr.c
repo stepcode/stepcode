@@ -38,7 +38,6 @@ FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, c
 FAKE_VOID_FUNC(EXP_resolve, Expression, Scope, Type)
 
 void setup() {
-    ERRORwarnings = LISTcreate();
     EXPinitialize();
     
     RESET_FAKE(EXPRESS_fail);

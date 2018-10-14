@@ -193,11 +193,6 @@ extern SC_EXPRESS_EXPORT Expression  LITERAL_PI;
 extern SC_EXPRESS_EXPORT Expression  LITERAL_ZERO;
 extern SC_EXPRESS_EXPORT Expression  LITERAL_ONE;
 
-extern SC_EXPRESS_EXPORT Error ERROR_bad_qualification;
-extern SC_EXPRESS_EXPORT Error ERROR_integer_expression_expected;
-extern SC_EXPRESS_EXPORT Error ERROR_implicit_downcast;
-extern SC_EXPRESS_EXPORT Error ERROR_ambig_implicit_downcast;
-
 extern SC_EXPRESS_EXPORT struct freelist_head EXP_fl;
 extern SC_EXPRESS_EXPORT struct freelist_head OP_fl;
 extern SC_EXPRESS_EXPORT struct freelist_head QUERY_fl;

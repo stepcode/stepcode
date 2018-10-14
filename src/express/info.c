@@ -26,9 +26,7 @@ void EXPRESSusage( int _exit ) {
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
     fprintf( stderr, "\tnone\n\tall\n" );
-    LISTdo( ERRORwarnings, opt, Error_Warning )
-    fprintf( stderr, "\t%s\n", opt->name );
-    LISTod
+    fprintf( stderr, ERRORget_warnings_help("\t", "\n") );
     fprintf( stderr, "and <object_type> is one or more of:\n" );
     fprintf( stderr, "  e   entity\n" );
     fprintf( stderr, "  p   procedure\n" );

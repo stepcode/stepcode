@@ -70,7 +70,6 @@ struct Linked_List_ {
 /* global variables */
 /********************/
 
-extern SC_EXPRESS_EXPORT Error ERROR_empty_list;
 extern SC_EXPRESS_EXPORT struct freelist_head LINK_fl;
 extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
 

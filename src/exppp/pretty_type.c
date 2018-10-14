@@ -198,7 +198,7 @@ void TYPE_body_out( Type t, int level ) {
 
             /* if empty, force a left paren */
             if( first_time ) {
-                ERRORreport_with_symbol( ERROR_select_empty, &error_sym, t->symbol.name );
+                ERRORreport_with_symbol( SELECT_EMPTY, &error_sym, t->symbol.name );
                 raw( "%*s( ", level, "" );
             }
             raw( " )" );

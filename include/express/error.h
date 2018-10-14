@@ -28,16 +28,10 @@
  * prettied up interface to print_objects_when_running
  */
 
-#include <sc_export.h>
-#include "basic.h"  /* get basic definitions */
 #include <setjmp.h>
 
-/*************/
-/* constants */
-/*************/
-
-#define ERROR_none      (Error)NULL
-#define ERROR_MAX       100
+#include "sc_export.h"
+#include "basic.h"  /* get basic definitions */
 
 /*****************/
 /* packages used */
@@ -46,33 +40,122 @@
 #include "alloc.h"
 #include "symbol.h"
 
+enum ErrorCode {
+    /* dict.c */
+    DUPLICATE_DECL = 1,
+    DUPLICATE_DECL_DIFF_FILE,
+    /* error.c */
+    SUBORDINATE_FAILED,
+    SYNTAX_EXPECTING,
+    /* expr.c */
+    INTEGER_EXPRESSION_EXPECTED,
+    INTERNAL_UNRECOGNISED_OP_IN_EXPRESOLVE,
+    ATTRIBUTE_REF_ON_AGGREGATE,
+    ATTRIBUTE_REF_FROM_NON_ENTITY,
+    INDEXING_ILLEGAL,
+    WARN_INDEXING_MIXED,
+    ENUM_NO_SUCH_ITEM,
+    GROUP_REF_NO_SUCH_ENTITY,
+    GROUP_REF_UNEXPECTED_TYPE,
+    IMPLICIT_DOWNCAST,
+    AMBIG_IMPLICIT_DOWNCAST,
+    /* express.c */
+    BAIL_OUT,
+    SYNTAX,
+    REF_NONEXISTENT,
+    TILDE_EXPANSION_FAILED,
+    SCHEMA_NOT_IN_OWN_SCHEMA_FILE,
+    UNLABELLED_PARAM_TYPE,
+    FILE_UNREADABLE,
+    FILE_UNWRITABLE,
+    WARN_UNSUPPORTED_LANG_FEAT,
+    WARN_SMALL_REAL,
+    /* lexact.c */
+    INCLUDE_FILE,
+    UNMATCHED_CLOSE_COMMENT,
+    UNMATCHED_OPEN_COMMENT,
+    UNTERMINATED_STRING,
+    ENCODED_STRING_BAD_DIGIT,
+    ENCODED_STRING_BAD_COUNT,
+    BAD_IDENTIFIER,
+    UNEXPECTED_CHARACTER,
+    NONASCII_CHAR,
+    /* linklist.c */
+    EMPTY_LIST,
+    /* resolve.c */
+    UNDEFINED,
+    UNDEFINED_ATTR,
+    UNDEFINED_TYPE,
+    UNDEFINED_SCHEMA,
+    UNKNOWN_ATTR_IN_ENTITY,
+    UNKNOWN_SUBTYPE,
+    UNKNOWN_SUPERTYPE,
+    CIRCULAR_REFERENCE,
+    SUBSUPER_LOOP,
+    SUBSUPER_CONTINUATION,
+    SELECT_LOOP,
+    SELECT_CONTINUATION,
+    SUPERTYPE_RESOLVE,
+    SUBTYPE_RESOLVE,
+    NOT_A_TYPE,
+    FUNCALL_NOT_A_FUNCTION,
+    UNDEFINED_FUNC,
+    EXPECTED_PROC,
+    NO_SUCH_PROCEDURE,
+    WRONG_ARG_COUNT,
+    QUERY_REQUIRES_AGGREGATE,
+    SELF_IS_UNKNOWN,
+    INVERSE_BAD_ENTITY,
+    INVERSE_BAD_ATTR,
+    MISSING_SUPERTYPE,
+    TYPE_IS_ENTITY,
+    AMBIGUOUS_ATTR,
+    AMBIGUOUS_GROUP,
+    OVERLOADED_ATTR,
+    REDECL_NO_SUCH_ATTR,
+    REDECL_NO_SUCH_SUPERTYPE,
+    MISSING_SELF,
+    FN_SKIP_BRANCH,
+    CASE_SKIP_LABEL,
+    UNIQUE_QUAL_REDECL,
+    /* type.c */
+    CORRUPTED_TYPE,
+    UNDEFINED_TAG,
+    /* exppp.c */
+    SELECT_EMPTY,
+};
+
+/*************/
+/* constants */
+/*************/
+
+#define ERROR_none      (Error)NULL
+#define ERROR_MAX       100
+
 /************/
 /* typedefs */
 /************/
 
-typedef enum {
-    SEVERITY_WARNING    = 0,
-    SEVERITY_ERROR  = 1,
-    SEVERITY_EXIT   = 2,
-    SEVERITY_DUMP   = 3,
-    SEVERITY_MAX    = 4
-} Severity;
+enum Severity {
+    SEVERITY_WARNING = 0,
+    SEVERITY_ERROR,
+    SEVERITY_EXIT,
+    SEVERITY_DUMP,
+    SEVERITY_MAX
+};
 
 /***************************/
 /* hidden type definitions */
 /***************************/
 
-typedef struct Error_ {
-    bool enabled;
-    Severity    severity;
-    char  * message;
-    int serial; /* used to give each type of error a unique identifier */
-} * Error;
+struct Error_ {
+    enum Severity severity;
+    const char *message;
+    const char *name;
+    bool override;
+};
 
-typedef struct Error_Warning_ {
-    char  * name;
-    struct Linked_List_ * errors;
-} * Error_Warning;
+typedef struct Error_ *Error;
 
 /****************/
 /* modules used */
@@ -89,10 +172,6 @@ extern SC_EXPRESS_EXPORT const char * current_filename;
 extern SC_EXPRESS_EXPORT bool ERRORoccurred;
 
 
-extern SC_EXPRESS_EXPORT Error experrc;
-extern SC_EXPRESS_EXPORT Error ERROR_subordinate_failed;
-extern SC_EXPRESS_EXPORT Error ERROR_syntax_expecting;
-
 /* all of these are 1 if true, 0 if false switches */
 /* for debugging fedex */
 extern SC_EXPRESS_EXPORT int ERRORdebugging;
@@ -101,17 +180,7 @@ extern SC_EXPRESS_EXPORT int malloc_debug_resolve;
 /* for debugging yacc/lex */
 extern SC_EXPRESS_EXPORT int debug;
 
-extern SC_EXPRESS_EXPORT struct Linked_List_ * ERRORwarnings;
-extern SC_EXPRESS_EXPORT struct freelist_head ERROR_OPT_fl;
-
 extern SC_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
-
-/******************************/
-/* macro function definitions */
-/******************************/
-
-#define ERROR_OPT_new() (struct Error_Warning_ *)ALLOC_new(&ERROR_OPT_fl)
-#define ERROR_OPT_destroy(x)    ALLOC_destroy(&ERROR_OPT_fl,(Freelist *)x)
 
 /***********************/
 /* function prototypes */
@@ -119,26 +188,6 @@ extern SC_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
 
 extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer( void );
 extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer( void );
-
-/********************/
-/* Inline functions */
-/********************/
-
-static inline void ERRORdisable( Error error ) {
-    if( error != ERROR_none ) {
-        error->enabled = false;
-    }
-}
-
-static inline void ERRORenable( Error error ) {
-    if( error != ERROR_none ) {
-        error->enabled = true;
-    }
-}
-
-static inline bool ERRORis_enabled( Error error ) {
-    return error->enabled;
-}
 
 static inline void ERRORbuffer_messages( bool flag ) {
     __ERROR_buffer_errors = flag;
@@ -162,22 +211,21 @@ static inline void ERRORflush_messages( void ) {
 /***********************/
 
 extern SC_EXPRESS_EXPORT void ERRORinitialize( void );
-extern SC_EXPRESS_EXPORT void ERRORinitialize_after_LIST( void );
 extern SC_EXPRESS_EXPORT void ERRORcleanup( void );
 extern SC_EXPRESS_EXPORT void ERRORnospace( void );
 extern SC_EXPRESS_EXPORT void ERRORabort( int );
-extern SC_EXPRESS_EXPORT Error    ERRORcreate( char *, Severity );
-extern SC_EXPRESS_EXPORT void ERRORreport( Error, ... );
-extern SC_EXPRESS_EXPORT void ERRORdestroy( Error );
+extern SC_EXPRESS_EXPORT void ERRORreport( enum ErrorCode, ... );
 
 struct Symbol_; /* mention Symbol to avoid warning on following line */
-extern SC_EXPRESS_EXPORT void ERRORreport_with_symbol( Error, struct Symbol_ *, ... );
-extern SC_EXPRESS_EXPORT void ERRORreport_with_line( Error, int, ... );
+extern SC_EXPRESS_EXPORT void ERRORreport_with_symbol( enum ErrorCode, struct Symbol_ *, ... );
+extern SC_EXPRESS_EXPORT void ERRORreport_with_line( enum ErrorCode, int, ... );
 
-extern SC_EXPRESS_EXPORT void ERRORcreate_warning( char *, Error );
-extern SC_EXPRESS_EXPORT void ERRORset_warning( char *, int );
-extern SC_EXPRESS_EXPORT void ERRORset_all_warnings( int );
+extern SC_EXPRESS_EXPORT void ERRORset_warning( char *, bool );
+extern SC_EXPRESS_EXPORT void ERRORset_all_warnings( bool );
 extern SC_EXPRESS_EXPORT void ERRORsafe( jmp_buf env );
 extern SC_EXPRESS_EXPORT void ERRORunsafe( void );
+
+extern char * ERRORget_warnings_help(const char* prefix, const char *eol);
+extern bool ERRORis_enabled(enum ErrorCode errnum);
 
 #endif /* ERROR_H */

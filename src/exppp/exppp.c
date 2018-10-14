@@ -215,9 +215,6 @@ void exppp_init() {
         return;
     }
     first_time = false;
-
-    ERROR_select_empty = ERRORcreate(
-                             "select type %s has no members", SEVERITY_ERROR );
 }
 
 

@@ -4,6 +4,7 @@
 #include "exppp.h"
 
 static void exppp_usage( void ) {
+    char *warnings_help_msg = ERRORget_warnings_help("\t", "\n");
     fprintf( stderr, "usage: %s [-v] [-d #] [-p <object_type>] {-w|-i <warning>} [-l <length>] [-c] [-o [file|--]] express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "\t-v produces a version description\n" );
     fprintf( stderr, "\t-l specifies line length hint for output\n" );
@@ -16,9 +17,7 @@ static void exppp_usage( void ) {
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
     fprintf( stderr, "\tnone\n\tall\n" );
-    LISTdo( ERRORwarnings, opt, Error_Warning )
-    fprintf( stderr, "\t%s\n", opt->name );
-    LISTod
+    fprintf( stderr, "%s", warnings_help_msg);
     fprintf( stderr, "and <object_type> is one or more of:\n" );
     fprintf( stderr, "	e	entity\n" );
     fprintf( stderr, "	p	procedure\n" );

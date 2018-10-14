@@ -46,7 +46,6 @@ FAKE_VALUE_FUNC(int, ENTITYdeclares_variable, Entity, Variable)
 FAKE_VALUE_FUNC(int, EXPRESS_fail, Express)
 
 void setup() {
-    ERRORwarnings = LISTcreate();
     RESOLVEinitialize();
     
     RESET_FAKE(SCOPEfind);

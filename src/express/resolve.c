@@ -64,43 +64,6 @@
 
 int print_objects_while_running = 0;
 
-Error ERROR_undefined_attribute = ERROR_none;
-Error ERROR_undefined_type = ERROR_none;
-Error ERROR_undefined_schema = ERROR_none;
-Error ERROR_unknown_attr_in_entity = ERROR_none;
-Error ERROR_unknown_subtype = ERROR_none;
-Error ERROR_unknown_supertype = ERROR_none;
-Error ERROR_circular_reference = ERROR_none;
-Error ERROR_ambiguous_attribute = ERROR_none;
-Error ERROR_ambiguous_group = ERROR_none;
-Error WARNING_fn_skip_branch = ERROR_none;
-Error WARNING_case_skip_label = ERROR_none;
-
-static Error ERROR_wrong_arg_count;
-static Error ERROR_supertype_resolve;
-static Error ERROR_subtype_resolve;
-static Error ERROR_not_a_type;
-static Error ERROR_funcall_not_a_function;
-static Error ERROR_undefined_func;
-static Error ERROR_undefined;
-static Error ERROR_expected_proc;
-static Error ERROR_no_such_procedure;
-static Error ERROR_query_requires_aggregate;
-static Error ERROR_self_is_unknown;
-static Error ERROR_inverse_bad_attribute;
-static Error ERROR_inverse_bad_entity;
-static Error ERROR_missing_supertype;
-static Error ERROR_subsuper_loop;
-static Error ERROR_subsuper_continuation;
-static Error ERROR_select_loop;
-static Error ERROR_select_continuation;
-static Error ERROR_type_is_entity;
-static Error ERROR_overloaded_attribute;
-static Error ERROR_redecl_no_such_attribute;
-static Error ERROR_redecl_no_such_supertype;
-static Error ERROR_missing_self;
-static Error WARNING_unique_qual_redecl;
-
 static Type self = 0;   /**< always points to current value of SELF or 0 if none */
 
 static bool found_self;  /**< remember whether we've seen a SELF in a WHERE clause */
@@ -113,154 +76,10 @@ extern void VAR_resolve_types( Variable v );
 
 /** Initialize the Fed-X second pass. */
 void RESOLVEinitialize( void ) {
-    ERROR_undefined = ERRORcreate(
-                          "Reference to undefined object %s.", SEVERITY_ERROR );
-
-    ERROR_undefined_attribute = ERRORcreate(
-                                    "Reference to undefined attribute %s.", SEVERITY_ERROR );
-
-    ERROR_undefined_type = ERRORcreate(
-                               "Reference to undefined type %s.", SEVERITY_ERROR );
-
-    ERROR_undefined_schema = ERRORcreate(
-                                 "Reference to undefined schema %s.", SEVERITY_ERROR );
-
-    ERROR_unknown_attr_in_entity = ERRORcreate(
-                                       "Unknown attribute %s in entity %s.", SEVERITY_ERROR );
-
-    ERROR_unknown_subtype = ERRORcreate(
-                                "Unknown subtype %s for entity %s.", SEVERITY_EXIT );
-    /*"Unknown subtype %s for entity %s.", SEVERITY_WARNING);*/
-
-    ERROR_unknown_supertype = ERRORcreate(
-                                  "Unknown supertype %s for entity %s.", SEVERITY_ERROR );
-
-    ERROR_circular_reference = ERRORcreate(
-                                   "Circularity: definition of %s references itself.", SEVERITY_ERROR );
-    /*"Circular definition: schema %s referenced schema %s.",SEVERITY_ERROR);*/
-
-    ERROR_subsuper_loop = ERRORcreate(
-                              "Entity %s is a subtype of itself", SEVERITY_ERROR );
-    ERROR_subsuper_continuation = ERRORcreate(
-                                      "  (via supertype entity %s)", SEVERITY_ERROR );
-
-    ERROR_select_loop = ERRORcreate(
-                            "Select type %s selects itself", SEVERITY_ERROR );
-    ERROR_select_continuation = ERRORcreate(
-                                    "  (via select type %s)", SEVERITY_ERROR );
-
-    ERROR_supertype_resolve = ERRORcreate(
-                                  "Supertype %s is not an entity (line %d).", SEVERITY_ERROR );
-
-    ERROR_subtype_resolve = ERRORcreate(
-                                "Subtype %s resolves to non-entity %s on line %d.", SEVERITY_ERROR );
-
-    ERROR_not_a_type = ERRORcreate(
-                           "Expected a type (or entity) but %s is %s.", SEVERITY_ERROR );
-
-    ERROR_funcall_not_a_function = ERRORcreate(
-                                       "Function call of %s which is not a function.", SEVERITY_ERROR );
-
-    ERROR_undefined_func = ERRORcreate(
-                               "Function %s undefined.", SEVERITY_ERROR );
-
-    ERROR_expected_proc = ERRORcreate(
-                              "%s is used as a procedure call but is not defined as one (line %d).", SEVERITY_ERROR );
-
-    ERROR_no_such_procedure = ERRORcreate(
-                                  "No such procedure as %s.", SEVERITY_ERROR );
-
-    ERROR_wrong_arg_count = ERRORcreate(
-                                "Call to %s uses %d arguments, but expected %d.", SEVERITY_WARNING );
-
-    ERROR_query_requires_aggregate = ERRORcreate(
-                                         "Query expression source must be an aggregate.", SEVERITY_ERROR );
-
-    ERROR_self_is_unknown = ERRORcreate(
-                                "SELF is not within an entity declaration.", SEVERITY_ERROR );
-
-    ERROR_inverse_bad_entity = ERRORcreate(
-                                   "Attribute %s is referenced from non-entity-inheriting type.", SEVERITY_ERROR );
-
-    ERROR_inverse_bad_attribute = ERRORcreate(
-                                      "Unknown attribute %s in entity %s in inverse.", SEVERITY_ERROR );
-
-    ERROR_missing_supertype = ERRORcreate(
-                                  "Entity %s missing from supertype list for subtype %s.", SEVERITY_ERROR );
-
-    ERROR_type_is_entity = ERRORcreate(
-                               "An entity (%s) is not acceptable as an underlying type.", SEVERITY_ERROR );
-
-    ERROR_ambiguous_attribute = ERRORcreate(
-                                    "Ambiguous attribute reference %s.", SEVERITY_WARNING );
-
-    ERROR_ambiguous_group = ERRORcreate(
-                                "Ambiguous group reference %s.", SEVERITY_WARNING );
-
-    ERROR_overloaded_attribute = ERRORcreate(
-                                     "Attribute %s already inherited via supertype %s.", SEVERITY_ERROR );
-
-    ERROR_redecl_no_such_attribute = ERRORcreate(
-                                         "Redeclared attribute %s not declared in supertype %s.", SEVERITY_ERROR );
-
-    ERROR_redecl_no_such_supertype = ERRORcreate(
-                                         "No such supertype %s for redeclaration of attribute %s.", SEVERITY_ERROR );
-
-    ERROR_missing_self = ERRORcreate(
-                             "Domain rule %s must refer to SELF or attribute.", SEVERITY_ERROR );
-
-    WARNING_fn_skip_branch = ERRORcreate(
-                                 "IF statement condition is always %s. Ignoring branch that is never taken.", SEVERITY_WARNING );
-
-    WARNING_case_skip_label = ERRORcreate( "CASE label %s cannot be matched. Ignoring its statements.", SEVERITY_WARNING );
-
-    WARNING_unique_qual_redecl = ERRORcreate( "Possibly unnecessary qualifiers on redeclared attr '%s' in a uniqueness rule of entity '%s'.", SEVERITY_WARNING );
-
-    ERRORcreate_warning( "circular_subtype", ERROR_subsuper_loop );
-    ERRORcreate_warning( "circular_select", ERROR_select_loop );
-    ERRORcreate_warning( "entity_as_type", ERROR_type_is_entity );
-    ERRORcreate_warning( "invariant_condition", WARNING_fn_skip_branch );
-    ERRORcreate_warning( "invalid_case", WARNING_case_skip_label );
-    ERRORcreate_warning( "unnecessary_qualifiers", WARNING_unique_qual_redecl );
 }
 
 /** Clean up the Fed-X second pass */
 void RESOLVEcleanup( void ) {
-    ERRORdestroy( ERROR_undefined );
-    ERRORdestroy( ERROR_undefined_attribute );
-    ERRORdestroy( ERROR_undefined_type );
-    ERRORdestroy( ERROR_undefined_schema );
-    ERRORdestroy( ERROR_unknown_attr_in_entity );
-    ERRORdestroy( ERROR_unknown_subtype );
-    ERRORdestroy( ERROR_unknown_supertype );
-    ERRORdestroy( ERROR_circular_reference );
-    ERRORdestroy( ERROR_subsuper_loop );
-    ERRORdestroy( ERROR_subsuper_continuation );
-    ERRORdestroy( ERROR_select_loop );
-    ERRORdestroy( ERROR_select_continuation );
-    ERRORdestroy( ERROR_supertype_resolve );
-    ERRORdestroy( ERROR_subtype_resolve );
-    ERRORdestroy( ERROR_not_a_type );
-    ERRORdestroy( ERROR_funcall_not_a_function );
-    ERRORdestroy( ERROR_undefined_func );
-    ERRORdestroy( ERROR_expected_proc );
-    ERRORdestroy( ERROR_no_such_procedure );
-    ERRORdestroy( ERROR_wrong_arg_count );
-    ERRORdestroy( ERROR_query_requires_aggregate );
-    ERRORdestroy( ERROR_self_is_unknown );
-    ERRORdestroy( ERROR_inverse_bad_entity );
-    ERRORdestroy( ERROR_inverse_bad_attribute );
-    ERRORdestroy( ERROR_missing_supertype );
-    ERRORdestroy( ERROR_type_is_entity );
-    ERRORdestroy( ERROR_ambiguous_attribute );
-    ERRORdestroy( ERROR_ambiguous_group );
-    ERRORdestroy( ERROR_overloaded_attribute );
-    ERRORdestroy( ERROR_redecl_no_such_attribute );
-    ERRORdestroy( ERROR_redecl_no_such_supertype );
-    ERRORdestroy( ERROR_missing_self );
-    ERRORdestroy( WARNING_case_skip_label );
-    ERRORdestroy( WARNING_fn_skip_branch );
-    ERRORdestroy( WARNING_unique_qual_redecl );
 }
 
 /**
@@ -324,15 +143,13 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             x = SCOPEfind( scope, expr->symbol.name,
                            SCOPE_FIND_FUNCTION | SCOPE_FIND_ENTITY );
             if( !x ) {
-                ERRORreport_with_symbol( ERROR_undefined_func,
-                                         &expr->symbol, expr->symbol.name );
+                ERRORreport_with_symbol(UNDEFINED_FUNC, &expr->symbol, expr->symbol.name );
                 resolve_failed( expr );
                 break;
             }
             if( ( DICT_type != OBJ_FUNCTION ) && ( DICT_type != OBJ_ENTITY ) ) {
                 sym = OBJget_symbol( x, DICT_type );
-                ERRORreport_with_symbol( ERROR_funcall_not_a_function,
-                                         &expr->symbol, sym->name );
+                ERRORreport_with_symbol(FUNCALL_NOT_A_FUNCTION, &expr->symbol, sym->name );
                 resolve_failed( expr );
                 break;
             }
@@ -357,8 +174,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 /* to NVL code later which assumes args are present */
                 if( LISTget_length( expr->u.funcall.list ) !=
                         f->u.func->pcount ) {
-                    ERRORreport_with_symbol( ERROR_wrong_arg_count,
-                                             &expr->symbol, expr->symbol.name,
+                    ERRORreport_with_symbol(WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name,
                                              LISTget_length( expr->u.funcall.list ),
                                              f->u.func->pcount );
                 }
@@ -447,8 +263,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 if( typecheck == Type_Unknown ) {
                     return;
                 } else {
-                    ERRORreport_with_symbol( ERROR_undefined,
-                                             &expr->symbol, expr->symbol.name );
+                    ERRORreport_with_symbol(UNDEFINED, &expr->symbol, expr->symbol.name );
                     resolve_failed( expr );
                     break;
                 }
@@ -494,8 +309,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     /* but I don't think that's a problem */
 
                     if( ( ( Function )x )->u.func->pcount != 0 ) {
-                        ERRORreport_with_symbol( ERROR_wrong_arg_count,
-                                                 &expr->symbol, expr->symbol.name, 0,
+                        ERRORreport_with_symbol(WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name, 0,
                                                  f->u.func->pcount );
                         resolve_failed( expr );
                     } else {
@@ -527,7 +341,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 found_self = true;
                 resolved_all( expr );
             } else {
-                ERRORreport_with_symbol( ERROR_self_is_unknown, &scope->symbol );
+                ERRORreport_with_symbol(SELF_IS_UNKNOWN, &scope->symbol );
                 resolve_failed( expr );
             }
             break;
@@ -546,14 +360,14 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 /* retrieve the common aggregate type */
                 t = TYPE_retrieve_aggregate( expr->return_type, 0 );
                 if( !t ) {
-                    ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
+                    ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
                     resolve_failed( expr );
                     break;
                 }
             } else if( TYPEis_runtime( expr->return_type ) ) {
                 t = Type_Runtime;
             } else {
-                ERRORreport_with_symbol( ERROR_query_requires_aggregate, &expr->u.query->aggregate->symbol );
+                ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
                 break;
             }
@@ -598,14 +412,14 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
         /* must be a simple entity reference */
         ent_ref = ( Entity )SCOPEfind( ent->superscope, expr->symbol.name, SCOPE_FIND_ENTITY );
         if( !ent_ref ) {
-            ERRORreport_with_symbol( ERROR_unknown_subtype, &ent->symbol,
+            ERRORreport_with_symbol(UNKNOWN_SUBTYPE, &ent->symbol,
                                      expr->symbol.name, ent->symbol.name );
             i = RESOLVE_FAILED;
         } else if( DICT_type != OBJ_ENTITY ) {
             Symbol * sym = OBJget_symbol( ent_ref, DICT_type );
             /* line number should really be on supertype name, */
             /* but all we have easily is the entity line number */
-            ERRORreport_with_symbol( ERROR_subtype_resolve, &ent->symbol,
+            ERRORreport_with_symbol(SUBTYPE_RESOLVE, &ent->symbol,
                                      expr->symbol.name, sym->line );
             i = RESOLVE_FAILED;
         } else {
@@ -691,9 +505,9 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
         TYPEresolve( &type->u.type->head );
 
         if( !is_resolve_failed( type->u.type->head ) ) {
-            if( ERRORis_enabled( ERROR_type_is_entity ) ) {
+            if( ERRORis_enabled( TYPE_IS_ENTITY ) ) {
                 if( TYPEis_entity( type->u.type->head ) ) {
-                    ERRORreport_with_symbol( ERROR_type_is_entity, &type->symbol, type->u.type->head->u.type->body->entity->symbol.name );
+                    ERRORreport_with_symbol(TYPE_IS_ENTITY, &type->symbol, type->u.type->head->u.type->body->entity->symbol.name );
                     resolve_failed( type );
                 }
             }
@@ -711,7 +525,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
                                       SCOPE_FIND_ANYTHING ^ SCOPE_FIND_VARIABLE );
         /*              SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY);*/
         if( !ref_type ) {
-            ERRORreport_with_symbol( ERROR_undefined_type, &type->symbol, type->symbol.name );
+            ERRORreport_with_symbol(UNDEFINED_TYPE, &type->symbol, type->symbol.name );
             *typeaddr = Type_Bad; /* just in case */
             resolve_failed( type );
         } else if( DICT_type == OBJ_TYPE ) {
@@ -729,7 +543,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
 
             type = *typeaddr = ( ( Entity )ref_type )->u.entity->type;
         } else {
-            ERRORreport_with_symbol( ERROR_not_a_type, &type->symbol, type->symbol.name,
+            ERRORreport_with_symbol(NOT_A_TYPE, &type->symbol, type->symbol.name,
                                      OBJget_type( DICT_type ) );
             resolve_failed( type );
         }
@@ -781,7 +595,7 @@ void VAR_resolve_types( Variable v ) {
             type = type->u.type->body->base;
         }
         if( type->u.type->body->type != entity_ ) {
-            ERRORreport_with_symbol( ERROR_inverse_bad_entity,
+            ERRORreport_with_symbol(INVERSE_BAD_ENTITY,
                                      &v->name->symbol, v->inverse_symbol->name );
         } else {
             attr = VARfind( type->u.type->body->entity, v->inverse_symbol->name, 1 );
@@ -789,7 +603,7 @@ void VAR_resolve_types( Variable v ) {
                 v->inverse_attribute = attr;
                 failed |= is_resolve_failed( attr->name );
             } else {
-                ERRORreport_with_symbol( ERROR_inverse_bad_attribute,
+                ERRORreport_with_symbol(INVERSE_BAD_ATTR,
                                          v->inverse_symbol, v->inverse_symbol->name, type->u.type->body->entity->symbol.name );
             }
         }
@@ -889,12 +703,12 @@ void STMTresolve( Statement statement, Scope scope ) {
             if( proc ) {
                 if( DICT_type != OBJ_PROCEDURE ) {
                     Symbol * newsym = OBJget_symbol( proc, DICT_type );
-                    ERRORreport_with_symbol( ERROR_expected_proc, &statement->symbol, proc_name, newsym->line );
+                    ERRORreport_with_symbol(EXPECTED_PROC, &statement->symbol, proc_name, newsym->line );
                 } else {
                     statement->u.proc->procedure = proc;
                 }
             } else {
-                ERRORreport_with_symbol( ERROR_no_such_procedure, &statement->symbol, proc_name );
+                ERRORreport_with_symbol(NO_SUCH_PROCEDURE, &statement->symbol, proc_name );
             }
             LISTdo( statement->u.proc->parameters, e, Expression )
             EXPresolve( e, scope, Type_Dont_Care );
@@ -960,7 +774,7 @@ void ENTITYresolve_expressions( Entity e ) {
             sname = attr->name->e.op1->e.op2->symbol.name;
             if( !strcmp( sname, e->symbol.name ) ||
                     !( sup = ENTITYfind_inherited_entity( e, sname, 0 ) ) ) {
-                ERRORreport_with_symbol( ERROR_redecl_no_such_supertype,
+                ERRORreport_with_symbol(REDECL_NO_SUCH_SUPERTYPE,
                                         &attr->name->e.op1->e.op2->symbol,
                                         attr->name->e.op1->e.op2->symbol.name,
                                         VARget_simple_name( attr ) );
@@ -968,7 +782,7 @@ void ENTITYresolve_expressions( Entity e ) {
             } else {
                 sname = VARget_simple_name( attr );
                 if( !ENTITY_get_local_attribute( sup, sname ) ) {
-                    ERRORreport_with_symbol( ERROR_redecl_no_such_attribute,
+                    ERRORreport_with_symbol(REDECL_NO_SUCH_ATTR,
                                             &attr->name->e.op2->symbol,
                                             sname,
                                             sup->symbol.name );
@@ -982,7 +796,7 @@ void ENTITYresolve_expressions( Entity e ) {
             LISTdo_n( e->u.entity->supertypes, supr, Entity, b ) {
                     if( ENTITYget_named_attribute( supr,
                                                 attr->name->symbol.name ) ) {
-                        ERRORreport_with_symbol( ERROR_overloaded_attribute,
+                        ERRORreport_with_symbol(OVERLOADED_ATTR,
                                                 &attr->name->symbol,
                                                 attr->name->symbol.name,
                                                 supr->symbol.name );
@@ -1031,7 +845,7 @@ void ENTITYcheck_missing_supertypes( Entity ent ) {
             }
         } LISTod;
         if( !found ) {
-            ERRORreport_with_symbol( ERROR_missing_supertype, &sub->symbol, ent->symbol.name, sub->symbol.name );
+            ERRORreport_with_symbol(MISSING_SUPERTYPE, &sub->symbol, ent->symbol.name, sub->symbol.name );
             resolve_failed( sub );
         }
     } LISTod;
@@ -1056,7 +870,7 @@ int ENTITY_check_subsuper_cyclicity( Entity e, Entity enew ) {
     /* as well */
     LISTdo( enew->u.entity->subtypes, sub, Entity )
     if( e == sub ) {
-        ERRORreport_with_symbol( ERROR_subsuper_loop, &sub->symbol, e->symbol.name );
+        ERRORreport_with_symbol(SUBSUPER_LOOP, &sub->symbol, e->symbol.name );
         return 1;
     }
     if( sub->search_id == __SCOPE_search_id ) {
@@ -1064,7 +878,7 @@ int ENTITY_check_subsuper_cyclicity( Entity e, Entity enew ) {
     }
     sub->search_id = __SCOPE_search_id;
     if( ENTITY_check_subsuper_cyclicity( e, sub ) ) {
-        ERRORreport_with_symbol( ERROR_subsuper_continuation, &sub->symbol, sub->symbol.name );
+        ERRORreport_with_symbol(SUBSUPER_CONTINUATION, &sub->symbol, sub->symbol.name );
         return 1;
     }
     LISTod;
@@ -1081,7 +895,7 @@ int TYPE_check_select_cyclicity( TypeBody tb, Type tnew ) {
     LISTdo( tnew->u.type->body->list, item, Type )
     if( item->u.type->body->type == select_ ) {
         if( tb == item->u.type->body ) {
-            ERRORreport_with_symbol( ERROR_select_loop,
+            ERRORreport_with_symbol(SELECT_LOOP,
                                      &item->symbol, item->symbol.name );
             return 1;
         }
@@ -1090,7 +904,7 @@ int TYPE_check_select_cyclicity( TypeBody tb, Type tnew ) {
         }
         item->search_id = __SCOPE_search_id;
         if( TYPE_check_select_cyclicity( tb, item ) ) {
-            ERRORreport_with_symbol( ERROR_select_continuation,
+            ERRORreport_with_symbol(SELECT_CONTINUATION,
                                      &item->symbol, item->symbol.name );
             return 1;
         }
@@ -1124,7 +938,7 @@ void SCOPEresolve_types( Scope s ) {
     while( 0 != ( x = DICTdo( &de ) ) ) {
         switch( DICT_type ) {
             case OBJ_TYPE:
-                if( ERRORis_enabled( ERROR_select_loop ) ) {
+                if( ERRORis_enabled( SELECT_LOOP ) ) {
                     TYPEcheck_select_cyclicity( ( Type )x );
                 }
                 break;
@@ -1141,7 +955,7 @@ void SCOPEresolve_types( Scope s ) {
                 ENTITYcheck_missing_supertypes( ( Entity )x );
                 ENTITYresolve_types( ( Entity )x );
                 ENTITYcalculate_inheritance( ( Entity )x );
-                if( ERRORis_enabled( ERROR_subsuper_loop ) ) {
+                if( ERRORis_enabled( SUBSUPER_LOOP ) ) {
                     ENTITYcheck_subsuper_cyclicity( ( Entity )x );
                 }
                 if( is_resolve_failed( ( Entity )x ) ) {
@@ -1191,12 +1005,12 @@ void ENTITYresolve_supertypes( Entity e ) {
     LISTdo( e->u.entity->supertype_symbols, sym, Symbol * ) {
         ref_entity = ( Entity )SCOPEfind( e->superscope, sym->name, SCOPE_FIND_ENTITY );
         if( !ref_entity ) {
-            ERRORreport_with_symbol( ERROR_unknown_supertype, sym, sym->name, e->symbol.name );
+            ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, sym, sym->name, e->symbol.name );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else if( DICT_type != OBJ_ENTITY ) {
             Symbol * newsym = OBJget_symbol( ref_entity, DICT_type );
-            ERRORreport_with_symbol( ERROR_supertype_resolve, sym, sym->name, newsym->line );
+            ERRORreport_with_symbol(SUPERTYPE_RESOLVE, sym, sym->name, newsym->line );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else {
@@ -1280,7 +1094,7 @@ void ENTITYresolve_uniques( Entity e ) {
             if( ( attr2 ) && ( attr != attr2 ) && ( ENTITYdeclares_variable( e, attr2 ) ) ) {
                 /* attr exists in type + supertype - it's a redeclaration.
                  * in this case, qualifiers are unnecessary; print a warning */
-                ERRORreport_with_symbol( WARNING_unique_qual_redecl, &( expr->e.op2->symbol ), expr->e.op2->symbol.name, e->symbol.name );
+                ERRORreport_with_symbol(UNIQUE_QUAL_REDECL, &( expr->e.op2->symbol ), expr->e.op2->symbol.name, e->symbol.name );
             }
             if( !attr ) {
                 /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
@@ -1373,7 +1187,7 @@ int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     found_self = false;
     EXPresolve( w->expr, scope, Type_Dont_Care );
     if( need_self && ! found_self ) {
-        ERRORreport_with_symbol( ERROR_missing_self,
+        ERRORreport_with_symbol(MISSING_SELF,
                                  w->label,
                                  w->label->name );
         w->label->resolved = RESOLVE_FAILED;

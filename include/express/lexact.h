@@ -72,16 +72,6 @@ extern SC_EXPRESS_EXPORT Scan_Buffer  SCAN_buffers[SCAN_NESTING_DEPTH];
 extern SC_EXPRESS_EXPORT int      SCAN_current_buffer;
 extern SC_EXPRESS_EXPORT char    *    SCANcurrent;
 
-extern SC_EXPRESS_EXPORT Error        ERROR_include_file;
-extern SC_EXPRESS_EXPORT Error        ERROR_unmatched_close_comment;
-extern SC_EXPRESS_EXPORT Error        ERROR_unmatched_open_comment;
-extern SC_EXPRESS_EXPORT Error        ERROR_unterminated_string;
-extern SC_EXPRESS_EXPORT Error        ERROR_encoded_string_bad_digit;
-extern SC_EXPRESS_EXPORT Error        ERROR_encoded_string_bad_count;
-extern SC_EXPRESS_EXPORT Error        ERROR_bad_identifier;
-extern SC_EXPRESS_EXPORT Error        ERROR_unexpected_character;
-extern SC_EXPRESS_EXPORT Error        ERROR_nonascii_char;
-
 /******************************/
 /* macro function definitions */
 /******************************/
