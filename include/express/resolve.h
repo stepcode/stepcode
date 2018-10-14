@@ -47,19 +47,6 @@
 
 extern SC_EXPRESS_EXPORT int print_objects_while_running;
 
-extern SC_EXPRESS_EXPORT Error ERROR_undefined_attribute;
-extern SC_EXPRESS_EXPORT Error ERROR_undefined_type;
-extern SC_EXPRESS_EXPORT Error ERROR_undefined_schema;
-extern SC_EXPRESS_EXPORT Error ERROR_unknown_attr_in_entity;
-extern SC_EXPRESS_EXPORT Error ERROR_unknown_subtype;
-extern SC_EXPRESS_EXPORT Error ERROR_unknown_supertype;
-extern SC_EXPRESS_EXPORT Error ERROR_circular_reference;
-extern SC_EXPRESS_EXPORT Error ERROR_ambiguous_attribute;
-extern SC_EXPRESS_EXPORT Error ERROR_ambiguous_group;
-
-extern SC_EXPRESS_EXPORT Error WARNING_case_skip_label;
-extern SC_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
-
 /* macros */
 
 /* cheaper doing the check here, then inside the function call.  Return */

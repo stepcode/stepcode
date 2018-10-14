@@ -402,7 +402,7 @@ aggregate_type(A) ::= TOK_AGGREGATE TOK_OF parameter_type(B).
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
+        ERRORreport_with_symbol(UNLABELLED_PARAM_TYPE, &sym,
         CURRENT_SCOPE_NAME);
     }
 }
@@ -1257,7 +1257,7 @@ generic_type(A) ::= TOK_GENERIC.
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
+        ERRORreport_with_symbol(UNLABELLED_PARAM_TYPE, &sym,
         CURRENT_SCOPE_NAME);
     }
 }
@@ -1551,7 +1551,7 @@ literal(A) ::= TOK_REAL_LITERAL(B).
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_warn_small_real, &sym, B.rVal );
+        ERRORreport_with_symbol(WARN_SMALL_REAL, &sym, B.rVal );
     }
     if( fabs( B.rVal ) < DBL_MIN ) {
         A = LITERAL_ZERO;
@@ -2431,7 +2431,7 @@ while_control(A) ::= TOK_WHILE expression(B).
     sym.line = yylineno;
     sym.filename = current_filename;
 
-    ERRORreport_with_symbol(ERROR_syntax, &sym, "Syntax error",
+    ERRORreport_with_symbol(SYNTAX, &sym, "Syntax error",
     CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
 }
 

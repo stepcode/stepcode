@@ -246,8 +246,6 @@ Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
  * report errors as appropriate
  */
 Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref ) {
-    extern Error ERROR_unknown_supertype;
-    extern Error ERROR_unknown_attr_in_entity;
     Entity ref_entity;
     Variable attr;
     struct Symbol_ *where;
@@ -256,15 +254,13 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
         /* use entity provided in group reference */
         ref_entity = ENTITYfind_inherited_entity( e, grp_ref->name, 0 );
         if( !ref_entity ) {
-            ERRORreport_with_symbol( ERROR_unknown_supertype, grp_ref,
-                                     grp_ref->name, e->symbol.name );
+            ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, grp_ref, grp_ref->name, e->symbol.name );
             return 0;
         }
         attr = ( Variable )DICTlookup( ref_entity->symbol_table,
                                        attr_ref->name );
         if( !attr ) {
-            ERRORreport_with_symbol( ERROR_unknown_attr_in_entity,
-                                     attr_ref, attr_ref->name,
+            ERRORreport_with_symbol(UNKNOWN_ATTR_IN_ENTITY, attr_ref, attr_ref->name,
                                      ref_entity->symbol.name );
             /*      resolve_failed(e);*/
         }
@@ -273,11 +269,11 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
         where = NULL;
         attr = ENTITYfind_inherited_attribute( e, attr_ref->name, &where );
         if( !attr /* was ref_entity? */ ) {
-            ERRORreport_with_symbol( ERROR_unknown_attr_in_entity,
+            ERRORreport_with_symbol(UNKNOWN_ATTR_IN_ENTITY,
                                      attr_ref, attr_ref->name,
                                      e->symbol.name );
         } else if( where != NULL ) {
-            ERRORreport_with_symbol( ERROR_implicit_downcast, attr_ref,
+            ERRORreport_with_symbol(IMPLICIT_DOWNCAST, attr_ref,
                                      where->name );
         }
     }

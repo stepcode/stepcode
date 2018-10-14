@@ -217,8 +217,6 @@ extern SC_EXPRESS_EXPORT Type Type_Bag_Of_Generic;
 extern SC_EXPRESS_EXPORT struct freelist_head TYPEHEAD_fl;
 extern SC_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
 
-extern SC_EXPRESS_EXPORT Error ERROR_corrupted_type;
-
 /******************************/
 /* macro function definitions */
 /******************************/

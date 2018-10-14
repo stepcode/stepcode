@@ -104,14 +104,6 @@ extern SC_EXPRESS_EXPORT bool    EXPRESSignore_duplicate_schemas;
 
 extern SC_EXPRESS_EXPORT Dictionary EXPRESSbuiltins;  /* procedures/functions */
 
-extern SC_EXPRESS_EXPORT Error ERROR_bail_out;
-extern SC_EXPRESS_EXPORT Error ERROR_syntax;
-extern SC_EXPRESS_EXPORT Error ERROR_unlabelled_param_type;
-extern SC_EXPRESS_EXPORT Error ERROR_file_unreadable;
-extern SC_EXPRESS_EXPORT Error ERROR_file_unwriteable;
-extern SC_EXPRESS_EXPORT Error ERROR_warn_unsupported_lang_feat;
-extern SC_EXPRESS_EXPORT Error ERROR_warn_small_real;
-
 extern SC_EXPRESS_EXPORT struct Scope_ * FUNC_NVL;
 extern SC_EXPRESS_EXPORT struct Scope_ * FUNC_USEDIN;
 

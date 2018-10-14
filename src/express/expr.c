@@ -85,21 +85,7 @@ Expression  LITERAL_PI = EXPRESSION_NULL;
 Expression  LITERAL_ZERO = EXPRESSION_NULL;
 Expression  LITERAL_ONE;
 
-Error ERROR_bad_qualification = ERROR_none;
-Error ERROR_integer_expression_expected = ERROR_none;
-Error ERROR_implicit_downcast = ERROR_none;
-Error ERROR_ambig_implicit_downcast = ERROR_none;
-
 void EXPop_init();
-static Error ERROR_internal_unrecognized_op_in_EXPresolve;
-/* following two could probably be combined */
-static Error ERROR_attribute_reference_on_aggregate;
-static Error ERROR_attribute_ref_from_nonentity;
-static Error ERROR_indexing_illegal;
-static Error ERROR_warn_indexing_mixed;
-static Error ERROR_enum_no_such_item;
-static Error ERROR_group_ref_no_such_entity;
-static Error ERROR_group_ref_unexpected_type;
 
 static_inline int OPget_number_of_operands( Op_Code op ) {
     if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
@@ -147,58 +133,10 @@ void EXPinitialize( void ) {
     LITERAL_ONE->u.integer = 1;
     resolved_all( LITERAL_ONE );
 
-    ERROR_integer_expression_expected = ERRORcreate(
-                                            "Integer expression expected", SEVERITY_WARNING );
-
-    ERROR_internal_unrecognized_op_in_EXPresolve = ERRORcreate(
-                "Opcode unrecognized while trying to resolve expression", SEVERITY_ERROR );
-
-    ERROR_attribute_reference_on_aggregate = ERRORcreate(
-                "Attribute %s cannot be referenced from an aggregate", SEVERITY_ERROR );
-
-    ERROR_attribute_ref_from_nonentity = ERRORcreate(
-            "Attribute %s cannot be referenced from a non-entity", SEVERITY_ERROR );
-
-    ERROR_indexing_illegal = ERRORcreate(
-                                 "Indexing is only permitted on aggregates", SEVERITY_ERROR );
-
-    ERROR_warn_indexing_mixed = ERRORcreate( "Indexing upon a select (%s), with mixed base types (aggregates and "
-                                "non-aggregates) and/or different aggregation types.", SEVERITY_WARNING );
-
-    ERROR_enum_no_such_item = ERRORcreate(
-                                  "Enumeration type %s does not contain item %s", SEVERITY_ERROR );
-
-    ERROR_group_ref_no_such_entity = ERRORcreate(
-                                         "Group reference failed to find entity %s", SEVERITY_ERROR );
-
-    ERROR_group_ref_unexpected_type = ERRORcreate(
-                                          "Group reference of unusual expression %s", SEVERITY_ERROR );
-
-    ERROR_implicit_downcast = ERRORcreate(
-                                  "Implicit downcast to %s.", SEVERITY_WARNING );
-
-    ERROR_ambig_implicit_downcast = ERRORcreate(
-                                        "Possibly ambiguous implicit downcast (%s?).", SEVERITY_WARNING );
-
-    ERRORcreate_warning( "downcast", ERROR_implicit_downcast );
-    ERRORcreate_warning( "downcast", ERROR_ambig_implicit_downcast );
-    ERRORcreate_warning( "indexing", ERROR_warn_indexing_mixed );
-
     EXPop_init();
 }
 
 void EXPcleanup( void ) {
-    ERRORdestroy( ERROR_integer_expression_expected );
-    ERRORdestroy( ERROR_internal_unrecognized_op_in_EXPresolve );
-    ERRORdestroy( ERROR_attribute_reference_on_aggregate );
-    ERRORdestroy( ERROR_attribute_ref_from_nonentity );
-    ERRORdestroy( ERROR_indexing_illegal );
-    ERRORdestroy( ERROR_warn_indexing_mixed );
-    ERRORdestroy( ERROR_enum_no_such_item );
-    ERRORdestroy( ERROR_group_ref_no_such_entity );
-    ERRORdestroy( ERROR_group_ref_unexpected_type );
-    ERRORdestroy( ERROR_implicit_downcast );
-    ERRORdestroy( ERROR_ambig_implicit_downcast );
 }
 
 /**
@@ -349,10 +287,10 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     LISTod;
 
                     if( all_enums ) {
-                        ERRORreport_with_symbol( WARNING_case_skip_label, &op2->symbol, op2->symbol.name );
+                        ERRORreport_with_symbol(CASE_SKIP_LABEL, &op2->symbol, op2->symbol.name );
                     } else {
                         /* no possible resolutions */
-                        ERRORreport_with_symbol( ERROR_undefined_attribute, &op2->symbol, op2->symbol.name );
+                        ERRORreport_with_symbol(UNDEFINED_ATTR, &op2->symbol, op2->symbol.name );
                     }
                     resolve_failed( expr );
                     return( Type_Bad );
@@ -360,7 +298,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     /* only one possible resolution */
                     if( dt == OBJ_VARIABLE ) {
                         if( where ) {
-                            ERRORreport_with_symbol( ERROR_implicit_downcast, &op2->symbol, where->name );
+                            ERRORreport_with_symbol(IMPLICIT_DOWNCAST, &op2->symbol, where->name );
                         }
 
                         if( v == VARIABLE_NULL ) {
@@ -385,7 +323,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     /* compile-time ambiguous */
                     if( where ) {
                         /* this is actually a warning, not an error */
-                        ERRORreport_with_symbol( ERROR_ambig_implicit_downcast, &op2->symbol, where->name );
+                        ERRORreport_with_symbol(AMBIG_IMPLICIT_DOWNCAST, &op2->symbol, where->name );
                     }
                     return( Type_Runtime );
             }
@@ -433,7 +371,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
              * which calls EXP_resolve_op_dot_fuzzy(). */
             item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
             if( !item ) {
-                ERRORreport_with_symbol( ERROR_enum_no_such_item, &op2->symbol,
+                ERRORreport_with_symbol(ENUM_NO_SUCH_ITEM, &op2->symbol,
                                          op1type->symbol.name, op2->symbol.name );
                 resolve_failed( expr );
                 return( Type_Bad );
@@ -448,7 +386,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
         case bag_:
         case list_:
         case set_:
-            ERRORreport_with_symbol( ERROR_attribute_reference_on_aggregate,
+            ERRORreport_with_symbol(ATTRIBUTE_REF_ON_AGGREGATE,
                                      &op2->symbol, op2->symbol.name );
             /*FALLTHRU*/
         case unknown_:  /* unable to resolved operand */
@@ -456,7 +394,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
             resolve_failed( expr );
             return( Type_Bad );
         default:
-            ERRORreport_with_symbol( ERROR_attribute_ref_from_nonentity,
+            ERRORreport_with_symbol(ATTRIBUTE_REF_FROM_NON_ENTITY,
                                      &op2->symbol, op2->symbol.name );
             resolve_failed( expr );
             return( Type_Bad );
@@ -553,7 +491,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             ent_ref =
                 ( Entity )ENTITYfind_inherited_entity( tmp, op2->symbol.name, 1 );
             if( !ent_ref ) {
-                ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
+                ERRORreport_with_symbol(GROUP_REF_NO_SUCH_ENTITY,
                                          &op2->symbol, op2->symbol.name );
                 resolve_failed( expr );
                 return( Type_Bad );
@@ -581,7 +519,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             switch( options ) {
                 case 0:
                     /* no possible resolutions */
-                    ERRORreport_with_symbol( ERROR_group_ref_no_such_entity,
+                    ERRORreport_with_symbol(GROUP_REF_NO_SUCH_ENTITY,
                                              &op2->symbol, op2->symbol.name );
                     resolve_failed( expr );
                     return( Type_Bad );
@@ -611,7 +549,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
         case list_:
         case set_:
         default:
-            ERRORreport_with_symbol( ERROR_group_ref_unexpected_type,
+            ERRORreport_with_symbol(GROUP_REF_UNEXPECTED_TYPE,
                                      &op1->symbol );
             return( Type_Bad );
     }
@@ -683,7 +621,7 @@ void EXPresolve_op_default( Expression e, Scope s ) {
 Type EXPresolve_op_unknown( Expression e, Scope s ) {
     (void) e; /* quell unused param warning */
     (void) s;
-    ERRORreport( ERROR_internal_unrecognized_op_in_EXPresolve );
+    ERRORreport( INTERNAL_UNRECOGNISED_OP_IN_EXPRESOLVE );
     return Type_Bad;
 }
 
@@ -706,7 +644,7 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
     } else if( op1type->u.type->body->type == binary_ ) {
-        ERRORreport_with_symbol( ERROR_warn_unsupported_lang_feat, &e->symbol, "indexing on a BINARY", __FILE__, __LINE__ );
+        ERRORreport_with_symbol(WARN_UNSUPPORTED_LANG_FEAT, &e->symbol, "indexing on a BINARY", __FILE__, __LINE__ );
         return( Type_Binary );
     } else if( op1type->u.type->body->type == generic_ ) {
         return( Type_Generic );
@@ -748,15 +686,15 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
             return( lasttype->u.type->body->base );
         } else if( numNonAggr == 0 ) {
             /*  All aggregates, but different types */
-            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            ERRORreport_with_symbol(WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
             return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         } else if( numAggr != 0 ) {
             /*  One or more aggregates, one or more nonaggregates */
-            ERRORreport_with_symbol( ERROR_warn_indexing_mixed, &e->symbol, op1type->symbol.name );
+            ERRORreport_with_symbol(WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
             return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         }   /*  Else, all are nonaggregates. This is an error. */
     }
-    ERRORreport_with_symbol( ERROR_indexing_illegal, &e->symbol );
+    ERRORreport_with_symbol(INDEXING_ILLEGAL, &e->symbol );
     return( Type_Unknown );
 }
 
@@ -858,14 +796,14 @@ void EXPop_init() {
 ** Compute the value of an integer expression.
 */
 int EXPget_integer_value( Expression expression ) {
-    experrc = ERROR_none;
+    /* TODO: why is this treated differently than a type error below? */
     if( expression == EXPRESSION_NULL ) {
         return 0;
     }
     if( expression->return_type->u.type->body->type == integer_ ) {
         return INT_LITget_value( expression );
     } else {
-        experrc = ERROR_integer_expression_expected;
+        ERRORreport(INTEGER_EXPRESSION_EXPECTED);
         return 0;
     }
 }

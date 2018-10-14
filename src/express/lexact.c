@@ -73,17 +73,6 @@ Scan_Buffer SCAN_buffers[SCAN_NESTING_DEPTH];
 int     SCAN_current_buffer = 0;
 char    *   SCANcurrent;
 
-Error       ERROR_include_file              = ERROR_none;
-Error       ERROR_unmatched_close_comment   = ERROR_none;
-Error       ERROR_unmatched_open_comment    = ERROR_none;
-Error       ERROR_unterminated_string       = ERROR_none;
-Error       ERROR_encoded_string_bad_digit  = ERROR_none;
-Error       ERROR_encoded_string_bad_count  = ERROR_none;
-Error       ERROR_bad_identifier            = ERROR_none;
-Error       ERROR_unexpected_character      = ERROR_none;
-Error       ERROR_nonascii_char;
-
-
 extern int      yylineno;
 
 #define SCAN_COMMENT_LENGTH 256
@@ -250,41 +239,10 @@ void SCANinitialize( void ) {
         DICTdefine( keyword_dictionary, k->key, ( Generic )k, 0, OBJ_UNKNOWN );
         /* not "unknown", but certainly won't be looked up by type! */
     }
-
-    /* set up errors on first time through */
-    if( ERROR_include_file == ERROR_none ) {
-        ERROR_include_file =
-            ERRORcreate( "Could not open include file `%s'.", SEVERITY_ERROR );
-        ERROR_unmatched_close_comment =
-            ERRORcreate( "unmatched close comment", SEVERITY_ERROR );
-        ERROR_unmatched_open_comment =
-            ERRORcreate( "unmatched open comment", SEVERITY_ERROR );
-        ERROR_unterminated_string =
-            ERRORcreate( "unterminated string literal", SEVERITY_ERROR );
-        ERROR_encoded_string_bad_digit = ERRORcreate(
-                                             "non-hex digit (%c) in encoded string literal", SEVERITY_ERROR );
-        ERROR_encoded_string_bad_count = ERRORcreate(
-                                             "number of digits (%d) in encoded string literal is not divisible by 8", SEVERITY_ERROR );
-        ERROR_bad_identifier = ERRORcreate(
-                                   "identifier (%s) cannot start with underscore", SEVERITY_ERROR );
-        ERROR_unexpected_character = ERRORcreate(
-                                         "character (%c) is not a valid lexical element by itself", SEVERITY_ERROR );
-        ERROR_nonascii_char = ERRORcreate(
-                                  "character (0x%x) is not in the EXPRESS character set", SEVERITY_ERROR );
-    }
 }
 
 /** Clean up the Scan module */
 void SCANcleanup( void ) {
-    ERRORdestroy( ERROR_include_file );
-    ERRORdestroy( ERROR_unmatched_close_comment );
-    ERRORdestroy( ERROR_unmatched_open_comment );
-    ERRORdestroy( ERROR_unterminated_string );
-    ERRORdestroy( ERROR_encoded_string_bad_digit );
-    ERRORdestroy( ERROR_encoded_string_bad_count );
-    ERRORdestroy( ERROR_bad_identifier );
-    ERRORdestroy( ERROR_unexpected_character );
-    ERRORdestroy( ERROR_nonascii_char );
 }
 
 int SCANprocess_real_literal( const char * yytext ) {
@@ -403,12 +361,12 @@ int SCANprocess_encoded_string( const char * yytext ) {
     count = 0;
     for( s = yylval.string; *s; s++, count++ ) {
         if( !isxdigit( *s ) ) {
-            ERRORreport_with_line( ERROR_encoded_string_bad_digit, yylineno, *s );
+            ERRORreport_with_line( ENCODED_STRING_BAD_DIGIT, yylineno, *s );
         }
     }
 
     if( 0 != ( count % 8 ) ) {
-        ERRORreport_with_line( ERROR_encoded_string_bad_count, yylineno, count );
+        ERRORreport_with_line( ENCODED_STRING_BAD_COUNT, yylineno, count );
     }
 
     return TOK_STRING_LITERAL_ENCODED;
@@ -489,7 +447,7 @@ void SCANinclude_file( char * filename ) {
     FILE * fp;
 
     if( ( fp = fopen( filename, "r" ) ) == NULL ) {
-        ERRORreport_with_line( ERROR_include_file, yylineno );
+        ERRORreport_with_line( INCLUDE_FILE, yylineno );
     } else {
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
             fprintf( stderr, "parse: including %s at line %d of %s\n",

@@ -110,21 +110,11 @@ void procdef(char *name, int pcount);
 void BUILTINSinitialize();
 Dictionary EXPRESSbuiltins; /* procedures/functions */
 
-Error ERROR_bail_out        = ERROR_none;
-Error ERROR_syntax      = ERROR_none;
-Error ERROR_unlabelled_param_type = ERROR_none;
-Error ERROR_file_unreadable;
-Error ERROR_file_unwriteable;
-Error ERROR_warn_unsupported_lang_feat;
-Error ERROR_warn_small_real;
 
 struct Scope_ * FUNC_NVL;
 struct Scope_ * FUNC_USEDIN;
 extern Express yyexpresult;
 
-static Error ERROR_ref_nonexistent;
-static Error ERROR_tilde_expansion_failed;
-static Error ERROR_schema_not_in_own_schema_file;
 
 extern Linked_List PARSEnew_schemas;
 void SCOPEinitialize( void );
@@ -267,7 +257,6 @@ void EXPRESSinitialize( void ) {
     HASHinitialize();   /* comes first - used by just about everything else! */
     DICTinitialize();
     LISTinitialize();   /* ditto */
-    ERRORinitialize_after_LIST();
     STACKinitialize();
     PASSinitialize();
 
@@ -293,45 +282,12 @@ void EXPRESSinitialize( void ) {
     
     BUILTINSinitialize();
 
-    ERROR_bail_out = ERRORcreate( "Aborting due to internal error(s)", SEVERITY_DUMP );
-    ERROR_syntax = ERRORcreate( "%s in %s %s", SEVERITY_EXIT );
-    /* i.e., "syntax error in procedure foo" */
-    ERROR_ref_nonexistent = ERRORcreate( "USE/REF of non-existent object (%s in schema %s)", SEVERITY_ERROR );
-    ERROR_tilde_expansion_failed = ERRORcreate(
-            "Tilde expansion for %s failed in EXPRESS_PATH environment variable", SEVERITY_ERROR );
-    ERROR_schema_not_in_own_schema_file = ERRORcreate(
-            "Schema %s was not found in its own schema file (%s)", SEVERITY_ERROR );
-    ERROR_unlabelled_param_type = ERRORcreate(
-            "Return type or local variable requires type label in `%s'", SEVERITY_ERROR );
-    ERROR_file_unreadable = ERRORcreate( "Could not read file %s: %s", SEVERITY_ERROR );
-    ERROR_file_unwriteable = ERRORcreate( "Could not write file %s: %s", SEVERITY_ERROR );
-    ERROR_warn_unsupported_lang_feat = ERRORcreate( "Unsupported language feature (%s) at %s:%d", SEVERITY_WARNING );
-    ERROR_warn_small_real = ERRORcreate( "REALs with extremely small magnitude may be interpreted as zero by other EXPRESS parsers "
-                                         "(IEEE 754 float denormals are sometimes rounded to zero) - fabs(%f) <= FLT_MIN.", SEVERITY_WARNING );
-
-/* I don't think this should be a mere warning; exppp crashes if this warning is suppressed.
- *     ERRORcreate_warning( "unknown_subtype", ERROR_unknown_subtype );
- */
-    ERRORcreate_warning( "unsupported", ERROR_warn_unsupported_lang_feat );
-    ERRORcreate_warning( "limits", ERROR_warn_small_real );
-
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
 }
 
 /** Clean up the EXPRESS package. */
 void EXPRESScleanup( void ) {
     EXPRESS_PATHfree();
-
-    ERRORdestroy( ERROR_bail_out );
-    ERRORdestroy( ERROR_syntax );
-    ERRORdestroy( ERROR_ref_nonexistent );
-    ERRORdestroy( ERROR_tilde_expansion_failed );
-    ERRORdestroy( ERROR_schema_not_in_own_schema_file );
-    ERRORdestroy( ERROR_unlabelled_param_type );
-    ERRORdestroy( ERROR_file_unreadable );
-    ERRORdestroy( ERROR_file_unwriteable );
-    ERRORdestroy( ERROR_warn_unsupported_lang_feat );
-    ERRORdestroy( ERROR_warn_small_real );
 
     DICTcleanup();
     ERRORcleanup();
@@ -365,7 +321,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
     }
 
     if( !fp ) {
-        ERRORreport( ERROR_file_unreadable, filename, strerror( errno ) );
+        ERRORreport( FILE_UNREADABLE, filename, strerror( errno ) );
         return;
     }
 
@@ -434,7 +390,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     /* want 0 on success, 1 on invalid input, 2 on memory exhaustion */
     if( yyerrstatus != 0 ) {
         fprintf( stderr, ">> Bailing! (yyerrstatus = %d)\n", yyerrstatus );
-        ERRORreport( ERROR_bail_out );
+        ERRORreport( BAIL_OUT );
         /* free model and model->u.express */
         return 0;
     }
@@ -510,7 +466,7 @@ void RENAMEresolve( Rename * r, Schema s ) {
     }
 
     if( is_resolve_in_progress_raw( r->old ) ) {
-        ERRORreport_with_symbol( ERROR_circular_reference,
+        ERRORreport_with_symbol( CIRCULAR_REFERENCE,
                                  r->old, r->old->name );
         resolve_failed_raw( r->old );
         return;
@@ -519,7 +475,7 @@ void RENAMEresolve( Rename * r, Schema s ) {
 
     remote = SCOPEfind_for_rename( r->schema, r->old->name );
     if( remote == 0 ) {
-        ERRORreport_with_symbol( ERROR_ref_nonexistent, r->old,
+        ERRORreport_with_symbol( REF_NONEXISTENT, r->old,
                                  r->old->name, r->schema->symbol.name );
         resolve_failed_raw( r->old );
     } else {
@@ -596,7 +552,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
         if( s ) {
             return s;
         }
-        ERRORreport( ERROR_schema_not_in_own_schema_file,
+        ERRORreport( SCHEMA_NOT_IN_OWN_SCHEMA_FILE,
                      name, dir->full );
         return 0;
     } else {
@@ -623,7 +579,7 @@ static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list
     r = ( Rename * )l->data;
     r->schema = EXPRESSfind_schema( modeldict, r->schema_sym->name );
     if( !r->schema ) {
-        ERRORreport_with_symbol( ERROR_undefined_schema,
+        ERRORreport_with_symbol(UNDEFINED_SCHEMA,
                                  r->schema_sym,
                                  r->schema_sym->name );
         resolve_failed_raw( r->old );
@@ -645,7 +601,7 @@ static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_Li
     sym = ( Symbol * )list->data;
     ref_schema = EXPRESSfind_schema( modeldict, sym->name );
     if( !ref_schema ) {
-        ERRORreport_with_symbol( ERROR_undefined_schema, sym, sym->name );
+        ERRORreport_with_symbol(UNDEFINED_SCHEMA, sym, sym->name );
         resolve_failed( schema );
         list->data = 0;
     } else {

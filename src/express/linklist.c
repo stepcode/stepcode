@@ -23,14 +23,10 @@
 
 #include "express/linklist.h"
 
-Error ERROR_empty_list = ERROR_none;
-
 void LISTinitialize( void ) {
-    ERROR_empty_list = ERRORcreate( "Empty list in %s.", SEVERITY_ERROR );
 }
 
 void LISTcleanup( void ) {
-    ERRORdestroy( ERROR_empty_list );
 }
 
 Linked_List LISTcreate() {
@@ -152,7 +148,7 @@ Generic LISTremove_first( Linked_List list ) {
 
     node = list->mark->next;
     if( node == list->mark ) {
-        ERRORreport( ERROR_empty_list, "LISTremove_first" );
+        ERRORreport( EMPTY_LIST, "LISTremove_first" );
         return NULL;
     }
     item = node->data;

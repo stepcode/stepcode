@@ -39,9 +39,6 @@
 
 char DICT_type; /**< set to type of object found, as a side-effect of DICT lookup routines */
 
-static Error    ERROR_duplicate_decl;
-static Error    ERROR_duplicate_decl_diff_file;
-
 void DICTprint( Dictionary dict ) {
     Element e;
     DictionaryEntry de;
@@ -57,16 +54,10 @@ void DICTprint( Dictionary dict ) {
 
 /** Initialize the Dictionary module */
 void DICTinitialize( void ) {
-    ERROR_duplicate_decl = ERRORcreate(
-                               "Redeclaration of %s.  Previous declaration was on line %d.", SEVERITY_ERROR );
-    ERROR_duplicate_decl_diff_file = ERRORcreate(
-                                         "Redeclaration of %s.  Previous declaration was on line %d in file %s.", SEVERITY_ERROR );
 }
 
 /** Clean up the Dictionary module */
 void DICTcleanup( void ) {
-    ERRORdestroy( ERROR_duplicate_decl );
-    ERRORdestroy( ERROR_duplicate_decl_diff_file );
 }
 
 /**
@@ -104,11 +95,11 @@ int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char ty
         /* if we're adding a non-enum, and we've  *
          * already added a non-enum, complain     */
         if( sym->filename == old->symbol->filename ) {
-            ERRORreport_with_symbol( ERROR_duplicate_decl, sym, name, old->symbol->line );
+            ERRORreport_with_symbol( DUPLICATE_DECL, sym, name, old->symbol->line );
         } else {
-            ERRORreport_with_symbol( ERROR_duplicate_decl_diff_file, sym, name, old->symbol->line, old->symbol->filename );
+            ERRORreport_with_symbol( DUPLICATE_DECL_DIFF_FILE, sym, name, old->symbol->line, old->symbol->filename );
         }
-        experrc = ERROR_subordinate_failed;
+        ERRORreport(SUBORDINATE_FAILED);
         return( 1 );
     }
     return 0;
@@ -135,11 +126,11 @@ int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char t
     }
 
     if( sym->filename == e2->symbol->filename ) {
-        ERRORreport_with_symbol( ERROR_duplicate_decl, sym, name, e2->symbol->line );
+        ERRORreport_with_symbol( DUPLICATE_DECL, sym, name, e2->symbol->line );
     } else {
-        ERRORreport_with_symbol( ERROR_duplicate_decl_diff_file, sym, name, e2->symbol->line, e2->symbol->filename );
+        ERRORreport_with_symbol( DUPLICATE_DECL_DIFF_FILE, sym, name, e2->symbol->line, e2->symbol->filename );
     }
-    experrc = ERROR_subordinate_failed;
+    ERRORreport(SUBORDINATE_FAILED);
     return( 1 );
 }
 

@@ -2348,7 +2348,7 @@ static void yy_reduce(
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
+        ERRORreport_with_symbol(UNLABELLED_PARAM_TYPE, &sym,
         CURRENT_SCOPE_NAME);
     }
 }
@@ -3298,7 +3298,7 @@ static void yy_reduce(
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_unlabelled_param_type, &sym,
+        ERRORreport_with_symbol(UNLABELLED_PARAM_TYPE, &sym,
         CURRENT_SCOPE_NAME);
     }
 }
@@ -3578,7 +3578,7 @@ static void yy_reduce(
         Symbol sym;
         sym.line = yylineno;
         sym.filename = current_filename;
-        ERRORreport_with_symbol(ERROR_warn_small_real, &sym, yymsp[0].minor.yy0.rVal );
+        ERRORreport_with_symbol(WARN_SMALL_REAL, &sym, yymsp[0].minor.yy0.rVal );
     }
     if( fabs( yymsp[0].minor.yy0.rVal ) < DBL_MIN ) {
         yygotominor.yy401 = LITERAL_ZERO;
@@ -4464,7 +4464,7 @@ static void yy_syntax_error(
     sym.line = yylineno;
     sym.filename = current_filename;
 
-    ERRORreport_with_symbol(ERROR_syntax, &sym, "Syntax error",
+    ERRORreport_with_symbol(SYNTAX, &sym, "Syntax error",
     CURRENT_SCOPE_TYPE_PRINTABLE, CURRENT_SCOPE_NAME);
 #line 4470 "expparse.c"
   ParseARG_STORE; /* Suppress warning about unused %extra_argument variable */

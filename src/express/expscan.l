@@ -142,7 +142,7 @@ SCANnextchar(char* buffer)
 #endif
 	buffer[0] = *(SCANcurrent++);
 	if (!isascii(buffer[0])) {
-	    ERRORreport_with_line(ERROR_nonascii_char,yylineno,
+	    ERRORreport_with_line(NONASCII_CHAR,yylineno,
 				  0xff & buffer[0]);
 	    buffer[0] = ' ';	/* substitute space */
 	}
@@ -224,7 +224,7 @@ integer {
 
 /* bad identifier */
 [_A-Za-z]id_char* {
-    ERRORreport_with_line(ERROR_bad_identifier, yylineno, yytext);
+    ERRORreport_with_line(BAD_IDENTIFIER, yylineno, yytext);
     return SCANprocess_identifier_or_keyword(yytext);
 }
 
@@ -235,7 +235,7 @@ integer {
 }
 
 "'"([^'\n]|"''")*'\n' {
-    ERRORreport_with_line(ERROR_unterminated_string, LINENO_FUDGE);
+    ERRORreport_with_line(UNTERMINATED_STRING, LINENO_FUDGE);
     NEWLINE;
     return SCANprocess_string(yytext);
 }
@@ -245,7 +245,7 @@ integer {
 }
 
 '"'[^\"\n]*'\n' {
-    ERRORreport_with_line(ERROR_unterminated_string, LINENO_FUDGE);
+    ERRORreport_with_line(UNTERMINATED_STRING, LINENO_FUDGE);
     NEWLINE;
     return SCANprocess_encoded_string(yytext);
 }
@@ -299,7 +299,7 @@ integer {
 }
 
 <code>"*)" {
-    ERRORreport_with_line(ERROR_unmatched_close_comment, yylineno);
+    ERRORreport_with_line(UNMATCHED_CLOSE_COMMENT, yylineno);
     IGNORE_TOKEN;
 }	
 
@@ -316,7 +316,7 @@ integer {
 
 /* As per N15, 7.1.5.3, all other recognized chars are incorrect - DEL */
 <code>[$%&@\^{}~] {
-    ERRORreport_with_line(ERROR_unexpected_character,yylineno,yytext[0]);
+    ERRORreport_with_line(UNEXPECTED_CHARACTER,yylineno,yytext[0]);
     IGNORE_TOKEN;
 }
 

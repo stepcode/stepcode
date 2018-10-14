@@ -60,8 +60,6 @@ void MEMORYinitialize() {
     ALLOCinitialize( &LINK_fl, sizeof( struct Link_ ), 500, 100 );
     ALLOCinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );
 
-    ALLOCinitialize( &ERROR_OPT_fl, sizeof( struct Error_Warning_ ), 5, 5 );
-    
     ALLOCinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
     
     ALLOCinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );

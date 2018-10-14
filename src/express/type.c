@@ -126,10 +126,6 @@ This module implements the type abstraction.  It is
 
 #include "express/type.h"
 
-Error ERROR_corrupted_type = ERROR_none;
-
-static Error ERROR_undefined_tag;
-
 Type TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
     Type t;
     extern int tag_count;
@@ -152,7 +148,7 @@ Type TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol
      * then we can only refer to existing tags, so produce an error
      */
     if( tag_count < 0 ) {
-        ERRORreport_with_symbol( ERROR_undefined_tag, symbol,
+        ERRORreport_with_symbol( UNDEFINED_TAG, symbol,
                                  symbol->name );
         return( 0 );
     }
@@ -225,17 +221,10 @@ return( false );
 
 /** Initialize the Type module */
 void TYPEinitialize() {
-    ERROR_corrupted_type =
-        ERRORcreate( "Corrupted type in %s", SEVERITY_DUMP );
-
-    ERROR_undefined_tag =
-        ERRORcreate( "Undefined type tag %s", SEVERITY_ERROR );
 }
 
 /** Clean up the Type module */
 void TYPEcleanup( void ) {
-    ERRORdestroy( ERROR_corrupted_type );
-    ERRORdestroy( ERROR_undefined_tag );
 }
 
 /**
