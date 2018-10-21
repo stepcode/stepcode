@@ -364,7 +364,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     int tokenID;
     parse_data_t parseData;
 
-    void * parser = ParseAlloc( malloc );
+    void * parser = ParseAlloc( sc_malloc );
     perplex_t scanner = perplexFileScanner( fp );
     parseData.scanner = scanner;
 
@@ -397,7 +397,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
     EXPRESSpass = 1;
 
     perplexFree( scanner );
-    ParseFree( parser, free );
+    ParseFree( parser, sc_free );
 
     return yyexpresult;
 }

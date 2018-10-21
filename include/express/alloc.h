@@ -58,22 +58,11 @@ struct freelist_head {
 #endif
 };
 
-char * nnew();
-
 #include "error.h"
 
 /***********************************************/
 /* space allocation macros with error package: */
 /***********************************************/
-
-extern SC_EXPRESS_EXPORT int yylineno;
-
-/** CALLOC grabs and initializes to all 0s space for the indicated
- * number of instances of the indicated type */
-#define CALLOC(ptr, num, type)                  \
-    if (((ptr) = (type*)calloc((num), (unsigned)sizeof(type)))==NULL) { \
-        fprintf(stderr,"fedex: out of space");\
-    } else {}
 
 SC_EXPRESS_EXPORT void    _ALLOCinitialize( void );
 SC_EXPRESS_EXPORT void    ALLOCinitialize( struct freelist_head * flh, unsigned int size, int alloc1, int alloc2 );

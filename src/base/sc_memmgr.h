@@ -70,10 +70,10 @@ inline void operator delete[]( void * addr ) throw () {
 #endif /* SC_MEMMGR_CC */
 
 #else
-#define sc_malloc(size)            malloc(size)
-#define sc_calloc(count, size)     calloc(count, size)
-#define sc_realloc(addr, size)     realloc(addr, size)
-#define sc_free(addr)              free(addr)
+#define sc_malloc   malloc
+#define sc_calloc   calloc
+#define sc_realloc  realloc
+#define sc_free     free
 #endif /* SC_MEMMGR_ENABLE_CHECKS */
 
 #endif /* SC_MEMMGR_H */

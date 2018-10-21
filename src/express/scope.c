@@ -39,6 +39,8 @@
  * prettied up interface to print_objects_when_running
  */
 
+#include "sc_memmgr.h"
+
 #define SCOPE_C
 #include "express/scope.h"
 #include "express/resolve.h"

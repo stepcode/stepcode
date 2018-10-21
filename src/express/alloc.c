@@ -39,6 +39,8 @@ Now you can say things like:
 #include "express/alloc.h"
 #include "express/error.h"
 
+#include "sc_memmgr.h"
+
 /* just in case we are compiling by hand */
 #ifndef ALLOC
 #define ALLOC
@@ -50,7 +52,7 @@ Now you can say things like:
  * \param bytes new memory size
  */
 Freelist * create_freelist( struct freelist_head * flh, int bytes ) {
-    Freelist * current = ( Freelist * )malloc( bytes );
+    Freelist * current = ( Freelist * )sc_malloc( bytes );
     if( current == 0 ) {
         return( 0 );
     }
@@ -123,7 +125,7 @@ void * ALLOC_new( struct freelist_head * flh ) {
 #endif
 
 #ifdef REAL_MALLOC
-    return( calloc( 1, flh->size_elt ) );
+    return( sc_calloc( 1, flh->size_elt ) );
     /*NOTREACHED*/
 #else
     if( flh->freelist == NULL && 0 == create_freelist( flh, flh->bytes ) ) {
@@ -156,7 +158,7 @@ void ALLOC_destroy( struct freelist_head * flh, Freelist * link ) {
 #endif
 
 #ifdef REAL_MALLOC
-    free( link );
+    sc_free( link );
     return;
     /*NOTREACHED*/
 #else
