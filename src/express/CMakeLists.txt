@@ -71,10 +71,8 @@ set(EXPRESS_SOURCES
   schema.c
   resolve.c
   resolve2.c
-  lexact.c
   linklist.c
   error.c
-  dict.c
   hash.c
   alloc.c
   memory.c

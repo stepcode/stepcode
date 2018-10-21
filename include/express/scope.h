@@ -50,6 +50,7 @@
 /****************/
 
 #include <sc_export.h>
+#include "hash.h"
 #include "type.h"
 #include "variable.h"
 #include "entity.h"
@@ -62,7 +63,6 @@
 /*****************/
 
 #include "expbasic.h"   /* get basic definitions */
-#include "dict.h"
 #include "symbol.h"
 
 /***************************/
@@ -82,7 +82,7 @@ struct Scope_ {
     char            type;       /* see above */
     ClientData      clientData; /**< user may use this for any purpose */
     int             search_id;  /**< key to avoid searching this scope twice */
-    Dictionary      symbol_table, enum_table;
+    Hash_Table      symbol_table, enum_table;
     struct Scope_ * superscope;
     union {
         struct Procedure_ * proc;

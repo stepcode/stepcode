@@ -16,12 +16,15 @@
 #ifdef HAVE_UNISTD_H
 #  include <unistd.h>
 #endif
-#include <express/info.h>
-#include <express/express.h>
-#include <express/scope.h>
-#include <express/variable.h>
-#include "ordered_attrs.h"
+
 #include <assert.h>
+
+#include "express/info.h"
+#include "express/express.h"
+#include "express/scope.h"
+#include "express/variable.h"
+#include "express/hash.h"
+#include "ordered_attrs.h"
 
 char * entityName, _buf[512] = { 0 };
 
@@ -70,13 +73,14 @@ void print_attrs( Entity ent ) {
 }
 
 void find_and_print( Express model ) {
-    DictionaryEntry de;
+    Hash_Iterator it;
     Schema s;
     Entity e;
-    DICTdo_init( model->symbol_table, &de, '*' );
-    while( 0 != ( s = (Schema) DICTdo( &de ) ) ) {
+
+    HASHdo_init(model->symbol_table, &it, OBJ_ANY);
+    while((s = HASHdo(&it))) {
         printf( "Schema %s\n", s->symbol.name );
-        e = (Entity) DICTlookup( s->symbol_table, entityName );
+        e = HASHsearch(s->symbol_table, (Symbol) {.name = entityName}, HASH_FIND);
         if( e ) {
             print_attrs( e );
         }

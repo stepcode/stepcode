@@ -74,7 +74,9 @@
 #include <errno.h>
 
 #include "sc_memmgr.h"
+
 #include "express/memory.h"
+#include "express/hash.h"
 #include "express/basic.h"
 #include "express/express.h"
 #include "express/resolve.h"
@@ -108,7 +110,7 @@ bool    EXPRESSignore_duplicate_schemas      = false;
 Function funcdef(char *name, int pcount, Type ret_typ);
 void procdef(char *name, int pcount);
 void BUILTINSinitialize();
-Dictionary EXPRESSbuiltins; /* procedures/functions */
+Hash_Table EXPRESSbuiltins; /* procedures/functions */
 
 
 struct Scope_ * FUNC_NVL;
@@ -255,7 +257,6 @@ void EXPRESSinitialize( void ) {
     ERRORinitialize();
 
     HASHinitialize();   /* comes first - used by just about everything else! */
-    DICTinitialize();
     LISTinitialize();   /* ditto */
     STACKinitialize();
     PASSinitialize();
@@ -289,7 +290,6 @@ void EXPRESSinitialize( void ) {
 void EXPRESScleanup( void ) {
     EXPRESS_PATHfree();
 
-    DICTcleanup();
     ERRORcleanup();
     RESOLVEcleanup();
     TYPEcleanup();
@@ -410,15 +410,16 @@ static Express PARSERrun( char * filename, FILE * fp ) {
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
 static void * SCOPEfind_for_rename( Scope schema, char * name ) {
+    Symbol *ep;
     void *result;
     Rename * rename;
 
     /* object can only appear in top level symbol table */
     /* OR in another rename clause */
 
-    result = DICTlookup( schema->symbol_table, name );
-    if( result ) {
-        return result;
+    ep = HASHsearch(schema->symbol_table, (Symbol) {.name = name}, HASH_FIND);
+    if( ep ) {
+        return ep->data;
     }
 
     /* Occurs in a fully USE'd schema? */
@@ -431,18 +432,23 @@ static void * SCOPEfind_for_rename( Scope schema, char * name ) {
     } LISTod;
 
     /* Occurs in a partially USE'd schema? */
-    rename = ( Rename * )DICTlookup( schema->u.schema->usedict, name );
-    if( rename ) {
+    ep = HASHsearch(schema->u.schema->usedict, (Symbol) {.name = name}, HASH_FIND);
+    if( ep ) {
+        rename = ep->data;
         RENAMEresolve( rename, schema );
+/* TODO: why is this required? (could return rename directly?)
         DICT_type = rename->type;
-        return( rename->object );
+        */
+        return rename->object;
     }
 
     LISTdo( schema->u.schema->uselist, r, Rename * )
     if( !strcmp( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
         RENAMEresolve( r, schema );
+/* TODO; why is this required? (could return rename directly?)
         DICT_type = r->type;
-        return( r->object );
+        */
+        return r->object;
     }
     LISTod;
 
@@ -480,7 +486,9 @@ void RENAMEresolve( Rename * r, Schema s ) {
         resolve_failed_raw( r->old );
     } else {
         r->object = remote;
+/* TODO: why is this required? 
         r->type = DICT_type;
+*/
         switch( r->rename_type ) {
             case use:
                 SCHEMAdefine_use( s, r );
@@ -496,18 +504,22 @@ void RENAMEresolve( Rename * r, Schema s ) {
 
 #ifdef using_enum_items_is_a_pain
 static void RENAMEresolve_enum( Type t, Schema s ) {
-    DictionaryEntry de;
+    Hash_Iterator it;
+    Symbol *ep;
     Expression      x;
 
-    DICTdo_init( t->symbol_table, &de, OBJ_EXPRESSION );
-    while( 0 != ( x = ( Expression )DICTdo( &de ) ) ) {
+    HASHdo_init( t->symbol_table, &it, OBJ_EXPRESSION );
+    while( (ep = HASHdo( &it )) ) {
+        x = ep->data;
+        /* TODO: if this isn't required, should we delete it? */
         /*      SCHEMAadd_use(s, v*/
         /*          raw(x->symbol.name);*/
     }
 }
 #endif
 
-Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
+Schema EXPRESSfind_schema( Hash_Table modeldict, char * name ) {
+    Symbol *ep;
     Schema s;
     FILE * fp;
     char * src, *dest;
@@ -518,8 +530,9 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
                  EXPRESSpass, name );
     }
 
-    s = ( Schema )DICTlookup( modeldict, name );
-    if( s ) {
+    ep = HASHsearch(modeldict, (Symbol) {.name = name}, HASH_FIND);
+    if (ep) {
+        s = ep->data;
         return s;
     }
 
@@ -547,10 +560,10 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
 
         express = PARSERrun( SCANstrdup( dir->full ), fp );
         if( express ) {
-            s = ( Schema )DICTlookup( modeldict, name );
-        }
-        if( s ) {
-            return s;
+            ep = HASHsearch(modeldict, (Symbol) {.name = name}, HASH_FIND);
+            if( ep ) {
+                return ep->data;
+            }
         }
         ERRORreport( SCHEMA_NOT_IN_OWN_SCHEMA_FILE,
                      name, dir->full );
@@ -571,7 +584,7 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
  * because of partial schema references
  * \sa connect_schema_lists()
  */
-static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list ) {
+static void connect_lists( Hash_Table modeldict, Schema schema, Linked_List list ) {
     Rename * r;
 
     /* translate symbols to schemas */
@@ -592,7 +605,7 @@ static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list
  * same as `connect_lists` except for full schemas
  * \sa connect_lists()
  */
-static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_List schema_list ) {
+static void connect_schema_lists( Hash_Table modeldict, Schema schema, Linked_List schema_list ) {
     Symbol * sym;
     Schema ref_schema;
 
@@ -620,8 +633,10 @@ void EXPRESSresolve( Express model ) {
     /* comes first - DEL */
 
     Schema schema;
-    DictionaryEntry de;
+    Hash_Iterator it;
+    Symbol *ep;
 
+    /* TODO: do we really need to use setjmp? */
     jmp_buf env;
     if( setjmp( env ) ) {
         return;
@@ -668,8 +683,10 @@ void EXPRESSresolve( Express model ) {
     }
 
     /* connect the object in each rename clause to the real object */
-    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
-    while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
+    HASHdo_init( model->symbol_table, &it, OBJ_SCHEMA );
+    while( (ep = HASHdo(&it)) ) {
+        schema = ep->data;
+        
         if( is_not_resolvable( schema ) ) {
             continue;
         }
@@ -703,8 +720,10 @@ void EXPRESSresolve( Express model ) {
         fprintf( stderr, "pass %d: resolving sub and supertypes\n", EXPRESSpass );
     }
 
-    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
-    while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
+    HASHdo_init( model->symbol_table, &it, OBJ_SCHEMA );
+    while( (ep = HASHdo(&it)) ) {
+        schema = ep->data;
+        
         if( is_not_resolvable( schema ) ) {
             continue;
         }
@@ -734,8 +753,10 @@ void EXPRESSresolve( Express model ) {
         fprintf( stderr, "pass %d: resolving implied USE's\n", EXPRESSpass );
     }
 
-    DICTdo_init( model->symbol_table, &de, OBJ_SCHEMA );
-    while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
+    HASHdo_init( model->symbol_table, &it, OBJ_SCHEMA );
+    while( (ep = HASHdo(&it)) ) {
+        schema = ep->data;
+        
         if( is_not_resolvable( schema ) ) {
             continue;
         }
@@ -746,8 +767,11 @@ void EXPRESSresolve( Express model ) {
         }
 
         if( schema->u.schema->usedict ) {
-            DICTdo_init( schema->u.schema->usedict, &fg, '*' )
-            while( 0 != ( r = ( Rename )DICTdo( &fg ) ) ) {
+            Hash_Iterator iv;
+            DICTdo_init( schema->u.schema->usedict, &iv, '*' )
+            while( (ep = HASHdo( &iv )) ) {
+                r = ep->data;
+                
                 if( ( r->type = OBJ_TYPE ) && ( ( Type )r->object )->body &&
                         TYPEis_enumeration( ( Type )r->object ) ) {
                     RENAMEresolve_enum( ( Type )r->object, schema );
@@ -771,12 +795,16 @@ void EXPRESSresolve( Express model ) {
     }
 
     /* mark everything resolved if possible */
-    DICTdo_init( model->symbol_table, &de, '*' );
-    while( 0 != ( schema = ( Schema )DICTdo( &de ) ) ) {
+#if 0
+    HASHdo_init( model->symbol_table, &it, '*' );
+    while( (ep = HASHdo( &it ) ) ) {
+         schema = it->data;
+        
         if( is_resolvable( schema ) ) {
             resolved_all( schema );
         }
     }
+#endif
 }
 
 Function funcdef(char *name, int pcount, Type ret_typ) {
@@ -786,7 +814,7 @@ Function funcdef(char *name, int pcount, Type ret_typ) {
     f->u.func->return_type = ret_typ;
     f->u.func->builtin = true;
     resolved_all(f);
-    DICTdefine(EXPRESSbuiltins, name, f, 0, OBJ_FUNCTION);
+    HASHsearch(EXPRESSbuiltins, (Symbol) {.name = name, .data = f, .type = OBJ_FUNCTION}, HASH_INSERT);
     return f;
 }
 
@@ -796,11 +824,11 @@ void procdef(char *name, int pcount) {
     p->u.proc->pcount = pcount;
     p->u.proc->builtin = true;
     resolved_all(p);
-    DICTdefine(EXPRESSbuiltins, name, p, 0, OBJ_PROCEDURE);
+    HASHsearch(EXPRESSbuiltins, (Symbol) {.name = name, .data = p, .type = OBJ_PROCEDURE}, HASH_INSERT);
 }
 
 void BUILTINSinitialize() {
-    EXPRESSbuiltins = DICTcreate( 35 );
+    EXPRESSbuiltins = HASHcreate();
     procdef("INSERT", 3 );
     procdef("REMOVE", 2 );
 

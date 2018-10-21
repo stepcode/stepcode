@@ -56,7 +56,7 @@ typedef struct Symbol_ {
     unsigned char *name;
     void *data;             /* the AST for this symbol            */
     char type;              /* the OBJ_ type, see expbasic.h      */
-    int ref_typ;            /* the lexer ref_type for this symbol */
+    int ref_tok;            /* the lexer ref_type for this symbol */
     
     const char *filename;
     int line;
@@ -79,9 +79,6 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /* macro function definitions */
 /******************************/
 
-#define SYMBOL_new()        (struct Symbol_ *)ALLOC_new(&SYMBOL_fl)
-#define SYMBOL_destroy(x)   ALLOC_destroy(&SYMBOL_fl,(Freelist *)x)
-
 /* TODO: gets called from e.g. type.c, should be set by parser */
 #define SYMBOLset(obj)      obj->symbol.line = yylineno; \
                 obj->symbol.filename = current_filename
@@ -91,6 +88,6 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /***********************/
 
 extern SC_EXPRESS_EXPORT void SYMBOLinitialize( void );
-SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int ref_typ, int line, const char * filename );
+SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int ref_tok, int line, const char * filename );
 
 #endif    /*  SYMBOL_H  */

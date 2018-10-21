@@ -56,7 +56,7 @@
 /************/
 
 typedef struct Hash_Table_ * Dictionary;
-typedef HashEntry       DictionaryEntry;
+typedef struct Hash_Iterator_ DictionaryEntry;
 
 /****************/
 /* modules used */
@@ -78,18 +78,8 @@ extern SC_EXPRESS_EXPORT char DICT_type;  /**< set as a side-effect of DICT look
 /* macro function definitions */
 /*******************************/
 
-#define DICTcreate(estimated_max_size)  HASHcreate(estimated_max_size)
-#define DICTdo_init(dict,de,t) HASHlistinit((dict),(de),(t))
-#define DICTdo_end(hash_entry)      HASHlistend(hash_entry)
-
-/** modify dictionary entry in-place */
-#define DICTchange(e,obj,sym,typ)   { \
-                    (e)->data = (obj); \
-                    (e)->symbol = (sym); \
-                    (e)->type = (typ); \
-                    }
-#define DICTchange_type(e,typ)      (e)->type = (typ)
-
+#define DICTcreate(x)  HASHcreate()
+#define DICTdo_init(dict,de,t) HASHdo_init((dict),(de),(t))
 
 /***********************/
 /* function prototypes */

@@ -11,9 +11,8 @@
 /********************************new****************************************/
 
 void SCOPEresolve_subsupers( Scope scope ) {
-    DictionaryEntry de;
-    void *x;
-    char type;
+    Hash_Iterator it;
+    Symbol *ep;
     Symbol * sym;
     Type t;
 
@@ -23,27 +22,27 @@ void SCOPEresolve_subsupers( Scope scope ) {
                  scope->symbol.name, OBJget_type( scope->type ) );
     }
 
-    DICTdo_init( scope->symbol_table, &de, '*' );
-    while( 0 != ( x = DICTdo( &de ) ) ) {
-        switch( type = DICT_type ) {
+    HASHdo_init( scope->symbol_table, &it, '*' );
+    while( (ep = HASHdo( &it )) ) {
+        switch( ep->type ) {
             case OBJ_ENTITY:
-                ENTITYresolve_supertypes( ( Entity )x );
-                ENTITYresolve_subtypes( ( Entity )x );
+                ENTITYresolve_supertypes( ep->data );
+                ENTITYresolve_subtypes( ep->data );
                 break;
             case OBJ_FUNCTION:
             case OBJ_PROCEDURE:
             case OBJ_RULE:
-                SCOPEresolve_subsupers( ( Scope )x );
+                SCOPEresolve_subsupers( ep->data );
                 break;
             case OBJ_TYPE:
-                t = ( Type )x;
+                t = ( Type ) ep->data;
                 TYPEresolve( &t );
                 break;
             default:
                 /* ignored everything else */
                 break;
         }
-        sym = OBJget_symbol( x, type );
+        sym = OBJget_symbol( ep->data, ep->type );
         if( is_resolve_failed_raw( sym ) ) {
             resolve_failed( scope );
         }
@@ -51,8 +50,8 @@ void SCOPEresolve_subsupers( Scope scope ) {
 }
 
 void SCOPEresolve_expressions_statements( Scope s ) {
-    DictionaryEntry de;
-    void *x;
+    Hash_Iterator it;
+    Symbol *ep;
     Variable v;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
@@ -61,38 +60,38 @@ void SCOPEresolve_expressions_statements( Scope s ) {
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
-    DICTdo_init( s->symbol_table, &de, '*' );
-    while( 0 != ( x = DICTdo( &de ) ) ) {
-        switch( DICT_type ) {
+    HASHdo_init( s->symbol_table, &it, '*' );
+    while( (ep = HASHdo( &it )) ) {
+        switch( ep->type ) {
             case OBJ_SCHEMA:
-                if( is_not_resolvable( ( Schema )x ) ) {
+                if( is_not_resolvable( ( Schema )ep->data ) ) {
                     break;
                 }
-                SCOPEresolve_expressions_statements( ( Scope )x );
+                SCOPEresolve_expressions_statements( ( Scope )ep->data );
                 break;
             case OBJ_ENTITY:
-                ENTITYresolve_expressions( ( Entity )x );
+                ENTITYresolve_expressions( ( Entity )ep->data );
                 break;
             case OBJ_FUNCTION:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.func->body );
+                ALGresolve_expressions_statements( ( Scope )ep->data, ( ( Scope )ep->data )->u.func->body );
                 break;
             case OBJ_PROCEDURE:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.proc->body );
+                ALGresolve_expressions_statements( ( Scope )ep->data, ( ( Scope )ep->data )->u.proc->body );
                 break;
             case OBJ_RULE:
-                ALGresolve_expressions_statements( ( Scope )x, ( ( Scope )x )->u.rule->body );
+                ALGresolve_expressions_statements( ( Scope )ep->data, ( ( Scope )ep->data )->u.rule->body );
 
-                WHEREresolve( RULEget_where( ( Scope )x ), ( Scope )x, 0 );
+                WHEREresolve( RULEget_where( ( Scope )ep->data ), ( Scope )ep->data, 0 );
                 break;
             case OBJ_VARIABLE:
-                v = ( Variable )x;
+                v = ( Variable )ep->data;
                 TYPEresolve_expressions( v->type, s );
                 if( v->initializer ) {
                     EXPresolve( v->initializer, s, v->type );
                 }
                 break;
             case OBJ_TYPE:
-                TYPEresolve_expressions( ( Type )x, s );
+                TYPEresolve_expressions( ( Type )ep->data, s );
                 break;
             default:
                 /* ignored everything else */

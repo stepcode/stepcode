@@ -124,45 +124,31 @@ This module implements the type abstraction.  It is
 
 #include <assert.h>
 
+#include "sc_memmgr.h"
+#include "express/hash.h"
 #include "express/type.h"
 
 Type TYPEcreate_user_defined_tag( Type base, Scope scope, struct Symbol_ *symbol ) {
+    Symbol *ep;
     Type t;
     extern int tag_count;
 
-    t = ( Type )DICTlookup( scope->symbol_table, symbol->name );
-    if( t ) {
-        if( DICT_type == OBJ_TAG ) {
-            return( t );
+    ep = HASHsearch( scope->symbol_table, (Symbol) { .name = symbol->name }, HASH_FIND );
+    if (ep) {
+        t = (Type) ep->data;
+        if( ep->type == OBJ_TAG ) {
+            return t;
         } else {
-            /* easiest to just generate the error this way!
-             * following call WILL fail intentionally
-             */
-            DICTdefine( scope->symbol_table, symbol->name, 0, symbol, OBJ_TAG );
-            return( 0 );
+            /* TODO: print error message (duplicate parameter) */
+            return NULL;
         }
     }
 
-    /* tag is undefined
-     * if we are outside a formal parameter list (hack, hack)
-     * then we can only refer to existing tags, so produce an error
-     */
-    if( tag_count < 0 ) {
-        ERRORreport_with_symbol( UNDEFINED_TAG, symbol,
-                                 symbol->name );
-        return( 0 );
-    }
-
-    /* otherwise, we're in a formal parameter list,
-     * so it's ok to define it
-     */
+    /* otherwise, define it */
     t = TYPEcreate_nostab( symbol, scope, OBJ_TAG );
     t->u.type->head = base;
 
-    /* count unique type tags inside PROC and FUNC headers */
-    tag_count++;
-
-    return( t );
+    return t;
 }
 
 /**

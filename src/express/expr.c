@@ -152,6 +152,7 @@ void EXPcleanup( void ) {
  */
 static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e,
                                      Variable * v, char * dt, struct Symbol_ ** where, int s_id ) {
+    Symbol *ep;
     Expression item;
     Variable tmp;
     int options = 0;
@@ -170,7 +171,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                     *where = w;
                 }
                 *v = tmp;
-                *dt = DICT_type;
+                *dt = OBJ_VARIABLE;
                 return 1;
             } else {
                 return 0;
@@ -226,10 +227,11 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
             return options;
         }
         case enumeration_:
-            item = ( Expression )DICTlookup( TYPEget_enum_tags( selection ), sref.name );
-            if( item ) {
+            ep = HASHsearch(TYPEget_enum_tags( selection ), (Symbol) {.name = sref.name}, HASH_FIND);
+            if (ep) {
+                item = ep->data;
                 *e = item;
-                *dt = DICT_type;
+                *dt = OBJ_ENUM;
                 return 1;
             }
         default:
@@ -238,6 +240,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
 }
 
 Type EXPresolve_op_dot( Expression expr, Scope scope ) {
+    Symbol *ep;
     Expression op1 = expr->e.op1;
     Expression op2 = expr->e.op2;
     Variable v = 0;
@@ -337,10 +340,12 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                 resolve_failed( expr );
                 return( Type_Bad );
             }
+            /* TODO: now checked in parser?
             if( DICT_type != OBJ_VARIABLE ) {
                 fprintf( stderr, "EXPresolved_op_dot: attribute not an attribute?\n" );
                 ERRORabort( 0 );
             }
+            */
 
             op2->u.variable = v;
             op2->return_type = v->type;
@@ -357,9 +362,11 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                 resolve_failed( expr );
                 return( Type_Bad );
             }
+            /* TODO: now checked in parser?
             if( DICT_type != OBJ_VARIABLE ) {
                 fprintf( stderr, "ERROR: EXPresolved_op_dot: attribute not an attribute?\n" );
             }
+            */
 
             op2->u.variable = v;
             /* changed to set return_type */
@@ -369,14 +376,16 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
         case enumeration_:
             /* enumerations within a select will be handled by `case select_` above,
              * which calls EXP_resolve_op_dot_fuzzy(). */
-            item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
-            if( !item ) {
+            ep = HASHsearch(TYPEget_enum_tags( op1type ), (Symbol) { .name = op2->symbol.name }, HASH_FIND);
+            if (!ep) {
                 ERRORreport_with_symbol(ENUM_NO_SUCH_ITEM, &op2->symbol,
                                          op1type->symbol.name, op2->symbol.name );
                 resolve_failed( expr );
                 return( Type_Bad );
             }
-
+            
+            /* TODO: ep->data, ep->type? */
+            item = ep->data;
             op2->u.expression = item;
             op2->return_type = item->type;
             resolved_all( expr );

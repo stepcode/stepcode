@@ -125,10 +125,10 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
 ** \note the macro 'EXPresolve' calls this function after checking if expr is already resolved
 */
 void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
+    Symbol *ep;
     Function f = 0;
     Symbol * sym;
-    void *x;
-    Entity e;
+    Entity ent;
     Type t;
     bool func_args_checked = false;
 
@@ -137,18 +137,19 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
     */
     switch( expr->type->u.type->body->type ) {
         case funcall_:
+            /* TODO: no longer true - now the parser sees them as funcall_! */
             /* functions with no arguments get handled elsewhere */
             /* because the parser sees them just like attributes */
 
-            x = SCOPEfind( scope, expr->symbol.name,
+            ep = SCOPEfind(scope, expr->symbol.name,
                            SCOPE_FIND_FUNCTION | SCOPE_FIND_ENTITY );
-            if( !x ) {
+            if( !ep ) {
                 ERRORreport_with_symbol(UNDEFINED_FUNC, &expr->symbol, expr->symbol.name );
                 resolve_failed( expr );
                 break;
             }
-            if( ( DICT_type != OBJ_FUNCTION ) && ( DICT_type != OBJ_ENTITY ) ) {
-                sym = OBJget_symbol( x, DICT_type );
+            if (ep->type != OBJ_FUNCTION && ep->type != OBJ_ENTITY) {
+                sym = OBJget_symbol( ep->data, ep->type );
                 ERRORreport_with_symbol(FUNCALL_NOT_A_FUNCTION, &expr->symbol, sym->name );
                 resolve_failed( expr );
                 break;
@@ -156,17 +157,17 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             /* original code accepted rules, too? */
 
             /* entities are treated like implicit constructor functions */
-            if( DICT_type == OBJ_ENTITY ) {
+            if( ep->type == OBJ_ENTITY ) {
                 Type self_old = self; /* save previous in the unlikely but possible case that
                                        * SELF is in a derived initialization of an entity */
-                e = ( Entity )x;
-                self = e->u.entity->type;
+                ent = ( Entity ) ep->data;
+                self = ent->u.entity->type;
                 /* skip parameter resolution for now */
                 /*          ARGresolve();*/
-                expr->return_type = e->u.entity->type;
+                expr->return_type = ent->u.entity->type;
                 self = self_old;    /* restore old SELF */
             } else {
-                f = ( Function )x;
+                f = ( Function ) ep->data;
                 expr->return_type = f->u.func->return_type;
 
                 /* do argument typechecking here if requested */
@@ -211,7 +212,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             /* add function or entity as first element of list */
             LISTadd_first( expr->u.list, x );
 #endif
-            expr->u.funcall.function = ( struct Scope_ * ) x;
+            expr->u.funcall.function = ( struct Scope_ * ) ep->data;
 
             resolved_all( expr );
             break;
@@ -229,37 +230,26 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             resolved_all( expr );
             break;
         case identifier_:
-
-            x = 0;
-
             /* assume it's a variable/attribute */
-            if( !x ) {
-                x = VARfind( scope, expr->symbol.name, 0 );
-            }
+            ep = VARfind( scope, expr->symbol.name );
             /* if not found as a variable, try as function, etc ... */
-            if( !x ) {
-                x = SCOPEfind( scope, expr->symbol.name,
-                               SCOPE_FIND_ANYTHING );
+            if( !ep ) {
+                ep = SCOPEfind( scope, expr->symbol.name, SCOPE_FIND_ANYTHING );
             }
             /* Not all enums have `typecheck->u.type->body->type` == `enumeration_` - ?! */
-            if( !x ) {
+            if (!ep) {
                 Scope enumscope = scope;
-                while( 1 ) {
+                while (1) {
                     /* look up locally, then go through the superscopes */
-                    x = DICTlookup( enumscope->enum_table, expr->symbol.name );
-                    if( x ) {
+                    ep = HASHsearch(enumscope->enum_table, (Symbol) {.name = expr->symbol.name}, HASH_FIND);
+                    if (ep || enumscope->type == OBJ_SCHEMA)
                         break;
-                    }
-                    if( enumscope->type == OBJ_SCHEMA ) {
-                        /* if we get here, this means that we've looked through all scopes */
-                        x = 0;
-                        break;
-                    }
+                    
                     enumscope = enumscope->superscope;
                 }
             }
 
-            if( !x ) {
+            if( !ep ) {
                 if( typecheck == Type_Unknown ) {
                     return;
                 } else {
@@ -268,9 +258,9 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     break;
                 }
             }
-            switch( DICT_type ) {
+            switch( ep->type ) {
                 case OBJ_VARIABLE:
-                    expr->u.variable = ( Variable )x;
+                    expr->u.variable = ( Variable ) ep->data;
 #if 0
                     /* gee, I don't see what variables have to go through this right here */
                     VARresolve_expressions( expr->u.variable, scope );
@@ -287,28 +277,28 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     resolved_all( expr );
                     break;
                 case OBJ_ENTITY:
-                    expr->return_type = expr->type = ( ( Entity )x )->u.entity->type;
+                    expr->return_type = expr->type = ( ( Entity )ep->data )->u.entity->type;
                     /* entity may not actually be resolved by now */
                     /* but I don't think that's a problem */
                     resolved_all( expr );
                     break;
                 case OBJ_EXPRESSION:
                     /* so far only enumerations get returned this way */
-                    expr->u.expression = ( Expression )x;
-                    expr->type = expr->return_type = ( ( Expression )x )->type;
+                    expr->u.expression = ( Expression ) ep->data;
+                    expr->type = expr->return_type = ( ( Expression )ep->data )->type;
                     resolved_all( expr );
                     break;
                 case OBJ_FUNCTION:
                     /* functions with no args end up here because the */
                     /* parser doesn't know any better */
                     expr->u.list = LISTcreate();
-                    LISTadd_last( expr->u.list, x );
+                    LISTadd_last( expr->u.list, ep->data );
                     expr->type = Type_Funcall;
-                    expr->return_type = ( ( Function )x )->u.func->return_type;
+                    expr->return_type = ( ( Function ) ep->data )->u.func->return_type;
                     /* function may not actually be resolved by now */
                     /* but I don't think that's a problem */
 
-                    if( ( ( Function )x )->u.func->pcount != 0 ) {
+                    if( ( ( Function ) ep->data )->u.func->pcount != 0 ) {
                         ERRORreport_with_symbol(WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name, 0,
                                                  f->u.func->pcount );
                         resolve_failed( expr );
@@ -318,8 +308,8 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     break;
                 case OBJ_TYPE:
                     /* enumerations can appear here, I don't know about others */
-                    expr->type = ( Type )x;
-                    expr->return_type = ( Type )x;
+                    expr->type = ( Type ) ep->data;
+                    expr->return_type = ( Type ) ep->data;
                     expr->symbol.resolved = expr->type->symbol.resolved;
                     break;
                 default:
@@ -396,6 +386,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
 }
 
 int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, Linked_List * flat ) {
+    Symbol *ep;
     Entity ent_ref;
     int i = UNRESOLVED;
 
@@ -410,13 +401,13 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
         LISTod;
     } else {
         /* must be a simple entity reference */
-        ent_ref = ( Entity )SCOPEfind( ent->superscope, expr->symbol.name, SCOPE_FIND_ENTITY );
-        if( !ent_ref ) {
+        ep = SCOPEfind(ent->superscope, expr->symbol.name, SCOPE_FIND_ENTITY);
+        if( !ep ) {
             ERRORreport_with_symbol(UNKNOWN_SUBTYPE, &ent->symbol,
                                      expr->symbol.name, ent->symbol.name );
             i = RESOLVE_FAILED;
-        } else if( DICT_type != OBJ_ENTITY ) {
-            Symbol * sym = OBJget_symbol( ent_ref, DICT_type );
+        } else if( ep->type != OBJ_ENTITY ) {
+            Symbol * sym = OBJget_symbol( ep->data, ep->type );
             /* line number should really be on supertype name, */
             /* but all we have easily is the entity line number */
             ERRORreport_with_symbol(SUBTYPE_RESOLVE, &ent->symbol,
@@ -424,6 +415,7 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
             i = RESOLVE_FAILED;
         } else {
             bool found = false;
+            ent_ref = ep->data;
 
             /* link in to flat list */
             if( !*flat ) {
@@ -474,8 +466,8 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
 ** Resolve all references in a type.
 */
 void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
+    Symbol *ep;
     Type type = *typeaddr;
-    Type ref_type;
     TypeBody body = type->u.type->body;
     Scope scope = type->superscope;
 
@@ -516,35 +508,29 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
         }
     } else {
         /* simple type reference such as "T" */
-        /* this really is a hack.  masking out only variables from */
-        /* the search is to support the (allowed) circumstance of */
-        /* an attribute or formal parameter whose name is the same */
-        /* as its type, i.e. "foo : foo".  unfortunately, babys like */
-        /* local variables get thrown out with the bathwater.  -snc */
-        ref_type = ( Type )SCOPEfind( scope, type->symbol.name,
-                                      SCOPE_FIND_ANYTHING ^ SCOPE_FIND_VARIABLE );
-        /*              SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY);*/
-        if( !ref_type ) {
+        /* search in the parent scope, to avoid "foo : foo" name type conflicts */
+        ep = SCOPEfind(scope->superscope, type->symbol.name, SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY );
+        if( !ep ) {
             ERRORreport_with_symbol(UNDEFINED_TYPE, &type->symbol, type->symbol.name );
             *typeaddr = Type_Bad; /* just in case */
             resolve_failed( type );
-        } else if( DICT_type == OBJ_TYPE ) {
+        } else if( ep->type == OBJ_TYPE ) {
             /* due to declarations of multiple attributes off of a */
             /* single type ref, we have to use reference counts */
             /* to safely deallocate the TypeHead.  It's trivial to do */
             /* but gaining back the memory isn't worth the CPU time. */
             /* if (type->refcount--) TYPE_destroy(type); */
 
-            type = *typeaddr = ref_type;
+            type = *typeaddr = ep->data;
             TYPEresolve( typeaddr ); /* addr doesn't matter here */
             /* it will not be written through */
-        } else if( DICT_type == OBJ_ENTITY ) {
+        } else if( ep->type == OBJ_ENTITY ) {
             /* if (type->refcount--) TYPE_destroy(type); see above */
 
-            type = *typeaddr = ( ( Entity )ref_type )->u.entity->type;
+            type = *typeaddr = ( ( Entity )ep->data )->u.entity->type;
         } else {
             ERRORreport_with_symbol(NOT_A_TYPE, &type->symbol, type->symbol.name,
-                                     OBJget_type( DICT_type ) );
+                                    OBJget_type( ep->type ) );
             resolve_failed( type );
         }
     }
@@ -598,7 +584,7 @@ void VAR_resolve_types( Variable v ) {
             ERRORreport_with_symbol(INVERSE_BAD_ENTITY,
                                      &v->name->symbol, v->inverse_symbol->name );
         } else {
-            attr = VARfind( type->u.type->body->entity, v->inverse_symbol->name, 1 );
+            attr = VARfind( type->u.type->body->entity, v->inverse_symbol->name);
             if( attr ) {
                 v->inverse_attribute = attr;
                 failed |= is_resolve_failed( attr->name );
@@ -659,6 +645,7 @@ void CASE_ITresolve( Case_Item item, Scope scope, Statement statement ) {
 }
 
 void STMTresolve( Statement statement, Scope scope ) {
+    Symbol *ep;
     /* scope is always the function/procedure/rule from SCOPEresolve_expressions_statements(); */
     Scope proc;
 
@@ -698,17 +685,17 @@ void STMTresolve( Statement statement, Scope scope ) {
             break;
         case STMT_PCALL:
 #define proc_name statement->symbol.name
-            proc = ( Scope )SCOPEfind( scope, proc_name,
-                                       SCOPE_FIND_PROCEDURE );
-            if( proc ) {
-                if( DICT_type != OBJ_PROCEDURE ) {
-                    Symbol * newsym = OBJget_symbol( proc, DICT_type );
+            ep = SCOPEfind( scope, proc_name, SCOPE_FIND_PROCEDURE);
+            if( !ep ) {
+                ERRORreport_with_symbol(NO_SUCH_PROCEDURE, &statement->symbol, proc_name );
+            } else {
+                proc = ep->data;
+                if( ep->type != OBJ_PROCEDURE ) {
+                    Symbol * newsym = OBJget_symbol( proc, ep->type );
                     ERRORreport_with_symbol(EXPECTED_PROC, &statement->symbol, proc_name, newsym->line );
                 } else {
                     statement->u.proc->procedure = proc;
                 }
-            } else {
-                ERRORreport_with_symbol(NO_SUCH_PROCEDURE, &statement->symbol, proc_name );
             }
             LISTdo( statement->u.proc->parameters, e, Expression )
             EXPresolve( e, scope, Type_Dont_Care );
@@ -755,9 +742,10 @@ static Variable ENTITY_get_local_attribute( Entity e, char * name ) {
 }
 
 void ENTITYresolve_expressions( Entity e ) {
+    Hash_Iterator it;
+    Symbol *ep;
     Variable v;
     int status = 0;
-    DictionaryEntry de;
     char * sname;
     Entity sup;
 
@@ -808,8 +796,9 @@ void ENTITYresolve_expressions( Entity e ) {
         status |= is_resolve_failed( attr->name );
     } LISTod;
 
-    DICTdo_init( e->symbol_table, &de, OBJ_VARIABLE );
-    while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
+    HASHdo_init( e->symbol_table, &it, OBJ_VARIABLE );
+    while( (ep = HASHdo( &it )) ) {
+        v = (Variable) ep->data;
         if( !is_resolve_failed( v->name ) ) {
             TYPEresolve_expressions( v->type, e );
             if( v->initializer ) {
@@ -924,9 +913,9 @@ void ENTITYresolve_types( Entity e );
 
 /** also resolves inheritance counts and sub/super consistency */
 void SCOPEresolve_types( Scope s ) {
+    Hash_Iterator it;
+    Symbol *ep;
     Variable var;
-    DictionaryEntry de;
-    void *x;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
@@ -934,16 +923,16 @@ void SCOPEresolve_types( Scope s ) {
                  s->symbol.name, OBJget_type( s->type ) );
     }
 
-    DICTdo_init( s->symbol_table, &de, '*' );
-    while( 0 != ( x = DICTdo( &de ) ) ) {
-        switch( DICT_type ) {
+    HASHdo_init( s->symbol_table, &it, '*' );
+    while( (ep = HASHdo( &it )) ) {
+        switch( ep->type ) {
             case OBJ_TYPE:
                 if( ERRORis_enabled( SELECT_LOOP ) ) {
-                    TYPEcheck_select_cyclicity( ( Type )x );
+                    TYPEcheck_select_cyclicity( ( Type ) ep->data );
                 }
                 break;
             case OBJ_VARIABLE:  /* really constants */
-                var = ( Variable )x;
+                var = ( Variable ) ep->data;
                 /* before OBJ_BITS hack, we looked in s->superscope */
                 TYPEresolve( &var->type );
                 if( is_resolve_failed( var->type ) ) {
@@ -952,26 +941,26 @@ void SCOPEresolve_types( Scope s ) {
                 }
                 break;
             case OBJ_ENTITY:
-                ENTITYcheck_missing_supertypes( ( Entity )x );
-                ENTITYresolve_types( ( Entity )x );
-                ENTITYcalculate_inheritance( ( Entity )x );
+                ENTITYcheck_missing_supertypes( ( Entity ) ep->data );
+                ENTITYresolve_types( ( Entity ) ep->data );
+                ENTITYcalculate_inheritance( ( Entity ) ep->data );
                 if( ERRORis_enabled( SUBSUPER_LOOP ) ) {
-                    ENTITYcheck_subsuper_cyclicity( ( Entity )x );
+                    ENTITYcheck_subsuper_cyclicity( ( Entity ) ep->data );
                 }
-                if( is_resolve_failed( ( Entity )x ) ) {
+                if( is_resolve_failed( ( Entity ) ep->data ) ) {
                     resolve_failed( s );
                 }
                 break;
             case OBJ_SCHEMA:
-                if( is_not_resolvable( ( Schema )x ) ) {
+                if( is_not_resolvable( ( Schema ) ep->data ) ) {
                     break;
                 }
                 /*FALLTHRU*/
             case OBJ_PROCEDURE:
             case OBJ_RULE:
             case OBJ_FUNCTION:
-                SCOPEresolve_types( ( Scope )x );
-                if( is_resolve_failed( ( Scope )x ) ) {
+                SCOPEresolve_types( ( Scope ) ep->data );
+                if( is_resolve_failed( ( Scope ) ep->data ) ) {
                     resolve_failed( s );
                 }
                 break;
@@ -986,6 +975,7 @@ void SCOPEresolve_types( Scope s ) {
 
 /** for each supertype, find the entity it refs to */
 void ENTITYresolve_supertypes( Entity e ) {
+    Symbol *ep;
     Entity ref_entity;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {
@@ -1003,17 +993,18 @@ void ENTITYresolve_supertypes( Entity e ) {
 #endif
 
     LISTdo( e->u.entity->supertype_symbols, sym, Symbol * ) {
-        ref_entity = ( Entity )SCOPEfind( e->superscope, sym->name, SCOPE_FIND_ENTITY );
-        if( !ref_entity ) {
+        ep = SCOPEfind( e->superscope, sym->name, SCOPE_FIND_ENTITY );
+        if( !ep ) {
             ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, sym, sym->name, e->symbol.name );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
-        } else if( DICT_type != OBJ_ENTITY ) {
-            Symbol * newsym = OBJget_symbol( ref_entity, DICT_type );
+        } else if( ep->type != OBJ_ENTITY ) {
+            Symbol * newsym = OBJget_symbol( ep->data, ep->type );
             ERRORreport_with_symbol(SUPERTYPE_RESOLVE, sym, sym->name, newsym->line );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else {
+            ref_entity = ep->data;
             bool found = false;
 
             LISTadd_last( e->u.entity->supertypes, ref_entity );

@@ -61,8 +61,8 @@
 /****************/
 
 #include "alg.h"
-#include "dict.h"
 #include "entity.h"
+#include "hash.h"
 #include "linklist.h"
 
 /***************************/
@@ -91,8 +91,8 @@ struct Schema_ {
      * dictionaries into which are entered renames for each specific
      * object specified in a rename clause (even if it uses the same
      * name */
-    Dictionary refdict;
-    Dictionary usedict;
+    Hash_Table refdict;
+    Hash_Table usedict;
 
     Linked_List use_schemas; /**< lists of schemas that are fully use'd
                               * entries can be 0 if schemas weren't found during RENAMEresolve */
@@ -133,7 +133,7 @@ extern SC_EXPRESS_EXPORT int __SCOPE_search_id;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Variable VARfind( Scope, char *, int );
+extern SC_EXPRESS_EXPORT Variable VARfind( Scope, char * );
 extern SC_EXPRESS_EXPORT Schema   SCHEMAcreate( void );
 extern SC_EXPRESS_EXPORT void     SCHEMAinitialize( void );
 extern SC_EXPRESS_EXPORT void     SCHEMAadd_use( Schema, Symbol *, Symbol *, Symbol * );

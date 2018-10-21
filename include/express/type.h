@@ -129,7 +129,6 @@ typedef enum type_enum  Class;
 /* modules used */
 /****************/
 
-#include "dict.h"
 #include "entity.h"
 #include "expr.h"
 #include "scope.h"

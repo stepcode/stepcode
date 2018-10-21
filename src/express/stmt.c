@@ -173,11 +173,13 @@ Statement ALIAScreate( Scope scope, Variable variable, Linked_List statements ) 
 */
 Scope INCR_CTLcreate( Symbol * control, Expression start,
                       Expression end, Expression increment ) {
+    Symbol sym;
+    
     Scope s = SCOPEcreate_tiny( OBJ_INCREMENT );
     Expression e = EXPcreate_from_symbol( Type_Attribute, control );
     Variable v = VARcreate( e, Type_Number );
-    DICTdefine( s->symbol_table, control->name,
-                v, control, OBJ_VARIABLE );
+    sym = (Symbol) {.name = control->name, .data = v, .type = OBJ_VARIABLE};
+    HASHsearch(s->symbol_table, sym, HASH_INSERT);
     s->u.incr = INCR_new();
     s->u.incr->init = start;
     s->u.incr->end = end;

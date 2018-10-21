@@ -95,15 +95,31 @@ typedef enum { HASH_FIND, HASH_INSERT, HASH_DELETE } Action;
 /* abstractions */
 /****************/
 
-struct Hash_Table_;
+typedef Symbol **Segment;
+
+struct Hash_Table_ {
+    unsigned int    p;              /**< Next bucket to be split  */
+    unsigned int    maxp;           /**< upper bound on p during expansion    */
+    unsigned int    KeyCount;       /**< current # keys   */
+    unsigned int    SegmentCount;   /**< current # segments   */
+    Segment *Directory;
+    unsigned int DirectorySize;
+    unsigned int SegmentSize;
+#ifdef HASH_DEBUG
+    unsigned int HashCollisions;
+#endif    
+};
+
 typedef struct Hash_Table_ *Hash_Table;
 
-typedef struct Hash_Iterator_ {
+struct Hash_Iterator_ {
     Hash_Table table;
     unsigned int hash;
     Symbol *p;
     char type;
-} Hash_Iterator;
+} 
+
+typedef struct Hash_Iterator_ Hash_Iterator;
 
 /********************/
 /* global variables */

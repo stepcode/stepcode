@@ -113,37 +113,56 @@ void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol
 }
 
 void SCHEMAdefine_reference( Schema schema, Rename * r ) {
-    Rename * old = 0;
-    char * name = ( r->nnew ? r->nnew : r->old )->name;
-
+    Rename *old;
+    Symbol e, *ep;
+    Symbol *sym;
+    
     if( !schema->u.schema->refdict ) {
-        schema->u.schema->refdict = DICTcreate( 20 );
-    } else {
-        old = ( Rename * )DICTlookup( schema->u.schema->refdict, name );
-    }
-    if( !old || ( DICT_type != OBJ_RENAME ) || ( old->object != r->object ) ) {
-        DICTdefine( schema->u.schema->refdict, name,
-                    r, r->old, OBJ_RENAME );
+        schema->u.schema->refdict = HASHcreate();
+    } 
+
+    sym = r->nnew ? r->nnew : r->old;
+
+    e = (Symbol) {.name = sym->name, .data = r, .type = OBJ_RENAME};
+    ep = HASHsearch(schema->u.schema->refdict, e, HASH_FIND);
+    old = !ep ? NULL : ep->data;
+    
+    if( !ep || ep->type != OBJ_RENAME || old->object != r->object ) {
+        /* TODO: evaluate difference in behaviour with DICTdefine
+         * if there's already an OBJ_RENAME, then DICTdefine would replace it
+         * - this will instead append another
+         */
+        HASHsearch(schema->u.schema->refdict, e, HASH_INSERT);
     }
 }
 
 void SCHEMAdefine_use( Schema schema, Rename * r ) {
-    Rename * old = 0;
-    char * name = ( r->nnew ? r->nnew : r->old )->name;
+    Rename * old;
+    Symbol *ep, e;
+    Symbol *sym;
 
     if( !schema->u.schema->usedict ) {
-        schema->u.schema->usedict = DICTcreate( 20 );
-    } else {
-        old = ( Rename * )DICTlookup( schema->u.schema->usedict, name );
+        schema->u.schema->usedict = HASHcreate();
     }
-    if( !old || ( DICT_type != OBJ_RENAME ) || ( old->object != r->object ) ) {
-        DICTdefine( schema->u.schema->usedict, name,
-                    r, r->old, OBJ_RENAME );
+    
+    sym = r->nnew ? r->nnew : r->old;
+    e = (Symbol) {.name = sym->name, .data = r, .type = OBJ_RENAME};
+    
+    ep = HASHsearch(schema->u.schema->refdict, e, HASH_FIND);
+    old = !ep ? NULL : ep->data;
+        
+    if( !ep || ep->type != OBJ_RENAME || old->object != r->object ) {
+        /* TODO: evaluate difference in behaviour with DICTdefine
+         * if there's already an OBJ_RENAME, then DICTdefine would replace it
+         * - this will instead append another
+         */
+        HASHsearch(schema->u.schema->usedict, e, HASH_INSERT);
     }
 }
 
 static void SCHEMA_get_entities_use( Scope scope, Linked_List result ) {
-    DictionaryEntry de;
+    Hash_Iterator it;
+    Symbol *ep;
     Rename * rename;
 
     if( scope->search_id == __SCOPE_search_id ) {
@@ -159,9 +178,10 @@ static void SCHEMA_get_entities_use( Scope scope, Linked_List result ) {
 
     /* partially USE'd schema */
     if( scope->u.schema->usedict ) {
-        DICTdo_init( scope->u.schema->usedict, &de, '*' );
-        while( 0 != ( rename = ( Rename * )DICTdo( &de ) ) ) {
-            LISTadd_last( result, rename->object );
+        HASHdo_init(scope->u.schema->usedict, &it, '*');
+        while ( (ep = HASHdo(&it)) ) {
+            rename = ep->data;
+            LISTadd_last(result, rename->object);            
         }
     }
 }
@@ -180,7 +200,8 @@ Linked_List SCHEMAget_entities_use( Scope scope ) {
 /** return ref'd entities */
 void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
     Rename * rename;
-    DictionaryEntry de;
+    Hash_Iterator it;
+    Symbol *ep;
 
     if( scope->search_id == __SCOPE_search_id ) {
         return;
@@ -196,11 +217,10 @@ void SCHEMA_get_entities_ref( Scope scope, Linked_List result ) {
     LISTod
 
     /* partially REF'd schema */
-    DICTdo_init( scope->u.schema->refdict, &de, '*' );
-    while( 0 != ( rename = ( Rename * )DICTdo( &de ) ) ) {
-        if( DICT_type == OBJ_ENTITY ) {
-            LISTadd_last( result, rename->object );
-        }
+    HASHdo_init(scope->u.schema->refdict, &it, OBJ_ENTITY);
+    while ( (ep = HASHdo(&it)) ) {
+        rename = ep->data;
+        LISTadd_last(result, rename->object);
     }
 }
 
@@ -219,31 +239,30 @@ Linked_List SCHEMAget_entities_ref( Scope scope ) {
  * look up an attribute reference
  * if strict false, anything can be returned, not just attributes
  */
-Variable VARfind( Scope scope, char * name, int strict ) {
+Variable VARfind( Scope scope, char * name ) {
     Variable result;
+    Symbol *ep, e;
 
     /* first look up locally */
     switch( scope->type ) {
         case OBJ_ENTITY:
-            result = ENTITYfind_inherited_attribute( scope, name, 0 );
-            if( result ) {
-                if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    fprintf( stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n" );
-                }
+            result = ENTITYfind_inherited_attribute(scope, name, NULL);
+            /* strict is checked when parsing */
+            if (result)
                 return result;
-            }
             break;
         case OBJ_INCREMENT:
         case OBJ_QUERY:
         case OBJ_ALIAS:
-            result = ( Variable )DICTlookup( scope->symbol_table, name );
-            if( result ) {
-                if( strict && ( DICT_type != OBJ_VARIABLE ) ) {
-                    fprintf( stderr, "ERROR: strict && ( DICT_type != OBJ_VARIABLE )\n" );
-                }
-                return result;
+            e = (Symbol) {.name = name, .type = OBJ_VARIABLE};
+            ep = HASHsearch(scope->symbol_table, e, HASH_FIND);
+            /* strict is checked when parsing */
+            if (ep) {
+                result = ep->data;
+            } else {
+                result = VARfind( scope->superscope, name );
             }
-            return( VARfind( scope->superscope, name, strict ) );
+            return result;
     }
     return 0;
 }

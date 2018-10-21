@@ -34,6 +34,7 @@
 
 #include "express/hash.h"
 #include "hash_impl.h"
+#include "symbol_impl.h"
 
 #define SEGMENT_SZ       32 /* deliberately small segment size! */
 #define SEGMENT_WIDTH     5 /* log2(SEGMENT_SZ)	*/
@@ -41,40 +42,19 @@
 #define PRIME1           37
 #define PRIME2      1048583
 
-/******************************/
-/* macro function definitions */
-/******************************/
-#ifndef HASH_TESTING
-#  define HASH_Table_new()    (struct Hash_Table_ *)ALLOC_new(&HASH_Table_fl)
-#  define HASH_Table_destroy(x)   ALLOC_destroy(&HASH_Table_fl,(Freelist *)x)
-#else
-#  define HASH_Table_new()      calloc(1, sizeof(struct Hash_Table_))
-#  define HASH_Table_destroy(x) free(x)
-#  define SYMBOL_new()          calloc(1, sizeof(Symbol))
-#  define SYMBOL_destroy(x)     free(x)
-#endif
+Hash_Table
+HASH_Table_new() {
+    return ALLOC_new(&HASH_Table_fl);
+}
 
-typedef Symbol **Segment;
-
-struct Hash_Table_ {
-    unsigned int    p;      /**< Next bucket to be split  */
-    unsigned int    maxp;   /**< upper bound on p during expansion    */
-    unsigned int    KeyCount;       /**< current # keys   */
-    unsigned int    SegmentCount;   /**< current # segments   */
-    Segment *Directory;
-    unsigned int DirectorySize;
-    unsigned int SegmentSize;
-#ifdef HASH_DEBUG
-    unsigned int HashCollisions;
-#endif    
-};
-
-#ifndef HASH_TESTING
+void
+HASH_Table_destroy(Hash_Table x) {
+    ALLOC_destroy(&HASH_Table_fl,(Freelist *)(Generic)x);
+}
 
 void
 HASHinitialize() {
 }
-#endif
 
 Hash_Table
 HASHcreate()

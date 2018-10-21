@@ -2,7 +2,7 @@
 #include "express/type.h"
 #include "express/expr.h"
 
-#include "express/dict.h"
+#include "symbol_impl.h"
 
 /* TODO: use enum? */
 Type Type_Bad;
@@ -137,14 +137,14 @@ void FACTORYinitialize() {
 /** Create and return an empty scope inside a parent scope. */
 Scope SCOPEcreate( char type ) {
     Scope d = SCOPE_new();
-    d->symbol_table = DICTcreate( 50 );
+    d->symbol_table = HASHcreate();
     d->type = type;
     return d;
 }
 
 Scope SCOPEcreate_tiny( char type ) {
     Scope d = SCOPE_new();
-    d->symbol_table = DICTcreate( 1 );
+    d->symbol_table = HASHcreate();
     d->type = type;
     return d;
 }
@@ -166,7 +166,7 @@ Scope SCOPEcreate_nostab( char type ) {
 /** Create and return a schema. */
 Schema SCHEMAcreate( void ) {
     Scope s = SCOPEcreate( OBJ_SCHEMA );
-    s->enum_table = DICTcreate(50);
+    s->enum_table = HASHcreate();
     s->u.schema = SCHEMA_new();
     return s;
 }
@@ -174,13 +174,15 @@ Schema SCHEMAcreate( void ) {
 /**
  * create a type with no symbol table
  */
-Type TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
+Type TYPEcreate_nostab( Symbol *symbol, Scope scope, char objtype ) {
+    Symbol e;
     Type t = SCOPEcreate_nostab( OBJ_TYPE );
     TypeHead th = TYPEHEAD_new();
 
     t->u.type = th;
     t->symbol = *symbol;
-    DICTdefine( scope->symbol_table, symbol->name, t, &t->symbol, objtype );
+    e = (Symbol) {.name = symbol->name, .data = t, .type = objtype};
+    HASHsearch( scope->symbol_table, e, HASH_INSERT );
 
     return t;
 }
@@ -367,7 +369,9 @@ Expression QUERYcreate( Symbol * local, Expression aggregate ) {
 
     Variable v = VARcreate( e2, Type_Attribute );
 
-    DICTdefine( s->symbol_table, local->name, v, &e2->symbol, OBJ_VARIABLE );
+    HASHsearch( s->symbol_table,
+                (Symbol) {.name = local->name, .data = v, .type = OBJ_VARIABLE},
+                HASH_INSERT );
     e->u.query = QUERY_new();
     e->u.query->scope = s;
     e->u.query->local = v;

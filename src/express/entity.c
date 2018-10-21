@@ -185,6 +185,7 @@ struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name,
 
 /** find a (possibly inherited) attribute */
 Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down, struct Symbol_ ** where ) {
+    Symbol *ep;
     Variable result;
 
     /* avoid searching scopes that we've already searched */
@@ -198,8 +199,9 @@ Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down
     entity->search_id = __SCOPE_search_id;
 
     /* first look locally */
-    result = ( Variable )DICTlookup( entity->symbol_table, name );
-    if( result ) {
+    ep = HASHsearch(entity->symbol_table, (Symbol) {.name = name}, HASH_FIND);
+    if (ep) {
+        result = ep->data;
         if( down && *down && where ) {
             *where = &entity->symbol;
         }
@@ -246,6 +248,7 @@ Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
  * report errors as appropriate
  */
 Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref ) {
+    Symbol *ep;
     Entity ref_entity;
     Variable attr;
     struct Symbol_ *where;
@@ -257,13 +260,14 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
             ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, grp_ref, grp_ref->name, e->symbol.name );
             return 0;
         }
-        attr = ( Variable )DICTlookup( ref_entity->symbol_table,
-                                       attr_ref->name );
-        if( !attr ) {
+        ep = HASHsearch(ref_entity->symbol_table, (Symbol) {.name = attr_ref->name}, HASH_FIND);
+        if (!ep) {
             ERRORreport_with_symbol(UNKNOWN_ATTR_IN_ENTITY, attr_ref, attr_ref->name,
                                      ref_entity->symbol.name );
             /*      resolve_failed(e);*/
+            return 0;
         }
+        attr = ep->data;
     } else {
         /* no entity provided, look through supertype chain */
         where = NULL;
@@ -301,19 +305,23 @@ void ENTITYinitialize() {
 ** Add an attribute to an entity.
 */
 void ENTITYadd_attribute( Entity entity, Variable attr ) {
+    Symbol e, *ep;
     int rc;
 
+    memcpy(&e, &attr->name->symbol, sizeof(Symbol));
+    e.data = attr;
+    e.type = OBJ_VARIABLE;
+    
     if( attr->name->type->u.type->body->type != op_ ) {
         /* simple id */
-        rc = DICTdefine( entity->symbol_table, attr->name->symbol.name,
-                         attr, &attr->name->symbol, OBJ_VARIABLE );
+        ep = HASHsearch(entity->symbol_table, e, HASH_INSERT);
     } else {
         /* SELF\ENTITY.SIMPLE_ID */
-        rc = DICTdefine( entity->symbol_table, attr->name->e.op2->symbol.name,
-                         attr, &attr->name->symbol, OBJ_VARIABLE );
+        e.name = attr->name->e.op2->symbol.name;
+        ep = HASHsearch( entity->symbol_table, e, HASH_INSERT);
     }
-    if( rc == 0 ) {
-        LISTadd_last( entity->u.entity->attributes, attr );
+    if( !ep ) {
+        LISTadd_last( entity->u.entity->attributes, ( Generic )attr );
         VARput_offset( attr, entity->u.entity->attribute_count );
         entity->u.entity->attribute_count++;
     }

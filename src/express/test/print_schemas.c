@@ -13,16 +13,17 @@
 #  include <unistd.h>
 #endif
 #include "express/express.h"
+#include "express/hash.h"
 
 void
 print_schemas( Express model ) {
-    DictionaryEntry de;
+    Hash_Iterator it;
     Schema s;
 
     printf( "File: %s\n  ", model->u.express->filename );
 
-    DICTdo_init( model->symbol_table, &de, '*' );
-    while( 0 != ( s = (Schema) DICTdo( &de ) ) ) {
+    HASHdo_init( model->symbol_table, &it, OBJ_ANY );
+    while((s = HASHdo(&it))) {
         printf( "%s", s->symbol.name );
     }
     printf( "\n" );

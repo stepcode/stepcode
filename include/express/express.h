@@ -62,7 +62,6 @@
 #include "alg.h"
 #include "schema.h"
 #include "lexact.h"
-#include "dict.h"
 
 /************/
 /* typedefs */
@@ -102,7 +101,7 @@ extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
 extern SC_EXPRESS_EXPORT int ( *EXPRESSgetopt )( int, char * );
 extern SC_EXPRESS_EXPORT bool    EXPRESSignore_duplicate_schemas;
 
-extern SC_EXPRESS_EXPORT Dictionary EXPRESSbuiltins;  /* procedures/functions */
+extern SC_EXPRESS_EXPORT Hash_Table EXPRESSbuiltins;  /* procedures/functions */
 
 extern SC_EXPRESS_EXPORT struct Scope_ * FUNC_NVL;
 extern SC_EXPRESS_EXPORT struct Scope_ * FUNC_USEDIN;
