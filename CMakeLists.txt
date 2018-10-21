@@ -123,6 +123,7 @@ include_directories(
   ${SC_BINARY_DIR}/include
  )
 
+add_subdirectory(src/auxlib)
 add_subdirectory(src/base)
 add_subdirectory(src/express)
 add_subdirectory(src/exppp)

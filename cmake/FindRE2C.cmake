@@ -122,6 +122,7 @@ if(NOT COMMAND RE2C_TARGET)
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         )
 
+        # TODO: check, for generated sources headers should be included in outputs
         set(RE2C_${Name}_DEFINED TRUE)    
         set(RE2C_${Name}_OUTPUTS ${RE2COutput})
         if("${RE2C_TARGET_ARG_DEFINES_FILE}" STREQUAL "")

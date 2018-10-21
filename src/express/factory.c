@@ -214,7 +214,6 @@ Type TYPEcreate_from_body_anonymously( TypeBody tb ) {
     t->u.type = th;
     t->u.type->body = tb;
     t->symbol.name = 0;
-    SYMBOLset( t );
     return t;
 }
 
@@ -224,17 +223,13 @@ TypeBody TYPEBODYcreate( enum type_enum type ) {
     return tb;
 }
 
-Symbol * SYMBOLcreate( char * name, int ref_typ, int line, const char * filename ) {
+Symbol * SYMBOLcreate( char * name, int ref_tok, int line, const char * filename ) {
     Symbol * sym = SYMBOL_new();
     sym->name = name;
-    sym->ref_typ = ref_typ;
+    sym->ref_tok = ref_tok;
     sym->line = line;
-    sym->filename = filename; /* NOTE this used the global 'current_filename',
-                               * instead of 'filename'. This func is only
-                               * called in two places, and both calls use
-                               * 'current_filename'. Changed this to avoid
-                               * potential future headaches. (MAP, Jan 12)
-                               */
+    sym->filename = filename;
+    
     return sym;
 }
 
@@ -279,7 +274,6 @@ Variable VARcreate( Expression name, Type type ) {
 Expression EXPcreate( Type type ) {
     Expression e;
     e = EXP_new();
-    SYMBOLset( e );
     e->type = type;
     e->return_type = Type_Unknown;
     return( e );
@@ -292,7 +286,6 @@ Expression EXPcreate( Type type ) {
 Expression EXPcreate_simple( Type type ) {
     Expression e;
     e = EXP_new();
-    SYMBOLset( e );
     e->type = e->return_type = type;
     return( e );
 }

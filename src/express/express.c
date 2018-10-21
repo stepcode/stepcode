@@ -81,18 +81,21 @@
 #include "express/express.h"
 #include "express/resolve.h"
 #include "express/factory.h"
-#include "stack.h"
 #include "express/scope.h"
+#include "express/exp_kw.h"
+
+#include "stack.h"
 #include "token_type.h"
+#include "lexsupport.h"
 #include "expparse.h"
 #include "expscan.h"
-#include "parse_data.h"
-#include "express/lexact.h"
 
+#if 0
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
 void Parse( void * parser, int tokenID, YYSTYPE data, parse_data_t parseData );
 void ParseTrace(FILE *TraceFILE, char *zTracePrompt);
+#endif
 
 Linked_List EXPRESS_path;
 int EXPRESSpass;
@@ -115,8 +118,9 @@ Hash_Table EXPRESSbuiltins; /* procedures/functions */
 
 struct Scope_ * FUNC_NVL;
 struct Scope_ * FUNC_USEDIN;
+#if 0
 extern Express yyexpresult;
-
+#endif
 
 extern Linked_List PARSEnew_schemas;
 void SCOPEinitialize( void );
@@ -279,8 +283,6 @@ void EXPRESSinitialize( void ) {
     /*    LOOP_CTLinitialize();*/
     STMTinitialize();
 
-    SCANinitialize();
-   
     BUILTINSinitialize();
 
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
@@ -294,7 +296,6 @@ void EXPRESScleanup( void ) {
     RESOLVEcleanup();
     TYPEcleanup();
     EXPcleanup();
-    SCANcleanup();
     LISTcleanup();
 }
 
@@ -304,8 +305,10 @@ void EXPRESScleanup( void ) {
 ** Parse an Express source file into the Working Form.
 */
 void EXPRESSparse( Express model, FILE * fp, char * filename ) {
+#if 0
     yyexpresult = model;
-
+#endif
+    
     if( !fp ) {
         fp = fopen( filename, "r" );
     }
@@ -345,7 +348,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
 
         /* get new copy of filename to avoid being smashed */
         /* by subsequent lookups on EXPRESS_path */
-        model->u.express->filename = SCANstrdup( filename );
+        model->u.express->filename = strdup( filename );
         filename = model->u.express->filename;
     }
 
@@ -353,6 +356,57 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
     PARSERrun( filename, model->u.express->file = fp );
 }
 
+static Express PARSERrun( char * filename, FILE * fp ) {
+    int tok;
+    struct YYSTYPE yylval;
+    struct YYSTATE *pState;
+    void *pParser, *pScanner;
+
+    pScanner = yylexAlloc();
+    pState = yystateAlloc();
+    pParser = yyparseAlloc(sc_malloc);
+    
+    if( print_objects_while_running & OBJ_PASS_BITS ) {
+        fprintf( stderr, "parse (pass %d)\n", EXPRESSpass );
+    }
+
+    if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
+        fprintf( stderr, "parse: %s (schema file)\n", filename );
+    }
+    
+    yylexInit(pScanner, pState, fp);
+    
+    yyparseTrace(stderr, "dbg: ");
+    while ((tok = yylex(pScanner, &yylval))) {
+        yyparse(pParser, tok, &yylval, pState);
+    }
+    yyparse(pParser, 0, &yylval, pState);
+
+#if 0
+    /* want 0 on success, 1 on invalid input, 2 on memory exhaustion */
+    if( yyerrstatus != 0 ) {
+        fprintf( stderr, ">> Bailing! (yyerrstatus = %d)\n", yyerrstatus );
+        ERRORreport( ERROR_bail_out );
+        /* free model and model->u.express */
+        return 0;
+    }
+    EXPRESSpass = 1;
+    
+#endif
+
+    /* TODO: yylexFree(pScanner) */
+    yyparseFree(pParser, sc_free);
+    /*
+    yylexFree(pScanner);
+    yystateFree(pState);
+    */
+
+#if 0
+    return yyexpresult;
+#endif
+}
+
+#if 0
 /* TODO LEMON ought to put this in expparse.h */
 void parserInitState();
 
@@ -401,6 +455,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
 
     return yyexpresult;
 }
+#endif
 
 /**
  * find the final object to which a rename points
@@ -558,7 +613,7 @@ Schema EXPRESSfind_schema( Hash_Table modeldict, char * name ) {
                      EXPRESSpass, dir->full );
         }
 
-        express = PARSERrun( SCANstrdup( dir->full ), fp );
+        express = PARSERrun( strdup( dir->full ), fp );
         if( express ) {
             ep = HASHsearch(modeldict, (Symbol) {.name = name}, HASH_FIND);
             if( ep ) {

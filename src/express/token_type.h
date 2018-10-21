@@ -52,31 +52,39 @@ struct qualifier {
 };
 
 /** simple (single-valued) node types */
-typedef union YYSTYPE {
-    Binary           binary;
-    Case_Item        case_item;
-    Expression       expression;
-    Integer          iVal;
-    Linked_List      list;
-    Logical          logical;
-    Op_Code          op_code;
-    Qualified_Attr * qualified_attr;
-    Real             rVal;
-    Statement        statement;
-    Symbol         * symbol;
-    char           * string;
-    Type             type;
-    TypeBody         typebody;
-    Variable         variable;
-    Where            where;
 
-    struct type_either   type_either;
-    struct type_flags    type_flags;
-    struct entity_body   entity_body;
-    struct subsuper_decl subsuper_decl;
-    struct subtypes      subtypes;
-    struct upper_lower   upper_lower;
-    struct qualifier     qualifier;
-    unsigned int val;
+typedef struct YYSTYPE {
+    int scope_idx;
+        
+    union {
+        Binary           binary;
+        Case_Item        case_item;
+        Expression       expression;
+        Integer          iVal;
+        Linked_List      list;
+        Logical          logical;
+        Op_Code          op_code;
+        Qualified_Attr * qualified_attr;
+        Real             rVal;
+        Statement        statement;
+        Symbol         * symbol;
+        char           * string;
+    /* TODO: remove after parser rebuild / reconsider */
+    char *cstr;
+        Type             type;
+        TypeBody         typebody;
+        Variable         variable;
+        Where            where;
+
+        /* TODO: can probably have one integrated structure */
+        struct type_either   type_either;
+        struct type_flags    type_flags;
+        struct entity_body   entity_body;
+        struct subsuper_decl subsuper_decl;
+        struct subtypes      subtypes;
+        struct upper_lower   upper_lower;
+        struct qualifier     qualifier;
+        unsigned int val;
+    };
 } YYSTYPE;
 #endif

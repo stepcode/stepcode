@@ -390,9 +390,12 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
     Entity ent_ref;
     int i = UNRESOLVED;
 
+    /* TODO: TYPEis... should be known by the parser */
     if( !expr ) {
-        return ( RESOLVED );
-    } else if( TYPEis_expression( expr->type ) ) {
+        return RESOLVED;
+    }
+    
+    if( TYPEis_expression( expr->type ) ) {
         i = ENTITYresolve_subtype_expression( expr->e.op1, ent, flat );
         i |= ENTITYresolve_subtype_expression( expr->e.op2, ent, flat );
     } else if( TYPEis_oneof( expr->type ) ) {
@@ -1194,8 +1197,10 @@ int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     }
 }
 
+#if 0
 struct tag * TAGcreate_tags() {
     extern int tag_count;
 
     return( ( struct tag * ) sc_calloc( tag_count, sizeof( struct tag ) ) );
 }
+#endif

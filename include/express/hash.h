@@ -117,7 +117,7 @@ struct Hash_Iterator_ {
     unsigned int hash;
     Symbol *p;
     char type;
-} 
+};
 
 typedef struct Hash_Iterator_ Hash_Iterator;
 

@@ -26,7 +26,7 @@ void populateAttrList( oaList & list, Entity ent ) {
     LISTdo( ent->u.entity->attributes, attr, Variable ) {
         bool unique = true;
         for( unsigned int i = attrCount; i < list.size(); i++ ) {
-            if( 0 == strcasecmp( attr->name->symbol.name, list[i]->attr->name->symbol.name ) ) {
+            if(!strcasecmp( (char *) attr->name->symbol.name, (char *) list[i]->attr->name->symbol.name ) ) {
                 // an attr by this name exists in a supertype
                 // originally printed a warning here, but that was misleading - they have more uses than I thought
                 unique = false;
@@ -56,8 +56,8 @@ void dedupList( oaList & list ) {
     oaList::iterator it, jt;
     for( it = list.begin(); it != list.end(); it++ ) {
         for( jt = it + 1; jt != list.end(); jt++ ) {
-            if( ( 0 == strcasecmp( ( * it )->attr->name->symbol.name, ( * jt )->attr->name->symbol.name ) ) &&
-                ( 0 == strcasecmp( ( * it )->creator->symbol.name, ( * jt )->creator->symbol.name ) ) ) {
+            if( ( !strcasecmp( (char *) ( * it )->attr->name->symbol.name, (char *) ( * jt )->attr->name->symbol.name ) ) &&
+                ( !strcasecmp( (char *) ( * it )->creator->symbol.name, (char *) ( * jt )->creator->symbol.name ) ) ) {
                 //fprintf( stderr, "erasing %s created by %s\n", ( * jt )->attr->name->symbol.name, ( * jt )->creator->symbol.name );
                 jt--;
                 list.erase( jt + 1 );

@@ -6,6 +6,144 @@
 %token_type { struct YYSTYPE * }
 %stack_size 0
 
+/* type definitions */
+%type case_action { Case_Item }
+%type case_otherwise { Case_Item }
+
+%type case_action_list { Linked_List }
+%type case_label_list { Linked_List }
+
+%type expression { Expression }
+
+/************** OLD type definitions ***************/
+/*
+%type entity_body            { struct entity_body }
+
+%type aggregate_init_element        { Expression }
+%type aggregate_initializer        { Expression }
+%type assignable            { Expression }
+%type attribute_decl            { Expression }
+%type by_expression            { Expression }
+%type constant                { Expression }
+
+%type function_call            { Expression }
+%type general_ref            { Expression }
+%type group_ref                { Expression }
+%type identifier            { Expression }
+%type initializer            { Expression }
+%type interval                { Expression }
+%type literal                { Expression }
+%type local_initializer            { Expression }
+%type precision_spec            { Expression }
+%type query_expression            { Expression }
+%type query_start            { Expression }
+%type simple_expression            { Expression }
+%type unary_expression            { Expression }
+%type supertype_expression        { Expression }
+%type until_control            { Expression }
+%type while_control            { Expression }
+
+%type function_header            { Integer }
+%type fh_lineno                { Integer }
+%type rule_header            { Integer }
+%type rh_start                { Integer }
+%type rh_get_line            { Integer }
+%type procedure_header            { Integer }
+%type ph_get_line            { Integer }
+
+%type action_body            { Linked_List }
+%type actual_parameters            { Linked_List }
+%type aggregate_init_body        { Linked_List }
+%type explicit_attr_list        { Linked_List }
+%type case_block            { Linked_List }
+%type case_labels            { Linked_List }
+%type where_clause_list            { Linked_List }
+%type derive_decl            { Linked_List }
+%type explicit_attribute        { Linked_List }
+%type expression_list            { Linked_List }
+%type formal_parameter            { Linked_List }
+%type formal_parameter_list        { Linked_List }
+%type formal_parameter_rep        { Linked_List }
+%type id_list                { Linked_List }
+%type defined_type_list            { Linked_List }
+%type nested_id_list            { Linked_List }
+%type statement_rep            { Linked_List }
+%type subtype_decl            { Linked_List }
+%type where_rule            { Linked_List }
+%type where_rule_OPT            { Linked_List }
+%type supertype_expression_list        { Linked_List }
+%type labelled_attrib_list_list        { Linked_List }
+%type labelled_attrib_list        { Linked_List }
+%type inverse_attr_list            { Linked_List }
+
+%type inverse_clause            { Linked_List }
+%type attribute_decl_list        { Linked_List }
+%type derived_attribute_rep        { Linked_List }
+%type unique_clause            { Linked_List }
+%type rule_formal_parameter_list    { Linked_List }
+%type qualified_attr_list        { Linked_List }
+
+%type rel_op            { Op_Code }
+
+%type optional_or_unique    { struct type_flags }
+%type optional_fixed        { struct type_flags }
+%type optional            { struct type_flags }
+%type var            { struct type_flags }
+%type unique            { struct type_flags }
+
+%type qualified_attr        { Expression }
+
+%type qualifier            { struct qualifier }
+
+%type alias_statement        { Statement }
+%type assignment_statement    { Statement }
+%type case_statement        { Statement }
+%type compound_statement    { Statement }
+%type escape_statement        { Statement }
+%type if_statement        { Statement }
+%type proc_call_statement    { Statement }
+%type repeat_statement        { Statement }
+%type return_statement        { Statement }
+%type skip_statement        { Statement }
+%type statement            { Statement }
+
+%type subsuper_decl        { struct subsuper_decl }
+
+%type supertype_decl        { struct subtypes }
+%type supertype_factor        { struct subtypes }
+
+%type function_id        { Symbol* }
+%type procedure_id        { Symbol* }
+
+%type attribute_type        { Type }
+%type defined_type        { Type }
+%type parameter_type        { Type }
+%type generic_type        { Type }
+
+%type basic_type        { TypeBody }
+%type select_type        { TypeBody }
+%type aggregate_type        { TypeBody }
+%type aggregation_type        { TypeBody }
+%type array_type        { TypeBody }
+%type bag_type            { TypeBody }
+%type conformant_aggregation    { TypeBody }
+%type list_type            { TypeBody }
+%type set_type            { TypeBody }
+
+%type set_or_bag_of_entity    { struct type_either }
+%type type            { struct type_either }
+
+%type cardinality_op        { struct upper_lower }
+%type bound_spec        { struct upper_lower }
+
+%type inverse_attr        { Variable }
+%type derived_attribute        { Variable }
+%type rule_formal_parameter    { Variable }
+
+%type where_clause        { Where }
+*/
+/************ END OLD type definitions *************/
+
 /* tokens not in the grammar */
 %nonassoc T_INVALID T_DOCROOT T_RULE_REF T_RULE_LABEL_REF .
 
@@ -27,6 +165,8 @@
 
 #include "bstrlib.h"
 #include "lexsupport.h"
+
+Linked_List PARSEnew_schemas;
 
 }
 
@@ -162,17 +302,19 @@ built_in_procedure ::= T_INSERT .
 built_in_procedure ::= T_REMOVE .
 
 case_action ::= case_label_list T_COLON stmt .
+
+case_otherwise ::= T_OTHERWISE T_COLON stmt .
+case_otherwise ::= .
     
 case_label_list ::= case_label_list T_COMMA case_label .
 case_label_list ::= case_label .
 
 case_label ::= expression .
 
-case_stmt ::= T_CASE selector T_OF case_action_list T_OTHERWISE T_COLON stmt T_END_CASE T_SEMICOLON .
-case_stmt ::= T_CASE selector T_OF case_action_list T_END_CASE T_SEMICOLON .
-
 case_action_list ::= case_action_list case_action .
 case_action_list ::= .
+
+case_stmt ::= T_CASE selector T_OF case_action_list case_otherwise T_END_CASE T_SEMICOLON .
 
 compound_stmt ::= T_BEGIN stmt_list T_END T_SEMICOLON .
 

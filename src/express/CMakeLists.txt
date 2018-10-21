@@ -2,6 +2,7 @@ include_directories(
   ${CMAKE_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${SC_SOURCE_DIR}/src/base
+  ${SC_SOURCE_DIR}/src/auxlib
   )
 
 # Set up the information we need to feed the generated source management
@@ -166,7 +167,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
   endif()
 endif()
 
-SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})
+SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base auxlib ${SC_EXEC_NOINSTALL})
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)

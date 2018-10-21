@@ -48,7 +48,6 @@ Statement STATEMENT_SKIP = STATEMENT_NULL;
 Statement STMTcreate( int type ) {
     Statement s;
     s = STMT_new();
-    SYMBOLset( s );
     s->type = type;
     return s;
 }

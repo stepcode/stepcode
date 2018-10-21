@@ -139,6 +139,7 @@ if(NOT COMMAND LEMON_TARGET)
     )
     
     # set the return values
+    # TODO: for generated sources even headers should be target dependencies
     set(LEMON_${Name}_DEFINED TRUE)
     set(LEMON_${Name}_OUTPUT_HEADER "${CMAKE_CURRENT_BINARY_DIR}/${_out_hdr_file}")
     set(LEMON_${Name}_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}")

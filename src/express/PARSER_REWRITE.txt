@@ -30,14 +30,20 @@ Requirements
 RE2C - versions before 1.0 have significant bugs, I used 1.0.3 - not the version in BRL-CAD.
 Lemon - I would guess any recent version would work (I haven't tested yet).
 
-building
+When I get a moment I'll add an equivalently named branch in the baffledCitrus repo.
 
-$ re2c -W -Wno-match-empty-string -r -c --tags -t expscan.h -o expscan.c expscan.l
-$ lemon -p -c expparser.y 
+Build Instructions
+==================
 
-compile bstrlib.o, lexsupport.o and the above outputs
+NOTE: currently no generators are supported!
 
-a main is defined in expparser.y for the moment.
+configure using cmake
+EXPRESS_ONLY - set ON
+GENERATORS - turn all generators OFF
+DEBUG - set appropriate debug flags for your platform
+TESTING - enable tests
 
-./test some/express/file.exp
+you can check for parse errors by running check-express
+
+./check-express some/express/file.exp
 
