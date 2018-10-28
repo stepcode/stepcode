@@ -148,7 +148,7 @@ void SCHEMAdefine_use( Schema schema, Rename * r ) {
     sym = r->nnew ? r->nnew : r->old;
     e = (Symbol) {.name = sym->name, .data = r, .type = OBJ_RENAME};
     
-    ep = HASHsearch(schema->u.schema->refdict, e, HASH_FIND);
+    ep = HASHsearch(schema->u.schema->usedict, e, HASH_FIND);
     old = !ep ? NULL : ep->data;
         
     if( !ep || ep->type != OBJ_RENAME || old->object != r->object ) {
