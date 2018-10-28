@@ -33,15 +33,6 @@
  */
 
 #include "express/symbol.h"
-#include "symbol_impl.h"
-
-struct Symbol_ *SYMBOL_new() {
-    return ALLOC_new(&SYMBOL_fl);
-}
-
-void SYMBOL_destroy(struct Symbol_ *x) {
-    ALLOC_destroy(&SYMBOL_fl,(Freelist *)(Generic)x);
-}
 
 /** Initialize the Symbol module */
 void SYMBOLinitialize( void ) {

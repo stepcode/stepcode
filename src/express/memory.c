@@ -7,6 +7,8 @@
 #include "express/schema.h"
 #include "express/type.h"
 
+#include "symbol_impl.h"
+
 struct freelist_head HASH_Table_fl;
 
 struct freelist_head LINK_fl;
@@ -97,4 +99,13 @@ void MEMORYinitialize() {
     ALLOCinitialize( &INCR_fl, sizeof( struct Increment_ ), 100, 30 );
 
 }
+
+struct Symbol_ *SYMBOL_new() {
+    return ALLOC_new(&SYMBOL_fl);
+}
+
+void SYMBOL_destroy(struct Symbol_ *x) {
+    ALLOC_destroy(&SYMBOL_fl,(Freelist *)(Generic)x);
+}
+
 
