@@ -239,30 +239,29 @@ Linked_List SCHEMAget_entities_ref( Scope scope ) {
  * look up an attribute reference
  * if strict false, anything can be returned, not just attributes
  */
-Variable VARfind( Scope scope, char * name ) {
+Symbol *VARfind( Scope scope, char * name ) {
     Variable result;
-    Symbol *ep, e;
+    Symbol *ep;
 
     /* first look up locally */
     switch( scope->type ) {
         case OBJ_ENTITY:
-            result = ENTITYfind_inherited_attribute(scope, name, NULL);
+            ep = ENTITYfind_inherited_attribute(scope, name, NULL);
             /* strict is checked when parsing */
-            if (result)
-                return result;
+            if (ep)
+                return ep;
             break;
         case OBJ_INCREMENT:
         case OBJ_QUERY:
         case OBJ_ALIAS:
-            e = (Symbol) {.name = name, .type = OBJ_VARIABLE};
-            ep = HASHsearch(scope->symbol_table, e, HASH_FIND);
+            ep = HASHsearch(scope->symbol_table, (Symbol) {.name = name, .type = OBJ_VARIABLE}, HASH_FIND);
             /* strict is checked when parsing */
-            if (ep) {
-                result = ep->data;
-            } else {
-                result = VARfind( scope->superscope, name );
-            }
-            return result;
+            if (ep)
+                return ep;
+            
+            ep = VARfind( scope->superscope, name );
+            if (ep)
+                return ep;
     }
-    return 0;
+    return NULL;
 }

@@ -464,58 +464,50 @@ static Express PARSERrun( char * filename, FILE * fp ) {
  *
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
-static void * SCOPEfind_for_rename( Scope schema, char * name ) {
+static Symbol *SCOPEfind_for_rename( Scope schema, char * name ) {
     Symbol *ep;
-    void *result;
-    Rename * rename;
 
     /* object can only appear in top level symbol table */
     /* OR in another rename clause */
-
     ep = HASHsearch(schema->symbol_table, (Symbol) {.name = name}, HASH_FIND);
     if( ep ) {
-        return ep->data;
+        return ep;
     }
 
     /* Occurs in a fully USE'd schema? */
     LISTdo( schema->u.schema->use_schemas, use_schema, Schema ) {
         /* follow chain'd USEs */
-        result = SCOPEfind_for_rename( use_schema, name );
-        if( result ) {
-            return( result );
+        ep = SCOPEfind_for_rename( use_schema, name );
+        if (ep) {
+            return ep;
         }
     } LISTod;
 
     /* Occurs in a partially USE'd schema? */
     ep = HASHsearch(schema->u.schema->usedict, (Symbol) {.name = name}, HASH_FIND);
     if( ep ) {
-        rename = ep->data;
-        RENAMEresolve( rename, schema );
-/* TODO: why is this required? (could return rename directly?)
-        DICT_type = rename->type;
-        */
-        return rename->object;
+        RENAMEresolve( ep->data, schema );
+        return ep;
     }
 
     LISTdo( schema->u.schema->uselist, r, Rename * )
     if( !strcmp( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
         RENAMEresolve( r, schema );
-/* TODO; why is this required? (could return rename directly?)
-        DICT_type = r->type;
-        */
-        return r->object;
+        ep = SCOPEfind_for_rename( r->schema, r->old->name );
+        if (ep) {
+            return ep;
+        }
     }
     LISTod;
 
     /* we are searching for an object to be interfaced from this schema. */
     /* therefore, we *never* want to look at things which are REFERENCE'd */
     /* *into* the current schema.  -snc */
-
-    return 0;
+    return NULL;
 }
 
 void RENAMEresolve( Rename * r, Schema s ) {
-    void *remote;
+    Symbol *remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
     if( r->object ) {
@@ -535,15 +527,13 @@ void RENAMEresolve( Rename * r, Schema s ) {
     resolve_in_progress_raw( r->old );
 
     remote = SCOPEfind_for_rename( r->schema, r->old->name );
-    if( remote == 0 ) {
+    if (!remote) {
         ERRORreport_with_symbol( REF_NONEXISTENT, r->old,
                                  r->old->name, r->schema->symbol.name );
         resolve_failed_raw( r->old );
     } else {
-        r->object = remote;
-/* TODO: why is this required? 
-        r->type = DICT_type;
-*/
+        r->object = remote->data;
+        r->type = remote->type;
         switch( r->rename_type ) {
             case use:
                 SCHEMAdefine_use( s, r );

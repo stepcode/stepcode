@@ -37,8 +37,8 @@ int tag_count;
 
 DEFINE_FFF_GLOBALS
 
-FAKE_VALUE_FUNC(Variable, VARfind, Scope, char *, int)
 FAKE_VALUE_FUNC(Symbol *, SCOPEfind, Scope, char *, int)
+FAKE_VALUE_FUNC(Symbol *, VARfind, Scope, char *)
 FAKE_VALUE_FUNC(char *, VARget_simple_name, Variable)
 FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, char *, int)
 FAKE_VALUE_FUNC(Variable, ENTITYget_named_attribute, Entity, char *)

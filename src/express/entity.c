@@ -184,7 +184,7 @@ struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name,
 }
 
 /** find a (possibly inherited) attribute */
-Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down, struct Symbol_ ** where ) {
+Symbol *ENTITY_find_inherited_attribute( Entity entity, char * name, int * down, struct Symbol_ ** where ) {
     Symbol *ep;
     Variable result;
 
@@ -201,18 +201,17 @@ Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down
     /* first look locally */
     ep = HASHsearch(entity->symbol_table, (Symbol) {.name = name}, HASH_FIND);
     if (ep) {
-        result = ep->data;
         if( down && *down && where ) {
             *where = &entity->symbol;
         }
-        return result;
+        return ep;
     }
 
     /* check supertypes */
     LISTdo( entity->u.entity->supertypes, super, Entity )
-    result = ENTITY_find_inherited_attribute( super, name, down, where );
-    if( result ) {
-        return result;
+    ep = ENTITY_find_inherited_attribute( super, name, down, where );
+    if( ep ) {
+        return ep;
     }
     LISTod;
 
@@ -220,18 +219,18 @@ Variable ENTITY_find_inherited_attribute( Entity entity, char * name, int * down
     if( down ) {
         ++*down;
         LISTdo( entity->u.entity->subtypes, sub, Entity )
-        result = ENTITY_find_inherited_attribute( sub, name, down, where );
-        if( result ) {
-            return result;
+        ep = ENTITY_find_inherited_attribute( sub, name, down, where );
+        if( ep ) {
+            return ep;
         }
         LISTod;
         --*down;
     }
 
-    return 0;
+    return NULL;
 }
 
-Variable ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
+Symbol *ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
         struct Symbol_ ** down_sym ) {
     extern int __SCOPE_search_id;
     int down_flag = 0;
@@ -471,11 +470,16 @@ int ENTITYget_attribute_offset( Entity entity, Variable attribute ) {
 int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
     int offset;
     int value;
+    Symbol *ep;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
-    if( !strcmp( VARget_simple_name( attr ), name ) )
-        return entity->u.entity->inheritance +
-               VARget_offset( ENTITY_find_inherited_attribute( entity, name, 0, 0 ) );
+    if (!strcmp( VARget_simple_name( attr ), name ) ) {
+        ep = ENTITY_find_inherited_attribute( entity, name, 0, 0 );
+        if (!ep)
+            continue;
+        
+        return entity->u.entity->inheritance + VARget_offset((Variable) ep->data);
+    }
     LISTod;
     offset = 0;
     LISTdo( entity->u.entity->supertypes, super, Entity )

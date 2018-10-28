@@ -32,7 +32,7 @@ DEFINE_FFF_GLOBALS
 
 FAKE_VALUE_FUNC(int, EXPRESS_fail, Express)
 FAKE_VOID_FUNC(SCOPE_get_entities, Scope, Linked_List)
-FAKE_VALUE_FUNC(Variable, ENTITYfind_inherited_attribute, struct Scope_ *, char *, struct Symbol_ **)
+FAKE_VALUE_FUNC(Symbol *, ENTITYfind_inherited_attribute, struct Scope_ *, char *, struct Symbol_ **)
 
 void setup() {
     RESET_FAKE(EXPRESS_fail)
@@ -168,13 +168,16 @@ int test_schema_get_entities_ref() {
     return 0;
 }
 
-Variable 
+Symbol * 
 ENTITY_find_attr_handler(struct Scope_ *entity, char * name, struct Symbol_** down_sym)
 {
-    Variable r;
+    Symbol e, *ep;
     (void) down_sym;
-    r = DICTlookup(entity->symbol_table, name);
-    return r;
+    
+    e = (Symbol) {.name = name};
+    ep = HASHsearch(entity->symbol_table, e, HASH_FIND);
+    
+    return ep;
 }
 
 int test_var_find() {
