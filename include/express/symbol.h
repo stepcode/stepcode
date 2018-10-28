@@ -88,6 +88,6 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /***********************/
 
 extern SC_EXPRESS_EXPORT void SYMBOLinitialize( void );
-SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int ref_tok, int line, const char * filename );
+SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int type, int ref_tok, int line, const char * filename );
 
 #endif    /*  SYMBOL_H  */

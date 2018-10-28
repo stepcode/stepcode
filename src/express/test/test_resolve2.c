@@ -9,6 +9,7 @@
 
 /* non-core */
 #include "express/type.h"
+#include "expparse.h"
 
 #include "driver.h"
 #include "fff.h"
@@ -55,25 +56,29 @@ int test_scope_resolve_expr_stmt() {
     Schema scope;
     Type sel, ent_base;
     Entity ent;
-    Symbol *ent_id, *sel_id;
+    Symbol e, *ent_id, *sel_id, *ent_ref;
     
     scope = SCHEMAcreate();
-    ent_id = SYMBOLcreate("ent", 1, "test_4");
-    sel_id = SYMBOLcreate("sel_typ", 1, "test_4");
     
-    ent_base = TYPEcreate_name(ent_id);
-    ent_base->superscope = scope;
+    e = (Symbol) {.name = "ent", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     ent = ENTITYcreate(ent_id);
     ent->superscope = scope;
+    ent_id->data = ent;
+    
+    e = (Symbol) {.name = "sel_typ", .type = OBJ_TYPE, .ref_tok = T_TYPE_REF};
+    sel_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     sel = TYPEcreate(select_);
     sel->symbol = *sel_id;
     sel->u.type->body->list = LISTcreate();
     sel->superscope = scope;
+    sel_id->data = sel;
+    
+    ent_ref = SYMBOLcreate("ent", OBJ_ENTITY, T_ENTITY_REF, 1, "test_5");
+    ent_base = TYPEcreate_name(ent_ref);
+    ent_base->superscope = sel;
     LISTadd_last(sel->u.type->body->list, ent_base);
     
-    DICTdefine(scope->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, sel_id->name, sel, sel_id, OBJ_TYPE);
-
     SCOPEresolve_expressions_statements(scope);
     
     assert(ENTITYresolve_expressions_fake.call_count == 1);
@@ -86,24 +91,28 @@ int test_scope_resolve_subsupers() {
     Schema scope;
     Type sel, ent_base;
     Entity ent;
-    Symbol *ent_id, *sel_id;
+    Symbol e, *ent_id, *sel_id, *ent_ref;
     
     scope = SCHEMAcreate();
-    ent_id = SYMBOLcreate("ent", 1, "test_4");
-    sel_id = SYMBOLcreate("sel_typ", 1, "test_4");
     
-    ent_base = TYPEcreate_name(ent_id);
-    ent_base->superscope = scope;
+    e = (Symbol) {.name = "ent", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     ent = ENTITYcreate(ent_id);
     ent->superscope = scope;
+    ent_id->data = ent;
+    
+    e = (Symbol) {.name = "sel_typ", .type = OBJ_TYPE, .ref_tok = T_TYPE_REF};
+    sel_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     sel = TYPEcreate(select_);
     sel->symbol = *sel_id;
     sel->u.type->body->list = LISTcreate();
     sel->superscope = scope;
-    LISTadd_last(sel->u.type->body->list, ent_base);
+    sel_id->data = sel;
     
-    DICTdefine(scope->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, sel_id->name, sel, sel_id, OBJ_TYPE);
+    ent_ref = SYMBOLcreate("ent", OBJ_ENTITY, T_ENTITY_REF, 1, "test_6");
+    ent_base = TYPEcreate_name(ent_id);
+    ent_base->superscope = sel;    
+    LISTadd_last(sel->u.type->body->list, ent_base);
 
     SCOPEresolve_subsupers(scope);
     

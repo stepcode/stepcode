@@ -11,6 +11,7 @@
 #include "express/schema.h"
 #include "express/expr.h"
 #include "express/type.h"
+#include "expparse.h"
 
 #include "driver.h"
 #include "fff.h"
@@ -36,8 +37,8 @@ int tag_count;
 
 DEFINE_FFF_GLOBALS
 
-FAKE_VALUE_FUNC(void *, SCOPEfind, Scope, char *, int)
 FAKE_VALUE_FUNC(Variable, VARfind, Scope, char *, int)
+FAKE_VALUE_FUNC(Symbol *, SCOPEfind, Scope, char *, int)
 FAKE_VALUE_FUNC(char *, VARget_simple_name, Variable)
 FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, char *, int)
 FAKE_VALUE_FUNC(Variable, ENTITYget_named_attribute, Entity, char *)
@@ -58,9 +59,11 @@ void setup() {
     RESET_FAKE(EXPRESS_fail);
 }
 
-void * SCOPEfind_handler(Scope scope, char * name, int type) {
-    (void) type;
-    return DICTlookup(scope->symbol_table, name);
+Symbol *SCOPEfind_handler(Scope scope, char * name, int type) {
+    Symbol *ep;
+
+    ep = HASHsearch(scope->symbol_table, (Symbol) {.name = name, .type = type}, HASH_FIND);
+    return ep;
 }
 
 int test_exp_resolve_bad_func_call() {
@@ -70,7 +73,7 @@ int test_exp_resolve_bad_func_call() {
     
     scope = SCHEMAcreate();
     
-    func_id = SYMBOLcreate("func1", 1, "test1");
+    func_id = SYMBOLcreate("func1", OBJ_FUNCTION, T_FUNCTION_REF, 1, "test1");
     func_call = EXPcreate_from_symbol(Type_Funcall, func_id);
     
     SCOPEfind_fake.custom_fake = SCOPEfind_handler;    
@@ -90,7 +93,7 @@ int test_exp_resolve_func_call() {
     
     scope = SCHEMAcreate();
     
-    func_id = SYMBOLcreate("func1", 1, "test1");
+    func_id = SYMBOLcreate("func1", OBJ_FUNCTION, T_FUNCTION_REF, 1, "test1");
     func_call = EXPcreate_from_symbol(Type_Funcall, func_id);
     
     func_def = TYPEcreate_nostab(func_id, scope, OBJ_FUNCTION);
@@ -104,33 +107,38 @@ int test_exp_resolve_func_call() {
     return 0;
 }
 
-Variable VARfind_handler(Scope scope, char *name, int strict) {
-    (void) strict;
-    return DICTlookup(scope->symbol_table, name);
+Symbol *VARfind_handler(Scope scope, char *name, int strict) {
+    Symbol *ep;
+    
+    ep = HASHsearch(scope->symbol_table, (Symbol) {.name = name}, HASH_FIND);
+    return ep;
 }
 
 int test_exp_resolve_local_identifier() {
     Schema scope;
     Entity ent;
     Expression ent_attr, ent_attr_ref;
-    Symbol *attr_id, *attr_ref, *ent_id;
+    Symbol e, *attr_id, *attr_ref, *ent_id;
     Variable v_attr;
     Type attr_typ;
     
     scope = SCHEMAcreate();
-    
-    ent_id = SYMBOLcreate("entity1", 1, "test_2");
-    ent = ENTITYcreate(ent_id);        
-    DICT_define(scope->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
 
-    attr_id = SYMBOLcreate("attr1", 1, "test_2");
+    e = (Symbol) {.name = "entity1", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    ent = ENTITYcreate(ent_id);        
+    ent_id->data = ent;
+
+    e = (Symbol) {.name = "attr1", .type = OBJ_VARIABLE, .ref_tok = T_SIMPLE_REF};
+    attr_id = HASHsearch(ent->symbol_table, e, HASH_INSERT);
     ent_attr = EXPcreate_from_symbol(Type_Attribute, attr_id);
     attr_typ = TYPEcreate(real_);
     v_attr = VARcreate(ent_attr, attr_typ);
     v_attr->flags.attribute = true;
-    DICT_define(ent->symbol_table, attr_id->name, v_attr, attr_id, OBJ_VARIABLE);
+    attr_id->data = v_attr;
+
     
-    attr_ref = SYMBOLcreate("attr1", 1, "test_2");
+    attr_ref = SYMBOLcreate("attr1", OBJ_ENTITY, T_ENTITY_REF, 1, "test_2");
     ent_attr_ref = EXPcreate_from_symbol(Type_Identifier, attr_ref);
     
     VARfind_fake.custom_fake = VARfind_handler;
@@ -147,19 +155,22 @@ int test_entity_resolve_subtype_expr_entity() {
     Schema scope;
     Entity ent1, ent2;
     Expression subtype_exp;
-    Symbol *ent1_id, *ent2_id, *ent2_ref;
+    Symbol e, *ent1_id, *ent2_id, *ent2_ref;
     int chk;
     
     scope = SCHEMAcreate();
-    ent1_id = SYMBOLcreate("ent1", 1, "test_3");
-    ent2_id = SYMBOLcreate("ent2", 1, "test_3");
-    ent2_ref = SYMBOLcreate("ent2", 1, "test_3");
-    ent1 = ENTITYcreate(ent1_id);
-    ent2 = ENTITYcreate(ent2_id);
     
-    DICTdefine(scope->symbol_table, ent1_id->name, ent1, ent1_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, ent2_id->name, ent2, ent2_id, OBJ_ENTITY);
-
+    e = (Symbol) {.name = "ent1", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent1_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    ent1 = ENTITYcreate(ent1_id);
+    ent1_id->data = ent1;
+    
+    e = (Symbol) {.name = "ent2", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent2_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    ent2 = ENTITYcreate(ent2_id);
+    ent2_id->data = ent2;
+    
+    ent2_ref = SYMBOLcreate("ent2", OBJ_ENTITY, T_ENTITY_REF, 1, "test_3");
     subtype_exp = EXPcreate_from_symbol(Type_Identifier, ent2_ref);
     ent1->superscope = scope;
     ent1->u.entity->subtypes = LISTcreate();
@@ -177,25 +188,32 @@ int test_type_resolve_entity() {
     Schema scope;
     Type sel, ent_base;
     Entity ent;
-    Symbol *ent_id, *sel_id;
+    Symbol e, *ent_id, *sel_id, *ent_base_id;
     
     scope = SCHEMAcreate();
-    ent_id = SYMBOLcreate("ent", 1, "test_4");
-    sel_id = SYMBOLcreate("sel_typ", 1, "test_4");
     
-    ent_base = TYPEcreate_name(ent_id);
-    ent_base->superscope = scope;
+    e = (Symbol) {.name = "ent", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     ent = ENTITYcreate(ent_id);
-    ent->superscope = scope;
-    sel = TYPEcreate(select_);
+    ent_id->data = ent;
+
+    e = (Symbol) {.name = "sel_typ", .type = OBJ_TYPE, .ref_tok = T_TYPE_REF};
+    sel_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    sel = TYPEcreate_name(sel_id);
+    sel->superscope = scope;
+    sel_id->data = sel;
+    
+    ent_base_id = SYMBOLcreate("ent", OBJ_ENTITY, T_ENTITY_REF, 1, "test_5");
+    ent_base = TYPEcreate_name(ent_base_id);
+    ent_base->superscope = sel;
+    ent_base_id->data = ent_base;
+    
     sel->symbol = *sel_id;
+    sel->u.type->body = TYPEBODYcreate(select_);
     sel->u.type->body->list = LISTcreate();
     sel->superscope = scope;
     LISTadd_last(sel->u.type->body->list, ent_base);
     
-    DICTdefine(scope->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, sel_id->name, sel, sel_id, OBJ_TYPE);
-
     SCOPEfind_fake.custom_fake = SCOPEfind_handler;
 
     TYPE_resolve(&sel);
@@ -210,20 +228,19 @@ int test_stmt_resolve_pcall_proc() {
     Function f;
     Procedure p;
     Statement s;
-    Symbol *func_id, *proc_id, *proc_ref;
+    Symbol e, *func_id, *proc_id, *proc_ref;
     
     scope = SCHEMAcreate();
     
-    func_id = SYMBOLcreate("func1", 1, "test_5");
-    proc_id = SYMBOLcreate("proc1", 1, "test_5");
-    proc_ref = SYMBOLcreate("proc1", 1, "test_5");
-
     f = ALGcreate(OBJ_FUNCTION);
-    DICTdefine(scope->symbol_table, func_id->name, f, func_id, OBJ_FUNCTION);
+    e = (Symbol) {.name = "func1", .type = OBJ_FUNCTION, .ref_tok = T_FUNCTION_REF, .data = f};
+    func_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     
     p = ALGcreate(OBJ_PROCEDURE);
-    DICTdefine(f->symbol_table, proc_id->name, p, proc_id, OBJ_PROCEDURE);
+    e = (Symbol) {.name = "proc1", .type = OBJ_PROCEDURE, .ref_tok = T_PROCEDURE_REF, .data = p};
+    proc_id = HASHsearch(f->symbol_table, e, HASH_INSERT);
     
+    proc_ref = SYMBOLcreate("proc1", OBJ_PROCEDURE, T_PROCEDURE_REF, 1, "test_5");
     s = PCALLcreate(NULL);
     s->symbol = *proc_ref;
     
@@ -240,11 +257,15 @@ int test_scope_resolve_named_types() {
     Schema scope;
     Type sel, ent_base;
     Entity ent;
-    Symbol *ent_id, *sel_id;
+    Symbol e, *ent_id, *sel_id;
     
     scope = SCHEMAcreate();
-    sel_id = SYMBOLcreate("sel_typ", 1, "test_4");
-    ent_id = SYMBOLcreate("ent", 1, "test_4");
+    
+    e = (Symbol) {.name = "sel_typ", .type = OBJ_TYPE, .ref_tok = T_TYPE_REF};
+    sel_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    
+    e = (Symbol) {.name = "ent", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     
     ent_base = TYPEcreate(entity_);
     ent_base->symbol = *ent_id;
@@ -256,9 +277,9 @@ int test_scope_resolve_named_types() {
     sel->u.type->body->list = LISTcreate();
     sel->superscope = scope;
     LISTadd_last(sel->u.type->body->list, ent_base);
-    
-    DICTdefine(scope->symbol_table, ent_id->name, ent, ent_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, sel_id->name, sel, sel_id, OBJ_TYPE);
+
+    ent_id->data = ent;
+    sel_id->data = sel;
 
     SCOPEfind_fake.custom_fake = SCOPEfind_handler;
     
@@ -274,19 +295,23 @@ int test_scope_resolve_named_types() {
 int test_entity_resolve_supertypes() {
     Schema scope;
     Entity ent1, ent2;
-    Symbol *ent1_id, *ent2_id, *ent1_ref;
+    Symbol e, *ent1_id, *ent2_id, *ent1_ref;
     
     scope = SCHEMAcreate();
-    ent1_id = SYMBOLcreate("ent1", 1, "test_3");
-    ent2_id = SYMBOLcreate("ent2", 1, "test_3");
-    ent1_ref = SYMBOLcreate("ent1", 1, "test_3");
+
+    e = (Symbol) {.name = "ent1", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent1_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     ent1 = ENTITYcreate(ent1_id);
-    ent2 = ENTITYcreate(ent2_id);
     ent1->superscope = scope;
-    ent2->superscope = scope;
+    ent1_id->data = ent1;
     
-    DICTdefine(scope->symbol_table, ent1_id->name, ent1, ent1_id, OBJ_ENTITY);
-    DICTdefine(scope->symbol_table, ent2_id->name, ent2, ent2_id, OBJ_ENTITY);
+    e = (Symbol) {.name = "ent2", .type = OBJ_ENTITY, .ref_tok = T_ENTITY_REF};
+    ent2_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
+    ent2 = ENTITYcreate(ent2_id);
+    ent2->superscope = scope;
+    ent2_id->data = ent2;
+    
+    ent1_ref = SYMBOLcreate("ent1", OBJ_ENTITY, T_ENTITY_REF, 1, "test_3");
     
     ent2->u.entity->supertype_symbols = LISTcreate();
     LISTadd_last(ent2->u.entity->supertype_symbols, ent1_ref);

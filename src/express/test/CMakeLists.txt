@@ -21,7 +21,6 @@ set(EXPRESS_CORE_OBJ
     $<TARGET_OBJECTS:objlib_alg_c>
     
     # deprecated
-    $<TARGET_OBJECTS:objlib_dict_c>
     $<TARGET_OBJECTS:objlib_info_c>
 )
 

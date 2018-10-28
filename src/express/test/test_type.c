@@ -5,9 +5,9 @@
 /* core */
 #include "express/hash.h"
 #include "express/linklist.h"
+#include "expparse.h"
 
 /* non-core */
-
 #include "driver.h"
 #include "fff.h"
 
@@ -36,23 +36,23 @@ void setup() {
 
 int test_type_create_user_defined_tag() {
     Schema scope;
-    Function f;
     Type t, g, chk;
-    Symbol *func_id, *tag_id;
+    Symbol e, *func_id, *tag_id;
     
     scope = SCHEMAcreate();
     
-    func_id = SYMBOLcreate("func1", 1, "test_5");
-    tag_id = SYMBOLcreate("item1", 1, "test_5");
+    e = (Symbol) {.name = "func1", .type = OBJ_FUNCTION,
+                  .ref_tok = T_FUNCTION_REF, .data = ALGcreate(OBJ_FUNCTION)};
+    func_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
 
-    f = ALGcreate(OBJ_FUNCTION);
-    f->symbol = *func_id;
-    DICTdefine(scope->symbol_table, func_id->name, f, func_id, OBJ_FUNCTION);
+    e = (Symbol) {.name = "item1", .type = OBJ_TAG,
+                  .ref_tok = T_RULE_LABEL_REF};
+    tag_id = HASHsearch(scope->symbol_table, e, HASH_INSERT);
     
     g = TYPEcreate(generic_);
-    t = TYPEcreate_nostab(tag_id, f, OBJ_TAG);
+    t = TYPEcreate_nostab(tag_id, func_id->data, OBJ_TAG);
     
-    chk = TYPEcreate_user_defined_tag(g, f, tag_id);
+    chk = TYPEcreate_user_defined_tag(g, func_id->data, tag_id);
     
     assert(chk == t);
     

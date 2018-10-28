@@ -223,9 +223,10 @@ TypeBody TYPEBODYcreate( enum type_enum type ) {
     return tb;
 }
 
-Symbol * SYMBOLcreate( char * name, int ref_tok, int line, const char * filename ) {
+Symbol *SYMBOLcreate(char * name, int type, int ref_tok, int line, const char * filename) {
     Symbol * sym = SYMBOL_new();
     sym->name = name;
+    sym->type = type;
     sym->ref_tok = ref_tok;
     sym->line = line;
     sym->filename = filename;
