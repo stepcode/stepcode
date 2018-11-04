@@ -155,6 +155,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
     Symbol *ep;
     Expression item;
     Variable tmp;
+    Linked_List supert, subt, uniqSubs;
     int options = 0;
     struct Symbol_ *w = NULL;
 
@@ -176,10 +177,10 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
             } else {
                 return 0;
             }
-        case select_: {
-            Linked_List supert = LISTcreate();
-            Linked_List subt = LISTcreate();
-            Linked_List uniqSubs = LISTcreate();
+        case select_:
+            supert = LISTcreate();
+            subt = LISTcreate();
+            uniqSubs = LISTcreate();
             selection->search_id = s_id;
             LISTdo( selection->u.type->body->list, t, Type ) {
                 int nr = EXP_resolve_op_dot_fuzzy( t, sref, e, v, dt, &w, s_id );
@@ -225,7 +226,6 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
             LISTfree( subt );
             LISTfree( uniqSubs );
             return options;
-        }
         case enumeration_:
             ep = HASHsearch(TYPEget_enum_tags( selection ), (Symbol) {.name = sref.name}, HASH_FIND);
             if (ep) {
@@ -233,6 +233,8 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                 *e = item;
                 *dt = OBJ_ENUM;
                 return 1;
+            } else {
+                return 0;
             }
         default:
             return 0;
@@ -321,7 +323,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                         fprintf( stderr, "EXPresolved_op_dot: attribute not an attribute?\n" );
                         ERRORabort( 0 );
                     }
-
+                    break;
                 default:
                     /* compile-time ambiguous */
                     if( where ) {
@@ -609,17 +611,24 @@ Type EXPresolve_op_relational( Expression e, Scope s ) {
 
 void EXPresolve_op_default( Expression e, Scope s ) {
     int failed = 0;
-
-    switch( OPget_number_of_operands( e->e.op_code ) ) {
-        case 3:
-            EXPresolve( e->e.op3, s, Type_Dont_Care );
-            failed = is_resolve_failed( e->e.op3 );
-        case 2:
-            EXPresolve( e->e.op2, s, Type_Dont_Care );
-            failed |= is_resolve_failed( e->e.op2 );
+    int nargs = OPget_number_of_operands( e->e.op_code );
+    
+    if (nargs == 3) {
+        EXPresolve( e->e.op3, s, Type_Dont_Care );
+        failed = is_resolve_failed( e->e.op3 );
     }
-    EXPresolve( e->e.op1, s, Type_Dont_Care );
-    if( failed || is_resolve_failed( e->e.op1 ) ) {
+    
+    if (nargs >= 2) {
+        EXPresolve( e->e.op2, s, Type_Dont_Care );
+        failed |= is_resolve_failed( e->e.op2 );
+    }
+    
+    if (1) { /* (nargs >= 1) */
+        EXPresolve( e->e.op1, s, Type_Dont_Care );
+        failed |= is_resolve_failed( e->e.op1 );
+    }
+    
+    if (failed) {
         resolve_failed( e );
     } else {
         resolved_all( e );

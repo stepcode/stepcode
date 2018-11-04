@@ -304,7 +304,6 @@ void ENTITYinitialize() {
 */
 void ENTITYadd_attribute( Entity entity, Variable attr ) {
     Symbol e, *ep;
-    int rc;
 
     memcpy(&e, &attr->name->symbol, sizeof(Symbol));
     e.data = attr;

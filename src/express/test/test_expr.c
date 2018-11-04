@@ -8,7 +8,7 @@
 #include "expparse.h"
 
 /* non-core */
-#include "express/dict.h"
+#include "express/hash.h"
 #include "express/variable.h"
 
 #include "driver.h"
@@ -125,7 +125,6 @@ int test_resolve_select_enum_member() {
     return 0;
 }
 
-/* TODO: remove DICTlookup after eliminating DICT_type */
 void EXP_resolve_entity_handler(Expression exp, Scope cxt, Type unused) {
     (void) unused;
     Symbol *ep;
