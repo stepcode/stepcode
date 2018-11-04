@@ -127,6 +127,6 @@ extern SC_EXPRESS_EXPORT struct freelist_head VAR_fl;
 
 extern SC_EXPRESS_EXPORT Variable VARcreate( Expression, Type );
 extern SC_EXPRESS_EXPORT void VARinitialize( void );
-extern SC_EXPRESS_EXPORT char * VARget_simple_name( Variable );
+extern SC_EXPRESS_EXPORT const char * VARget_simple_name( Variable );
 
 #endif    /*  VARIABLE_H  */

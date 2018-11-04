@@ -355,10 +355,10 @@ class ComplexList {
         int operator< ( ComplexList & c ) {
             return ( strcmp( supertype(), c.supertype() ) < 0 );
         }
-        int operator< ( char * name ) {
+        int operator< ( const char * name ) {
             return ( strcmp( supertype(), name ) < 0 );
         }
-        int operator== ( char * name ) {
+        int operator== ( const char * name ) {
             return ( strcmp( supertype(), name ) == 0 );
         }
         const char * supertype() {
@@ -410,7 +410,7 @@ class ComplexCollect {
         void remove( ComplexList * );
         // Remove this list but don't delete its hierarchy structure, because
         // it's used elsewhere.
-        ComplexList * find( char * );
+        ComplexList * find( const char * );
         int supports( EntNode * );
         bool externMapping( const char * ent ) {
             return ( clists ? clists->isDependent( ent ) : 0 );

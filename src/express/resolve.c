@@ -735,7 +735,7 @@ void STMTresolve( Statement statement, Scope scope ) {
     }
 }
 
-static Variable ENTITY_get_local_attribute( Entity e, char * name ) {
+static Variable ENTITY_get_local_attribute( Entity e, const char * name ) {
     LISTdo( e->u.entity->attributes, a, Variable )
     if( !strcmp( VARget_simple_name( a ), name ) ) {
         return a;
@@ -749,7 +749,7 @@ void ENTITYresolve_expressions( Entity e ) {
     Symbol *ep;
     Variable v;
     int status = 0;
-    char * sname;
+    const char * sname;
     Entity sup;
 
     if( print_objects_while_running & OBJ_ENTITY_BITS ) {

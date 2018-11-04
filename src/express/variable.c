@@ -97,7 +97,7 @@ void VARinitialize() {
  * returns simple name of variable
  * for example, if var is named SELF\xxx.yyy, return yyy
  */
-extern char * VARget_simple_name( Variable v ) {
+extern const char * VARget_simple_name( Variable v ) {
     Expression e = VARget_name( v );
 
     while( TYPEis_expression( EXPget_type( e ) ) ) {

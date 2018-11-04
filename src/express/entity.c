@@ -130,7 +130,7 @@ int ENTITYdeclares_variable( Entity e, Variable v ) {
     return false;
 }
 
-static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down ) {
+static Entity ENTITY_find_inherited_entity( Entity entity, const char * name, int down ) {
     Entity result;
 
     /* avoid searching scopes that we've already searched */
@@ -174,7 +174,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
     return 0;
 }
 
-struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name, int down ) {
+struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, const char * name, int down ) {
     if( !strcmp( name, entity->symbol.name ) ) {
         return( entity );
     }
@@ -184,9 +184,8 @@ struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name,
 }
 
 /** find a (possibly inherited) attribute */
-Symbol *ENTITY_find_inherited_attribute( Entity entity, char * name, int * down, struct Symbol_ ** where ) {
+Symbol *ENTITY_find_inherited_attribute( Entity entity, const char * name, int * down, struct Symbol_ ** where ) {
     Symbol *ep;
-    Variable result;
 
     /* avoid searching scopes that we've already searched */
     /* this can happen due to several things */
@@ -230,7 +229,7 @@ Symbol *ENTITY_find_inherited_attribute( Entity entity, char * name, int * down,
     return NULL;
 }
 
-Symbol *ENTITYfind_inherited_attribute( struct Scope_ *entity, char * name,
+Symbol *ENTITYfind_inherited_attribute( struct Scope_ *entity, const char * name,
         struct Symbol_ ** down_sym ) {
     extern int __SCOPE_search_id;
     int down_flag = 0;
@@ -410,7 +409,7 @@ Linked_List ENTITYget_all_attributes( Entity entity ) {
 ** \note   If the entity has no attribute with the given name,
 **  VARIABLE_NULL is returned.
 */
-Variable ENTITYget_named_attribute( Entity entity, char * name ) {
+Variable ENTITYget_named_attribute( Entity entity, const char * name ) {
     Variable attribute;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
@@ -467,7 +466,7 @@ int ENTITYget_attribute_offset( Entity entity, Variable attribute ) {
 ** \note   If the entity has no attribute with the given name,
 **      -1 is returned.
 */
-int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
+int ENTITYget_named_attribute_offset( Entity entity, const char * name ) {
     int offset;
     int value;
     Symbol *ep;

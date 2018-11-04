@@ -3,7 +3,7 @@
 
 #include "express/hash.h"
 
-inline size_t HASHhash(unsigned char *);
+inline size_t HASHhash(const unsigned char *);
 inline void HASHexpand_table(Hash_Table);
 
 inline Hash_Table HASH_Table_new();

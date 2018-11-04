@@ -52,8 +52,8 @@
 /* type definitions        */
 /***************************/
 
-typedef struct Symbol_ {
-    unsigned char *name;
+struct Symbol_ {
+    const char *name;
     void *data;             /* the AST for this symbol            */
     char type;              /* the OBJ_ type, see expbasic.h      */
     int ref_tok;            /* the lexer ref_type for this symbol */
@@ -63,7 +63,9 @@ typedef struct Symbol_ {
     char resolved;          /* if imported TYPE or ENTITY is unresolved */
     
     struct Symbol_ *next;   /* symbol table clashes */
-} Symbol;
+};
+
+typedef struct Symbol_ Symbol;
 
 /****************/
 /* modules used */

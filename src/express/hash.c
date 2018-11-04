@@ -287,10 +287,10 @@ HASHdelete(Hash_Table tbl, Symbol *item) {
 /*
 ** Internal routines
 */
-size_t HASHhash(unsigned char *key)
+size_t HASHhash(const unsigned char *key)
 {
     size_t h;
-    unsigned char *k;
+    const unsigned char *k;
     
     /* Convert string to integer */
     for (h = 0, k = key; *k; k++)

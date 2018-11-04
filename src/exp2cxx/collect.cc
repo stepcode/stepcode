@@ -70,7 +70,7 @@ void ComplexCollect::remove( ComplexList * c )
     count--;
 }
 
-ComplexList * ComplexCollect::find( char * name )
+ComplexList * ComplexCollect::find( const char * name )
 /*
  * Searches for and returns the ComplexList whose supertype name = name.
  */

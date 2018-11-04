@@ -174,7 +174,7 @@ Linked_List SCOPEget_entities_superclass_order( Scope scope ) {
  */
 extern Hash_Table EXPRESSbuiltins;
 
-Symbol *SCOPEfind( Scope scope, char * name, int type_mask ) {
+Symbol *SCOPEfind( Scope scope, const char * name, int type_mask ) {
     Symbol *ep;
 
     /* TODO: check, this looks like it should be in the parser */
@@ -197,7 +197,7 @@ Symbol *SCOPEfind( Scope scope, char * name, int type_mask ) {
  * the supertype/subtype hierarchy
  * EH???  -> lookup an object when the current scope is not a schema
  */
-Symbol *SCOPE_find( Scope scope, char * name, int type_mask ) {
+Symbol *SCOPE_find( Scope scope, const char * name, int type_mask ) {
     Symbol *ep;
     Rename * rename;
 

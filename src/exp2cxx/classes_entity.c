@@ -1049,7 +1049,7 @@ void ENTITYlib_print( Entity entity, Linked_List neededAttr, FILE * file, Schema
  */
 void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) {
     FILE * hdr, * impl;
-    char * n = ENTITYget_name( entity );
+    const char * n = ENTITYget_name( entity );
     Linked_List remaining = LISTcreate();
     filenames_t names = getEntityFilenames( entity );
 

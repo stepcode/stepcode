@@ -239,8 +239,7 @@ Linked_List SCHEMAget_entities_ref( Scope scope ) {
  * look up an attribute reference
  * if strict false, anything can be returned, not just attributes
  */
-Symbol *VARfind( Scope scope, char * name ) {
-    Variable result;
+Symbol *VARfind( Scope scope, const char * name ) {
     Symbol *ep;
 
     /* first look up locally */

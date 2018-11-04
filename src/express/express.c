@@ -464,7 +464,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
  *
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
-static Symbol *SCOPEfind_for_rename( Scope schema, char * name ) {
+static Symbol *SCOPEfind_for_rename( Scope schema, const char * name ) {
     Symbol *ep;
 
     /* object can only appear in top level symbol table */
@@ -563,12 +563,12 @@ static void RENAMEresolve_enum( Type t, Schema s ) {
 }
 #endif
 
-Schema EXPRESSfind_schema( Hash_Table modeldict, char * name ) {
+Schema EXPRESSfind_schema( Hash_Table modeldict, const char *name ) {
     Symbol *ep;
     Schema s;
     FILE * fp;
-    char * src, *dest;
-    char lower[MAX_SCHEMA_FILENAME_SIZE];   /* avoid lowerizing original */
+    const char *src;
+    char lower[MAX_SCHEMA_FILENAME_SIZE], *dest;
 
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
         fprintf( stderr, "pass %d: %s (schema reference)\n",

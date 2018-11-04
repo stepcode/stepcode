@@ -16,7 +16,7 @@
 
 // Local function prototypes:
 static void initEnts( Express );
-static Entity findEnt( Entity, char * );
+static Entity findEnt( Entity, const char * );
 
 ComplexCollect::ComplexCollect( Express express )
 /*
@@ -235,7 +235,7 @@ void MultList::processSubExp( Expression exp, Entity super,
     }
 }
 
-static Entity findEnt( Entity ent0, char * name )
+static Entity findEnt( Entity ent0, const char * name )
 /*
  * Returns an entity named name.  The desired entity is likely to be in the
  * same schema as ent0.  findEnt first searches the schema which contains
