@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Copyright (c) 2011-2012, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 
@@ -33,7 +34,7 @@ class Model(objet):
     """ The container for entity instances
     """
     def __init_(self):
-        print "Model initialized"
+        print("Model initialized")
         self._instances = []
     
     def add_instance(self, entity_instance):
