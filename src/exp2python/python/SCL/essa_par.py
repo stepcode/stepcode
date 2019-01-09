@@ -1,3 +1,4 @@
+from __future__ import print_function
 def process_nested_parent_str(attr_str):
     '''
     The first letter should be a parenthesis
@@ -63,9 +64,9 @@ def process_nested_parent_str2(attr_str,idx=0):
 #print process_nested_parent_str2('1,2,3,4,5,6')
 #idx=0
 #print process_nested_parent_str2("'A','B','C'")
-print process_nested_parent_str2("'A'")[0]
-print process_nested_parent_str2("30.0,0.0,5.0")[0]
-print process_nested_parent_str2("(Thomas)")[0]
-print process_nested_parent_str2("Thomas, Paviot, ouais")[0]
-print process_nested_parent_str2("1,2,(3,4,5),6,7,8")[0]
-print process_nested_parent_str2("(#9149,#9166),#9142,.T.")[0]
+print(process_nested_parent_str2("'A'")[0])
+print(process_nested_parent_str2("30.0,0.0,5.0")[0])
+print(process_nested_parent_str2("(Thomas)")[0])
+print(process_nested_parent_str2("Thomas, Paviot, ouais")[0])
+print(process_nested_parent_str2("1,2,(3,4,5),6,7,8")[0])
+print(process_nested_parent_str2("(#9149,#9166),#9142,.T.")[0])

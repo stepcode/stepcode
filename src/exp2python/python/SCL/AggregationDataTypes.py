@@ -126,9 +126,9 @@ class ARRAY(BaseType.Type, BaseType.Aggregate):
     """
     def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, OPTIONAL=False, scope = None):
         BaseType.Type.__init__(self, base_type, scope)
-        if not type(bound_1)==int:
+        if not isinstance(bound_1, int):
             raise TypeError("ARRAY lower bound must be an integer")
-        if not type(bound_2)==int:
+        if not isinstance(bound_2, int):
             raise TypeError("ARRAY upper bound must be an integer")
         if not (bound_1 <= bound_2):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
@@ -235,17 +235,17 @@ class LIST(BaseType.Type, BaseType.Aggregate):
     """
     def __init__( self ,  bound_1 , bound_2 , base_type , UNIQUE = False, scope = None):
         BaseType.Type.__init__(self, base_type, scope)
-        if not type(bound_1)==int:
+        if not isinstance(bound_1, int):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
         if bound_2 == None:
             self._unbounded = True
-        elif not type(bound_2)==int:
+        elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
         if not bound_1>=0:
             raise AssertionError("LIST lower bound must be greater of equal to 0")
-        if (type(bound_2)==int and not (bound_1 <= bound_2)):
+        if (isinstance(bound_2, int) and not (bound_1 <= bound_2)):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
         # set up class attributes
         self._bound_1 = bound_1
@@ -282,14 +282,14 @@ class LIST(BaseType.Type, BaseType.Aggregate):
 
     def get_hibound(self):
         hibound = self._bound_2
-        if type(hibound)==int:
+        if isinstance(hibound, int):
             return INTEGER(hibound)
         else:
             return hibound
     
     def get_lobound(self):
         lobound = self._bound_1
-        if type(lobound)==int:
+        if isinstance(lobound, int):
             return INTEGER(lobound)
         else:
             return lobound
@@ -409,17 +409,17 @@ class BAG(BaseType.Type, BaseType.Aggregate):
     """
     def __init__( self ,  bound_1 , bound_2 , base_type , scope = None):
         BaseType.Type.__init__(self, base_type, scope)
-        if not type(bound_1)==int:
+        if not isinstance(bound_1, int):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
         if bound_2 == None:
             self._unbounded = True
-        elif not type(bound_2)==int:
+        elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
         if not bound_1>=0:
             raise AssertionError("LIST lower bound must be greater of equal to 0")
-        if (type(bound_2)==int and not (bound_1 <= bound_2)):
+        if (isinstance(bound_2, int) and not (bound_1 <= bound_2)):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
         # set up class attributes
         self._bound_1 = bound_1
@@ -462,14 +462,14 @@ class BAG(BaseType.Type, BaseType.Aggregate):
 
     def get_hibound(self):
         hibound = self._bound_2
-        if type(hibound)==int:
+        if isinstance(hibound, int):
             return INTEGER(hibound)
         else:
             return hibound
 
     def get_lobound(self):
         lobound = self._bound_1
-        if type(lobound)==int:
+        if isinstance(lobound, int):
             return INTEGER(lobound)
         else:
             return lobound
@@ -527,17 +527,17 @@ class SET(BaseType.Type, BaseType.Aggregate):
     """
     def __init__( self ,  bound_1 , bound_2 , base_type , scope = None):
         BaseType.Type.__init__(self, base_type, scope)
-        if not type(bound_1)==int:
+        if not isinstance(bound_1, int):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
         if bound_2 == None:
             self._unbounded = True
-        elif not type(bound_2)==int:
+        elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
         if not bound_1>=0:
             raise AssertionError("LIST lower bound must be greater of equal to 0")
-        if (type(bound_2)==int and not (bound_1 <= bound_2)):
+        if (isinstance(bound_2, int) and not (bound_1 <= bound_2)):
             raise AssertionError("ARRAY lower bound must be less than or equal to upper bound")
         # set up class attributes
         self._bound_1 = bound_1
@@ -581,14 +581,14 @@ class SET(BaseType.Type, BaseType.Aggregate):
 
     def get_hibound(self):
         hibound = self._bound_2
-        if type(hibound)==int:
+        if isinstance(hibound, int):
             return INTEGER(hibound)
         else:
             return hibound
 
     def get_lobound(self):
         lobound = self._bound_1
-        if type(lobound)==int:
+        if isinstance(lobound, int):
             return INTEGER(lobound)
         else:
             return lobound
