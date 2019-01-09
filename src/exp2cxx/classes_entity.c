@@ -46,7 +46,7 @@ extern int old_accessors;
  *                  use of a separate header with a namespace.
  */
 void ENTITYnames_print( Entity entity, FILE * file ) {
-    fprintf( file, "    extern EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( file, "    extern SC_SCHEMA_EXPORT EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
 }
 
 /** declares the global pointer to the EntityDescriptor representing a particular entity
