@@ -39,10 +39,17 @@ void
 InstMgr::PrintSortedFileIds() {
     MgrNode * mn = 0;
     int count = InstanceCount();
+    cout << "Number of instances: " << count << endl;
+
+    if (!sortedMaster) {
+        cout << "ERROR: sortedMaster is NULL!";
+    }
+    
     int i = 0;
-    for( i = 0; i < count; i++ ) {
-        mn = ( MgrNode * )( ( *sortedMaster )[i] );
-        cout << i << " " << mn->GetFileId() << endl;
+    for (std::map<int, MgrNode *>::iterator it = sortedMaster->begin (); it!= sortedMaster->end(); it++, i++) {
+        int id = it->first;
+        MgrNode * mn = it->second;;
+        cout << i << ": #" << id << "=" << (mn ? mn->GetFileId () : 0) << endl;
     }
 }
 
