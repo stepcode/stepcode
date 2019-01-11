@@ -58,8 +58,8 @@ if(MSVC)
   add_definitions(-D__MSVC__ -D__WIN32__)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-  # disable some minor warings
-  add_definitions(-wd4251 -wd4065)
+  # disable some minor dll linkage warings
+  add_definitions(-wd4251 -wd4065 -wd4275)
   # disable x64 warings (to revisit later)
   add_definitions(-wd4267  -wd4244)
 elseif(BORLAND)
