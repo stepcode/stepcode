@@ -56,7 +56,7 @@ class SC_CORE_EXPORT SDAI_Select {
         virtual ~SDAI_Select();
 
         // from SDAI binding
-        SDAI_String UnderlyingTypeName() const;
+        const char * UnderlyingTypeName() const;
         const TypeDescriptor * CurrentUnderlyingType() const;
         bool exists() const;
         void nullify();
