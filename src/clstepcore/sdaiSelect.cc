@@ -126,8 +126,12 @@ SDAI_Select::IsUnique( const BASE_TYPE bt ) const {
 }
 
 
-SDAI_String SDAI_Select::UnderlyingTypeName() const {
-    return underlying_type -> Name();
+const char * SDAI_Select::UnderlyingTypeName() const {
+    if (underlying_type) {
+        return underlying_type -> Name();
+    } else {
+        return "";
+    }
 }
 
 const TypeDescriptor  * SDAI_Select::CurrentUnderlyingType() const {
