@@ -127,7 +127,20 @@ static void PrintAggregate (STEPaggregate* pAggr)
 //
 static void PrintAttributeByType (STEPattribute* pAttr)
     {
-    PrimitiveType attrType = pAttr->BaseType ();
+    PrimitiveType attrType = pAttr->Type ();
+
+    switch (attrType)
+        {
+        case sdaiAGGR:
+        case ARRAY_TYPE:      // DAS
+        case BAG_TYPE:        // DAS
+        case SET_TYPE:        // DAS
+        case LIST_TYPE:       // DAS
+            break;
+
+        default:
+            attrType = pAttr->BaseType ();
+        }
 
     switch (attrType)
         {
