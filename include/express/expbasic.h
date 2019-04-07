@@ -34,6 +34,7 @@
 #ifndef EXPRESS_BASIC_H
 #define EXPRESS_BASIC_H
 
+#include "sc_cf.h"
 #include "basic.h"  /* get basic definitions */
 
 /************/
@@ -46,7 +47,7 @@ typedef enum { Lfalse, Lunknown, Ltrue } Logical;
 /* typedef ... Binary; done below because String not defined yet */
 
 #ifndef _CLIENTDATA
-#   ifdef __STDC__
+#   ifdef HAVE_VOIDPTR
 typedef void * ClientData;
 #   else
 typedef int * ClientData;

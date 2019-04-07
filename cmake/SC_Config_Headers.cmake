@@ -21,9 +21,10 @@ CONFIG_H_APPEND(SC "${CONFIG_H_FILE_CONTENTS}")
 
 include(CheckLibraryExists)
 include(CheckIncludeFile)
-include(CheckFunctionExists)
+include(CheckSymbolExists)
 include(CheckTypeSize)
 include(CMakePushCheckState)
+include(CheckCSourceCompiles)
 include(CheckCXXSourceRuns)
 
 CHECK_INCLUDE_FILE(ndir.h HAVE_NDIR_H)
@@ -37,12 +38,33 @@ CHECK_INCLUDE_FILE(stdbool.h HAVE_STDBOOL_H)
 CHECK_INCLUDE_FILE(process.h HAVE_PROCESS_H)
 CHECK_INCLUDE_FILE(io.h HAVE_IO_H)
 
-CHECK_FUNCTION_EXISTS(abs HAVE_ABS)
-CHECK_FUNCTION_EXISTS(memcpy HAVE_MEMCPY)
-CHECK_FUNCTION_EXISTS(memmove HAVE_MEMMOVE)
-CHECK_FUNCTION_EXISTS(getopt HAVE_GETOPT)
+# ensure macro functions are captured
+CHECK_SYMBOL_EXISTS(abs "stdlib.h" HAVE_ABS)
+CHECK_SYMBOL_EXISTS(memcpy "string.h" HAVE_MEMCPY)
+CHECK_SYMBOL_EXISTS(memmove "string.h" HAVE_MEMMOVE)
+CHECK_SYMBOL_EXISTS(getopt "getopt.h" HAVE_GETOPT)
+CHECK_SYMBOL_EXISTS(vsnprintf "stdio.h" HAVE_VSNPRINTF)
 
 CHECK_TYPE_SIZE("ssize_t" SSIZE_T)
+
+CHECK_C_SOURCE_COMPILES("
+  #include <stddef.h>
+  int main(char *argv[], int argc) {
+    void *p = NULL;
+    return 0;
+  }
+  "
+  HAVE_VOIDPTR
+)
+
+CHECK_C_SOURCE_COMPILES("
+  int main(char *argv[], int argc) {
+    const char *p = \"const_char_p_test\";
+    return 0;
+  }
+  "
+  HAVE_CONST
+)
 
 if(SC_ENABLE_CXX11)
   set( TEST_STD_THREAD "

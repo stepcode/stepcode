@@ -89,7 +89,7 @@
 /* Generic pointer type */
 /************************/
 
-#ifdef __STDC__
+#ifdef HAVE_VOIDPTR
 typedef void * Generic;
 #else
 typedef char * Generic;
@@ -124,7 +124,7 @@ typedef int ( *intFuncptr )();
 /* ... at least in header files ... */
 
 #ifndef CONST
-# ifdef __STDC__
+# ifdef HAVE_CONST
 #  define CONST     const
 # else
 #  define CONST
