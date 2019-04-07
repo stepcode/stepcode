@@ -217,6 +217,9 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
     cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;
     cmLists << "                 \"${schema_target_files}\")" << endl;
+    cmLists << "if(MSVC)" << endl;
+    cmLists << "target_compile_options(" << shortName << " PRIVATE \"/bigobj\")" << endl;
+    cmLists << "endif()" << endl;
 
     cmLists.close();
 
