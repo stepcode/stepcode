@@ -131,7 +131,18 @@ include_directories(
   ${SC_SOURCE_DIR}/src/clutils
   )
 
-SC_ADDLIB(stepcore "${LIBSTEPCORE_SRCS}" "steputils;stepdai;base")
+set(_libdeps steputils stepdai base)
+
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(stepcore SHARED SOURCES ${LIBSTEPCORE_SRCS} LINK_LIBRARIES ${_libdeps})
+  if(WIN32)
+    target_compile_definitions(stepcore PRIVATE SC_CORE_DLL_EXPORTS)
+  endif()
+endif()
+
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(stepcore-static STATIC SOURCES ${LIBSTEPCORE_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static>-static)
+endif()
 
 install(FILES ${SC_CLSTEPCORE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)

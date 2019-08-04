@@ -30,12 +30,21 @@ include_directories(
   ${SC_SOURCE_DIR}/src/base/judy/src
   )
 
-SC_ADDLIB(steplazyfile "${clLazyFile_SRCS};${clLazyFile_HDRS}" "stepcore;stepdai;steputils;base;stepeditor")
-SC_ADDEXEC(lazy_test "lazy_test.cc" "steplazyfile;stepeditor" NO_INSTALL)
-set_property(TARGET lazy_test APPEND PROPERTY COMPILE_DEFINITIONS "NO_REGISTRY")
-if(TARGET lazy_test-static)
-  set_property(TARGET lazy_test-static APPEND PROPERTY COMPILE_DEFINITIONS "NO_REGISTRY")
-endif(TARGET lazy_test-static)
+set(_libdeps stepcore stepdai steputils base stepeditor)
+
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(steplazyfile SHARED SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES ${_libdeps})
+  if(WIN32)
+    target_compile_definitions(steplazyfile PRIVATE SC_LAZYFILE_DLL_EXPORTS)
+  endif()
+endif()
+
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(steplazyfile-static STATIC SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
+endif()
+
+SC_ADDEXEC(lazy_test SOURCES lazy_test.cc LINK_LIBRARIES steplazyfile stepeditor NO_INSTALL)
+target_compile_definitions(lazy_test PRIVATE NO_REGISTRY)
 
 install(FILES ${SC_CLLAZYFILE_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cllazyfile)

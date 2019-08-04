@@ -29,18 +29,23 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/judy/src
   )
 
-if(MINGW OR MSVC OR BORLAND)
-  add_definitions(-DSC_BASE_DLL_EXPORTS)
-endif()
-
-if (${SC_MEMMGR_ENABLE_CHECKS})
+if($CACHE{SC_MEMMGR_ENABLE_CHECKS})
   add_definitions(-DSC_MEMMGR_ENABLE_CHECKS)
 endif()
 
-SC_ADDLIB(base "${SC_BASE_SOURCES}" "")
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(base SHARED SOURCES ${SC_BASE_SOURCES})
+  if(WIN32)
+    target_link_libraries(base psapi)
+    target_compile_definitions(base PRIVATE SC_BASE_DLL_EXPORTS)
+  endif()
+endif()
 
-if(MINGW OR MSVC OR BORLAND)
-  target_link_libraries(base psapi.lib)
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(base-static STATIC SOURCES ${SC_BASE_SOURCES})
+  if(WIN32)
+    target_link_libraries(base-static psapi)
+  endif()
 endif()
 
 if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/judy/src")

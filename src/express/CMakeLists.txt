@@ -1,5 +1,5 @@
 include_directories(
-  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${SC_SOURCE_DIR}/src/base
   )
@@ -109,28 +109,49 @@ SET(EXPRESS_PRIVATE_HDRS
   stack.h
   )
 
-SC_ADDLIB(express "${EXPRESS_SOURCES}" "base" SO_SRCS "${SCL_SO_SRCS}" STATIC_SRCS "${SCL_STATIC_SRCS}")
-if(SC_GENERATE_LP_SOURCES)
-  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
-  set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
-  if (TARGET express-static)
+variable_watch(SC_ADDLIB_EXPRESS_ARG_LINK_LIBRARIES)
+variable_watch(SC_ADDLIB_EXPRESS-STATIC_ARG_LINK_LIBRARIES)
+
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(express SHARED SOURCES ${EXPRESS_SOURCES} ${SCL_SO_SRCS} LINK_LIBRARIES base)
+  if(WIN32)
+    target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
+  endif()
+
+  if(SC_GENERATE_LP_SOURCES)
+    set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+    set_property(TARGET express APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+    add_custom_command(TARGET express POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
+    )
+  else()
+    add_dependencies(express express_verify)
+  endif()
+
+  if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
+    add_dependencies(express version_string)
+  endif()
+endif()
+
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(express-static STATIC SOURCES ${EXPRESS_SOURCES} ${SCL_STATIC_SRCS} LINK_LIBRARIES base-static)
+
+  if(SC_GENERATE_LP_SOURCES)
     set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_static_INCLUDE_DIR}")
     set_property(TARGET express-static APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_static_INCLUDE_DIR}")
-  endif (TARGET express-static)
-endif(SC_GENERATE_LP_SOURCES)
-
-if(SC_GENERATE_LP_SOURCES)
-  add_custom_command(TARGET express POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
+    add_custom_command(TARGET express-static POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
     )
-else(SC_GENERATE_LP_SOURCES)
-  add_dependencies(express express_verify)
-endif(SC_GENERATE_LP_SOURCES)
+  else()
+    add_dependencies(express-static express_verify)
+  endif()
+ 
+  if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
+    add_dependencies(express-static version_string)
+  endif()
+endif()
 
-if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-  add_dependencies(express version_string)
-endif(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-SC_ADDEXEC("check-express" "${CHECK_EXPRESS_SOURCES}" "express;base"  ${SC_EXEC_NOINSTALL})
+SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)

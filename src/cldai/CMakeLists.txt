@@ -34,7 +34,18 @@ include_directories(
   ${SC_SOURCE_DIR}/src/clutils
   )
 
-SC_ADDLIB(stepdai "${LIBSTEPDAI_SRCS}" "steputils;base")
+set(_libdeps steputils base)
+
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(stepdai SHARED SOURCES ${LIBSTEPDAI_SRCS} LINK_LIBRARIES ${_libdeps})
+  if(WIN32)
+    target_compile_definitions(stepdai PRIVATE SC_DAI_DLL_EXPORTS)
+  endif()
+endif()
+
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(stepdai-static STATIC SOURCES ${LIBSTEPDAI_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
+endif()
 
 install(FILES ${SC_CLDAI_HDRS}
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cldai)

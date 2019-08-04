@@ -51,7 +51,8 @@ set(SC_ABI_SOVERSION 2)
 set(SC_ABI_VERSION ${SC_ABI_SOVERSION}.0.0)
 
 # Minimum required version of CMake
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.6.3)
+# TODO: rework to remove these
 if(COMMAND CMAKE_POLICY)
   CMAKE_POLICY(SET CMP0003 NEW)
   if ("${CMAKE_VERSION}" VERSION_GREATER 2.99)
@@ -109,11 +110,8 @@ include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)
 ################
 
 if(MSVC)
-  add_definitions(-D__MSVC__ -D__WIN32__)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-elseif(BORLAND)
-  add_definitions(-D__BORLAND__ -D__WIN32__)
 else()
   add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
   if(HAVE_NULLPTR)
@@ -145,7 +143,11 @@ add_subdirectory(doc)
 
 # 'make core' builds everything that isn't generated. for devs.
 add_custom_target(core)
-add_dependencies(core stepdai check-express stepeditor exp2cxx)
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  add_dependencies(core stepdai stepeditor exp2cxx check-express)
+else()
+  add_dependencies(core stepdai-static stepeditor-static exp2cxx check-express)
+endif()
 
 # CONFIG_END_MESSAGES - list of messages to be printed after everything else is done.
 # THIS MUST BE LAST to ensure that they are visible to the user without scrolling.

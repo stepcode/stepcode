@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.6.3)
 #c++ tests that depend on a particular schema
 
 include_directories( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
@@ -52,9 +52,6 @@ function(add_schema_dependent_test name sdai_lib exe_args )
   if(NOT ${ARGV4} STREQUAL "")
     set_property(TARGET tst_${name} APPEND_STRING PROPERTY COMPILE_FLAGS ${ARGV4} )
   endif(NOT ${ARGV4} STREQUAL "")
-  if(NOT "${ARGV5}" MATCHES "NONE")
-    DEFINE_DLL_IMPORTS("tst_${name}" "${ARGV5}")
-  endif(NOT "${ARGV5}" MATCHES "NONE")
   target_link_libraries(tst_${name} sdai_${sdai_lib} ${ARGV5})
   add_test(NAME build_cpp_${name}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

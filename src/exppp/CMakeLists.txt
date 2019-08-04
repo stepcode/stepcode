@@ -30,14 +30,20 @@ include_directories(
   ${SC_SOURCE_DIR}/src/express
  )
 
-if(BORLAND)
-  add_definitions(-D__STDC__)
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(libexppp SHARED SOURCES ${LIBEXPPP_SOURCES} LINK_LIBRARIES express base)
+  set_target_properties(libexppp PROPERTIES PREFIX "")
+  if(WIN32)
+    target_compile_definitions(libexppp PRIVATE SC_EXPPP_DLL_EXPORTS)
+  endif()
 endif()
 
-SC_ADDLIB(libexppp "${LIBEXPPP_SOURCES}" "express;base")
-set_target_properties(libexppp PROPERTIES PREFIX "")
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(libexppp-static STATIC SOURCES ${LIBEXPPP_SOURCES} LINK_LIBRARIES express-static base-static)
+  set_target_properties(libexppp-static PROPERTIES PREFIX "")
+endif()
 
-SC_ADDEXEC(exppp "${EXPPP_SOURCES}" "libexppp;express;base")
+SC_ADDEXEC(exppp SOURCES ${EXPPP_SOURCES} LINK_LIBRARIES libexppp express base)
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)
