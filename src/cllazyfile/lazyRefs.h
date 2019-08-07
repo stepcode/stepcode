@@ -60,12 +60,19 @@ class SC_LAZYFILE_EXPORT lazyRefs {
         typedef std::set< const Inverse_attribute * > iaList_t;
         typedef judyLArray< instanceID, std::string * > refMap_t;
         typedef std::set< const EntityDescriptor * > edList_t;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         iaList_t _iaList;
         lazyInstMgr * _lim;
         instanceID _id;
         refMap_t _refMap;
         referentInstances_t _referentInstances;
         SDAI_Application_instance * _inst;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
         void checkAnInvAttr( const Inverse_attribute * ia ) {
             const EntityDescriptor * ed;

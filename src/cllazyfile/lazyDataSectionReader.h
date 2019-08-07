@@ -16,7 +16,14 @@
 class SC_LAZYFILE_EXPORT lazyDataSectionReader: public sectionReader {
     protected:
         bool _error, _completelyLoaded;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         std::string _sectionIdentifier;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
         /// only makes sense to call the ctor from derived class ctors
         lazyDataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );

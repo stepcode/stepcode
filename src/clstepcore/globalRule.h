@@ -9,11 +9,19 @@
 
 class SC_CORE_EXPORT Global_rule : public Dictionary_instance {
 public:
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     Express_id _name;
+    std::string _rule_text; // non-SDAI
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
     Entity__set_var _entities; // not implemented
     Where_rule__list_var _where_rules;
     Schema_ptr _parent_schema;
-    std::string _rule_text; // non-SDAI
 
     Global_rule();
     Global_rule( const char * n, Schema_ptr parent_sch, const std::string & rt );

@@ -38,7 +38,14 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         typedef std::map< const Inverse_attribute * const, iAstruct> iAMap_t;
     protected:
         const EntityDescriptor * eDesc;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         iAMap_t iAMap;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
         bool _complex;
 
     public: //TODO make these private?
@@ -51,7 +58,14 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         int               STEPfile_id;
 
         ErrorDescriptor   _error;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         std::string       p21Comment;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
         /**
         ** head entity for multiple inheritance.  If it is null then this

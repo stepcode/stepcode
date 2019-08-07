@@ -26,6 +26,10 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         /** multimap from instance number to instances that it refers to
          * \sa instanceRefs_pair
          */
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         instanceRefs_t  _fwdInstanceRefs;
         /** multimap from instance number to instances that refer to it - the majority of these will not be inverse references!
          * \sa instanceRefs_pair
@@ -66,6 +70,10 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         std::string _longestTypeName;
 
         instMgrAdapter * _ima;
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
     public:
         lazyInstMgr();

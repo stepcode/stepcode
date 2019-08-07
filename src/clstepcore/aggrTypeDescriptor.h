@@ -35,7 +35,14 @@ protected:
 
     AggrBoundTypeEnum _bound1_type, _bound2_type;
     boundCallbackFn _bound1_callback, _bound2_callback;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     std::string _bound1_str, _bound2_str;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
 public:
 

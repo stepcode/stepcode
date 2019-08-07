@@ -18,10 +18,17 @@ class SC_LAZYFILE_EXPORT sectionReader {
     protected:
         //protected data members
         lazyFileReader * _lazyFile;
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         std::ifstream & _file;
 
         std::streampos _sectionStart,  ///< the start of this section as reported by tellg()
             _sectionEnd;               ///< the end of this section as reported by tellg()
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
         unsigned long _totalInstances;
 
         ErrorDescriptor * _error;
