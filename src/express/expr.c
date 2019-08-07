@@ -106,7 +106,7 @@ static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
 
-static_inline int OPget_number_of_operands( Op_Code op ) {
+static inline int OPget_number_of_operands( Op_Code op ) {
     if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
         return 1;
     } else if( op == OP_SUBCOMPONENT ) {

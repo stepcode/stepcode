@@ -95,6 +95,10 @@ extern SC_EXPRESS_EXPORT Error        ERROR_nonascii_char;
 # define SCANtext_ready (*SCANcurrent != '\0')
 #endif
 
+#ifndef static_inline
+# define static_inline static inline
+#endif
+
 /***********************/
 /* function prototypes */
 /***********************/

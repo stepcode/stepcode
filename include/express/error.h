@@ -126,23 +126,23 @@ extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer( void );
 /* Inline functions */
 /********************/
 
-static_inline void ERRORdisable( Error error ) {
+static inline void ERRORdisable( Error error ) {
     if( error != ERROR_none ) {
         error->enabled = false;
     }
 }
 
-static_inline void ERRORenable( Error error ) {
+static inline void ERRORenable( Error error ) {
     if( error != ERROR_none ) {
         error->enabled = true;
     }
 }
 
-static_inline bool ERRORis_enabled( Error error ) {
+static inline bool ERRORis_enabled( Error error ) {
     return error->enabled;
 }
 
-static_inline void ERRORbuffer_messages( bool flag ) {
+static inline void ERRORbuffer_messages( bool flag ) {
 #if !defined(__MSVC__) && !defined(__BORLAND__)
     extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
@@ -155,7 +155,7 @@ static_inline void ERRORbuffer_messages( bool flag ) {
     }
 }
 
-static_inline void ERRORflush_messages( void ) {
+static inline void ERRORflush_messages( void ) {
 #if !defined(__MSVC__) && !defined(__BORLAND__)
     extern void ERROR_start_message_buffer( void ),
            ERROR_flush_message_buffer( void );
@@ -166,6 +166,7 @@ static_inline void ERRORflush_messages( void ) {
         ERROR_start_message_buffer();
     }
 }
+
 
 /***********************/
 /* function prototypes */

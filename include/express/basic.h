@@ -85,6 +85,9 @@
 # include <sc_stdbool.h>
 #endif
 
+#if defined(_MSC_VER) && (_MSC_VER < 1900) && !defined(__cplusplus)
+#define inline __inline
+#endif
 
 /**************************/
 /* function pointer types */
@@ -92,20 +95,6 @@
 
 typedef void ( *voidFuncptr )();
 typedef int ( *intFuncptr )();
-
-/******************************/
-/* deal with inline functions */
-/******************************/
-
-#if !defined(static_inline)
-#if (!defined(__GNUC__) && !defined(__MSVC__)) || defined(__STRICT_ANSI)
-#define static_inline
-#undef supports_inline_functions
-#else
-#define static_inline static __inline
-#define supports_inline_functions   1L
-#endif    /*    */
-#endif /* !defined(static_inline) */
 
 /* allow same declarations to suffice for both Standard and Classic C */
 /* ... at least in header files ... */
