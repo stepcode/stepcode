@@ -1014,7 +1014,7 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
 static bool listContainsVar( Linked_List l, Variable v ) {
     const char * vName = VARget_simple_name( v );
     LISTdo( l, curr, Variable ) {
-        if( streq( vName, VARget_simple_name( curr ) ) ) {
+        if( !strcmp( vName, VARget_simple_name( curr ) ) ) {
             return true;
         }
     }

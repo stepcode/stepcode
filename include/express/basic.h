@@ -95,9 +95,6 @@ typedef void * Generic;
 typedef char * Generic;
 #endif    /*    */
 
-/* other handy macros */
-#define streq(x,y)  (!strcmp((x),(y)))
-
 
 /**************************/
 /* function pointer types */

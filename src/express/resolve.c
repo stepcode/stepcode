@@ -957,7 +957,7 @@ void ALGresolve_expressions_statements( Scope s, Linked_List statements ) {
 
 static Variable ENTITY_get_local_attribute( Entity e, char * name ) {
     LISTdo( e->u.entity->attributes, a, Variable )
-    if( streq( VARget_simple_name( a ), name ) ) {
+    if( !strcmp( VARget_simple_name( a ), name ) ) {
         return a;
     }
     LISTod;
@@ -982,7 +982,7 @@ void ENTITYresolve_expressions( Entity e ) {
         if( attr->name->type->u.type->body->type == op_ ) {
             /* attribute redeclaration */
             sname = attr->name->e.op1->e.op2->symbol.name;
-            if( streq( sname, e->symbol.name ) ||
+            if( !strcmp( sname, e->symbol.name ) ||
                     !( sup = ENTITYfind_inherited_entity( e, sname, 0 ) ) ) {
                 ERRORreport_with_symbol( ERROR_redecl_no_such_supertype,
                                         &attr->name->e.op1->e.op2->symbol,

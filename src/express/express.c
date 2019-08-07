@@ -222,7 +222,7 @@ static void EXPRESS_PATHinit() {
 
             /* if it's just ".", make it as if it was */
             /* just "" to make error messages cleaner */
-            if( streq( ".", start ) ) {
+            if( !strcmp( ".", start ) ) {
                 dir->leaf = dir->full;
                 LISTadd_last( EXPRESS_path, ( Generic )dir );
                 *( p - 1 ) = save; /* put char back where */
@@ -446,7 +446,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
         int length = strlen( start );
 
         /* drop .exp suffix if present */
-        if( dot && streq( dot, ".exp" ) ) {
+        if( dot && !strcmp( dot, ".exp" ) ) {
             length -= 4;
         }
 
@@ -552,7 +552,7 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
     }
 
     LISTdo( schema->u.schema->uselist, r, Rename * )
-    if( streq( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
+    if( !strcmp( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
         RENAMEresolve( r, schema );
         DICT_type = r->type;
         return( r->object );

@@ -146,7 +146,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
     entity->search_id = __SCOPE_search_id;
 
     LISTdo( entity->u.entity->supertypes, super, Entity )
-    if( streq( super->symbol.name, name ) ) {
+    if( !strcmp( super->symbol.name, name ) ) {
         return super;
     }
     LISTod
@@ -160,7 +160,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
 
     if( down ) {
         LISTdo( entity->u.entity->subtypes, sub, Entity )
-        if( streq( sub->symbol.name, name ) ) {
+        if( !strcmp( sub->symbol.name, name ) ) {
             return sub;
         }
         LISTod;
@@ -177,7 +177,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
 }
 
 struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name, int down ) {
-    if( streq( name, entity->symbol.name ) ) {
+    if( !strcmp( name, entity->symbol.name ) ) {
         return( entity );
     }
 
@@ -437,7 +437,7 @@ Variable ENTITYget_named_attribute( Entity entity, char * name ) {
     Variable attribute;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
-    if( streq( VARget_simple_name( attr ), name ) ) {
+    if( !strcmp( VARget_simple_name( attr ), name ) ) {
         return attr;
     }
     LISTod;
@@ -495,7 +495,7 @@ int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
     int value;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
-    if( streq( VARget_simple_name( attr ), name ) )
+    if( !strcmp( VARget_simple_name( attr ), name ) )
         return entity->u.entity->inheritance +
                VARget_offset( ENTITY_find_inherited_attribute( entity, name, 0, 0 ) );
     LISTod;

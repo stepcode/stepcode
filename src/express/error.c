@@ -199,7 +199,7 @@ void ERRORcreate_warning( char * name, Error error ) {
 
     /* first check if we know about this type of error */
     LISTdo( ERRORwarnings, opt, Error_Warning ) {
-        if( streq( name, opt->name ) ) {
+        if( !strcmp( name, opt->name ) ) {
             LISTadd_last( opt->errors, ( Generic )error );
             return;
         }
@@ -215,14 +215,14 @@ void ERRORcreate_warning( char * name, Error error ) {
 
 void ERRORset_warning( char * name, int set ) {
 
-    if( streq( name, "all" ) ) {
+    if( !strcmp( name, "all" ) ) {
         ERRORset_all_warnings( set );
-    } else if( streq( name, "none" ) ) {
+    } else if( !strcmp( name, "none" ) ) {
         ERRORset_all_warnings( !set );
     } else {
         bool found = false;
         LISTdo( ERRORwarnings, opt, Error_Warning ) {
-            if( streq( opt->name, name ) ) {
+            if( !strcmp( opt->name, name ) ) {
                 found = true;
                 LISTdo_n( opt->errors, err, Error, b ) {
                     err->enabled = set;
