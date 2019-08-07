@@ -1,10 +1,20 @@
 #ifndef LAZYTYPES_H
 #define LAZYTYPES_H
 
+#include "sc_cf.h"
+
 #include <iostream>
 #include <vector>
 #include <set>
+
+#ifdef HAVE_STDINT_H
 #include <stdint.h>
+#else
+#if defined(_MSC_VER) && _MSC_VER < 1600
+typedef unsigned __int64 uint64_t;
+typedef unsigned __int16 uint16_t;
+#endif
+#endif
 
 #include "judyLArray.h"
 #include "judySArray.h"

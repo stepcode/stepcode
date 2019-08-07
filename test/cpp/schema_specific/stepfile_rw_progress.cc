@@ -31,7 +31,7 @@
 #ifdef HAVE_STD_CHRONO
 # define DELAY(t) std::this_thread::sleep_for(std::chrono::milliseconds(t));
 #else
-# ifndef __WIN32__
+# ifndef _WIN32
 #  define DELAY(t) usleep( t * 100 )
 # else
 #  include <WinBase.h>

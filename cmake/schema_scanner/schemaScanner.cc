@@ -22,7 +22,7 @@ extern "C" {
 
 #  include <string.h>
 
-#  if defined( _WIN32 ) || defined ( __WIN32__ )
+#  ifdef _WIN32
 #    include <direct.h>
 #    define getcwd _getcwd
 #  else

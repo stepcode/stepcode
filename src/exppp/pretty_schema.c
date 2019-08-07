@@ -14,7 +14,7 @@
 #include "pretty_scope.h"
 #include "pretty_schema.h"
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
+#ifdef _WIN32
 #  define unlink _unlink
 #else
 #  include <unistd.h> /* for unlink */
