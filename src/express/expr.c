@@ -733,7 +733,7 @@ Type EXPresolve_op_unknown( Expression e, Scope s ) {
     return Type_Bad;
 }
 
-typedef Type Resolve_expr_func PROTO( ( Expression , Scope ) );
+typedef Type (Resolve_expr_func) ( Expression , Scope );
 
 Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );

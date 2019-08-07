@@ -125,22 +125,22 @@ extern SC_EXPRESS_EXPORT struct freelist_head LIST_fl;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void LISTinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void LISTcleanup PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT Linked_List LISTcreate PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT Linked_List LISTcopy PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT void LISTsort PROTO( ( Linked_List, int (*comp)(void*, void*) ) );
-extern SC_EXPRESS_EXPORT void LISTswap PROTO( ( Link, Link ) );
-extern SC_EXPRESS_EXPORT Generic  LISTadd_first PROTO( ( Linked_List, Generic ) );
-extern SC_EXPRESS_EXPORT Generic  LISTadd_last PROTO( ( Linked_List, Generic ) );
-extern SC_EXPRESS_EXPORT Generic  LISTadd_after PROTO( ( Linked_List, Link, Generic ) );
-extern SC_EXPRESS_EXPORT Generic  LISTadd_before PROTO( ( Linked_List, Link, Generic ) );
-extern SC_EXPRESS_EXPORT Generic  LISTremove_first PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Generic  LISTget_first PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Generic  LISTget_second PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Generic  LISTget_nth PROTO( ( Linked_List, int ) );
-extern SC_EXPRESS_EXPORT void LISTfree PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT int  LISTget_length PROTO( ( Linked_List ) );
+extern SC_EXPRESS_EXPORT void LISTinitialize( void );
+extern SC_EXPRESS_EXPORT void LISTcleanup( void );
+extern SC_EXPRESS_EXPORT Linked_List LISTcreate( void );
+extern SC_EXPRESS_EXPORT Linked_List LISTcopy( Linked_List );
+extern SC_EXPRESS_EXPORT void LISTsort( Linked_List, int (*comp)(void*, void*) );
+extern SC_EXPRESS_EXPORT void LISTswap( Link, Link );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_first( Linked_List, Generic );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_last( Linked_List, Generic );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_after( Linked_List, Link, Generic );
+extern SC_EXPRESS_EXPORT Generic  LISTadd_before( Linked_List, Link, Generic );
+extern SC_EXPRESS_EXPORT Generic  LISTremove_first( Linked_List );
+extern SC_EXPRESS_EXPORT Generic  LISTget_first( Linked_List );
+extern SC_EXPRESS_EXPORT Generic  LISTget_second( Linked_List );
+extern SC_EXPRESS_EXPORT Generic  LISTget_nth( Linked_List, int );
+extern SC_EXPRESS_EXPORT void LISTfree( Linked_List );
+extern SC_EXPRESS_EXPORT int  LISTget_length( Linked_List );
 extern SC_EXPRESS_EXPORT bool LISTempty( Linked_List list );
 
 #endif /*LINKED_LIST_H*/

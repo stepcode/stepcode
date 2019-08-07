@@ -133,20 +133,20 @@ extern SC_EXPRESS_EXPORT int __SCOPE_search_id;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Variable VARfind PROTO( ( Scope, char *, int ) );
-extern SC_EXPRESS_EXPORT Schema   SCHEMAcreate PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void     SCHEMAinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void     SCHEMAadd_use PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
-extern SC_EXPRESS_EXPORT void     SCHEMAadd_reference PROTO( ( Schema, Symbol *, Symbol *, Symbol * ) );
-extern SC_EXPRESS_EXPORT void     SCHEMAdefine_use PROTO( ( Schema, Rename * ) );
-extern SC_EXPRESS_EXPORT void     SCHEMAdefine_reference PROTO( ( Schema, Rename * ) );
-extern SC_EXPRESS_EXPORT Generic  SCHEMAfind PROTO( ( Schema, char * name, int search_refs ) );
-extern SC_EXPRESS_EXPORT Scope    SCOPEcreate PROTO( ( char ) );
-extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_tiny PROTO( ( char ) );
-extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_nostab PROTO( ( char ) );
-extern SC_EXPRESS_EXPORT void     SCOPEdestroy PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT Variable VARfind( Scope, char *, int );
+extern SC_EXPRESS_EXPORT Schema   SCHEMAcreate( void );
+extern SC_EXPRESS_EXPORT void     SCHEMAinitialize( void );
+extern SC_EXPRESS_EXPORT void     SCHEMAadd_use( Schema, Symbol *, Symbol *, Symbol * );
+extern SC_EXPRESS_EXPORT void     SCHEMAadd_reference( Schema, Symbol *, Symbol *, Symbol * );
+extern SC_EXPRESS_EXPORT void     SCHEMAdefine_use( Schema, Rename * );
+extern SC_EXPRESS_EXPORT void     SCHEMAdefine_reference( Schema, Rename * );
+extern SC_EXPRESS_EXPORT void *   SCHEMAfind( Schema, char * name, int search_refs );
+extern SC_EXPRESS_EXPORT Scope    SCOPEcreate( char );
+extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_tiny( char );
+extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_nostab( char );
+extern SC_EXPRESS_EXPORT void     SCOPEdestroy( Scope );
+extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_use( Scope );
+extern SC_EXPRESS_EXPORT Linked_List SCHEMAget_entities_ref( Scope );
 
 #endif /*  SCHEMA_H */
 

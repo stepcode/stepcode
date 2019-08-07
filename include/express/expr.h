@@ -178,7 +178,7 @@ struct Expression_ {
 /** indexed by the op enumeration values */
 struct EXPop_entry {
     char * token;       /**< literal token, e.g., "<>" */
-    Type( *resolve ) PROTO( ( Expression, struct Scope_ * ) );
+    Type( *resolve )( Expression, struct Scope_ * );
 };
 
 /********************/
@@ -254,16 +254,16 @@ extern SC_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Expression   EXPcreate PROTO( ( Type ) );
-extern SC_EXPRESS_EXPORT Expression   EXPcreate_simple PROTO( ( Type ) );
-extern SC_EXPRESS_EXPORT Expression   EXPcreate_from_symbol PROTO( ( Type, Symbol * ) );
-extern SC_EXPRESS_EXPORT Expression   UN_EXPcreate PROTO( ( Op_Code, Expression ) );
-extern SC_EXPRESS_EXPORT Expression   BIN_EXPcreate PROTO( ( Op_Code, Expression, Expression ) );
-extern SC_EXPRESS_EXPORT Expression   TERN_EXPcreate PROTO( ( Op_Code, Expression, Expression, Expression ) );
-extern SC_EXPRESS_EXPORT Expression   QUERYcreate PROTO( ( Symbol *, Expression ) );
-extern SC_EXPRESS_EXPORT void     EXPinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void     EXPcleanup PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT Type     EXPtype PROTO( ( Expression, struct Scope_ * ) );
-extern SC_EXPRESS_EXPORT int      EXPget_integer_value PROTO( ( Expression ) );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate( Type );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate_simple( Type );
+extern SC_EXPRESS_EXPORT Expression   EXPcreate_from_symbol( Type, Symbol * );
+extern SC_EXPRESS_EXPORT Expression   UN_EXPcreate( Op_Code, Expression );
+extern SC_EXPRESS_EXPORT Expression   BIN_EXPcreate( Op_Code, Expression, Expression );
+extern SC_EXPRESS_EXPORT Expression   TERN_EXPcreate( Op_Code, Expression, Expression, Expression );
+extern SC_EXPRESS_EXPORT Expression   QUERYcreate( Symbol *, Expression );
+extern SC_EXPRESS_EXPORT void     EXPinitialize( void );
+extern SC_EXPRESS_EXPORT void     EXPcleanup( void );
+extern SC_EXPRESS_EXPORT Type     EXPtype( Expression, struct Scope_ * );
+extern SC_EXPRESS_EXPORT int      EXPget_integer_value( Expression );
 
 #endif /*EXPRESSION_H*/

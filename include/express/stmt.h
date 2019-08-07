@@ -225,17 +225,17 @@ extern SC_EXPRESS_EXPORT Statement STATEMENT_SKIP;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Statement    STMTcreate PROTO( ( int ) );
-extern SC_EXPRESS_EXPORT Statement    ALIAScreate PROTO( ( struct Scope_ *, Variable, Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    CASEcreate PROTO( ( Expression , Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    ASSIGNcreate PROTO( ( Expression , Expression ) );
-extern SC_EXPRESS_EXPORT Statement    COMP_STMTcreate PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    CONDcreate PROTO( ( Expression, Linked_List, Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    LOOPcreate PROTO( ( struct Scope_ *, Expression, Expression, Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    PCALLcreate PROTO( ( Linked_List ) );
-extern SC_EXPRESS_EXPORT Statement    RETcreate PROTO( ( Expression ) );
-extern SC_EXPRESS_EXPORT void     STMTinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate PROTO( ( Symbol *, Expression start,
-        Expression end, Expression increment ) );
+extern SC_EXPRESS_EXPORT Statement    STMTcreate( int );
+extern SC_EXPRESS_EXPORT Statement    ALIAScreate( struct Scope_ *, Variable, Linked_List );
+extern SC_EXPRESS_EXPORT Statement    CASEcreate( Expression , Linked_List );
+extern SC_EXPRESS_EXPORT Statement    ASSIGNcreate( Expression , Expression );
+extern SC_EXPRESS_EXPORT Statement    COMP_STMTcreate( Linked_List );
+extern SC_EXPRESS_EXPORT Statement    CONDcreate( Expression, Linked_List, Linked_List );
+extern SC_EXPRESS_EXPORT Statement    LOOPcreate( struct Scope_ *, Expression, Expression, Linked_List );
+extern SC_EXPRESS_EXPORT Statement    PCALLcreate( Linked_List );
+extern SC_EXPRESS_EXPORT Statement    RETcreate( Expression );
+extern SC_EXPRESS_EXPORT void     STMTinitialize( void );
+extern SC_EXPRESS_EXPORT struct Scope_ * INCR_CTLcreate( Symbol *, Expression start,
+        Expression end, Expression increment );
 
 #endif /*STATEMENT_H*/

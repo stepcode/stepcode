@@ -193,13 +193,13 @@ This change only seems to have affected hash.h and hash.c
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void HASHinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT Hash_Table   HASHcreate PROTO( ( unsigned ) );
-extern SC_EXPRESS_EXPORT Hash_Table   HASHcopy PROTO( ( Hash_Table ) );
-extern SC_EXPRESS_EXPORT void HASHdestroy PROTO( ( Hash_Table ) );
-extern SC_EXPRESS_EXPORT Element  HASHsearch PROTO( ( Hash_Table, Element, Action ) );
-extern SC_EXPRESS_EXPORT void HASHlistinit PROTO( ( Hash_Table, HashEntry * ) );
-extern SC_EXPRESS_EXPORT void HASHlistinit_by_type PROTO( ( Hash_Table, HashEntry *, char ) );
-extern SC_EXPRESS_EXPORT Element  HASHlist PROTO( ( HashEntry * ) );
+extern SC_EXPRESS_EXPORT void HASHinitialize( void );
+extern SC_EXPRESS_EXPORT Hash_Table   HASHcreate( unsigned );
+extern SC_EXPRESS_EXPORT Hash_Table   HASHcopy( Hash_Table );
+extern SC_EXPRESS_EXPORT void HASHdestroy( Hash_Table );
+extern SC_EXPRESS_EXPORT Element  HASHsearch( Hash_Table, Element, Action );
+extern SC_EXPRESS_EXPORT void HASHlistinit( Hash_Table, HashEntry * );
+extern SC_EXPRESS_EXPORT void HASHlistinit_by_type( Hash_Table, HashEntry *, char );
+extern SC_EXPRESS_EXPORT Element  HASHlist( HashEntry * );
 
 #endif /*HASH_H*/

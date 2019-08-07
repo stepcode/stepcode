@@ -128,20 +128,6 @@ typedef int ( *intFuncptr )();
 # endif
 #endif
 
-#ifndef PROTO
-# ifdef __STDC__
-#  define PROTO(x)  x
-# else
-
-# if defined(__CLCC__) || defined(__MSVC__) || defined(__BORLAND__)
-# define PROTO(x)   x
-#else
-# define PROTO(x)   ()
-# endif
-
-# endif
-#endif
-
 #endif    /*    */
 
 

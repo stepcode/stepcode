@@ -88,7 +88,7 @@ extern SC_EXPRESS_EXPORT struct freelist_head SYMBOL_fl;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void SYMBOLinitialize PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void SYMBOLinitialize( void );
 SC_EXPRESS_EXPORT Symbol * SYMBOLcreate( char * name, int line, const char * filename );
 
 #endif    /*  SYMBOL_H  */

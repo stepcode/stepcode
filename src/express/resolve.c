@@ -78,9 +78,9 @@ Error WARNING_fn_skip_branch = ERROR_none;
 Error WARNING_case_skip_label = ERROR_none;
 
 
-static void ENTITYresolve_subtypes PROTO( ( Schema ) );
-static void ENTITYresolve_supertypes PROTO( ( Entity ) );
-static void TYPEresolve_expressions PROTO( ( Type, Scope ) );
+static void ENTITYresolve_subtypes( Schema );
+static void ENTITYresolve_supertypes( Entity );
+static void TYPEresolve_expressions( Type, Scope );
 
 static Error ERROR_wrong_arg_count;
 static Error ERROR_supertype_resolve;
@@ -115,9 +115,9 @@ static bool found_self;  /**< remember whether we've seen a SELF in a WHERE clau
 /* function prototypes */
 /***********************/
 
-static int WHEREresolve PROTO( ( Linked_List, Scope, int ) );
-extern void VAR_resolve_expressions PROTO( ( Variable, Entity ) );
-extern void VAR_resolve_types PROTO( ( Variable v ) );
+static int WHEREresolve( Linked_List, Scope, int );
+extern void VAR_resolve_expressions( Variable, Entity );
+extern void VAR_resolve_types( Variable v );
 
 /** Initialize the Fed-X second pass. */
 void RESOLVEinitialize( void ) {

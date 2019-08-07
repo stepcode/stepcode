@@ -94,14 +94,14 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt);
 Linked_List EXPRESS_path;
 int EXPRESSpass;
 
-void ( *EXPRESSinit_args ) PROTO( ( int, char ** ) )   = 0;
-void ( *EXPRESSinit_parse ) PROTO( ( void ) )     = 0;
-int ( *EXPRESSfail ) PROTO( ( Express ) )        = 0;
-int ( *EXPRESSsucceed ) PROTO( ( Express ) )     = 0;
-void ( *EXPRESSbackend ) PROTO( ( Express ) )     = 0;
+void ( *EXPRESSinit_args )( int, char ** ) = NULL;
+void ( *EXPRESSinit_parse )( void ) = NULL;
+int ( *EXPRESSfail )( Express ) = NULL;
+int ( *EXPRESSsucceed )( Express ) = NULL;
+void ( *EXPRESSbackend )( Express ) = NULL;
 char * EXPRESSprogram_name;
 extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
-int ( *EXPRESSgetopt ) PROTO( ( int, char * ) )   = 0;
+int ( *EXPRESSgetopt )( int, char * ) = NULL;
 bool    EXPRESSignore_duplicate_schemas      = false;
 
 Dictionary EXPRESSbuiltins; /* procedures/functions */
@@ -125,7 +125,7 @@ static Error ERROR_schema_not_in_own_schema_file;
 extern Linked_List PARSEnew_schemas;
 void SCOPEinitialize( void );
 
-static Express PARSERrun PROTO( ( char *, FILE * ) );
+static Express PARSERrun( char *, FILE * );
 
 /** name specified on command line */
 char * input_filename = 0;
@@ -469,7 +469,7 @@ void parserInitState();
 
 /** start parsing a new schema file */
 static Express PARSERrun( char * filename, FILE * fp ) {
-    extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
+    extern void SCAN_lex_init( char *, FILE * );
     extern YYSTYPE yylval;
     extern int yyerrstatus;
     int tokenID;
