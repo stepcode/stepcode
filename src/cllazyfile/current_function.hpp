@@ -36,10 +36,6 @@
 
 # define SC_CURRENT_FUNCTION __FUNCTION__
 
-#elif defined(__BORLANDC__) && (__BORLANDC__ >= 0x550)
-
-# define SC_CURRENT_FUNCTION __FUNC__
-
 #elif defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
 
 # define SC_CURRENT_FUNCTION __func__

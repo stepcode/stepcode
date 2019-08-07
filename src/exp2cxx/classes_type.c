@@ -492,10 +492,8 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
     }
 
     /* Print the extern statement: */
-#if !defined(__BORLAND__)
     strncpy( nm, TYPEtd_name( t ), BUFSIZ );
     fprintf( classes, "extern SC_SCHEMA_EXPORT %s         *%s;\n", GetTypeDescriptorName( t ), nm );
-#endif
 }
 
 /** **
