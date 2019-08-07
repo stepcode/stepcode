@@ -117,10 +117,8 @@ extern SC_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
 /* function prototypes */
 /***********************/
 
-#if defined(__MSVC__) || defined(__BORLAND__)
 extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer( void );
 extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer( void );
-#endif
 
 /********************/
 /* Inline functions */
@@ -143,10 +141,6 @@ static inline bool ERRORis_enabled( Error error ) {
 }
 
 static inline void ERRORbuffer_messages( bool flag ) {
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-    extern void ERROR_start_message_buffer( void ),
-           ERROR_flush_message_buffer( void );
-#endif
     __ERROR_buffer_errors = flag;
     if( __ERROR_buffer_errors ) {
         ERROR_start_message_buffer();
@@ -156,11 +150,6 @@ static inline void ERRORbuffer_messages( bool flag ) {
 }
 
 static inline void ERRORflush_messages( void ) {
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-    extern void ERROR_start_message_buffer( void ),
-           ERROR_flush_message_buffer( void );
-#endif
-
     if( __ERROR_buffer_errors ) {
         ERROR_flush_message_buffer();
         ERROR_start_message_buffer();
@@ -184,11 +173,6 @@ extern SC_EXPRESS_EXPORT void ERRORdestroy( Error );
 struct Symbol_; /* mention Symbol to avoid warning on following line */
 extern SC_EXPRESS_EXPORT void ERRORreport_with_symbol( Error, struct Symbol_ *, ... );
 extern SC_EXPRESS_EXPORT void ERRORreport_with_line( Error, int, ... );
-
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer( void );
-extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer( void );
-#endif
 
 extern SC_EXPRESS_EXPORT void ERRORcreate_warning( char *, Error );
 extern SC_EXPRESS_EXPORT void ERRORset_warning( char *, int );
