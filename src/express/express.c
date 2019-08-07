@@ -150,7 +150,7 @@ int EXPRESS_succeed( Express model ) {
     return 0;
 }
 
-Symbol * EXPRESS_get_symbol( Generic e ) {
+Symbol * EXPRESS_get_symbol( void *e ) {
     return( &( ( Express )e )->symbol );
 }
 
@@ -187,7 +187,7 @@ static void EXPRESS_PATHinit() {
         /* if no EXPRESS_PATH, search current directory anyway */
         dir = ( Dir * )sc_malloc( sizeof( Dir ) );
         dir->leaf = dir->full;
-        LISTadd_last( EXPRESS_path, ( Generic )dir );
+        LISTadd_last( EXPRESS_path, dir );
     } else {
         int done = 0;
         while( !done ) {
@@ -224,7 +224,7 @@ static void EXPRESS_PATHinit() {
             /* just "" to make error messages cleaner */
             if( !strcmp( ".", start ) ) {
                 dir->leaf = dir->full;
-                LISTadd_last( EXPRESS_path, ( Generic )dir );
+                LISTadd_last( EXPRESS_path, dir );
                 *( p - 1 ) = save; /* put char back where */
                 /* temp null was */
                 continue;
@@ -241,7 +241,7 @@ static void EXPRESS_PATHinit() {
                 sprintf( dir->full, "%s/", start );
                 dir->leaf = dir->full + length + 1;
             }
-            LISTadd_last( EXPRESS_path, ( Generic )dir );
+            LISTadd_last( EXPRESS_path, dir );
 
             *( p - 1 ) = save; /* put char back where temp null was */
         }
@@ -312,13 +312,13 @@ void EXPRESSinitialize( void ) {
             x->u.func->return_type = r; \
             x->u.func->builtin = true; \
             resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_FUNCTION);
+            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_FUNCTION);
 #define procdef(x,y,c)  x = ALGcreate(OBJ_PROCEDURE);\
             x->symbol.name = y;\
             x->u.proc->pcount = c; \
             x->u.proc->builtin = true; \
             resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_PROCEDURE);
+            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_PROCEDURE);
     /* third arg is # of parameters */
 
     /* eventually everything should be data-driven, but for now */
@@ -522,8 +522,8 @@ static void RENAMEresolve( Rename * r, Schema s );
  *
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
-static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
-    Generic result;
+static void * SCOPEfind_for_rename( Scope schema, char * name ) {
+    void *result;
     Rename * rename;
 
     /* object can only appear in top level symbol table */
@@ -567,7 +567,7 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
 }
 
 static void RENAMEresolve( Rename * r, Schema s ) {
-    Generic remote;
+    void *remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
     if( r->object ) {
@@ -716,9 +716,9 @@ static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_Li
     if( !ref_schema ) {
         ERRORreport_with_symbol( ERROR_undefined_schema, sym, sym->name );
         resolve_failed( schema );
-        list->data = 0;
+        list->data = NULL;
     } else {
-        list->data = ( Generic )ref_schema;
+        list->data = ref_schema;
     }
     LISTod
 }

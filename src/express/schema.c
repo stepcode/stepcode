@@ -57,8 +57,8 @@ struct freelist_head SCHEMA_fl;
 
 int __SCOPE_search_id = 0;
 
-Symbol * RENAME_get_symbol( Generic r ) {
-    return( ( ( Rename * )r )->old );
+Symbol * RENAME_get_symbol( void *r ) {
+    return ( ( Rename * )r )->old;
 }
 
 /** Initialize the Schema module. */
@@ -143,7 +143,7 @@ void SCHEMAadd_reference( Schema cur_schema, Symbol * ref_schema, Symbol * old, 
     if( !cur_schema->u.schema->reflist ) {
         cur_schema->u.schema->reflist = LISTcreate();
     }
-    LISTadd_last( cur_schema->u.schema->reflist, ( Generic )r );
+    LISTadd_last( cur_schema->u.schema->reflist, r );
 }
 
 void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol * snnew ) {
@@ -156,7 +156,7 @@ void SCHEMAadd_use( Schema cur_schema, Symbol * ref_schema, Symbol * old, Symbol
     if( !cur_schema->u.schema->uselist ) {
         cur_schema->u.schema->uselist = LISTcreate();
     }
-    LISTadd_last( cur_schema->u.schema->uselist, ( Generic )r );
+    LISTadd_last( cur_schema->u.schema->uselist, r );
 }
 
 void SCHEMAdefine_reference( Schema schema, Rename * r ) {
@@ -170,7 +170,7 @@ void SCHEMAdefine_reference( Schema schema, Rename * r ) {
     }
     if( !old || ( DICT_type != OBJ_RENAME ) || ( old->object != r->object ) ) {
         DICTdefine( schema->u.schema->refdict, name,
-                    ( Generic )r, r->old, OBJ_RENAME );
+                    r, r->old, OBJ_RENAME );
     }
 }
 
@@ -185,7 +185,7 @@ void SCHEMAdefine_use( Schema schema, Rename * r ) {
     }
     if( !old || ( DICT_type != OBJ_RENAME ) || ( old->object != r->object ) ) {
         DICTdefine( schema->u.schema->usedict, name,
-                    ( Generic )r, r->old, OBJ_RENAME );
+                    r, r->old, OBJ_RENAME );
     }
 }
 

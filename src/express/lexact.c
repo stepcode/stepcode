@@ -246,7 +246,7 @@ void SCANinitialize( void ) {
 
     keyword_dictionary = HASHcreate( 100 ); /* not exact */
     for( k = keywords; k->key; k++ ) {
-        DICTdefine( keyword_dictionary, k->key, ( Generic )k, 0, OBJ_UNKNOWN );
+        DICTdefine( keyword_dictionary, k->key, k, NULL, OBJ_UNKNOWN );
         /* not "unknown", but certainly won't be looked up by type! */
     }
 

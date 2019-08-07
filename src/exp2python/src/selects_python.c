@@ -81,8 +81,8 @@ LISTmember
 determines if the given entity is a member of the list.
 RETURNS the member if it is a member; otherwise 0 is returned.
 *******************/
-Generic
-LISTmember( const Linked_List list, Generic e ) {
+void *
+LISTmember( const Linked_List list, void *e ) {
     Link node;
     for( node = list->mark->next; node != list->mark; node = node->next )
         if( e == node -> data ) {

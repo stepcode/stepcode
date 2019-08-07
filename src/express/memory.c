@@ -116,8 +116,8 @@ void MEMinitialize( struct freelist_head * flh, unsigned int size, int alloc1, i
 #endif
 }
 
-Generic MEM_new( struct freelist_head * flh ) {
-    Generic obj;
+void * MEM_new( struct freelist_head * flh ) {
+    void *obj;
 
 #ifndef NOSTAT
     flh->alloc++;

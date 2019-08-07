@@ -208,13 +208,13 @@ extern SC_EXPRESS_EXPORT struct freelist_head QUAL_ATTR_fl;
 /******************************/
 
 #define EXP_new()   (struct Expression_ *)MEM_new(&EXP_fl)
-#define EXP_destroy(x)  MEM_destroy(&EXP_fl,(Freelist *)(Generic)x)
+#define EXP_destroy(x)  MEM_destroy(&EXP_fl,(Freelist *)x)
 #define OP_new()    (struct Op_Subexpression *)MEM_new(&OP_fl)
-#define OP_destroy(x)   MEM_destroy(&OP_fl,(Freelist *)(Generic)x)
+#define OP_destroy(x)   MEM_destroy(&OP_fl,(Freelist *)x)
 #define QUERY_new() (struct Query_ *)MEM_new(&QUERY_fl)
-#define QUERY_destroy(x) MEM_destroy(&QUERY_fl,(Freelist *)(Generic)x)
+#define QUERY_destroy(x) MEM_destroy(&QUERY_fl,(Freelist *)x)
 #define QUAL_ATTR_new() (struct Qualified_Attr *)MEM_new(&QUAL_ATTR_fl)
-#define QUAL_ATTR_destroy(x) MEM_destroy(&QUAL_ATTR_fl,(Freelist *)(Generic)x)
+#define QUAL_ATTR_destroy(x) MEM_destroy(&QUAL_ATTR_fl,(Freelist *)x)
 
 #define EXPget_name(e)          ((e)->symbol.name)
 #define ENUMget_name(e)         ((e)->symbol.name)

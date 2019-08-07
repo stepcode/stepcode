@@ -75,7 +75,7 @@ void DICTcleanup( void ) {
  * error directly if there is a duplicate value.
  * \return 0 on success, 1 on failure
  */
-int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
+int DICTdefine( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
     struct Element_ new, *old;
 
     new.key = name;
@@ -123,7 +123,7 @@ int DICTdefine( Dictionary dict, char * name, Generic obj, Symbol * sym, char ty
  * their unusual behavior with respect to scoping and visibility rules
  * \sa DICTdefine()
  */
-int DICT_define( Dictionary dict, char * name, Generic obj, Symbol * sym, char type ) {
+int DICT_define( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
 
     e.key = name;
@@ -163,7 +163,7 @@ void DICTundefine( Dictionary dict, char * name ) {
 ** \param name name to look up
 ** \return the value found, NULL if not found
 */
-Generic DICTlookup( Dictionary dictionary, char * name ) {
+void *DICTlookup( Dictionary dictionary, char * name ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -182,7 +182,7 @@ Generic DICTlookup( Dictionary dictionary, char * name ) {
 /** like DICTlookup but returns symbol, too
  * \sa DICTlookup()
  */
-Generic DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
+void *DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -199,7 +199,7 @@ Generic DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     return( NULL );
 }
 
-Generic DICTdo( DictionaryEntry * dict_entry ) {
+void *DICTdo( DictionaryEntry * dict_entry ) {
     if( 0 == HASHlist( dict_entry ) ) {
         return 0;
     }

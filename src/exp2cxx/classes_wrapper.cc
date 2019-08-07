@@ -722,7 +722,7 @@ void print_file( Express express ) {
 
     print_file_header( &files );
     if( separate_schemas ) {
-        print_schemas_separate( express, ( void * )&col, &files );
+        print_schemas_separate( express, &col, &files );
     } else {
         print_schemas_combined( express, col, &files );
     }

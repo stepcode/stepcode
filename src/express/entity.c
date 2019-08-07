@@ -336,14 +336,14 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
     if( attr->name->type->u.type->body->type != op_ ) {
         /* simple id */
         rc = DICTdefine( entity->symbol_table, attr->name->symbol.name,
-                         ( Generic )attr, &attr->name->symbol, OBJ_VARIABLE );
+                         attr, &attr->name->symbol, OBJ_VARIABLE );
     } else {
         /* SELF\ENTITY.SIMPLE_ID */
         rc = DICTdefine( entity->symbol_table, attr->name->e.op2->symbol.name,
-                         ( Generic )attr, &attr->name->symbol, OBJ_VARIABLE );
+                         attr, &attr->name->symbol, OBJ_VARIABLE );
     }
     if( rc == 0 ) {
-        LISTadd_last( entity->u.entity->attributes, ( Generic )attr );
+        LISTadd_last( entity->u.entity->attributes, attr );
         VARput_offset( attr, entity->u.entity->attribute_count );
         entity->u.entity->attribute_count++;
     }
@@ -354,7 +354,7 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
 ** \param instance new instance
 ** Add an item to the instance list of an entity.
 */
-void ENTITYadd_instance( Entity entity, Generic instance ) {
+void ENTITYadd_instance( Entity entity, void *instance ) {
     if( entity->u.entity->instances == LIST_NULL ) {
         entity->u.entity->instances = LISTcreate();
     }
@@ -401,7 +401,7 @@ static void ENTITY_get_all_attributes( Entity entity, Linked_List result ) {
     ENTITY_get_all_attributes( super, result );
     LISTod;
     /* Gee, aren't they resolved by this time? */
-    LISTdo( entity->u.entity->attributes, attr, Generic )
+    LISTdo( entity->u.entity->attributes, attr, void * )
     LISTadd_last( result, attr );
     LISTod;
 }

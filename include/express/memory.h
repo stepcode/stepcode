@@ -48,7 +48,7 @@ struct freelist_head {
     int alloc;          /**< # of allocations */
     int dealloc;
     int create;         /**< number of calls to create a new freelist */
-    Generic max;        /**< end of freelist */
+    void *max;        /**< end of freelist */
 #endif
     int size;           /**< size of a single elt incl. next ptr */
     int bytes;          /**< if we run out, allocate memory by this many bytes */

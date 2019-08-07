@@ -146,7 +146,7 @@ Expression EXPcreate_from_symbol( Type type, Symbol * symbol ) {
     return e;
 }
 
-Symbol * EXP_get_symbol( Generic e ) {
+Symbol * EXP_get_symbol( void *e ) {
     return( &( ( Expression )e )->symbol );
 }
 
@@ -297,9 +297,9 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                          * sure of the circumstances in which this is beneficial.
                          */
                         *where = w;
-                        LISTadd_last( subt, (Generic) w );
+                        LISTadd_last( subt, w );
                     } else {
-                        LISTadd_last( supert, (Generic) t );
+                        LISTadd_last( supert, t );
                     }
                     options += nr;
                 }
@@ -316,7 +316,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                     }
                 } LISTod
                 if( !found ) {
-                    LISTadd_last( uniqSubs, (Generic) s );
+                    LISTadd_last( uniqSubs, s );
                 }
             } LISTod
             if( ( LISTget_length( uniqSubs ) == 0 ) && ( LISTget_length( supert ) == 1 ) && ( options > 1 ) ) {
@@ -961,7 +961,7 @@ Expression QUERYcreate( Symbol * local, Expression aggregate ) {
 
     Variable v = VARcreate( e2, Type_Attribute );
 
-    DICTdefine( s->symbol_table, local->name, ( Generic )v, &e2->symbol, OBJ_VARIABLE );
+    DICTdefine( s->symbol_table, local->name, v, &e2->symbol, OBJ_VARIABLE );
     e->u.query = QUERY_new();
     e->u.query->scope = s;
     e->u.query->local = v;

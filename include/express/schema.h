@@ -76,7 +76,7 @@ typedef struct Rename {
     Schema schema;
     struct Symbol_ * old;
     struct Symbol_ * nnew;
-    Generic object;     /**< once object has been looked up */
+    void *object;     /**< once object has been looked up */
     char type;      /**< drat, need to remember this once renames have been
                      * resolved to avoid looking them up in the dictionary again */
     enum rename_type rename_type;
@@ -118,11 +118,11 @@ extern SC_EXPRESS_EXPORT int __SCOPE_search_id;
 #define SCHEMAget_symbol(schema)    SCOPEget_symbol(schema)
 
 #define REN_new()   (struct Rename *)MEM_new(&REN_fl)
-#define REN_destroy(x)  MEM_destroy(&REN_fl,(Freelist *)(Generic)x)
+#define REN_destroy(x)  MEM_destroy(&REN_fl,(Freelist *)x)
 #define SCOPE_new() (struct Scope_ *)MEM_new(&SCOPE_fl)
-#define SCOPE_destroy(x)    MEM_destroy(&SCOPE_fl,(Freelist *)(Generic)x)
+#define SCOPE_destroy(x)    MEM_destroy(&SCOPE_fl,(Freelist *)x)
 #define SCHEMA_new()    (struct Schema_ *)MEM_new(&SCHEMA_fl)
-#define SCHEMA_destroy(x)   MEM_destroy(&SCHEMA_fl,(Freelist *)(Generic)x)
+#define SCHEMA_destroy(x)   MEM_destroy(&SCHEMA_fl,(Freelist *)x)
 
 /* the following is simply to make the resulting code easier to read */
 /* otherwise, you'd see "entity->superscope" even when you KNOW */

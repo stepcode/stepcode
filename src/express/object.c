@@ -27,7 +27,7 @@
 
 struct Object * OBJ;
 
-Symbol * UNK_get_symbol( Generic x ) {
+Symbol * UNK_get_symbol( void *x ) {
     (void) x; /* quell unused param warning; it appears that the prototype must match other functions */
     fprintf( stderr, "OBJget_symbol called on object of unknown type\n" );
     ERRORabort( 0 );
@@ -51,7 +51,7 @@ void OBJcleanup() {
     sc_free( OBJ );
 }
 
-void OBJcreate( char type, struct Symbol_ * ( *get_symbol )( Generic ), char * printable_type, int bits ) {
+void OBJcreate( char type, struct Symbol_ * ( *get_symbol ) ( void * ), char * printable_type, int bits ) {
     int index = ( int )type;
     OBJ[index].get_symbol = get_symbol;
     OBJ[index].type = printable_type;

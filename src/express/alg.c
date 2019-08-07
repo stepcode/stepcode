@@ -73,7 +73,7 @@ Scope ALGcreate( char type ) {
 ** Description: Initialize the Algorithm module.
 */
 
-Symbol * WHERE_get_symbol( Generic w ) {
+Symbol * WHERE_get_symbol( void *w ) {
     return( ( ( Where )w )->label );
 }
 

@@ -85,16 +85,6 @@
 # include <sc_stdbool.h>
 #endif
 
-/************************/
-/* Generic pointer type */
-/************************/
-
-#ifdef __STDC__
-typedef void * Generic;
-#else
-typedef char * Generic;
-#endif    /*    */
-
 
 /**************************/
 /* function pointer types */

@@ -316,7 +316,7 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
 void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
     Function f = 0;
     Symbol * sym;
-    Generic x;
+    void *x;
     Entity e;
     Type t;
     bool func_args_checked = false;
@@ -426,7 +426,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
 
             /* assume it's a variable/attribute */
             if( !x ) {
-                x = ( Generic )VARfind( scope, expr->symbol.name, 0 );
+                x = VARfind( scope, expr->symbol.name, 0 );
             }
             /* if not found as a variable, try as function, etc ... */
             if( !x ) {
@@ -632,7 +632,7 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
             LISTod
 
             if( !found ) {
-                LISTadd_last( *flat, ( Generic )ent_ref );
+                LISTadd_last( *flat, ent_ref );
             }
 
             /* link in to expression */
@@ -653,7 +653,7 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
                 if( !ent_ref->u.entity->supertypes ) {
                     ent_ref->u.entity->supertypes = LISTcreate();
                 }
-                LISTadd_last( ent_ref->u.entity->supertypes, ( Generic )ent );
+                LISTadd_last( ent_ref->u.entity->supertypes, ent );
             }
 #endif
         }
@@ -1136,7 +1136,7 @@ void ENTITYresolve_types( Entity e );
 void SCOPEresolve_types( Scope s ) {
     Variable var;
     DictionaryEntry de;
-    Generic x;
+    void *x;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
@@ -1200,7 +1200,7 @@ void SCOPEresolve_types( Scope s ) {
 
 void SCOPEresolve_subsupers( Scope scope ) {
     DictionaryEntry de;
-    Generic x;
+    void *x;
     char type;
     Symbol * sym;
     Type t;
@@ -1270,7 +1270,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
         } else {
             bool found = false;
 
-            LISTadd_last( e->u.entity->supertypes, ( Generic )ref_entity );
+            LISTadd_last( e->u.entity->supertypes, ref_entity );
             if( is_resolve_failed( ref_entity ) ) {
                 resolve_failed( e );
             }
@@ -1290,7 +1290,7 @@ static void ENTITYresolve_supertypes( Entity e ) {
                 if( !ref_entity->u.entity->subtypes ) {
                     ref_entity->u.entity->subtypes = LISTcreate();
                 }
-                LISTadd_last( ref_entity->u.entity->subtypes, ( Generic )e );
+                LISTadd_last( ref_entity->u.entity->subtypes, e );
             }
         }
     } LISTod;
@@ -1429,7 +1429,7 @@ static void TYPEresolve_expressions( Type t, Scope s ) {
 
 void SCOPEresolve_expressions_statements( Scope s ) {
     DictionaryEntry de;
-    Generic x;
+    void *x;
     Variable v;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &

@@ -184,7 +184,7 @@ This change only seems to have affected hash.h and hash.c
 #define MOD(x,y)        ((x) & ((y)-1))
 
 #define HASH_Table_new()    (struct Hash_Table_ *)MEM_new(&HASH_Table_fl)
-#define HASH_Table_destroy(x)   MEM_destroy(&HASH_Table_fl,(Freelist *)(Generic)x)
+#define HASH_Table_destroy(x)   MEM_destroy(&HASH_Table_fl,(Freelist *)x)
 #define HASH_Element_new()  (struct Element_ *)MEM_new(&HASH_Element_fl)
 #define HASH_Element_destroy(x) MEM_destroy(&HASH_Element_fl,(Freelist *)(char *)x)
 
