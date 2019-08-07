@@ -22,8 +22,9 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include <sc_trace_fprintf.h>
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
-#  define snprintf _snprintf
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#  include "sc_stdio.h"
+#  define snprintf c99_snprintf
 #endif
 
 extern int old_accessors;

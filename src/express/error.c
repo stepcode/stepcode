@@ -67,8 +67,9 @@
 #include "express/info.h"
 #include "express/linklist.h"
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
-#  define snprintf _snprintf
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#  include "sc_stdio.h"
+#  define vsnprintf c99_vsnprintf
 #endif
 
 bool __ERROR_buffer_errors = false;
@@ -124,7 +125,8 @@ static jmp_buf ERROR_safe_env;
 #define error_file stderr /**< message buffer file */
 
 static int ERROR_vprintf( const char *format, va_list ap ) {
-    int result = snprintf( ERROR_string, ERROR_string_end - ERROR_string, format, ap );
+    int result = vsnprintf( ERROR_string, ERROR_string_end - ERROR_string, format, ap );
+
     if(result < 0) {
         ERROR_string = ERROR_string_end;
     } else if(result > (ERROR_string_end - ERROR_string)) {
