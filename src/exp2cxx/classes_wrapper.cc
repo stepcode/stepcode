@@ -62,16 +62,14 @@ void print_file_header( FILES * files ) {
     files -> incall = FILEcreate( "schema.h" );
     fprintf( files->incall, "\n// in the exp2cxx source code, this file is generally referred to as files->incall or schemafile\n" );
 
-    fprintf( files->incall, "\n#ifndef SC_%s_EXPORT\n", "SCHEMA" );
-    fprintf( files->incall, "# if defined(SC_%s_DLL_EXPORTS) && defined(SC_%s_DLL_IMPORTS)\n", "SCHEMA", "SCHEMA" );
-    fprintf( files->incall, "#  error \"SC_%s_DLL_EXPORTS or SC_%s_DLL_IMPORTS can be defined, not both.\"\n", "SCHEMA", "SCHEMA" );
-    fprintf( files->incall, "# elif defined(SC_%s_DLL_EXPORTS)\n", "SCHEMA" );
-    fprintf( files->incall, "#  define SC_%s_EXPORT __declspec(dllexport)\n", "SCHEMA" );
-    fprintf( files->incall, "# elif defined(SC_%s_DLL_IMPORTS)\n", "SCHEMA" );
-    fprintf( files->incall, "#  define SC_%s_EXPORT __declspec(dllimport)\n", "SCHEMA" );
+    fprintf( files->incall, "\n#if !defined(SC_STATIC) && defined(_WIN32)\n" );
+    fprintf( files->incall, "# if defined(SC_SCHEMA_DLL_EXPORTS)\n" );
+    fprintf( files->incall, "#  define SC_SCHEMA_EXPORT __declspec(dllexport)\n" );
     fprintf( files->incall, "# else\n" );
-    fprintf( files->incall, "#  define SC_%s_EXPORT\n", "SCHEMA" );
+    fprintf( files->incall, "#  define SC_SCHEMA_EXPORT __declspec(dllimport)\n" );
     fprintf( files->incall, "# endif\n" );
+    fprintf( files->incall, "#else\n" );
+    fprintf( files->incall, "# define SC_SCHEMA_EXPORT\n" );
     fprintf( files->incall, "#endif\n\n" );
 
     fprintf( files->incall, "#ifdef SC_LOGGING\n" );
