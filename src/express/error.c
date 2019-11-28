@@ -57,7 +57,7 @@
 #include <signal.h>
 #include <string.h>
 
-#ifdef __STDC__
+#if defined (__STDC__)
 #include <stdarg.h>
 #else
 #include <varargs.h>
@@ -135,10 +135,24 @@ static int ERROR_vprintf( const char *format, va_list ap ) {
     return result;
 }
 
-static int ERROR_printf( const char *format, ... ) {
-    int result;
+static int
+#ifdef __STDC__
+ERROR_printf( const char *format, ... ) {
+#else
+ERROR_printf (va_alist)
+va_dcl {
+    const char *format;
+#endif
     va_list ap;
+    int result;
+
+#ifdef __STDC__
     va_start( ap, format );
+#else
+    va_start( ap );
+    format = va_arg( ap, const char* );
+#endif
+
     result = ERROR_vprintf( format, ap );
     va_end( ap );
     return result;
