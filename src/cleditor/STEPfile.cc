@@ -1796,7 +1796,9 @@ Severity STEPfile::AppendFileW( istream * in, bool useTechCor ) {
         return SEVERITY_INPUT_ERROR;
     }
 
-    cout << "Reading Data from " << ( ( FileNameW().compare( L"-" ) == 0 ) ? L"standard input" : FileNameW().c_str() ) << "...\n";
+    cout << "Reading Data from ";
+	wcout << ( ( FileNameW().compare( L"-" ) == 0 ) ? L"standard input" : FileNameW() );
+	cout << "...\n";
 
     //  Read header
     rval = ReadHeader( *in );
