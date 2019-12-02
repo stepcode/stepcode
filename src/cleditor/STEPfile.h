@@ -59,6 +59,7 @@ class SC_EDITOR_EXPORT STEPfile {
 //file information
         DirObj * _currentDir;
         std::string _fileName;
+		std::wstring _fileNameW;
 
         //the following are used to compute read/write progress
         std::ifstream::pos_type _iFileSize; ///< input file size
@@ -115,7 +116,11 @@ class SC_EDITOR_EXPORT STEPfile {
         std::string FileName() const {
             return _fileName;
         }
+		std::wstring FileNameW() const {
+            return _fileNameW;
+        }
         std::string SetFileName( const std::string name = "" );
+		std::wstring SetFileNameW( const std::wstring name = L"" );
         std::string TruncFileName( const std::string name ) const;
         float GetReadProgress() const;
         float GetWriteProgress() const;
@@ -143,12 +148,14 @@ class SC_EDITOR_EXPORT STEPfile {
 
 //Reading and Writing
         Severity ReadExchangeFile( const std::string filename = "", bool useTechCor = 1 );
+		Severity ReadExchangeFileW( const std::wstring filename = L"", bool useTechCor = 1 );
         Severity AppendExchangeFile( const std::string filename = "", bool useTechCor = 1 );
 
         Severity ReadWorkingFile( const std::string filename = "", bool useTechCor = 1 );
         Severity AppendWorkingFile( const std::string filename = "", bool useTechCor = 1 );
 
         Severity AppendFile( istream * in, bool useTechCor = 1 ) ;
+		Severity AppendFileW( istream * in, bool useTechCor = 1 ) ;
 
         Severity WriteExchangeFile( ostream & out, int validate = 1,
                                     int clearError = 1, int writeComments = 1 );
@@ -176,6 +183,8 @@ class SC_EDITOR_EXPORT STEPfile {
         std::string schemaName(); /**< Returns and copies out schema name from header instances.
                                              Called by ReadExchangeFile */
         istream * OpenInputFile( const std::string filename = "" );
+		 istream * OpenInputFileW( const std::wstring filename = L"" );
+
         void CloseInputFile( istream * in );
 
         Severity ReadHeader( istream & in );

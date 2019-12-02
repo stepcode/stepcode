@@ -56,6 +56,17 @@ std::string STEPfile::SetFileName( const std::string newName ) {
     return _fileName;
 }
 
+
+std::wstring STEPfile::SetFileNameW( const std::wstring newName ) {
+    //  if a newName is not given or is the same as the old, use the old name
+    if( ( newName.empty() ) || ( newName == _fileNameW ) ) {
+        return FileNameW();
+    }
+
+    _fileNameW = DirObj::NormalizeW( newName );
+    return _fileNameW;
+}
+
 /** Returns read progress,scaled 0-100. Will return a value < 0 if
  * called *immediately* after read operation starts, if no file has
  * been specified, or if file has been closed. If result < 50,
@@ -1684,6 +1695,156 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     _errorCount = 0;
     istream * in2;
     if( !( ( in2 = OpenInputFile() ) && ( in2 -> good() ) ) ) {
+        //  if the stream is not readable, there's an error
+        _error.AppendToUserMsg( "Cannot open file for 2nd pass -- No data read.\n" );
+        CloseInputFile( in2 );
+        return SEVERITY_INPUT_ERROR;
+    }
+    if( !FindDataSection( *in2 ) ) {
+        _error.AppendToUserMsg( "Error: Unable to find DATA section delimiter in second pass. \nData section not read. Rest of file ignored.\n" );
+        CloseInputFile( in2 );
+        return  SEVERITY_INPUT_ERROR;
+    }
+
+    switch( _fileType ) {
+        case VERSION_CURRENT:
+        case VERSION_UNKNOWN:
+        case WORKING_SESSION:
+            valid_insts = ReadData2( *in2, useTechCor );
+            break;
+        default:
+            _error.AppendToUserMsg( "STEPfile::AppendFile: STEP file version set to unrecognized value.\n" );
+            CloseInputFile( in2 );
+            return  SEVERITY_BUG;
+    }
+
+    //check for "ENDSEC;"
+    ReadTokenSeparator( *in2 );
+    if( total_insts != valid_insts ) {
+        sprintf( errbuf, "%d invalid instances in file: %s\n",
+                 total_insts - valid_insts, ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
+        _error.AppendToUserMsg( errbuf );
+        CloseInputFile( in2 );
+        return _error.GreaterSeverity( SEVERITY_WARNING );
+    }
+
+    cout << "\nSECOND PASS complete:  " << valid_insts
+         << " instances valid.\n";
+    sprintf( errbuf,
+             "  %d  ERRORS\t  %d  WARNINGS\n\n",
+             _errorCount, _warningCount );
+    _error.AppendToUserMsg( errbuf );
+    cout << errbuf;
+
+
+    //check for "ENDSTEP;" || "END-ISO-10303-21;"
+
+    if( in2 -> good() ) {
+        ReadTokenSeparator( *in2 );
+        keywd = GetKeyword( *in2, ";", _error );
+        //yank the ";" from the istream
+        //if (';' == in2->peek()) in2->get();
+        char ch;
+        in2->get( ch );
+        if( ch != ';' ) {
+            std::cerr << __FILE__ << ":" << __LINE__ << " - Expected ';' at Part 21 EOF, found '" << c << "'." << std::endl;
+        }
+    }
+
+    if( ( !keywd.compare( 0, keywd.size(), END_FILE_DELIM ) ) || !( in2 -> good() ) ) {
+        _error.AppendToUserMsg( END_FILE_DELIM );
+        _error.AppendToUserMsg( " missing at end of file.\n" );
+        CloseInputFile( in2 );
+        return _error.GreaterSeverity( SEVERITY_WARNING );
+    }
+    CloseInputFile( in2 );
+    cout << "Finished reading file.\n\n";
+    return SEVERITY_NULL;
+}
+
+Severity STEPfile::AppendFileW( istream * in, bool useTechCor ) {
+    Severity rval = SEVERITY_NULL;
+    char errbuf[BUFSIZ];
+
+    SetFileIdIncrement();
+    int total_insts = 0,  valid_insts = 0;
+
+    ReadTokenSeparator( *in );
+    std::string keywd = GetKeyword( *in, "; #", _error );
+    // get the delimiter off the istream
+    char c;
+    in->get( c );
+
+    if( !strncmp( const_cast<char *>( keywd.c_str() ), "ISO-10303-21",
+                  strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
+        SetFileType( VERSION_CURRENT );
+    } else if( !strncmp( const_cast<char *>( keywd.c_str() ), "STEP_WORKING_SESSION",
+                         strlen( const_cast<char *>( keywd.c_str() ) ) ) ) {
+        if( _fileType != WORKING_SESSION ) {
+            _error.AppendToUserMsg(
+                "Warning: Reading in file as Working Session file.\n" );
+            _error.GreaterSeverity( SEVERITY_WARNING );
+        }
+        SetFileType( WORKING_SESSION );
+    } else {
+        sprintf( errbuf,
+                 "Faulty input at beginning of file. \"ISO-10303-21;\" or"
+                 " \"STEP_WORKING_SESSION;\" expected. File not read: %s\n",
+                 ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
+        _error.AppendToUserMsg( errbuf );
+        _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
+        return SEVERITY_INPUT_ERROR;
+    }
+
+    cout << "Reading Data from " << ( ( FileNameW().compare( L"-" ) == 0 ) ? L"standard input" : FileNameW().c_str() ) << "...\n";
+
+    //  Read header
+    rval = ReadHeader( *in );
+    cout << "\nHEADER read:";
+    if( rval < SEVERITY_WARNING ) {
+        sprintf( errbuf,
+                 "Error: non-recoverable error in reading header section. "
+                 "There were %d errors encountered. Rest of file is ignored.\n",
+                 _errorCount );
+        _error.AppendToUserMsg( errbuf );
+        return rval;
+    } else if( rval != SEVERITY_NULL ) {
+        sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
+                 _errorCount, _warningCount );
+        cout << errbuf;
+    } else {
+        cout << endl;
+    }
+
+    if( !FindDataSection( *in ) ) {
+        _error.AppendToUserMsg( "Error: Unable to find DATA section delimiter. Data section not read. Rest of file ignored.\n" );
+        return SEVERITY_INPUT_ERROR;
+    }
+
+    //  PASS 1
+    _errorCount = 0;
+    total_insts = ReadData1( *in );
+
+    cout << "\nFIRST PASS complete:  " << total_insts
+         << " instances created.\n";
+    sprintf( errbuf,
+             "  %d  ERRORS\t  %d  WARNINGS\n\n",
+             _errorCount, _warningCount );
+    cout << errbuf;
+
+    //  PASS 2
+    //  This would be nicer if you didn't actually have to close the
+    //  file but could just reposition the pointer back to the
+    //  beginning of the data section.  It looks like you can do this
+    //  with the GNU File class, but that class doesn't have the
+    //  operator >> overloaded which is used to do the rest of the
+    //  parsing.  SO we are using istreams and this works, but could
+    //  be better.
+
+    // reset the error count so you're not counting things twice:
+    _errorCount = 0;
+    istream * in2;
+    if( !( ( in2 = OpenInputFileW() ) && ( in2 -> good() ) ) ) {
         //  if the stream is not readable, there's an error
         _error.AppendToUserMsg( "Cannot open file for 2nd pass -- No data read.\n" );
         CloseInputFile( in2 );

@@ -193,6 +193,19 @@ bool DirObj::IsADirectory( const char * path ) {
 #endif
 }
 
+bool DirObj::IsADirectoryW( const wchar_t * path ) {
+#if defined(__WIN32__)
+    if( PathIsDirectoryW( path ) ) {
+        return true;
+    }
+    return false;
+#else
+    struct stat st;
+    return stat( path, &st ) == 0 && ( st.st_mode & S_IFMT ) == S_IFDIR;
+#endif
+}
+
+
 //////////////////////////////// Normalize() //////////////////////////////////
 //
 // Normalize path in order in the following way:
@@ -242,6 +255,40 @@ std::string DirObj::Normalize( const std::string & path ) {
 
         // if buf is a path to a directory and doesn't end with '/'
     } else if( IsADirectory( buf.c_str() ) && buf[buf.size()] != slash[0] ) {
+        buf.append( slash );
+    }
+    return buf;
+}
+
+
+std::wstring DirObj::NormalizeW( const std::wstring & path ) {
+    std::wstring buf;
+    const wchar_t * slash;
+#if defined(__WIN32__)
+    wchar_t b[MAX_PATH];
+    PathCanonicalizeW( b, path.c_str() );
+    slash = L"\\";
+#else
+    wchar_t * b;
+    b = realpath( path.c_str(), 0 );
+    slash = L"/";
+#endif
+    if( b == 0 ) {
+        buf.clear();
+    } else {
+        buf.assign( b );
+
+#if !defined(__WIN32__)
+	free(b);
+#endif
+    }
+
+    if( buf.empty() ) {
+        buf = L".";
+        buf.append( slash );
+
+        // if buf is a path to a directory and doesn't end with '/'
+    } else if( IsADirectoryW( buf.c_str() ) && buf[buf.size()] != slash[0] ) {
         buf.append( slash );
     }
     return buf;

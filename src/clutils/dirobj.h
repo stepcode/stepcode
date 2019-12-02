@@ -54,6 +54,7 @@ class SC_UTILS_EXPORT DirObj {
 
         bool LoadDirectory( const std::string & name );
         static std::string Normalize( const std::string & s );
+		 static std::wstring NormalizeW( const std::wstring & s );
 
         const char * ValidDirectories( const char * );
 
@@ -69,6 +70,7 @@ class SC_UTILS_EXPORT DirObj {
         int Count();
 
         static bool IsADirectory( const char * );
+		static bool IsADirectoryW( const wchar_t * );
     private:
         const char * RealPath( const char * );
 

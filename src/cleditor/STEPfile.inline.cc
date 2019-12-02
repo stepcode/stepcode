@@ -119,6 +119,27 @@ Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor
     return rval;
 }
 
+
+/******************************************************/
+Severity STEPfile::ReadExchangeFileW( const std::wstring filename, bool useTechCor ) {
+    _error.ClearErrorMsg();
+    _errorCount = 0;
+    istream * in = OpenInputFileW( filename );
+    if( _error.severity() < SEVERITY_WARNING ) {
+        CloseInputFile( in );
+        return _error.severity();
+    }
+
+    instances().ClearInstances();
+    if( _headerInstances ) {
+        _headerInstances->ClearInstances();
+    }
+    _headerId = 5;
+    Severity rval = AppendFileW( in, useTechCor );
+    CloseInputFile( in );
+    return rval;
+}
+
 Severity STEPfile::AppendExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
@@ -193,6 +214,49 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
         in = &std::cin;
     } else {
         in = new ifstream( FileName().c_str() );
+    }
+
+    if( !in || !( in -> good() ) ) {
+        char msg[BUFSIZ];
+        sprintf( msg, "Unable to open file for input: \'%s\'. File not read.\n", filename.c_str() );
+        _error.AppendToUserMsg( msg );
+        _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
+        return ( 0 );
+    }
+
+    //check size of file
+    in->seekg( 0, std::ifstream::end );
+    _iFileSize = in->tellg();
+    in->seekg( 0, std::ifstream::beg );
+    return in;
+}
+
+
+/******************************************************/
+istream * STEPfile::OpenInputFileW( const std::wstring filename ) {
+    _iFileCurrentPosition = 0;
+
+    //  if there's no filename to use, fail
+    if( filename.empty() && FileNameW().empty() ) {
+        _error.AppendToUserMsg( "Unable to open file for input. No current file name.\n" );
+        _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
+        return( 0 );
+    } else {
+        if( SetFileNameW( filename ).empty() && ( filename.compare( L"-" ) != 0 ) ) {
+            char msg[BUFSIZ];
+            sprintf( msg, "Unable to find file for input: \'%s\'. File not read.\n", filename.c_str() );
+            _error.AppendToUserMsg( msg );
+            _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
+            return( 0 );
+        }
+    }
+
+    std::istream * in;
+
+    if( filename.compare( L"-" ) == 0 ) {
+        in = &std::cin;
+    } else {
+        in = new ifstream( FileNameW().c_str() );
     }
 
     if( !in || !( in -> good() ) ) {
