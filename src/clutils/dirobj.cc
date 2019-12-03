@@ -193,6 +193,7 @@ bool DirObj::IsADirectory( const char * path ) {
 #endif
 }
 
+#if defined(_WIN32)
 bool DirObj::IsADirectoryW( const wchar_t * path ) {
 #if defined(__WIN32__)
     if( PathIsDirectoryW( path ) ) {
@@ -204,7 +205,7 @@ bool DirObj::IsADirectoryW( const wchar_t * path ) {
     return stat( path, &st ) == 0 && ( st.st_mode & S_IFMT ) == S_IFDIR;
 #endif
 }
-
+#endif
 
 //////////////////////////////// Normalize() //////////////////////////////////
 //
@@ -260,7 +261,7 @@ std::string DirObj::Normalize( const std::string & path ) {
     return buf;
 }
 
-
+#if defined(_WIN32)
 std::wstring DirObj::NormalizeW( const std::wstring & path ) {
     std::wstring buf;
     const wchar_t * slash;
@@ -293,6 +294,8 @@ std::wstring DirObj::NormalizeW( const std::wstring & path ) {
     }
     return buf;
 }
+
+#endif
 
 //////////////////////////////// ValidDirectories() ///////////////////////////
 //

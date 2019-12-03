@@ -119,7 +119,7 @@ Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor
     return rval;
 }
 
-
+#if defined(_WIN32)
 /******************************************************/
 Severity STEPfile::ReadExchangeFileW( const std::wstring filename, bool useTechCor ) {
     _error.ClearErrorMsg();
@@ -139,6 +139,7 @@ Severity STEPfile::ReadExchangeFileW( const std::wstring filename, bool useTechC
     CloseInputFile( in );
     return rval;
 }
+#endif
 
 Severity STEPfile::AppendExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
@@ -231,7 +232,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
     return in;
 }
 
-
+#if defined(_WIN32)
 /******************************************************/
 istream * STEPfile::OpenInputFileW( const std::wstring filename ) {
     _iFileCurrentPosition = 0;
@@ -273,6 +274,8 @@ istream * STEPfile::OpenInputFileW( const std::wstring filename ) {
     in->seekg( 0, std::ifstream::beg );
     return in;
 }
+#endif
+
 
 /******************************************************/
 void STEPfile::CloseInputFile( istream * in ) {
