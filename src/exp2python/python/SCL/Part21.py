@@ -57,15 +57,15 @@ class Lexer:
     tokens = list(base_tokens)
     states = (('slurp', 'exclusive'),)
         
-    def __init__(self, debug=0, optimize=0, compatibility_mode=False, header_limit=4096):
+    def __init__(self, debug=False, optimize=False, compatibility_mode=False, header_limit=4096):
         self.base_tokens = list(base_tokens)
         self.schema_dict = {}
         self.active_schema = {}
         self.input_length = 0
         self.compatibility_mode = compatibility_mode
         self.header_limit = header_limit
-        self.lexer = lex.lex(module=self, debug=debug, debuglog=logger, optimize=optimize,
-                             errorlog=logger)
+        self.lexer = lex.lex(module=self, debug=debug, optimize=optimize, lextab='l21tab',
+                             debuglog=logger, errorlog=logger)
         self.reset()
 
     def __getattr__(self, name):
@@ -85,10 +85,7 @@ class Lexer:
         self.lexer.begin('slurp')
         
     def token(self):
-        try:
-            return next(self.lexer)
-        except StopIteration:
-            return None
+        return self.lexer.token()
 
     def activate_schema(self, schema_name):
         if schema_name in self.schema_dict:
@@ -124,6 +121,9 @@ class Lexer:
             offset += 1  # also skip the \n
             t.lexer.lineno += t.value[0:offset].count('\n')
             t.lexer.skip(offset)
+    
+    def t_error(self, t):
+        raise LexError("Scanning error, invalid input", "{0}...".format(t.value[0:20]))
     
     # Comment (ignored)
     def t_COMMENT(self, t):
@@ -193,8 +193,8 @@ class Lexer:
     # Punctuation
     literals = '()=;,*$'
 
-    t_ANY_ignore  = ' \t'
-            
+    t_ANY_ignore  = ' \t\r'
+
 
 ####################################################################################################
 # Simple Model
@@ -212,24 +212,24 @@ class P21Header:
         self.extra_headers = []
 
 class HeaderEntity:
-    def __init__(self, type_name, *params):
+    def __init__(self, type_name, params):
         self.type_name = type_name
-        self.params = list(params) if params else []
+        self.params = params
 
 class Section:
     def __init__(self, entities):
         self.entities = entities
 
 class SimpleEntity:
-    def __init__(self, ref, type_name, *params):
+    def __init__(self, ref, type_name, params):
         self.ref = ref
         self.type_name = type_name
-        self.params = list(params) if params else []
+        self.params = params
 
 class ComplexEntity:
-    def __init__(self, ref, *params):
+    def __init__(self, ref, params):
         self.ref = ref
-        self.params = list(params) if params else []
+        self.params = params
 
 class TypedParameter:
     def __init__(self, type_name, *params):
@@ -241,15 +241,21 @@ class TypedParameter:
 ####################################################################################################
 class Parser:
     tokens = list(base_tokens)
-    start = 'exchange_file'
     
-    def __init__(self, lexer=None, debug=0):
-        self.lexer = lexer if lexer else Lexer()
+    def __init__(self, lexer=None, debug=False, tabmodule=None, start=None, optimize=False):
+        # defaults
+        start_tabs = {'exchange_file': 'p21tab', 'extract_header': 'p21hdrtab'}
+        if start and tabmodule: start_tabs[start] = tabmodule
+        if not start: start = 'exchange_file'
+        if start not in start_tabs: raise ValueError('please pass (dedicated) tabmodule')
 
+        # lexer may provide a more specialised set of tokens for use in (subclassed) parser
         try: self.tokens = lexer.tokens
         except AttributeError: pass
 
-        self.parser = yacc.yacc(module=self, debug=debug, debuglog=logger, errorlog=logger)
+        self.lexer = lexer if lexer else Lexer()
+        self.parser = yacc.yacc(debug=debug, module=self, tabmodule=start_tabs[start], start=start,
+                                optimize=optimize, debuglog=logger, errorlog=logger)
         self.reset()
     
     def parse(self, p21_data, **kwargs):
@@ -259,7 +265,7 @@ class Parser:
 
         if 'debug' in kwargs:
             result = self.parser.parse(lexer=self.lexer, debug=logger,
-                                       ** dict((k, v) for k, v in kwargs.iteritems() if k != 'debug'))
+                                       ** dict((k, v) for k, v in kwargs.items() if k != 'debug'))
         else:
             result = self.parser.parse(lexer=self.lexer, **kwargs)
         return result
@@ -271,6 +277,12 @@ class Parser:
     def p_exchange_file(self, p):
         """exchange_file : check_p21_start_token header_section data_section_list check_p21_end_token"""
         p[0] = P21File(p[2], p[3])
+        
+    def p_extract_header(self, p):
+        """extract_header : check_p21_start_token header_section DATA"""
+        p[0] = P21File(p[2], [])
+        # clear input to avoid trailing context errors
+        p.lexer.input('')
 
     def p_check_start_token(self, p):
         """check_p21_start_token : PART21_START"""
@@ -310,9 +322,8 @@ class Parser:
         p[0] = SimpleEntity(p[1], *p[3])
 
     def p_entity_instance_error(self, p):
-        """simple_entity_instance  : error '=' simple_record ';'
-           complex_entity_instance : error '=' subsuper_record ';'"""
-        pass
+        """entity_instance  : check_entity_instance_name '=' error ';'"""
+        logger.error('resyncing parser, check input between lineno %d and %d', p.lineno(2), p.lineno(4))
 
     def p_complex_entity_instance(self, p):
         """complex_entity_instance : check_entity_instance_name '=' subsuper_record ';'"""
@@ -320,25 +331,34 @@ class Parser:
 
     def p_subsuper_record(self, p):
         """subsuper_record : '(' simple_record_list ')'"""
-        p[0] = [TypedParameter(*x) for x in p[2]]
+        p[0] = [SimpleEntity(None, *x) for x in p[2]]
 
+    def p_data_section_list_init(self, p):
+        """data_section_list : data_section"""
+        p[0] = [p[1],]
+        
     def p_data_section_list(self, p):
-        """data_section_list : data_section_list data_section
-                             | data_section"""
-        try: p[0] = p[1] + [p[2],]
-        except IndexError: p[0] = [p[1],]
+        """data_section_list : data_section_list data_section"""
+        p[0] = p[1]
+        p[0].append(p[2])
 
+    def p_header_entity_list_init(self, p):
+        """header_entity_list : header_entity"""
+        p[0] = [p[1],]
+        
     def p_header_entity_list(self, p):
-        """header_entity_list : header_entity_list header_entity
-                              | header_entity"""
-        try: p[0] = p[1] + [p[2],]
-        except IndexError: p[0] = [p[1],]
+        """header_entity_list : header_entity_list header_entity"""
+        p[0] = p[1]
+        p[0].append(p[2])
 
+    def p_parameter_list_init(self, p):
+        """parameter_list : parameter"""
+        p[0] = [p[1],]
+        
     def p_parameter_list(self, p):
-        """parameter_list : parameter_list ',' parameter
-                          | parameter"""
-        try: p[0] = p[1] + [p[3],]
-        except IndexError: p[0] = [p[1],]
+        """parameter_list : parameter_list ',' parameter"""
+        p[0] = p[1]
+        p[0].append(p[3])
 
     def p_keyword(self, p):
         """keyword : USER_DEFINED_KEYWORD
@@ -372,7 +392,7 @@ class Parser:
 
     def p_data_start(self, p):
         """data_start : DATA '(' parameter_list ')' ';'"""
-        pass
+        pass # TODO: do something with the parameters
 
     def p_data_start_empty(self, p):
         """data_start : DATA '(' ')' ';'
@@ -383,11 +403,14 @@ class Parser:
         """data_section : data_start entity_instance_list ENDSEC""" 
         p[0] = Section(p[2])
 
+    def p_entity_instance_list_init(self, p):
+        """entity_instance_list : entity_instance"""
+        p[0] = [p[1],]
+        
     def p_entity_instance_list(self, p):
-        """entity_instance_list : entity_instance_list entity_instance
-                                | entity_instance"""
-        try: p[0] = p[1] + [p[2],]
-        except IndexError: p[0] = [p[1],]
+        """entity_instance_list : entity_instance_list entity_instance"""
+        p[0] = p[1]
+        p[0].append(p[2])
 
     def p_entity_instance_list_empty(self, p):
         """entity_instance_list : empty"""
@@ -407,18 +430,41 @@ class Parser:
         """simple_record : keyword '(' parameter_list ')'"""
         p[0] = (p[1], p[3])
 
+    def p_simple_record_list_init(self, p):
+        """simple_record_list : simple_record"""
+        p[0] = [p[1],]
+        
     def p_simple_record_list(self, p):
-        """simple_record_list : simple_record_list simple_record
-                              | simple_record"""
-        try: p[0] = p[1] + [p[2],]
-        except IndexError: p[0] = [p[1],]
+        """simple_record_list : simple_record_list simple_record"""
+        p[0] = p[1]
+        p[0].append(p[2])
    
     def p_empty(self, p):
         """empty :"""
         pass
 
-def test_debug():
-    import os.path
+
+def debug_lexer():
+    import codecs
+    from os.path import normpath, expanduser
+    
+    logging.basicConfig()
+    logger.setLevel(logging.DEBUG)
+    
+    lexer = Lexer(debug=True)
+    
+    p = normpath(expanduser('~/projects/src/stepcode/data/ap209/ATS7-out.stp'))
+    with codecs.open(p, 'r', encoding='iso-8859-1') as f:
+        s = f.read()
+        lexer.input(s)
+        while True:
+            tok = lexer.token()
+            if not tok: break
+            print(tok)
+            
+def debug_parser():
+    import codecs
+    from os.path import normpath, expanduser
 
     logging.basicConfig()
     logger.setLevel(logging.DEBUG)
@@ -427,36 +473,35 @@ def test_debug():
     parser.reset()
     
     logger.info("***** parser debug *****")
-    p = os.path.expanduser('~/projects/src/stepcode/data/ap214e3/s1-c5-214/s1-c5-214.stp')
-    with open(p, 'rU') as f:
+    p = normpath(expanduser('~/projects/src/stepcode/data/ap214e3/s1-c5-214/s1-c5-214.stp'))
+    with codecs.open(p, 'r', encoding='iso-8859-1') as f:
         s = f.read()
-        try:
-            parser.parse(s, debug=1)
-        except SystemExit:
-            pass
+        parser.parse(s, debug=1)
         
     logger.info("***** finished *****")
 
 def test():
-    import os, os.path, itertools, codecs
+    import os, codecs
+    from os.path import normpath, expanduser
     
     logging.basicConfig()
     logger.setLevel(logging.INFO)
-
-    parser = Parser()
+    
+    lexer = Lexer(optimize=True)
+    parser = Parser(lexer=lexer, optimize=True)
     compat_list = []
 
     def parse_check(p):
         logger.info("processing {0}".format(p))
         parser.reset()
-        with open(p, 'rU') as f:
-            iso_wrapper = codecs.EncodedFile(f, 'iso-8859-1')
-            s = iso_wrapper.read()
+        with codecs.open(p, 'r', encoding='iso-8859-1') as f:
+            s = f.read()
             parser.parse(s)
 
     logger.info("***** standard test *****")
-    for d, _, files in os.walk(os.path.expanduser('~/projects/src/stepcode')):
-        for f in itertools.ifilter(lambda x: x.endswith('.stp'), files):
+    stepcode_dir = normpath(os.path.expanduser('~/projects/src/stepcode'))
+    for d, _, files in os.walk(stepcode_dir):
+        for f in filter(lambda x: x.endswith('.stp'), files):
             p = os.path.join(d, f)
             try:
                 parse_check(p)
@@ -464,8 +509,46 @@ def test():
                 logger.exception('Lexer issue, adding {0} to compatibility test list'.format(os.path.basename(p)))
                 compat_list.append(p)
 
-    lexer =  Lexer(compatibility_mode=True)
-    parser = Parser(lexer=lexer)
+    lexer =  Lexer(optimize=True, compatibility_mode=True)
+    parser = Parser(lexer=lexer, optimize=True)
+    
+    logger.info("***** compatibility test *****")
+    for p in compat_list:
+        parse_check(p)
+            
+    logger.info("***** finished *****")
+
+def test_header_only():
+    import os, codecs
+    from os.path import normpath, expanduser
+
+    logging.basicConfig()
+    logger.setLevel(logging.INFO)
+
+    lexer = Lexer(optimize=True)
+    parser = Parser(start='extract_header', optimize=True)
+    compat_list = []
+
+    def parse_check(p):
+        logger.info("processing {0}".format(p))
+        parser.reset()
+        with codecs.open(p, 'r', encoding='iso-8859-1') as f:
+            s = f.read()
+            parser.parse(s)
+
+    logger.info("***** standard test *****")
+    stepcode_dir = normpath(os.path.expanduser('~/projects/src/stepcode'))
+    for d, _, files in os.walk(stepcode_dir):
+        for f in filter(lambda x: x.endswith('.stp'), files):
+            p = os.path.join(d, f)
+            try:
+                parse_check(p)
+            except LexError:
+                logger.exception('Lexer issue, adding {0} to compatibility test list'.format(os.path.basename(p)))
+                compat_list.append(p)
+
+    lexer =  Lexer(optimize=True, compatibility_mode=True)
+    parser = Parser(lexer=lexer, start='extract_header', optimize=True)
     
     logger.info("***** compatibility test *****")
     for p in compat_list:
@@ -474,4 +557,7 @@ def test():
     logger.info("***** finished *****")
 
 if __name__ == '__main__':
+    #debug_lexer()
+    #debug_parser()
     test()
+    #test_header_only()
