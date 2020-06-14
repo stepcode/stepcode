@@ -46,7 +46,7 @@ extern int old_accessors;
  *                  use of a separate header with a namespace.
  */
 void ENTITYnames_print( Entity entity, FILE * file ) {
-    fprintf( file, "    extern EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( file, "    extern SC_SCHEMA_EXPORT EntityDescriptor *%s%s;\n", ENT_PREFIX, ENTITYget_name( entity ) );
 }
 
 /** declares the global pointer to the EntityDescriptor representing a particular entity
@@ -61,7 +61,7 @@ void ENTITYnames_print( Entity entity, FILE * file ) {
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     char attrnm [BUFSIZ];
 
-    fprintf( file, "EntityDescriptor * %s::%s%s = 0;\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
+    fprintf( file, "SC_SCHEMA_EXPORT EntityDescriptor * %s::%s%s = 0;\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
     LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
         generate_attribute_name( v, attrnm );
         fprintf( file, "%s * %s::%s%d%s%s = 0;\n",

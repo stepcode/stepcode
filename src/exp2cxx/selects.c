@@ -679,7 +679,7 @@ void TYPEselect_inc_print( const Type type, FILE * f ) {
     fprintf( f, "typedef %s_ptr %s_var;\n\n", n, n );
 
     /*  print things for aggregate class  */
-    fprintf( f, "\nclass %s_agg : public SelectAggregate {\n", n );
+    fprintf( f, "\nclass SC_SCHEMA_EXPORT %s_agg : public SelectAggregate {\n", n );
     fprintf( f, "  protected:\n" );
     fprintf( f, "    SelectTypeDescriptor *sel_type;\n\n" );
     fprintf( f, "  public:\n" );

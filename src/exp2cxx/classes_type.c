@@ -520,7 +520,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     /* define type descriptor pointer */
     /*  in source - declare the real definition of the pointer */
     /*  i.e. in the .cc file                                   */
-    fprintf( files -> lib, "%s         *%s;\n", GetTypeDescriptorName( type ), tdnm );
+    fprintf( files -> lib, "SC_SCHEMA_EXPORT %s         *%s;\n", GetTypeDescriptorName( type ), tdnm );
 
     if( isAggregateType( type ) ) {
         const char * ctype = TYPEget_ctype( type );
