@@ -214,6 +214,10 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "     Sdai" << schema_upper << ".cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
 
+    cmLists << "if( WIN32 )" << endl;
+    cmLists << "set_source_files_properties( SdaiAll.cc PROPERTIES COMPILE_FLAGS /bigobj)" << endl;
+    cmLists << "endif( WIN32 )" << endl;
+
     cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
     cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;
     cmLists << "                 \"${schema_target_files}\")" << endl;
