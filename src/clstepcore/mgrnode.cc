@@ -34,9 +34,9 @@ int MgrNode::GetFileId() {
 
 void MgrNode::Remove() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::Remove()\n";
+//  std::cout << "MgrNode::Remove()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     GenericNode::Remove();
 // DON'T DO THIS!!    currState = noStateSE;
 }
@@ -44,7 +44,7 @@ void MgrNode::Remove() {
 // searches current list for fileId
 MgrNode * MgrNode::StateFindFileId( int fileId ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::StateFindFileId()\n";
+//  std::cout << "MgrNode::StateFindFileId()\n";
     MgrNode * startNode = this;
     if( startNode->GetFileId() == fileId ) {
         return this;
@@ -63,9 +63,9 @@ MgrNode * MgrNode::StateFindFileId( int fileId ) {
 
 MgrNode::~MgrNode() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::~MgrNode()\n";
+//  std::cout << "MgrNode::~MgrNode()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     if( se ) {
         delete se;
     }
@@ -79,19 +79,19 @@ MgrNode::~MgrNode() {
 
 displayStateEnum MgrNode::DisplayState() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::DisplayState()\n";
+//  std::cout << "MgrNode::DisplayState()\n";
     return ( di ? di->DisplayState() : noMapState );
 }
 
 int MgrNode::IsDisplayState( displayStateEnum ds ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::IsDisplayState()\n";
+//  std::cout << "MgrNode::IsDisplayState()\n";
     return ( di ? di->DisplayListMember( ds ) : 0 );
 }
 
 GenericNode * MgrNode::NextDisplay() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::NextDisplay()\n";
+//  std::cout << "MgrNode::NextDisplay()\n";
 //    return (di ? ((DisplayNode *)di->Next()) : (DisplayNode *)0);
     if( di ) {
 //  GenericNode *dn = di->Next();
@@ -105,7 +105,7 @@ GenericNode * MgrNode::NextDisplay() {
 
 GenericNode * MgrNode::PrevDisplay() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::PrevDisplay()\n";
+//  std::cout << "MgrNode::PrevDisplay()\n";
 //    return (di ? ((DisplayNode *)di->Prev()) : 0);
     if( di ) {
         return di->Prev();
@@ -133,7 +133,7 @@ int MgrNode::ChangeList( MgrNodeList * cmdList ) {
 
 int MgrNode::ChangeState( displayStateEnum s ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::ChangeState()\n";
+//  std::cout << "MgrNode::ChangeState()\n";
     if( di ) {
         return di->ChangeState( s );
     }
@@ -142,7 +142,7 @@ int MgrNode::ChangeState( displayStateEnum s ) {
 
 int MgrNode::ChangeState( stateEnum s ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::ChangeState()\n";
+//  std::cout << "MgrNode::ChangeState()\n";
     currState = s;
     // for now, later need to type check somehow and return success or failure
     return 1;
@@ -152,7 +152,7 @@ void MgrNode::Init( SDAI_Application_instance * s,
                     stateEnum listState,
                     MgrNodeList * list ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::Init()\n";
+//  std::cout << "MgrNode::Init()\n";
     se = s;
     arrayIndex = -1;
     di = 0;
@@ -165,17 +165,17 @@ void MgrNode::Init( SDAI_Application_instance * s,
 // used for sentinel node on lists of MgrNodes
 MgrNode::MgrNode() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::MgrNode()\n";
+//  std::cout << "MgrNode::MgrNode()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     Init( 0, noStateSE, 0 );
 }
 
 MgrNode::MgrNode( SDAI_Application_instance * StepEntPtr ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::MgrNode()\n";
+//  std::cout << "MgrNode::MgrNode()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     Init( StepEntPtr, noStateSE, 0 );
 }
 
@@ -185,9 +185,9 @@ MgrNode::MgrNode( SDAI_Application_instance * StepEntPtr ) {
 //  newSE - if instance is created by user using editor (probe)
 MgrNode::MgrNode( SDAI_Application_instance * StepEntPtr, stateEnum listState ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::MgrNode()\n";
+//  std::cout << "MgrNode::MgrNode()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     Init( StepEntPtr, listState, 0 );
 }
 // 'listState' ==
@@ -196,9 +196,9 @@ MgrNode::MgrNode( SDAI_Application_instance * StepEntPtr, stateEnum listState ) 
 //  newSE - if instance is created by user using editor (probe)
 MgrNode::MgrNode( SDAI_Application_instance * StepEntPtr, stateEnum listState, MgrNodeList * list ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNode::MgrNode()\n";
+//  std::cout << "MgrNode::MgrNode()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "MgrNode::this : '" << this << "'\n";
+//  std::cout << "MgrNode::this : '" << this << "'\n";
     Init( StepEntPtr, listState, list );
 
 }

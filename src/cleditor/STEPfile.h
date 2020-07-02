@@ -148,17 +148,17 @@ class SC_EDITOR_EXPORT STEPfile {
         Severity ReadWorkingFile( const std::string filename = "", bool useTechCor = 1 );
         Severity AppendWorkingFile( const std::string filename = "", bool useTechCor = 1 );
 
-        Severity AppendFile( istream * in, bool useTechCor = 1 ) ;
+        Severity AppendFile( std::istream * in, bool useTechCor = 1 ) ;
 
-        Severity WriteExchangeFile( ostream & out, int validate = 1,
+        Severity WriteExchangeFile( std::ostream & out, int validate = 1,
                                     int clearError = 1, int writeComments = 1 );
         Severity WriteExchangeFile( const std::string filename = "", int validate = 1,
                                     int clearError = 1, int writeComments = 1 );
-        Severity WriteValuePairsFile( ostream & out, int validate = 1,
+        Severity WriteValuePairsFile( std::ostream & out, int validate = 1,
                                       int clearError = 1,
                                       int writeComments = 1, int mixedCase = 1 );
 
-        Severity WriteWorkingFile( ostream & out, int clearError = 1,
+        Severity WriteWorkingFile( std::ostream & out, int clearError = 1,
                                    int writeComments = 1 );
         Severity WriteWorkingFile( const std::string filename = "", int clearError = 1,
                                    int writeComments = 1 );
@@ -175,10 +175,10 @@ class SC_EDITOR_EXPORT STEPfile {
 //member functions
         std::string schemaName(); /**< Returns and copies out schema name from header instances.
                                              Called by ReadExchangeFile */
-        istream * OpenInputFile( const std::string filename = "" );
-        void CloseInputFile( istream * in );
+        std::istream * OpenInputFile( const std::string filename = "" );
+        void CloseInputFile( std::istream * in );
 
-        Severity ReadHeader( istream & in );
+        Severity ReadHeader( std::istream & in );
 
         Severity HeaderVerifyInstances( InstMgr * im );
         void HeaderMergeInstances( InstMgr * im );
@@ -186,48 +186,48 @@ class SC_EDITOR_EXPORT STEPfile {
         int HeaderId( int increment = 1 );
         int HeaderId( const char * nm = "\0" );
 
-        int ReadData1( istream & in ); /**< First pass, to create instances */
-        int ReadData2( istream & in, bool useTechCor = true ); /**< Second pass, to read instances */
+        int ReadData1( std::istream & in ); /**< First pass, to create instances */
+        int ReadData2( std::istream & in, bool useTechCor = true ); /**< Second pass, to read instances */
 
 // obsolete
-        int ReadWorkingData1( istream & in );
-        int ReadWorkingData2( istream & in, bool useTechCor = true );
+        int ReadWorkingData1( std::istream & in );
+        int ReadWorkingData2( std::istream & in, bool useTechCor = true );
 
-        void ReadRestOfFile( istream & in );
+        void ReadRestOfFile( std::istream & in );
 
         /// create instance - used by ReadData1()
-        SDAI_Application_instance  *  CreateInstance( istream & in, ostream & out );
+        SDAI_Application_instance  *  CreateInstance( std::istream & in, std::ostream & out );
         /// create complex instance - used by CreateInstance()
-        SDAI_Application_instance  * CreateSubSuperInstance( istream & in, int fileid,
+        SDAI_Application_instance  * CreateSubSuperInstance( std::istream & in, int fileid,
                 ErrorDescriptor & );
 
         // read the instance - used by ReadData2()
-        SDAI_Application_instance  * ReadInstance( istream & in, ostream & out,
+        SDAI_Application_instance  * ReadInstance( std::istream & in, std::ostream & out,
                 std::string & cmtStr, bool useTechCor = true );
 
         ///  reading scopes are still incomplete, CreateScopeInstances and ReadScopeInstances are stubs
-        Severity CreateScopeInstances( istream & in, SDAI_Application_instance_ptr  ** scopelist );
-        Severity ReadScopeInstances( istream & in );
-//    Severity ReadSubSuperInstance(istream& in);
+        Severity CreateScopeInstances( std::istream & in, SDAI_Application_instance_ptr  ** scopelist );
+        Severity ReadScopeInstances( std::istream & in );
+//    Severity ReadSubSuperInstance(std::istream& in);
 
-        int FindDataSection( istream & in );
-        int FindHeaderSection( istream & in );
+        int FindDataSection( std::istream & in );
+        int FindHeaderSection( std::istream & in );
 
 // writing working session files
-        void WriteWorkingData( ostream & out, int writeComments = 1 );
+        void WriteWorkingData( std::ostream & out, int writeComments = 1 );
 
 //called by WriteExchangeFile
-        ofstream * OpenOutputFile( const std::string filename = "" );
-        void CloseOutputFile( ostream * out );
+	std::ofstream * OpenOutputFile( const std::string filename = "" );
+        void CloseOutputFile( std::ostream * out );
 
-        void WriteHeader( ostream & out );
-        void WriteHeaderInstance( SDAI_Application_instance * obj, ostream & out );
-        void WriteHeaderInstanceFileName( ostream & out );
-        void WriteHeaderInstanceFileDescription( ostream & out );
-        void WriteHeaderInstanceFileSchema( ostream & out );
+        void WriteHeader( std::ostream & out );
+        void WriteHeaderInstance( SDAI_Application_instance * obj, std::ostream & out );
+        void WriteHeaderInstanceFileName( std::ostream & out );
+        void WriteHeaderInstanceFileDescription( std::ostream & out );
+        void WriteHeaderInstanceFileSchema( std::ostream & out );
 
-        void WriteData( ostream & out, int writeComments = 1 );
-        void WriteValuePairsData( ostream & out, int writeComments = 1,
+        void WriteData( std::ostream & out, int writeComments = 1 );
+        void WriteValuePairsData( std::ostream & out, int writeComments = 1,
                                   int mixedCase = 1 );
 
         int IncrementFileId( int fileid );
@@ -237,7 +237,7 @@ class SC_EDITOR_EXPORT STEPfile {
         void SetFileIdIncrement();
         void MakeBackupFile();
 
-//    void ReadWhiteSpace(istream& in);
+//    void ReadWhiteSpace(std::istream& in);
 };
 
 //inline functions

@@ -113,7 +113,7 @@ int StrCmpIns( const char * str1, const char * str2 ) {
 }
 
 /**
- * Test if a string ends with the given suffix.
+ * Test if a string std::ends with the given suffix.
  */
 bool StrEndsWith( const std::string & s, const char * suf ) {
     if( suf == NULL ) {
@@ -132,9 +132,9 @@ bool StrEndsWith( const std::string & s, const char * suf ) {
 }
 
 /**
- *  Extract the next delimited string from the istream.
+ *  Extract the next delimited string from the std::istream.
  */
-std::string GetLiteralStr( istream & in, ErrorDescriptor * err ) {
+std::string GetLiteralStr( std::istream & in, ErrorDescriptor * err ) {
     std::string s;
     in >> std::ws; // skip whitespace
 
@@ -245,11 +245,11 @@ char * PrettyNewName( const char * oldname ) {
 ***    not then it is an error but the bad chars are not read since you have
 ***    no way to know when to stop.
 **/
-Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
+Severity CheckRemainingInput( std::istream & in, ErrorDescriptor * err,
                               const char * typeName, // used in error message
                               const char * delimiterList ) { // e.g. ",)"
-    string skipBuf;
-    ostringstream errMsg;
+    std::string skipBuf;
+    std::ostringstream errMsg;
 
     if( in.eof() ) {
         // no error
@@ -264,7 +264,7 @@ Severity CheckRemainingInput( istream & in, ErrorDescriptor * err,
         // At most the fail bit is set, so stream can still be read.
         // Clear errors and skip whitespace.
         in.clear();
-        in >> ws;
+        in >> std::ws;
 
         if( in.eof() ) {
             // no error

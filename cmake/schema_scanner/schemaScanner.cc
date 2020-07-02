@@ -130,7 +130,7 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
                                            stringstream & th, stringstream & ti, int tcount ) {
     string shortName = makeShortName( schemaName );
     if( mkDirIfNone( shortName.c_str() ) < 0 ) {
-        cerr << "Error creating directory " << shortName << " at " << __FILE__ << ":" << __LINE__;
+        std::cerr << "Error creating directory " << shortName << " at " << __FILE__ << ":" << __LINE__;
         perror( 0 );
         exit( EXIT_FAILURE );
     }
@@ -144,96 +144,96 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     ofstream cmLists;
     cmLists.open( cmListsPath.c_str() );
     if( !cmLists.good() ) {
-        cerr << "error opening file " << cmListsPath << " - exiting." << endl;
+        std::cerr << "error opening file " << cmListsPath << " - exiting." << std::endl;
         exit( EXIT_FAILURE );
     }
-    cmLists << "# -----  GENERATED FILE  -----" << endl;
-    cmLists << "# -----   Do not edit!   -----" << endl << endl;
+    cmLists << "# -----  GENERATED FILE  -----" << std::endl;
+    cmLists << "# -----   Do not edit!   -----" << std::endl << std::endl;
 
-    cmLists << "# schema name: " << schemaName << endl;
-    cmLists << "# (short name: " << shortName << ")" << endl;
-    cmLists << "# " << ecount << " entities, " << tcount << " types" << endl << endl;
+    cmLists << "# schema name: " << schemaName << std::endl;
+    cmLists << "# (short name: " << shortName << ")" << std::endl;
+    cmLists << "# " << ecount << " entities, " << tcount << " types" << std::endl << std::endl;
 
-    cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
-    cmLists << "include(${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake)" << endl;
+    cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << std::endl;
+    cmLists << "include(${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake)" << std::endl;
 
     // * 2 for headers, + 10 other files
-    cmLists << "set(" << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << ")" << endl << endl;
+    cmLists << "set(" << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << ")" << std::endl << std::endl;
 
 
-    cmLists << "PROJECT(" << shortName << ")" << endl;
-    cmLists << "# list headers so they can be installed - entity, type, misc" << endl;
+    cmLists << "PROJECT(" << shortName << ")" << std::endl;
+    cmLists << "# list headers so they can be installed - entity, type, misc" << std::endl;
 
-    cmLists << "set(" << shortName << "_entity_hdrs" << endl;
+    cmLists << "set(" << shortName << "_entity_hdrs" << std::endl;
     cmLists << eh.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "   )" << std::endl << std::endl;
 
-    cmLists << "set(" << shortName << "_type_hdrs" << endl;
+    cmLists << "set(" << shortName << "_type_hdrs" << std::endl;
     cmLists << th.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "   )" << std::endl << std::endl;
 
-    cmLists << "set(" << shortName << "_misc_hdrs" << endl;
-    cmLists << "     Sdaiclasses.h   schema.h" << endl;
-    cmLists << "     Sdai" << schema_upper << "Names.h" << endl;
-    cmLists << "     Sdai" << schema_upper << ".h" << endl;
-    cmLists << "   )" << endl << endl;
+    cmLists << "set(" << shortName << "_misc_hdrs" << std::endl;
+    cmLists << "     Sdaiclasses.h   schema.h" << std::endl;
+    cmLists << "     Sdai" << schema_upper << "Names.h" << std::endl;
+    cmLists << "     Sdai" << schema_upper << ".h" << std::endl;
+    cmLists << "   )" << std::endl << std::endl;
 
-    cmLists << "# install all headers" << endl;
-    cmLists << "set(all_headers ${" << shortName << "_entity_hdrs} ${" << shortName << "_type_hdrs} ${" << shortName << "_misc_hdrs})" << endl;
-    cmLists << "foreach( header_file ${all_headers} )" << endl;
-    cmLists << "  set(curr_dir)" << endl;
-    cmLists << "  get_filename_component(curr_dir ${header_file} PATH)" << endl;
-    cmLists << "  get_filename_component(curr_name ${header_file} NAME)" << endl;
-    cmLists << "  if (curr_dir)" << endl;
-    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "/${curr_dir}\" )" << endl;
-    cmLists << "  else (curr_dir)" << endl;
-    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "\" )" << endl;
-    cmLists << "  endif (curr_dir)" << endl;
-    cmLists << "endforeach()" << endl;
+    cmLists << "# install all headers" << std::endl;
+    cmLists << "set(all_headers ${" << shortName << "_entity_hdrs} ${" << shortName << "_type_hdrs} ${" << shortName << "_misc_hdrs})" << std::endl;
+    cmLists << "foreach( header_file ${all_headers} )" << std::endl;
+    cmLists << "  set(curr_dir)" << std::endl;
+    cmLists << "  get_filename_component(curr_dir ${header_file} PATH)" << std::endl;
+    cmLists << "  get_filename_component(curr_name ${header_file} NAME)" << std::endl;
+    cmLists << "  if (curr_dir)" << std::endl;
+    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "/${curr_dir}\" )" << std::endl;
+    cmLists << "  else (curr_dir)" << std::endl;
+    cmLists << "    install( FILES ${header_file} DESTINATION \"include/schemas/" << shortName << "\" )" << std::endl;
+    cmLists << "  endif (curr_dir)" << std::endl;
+    cmLists << "endforeach()" << std::endl;
 
-    cmLists << "# implementation files - 3 lists" << endl << endl;
+    cmLists << "# implementation files - 3 lists" << std::endl << std::endl;
 
-    cmLists << "# unity build: #include small .cc files to reduce the number" << endl;
-    cmLists << "# of translation units that must be compiled" << endl;
-    cmLists << "if(SC_UNITY_BUILD)" << endl << "  # turns off include statements within type and entity .cc's - the unity T.U.'s include a unity header" << endl;
-    cmLists << "  add_definitions( -DSC_SDAI_UNITY_BUILD)" << endl;
-    cmLists << "  set(" << shortName << "_entity_impls Sdai" << schema_upper << "_unity_entities.cc)" << endl;
-    cmLists << "  set(" << shortName << "_type_impls Sdai" << schema_upper << "_unity_types.cc)" << endl;
-    cmLists << "else(SC_UNITY_BUILD)" << endl;
-    cmLists << "  set(" << shortName << "_entity_impls" << endl;
+    cmLists << "# unity build: #include small .cc files to reduce the number" << std::endl;
+    cmLists << "# of translation units that must be compiled" << std::endl;
+    cmLists << "if(SC_UNITY_BUILD)" << std::endl << "  # turns off include statements within type and entity .cc's - the unity T.U.'s include a unity header" << std::endl;
+    cmLists << "  add_definitions( -DSC_SDAI_UNITY_BUILD)" << std::endl;
+    cmLists << "  set(" << shortName << "_entity_impls Sdai" << schema_upper << "_unity_entities.cc)" << std::endl;
+    cmLists << "  set(" << shortName << "_type_impls Sdai" << schema_upper << "_unity_types.cc)" << std::endl;
+    cmLists << "else(SC_UNITY_BUILD)" << std::endl;
+    cmLists << "  set(" << shortName << "_entity_impls" << std::endl;
     cmLists << ei.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "   )" << std::endl << std::endl;
 
-    cmLists << "  set(" << shortName << "_type_impls" << endl;
+    cmLists << "  set(" << shortName << "_type_impls" << std::endl;
     cmLists << ti.str();
-    cmLists << "   )" << endl;
-    cmLists << "endif(SC_UNITY_BUILD)" << endl << endl;
+    cmLists << "   )" << std::endl;
+    cmLists << "endif(SC_UNITY_BUILD)" << std::endl << std::endl;
 
-    cmLists << "set( " << shortName << "_misc_impls" << endl;
-    cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;
-    cmLists << "     Sdai" << schema_upper << ".cc" << endl;
-    cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
+    cmLists << "set( " << shortName << "_misc_impls" << std::endl;
+    cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << std::endl;
+    cmLists << "     Sdai" << schema_upper << ".cc" << std::endl;
+    cmLists << "     Sdai" << schema_upper << ".init.cc   )" << std::endl << std::endl;
 
-    cmLists << "if( WIN32 )" << endl;
-    cmLists << "set_source_files_properties( SdaiAll.cc PROPERTIES COMPILE_FLAGS /bigobj)" << endl;
-    cmLists << "endif( WIN32 )" << endl;
+    cmLists << "if( WIN32 )" << std::endl;
+    cmLists << "set_source_files_properties( SdaiAll.cc PROPERTIES COMPILE_FLAGS /bigobj)" << std::endl;
+    cmLists << "endif( WIN32 )" << std::endl;
 
-    cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
-    cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;
-    cmLists << "                 \"${schema_target_files}\")" << endl;
+    cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << std::endl;
+    cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << std::endl;
+    cmLists << "                 \"${schema_target_files}\")" << std::endl;
 
-    cmLists << "if( WIN32 )" << endl;
-    cmLists << "set_source_files_properties(Sdai" << schema_upper << "_unity_entities.cc PROPERTIES COMPILE_FLAGS /bigobj)" << endl;
-    cmLists << "set_source_files_properties(Sdai" << schema_upper << "_unity_types.cc PROPERTIES COMPILE_FLAGS /bigobj)" << endl;
-    cmLists << "endif( WIN32 )" << endl;
+    cmLists << "if( WIN32 )" << std::endl;
+    cmLists << "set_source_files_properties(Sdai" << schema_upper << "_unity_entities.cc PROPERTIES COMPILE_FLAGS /bigobj)" << std::endl;
+    cmLists << "set_source_files_properties(Sdai" << schema_upper << "_unity_types.cc PROPERTIES COMPILE_FLAGS /bigobj)" << std::endl;
+    cmLists << "endif( WIN32 )" << std::endl;
 
     cmLists.close();
 
     char pwd[BUFSIZ] = {0};
     if( getcwd( pwd, BUFSIZ ) ) {
-        cout << pwd << "/" << shortName << endl;
+        std::cout << pwd << "/" << shortName << std::endl;
     } else {
-        cerr << "Error encountered by getcwd() for " << shortName << " - exiting. Error was ";
+        std::cerr << "Error encountered by getcwd() for " << shortName << " - exiting. Error was ";
         perror( 0 );
         exit( EXIT_FAILURE );
     }
@@ -265,8 +265,8 @@ void printSchemaFilenames( Schema sch ){
                 ++ecount;
                 if( ( ecount % numColumns ) == 0 ) {
                     // columns
-                    entityHeaders << endl << tab;
-                    entityImpls << endl << tab;
+                    entityHeaders << std::endl << tab;
+                    entityImpls << std::endl << tab;
                 }
                 break;
             case OBJ_TYPE: {
@@ -285,8 +285,8 @@ void printSchemaFilenames( Schema sch ){
                 typeImpls << std::left << std::setw( colWidth ) << fn.impl << " ";
                 ++tcount;
                 if( ( tcount % numColumns ) == 0 ) {
-                    typeHeaders << endl << tab;
-                    typeImpls << endl << tab;
+                    typeHeaders << std::endl << tab;
+                    typeImpls << std::endl << tab;
                 }
                 break;
             }

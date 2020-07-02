@@ -33,22 +33,22 @@ class SC_DAI_EXPORT SDAI_Binary {
         const char * asStr() const  {
             return c_str();
         }
-        void STEPwrite( ostream & out = cout )  const;
+        void STEPwrite( std::ostream & out = std::cout )  const;
         const char * STEPwrite( std::string & s ) const;
 
         Severity StrToVal( const char * s, ErrorDescriptor * err );
-        Severity STEPread( istream & in, ErrorDescriptor * err );
+        Severity STEPread( std::istream & in, ErrorDescriptor * err );
         Severity STEPread( const char * s, ErrorDescriptor * err );
 
         Severity BinaryValidLevel( const char * value, ErrorDescriptor * err,
                                    int optional, char * tokenList,
                                    int needDelims = 0, int clearError = 1 );
-        Severity BinaryValidLevel( istream & in, ErrorDescriptor * err,
+        Severity BinaryValidLevel( std::istream & in, ErrorDescriptor * err,
                                    int optional, char * tokenList,
                                    int needDelims = 0, int clearError = 1 );
 
     protected:
-        Severity ReadBinary( istream & in, ErrorDescriptor * err, int AssignVal = 1,
+        Severity ReadBinary( std::istream & in, ErrorDescriptor * err, int AssignVal = 1,
                              int needDelims = 1 );
 };
 

@@ -32,7 +32,7 @@ int main( int argc, char * argv[] ) {
     sfile.ReadExchangeFile( argv[1] );
 
     if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
     const SdaiWindow * wind = dynamic_cast< SdaiWindow * >( instance_list.GetApplication_instance( "window" ) );
@@ -40,19 +40,19 @@ int main( int argc, char * argv[] ) {
     if( wind ) {
         STEPattributeList attrlist = wind->attributes;
         for( ; i < attrlist.list_length(); i++ ) {
-            cout << "attr " << i << ": " << attrlist[i].Name() << endl;
+            std::cout << "attr " << i << ": " << attrlist[i].Name() << std::endl;
             if( 0 == strcmp( attrname, attrlist[i].Name() ) ) {
                 foundMatch = true;
-                cout << "attribute " << '"' << attrname << '"' << " found at " << i << endl;
+                std::cout << "attribute " << '"' << attrname << '"' << " found at " << i << std::endl;
             }
         }
     }
     if( !i ) {
-        cout << "no attrs found" << endl;
+        std::cout << "no attrs found" << std::endl;
         exit( EXIT_FAILURE );
     }
     if( !foundMatch ) {
-        cout << "attribute " << '"' << attrname << '"' << " not found" << endl;
+        std::cout << "attribute " << '"' << attrname << '"' << " not found" << std::endl;
         exit( EXIT_FAILURE );
     } else {
         exit( EXIT_SUCCESS );

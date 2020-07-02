@@ -25,23 +25,23 @@ Severity SCLundefined::StrToVal( const char * s, ErrorDescriptor * err ) {
     return SEVERITY_NULL;
 }
 
-Severity SCLundefined::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity SCLundefined::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     return STEPread( in, err );
 }
 
 Severity SCLundefined::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * ) s );
+    std::istringstream in( ( char * ) s );
     return STEPread( in, err );
 }
 
-Severity SCLundefined::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity SCLundefined::STEPread( std::istream & in, ErrorDescriptor * err ) {
     char c = '\0';
-    ostringstream ss;
+    std::ostringstream ss;
     std::string str;
 
     int terminal = 0;
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
     in >> c;
     if( c == '$' ) {
         val = "";
@@ -94,7 +94,7 @@ Severity SCLundefined::STEPread( istream & in, ErrorDescriptor * err ) {
         }
     }
 
-    ss << ends;
+    ss << std::ends;
     val = &( ss.str()[0] );
 
     err->GreaterSeverity( SEVERITY_NULL );
@@ -115,7 +115,7 @@ const char * SCLundefined::STEPwrite( std::string & s ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void SCLundefined::  STEPwrite( ostream & out ) {
+void SCLundefined::  STEPwrite( std::ostream & out ) {
     if( val.empty() ) {
         out << "$";
     } else {

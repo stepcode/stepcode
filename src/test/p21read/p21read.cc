@@ -152,7 +152,7 @@ int main( int argc, char * argv[] ) {
 
     benchmark stats( "p21 ReadExchangeFile()" );
 
-    cout << argv[0] << ": load file ..." << endl;
+    std::cout << argv[0] << ": load file ..." << std::endl;
     if( argc >= ( sc_optind + 1 ) ) {
         flnm = argv[sc_optind];
     } else {
@@ -160,7 +160,7 @@ int main( int argc, char * argv[] ) {
     }
     sfile.ReadExchangeFile( flnm );
     if( sfile.Error().severity() < SEVERITY_USERMSG ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
     }
 
     if( trackStats ) {
@@ -176,7 +176,7 @@ int main( int argc, char * argv[] ) {
 
     Severity readSev = sfile.Error().severity(); //otherwise, errors from reading will be wiped out by sfile.WriteExchangeFile()
 
-    cout << argv[0] << ": write file ..." << endl;
+    std::cout << argv[0] << ": write file ..." << std::endl;
     if( argc == sc_optind + 2 ) {
         flnm = argv[sc_optind + 1];
     } else {
@@ -184,9 +184,9 @@ int main( int argc, char * argv[] ) {
     }
     sfile.WriteExchangeFile( flnm );
     if( sfile.Error().severity() < SEVERITY_USERMSG ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
     }
-    cout << argv[0] << ": " << flnm << " written"  << endl;
+    std::cout << argv[0] << ": " << flnm << " written"  << std::endl;
 
     if( ( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) || ( readSev <= SEVERITY_INCOMPLETE ) ) { //lower is worse
         exit( 1 );

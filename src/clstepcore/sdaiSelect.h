@@ -66,13 +66,13 @@ class SC_CORE_EXPORT SDAI_Select {
 
         // reading and writing
         const char * STEPwrite( std::string & s, const char * currSch = 0 ) const;
-        void STEPwrite( ostream & out = cout, const char * currSch = 0 ) const;
+        void STEPwrite( std::ostream & out = std::cout, const char * currSch = 0 ) const;
 
         // IMS 8/2/95: added as part of new select implementation
-        virtual void STEPwrite_verbose( ostream & out = cout, const char * = 0 )
+        virtual void STEPwrite_verbose( std::ostream & out = std::cout, const char * = 0 )
         const;
 
-        virtual void STEPwrite_content( ostream & out, const char * = 0 ) const = 0;
+        virtual void STEPwrite_content( std::ostream & out, const char * = 0 ) const = 0;
 
 
         Severity StrToVal( const char * val, const char * selectType,
@@ -80,12 +80,12 @@ class SC_CORE_EXPORT SDAI_Select {
         virtual Severity StrToVal_content( const char *,
                                            InstMgrBase * instances = 0 ) = 0;
 
-        Severity STEPread( istream & in, ErrorDescriptor * err,
+        Severity STEPread( std::istream & in, ErrorDescriptor * err,
                            InstMgrBase * instances = 0, const char * utype = 0,
                            int addFileId = 0, const char * = NULL );
 
         // abstract function
-        virtual Severity STEPread_content( istream & in = cin,
+        virtual Severity STEPread_content( std::istream & in = std::cin,
                                            InstMgrBase * instances = 0,
                                            const char * utype = 0,
                                            int addFileId = 0,

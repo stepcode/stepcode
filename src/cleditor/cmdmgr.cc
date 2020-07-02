@@ -98,7 +98,7 @@ MgrNode * CmdMgr::StateFindFileId( stateEnum s, int fileId ) {
         case newSE: // there is no new list
         case noStateSE:
         default:
-            cout << "ERROR can't find the node containing fileid " <<
+            std::cout << "ERROR can't find the node containing fileid " <<
                  fileId << " from this node\n";
             return 0;
     }

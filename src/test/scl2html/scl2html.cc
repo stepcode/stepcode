@@ -90,7 +90,7 @@ void PrintAttrTypeWithAnchor( const TypeDescriptor * typeDesc, ofstream & outhtm
     if( base == sdaiAGGR ) {
         outhtml << " (contains elements of type ";
         PrintAttrTypeWithAnchor( typeDesc->AggrElemTypeDescriptor(), outhtml );
-        outhtml << ")" << endl;
+        outhtml << ")" << std::endl;
     }
 
     if( anchor ) {
@@ -115,7 +115,7 @@ int PrintAttrsHTML( const EntityDescriptor * ent, ofstream & outhtml ) {
     if( attrDesc != 0 ) {
         outhtml << "\n<! -- These are the attributes for entity ";
         outhtml << ent->Name() << " >\n\n";
-        outhtml << "<UL>" << endl;
+        outhtml << "<UL>" << std::endl;
         while( attrDesc != 0 ) {
             attrCount++;
             outhtml << "<LI>" << attrDesc->Name() << " : ";
@@ -123,10 +123,10 @@ int PrintAttrsHTML( const EntityDescriptor * ent, ofstream & outhtml ) {
                 outhtml << "optional ";
             }
             PrintAttrTypeWithAnchor( attrDesc->ReferentType(), outhtml );
-            outhtml << endl;
+            outhtml << std::endl;
             attrDesc = aditr.NextAttrDesc();
         }
-        outhtml << "</UL>" << endl;
+        outhtml << "</UL>" << std::endl;
     }
     return attrCount;
 }
@@ -142,10 +142,10 @@ void PrintParentAttrsHTML( const EntityDescriptor * ent,
     // Passing this function the pointer to ent is really cosmetic, so
     // we can easily print out this 'header' information.
     outhtml << "\n<! -- This is a parent of " << ent->Name() << ">\n\n";
-    outhtml << "<DL>" << endl;
+    outhtml << "<DL>" << std::endl;
     outhtml << "<DT>" << ent->Name() << " inherits from ";
     outhtml << "<A HREF=\"" << parent->Name() << ".html\">";
-    outhtml << parent->Name() << "</A>" << endl;
+    outhtml << parent->Name() << "</A>" << std::endl;
 
     // Here we're going to traverse the list of supertypes of the parent
     // using the EntityDescriptorList
@@ -156,7 +156,7 @@ void PrintParentAttrsHTML( const EntityDescriptor * ent,
         // for each "grandparent" of ent, inside a descriptor body (<DD>)
         // recursively call this function... the 'while' takes care of
         // multiple inheritance: for each grandparent, trace back.
-        outhtml << "<DD>" << endl;
+        outhtml << "<DD>" << std::endl;
         const EntityDescriptor * grandpa = grandpaNode->EntityDesc();
         PrintParentAttrsHTML( parent, grandpa, outhtml );
         grandpaNode = ( EntityDescLinkNode * )grandpaNode->NextNode();
@@ -171,14 +171,14 @@ void PrintParentAttrsHTML( const EntityDescriptor * ent,
     AttrDescLinkNode * attrNode = ( AttrDescLinkNode * )attrList->GetHead();
     if( attrNode ) {
         outhtml << "<DT>" << parent->Name();
-        outhtml << " has the following attributes" << endl;
-        outhtml << "<DD>" << endl;
+        outhtml << " has the following attributes" << std::endl;
+        outhtml << "<DD>" << std::endl;
         if( PrintAttrsHTML( parent, outhtml ) == 0 ) {
-            outhtml << "<EM>none</EM>" << endl;
+            outhtml << "<EM>none</EM>" << std::endl;
         }
     }
 
-    outhtml << "</DL>" << endl;
+    outhtml << "</DL>" << std::endl;
 }
 
 
@@ -205,42 +205,42 @@ main() {
 
     const SchemaDescriptor * schema = registry->NextSchema();
     int num_ents = registry->GetEntityCnt();
-    cout << "Processing schema " << schema->Name();
-    cout << " with " << num_ents << " entities." << endl;
+    std::cout << "Processing schema " << schema->Name();
+    std::cout << " with " << num_ents << " entities." << std::endl;
 
     // Set up root-level index of the schema, in a file called
     // "index.html".  In this document are links to all objects in
     // the schema.
 
-    cout << "Creating 'index.html'" << endl;
+    std::cout << "Creating 'index.html'" << std::endl;
     ofstream root( "index.html" );
-    root << "<TITLE>" << schema->Name() << "</TITLE>" << endl;
-    root << "<H1>Schema: " << schema->Name() << "</H1>" << endl;
+    root << "<TITLE>" << schema->Name() << "</TITLE>" << std::endl;
+    root << "<H1>Schema: " << schema->Name() << "</H1>" << std::endl;
 
     // Do Type-list
-    cout << "Processing types ";
-    root << "<HR>" << endl;
-    root << "<H2>Types</H2>" << endl;
-    root << "<UL>" << endl;
+    std::cout << "Processing types ";
+    root << "<HR>" << std::endl;
+    root << "<H2>Types</H2>" << std::endl;
+    root << "<UL>" << std::endl;
 
     const TypeDescriptor * type;
     type = registry->NextType();
     root << "<! -- The following is a list of types, which are>\n";
     root << "<! --  cross-referenced from the entities.>\n";
     while( type != 0 ) {
-        cout << ".";
+        std::cout << ".";
         root << "<LI><A NAME=\"" << type->Name() << "\">";
         root << type->Name() << "</A>: ";
-        root << type->Description() << endl;
+        root << type->Description() << std::endl;
         type = registry->NextType();
     }
-    root << "</UL>" << endl;
-    cout << endl;
+    root << "</UL>" << std::endl;
+    std::cout << std::endl;
 
     // Do entity root-section and pages
-    root << "<HR>" << endl;
-    root << "<H2>Entities</H2>" << endl;
-    root << "<UL>" << endl;
+    root << "<HR>" << std::endl;
+    root << "<H2>Entities</H2>" << std::endl;
+    root << "<UL>" << std::endl;
     root << "<! -- These all lead to a page for each entity>\n";
 
     // These are all pointers we need to wander around the registry
@@ -257,27 +257,27 @@ main() {
 
     for( int i = 0; i < num_ents; i++ ) {
         ent = registry->NextEntity();
-        cout << "Processing " << ent->Name() << endl;
+        std::cout << "Processing " << ent->Name() << std::endl;
 
         // add anchor to root page
         root << "<LI><A HREF=\"" << ent->Name() << ".html\">";
-        root << ent->Name() << "</A>" << endl;
+        root << ent->Name() << "</A>" << std::endl;
 
         // construct page for entity
         char * tmpstr = new char[strlen( ent->Name() ) + 6];
         ofstream entout( strcat( strcpy( tmpstr, ent->Name() ), ".html" ) );
         delete [] tmpstr;
-        entout << "<TITLE>Entity " << ent->Name() << "</TITLE>" << endl;
-        entout << "<H1>" << ent->Name() << "</H1>" << endl;
+        entout << "<TITLE>Entity " << ent->Name() << "</TITLE>" << std::endl;
+        entout << "<H1>" << ent->Name() << "</H1>" << std::endl;
 
         // supertypes
-        entout << "<HR>\n<H2>Inherited Attributes</H2>" << endl;
+        entout << "<HR>\n<H2>Inherited Attributes</H2>" << std::endl;
         entout << "<! -- Below is the direct ancestry (if any) of ";
         entout << ent->Name() << ">\n";
         supers = &( ent->Supertypes() );
         entNode = ( EntityDescLinkNode * )supers->GetHead();
         if( !entNode ) {
-            entout << "<EM>none</EM>" << endl;
+            entout << "<EM>none</EM>" << std::endl;
         }
         while( entNode ) {
             // call PrintParentAttrsHTML to explore the parents
@@ -288,38 +288,38 @@ main() {
         }
 
         // local attributes
-        entout << "<HR>\n<H2>Local Attributes</H2>" << endl;
+        entout << "<HR>\n<H2>Local Attributes</H2>" << std::endl;
         if( PrintAttrsHTML( ent, entout ) == 0 ) {
-            entout << "<EM>none</EM>" << endl;
+            entout << "<EM>none</EM>" << std::endl;
         }
 
         // subtypes
         // We're going to traverse the subtypes by using the subtype list
         // of the entity, a little more simply than in PrintParentAttrsHTML()
-        entout << "<HR>\n<H2>Subtypes</H2>" << endl;
+        entout << "<HR>\n<H2>Subtypes</H2>" << std::endl;
         entout << "<! -- The following entities inherit from this one>\n";
         subs = &( ent->Subtypes() );
         entNode = ( EntityDescLinkNode * )subs->GetHead();
         if( entNode ) {
-            entout << "<UL>" << endl;
+            entout << "<UL>" << std::endl;
             EntityDescriptor * child;
             while( entNode ) {
                 child = entNode->EntityDesc();
                 entout << "<LI><A HREF=\"" << child->Name() << ".html\">";
-                entout << child->Name() << "</A>" << endl;
+                entout << child->Name() << "</A>" << std::endl;
                 entNode = ( EntityDescLinkNode * )entNode->NextNode();
             }
-            entout << "</UL>" << endl;
+            entout << "</UL>" << std::endl;
         } else {
-            entout << "<EM>none</EM>" << endl;
+            entout << "<EM>none</EM>" << std::endl;
         }
 
-        entout << "<HR>" << endl;
+        entout << "<HR>" << std::endl;
         entout << "Click <A HREF=\"index.html\">here</A> to ";
-        entout << "return to the index." << endl;
+        entout << "return to the index." << std::endl;
     }
-    root << "</UL>" << endl;
-    cout << "Done!" << endl;
+    root << "</UL>" << std::endl;
+    std::cout << "Done!" << std::endl;
 }
 
 

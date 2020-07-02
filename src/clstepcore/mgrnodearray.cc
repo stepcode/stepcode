@@ -49,13 +49,13 @@ MgrNodeArray::MgrNodeArray( int defaultSize )
 
 void MgrNodeArray::AssignIndexAddress( int index ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeArray::AssignIndexAddress()\n";
+//  std::cout << "MgrNodeArray::AssignIndexAddress()\n";
     ( ( MgrNode * )_buf[index] )->ArrayIndex( index );
 }
 
 MgrNodeArray::~MgrNodeArray() {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::~MgrNodeArray()\n";
+        std::cout << "MgrNodeArray::~MgrNodeArray()\n";
     }
     DeleteEntries();
 }
@@ -64,7 +64,7 @@ MgrNodeArray::~MgrNodeArray() {
 
 void MgrNodeArray::ClearEntries() {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::ClearEntries()\n";
+        std::cout << "MgrNodeArray::ClearEntries()\n";
     }
     int i;
     for( i = 0 ; i < _count; i++ ) {
@@ -77,7 +77,7 @@ void MgrNodeArray::ClearEntries() {
 
 void MgrNodeArray::DeleteEntries() {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::DeleteEntries()\n";
+        std::cout << "MgrNodeArray::DeleteEntries()\n";
     }
     int i;
     for( i = 0 ; i < _count; i++ ) {
@@ -90,7 +90,7 @@ void MgrNodeArray::DeleteEntries() {
 
 int MgrNodeArray::Insert( GenericNode * gn, int index ) {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::Insert()\n";
+        std::cout << "MgrNodeArray::Insert()\n";
     }
     int AssignedIndex = GenNodeArray::Insert( gn, index );
     int i;
@@ -104,7 +104,7 @@ int MgrNodeArray::Insert( GenericNode * gn, int index ) {
 
 void MgrNodeArray::Remove( int index ) {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::Remove()\n";
+        std::cout << "MgrNodeArray::Remove()\n";
     }
     if( 0 <= index && index < _count ) {
         GenNodeArray::Remove( index );
@@ -119,7 +119,7 @@ void MgrNodeArray::Remove( int index ) {
 
 int MgrNodeArray::MgrNodeIndex( int fileId ) {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArray::MgrNodeIndex()\n";
+        std::cout << "MgrNodeArray::MgrNodeIndex()\n";
     }
     int i;
     for( i = 0; i < _count; ++i ) {
@@ -140,7 +140,7 @@ MgrNodeArraySorted::MgrNodeArraySorted( int defaultSize )
 
 int MgrNodeArraySorted::Insert( GenericNode * gn ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeArraySorted::Insert()\n";
+//  std::cout << "MgrNodeArraySorted::Insert()\n";
 
     // since gn is really a MgrNode
     int fileId = ( ( MgrNode * )gn )->GetApplication_instance()->GetFileId();
@@ -152,21 +152,21 @@ int MgrNodeArraySorted::Insert( GenericNode * gn ) {
 
 int MgrNodeArraySorted::Index( GenericNode * gn ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeArraySorted::Index()\n";
+//  std::cout << "MgrNodeArraySorted::Index()\n";
     // since gn is really a MgrNode
     return MgrNodeIndex( ( ( MgrNode * )gn )->GetFileId() );
 }
 
 int MgrNodeArraySorted::Index( GenericNode ** gn ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeArraySorted::Index()\n";
+//  std::cout << "MgrNodeArraySorted::Index()\n";
     // since gn is really a MgrNode
     return MgrNodeIndex( ( ( MgrNode * )( *gn ) )->GetFileId() );
 }
 
 void MgrNodeArraySorted::ClearEntries() {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArraySorted::ClearEntries()\n";
+        std::cout << "MgrNodeArraySorted::ClearEntries()\n";
     }
     int i;
     for( i = 0 ; i < _count; i++ ) {
@@ -179,7 +179,7 @@ void MgrNodeArraySorted::ClearEntries() {
 
 void MgrNodeArraySorted::DeleteEntries() {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArraySorted::DeleteEntries()\n";
+        std::cout << "MgrNodeArraySorted::DeleteEntries()\n";
     }
     int i;
     for( i = 0 ; i < _count; i++ ) {
@@ -195,7 +195,7 @@ void MgrNodeArraySorted::DeleteEntries() {
 // thus the insert position will be at the end
 int MgrNodeArraySorted::FindInsertPosition( const int fileId ) {
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArraySorted::FindInsertPosition()\n";
+        std::cout << "MgrNodeArraySorted::FindInsertPosition()\n";
     }
     int i;
     int curFileId;
@@ -216,7 +216,7 @@ int MgrNodeArraySorted::MgrNodeIndex( int fileId ) {
 // that are sorted by fileId
 
     if( debug_level >= PrintFunctionTrace ) {
-        cout << "MgrNodeArraySorted::MgrNodeIndex()\n";
+        std::cout << "MgrNodeArraySorted::MgrNodeIndex()\n";
     }
     int low = 0;
     int high = _count - 1;

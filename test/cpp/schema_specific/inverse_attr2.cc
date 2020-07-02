@@ -25,8 +25,8 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
     const Inverse_attribute * ia;
     int j = 0;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
-        cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
-             << ", from entity: " << ia->inverted_entity_id_() << endl;
+        std::cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
+             << ", from entity: " << ia->inverted_entity_id_() << std::endl;
 
         //now find the entity containing the attribute in question
         const EntityDescriptor * inv_ed = reg.FindEntity( ia->inverted_entity_id_() );
@@ -35,8 +35,8 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
         int k = 0;
         while( 0 != ( attrDesc = attr_desc_itr.NextAttrDesc() ) ) {
             if( !strcmp( ia->inverted_attr_id_(), attrDesc->Name() ) ) {
-                cout << "attribute '" << attrDesc->Name() << "' is attribute #" << k
-                     << " of '" << inv_ed->Name() << "'." << endl;
+                std::cout << "attribute '" << attrDesc->Name() << "' is attribute #" << k
+                     << " of '" << inv_ed->Name() << "'." << std::endl;
 
                 // now go through the instList looking at each instance of
                 // entity type 'inv_ed', looking for references to 'ed' in the
@@ -56,7 +56,7 @@ bool findInverseAttrs2( InverseAItr iai, InstMgr & instList, Registry & reg ) {
                     if( sa.getADesc()->DomainType()->Type() == SET_TYPE ) {
                         STEPaggregate * aggr = sa.Aggregate();
                         if( !aggr || aggr->is_null() != 0 ) {
-                            cout << "findInverseAttrs2 FAILED" << endl;
+                            std::cout << "findInverseAttrs2 FAILED" << std::endl;
                             return false;
                         }
                     } else {
@@ -85,7 +85,7 @@ int main( int argc, char * argv[] ) {
     sfile.ReadExchangeFile( argv[1] );
 
     if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
     //find inverse attribute descriptors
@@ -99,14 +99,14 @@ int main( int argc, char * argv[] ) {
     EntityDescItr edi( ed->GetSupertypes() );
     const EntityDescriptor * super;
     while( 0 != ( super = edi.NextEntityDesc() ) ) {
-        cout << "supertype " << super->Name() << endl;
+        std::cout << "supertype " << super->Name() << std::endl;
         InverseAItr superIaIter( &( super->InverseAttr() ) );
         if( findInverseAttrs2( superIaIter, instance_list, registry ) ) {
             inverseAttrsFound = true;
         }
     }
     if( !inverseAttrsFound ) {
-        cout << "no inverse attrs found" << endl;
+        std::cout << "no inverse attrs found" << std::endl;
         exit( EXIT_FAILURE );
     }
     exit( EXIT_SUCCESS );

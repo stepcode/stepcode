@@ -26,9 +26,9 @@
 
 void GenericNode::Append( GenNodeList * list ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "GenericNode::Append()\n";
+//  std::cout << "GenericNode::Append()\n";
 //    if(debug_level >= PrintValues)
-//  cout << "GenericNode::this : '" << this << "'\n";
+//  std::cout << "GenericNode::this : '" << this << "'\n";
     list->Append( this );
 }
 

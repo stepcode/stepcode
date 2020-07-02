@@ -58,7 +58,7 @@ const char * SDAI_String::c_str( void ) const {
 }
 
 
-void SDAI_String::STEPwrite( ostream & out ) const {
+void SDAI_String::STEPwrite( std::ostream & out ) const {
     out << c_str();
 }
 
@@ -79,11 +79,11 @@ Severity SDAI_String::StrToVal( const char * s ) {
  * STEPread reads a string in exchange file format
  * starting with a single quote
  */
-Severity SDAI_String::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity SDAI_String::STEPread( std::istream & in, ErrorDescriptor * err ) {
     clear();  // clear the old string
     // remember the current format state to restore the previous settings
-    ios_base::fmtflags flags = in.flags();
-    in.unsetf( ios::skipws );
+    std::ios_base::fmtflags flags = in.flags();
+    in.unsetf( std::ios::skipws );
 
     // extract the string from the inputstream
     std::string s = GetLiteralStr( in, err );
@@ -105,9 +105,9 @@ Severity SDAI_String::STEPread( istream & in, ErrorDescriptor * err ) {
 }
 
 /**
- * \copydoc STEPread( istream & in, ErrorDescriptor * err )
+ * \copydoc STEPread( std::istream & in, ErrorDescriptor * err )
  */
 Severity SDAI_String::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return STEPread( in, err );
 }

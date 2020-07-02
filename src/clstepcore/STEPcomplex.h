@@ -62,19 +62,19 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
 // READ
         virtual Severity STEPread( int id, int addFileId,
                                    class InstMgrBase * instance_set,
-                                   istream & in = cin, const char * currSch = NULL,
+                                   std::istream & in = std::cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
 
-        virtual void STEPread_error( char c, int index, istream& in, const char * schnm );
+        virtual void STEPread_error( char c, int index, std::istream& in, const char * schnm );
 
 // WRITE
-        virtual void STEPwrite( ostream & out = cout, const char * currSch = NULL,
+        virtual void STEPwrite( std::ostream & out = std::cout, const char * currSch = NULL,
                                 int writeComment = 1 );
         virtual const char * STEPwrite( std::string & buf, const char * currSch = NULL );
 
         SDAI_Application_instance * Replicate();
 
-        virtual void WriteExtMapEntities( ostream & out = cout,
+        virtual void WriteExtMapEntities( std::ostream & out = std::cout,
                                           const char * currSch = NULL );
         virtual const char * WriteExtMapEntities( std::string & buf,
                 const char * currSch = NULL );

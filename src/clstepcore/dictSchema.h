@@ -123,16 +123,16 @@ public:
     }
 
     // the whole schema
-    void GenerateExpress( ostream & out ) const;
+    void GenerateExpress( std::ostream & out ) const;
 
     // USE, REFERENCE definitions
-    void GenerateUseRefExpress( ostream & out ) const;
+    void GenerateUseRefExpress( std::ostream & out ) const;
 
     // TYPE definitions
-    void GenerateTypesExpress( ostream & out ) const;
+    void GenerateTypesExpress( std::ostream & out ) const;
 
     // Entity definitions
-    void GenerateEntitiesExpress( ostream & out ) const;
+    void GenerateEntitiesExpress( std::ostream & out ) const;
 };
 
 typedef Schema SchemaDescriptor;

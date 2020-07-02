@@ -66,7 +66,7 @@ bool testOperatorEq() {
     if( s2.compare( &s, &t, b, &v, &e ) ) {
         return true;
     } else {
-        cerr << __FILE__ << ":" << __LINE__ << " - error: test for SDAI_Select::operator= failed" << endl;
+        std::cerr << __FILE__ << ":" << __LINE__ << " - error: test for SDAI_Select::operator= failed" << std::endl;
         return false;
     }
 }
@@ -75,7 +75,7 @@ int main( int /*argc*/, char ** /*argv*/ ) {
     bool pass = true;
     pass &= testOperatorEq();
     //TODO test other operators
-    cerr << "FIXME this test is incomplete!" << endl;
+    std::cerr << "FIXME this test is incomplete!" << std::endl;
     if( pass ) {
         exit( EXIT_SUCCESS );
     } else {

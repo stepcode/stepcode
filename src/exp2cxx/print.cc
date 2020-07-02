@@ -13,7 +13,7 @@
 // Local function prototypes:
 static char * joinText( JoinType, char * );
 
-ostream & operator << ( ostream & os, ComplexList & clist )
+std::ostream & operator << ( std::ostream & os, ComplexList & clist )
 /*
  * Prints out a ComplexList, by iterating through its children.
  */
@@ -26,7 +26,7 @@ ostream & operator << ( ostream & os, ComplexList & clist )
     return os;
 }
 
-ostream & operator << ( ostream & os, EntList & list )
+std::ostream & operator << ( std::ostream & os, EntList & list )
 /*
  * Prints out an EntList.  Calls appropriate function based on JoinType.
  */
@@ -39,7 +39,7 @@ ostream & operator << ( ostream & os, EntList & list )
     return os;
 }
 
-ostream & operator << ( ostream & os, SimpleList & slist )
+std::ostream & operator << ( std::ostream & os, SimpleList & slist )
 /*
  * Prints out a SimpleList.
  */
@@ -48,7 +48,7 @@ ostream & operator << ( ostream & os, SimpleList & slist )
     return os;
 }
 
-ostream & operator << ( ostream & os, MultList & mlist )
+std::ostream & operator << ( std::ostream & os, MultList & mlist )
 /*
  * Prints out a MultList.
  */
@@ -59,7 +59,7 @@ ostream & operator << ( ostream & os, MultList & mlist )
     // line at the end.  If not, the children of last child did already.
     EntList * child = mlist.childList;
 
-    os << joinText( mlist.join, jointype ) << endl;
+    os << joinText( mlist.join, jointype ) << std::endl;
     for( k = 0; k <= mlist.level; k++ ) {
         // Indent 1 more than our level (hence the "<=" ):
         os << "    ";
@@ -86,7 +86,7 @@ ostream & operator << ( ostream & os, MultList & mlist )
         child = child->next;
     }
     if( lastSimple ) {
-        os << endl;
+        os << std::endl;
     }
     return os;
 }

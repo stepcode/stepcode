@@ -24,15 +24,15 @@ class SC_CORE_EXPORT SCLundefined  {
     public:
 //  INPUT
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
-        virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
+        virtual Severity StrToVal( std::istream & in, ErrorDescriptor * err );
 
         virtual Severity STEPread( const char * s, ErrorDescriptor * err );
-        virtual Severity STEPread( istream & in, ErrorDescriptor * err );
+        virtual Severity STEPread( std::istream & in, ErrorDescriptor * err );
 
 //  OUTPUT
         virtual const char * asStr( std::string & s ) const;
         virtual const char * STEPwrite( std::string & s );
-        virtual void    STEPwrite( ostream & out = cout );
+        virtual void    STEPwrite( std::ostream & out = std::cout );
 
         int set_null();
         bool is_null();

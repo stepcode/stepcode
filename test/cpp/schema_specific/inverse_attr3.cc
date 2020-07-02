@@ -26,7 +26,7 @@ extern void SchemaInit( class Registry & );
 int main( int argc, char * argv[] ) {
     int exitStatus = EXIT_SUCCESS;
     if( argc != 2 ) {
-        cerr << "Wrong number of args!" << endl;
+        std::cerr << "Wrong number of args!" << std::endl;
         exit( EXIT_FAILURE );
     }
     lazyInstMgr lim;
@@ -37,34 +37,34 @@ int main( int argc, char * argv[] ) {
 //find attributes
     instanceTypes_t::cvector * insts = lim.getInstances( "window" );
     if( !insts || insts->empty() ) {
-        cout << "No window instances found!" << endl;
+        std::cout << "No window instances found!" << std::endl;
         exit( EXIT_FAILURE );
     }
     SdaiWindow * instance = dynamic_cast< SdaiWindow * >( lim.loadInstance( insts->at( 0 ) ) );
     if( !instance ) {
-        cout << "Problem loading instance" << endl;
+        std::cout << "Problem loading instance" << std::endl;
         exit( EXIT_FAILURE );
     }
-    cout << "instance #" << instance->StepFileId() << endl;
+    std::cout << "instance #" << instance->StepFileId() << std::endl;
 
     SDAI_Application_instance::iAMap_t::value_type v = instance->getInvAttr("isdefinedby");
     iAstruct attr = v.second; //instance->getInvAttr(ia);
         if( attr.a && attr.a->EntryCount() ) {
-            cout << "Map: found " << attr.a->EntryCount() << " inverse references." << endl;
+            std::cout << "Map: found " << attr.a->EntryCount() << " inverse references." << std::endl;
         } else {
-            cout << "Map: found no inverse references. ias " << (void *) &(v.second) << ", ia " << (void*) v.first << endl;
+            std::cout << "Map: found no inverse references. ias " << (void *) &(v.second) << ", ia " << (void*) v.first << std::endl;
             exitStatus = EXIT_FAILURE;
         }
 
     EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
     if( attr.a != aggr ) {
-        cout << "Error! got different EntityAggregate's when using map vs method" << endl;
+        std::cout << "Error! got different EntityAggregate's when using map vs method" << std::endl;
         exitStatus = EXIT_FAILURE;
     }
     if( aggr && aggr->EntryCount() ) {
-        cout << "Found " << aggr->EntryCount() << " inverse references." << endl;
+        std::cout << "Found " << aggr->EntryCount() << " inverse references." << std::endl;
     } else {
-        cout << "inverse attr is not defined" << endl;
+        std::cout << "inverse attr is not defined" << std::endl;
         exitStatus = EXIT_FAILURE;
     }
     exit( exitStatus );

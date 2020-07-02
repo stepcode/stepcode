@@ -58,7 +58,7 @@ Severity IntNode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return err->severity();
 }
 
-Severity IntNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity IntNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     if( ReadInteger( value, in, err, ",)" ) ) { // returns true if value is assigned
         _null = 0;
     } else {
@@ -78,7 +78,7 @@ Severity IntNode::STEPread( const char * s, ErrorDescriptor * err ) {
     return err->severity();
 }
 
-Severity IntNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity IntNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     if( ReadInteger( value, in, err, ",)" ) ) { // returns true if value is assigned
         _null = 0;
     } else {
@@ -104,7 +104,7 @@ const char * IntNode::STEPwrite( std::string & s, const char * ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void IntNode::STEPwrite( ostream & out ) {
+void IntNode::STEPwrite( std::ostream & out ) {
     std::string s;
     out << STEPwrite( s );
 }

@@ -16,7 +16,7 @@
 #include <sc_export.h>
 #include <string>
 #include <iostream>
-using namespace std;
+//using namespace std;
 
 #define _POC_  " report problem to scl-dev at groups.google.com"
 
@@ -46,7 +46,7 @@ typedef int DebugLevel;
  ** Description:
  **    the error is a detailed error message + a severity level
  **    also keeps a user message separately
- **    detailed message gets sent to ostream
+ **    detailed message gets sent to std::ostream
  **    uses std::string class to keep the user messages
  **    keeps severity of error
  **    created with or without error
@@ -60,13 +60,13 @@ class SC_UTILS_EXPORT ErrorDescriptor {
         Severity    _severity;
 
         static DebugLevel   _debug_level;
-        static ostream * _out; // note this will not be persistent
+        static std::ostream * _out; // note this will not be persistent
     public:
         ErrorDescriptor( Severity s    = SEVERITY_NULL,
                          DebugLevel d  = DEBUG_OFF );
         ~ErrorDescriptor( void );
 
-        void PrintContents( ostream & out = cout ) const;
+        void PrintContents( std::ostream & out = std::cout ) const;
 
         void ClearErrorMsg() {
             _severity = SEVERITY_NULL;
@@ -129,7 +129,7 @@ class SC_UTILS_EXPORT ErrorDescriptor {
         void debug_level( DebugLevel d )   {
             _debug_level = d;
         }
-        void SetOutput( ostream * o )      {
+        void SetOutput( std::ostream * o )      {
             _out = o;
         }
 } ;

@@ -33,7 +33,7 @@ extern "C" {
  * constructor is called and when stop() or the destructor is called.
  *
  * if the destructor is called and stop() had not previously been
- * called, the results are printed to the ostream given in the
+ * called, the results are printed to the std::ostream given in the
  * constructor, prefixed by the description.
  *
  * depends on getMemAndTime() above - may not work on all platforms.
@@ -48,7 +48,7 @@ class SC_BASE_EXPORT benchmark {
     public:
         benchmark( std::string description = "", bool debugMessages = true, std::ostream & o_stream = std::cout );
 
-        /// if 'stopped' is false, uses str(true) to print to ostream
+        /// if 'stopped' is false, uses str(true) to print to std::ostream
         ~benchmark( );
         void reset( );
         void reset( std::string description );
@@ -58,7 +58,7 @@ class SC_BASE_EXPORT benchmark {
         /// converts data member 'laterVals' into a string and returns it
         std::string str( );
 
-        /// outputs result of str() on ostream 'ostr'
+        /// outputs result of str() on std::ostream 'ostr'
         void out( );
 
         /// converts 'bv' into a string, prefixed by data member 'descr'

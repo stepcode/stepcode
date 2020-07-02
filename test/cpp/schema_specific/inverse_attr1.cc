@@ -26,8 +26,8 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
     const Inverse_attribute * ia;
     int j = 0;
     while( 0 != ( ia = iai.NextInverse_attribute() ) ) {
-        cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
-             << ", from entity: " << ia->inverted_entity_id_() << endl;
+        std::cout << "inverse attr #" << j << ", name: " << ia->Name() << ", inverted attr id: " << ia->inverted_attr_id_()
+             << ", from entity: " << ia->inverted_entity_id_() << std::endl;
 
         //now find the entity containing the attribute in question
 
@@ -44,8 +44,8 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
             } else {
                 EntityNode * en = ( EntityNode * ) relObj->GetHead();
                 SdaiObject * obj = ( SdaiObject * ) en->node;
-                cout << "file id " << obj->StepFileId() << "; name "
-                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->getEDesc()->Name() << endl;
+                std::cout << "file id " << obj->StepFileId() << "; name "
+                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->getEDesc()->Name() << std::endl;
             }
             ent_id = i;
         }
@@ -60,13 +60,13 @@ int main( int argc, char * argv[] ) {
     STEPfile  sfile( registry, instance_list, "", false );
     bool inverseAttrsFound = false;
     if( argc != 2 ) {
-        cout << "wrong args" << endl;
+        std::cout << "wrong args" << std::endl;
         exit( EXIT_FAILURE );
     }
     sfile.ReadExchangeFile( argv[1] );
 
     if( sfile.Error().severity() <= SEVERITY_INCOMPLETE ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
 
@@ -83,14 +83,14 @@ int main( int argc, char * argv[] ) {
     const EntityDescriptor * super;
     for( ; !iter.empty(); iter++ ) {
         super = iter.current();
-        cout << "supertype " << super->Name() << endl;
+        std::cout << "supertype " << super->Name() << std::endl;
         InverseAItr superIaIter( &( super->InverseAttr() ) );
         if( findInverseAttrs1( superIaIter, instance_list ) ) {
             inverseAttrsFound = true;
         }
     }
     if( !inverseAttrsFound ) {
-        cout << "no inverse attrs found" << endl;
+        std::cout << "no inverse attrs found" << std::endl;
         exit( EXIT_FAILURE );
     }
     exit( EXIT_SUCCESS );

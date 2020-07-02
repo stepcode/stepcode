@@ -38,11 +38,11 @@ class SC_DAI_EXPORT SDAI_String {
             s = c_str();
             return s.c_str();
         }
-        void STEPwrite( ostream & out = cout )  const;
+        void STEPwrite( std::ostream & out = std::cout )  const;
         void STEPwrite( std::string & s ) const;
 
         Severity StrToVal( const char * s );
-        Severity STEPread( istream & in, ErrorDescriptor * err );
+        Severity STEPread( std::istream & in, ErrorDescriptor * err );
         Severity STEPread( const char * s, ErrorDescriptor * err );
 
 };

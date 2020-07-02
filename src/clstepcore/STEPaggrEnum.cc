@@ -43,8 +43,8 @@ EnumAggregate::~EnumAggregate() {
  ******************************************************************/
 SingleLinkNode * EnumAggregate::NewNode() {
     //  defined in subclass
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  EnumAggregate::NewNode () called instead of virtual function. \n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  EnumAggregate::NewNode () called instead of virtual function. \n"
     << _POC_ << "\n";
     return 0;
 }
@@ -88,8 +88,8 @@ EnumNode::~EnumNode() {
 
 ///  defined in subclass
 SingleLinkNode * EnumNode::NewNode() {
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  EnumNode::NewNode () called instead of virtual function. \n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  EnumNode::NewNode () called instead of virtual function. \n"
     << _POC_ << "\n";
     return 0;
 }
@@ -104,7 +104,7 @@ Severity EnumNode::StrToVal( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity EnumNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity EnumNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     return node->STEPread( in, err );
 }
 
@@ -113,7 +113,7 @@ Severity EnumNode::StrToVal( istream & in, ErrorDescriptor * err ) {
  * a valid value will still be assigned if it exists before the garbage.
  */
 Severity EnumNode::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s ); // sz defaults to length of s
+    std::istringstream in( ( char * )s ); // sz defaults to length of s
 
     int nullable = 0;
     node->STEPread( in, err,  nullable );
@@ -124,7 +124,7 @@ Severity EnumNode::STEPread( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity EnumNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity EnumNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     int nullable = 0;
     node->STEPread( in, err,  nullable );
     return err->severity();
@@ -140,6 +140,6 @@ const char * EnumNode::STEPwrite( std::string & s, const char * ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void EnumNode::STEPwrite( ostream & out ) {
+void EnumNode::STEPwrite( std::ostream & out ) {
     node->STEPwrite( out );
 }

@@ -529,11 +529,11 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     fprintf( f, "\n    virtual BASE_TYPE ValueType() const;\n" );
 
     fprintf( f, "\n\n// STEP Part 21\n" );
-    fprintf( f, "    virtual void STEPwrite_content (ostream& out =std::cout,\n"
+    fprintf( f, "    virtual void STEPwrite_content (std::ostream& out =std::cout,\n"
              "                    const char *currSch =0) const;\n" );
-    fprintf( f, "    virtual void STEPwrite_verbose (ostream& out =std::cout,\n"
+    fprintf( f, "    virtual void STEPwrite_verbose (std::ostream& out =std::cout,\n"
              "                    const char *currSch =0) const;\n" );
-    fprintf( f, "    virtual Severity STEPread_content (istream& in =cin,\n"
+    fprintf( f, "    virtual Severity STEPread_content (std::istream& in =std::cin,\n"
              "        InstMgrBase * instances =0, const char *utype =0,\n"
              "        int addFileId =0, const char *currSch =0);\n" );
 
@@ -1289,7 +1289,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
 
     fprintf( f, "\n\n// STEP Part 21\n" );
     /*  write part 21   */
-    fprintf( f, "\nvoid\n%s::STEPwrite_content (ostream& out, const char *"
+    fprintf( f, "\nvoid\n%s::STEPwrite_content (std::ostream& out, const char *"
              " currSch) const {\n  (void)currSch;\n  ", n );
 
     /*  go through the items  */
@@ -1377,7 +1377,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
 
     /* STEPwrite_verbose() -- print value with specified type */
 
-    fprintf( f, "\nvoid\n%s::STEPwrite_verbose (ostream& out,"
+    fprintf( f, "\nvoid\n%s::STEPwrite_verbose (std::ostream& out,"
              " const char *currSch) const\n{\n", n );
 
     /* Get name of typedescriptor, according to value of currSch: */
@@ -1455,7 +1455,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
     fprintf( f, "    return;\n}\n" );
 
     /*  Read part 21   */
-    fprintf( f, "\nSeverity\n%s::STEPread_content (istream& in, InstMgrBase * instances,\n"
+    fprintf( f, "\nSeverity\n%s::STEPread_content (std::istream& in, InstMgrBase * instances,\n"
              "            const char *utype, int addFileId, const char *currSch)\n{\n"
              "  (void)instances;\n  (void)utype;\n  (void)addFileId;\n  (void)currSch;\n  ", n );
 

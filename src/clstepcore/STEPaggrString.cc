@@ -68,7 +68,7 @@ Severity StringNode::StrToVal( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity StringNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity StringNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
@@ -77,7 +77,7 @@ Severity StringNode::StrToVal( istream & in, ErrorDescriptor * err ) {
  * a valid value will still be assigned if it exists before the garbage.
  */
 Severity StringNode::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
 
     value.STEPread( in, err );
     CheckRemainingInput( in, err, "string", ",)" );
@@ -87,7 +87,7 @@ Severity StringNode::STEPread( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity StringNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity StringNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
@@ -101,7 +101,7 @@ const char * StringNode::STEPwrite( std::string & s, const char * ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void StringNode::STEPwrite( ostream & out ) {
+void StringNode::STEPwrite( std::ostream & out ) {
     value.STEPwrite( out );
 }
 

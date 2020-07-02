@@ -12,40 +12,40 @@ const int RealNumPrecision = REAL_NUM_PRECISION;
 // print Error information for debugging purposes
 void
 PrintErrorState( ErrorDescriptor & err ) {
-    cout << "** severity: ";
+    std::cout << "** severity: ";
     switch( err.severity() ) {
         case SEVERITY_NULL :
-            cout << "\n  Null\n";
+            std::cout << "\n  Null\n";
             break;
         case SEVERITY_USERMSG :
-            cout << "\n  User Message\n";
+            std::cout << "\n  User Message\n";
             break;
         case SEVERITY_INCOMPLETE :
-            cout << "\n  Incomplete\n";
+            std::cout << "\n  Incomplete\n";
             break;
         case SEVERITY_WARNING :
-            cout << "\n  Warning\n";
+            std::cout << "\n  Warning\n";
             break;
         case SEVERITY_INPUT_ERROR :
-            cout << "\n  Input Error\n";
+            std::cout << "\n  Input Error\n";
             break;
         default:
-            cout << "\n  Other\n";
+            std::cout << "\n  Other\n";
             break;
     }
-    cout << err.DetailMsg() << "\n";
+    std::cout << err.DetailMsg() << "\n";
 }
 
-// print istream error information for debugging purposes
-void IStreamState( istream & in ) {
+// print std::istream error information for debugging purposes
+void IStreamState( std::istream & in ) {
     if( in.good() ) {
-        cerr << "istream GOOD\n" << flush;
+        std::cerr << "std::istream GOOD\n" << std::flush;
     }
     if( in.fail() ) {
-        cerr << "istream FAIL\n" << flush;
+        std::cerr << "std::istream FAIL\n" << std::flush;
     }
     if( in.eof() ) {
-        cerr << "istream EOF\n" << flush;
+        std::cerr << "std::istream EOF\n" << std::flush;
     }
 }
 
@@ -59,7 +59,7 @@ void IStreamState( istream & in ) {
 //   a severity level and error message (no error MESSAGE is set for severity
 //   incomplete).
 // * tokenList contains characters that terminate reading the value.
-// * If tokenList is not zero then the istream will be read until a character
+// * If tokenList is not zero then the std::istream will be read until a character
 //   is found matching a character in tokenlist.  All values read up to the
 //   terminating character (delimiter) must be valid or err will be set with an
 //   appropriate error message.  A valid value may still have been assigned
@@ -69,10 +69,10 @@ void IStreamState( istream & in ) {
 //   by any characters other than white space (i.e. EOF must happen)
 //
 ///////////////////////////////////////////////////////////////////////////////
-int ReadInteger( SDAI_Integer & val, istream & in, ErrorDescriptor * err,
+int ReadInteger( SDAI_Integer & val, std::istream & in, ErrorDescriptor * err,
                  const char * tokenList ) {
     SDAI_Integer  i = 0;
-    in >> ws;
+    in >> std::ws;
     in >> i;
 
     int valAssigned = 0;
@@ -88,7 +88,7 @@ int ReadInteger( SDAI_Integer & val, istream & in, ErrorDescriptor * err,
 /// same as above but reads from a const char *
 int ReadInteger( SDAI_Integer & val, const char * s, ErrorDescriptor * err,
                  const char * tokenList ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return ReadInteger( val, in, err, tokenList );
 }
 
@@ -117,8 +117,8 @@ Severity IntValidLevel( const char * attrValue, ErrorDescriptor * err,
         err->ClearErrorMsg();
     }
 
-    istringstream in( ( char * )attrValue );
-    in >> ws; // skip white space
+    std::istringstream in( ( char * )attrValue );
+    in >> std::ws; // skip white space
     char c = in.peek();
     if( in.eof() ) {
         if( !optional ) {
@@ -180,7 +180,7 @@ std::string WriteReal( SDAI_Real val ) {
     return s;
 }
 
-void WriteReal( SDAI_Real  val, ostream & out ) {
+void WriteReal( SDAI_Real  val, std::ostream & out ) {
     out << WriteReal( val );
 }
 
@@ -194,7 +194,7 @@ void WriteReal( SDAI_Real  val, ostream & out ) {
 //   a severity level and error message (no error MESSAGE is set for severity
 //   incomplete).
 // * tokenList contains characters that terminate reading the value.
-// * If tokenList is not zero then the istream will be read until a character
+// * If tokenList is not zero then the std::istream will be read until a character
 //   is found matching a character in tokenlist.  All values read up to the
 //   terminating character (delimiter) must be valid or err will be set with an
 //   appropriate error message.  A valid value may still have been assigned
@@ -209,7 +209,7 @@ void WriteReal( SDAI_Real  val, ostream & out ) {
 //   an error), optional sign, at least one decimal digit if there is an E.
 //
 ///////////////////////////////////////////////////////////////////////////////
-int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
+int ReadReal( SDAI_Real & val, std::istream & in, ErrorDescriptor * err,
               const char * tokenList ) {
     SDAI_Real  d = 0;
 
@@ -221,7 +221,7 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
     char c;
     ErrorDescriptor e;
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     // read optional sign
     c = in.peek();
@@ -289,7 +289,7 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
     }
     buf[i] = '\0';
 
-    istringstream in2( ( char * )buf );
+    std::istringstream in2( ( char * )buf );
 
     // now that we have the real the stream will be able to salvage reading
     // whatever kind of format was used to represent the real.
@@ -313,7 +313,7 @@ int ReadReal( SDAI_Real & val, istream & in, ErrorDescriptor * err,
 /// same as above but reads from a const char *
 int ReadReal( SDAI_Real & val, const char * s, ErrorDescriptor * err,
               const char * tokenList ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return ReadReal( val, in, err, tokenList );
 }
 
@@ -342,8 +342,8 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
         err->ClearErrorMsg();
     }
 
-    istringstream in( ( char * )attrValue );
-    in >> ws; // skip white space
+    std::istringstream in( ( char * )attrValue );
+    in >> std::ws; // skip white space
     char c = in.peek();
     if( in.eof() ) {
         if( !optional ) {
@@ -376,7 +376,7 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
  *   a severity level and error message (no error MESSAGE is set for severity
  *   incomplete).
  * * tokenList contains characters that terminate reading the value.
- * * If tokenList is not zero then the istream will be read until a character
+ * * If tokenList is not zero then the std::istream will be read until a character
  *   is found matching a character in tokenlist.  All values read up to the
  *   terminating character (delimiter) must be valid or err will be set with an
  *   appropriate error message.  A valid value may still have been assigned
@@ -385,10 +385,10 @@ Severity RealValidLevel( const char * attrValue, ErrorDescriptor * err,
  *   to be invalid.  If tokenList is null then the value must not be followed
  *   by any characters other than white space (i.e. EOF must happen)
  */
-int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
+int ReadNumber( SDAI_Real & val, std::istream & in, ErrorDescriptor * err,
                 const char * tokenList ) {
     SDAI_Real  d = 0;
-    in >> ws;
+    in >> std::ws;
     in >> d;
 
     int valAssigned = 0;
@@ -403,7 +403,7 @@ int ReadNumber( SDAI_Real & val, istream & in, ErrorDescriptor * err,
 /// same as above but reads from a const char *
 int ReadNumber( SDAI_Real & val, const char * s, ErrorDescriptor * err,
                 const char * tokenList ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return ReadNumber( val, in, err, tokenList );
 }
 
@@ -433,8 +433,8 @@ Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
         err->ClearErrorMsg();
     }
 
-    istringstream in( ( char * )attrValue );
-    in >> ws; // skip white space
+    std::istringstream in( ( char * )attrValue );
+    in >> std::ws; // skip white space
     char c = in.peek();
     if( in.eof() ) {
         if( !optional ) {
@@ -458,7 +458,7 @@ Severity NumberValidLevel( const char * attrValue, ErrorDescriptor * err,
 }
 
 /// assign 's' so that it contains an exchange file format string read from 'in'.
-void PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
+void PushPastString( std::istream & in, std::string & s, ErrorDescriptor * err ) {
     s += GetLiteralStr( in, err );
 }
 
@@ -466,12 +466,12 @@ void PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
  * assign 's' so that it contains an exchange file format aggregate read from 'in'.
  * This is used to read aggregates that are part of multidimensional aggregates.
  */
-void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
+void PushPastImbedAggr( std::istream & in, std::string & s, ErrorDescriptor * err ) {
     char messageBuf[BUFSIZ];
     messageBuf[0] = '\0';
 
     char c;
-    in >> ws;
+    in >> std::ws;
     in.get( c );
 
     if( c == '(' ) {
@@ -505,12 +505,12 @@ void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
  * This is used to read a single dimensional aggregate (i.e. it is not allowed
  * to contain an aggregate as an element.
  */
-void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
+void PushPastAggr1Dim( std::istream & in, std::string & s, ErrorDescriptor * err ) {
     char messageBuf[BUFSIZ];
     messageBuf[0] = '\0';
 
     char c;
-    in >> ws;
+    in >> std::ws;
     in.get( c );
 
     if( c == '(' ) {
@@ -545,9 +545,9 @@ void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
 /**
 * FindStartOfInstance reads to the beginning of an instance marked by #
 * it copies what is read to the std::string inst.  It leaves the # on the
-* istream.
+* std::istream.
 */
-Severity FindStartOfInstance( istream & in, std::string & inst ) {
+Severity FindStartOfInstance( std::istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SDAI_String  tmp;
@@ -579,7 +579,7 @@ Severity FindStartOfInstance( istream & in, std::string & inst ) {
 * SkipInstance reads in an instance terminated with ;.  it copies
 * what is read to the std::string inst.
 */
-Severity SkipInstance( istream & in, std::string & inst ) {
+Severity SkipInstance( std::istream & in, std::string & inst ) {
     char c = 0;
     ErrorDescriptor errs;
     SDAI_String  tmp;
@@ -614,11 +614,11 @@ Severity SkipInstance( istream & in, std::string & inst ) {
 // external mapping don't have them.  If you are reading a simple record in the
 // form of an internal mapping you will have to read the semicolon.
 */
-const char * SkipSimpleRecord( istream & in, std::string & buf, ErrorDescriptor * err ) {
+const char * SkipSimpleRecord( std::istream & in, std::string & buf, ErrorDescriptor * err ) {
     char c;
     std::string s;
 
-    in >> ws;
+    in >> std::ws;
     in.get( c );
     if( c == '(' ) { // beginning of record
         buf += c;
@@ -653,10 +653,10 @@ const char * SkipSimpleRecord( istream & in, std::string & buf, ErrorDescriptor 
 // entity types.  To read a user-defined keyword: read the '!' then call
 // this function with skipInitWS turned off.
 **/
-const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS ) {
+const char * ReadStdKeyword( std::istream & in, std::string & buf, int skipInitWS ) {
     char c;
     if( skipInitWS ) {
-        in >> ws;
+        in >> std::ws;
     }
 
     while( in.get( c ) && !isspace( c ) && ( isalnum( c ) || ( c == '_' ) ) ) {
@@ -672,9 +672,9 @@ const char * ReadStdKeyword( istream & in, std::string & buf, int skipInitWS ) {
 
 /***************************
 This function returns a null terminated const char* for the
-characters read from the istream up to, but not including
+characters read from the std::istream up to, but not including
 the first character found in the set of delimiters, or the
-whitespace character. It leaves the delimiter on the istream.
+whitespace character. It leaves the delimiter on the std::istream.
 
 The string is returned in a static buffer, so it will change
 the next time the function is called.
@@ -684,7 +684,7 @@ of an entity of a specific type. They shall consist of uppercase letters,
 digits, underscore characters, and possibly an exclamation mark.
 The "!" shall appear only once, and only as the first character.
 ***************************/
-const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) {
+const char * GetKeyword( std::istream & in, const char * delims, ErrorDescriptor & err ) {
     char c;
     int sz = 1;
     static std::string str;
@@ -698,7 +698,7 @@ const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & er
                 ( c == '_' )   ||
                 ( c == '-' )   ||  //for reading 'ISO-10303-21'
                 ( ( c == '!' ) && ( sz == 1 ) ) ) ) {
-            cerr << "Error: Invalid character \'" << c <<
+            std::cerr << "Error: Invalid character \'" << c <<
                  "\' in GetKeyword.\nkeyword was: " << str << "\n";
             err.GreaterSeverity( SEVERITY_WARNING );
             in.putback( c );
@@ -717,19 +717,19 @@ const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & er
 
 /**
  * return 1 if found the keyword 'ENDSEC' with optional space and a ';'
- * otherwise return 0. This gobbles up the input stream until it knows
+ * otherwise return 0. This gobbles up the input stream until it knostd::ws
  * that it does or does not have the ENDSEC keyword (and semicolon). i.e.
  * the first character that stops matching the keyword ENDSEC; (including the
- * semicolon) will be put back onto the istream, everything else will remain
+ * semicolon) will be put back onto the std::istream, everything else will remain
  * read.  It is this way so that checking for the keywd the next time will
  * start with the correct char or if it doesn't find it the non-matching char
  * may be what you are looking for next (e.g. someone typed in END; and the
  * next chars are DATA; for the beginning of the data section).
  * FIXME putback() doesn't work well on all platforms
  */
-int FoundEndSecKywd( istream & in ) {
+int FoundEndSecKywd( std::istream & in ) {
     char c;
-    in >> ws;
+    in >> std::ws;
     in.get( c );
 
     if( c == 'E' ) {
@@ -743,7 +743,7 @@ int FoundEndSecKywd( istream & in ) {
                     if( c == 'E' ) {
                         in.get( c );
                         if( c == 'C' ) {
-                            in >> ws;
+                            in >> std::ws;
                             in.get( c );
                             if( c == ';' ) {
                                 return 1;
@@ -823,22 +823,22 @@ const char * ReadComment( std::string & ss, const char * s ) {
  * If there is not a comment returns null pointer.
  * After skipping white space it expects a slash followed by
  * an asterisk (which I didn't type to avoid messing up the
- * compiler).  It ends with asterisk followed by slash.
+ * compiler).  It std::ends with asterisk followed by slash.
  * If first char from 'in' is a slash it will remain read
  * whether or not there was a comment.  If there is no comment
  * only the slash will be read from 'in'.
  * FIXME putback() doesn't work well on all platforms
 ***************************/
-const char * ReadComment( istream & in, std::string & s ) {
+const char * ReadComment( std::istream & in, std::string & s ) {
     char c = '\0';
-    in >> ws;
+    in >> std::ws;
     in >> c;
 
     // it looks like a comment so far
     if( c == '/' ) { // leave slash read from stream
         in.get( c ); // won't skip space
         if( c == '*' ) { // it is a comment
-            in >> ws; // skip leading comment space
+            in >> std::ws; // skip leading comment space
             int commentLength = 0;
 
             // only to keep it from completely gobbling up input
@@ -859,7 +859,7 @@ const char * ReadComment( istream & in, std::string & s ) {
                     commentLength++;
                 }
             } // end while
-            cout << "ERROR comment longer than maximum comment length of "
+            std::cout << "ERROR comment longer than maximum comment length of "
                  << MAX_COMMENT_LENGTH << "\n"
                  << "Will try to recover...\n";
             std::string tmp;
@@ -880,11 +880,11 @@ const char * ReadComment( istream & in, std::string & s ) {
 }
 
 /***************************
- ** Read a Print Control Directive from the istream
+ ** Read a Print Control Directive from the std::istream
  ** "\F\" == formfeed
  ** "\N\" == newline
  ***************************/
-Severity ReadPcd( istream & in ) {
+Severity ReadPcd( std::istream & in ) {
     char c;
     in.get( c );
     if( c == '\\' ) {
@@ -897,21 +897,21 @@ Severity ReadPcd( istream & in ) {
             }
         }
     }
-    cerr << "Print control directive expected.\n";
+    std::cerr << "Print control directive expected.\n";
     return SEVERITY_WARNING;
 }
 
 
 /******************************
 This function reads through token separators
-from an istream. It returns when a token
-separator is not the next thing on the istream.
+from an std::istream. It returns when a token
+separator is not the next thing on the std::istream.
 The token separators are blanks, explicit print control directives,
 and comments.
 Part 21 considers the blank to be the space character,
 but this function considers blanks to be the return value of isspace(c)
 ******************************/
-void ReadTokenSeparator( istream & in, std::string * comments ) {
+void ReadTokenSeparator( std::istream & in, std::string * comments ) {
     char c;
     std::string s; // used if need to read a comment
 
@@ -921,7 +921,7 @@ void ReadTokenSeparator( istream & in, std::string * comments ) {
     }
 
     while( in ) {
-        in >> ws; // skip white space.
+        in >> std::ws; // skip white space.
         c = in.peek(); // look at next char on input stream
 
         switch( c ) {

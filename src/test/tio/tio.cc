@@ -22,7 +22,7 @@ int main( int argc, char * argv[] ) {
     int using_outfile = 0;
 
     if( argc > 3 || argc < 2 ) {
-        cout << "Syntax:   tio infile [outfile]" << endl;
+        std::cout << "Syntax:   tio infile [outfile]" << std::endl;
         exit( 1 );
     } else if( argc > 2 ) {
         using_outfile = 1;    // output filename is in argv[2]
@@ -58,52 +58,52 @@ int main( int argc, char * argv[] ) {
     // Reading the STEPfile instantiates all the objects in it.
     // The instances get pointers into the InstMgr, and each type
     // and entity gets a pointer into the registry.
-    cout << "\n### Reading exchange file from " << argv[1] << endl;
+    std::cout << "\n### Reading exchange file from " << argv[1] << std::endl;
     sfile->ReadExchangeFile( argv[1] );
 
     // Just checking... ;-)
-    cout << "\n### The InstMgr says there are ";
-    cout << instance_list.InstanceCount() << " instantiated objects" << endl;
+    std::cout << "\n### The InstMgr says there are ";
+    std::cout << instance_list.InstanceCount() << " instantiated objects" << std::endl;
 
-    cout << "\n### Here is the exchange file:" << endl << endl;
-    sfile->WriteExchangeFile( cout );
+    std::cout << "\n### Here is the exchange file:" << std::endl << std::endl;
+    sfile->WriteExchangeFile( std::cout );
 
     // If you append in another exchange file, it creates new instances
     // starting at a 1000-block of numbers.  Just 'Read'ing again
     // would clobber the instances already there.
-    cout << "\n### Now appending in another copy" << endl;
+    std::cout << "\n### Now appending in another copy" << std::endl;
     sfile->AppendExchangeFile( argv[1] );
 
     // Browsing the registry...
-    cout << "\n### Here is a list of entities now in the registry:" << endl;
+    std::cout << "\n### Here is a list of entities now in the registry:" << std::endl;
     registry->ResetEntities();
     const EntityDescriptor * ent = registry->NextEntity();
     std::string tmpstr;
     while( ent ) {
-        cout << ent->Name() << ": " << ent->TypeString( tmpstr ) << endl;
+        std::cout << ent->Name() << ": " << ent->TypeString( tmpstr ) << std::endl;
         ent = registry->NextEntity();
     }
 
     // Browsing through the instance manager.  This shows how to get
     // at those instances it points to.
-    cout << "\n### And here are all the instantiated objects..." << endl;
+    std::cout << "\n### And here are all the instantiated objects..." << std::endl;
     int numInstances = instance_list.InstanceCount();
-    cout << "### The InstMgr says we have " << numInstances;
-    cout << " things instantiated.\n";
+    std::cout << "### The InstMgr says we have " << numInstances;
+    std::cout << " things instantiated.\n";
     for( int i = 0; i < numInstances; i++ ) {
-        cout << i << ": " << instance_list.GetSTEPentity( i )->EntityName();
-        cout << " (" <<
+        std::cout << i << ": " << instance_list.GetSTEPentity( i )->EntityName();
+        std::cout << " (" <<
              instance_list.GetSTEPentity( i )->eDesc->Description();
-        cout << ")" << endl;
+        std::cout << ")" << std::endl;
     }
 
     // Dump everything to STEPfiles...
-    cout << "\n### Here it is in STEPfile format:" << endl << endl;
-    sfile->WriteExchangeFile( cout );
+    std::cout << "\n### Here it is in STEPfile format:" << std::endl << std::endl;
+    sfile->WriteExchangeFile( std::cout );
 
     if( using_outfile ) {
         ofstream stepout( argv[2] );
-        cout << "\n### Writing that to outfile " << argv[2] << endl;
+        std::cout << "\n### Writing that to outfile " << argv[2] << std::endl;
         sfile->WriteExchangeFile( stepout );
     }
     exit( 0 );
