@@ -224,9 +224,9 @@ extern SC_EXPRESS_EXPORT Error ERROR_corrupted_type;
 /******************************/
 
 #define TYPEHEAD_new()      (struct TypeHead_ *)MEM_new(&TYPEHEAD_fl)
-#define TYPEHEAD_destroy(x) MEM_destroy(&TYPEHEAD_fl,(Freelist *)(Generic)x)
+#define TYPEHEAD_destroy(x) MEM_destroy(&TYPEHEAD_fl,(Freelist *)x)
 #define TYPEBODY_new()      (struct TypeBody_ *)MEM_new(&TYPEBODY_fl)
-#define TYPEBODY_destroy(x) MEM_destroy(&TYPEBODY_fl,(Freelist *)(Generic)x)
+#define TYPEBODY_destroy(x) MEM_destroy(&TYPEBODY_fl,(Freelist *)x)
 
 #define TYPEis(t)       ((t)->u.type->body->type)
 #define TYPEis_identifier(t)    ((t)->u.type->body->type == identifier_)
@@ -293,20 +293,20 @@ extern SC_EXPRESS_EXPORT Error ERROR_corrupted_type;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Type TYPEcreate_partial PROTO( ( struct Symbol_ *, Scope ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_partial( struct Symbol_ *, Scope );
 
-extern SC_EXPRESS_EXPORT Type TYPEcreate PROTO( ( enum type_enum ) );
-extern SC_EXPRESS_EXPORT Type TYPEcreate_from_body_anonymously PROTO( ( TypeBody ) );
-extern SC_EXPRESS_EXPORT Type TYPEcreate_name PROTO( ( struct Symbol_ * ) );
-extern SC_EXPRESS_EXPORT Type TYPEcreate_nostab PROTO( ( struct Symbol_ *, Scope, char ) );
-extern SC_EXPRESS_EXPORT TypeBody TYPEBODYcreate PROTO( ( enum type_enum ) );
-extern SC_EXPRESS_EXPORT void TYPEinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void TYPEcleanup PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate( enum type_enum );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_from_body_anonymously( TypeBody );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_name( struct Symbol_ * );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_nostab( struct Symbol_ *, Scope, char );
+extern SC_EXPRESS_EXPORT TypeBody TYPEBODYcreate( enum type_enum );
+extern SC_EXPRESS_EXPORT void TYPEinitialize( void );
+extern SC_EXPRESS_EXPORT void TYPEcleanup( void );
 
-extern SC_EXPRESS_EXPORT bool TYPEinherits_from PROTO( ( Type, enum type_enum ) );
-extern SC_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type PROTO( ( Type ) );
+extern SC_EXPRESS_EXPORT bool TYPEinherits_from( Type, enum type_enum );
+extern SC_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type( Type );
 
-extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_type PROTO( ( Type, Scope, struct Symbol_ * ) );
-extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag PROTO( ( Type, Scope, struct Symbol_ * ) );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_type( Type, Scope, struct Symbol_ * );
+extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag( Type, Scope, struct Symbol_ * );
 
 #endif    /*  TYPE_H  */

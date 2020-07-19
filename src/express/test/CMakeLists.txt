@@ -15,8 +15,8 @@ add_test(NAME test_plib_parse_err
 set_tests_properties( test_plib_parse_err PROPERTIES DEPENDS "build_check_express;$<TARGET_NAME:check-express>" )
 set_tests_properties( test_plib_parse_err build_check_express PROPERTIES LABELS parser )
 
-sc_addexec(print_schemas "../fedex.c;print_schemas.c" "express;base")
-sc_addexec(print_attrs "../fedex.c;print_attrs.c" "express;base")
+sc_addexec(print_schemas SOURCES ../fedex.c print_schemas.c LINK_LIBRARIES express base)
+sc_addexec(print_attrs SOURCES ../fedex.c print_attrs.c LINK_LIBRARIES express base)
 
 # Local Variables:
 # tab-width: 8

@@ -47,7 +47,7 @@ Linked_List LISTcreate() {
 
 Linked_List LISTcopy( Linked_List src ) {
     Linked_List dst = LISTcreate();
-    LISTdo( src, x, Generic )
+    LISTdo( src, x, void * )
     LISTadd_last( dst, x );
     LISTod
     return dst;
@@ -88,7 +88,7 @@ void LISTsort( Linked_List list, int (*comp)(void*, void*)) {
 }
 
 void LISTswap( Link p, Link q ) {
-    Generic     tmp;
+    void *tmp;
 
     if( p == LINK_NULL || q == LINK_NULL || p == q )
         return;
@@ -99,7 +99,7 @@ void LISTswap( Link p, Link q ) {
 }
 
 
-Generic LISTadd_first( Linked_List list, Generic item ) {
+void *LISTadd_first( Linked_List list, void *item ) {
     Link        node;
 
     node = LINK_new();
@@ -109,7 +109,7 @@ Generic LISTadd_first( Linked_List list, Generic item ) {
     return item;
 }
 
-Generic LISTadd_last( Linked_List list, Generic item ) {
+void *LISTadd_last( Linked_List list, void *item ) {
     Link        node;
 
     node = LINK_new();
@@ -119,7 +119,7 @@ Generic LISTadd_last( Linked_List list, Generic item ) {
     return item;
 }
 
-Generic LISTadd_after( Linked_List list, Link link, Generic item ) {
+void *LISTadd_after( Linked_List list, Link link, void *item ) {
     Link node;
 
     if( link == LINK_NULL ) {
@@ -133,7 +133,7 @@ Generic LISTadd_after( Linked_List list, Link link, Generic item ) {
     return item;
 }
 
-Generic LISTadd_before( Linked_List list, Link link, Generic item ) {
+void *LISTadd_before( Linked_List list, Link link, void *item ) {
     Link node;
 
     if( link == LINK_NULL ) {
@@ -151,9 +151,9 @@ Generic LISTadd_before( Linked_List list, Link link, Generic item ) {
 }
 
 
-Generic LISTremove_first( Linked_List list ) {
+void *LISTremove_first( Linked_List list ) {
     Link        node;
-    Generic     item;
+    void *item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -166,9 +166,9 @@ Generic LISTremove_first( Linked_List list ) {
     return item;
 }
 
-Generic LISTget_first( Linked_List list ) {
+void *LISTget_first( Linked_List list ) {
     Link node;
-    Generic item;
+    void *item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -178,9 +178,9 @@ Generic LISTget_first( Linked_List list ) {
     return item;
 }
 
-Generic LISTget_second( Linked_List list ) {
+void *LISTget_second( Linked_List list ) {
     Link        node;
-    Generic     item;
+    void *item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -195,7 +195,7 @@ Generic LISTget_second( Linked_List list ) {
 }
 
 /** first is 1, not 0 */
-Generic LISTget_nth( Linked_List list, int n ) {
+void *LISTget_nth( Linked_List list, int n ) {
     int count = 1;
     Link node;
 

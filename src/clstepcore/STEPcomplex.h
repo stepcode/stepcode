@@ -42,7 +42,14 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
         STEPcomplex * head;
         Registry * _registry;
         int visited; ///< used when reading (or as you wish?)
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         STEPcomplex_attr_data_list _attr_data_list; ///< attrs are created with a pointer to data; this stores them for deletion
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
     public:
         STEPcomplex( Registry * registry, int fileid );
         STEPcomplex( Registry * registry, const std::string ** names, int fileid,

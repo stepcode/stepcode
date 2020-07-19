@@ -1007,14 +1007,14 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
     }
     /*  prepend this entity's attributes to the result list */
     LISTdo( ENTITYget_attributes( curEntity ), attr, Variable ) {
-        LISTadd_first( curList, ( Generic ) attr );
+        LISTadd_first( curList, attr );
     } LISTod;
 }
 
 static bool listContainsVar( Linked_List l, Variable v ) {
     const char * vName = VARget_simple_name( v );
     LISTdo( l, curr, Variable ) {
-        if( streq( vName, VARget_simple_name( curr ) ) ) {
+        if( !strcmp( vName, VARget_simple_name( curr ) ) ) {
             return true;
         }
     }
@@ -1070,7 +1070,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         LISTdo( required, attr, Variable ) {
             if( !listContainsVar( existing, attr ) &&
                     !listContainsVar( remaining, attr ) ) {
-                LISTadd_first( remaining, ( Generic ) attr );
+                LISTadd_first( remaining, attr );
             }
         }
         LISTod;

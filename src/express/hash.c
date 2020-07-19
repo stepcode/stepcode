@@ -118,7 +118,7 @@ struct freelist_head HASH_Element_fl;
 ** Internal routines
 */
 
-static_inline Address   HASHhash( char *, Hash_Table );
+static inline Address   HASHhash( char *, Hash_Table );
 static void     HASHexpand_table( Hash_Table );
 
 /*
@@ -409,7 +409,7 @@ HASHsearch( Hash_Table table, Element item, Action action ) {
 ** Internal routines
 */
 
-static_inline Address HASHhash( char * Key, Hash_Table table ) {
+static inline Address HASHhash( char * Key, Hash_Table table ) {
     Address     h, address;
     register unsigned char * k = ( unsigned char * )Key;
 

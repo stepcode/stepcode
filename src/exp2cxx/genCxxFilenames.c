@@ -1,8 +1,9 @@
 #include "genCxxFilenames.h"
 #include "class_strings.h"
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
-#  define snprintf _snprintf
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#  include "sc_stdio.h"
+#  define snprintf c99_snprintf
 #endif
 
 /** \file genCxxFilenames.c

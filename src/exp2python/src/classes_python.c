@@ -27,12 +27,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include <errno.h>
 
-#ifdef __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include "sc_memmgr.h"
 #include "classes.h"
 #include "expr.h"
@@ -50,8 +44,9 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #define PAD 1
 #define NOPAD   0
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
-#  define snprintf _snprintf
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#  include "sc_stdio.h"
+#  define snprintf c99_snprintf
 #endif
 
 int isAggregateType( const Type t );

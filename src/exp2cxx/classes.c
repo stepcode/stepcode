@@ -135,10 +135,9 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
         wlist = ( Linked_List )DICTlookup( dict, r->schema->symbol.name );
         if( !wlist ) {
             wlist = LISTcreate();
-            DICTdefine( dict, r->schema->symbol.name, ( Generic ) wlist,
-                        ( Symbol * )0, OBJ_UNKNOWN );
+            DICTdefine( dict, r->schema->symbol.name, wlist, NULL, OBJ_UNKNOWN );
         }
-        LISTadd_last( wlist, ( Generic ) r );
+        LISTadd_last( wlist, r );
     }
 
     /* step 2: for each list, print out the renames */

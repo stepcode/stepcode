@@ -45,22 +45,11 @@ endif()
 string(REPLACE "\n" "" GIT_COMMIT_ID ${GIT_COMMIT_ID})
 
 #-------------- date and time ---------------
-#once cmake_minimum_required is >= 2.8.11, we can use TIMESTAMP:
-#string(TIMESTAMP date_time_string)
 
 if(SC_ENABLE_TESTING)
   set (date_time_string "NA - disabled for testing")
-elseif(UNIX)
-  execute_process(COMMAND date "+%d %b %Y %H:%M" OUTPUT_VARIABLE date_time_string OUTPUT_STRIP_TRAILING_WHITESPACE)
-elseif(WIN32)
-  execute_process(COMMAND cmd /c date /t OUTPUT_VARIABLE currentDate OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process(COMMAND cmd /c time /t OUTPUT_VARIABLE currentTime OUTPUT_STRIP_TRAILING_WHITESPACE)
-  set (date_time_string "${currentDate} ${currentTime}")
 else()
-  set(date_time_string "\" __DATE__ \" \" __TIME__ \" ")
-  if(NOT SC_IS_SUBBUILD)
-    message(STATUS "Unknown platform - using date from preprocessor")
-  endif(NOT SC_IS_SUBBUILD)
+  string(TIMESTAMP date_time_string UTC)
 endif()
 
 set(header_string "/* sc_version_string.h - written by cmake. Changes will be lost! */\n"

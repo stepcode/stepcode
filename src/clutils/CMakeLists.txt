@@ -25,10 +25,19 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
-SC_ADDLIB(steputils "${LIBSTEPUTILS_SRCS}" "base")
+if($CACHE{SC_BUILD_SHARED_LIBS})
+  SC_ADDLIB(steputils SHARED SOURCES ${LIBSTEPUTILS_SRCS} LINK_LIBRARIES base)
+  if(WIN32)
+    target_compile_definitions(steputils PRIVATE SC_UTILS_DLL_EXPORTS)
+    target_link_libraries(steputils shlwapi)
+  endif()
+endif()
 
-if(MINGW OR MSVC OR BORLAND)
-  target_link_libraries(steputils shlwapi.lib)
+if($CACHE{SC_BUILD_STATIC_LIBS})
+  SC_ADDLIB(steputils-static STATIC SOURCES ${LIBSTEPUTILS_SRCS} LINK_LIBRARIES base-static)
+  if(WIN32)
+    target_link_libraries(steputils-static shlwapi)
+  endif()
 endif()
 
 install(FILES ${SC_CLUTILS_HDRS}

@@ -1,5 +1,5 @@
 project(SC_SUBPROJECT_SCHEMA_SCANNER)
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.6.3)
 
 if(NOT ("${CALLED_FROM}" STREQUAL "STEPCODE_CMAKELISTS" AND DEFINED SC_ROOT AND DEFINED SC_BUILDDIR))
   message(" ${CALLED_FROM}  ${SC_ROOT} ${SC_BUILDDIR}")
@@ -54,19 +54,16 @@ include_directories(
   ${SC_BUILDDIR}/include
  )
 
+add_executable(schema_scanner ${schema_scanner_src})
+
 if(MSVC)
-  add_definitions(-D__MSVC__ -D__WIN32__)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
-  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-elseif(BORLAND)
-  add_definitions(-D__BORLAND__ -D__WIN32__)
+  target_compile_definitions(schema_scanner PUBLIC _CRT_SECURE_NO_WARNINGS _CRT_NONSTDC_NO_WARNINGS)
 else()
-  add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
+  target_compile_options(schema_scanner PUBLIC -pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
 endif()
 
-add_definitions(-DSCHEMA_SCANNER)
-
-add_executable(schema_scanner ${schema_scanner_src})
+target_compile_definitions(schema_scanner PUBLIC SC_STATIC SCHEMA_SCANNER)
 
 # Local Variables:
 # tab-width: 8

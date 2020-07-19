@@ -21,10 +21,17 @@ public:
     // this ptr will be null.
     const TypeDescriptor * _local_definition;
 
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     // name in originating schema - only exists if it has been renamed.
     Express_id _original_id;
 
     Express_id _new_id; // original or renamed name via USE or REFERENCE (non-SDAI)
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
     const TypeDescriptor * local_definition_() const {
         return _local_definition;

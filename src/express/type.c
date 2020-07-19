@@ -174,7 +174,7 @@ Type TYPEcreate_nostab( struct Symbol_ *symbol, Scope scope, char objtype ) {
 
     t->u.type = th;
     t->symbol = *symbol;
-    DICTdefine( scope->symbol_table, symbol->name, ( Generic )t, &t->symbol, objtype );
+    DICTdefine( scope->symbol_table, symbol->name, t, &t->symbol, objtype );
 
     return t;
 }
@@ -309,8 +309,8 @@ return( false );
 }
 #endif
 
-Symbol * TYPE_get_symbol( Generic t ) {
-    return( &( ( Type )t )->symbol );
+Symbol * TYPE_get_symbol( void *t ) {
+    return &( ( Type )t )->symbol;
 }
 
 

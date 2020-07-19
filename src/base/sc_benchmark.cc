@@ -3,7 +3,7 @@
 #include "sc_benchmark.h"
 #include "sc_memmgr.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <windows.h>
 #include <psapi.h>
 #else
@@ -49,7 +49,7 @@ benchVals getMemAndTime( ) {
     vals.sysMilliseconds  = ( stime * 1000 ) / sysconf( _SC_CLK_TCK );
 #elif defined(__APPLE__)
     // http://stackoverflow.com/a/1911863/382458
-#elif defined(__WIN32__)
+#elif defined(_WIN32)
     // http://stackoverflow.com/a/282220/382458 and http://stackoverflow.com/a/64166/382458
     PROCESS_MEMORY_COUNTERS MemoryCntrs;
     FILETIME CreationTime, ExitTime, KernelTime, UserTime;

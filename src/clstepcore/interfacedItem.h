@@ -14,7 +14,14 @@ protected:
     Interfaced_item( const char * foreign_schema );
     virtual ~Interfaced_item();
 public:
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     Express_id _foreign_schema;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
     const Express_id foreign_schema_();
     //  private:

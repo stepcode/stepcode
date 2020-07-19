@@ -27,8 +27,15 @@ protected:
     // non-SDAI lists
     Interface_spec__set_var _use_interface_list; // list of USE interfaces
     Interface_spec__set_var _ref_interface_list; // list of REFERENCE interfaces
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     std::vector< std::string > _function_list; // of EXPRESS functions
     std::vector< std::string > _procedure_list; // of EXPRESS procedures
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
     Global_rule__set_var _global_rules;
 

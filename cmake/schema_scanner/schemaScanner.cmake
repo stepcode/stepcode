@@ -11,13 +11,8 @@
 # in a unity build, many small .cc files are #included to create a few large translation units
 # this makes compilation faster, but sometimes runs into compiler limitations
 if(NOT DEFINED SC_UNITY_BUILD)
-  if(BORLAND)
-    message( STATUS "Will not do unity build for this compiler. (SC_UNITY_BUILD=FALSE)")
-    set(SC_UNITY_BUILD FALSE)
-  else()
-    message( STATUS "Assuming compiler is capable of unity build. (SC_UNITY_BUILD=TRUE)")
-    set(SC_UNITY_BUILD TRUE)
-  endif(BORLAND)
+  message( STATUS "Assuming compiler is capable of unity build. (SC_UNITY_BUILD=TRUE)")
+  set(SC_UNITY_BUILD TRUE)
   message( STATUS "Override by setting SC_UNITY_BUILD; TRUE will result in faster build times but *huge* translation units and higher memory use in compilation.")
 else(NOT DEFINED SC_UNITY_BUILD)
   message( STATUS "Respecting user-defined SC_UNITY_BUILD value of ${SC_UNITY_BUILD}.")
@@ -106,5 +101,6 @@ macro(SCHEMA_CMLIST SCHEMA_FILE)
   endforeach(_dir ${_ss_out})
   # configure_file forces cmake to run again if the schema has been modified
   #if multiple schemas in one file, _schema is the last one printed.
+  # 2e6ee669 removed _schema, does this still work?
   configure_file(${SCHEMA_FILE} ${SCANNER_BUILD_DIR}/${_schema})
 endmacro(SCHEMA_CMLIST SCHEMA_FILE)

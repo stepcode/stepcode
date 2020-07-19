@@ -24,7 +24,7 @@ void SCOPEadd_inorder( Linked_List list, Scope s ) {
         break;
     } LISTod
 
-    LISTadd_before( list, k, ( Generic )s );
+    LISTadd_before( list, k, s );
 }
 
 /** like SCOPEadd_inorder, but for Variables */
@@ -37,7 +37,7 @@ void SCOPEaddvars_inorder( Linked_List list, Variable v ) {
         break;
     } LISTod
 
-    LISTadd_before( list, k, ( Generic )v );
+    LISTadd_before( list, k, v );
 }
 
 
@@ -244,11 +244,11 @@ void SCOPEconsts_out( Scope s, int level ) {
 void SCOPElocals_order( Linked_List list, Variable v ) {
     LISTdo_links( list, link ) {
         if( v->offset < ( (Variable) link->data )->offset ) {
-            LISTadd_before( list, link, (Generic) v );
+            LISTadd_before( list, link, v );
             return;
         }
     } LISTod
-    LISTadd_last( list, (Generic) v );
+    LISTadd_last( list, v );
 }
 
 void SCOPElocals_out( Scope s, int level ) {
@@ -290,7 +290,7 @@ void SCOPElocals_out( Scope s, int level ) {
         }
         if( !orderedLocals ) {
             orderedLocals = LISTcreate();
-            LISTadd_first( orderedLocals, (Generic) v );
+            LISTadd_first( orderedLocals, v );
         } else {
             /* sort by v->offset */
             SCOPElocals_order( orderedLocals, v );

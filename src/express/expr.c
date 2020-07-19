@@ -106,7 +106,7 @@ static Error ERROR_enum_no_such_item;
 static Error ERROR_group_ref_no_such_entity;
 static Error ERROR_group_ref_unexpected_type;
 
-static_inline int OPget_number_of_operands( Op_Code op ) {
+static inline int OPget_number_of_operands( Op_Code op ) {
     if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
         return 1;
     } else if( op == OP_SUBCOMPONENT ) {
@@ -146,7 +146,7 @@ Expression EXPcreate_from_symbol( Type type, Symbol * symbol ) {
     return e;
 }
 
-Symbol * EXP_get_symbol( Generic e ) {
+Symbol * EXP_get_symbol( void *e ) {
     return( &( ( Expression )e )->symbol );
 }
 
@@ -297,9 +297,9 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                          * sure of the circumstances in which this is beneficial.
                          */
                         *where = w;
-                        LISTadd_last( subt, (Generic) w );
+                        LISTadd_last( subt, w );
                     } else {
-                        LISTadd_last( supert, (Generic) t );
+                        LISTadd_last( supert, t );
                     }
                     options += nr;
                 }
@@ -316,7 +316,7 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                     }
                 } LISTod
                 if( !found ) {
-                    LISTadd_last( uniqSubs, (Generic) s );
+                    LISTadd_last( uniqSubs, s );
                 }
             } LISTod
             if( ( LISTget_length( uniqSubs ) == 0 ) && ( LISTget_length( supert ) == 1 ) && ( options > 1 ) ) {
@@ -733,7 +733,7 @@ Type EXPresolve_op_unknown( Expression e, Scope s ) {
     return Type_Bad;
 }
 
-typedef Type Resolve_expr_func PROTO( ( Expression , Scope ) );
+typedef Type (Resolve_expr_func) ( Expression , Scope );
 
 Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
@@ -961,7 +961,7 @@ Expression QUERYcreate( Symbol * local, Expression aggregate ) {
 
     Variable v = VARcreate( e2, Type_Attribute );
 
-    DICTdefine( s->symbol_table, local->name, ( Generic )v, &e2->symbol, OBJ_VARIABLE );
+    DICTdefine( s->symbol_table, local->name, v, &e2->symbol, OBJ_VARIABLE );
     e->u.query = QUERY_new();
     e->u.query->scope = s;
     e->u.query->local = v;

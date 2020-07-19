@@ -33,8 +33,15 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
         EntityDescriptorList _supertypes; // OPTIONAL
         AttrDescriptorList _explicitAttr; // OPTIONAL
         Inverse_attributeList _inverseAttr;  // OPTIONAL
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         std::string _supertype_stmt;
-    public:
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+   public:
         Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
         // pointer to a function that will create a new instance of a SDAI_Application_instance

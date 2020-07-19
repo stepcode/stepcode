@@ -97,9 +97,9 @@ extern SC_EXPRESS_EXPORT struct Object * OBJ;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void OBJinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void OBJcleanup PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void OBJcreate PROTO( ( char, struct Symbol_ * ( * )( Generic ), char *, int ) );
-extern SC_EXPRESS_EXPORT Symbol * UNK_get_symbol PROTO( ( Generic x ) );
+extern SC_EXPRESS_EXPORT void OBJinitialize( void );
+extern SC_EXPRESS_EXPORT void OBJcleanup( void );
+extern SC_EXPRESS_EXPORT void OBJcreate( char, struct Symbol_ * (*) (void *), char *, int);
+extern SC_EXPRESS_EXPORT Symbol * UNK_get_symbol( void *x );
 
 #endif /*OBJECT_H*/

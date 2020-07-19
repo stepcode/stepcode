@@ -106,7 +106,7 @@ extern SC_EXPRESS_EXPORT struct freelist_head VAR_fl;
 /******************************/
 
 #define VAR_new()   (struct Variable_ *)MEM_new(&VAR_fl)
-#define VAR_destroy(x)  MEM_destroy(&VAR_fl,(Freelist *)(Generic)x)
+#define VAR_destroy(x)  MEM_destroy(&VAR_fl,(Freelist *)x)
 
 #define VARget_name(v)          ((v)->name)
 #define VARput_name(v,n)        ((v)->name = (n))
@@ -125,8 +125,8 @@ extern SC_EXPRESS_EXPORT struct freelist_head VAR_fl;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT Variable VARcreate PROTO( ( Expression, Type ) );
-extern SC_EXPRESS_EXPORT void VARinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT char * VARget_simple_name PROTO( ( Variable ) );
+extern SC_EXPRESS_EXPORT Variable VARcreate( Expression, Type );
+extern SC_EXPRESS_EXPORT void VARinitialize( void );
+extern SC_EXPRESS_EXPORT char * VARget_simple_name( Variable );
 
 #endif    /*  VARIABLE_H  */

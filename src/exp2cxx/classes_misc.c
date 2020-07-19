@@ -340,7 +340,7 @@ Entity ENTITYget_superclass( Entity entity ) {
 void ENTITYget_first_attribs( Entity entity, Linked_List result ) {
     Linked_List supers;
 
-    LISTdo( ENTITYget_attributes( entity ), attr, Generic )
+    LISTdo( ENTITYget_attributes( entity ), attr, void * )
     LISTadd_last( result, attr );
     LISTod;
     supers = ENTITYget_supertypes( entity );

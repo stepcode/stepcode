@@ -94,14 +94,14 @@ void ParseTrace(FILE *TraceFILE, char *zTracePrompt);
 Linked_List EXPRESS_path;
 int EXPRESSpass;
 
-void ( *EXPRESSinit_args ) PROTO( ( int, char ** ) )   = 0;
-void ( *EXPRESSinit_parse ) PROTO( ( void ) )     = 0;
-int ( *EXPRESSfail ) PROTO( ( Express ) )        = 0;
-int ( *EXPRESSsucceed ) PROTO( ( Express ) )     = 0;
-void ( *EXPRESSbackend ) PROTO( ( Express ) )     = 0;
+void ( *EXPRESSinit_args )( int, char ** ) = NULL;
+void ( *EXPRESSinit_parse )( void ) = NULL;
+int ( *EXPRESSfail )( Express ) = NULL;
+int ( *EXPRESSsucceed )( Express ) = NULL;
+void ( *EXPRESSbackend )( Express ) = NULL;
 char * EXPRESSprogram_name;
 extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
-int ( *EXPRESSgetopt ) PROTO( ( int, char * ) )   = 0;
+int ( *EXPRESSgetopt )( int, char * ) = NULL;
 bool    EXPRESSignore_duplicate_schemas      = false;
 
 Dictionary EXPRESSbuiltins; /* procedures/functions */
@@ -125,7 +125,7 @@ static Error ERROR_schema_not_in_own_schema_file;
 extern Linked_List PARSEnew_schemas;
 void SCOPEinitialize( void );
 
-static Express PARSERrun PROTO( ( char *, FILE * ) );
+static Express PARSERrun( char *, FILE * );
 
 /** name specified on command line */
 char * input_filename = 0;
@@ -150,7 +150,7 @@ int EXPRESS_succeed( Express model ) {
     return 0;
 }
 
-Symbol * EXPRESS_get_symbol( Generic e ) {
+Symbol * EXPRESS_get_symbol( void *e ) {
     return( &( ( Express )e )->symbol );
 }
 
@@ -187,7 +187,7 @@ static void EXPRESS_PATHinit() {
         /* if no EXPRESS_PATH, search current directory anyway */
         dir = ( Dir * )sc_malloc( sizeof( Dir ) );
         dir->leaf = dir->full;
-        LISTadd_last( EXPRESS_path, ( Generic )dir );
+        LISTadd_last( EXPRESS_path, dir );
     } else {
         int done = 0;
         while( !done ) {
@@ -222,9 +222,9 @@ static void EXPRESS_PATHinit() {
 
             /* if it's just ".", make it as if it was */
             /* just "" to make error messages cleaner */
-            if( streq( ".", start ) ) {
+            if( !strcmp( ".", start ) ) {
                 dir->leaf = dir->full;
-                LISTadd_last( EXPRESS_path, ( Generic )dir );
+                LISTadd_last( EXPRESS_path, dir );
                 *( p - 1 ) = save; /* put char back where */
                 /* temp null was */
                 continue;
@@ -241,7 +241,7 @@ static void EXPRESS_PATHinit() {
                 sprintf( dir->full, "%s/", start );
                 dir->leaf = dir->full + length + 1;
             }
-            LISTadd_last( EXPRESS_path, ( Generic )dir );
+            LISTadd_last( EXPRESS_path, dir );
 
             *( p - 1 ) = save; /* put char back where temp null was */
         }
@@ -312,13 +312,13 @@ void EXPRESSinitialize( void ) {
             x->u.func->return_type = r; \
             x->u.func->builtin = true; \
             resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_FUNCTION);
+            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_FUNCTION);
 #define procdef(x,y,c)  x = ALGcreate(OBJ_PROCEDURE);\
             x->symbol.name = y;\
             x->u.proc->pcount = c; \
             x->u.proc->builtin = true; \
             resolved_all(x); \
-            DICTdefine(EXPRESSbuiltins,y,(Generic)x,0,OBJ_PROCEDURE);
+            DICTdefine(EXPRESSbuiltins,y,x,NULL,OBJ_PROCEDURE);
     /* third arg is # of parameters */
 
     /* eventually everything should be data-driven, but for now */
@@ -446,7 +446,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
         int length = strlen( start );
 
         /* drop .exp suffix if present */
-        if( dot && streq( dot, ".exp" ) ) {
+        if( dot && !strcmp( dot, ".exp" ) ) {
             length -= 4;
         }
 
@@ -469,7 +469,7 @@ void parserInitState();
 
 /** start parsing a new schema file */
 static Express PARSERrun( char * filename, FILE * fp ) {
-    extern void SCAN_lex_init PROTO( ( char *, FILE * ) );
+    extern void SCAN_lex_init( char *, FILE * );
     extern YYSTYPE yylval;
     extern int yyerrstatus;
     int tokenID;
@@ -522,8 +522,8 @@ static void RENAMEresolve( Rename * r, Schema s );
  *
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
-static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
-    Generic result;
+static void * SCOPEfind_for_rename( Scope schema, char * name ) {
+    void *result;
     Rename * rename;
 
     /* object can only appear in top level symbol table */
@@ -552,7 +552,7 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
     }
 
     LISTdo( schema->u.schema->uselist, r, Rename * )
-    if( streq( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
+    if( !strcmp( ( r->nnew ? r->nnew : r->old )->name, name ) ) {
         RENAMEresolve( r, schema );
         DICT_type = r->type;
         return( r->object );
@@ -567,7 +567,7 @@ static Generic SCOPEfind_for_rename( Scope schema, char * name ) {
 }
 
 static void RENAMEresolve( Rename * r, Schema s ) {
-    Generic remote;
+    void *remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
     if( r->object ) {
@@ -716,9 +716,9 @@ static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_Li
     if( !ref_schema ) {
         ERRORreport_with_symbol( ERROR_undefined_schema, sym, sym->name );
         resolve_failed( schema );
-        list->data = 0;
+        list->data = NULL;
     } else {
-        list->data = ( Generic )ref_schema;
+        list->data = ref_schema;
     }
     LISTod
 }

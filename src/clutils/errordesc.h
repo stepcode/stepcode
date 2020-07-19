@@ -55,7 +55,14 @@ typedef int DebugLevel;
 
 class SC_UTILS_EXPORT ErrorDescriptor {
     private:
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
         std::string _userMsg, _detailMsg;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
     protected:
         Severity    _severity;
 

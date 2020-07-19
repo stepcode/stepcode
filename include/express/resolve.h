@@ -73,14 +73,14 @@ extern SC_EXPRESS_EXPORT Error WARNING_fn_skip_branch;
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void RESOLVEinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void RESOLVEcleanup PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void SCOPEresolve_expressions_statements PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT void SCOPEresolve_subsupers PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT void SCOPEresolve_types PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT void TYPE_resolve PROTO( ( Type * ) );
-extern SC_EXPRESS_EXPORT void EXP_resolve PROTO( ( Expression, Scope, Type ) );
-extern SC_EXPRESS_EXPORT void ALGresolve PROTO( ( Scope ) );
-extern SC_EXPRESS_EXPORT void SCHEMAresolve PROTO( ( Scope ) );
+extern SC_EXPRESS_EXPORT void RESOLVEinitialize( void );
+extern SC_EXPRESS_EXPORT void RESOLVEcleanup( void );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_expressions_statements( Scope );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_subsupers( Scope );
+extern SC_EXPRESS_EXPORT void SCOPEresolve_types( Scope );
+extern SC_EXPRESS_EXPORT void TYPE_resolve( Type * );
+extern SC_EXPRESS_EXPORT void EXP_resolve( Expression, Scope, Type );
+extern SC_EXPRESS_EXPORT void ALGresolve( Scope );
+extern SC_EXPRESS_EXPORT void SCHEMAresolve( Scope );
 
 #endif /*RESOLVE_H*/

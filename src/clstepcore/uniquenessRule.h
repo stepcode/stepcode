@@ -11,13 +11,21 @@ class EntityDescriptor;
 
 class SC_CORE_EXPORT Uniqueness_rule : public Dictionary_instance {
 public:
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     Express_id _label;
-    const EntityDescriptor * _parent_entity;
 
     // non-SDAI
     std::string _comment; /** Comment contained in the EXPRESS.
                            * Should be properly formatted to include (* *)
                            * Will be written to EXPRESS as-is (w/out formatting) */
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+
+    const EntityDescriptor * _parent_entity;
 
     Uniqueness_rule();
     Uniqueness_rule( const Uniqueness_rule & );

@@ -205,7 +205,7 @@ Scope INCR_CTLcreate( Symbol * control, Expression start,
     Expression e = EXPcreate_from_symbol( Type_Attribute, control );
     Variable v = VARcreate( e, Type_Number );
     DICTdefine( s->symbol_table, control->name,
-                ( Generic )v, control, OBJ_VARIABLE );
+                v, control, OBJ_VARIABLE );
     s->u.incr = INCR_new();
     s->u.incr->init = start;
     s->u.incr->end = end;

@@ -14,7 +14,7 @@
 #include "pretty_scope.h"
 #include "pretty_schema.h"
 
-#if defined( _WIN32 ) || defined ( __WIN32__ )
+#ifdef _WIN32
 #  define unlink _unlink
 #else
 #  include <unistd.h> /* for unlink */
@@ -77,7 +77,7 @@ char * SCHEMAout( Schema s ) {
                 if( 0 != ( p = strchr( buf, '\n' ) ) ) {
                     *p = '\0';
                 }
-                if( ( !result ) || ( streq( buf, expheader[0] ) ) ) {
+                if( ( !result ) || ( !strcmp( buf, expheader[0] ) ) ) {
                     unlink( exppp_filename_buffer );
                 } else {
                     fprintf( stderr, "%s: %s already exists and appears to be hand-written\n",

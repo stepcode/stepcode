@@ -22,7 +22,7 @@ extern "C" {
 
 #  include <string.h>
 
-#  if defined( _WIN32 ) || defined ( __WIN32__ )
+#  ifdef _WIN32
 #    include <direct.h>
 #    define getcwd _getcwd
 #  else
@@ -244,7 +244,7 @@ void printSchemaFilenames( Schema sch ){
     int ecount = 0, tcount = 0;
 
     DictionaryEntry de;
-    Generic x;
+    void *x;
     filenames_t fn;
     DICTdo_init( sch->symbol_table, &de );
     while( 0 != ( x = DICTdo( &de ) ) ) {

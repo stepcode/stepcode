@@ -8,7 +8,7 @@ include_directories(
 )
 
 function(add_stepcore_test name libs)
-  SC_ADDEXEC(tst_${name} test_${name}.cc "${libs}" "TESTABLE")
+  SC_ADDEXEC(tst_${name} SOURCES test_${name}.cc LINK_LIBRARIES ${libs} TESTABLE)
   add_test(NAME build_cpp_${name}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     COMMAND ${CMAKE_COMMAND} --build .

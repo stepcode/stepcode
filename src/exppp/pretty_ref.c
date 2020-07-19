@@ -33,10 +33,9 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
         nameList = ( Linked_List )DICTlookup( dict, ren->schema->symbol.name );
         if( !nameList ) {
             nameList = LISTcreate();
-            DICTdefine( dict, ren->schema->symbol.name, ( Generic ) nameList,
-                        ( Symbol * )0, OBJ_UNKNOWN );
+            DICTdefine( dict, ren->schema->symbol.name, nameList, NULL, OBJ_UNKNOWN );
         }
-        LISTadd_last( nameList, ( Generic ) ren );
+        LISTadd_last( nameList, ren );
     }
 
     /* step 2: for each list, print out the renames */

@@ -146,7 +146,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
     entity->search_id = __SCOPE_search_id;
 
     LISTdo( entity->u.entity->supertypes, super, Entity )
-    if( streq( super->symbol.name, name ) ) {
+    if( !strcmp( super->symbol.name, name ) ) {
         return super;
     }
     LISTod
@@ -160,7 +160,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
 
     if( down ) {
         LISTdo( entity->u.entity->subtypes, sub, Entity )
-        if( streq( sub->symbol.name, name ) ) {
+        if( !strcmp( sub->symbol.name, name ) ) {
             return sub;
         }
         LISTod;
@@ -177,7 +177,7 @@ static Entity ENTITY_find_inherited_entity( Entity entity, char * name, int down
 }
 
 struct Scope_ * ENTITYfind_inherited_entity( struct Scope_ *entity, char * name, int down ) {
-    if( streq( name, entity->symbol.name ) ) {
+    if( !strcmp( name, entity->symbol.name ) ) {
         return( entity );
     }
 
@@ -336,14 +336,14 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
     if( attr->name->type->u.type->body->type != op_ ) {
         /* simple id */
         rc = DICTdefine( entity->symbol_table, attr->name->symbol.name,
-                         ( Generic )attr, &attr->name->symbol, OBJ_VARIABLE );
+                         attr, &attr->name->symbol, OBJ_VARIABLE );
     } else {
         /* SELF\ENTITY.SIMPLE_ID */
         rc = DICTdefine( entity->symbol_table, attr->name->e.op2->symbol.name,
-                         ( Generic )attr, &attr->name->symbol, OBJ_VARIABLE );
+                         attr, &attr->name->symbol, OBJ_VARIABLE );
     }
     if( rc == 0 ) {
-        LISTadd_last( entity->u.entity->attributes, ( Generic )attr );
+        LISTadd_last( entity->u.entity->attributes, attr );
         VARput_offset( attr, entity->u.entity->attribute_count );
         entity->u.entity->attribute_count++;
     }
@@ -354,7 +354,7 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
 ** \param instance new instance
 ** Add an item to the instance list of an entity.
 */
-void ENTITYadd_instance( Entity entity, Generic instance ) {
+void ENTITYadd_instance( Entity entity, void *instance ) {
     if( entity->u.entity->instances == LIST_NULL ) {
         entity->u.entity->instances = LISTcreate();
     }
@@ -401,7 +401,7 @@ static void ENTITY_get_all_attributes( Entity entity, Linked_List result ) {
     ENTITY_get_all_attributes( super, result );
     LISTod;
     /* Gee, aren't they resolved by this time? */
-    LISTdo( entity->u.entity->attributes, attr, Generic )
+    LISTdo( entity->u.entity->attributes, attr, void * )
     LISTadd_last( result, attr );
     LISTod;
 }
@@ -437,7 +437,7 @@ Variable ENTITYget_named_attribute( Entity entity, char * name ) {
     Variable attribute;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
-    if( streq( VARget_simple_name( attr ), name ) ) {
+    if( !strcmp( VARget_simple_name( attr ), name ) ) {
         return attr;
     }
     LISTod;
@@ -495,7 +495,7 @@ int ENTITYget_named_attribute_offset( Entity entity, char * name ) {
     int value;
 
     LISTdo( entity->u.entity->attributes, attr, Variable )
-    if( streq( VARget_simple_name( attr ), name ) )
+    if( !strcmp( VARget_simple_name( attr ), name ) )
         return entity->u.entity->inheritance +
                VARget_offset( ENTITY_find_inherited_attribute( entity, name, 0, 0 ) );
     LISTod;

@@ -10,13 +10,20 @@
 
 class SC_CORE_EXPORT Where_rule : public Dictionary_instance {
 public:
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
     Express_id _label;
-    Type_or_rule_var _type_or_rule;
 
     // non-SDAI
     std::string _comment; // Comment contained in the EXPRESS.
     // Should be properly formatted to include (* *)
     // Will be written to EXPRESS as-is (w/out formatting)
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
+    Type_or_rule_var _type_or_rule;
 
     Where_rule();
     Where_rule( const Where_rule & );

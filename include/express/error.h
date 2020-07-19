@@ -111,42 +111,36 @@ extern SC_EXPRESS_EXPORT void ( *ERRORusage_function )( void );
 /******************************/
 
 #define ERROR_OPT_new() (struct Error_Warning_ *)MEM_new(&ERROR_OPT_fl)
-#define ERROR_OPT_destroy(x)    MEM_destroy(&ERROR_OPT_fl,(Freelist *)(Generic)x)
+#define ERROR_OPT_destroy(x)    MEM_destroy(&ERROR_OPT_fl,(Freelist *)x)
 
 /***********************/
 /* function prototypes */
 /***********************/
 
-#if defined(__MSVC__) || defined(__BORLAND__)
-extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer PROTO( ( void ) );
-#endif
+extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer( void );
+extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer( void );
 
 /********************/
 /* Inline functions */
 /********************/
 
-static_inline void ERRORdisable( Error error ) {
+static inline void ERRORdisable( Error error ) {
     if( error != ERROR_none ) {
         error->enabled = false;
     }
 }
 
-static_inline void ERRORenable( Error error ) {
+static inline void ERRORenable( Error error ) {
     if( error != ERROR_none ) {
         error->enabled = true;
     }
 }
 
-static_inline bool ERRORis_enabled( Error error ) {
+static inline bool ERRORis_enabled( Error error ) {
     return error->enabled;
 }
 
-static_inline void ERRORbuffer_messages( bool flag ) {
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-    extern void ERROR_start_message_buffer( void ),
-           ERROR_flush_message_buffer( void );
-#endif
+static inline void ERRORbuffer_messages( bool flag ) {
     __ERROR_buffer_errors = flag;
     if( __ERROR_buffer_errors ) {
         ERROR_start_message_buffer();
@@ -155,44 +149,35 @@ static_inline void ERRORbuffer_messages( bool flag ) {
     }
 }
 
-static_inline void ERRORflush_messages( void ) {
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-    extern void ERROR_start_message_buffer( void ),
-           ERROR_flush_message_buffer( void );
-#endif
-
+static inline void ERRORflush_messages( void ) {
     if( __ERROR_buffer_errors ) {
         ERROR_flush_message_buffer();
         ERROR_start_message_buffer();
     }
 }
 
+
 /***********************/
 /* function prototypes */
 /***********************/
 
-extern SC_EXPRESS_EXPORT void ERRORinitialize PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERRORinitialize_after_LIST PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERRORcleanup PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERRORnospace PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERRORabort PROTO( ( int ) );
-extern SC_EXPRESS_EXPORT Error    ERRORcreate PROTO( ( char *, Severity ) );
-extern SC_EXPRESS_EXPORT void ERRORreport PROTO( ( Error, ... ) );
-extern SC_EXPRESS_EXPORT void ERRORdestroy PROTO( ( Error ) );
+extern SC_EXPRESS_EXPORT void ERRORinitialize( void );
+extern SC_EXPRESS_EXPORT void ERRORinitialize_after_LIST( void );
+extern SC_EXPRESS_EXPORT void ERRORcleanup( void );
+extern SC_EXPRESS_EXPORT void ERRORnospace( void );
+extern SC_EXPRESS_EXPORT void ERRORabort( int );
+extern SC_EXPRESS_EXPORT Error    ERRORcreate( char *, Severity );
+extern SC_EXPRESS_EXPORT void ERRORreport( Error, ... );
+extern SC_EXPRESS_EXPORT void ERRORdestroy( Error );
 
 struct Symbol_; /* mention Symbol to avoid warning on following line */
-extern SC_EXPRESS_EXPORT void ERRORreport_with_symbol PROTO( ( Error, struct Symbol_ *, ... ) );
-extern SC_EXPRESS_EXPORT void ERRORreport_with_line PROTO( ( Error, int, ... ) );
+extern SC_EXPRESS_EXPORT void ERRORreport_with_symbol( Error, struct Symbol_ *, ... );
+extern SC_EXPRESS_EXPORT void ERRORreport_with_line( Error, int, ... );
 
-#if !defined(__MSVC__) && !defined(__BORLAND__)
-extern SC_EXPRESS_EXPORT void ERROR_start_message_buffer PROTO( ( void ) );
-extern SC_EXPRESS_EXPORT void ERROR_flush_message_buffer PROTO( ( void ) );
-#endif
-
-extern SC_EXPRESS_EXPORT void ERRORcreate_warning PROTO( ( char *, Error ) );
-extern SC_EXPRESS_EXPORT void ERRORset_warning PROTO( ( char *, int ) );
-extern SC_EXPRESS_EXPORT void ERRORset_all_warnings PROTO( ( int ) );
-extern SC_EXPRESS_EXPORT void ERRORsafe PROTO( ( jmp_buf env ) );
-extern SC_EXPRESS_EXPORT void ERRORunsafe PROTO( ( void ) );
+extern SC_EXPRESS_EXPORT void ERRORcreate_warning( char *, Error );
+extern SC_EXPRESS_EXPORT void ERRORset_warning( char *, int );
+extern SC_EXPRESS_EXPORT void ERRORset_all_warnings( int );
+extern SC_EXPRESS_EXPORT void ERRORsafe( jmp_buf env );
+extern SC_EXPRESS_EXPORT void ERRORunsafe( void );
 
 #endif /* ERROR_H */
