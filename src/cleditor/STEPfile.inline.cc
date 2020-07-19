@@ -72,7 +72,7 @@ int STEPfile::SetFileType( FileTypeCode ft ) {
 
         default:
             // some kind of error
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+            std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
             return 0;
     }
@@ -103,7 +103,7 @@ std::string STEPfile::TruncFileName( const std::string filename ) const {
 Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
-    istream * in = OpenInputFile( filename );
+    std::istream * in = OpenInputFile( filename );
     if( _error.severity() < SEVERITY_WARNING ) {
         CloseInputFile( in );
         return _error.severity();
@@ -122,7 +122,7 @@ Severity STEPfile::ReadExchangeFile( const std::string filename, bool useTechCor
 Severity STEPfile::AppendExchangeFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
-    istream * in = OpenInputFile( filename );
+    std::istream * in = OpenInputFile( filename );
     if( _error.severity() < SEVERITY_WARNING ) {
         CloseInputFile( in );
         return _error.severity();
@@ -136,7 +136,7 @@ Severity STEPfile::AppendExchangeFile( const std::string filename, bool useTechC
 Severity STEPfile::ReadWorkingFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
-    istream * in = OpenInputFile( filename );
+    std::istream * in = OpenInputFile( filename );
     if( _error.severity() < SEVERITY_WARNING ) {
         CloseInputFile( in );
         return _error.severity();
@@ -156,7 +156,7 @@ Severity STEPfile::ReadWorkingFile( const std::string filename, bool useTechCor 
 Severity STEPfile::AppendWorkingFile( const std::string filename, bool useTechCor ) {
     _error.ClearErrorMsg();
     _errorCount = 0;
-    istream * in = OpenInputFile( filename );
+    std::istream * in = OpenInputFile( filename );
     if( _error.severity() < SEVERITY_WARNING ) {
         CloseInputFile( in );
         return _error.severity();
@@ -169,7 +169,7 @@ Severity STEPfile::AppendWorkingFile( const std::string filename, bool useTechCo
 }
 
 /******************************************************/
-istream * STEPfile::OpenInputFile( const std::string filename ) {
+std::istream * STEPfile::OpenInputFile( const std::string filename ) {
     _iFileCurrentPosition = 0;
 
     //  if there's no filename to use, fail
@@ -192,7 +192,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
     if( filename.compare( "-" ) == 0 ) {
         in = &std::cin;
     } else {
-        in = new ifstream( FileName().c_str() );
+        in = new std::ifstream( FileName().c_str() );
     }
 
     if( !in || !( in -> good() ) ) {
@@ -211,7 +211,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
 }
 
 /******************************************************/
-void STEPfile::CloseInputFile( istream * in ) {
+void STEPfile::CloseInputFile( std::istream * in ) {
     if (in != &std::cin) {
         delete in;
     }
@@ -223,7 +223,7 @@ void STEPfile::CloseInputFile( istream * in ) {
 
 
 /******************************************************/
-ofstream * STEPfile::OpenOutputFile( std::string filename ) {
+std::ofstream * STEPfile::OpenOutputFile( std::string filename ) {
     if( filename.empty() ) {
         if( FileName().empty() ) {
             _error.AppendToUserMsg( "No current file name.\n" );
@@ -241,7 +241,7 @@ ofstream * STEPfile::OpenOutputFile( std::string filename ) {
     if( _currentDir->FileExists( TruncFileName( filename ) ) ) {
         MakeBackupFile();
     }
-    ofstream * out  = new ofstream( filename.c_str() );
+    std::ofstream * out  = new std::ofstream( filename.c_str() );
     if( !out ) {
         _error.AppendToUserMsg( "unable to open file for output\n" );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -250,7 +250,7 @@ ofstream * STEPfile::OpenOutputFile( std::string filename ) {
     return out;
 }
 
-void STEPfile::CloseOutputFile( ostream * out ) {
+void STEPfile::CloseOutputFile( std::ostream * out ) {
     _oFileInstsWritten = 0;
     delete out;
 }

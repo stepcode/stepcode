@@ -94,7 +94,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgrBase * instances, int a
         return _error.severity( SEVERITY_INPUT_ERROR );
     }
 
-    istringstream in( ( char * )s ); // sz defaults to length of s
+    std::istringstream in( ( char * )s ); // sz defaults to length of s
 
     // read in value for attribute
     switch( NonRefType() ) {
@@ -173,7 +173,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgrBase * instances, int a
 /**************************************************************//**
 ** \fn STEPread
 ** \brief Reads attribute value from in, formatted as P21 file.
-** The value of the attribute is read from istream. The format
+** The value of the attribute is read from std::istream. The format
 ** expected is STEP exchange file.
 **
 ** Accepts '$' or nothing as value for OPTIONAL ATTRIBUTE, since
@@ -187,7 +187,7 @@ Severity STEPattribute::StrToVal( const char * s, InstMgrBase * instances, int a
 **         value >= SEVERITY_WARNING means program can continue parsing input,
 **         value <= SEVERITY_INPUT_ERROR  is fatal read error
 ******************************************************************/
-Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int addFileId,
+Severity STEPattribute::STEPread( std::istream & in, InstMgrBase * instances, int addFileId,
                                   const char * currSch, bool strict ) {
 
     // The attribute has been redefined by the attribute pointed
@@ -201,12 +201,12 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
     //  set the value to be null (reinitialize the attribute value)
     set_null();
 
-    in >> ws; // skip whitespace
+    in >> std::ws; // skip whitespace
     char c = in.peek();
 
     if( IsDerived() ) {
         if( c == '*' ) {
-            in.get( c ); // take * off the istream
+            in.get( c ); // take * off the std::istream
             _error.severity( SEVERITY_NULL );
         } else {
             _error.severity( SEVERITY_WARNING );
@@ -364,7 +364,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
             return _error.severity();
 
         case GENERIC_TYPE: {
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+            std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
             _error.GreaterSeverity( SEVERITY_BUG );
             return _error.severity();
@@ -374,7 +374,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
         case REFERENCE_TYPE:
         default: {
             // bug
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+            std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
             _error.GreaterSeverity( SEVERITY_BUG );
             return _error.severity();
@@ -389,7 +389,7 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
  ** Status:  complete 3/91
  *********************************************************************/
 std::string STEPattribute::asStr( const char * currSch ) const {
-    ostringstream ss;
+    std::ostringstream ss;
     std::string str;
 
     // The attribute has been derived by a subtype's attribute
@@ -464,7 +464,7 @@ std::string STEPattribute::asStr( const char * currSch ) const {
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+            std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
             str.clear();
             break;
@@ -477,9 +477,9 @@ std::string STEPattribute::asStr( const char * currSch ) const {
 }
 
 /// write '$' to out, put message in error, write brief error to stderr
-void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char* desc ) {
+void STEPattribute::STEPwriteError( std::ostream & out, unsigned int line, const char* desc ) {
     out << "$";
-    cerr << "Internal error:  " << __FILE__ << ":" << line << "\n" << _POC_ "\n";
+    std::cerr << "Internal error:  " << __FILE__ << ":" << line << "\n" << _POC_ "\n";
 
     _error.GreaterSeverity( SEVERITY_BUG );
     std::stringstream ss;
@@ -493,7 +493,7 @@ void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char
  * The output is in physical file format.
  *
  */
-void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
+void STEPattribute::STEPwrite( std::ostream & out, const char * currSch ) {
     // The attribute has been derived by a subtype's attribute
     if( IsDerived() ) {
         out << "*";
@@ -579,7 +579,7 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
+            std::cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
             _error.GreaterSeverity( SEVERITY_BUG );
             return;
 
@@ -743,7 +743,7 @@ Severity STEPattribute::set_null() {
 
         case REFERENCE_TYPE:
         case GENERIC_TYPE:
-            cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
+            std::cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__ << "\n" << _POC_ "\n";
             return SEVERITY_BUG;
 
         case UNKNOWN_TYPE:
@@ -1146,7 +1146,7 @@ Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * er
             return ptr.sh->SelectValidLevel( attrValue, error, im );
 
         default:
-            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+            std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                  << "\n" << _POC_ "\n";
             return error->severity();
     }
@@ -1157,7 +1157,7 @@ Severity STEPattribute::ValidLevel( const char * attrValue, ErrorDescriptor * er
 ** \param a -- attribute to output
 ** Description:  overloads the output operator to print an attribute
 ******************************************************************/
-ostream & operator<< ( ostream & out, STEPattribute & a ) {
+std::ostream & operator<< ( std::ostream & out, STEPattribute & a ) {
     a.STEPwrite( out );
     return out;
 }
@@ -1192,9 +1192,9 @@ void STEPattribute::AddErrorInfo() {
 * if it hits one of StopChars it puts it back.
 * RETURNS: the last char it read.
 ******************************************************************/
-char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
-    ios_base::fmtflags flbuf = in.flags();
-    in.unsetf( ios::skipws ); // turn skipping whitespace off
+char STEPattribute::SkipBadAttr( std::istream & in, char * StopChars ) {
+    std::ios_base::fmtflags flbuf = in.flags();
+    in.unsetf( std::ios::skipws ); // turn skipping whitespace off
 
     // read bad data until end of this attribute or entity.
     char * foundCh = 0;

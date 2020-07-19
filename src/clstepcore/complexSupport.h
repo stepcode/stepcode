@@ -17,7 +17,7 @@
 #include <sc_export.h>
 #include <iostream>
 #include <fstream>
-using namespace std;
+//using namespace std;
 #include "Str.h"
 
 #define LISTEND 999
@@ -143,8 +143,8 @@ class SC_CORE_EXPORT EntList {
         friend class OrList;
         friend class ComplexList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, EntList & );
-        friend ostream & operator<< ( ostream &, MultList & );
+        friend std::ostream & operator<< ( std::ostream &, EntList & );
+        friend std::ostream & operator<< ( std::ostream &, MultList & );
 
     public:
         EntList( JoinType j ) : join( j ), next( 0 ), prev( 0 ), viable( UNKNOWN ),
@@ -208,7 +208,7 @@ class SC_CORE_EXPORT EntList {
 
 class SC_CORE_EXPORT SimpleList : public EntList {
         friend class ComplexList;
-        friend ostream & operator<< ( ostream &, SimpleList & );
+        friend std::ostream & operator<< ( std::ostream &, SimpleList & );
 
     public:
         SimpleList( const char * n ) : EntList( SIMPLE ), I_marked( NOMARK ) {
@@ -249,7 +249,7 @@ class SC_CORE_EXPORT MultList : public EntList {
 
         friend class ComplexList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, MultList & );
+        friend std::ostream & operator<< ( std::ostream &, MultList & );
 
     public:
         MultList( JoinType j ) : EntList( j ), supertype( 0 ), numchildren( 0 ),
@@ -311,7 +311,7 @@ class SC_CORE_EXPORT AndOrList : public JoinList {
 
 class SC_CORE_EXPORT AndList : public JoinList {
         friend class ComplexList;
-        friend ostream & operator<< ( ostream &, ComplexList & );
+        friend std::ostream & operator<< ( std::ostream &, ComplexList & );
 
     public:
         AndList() : JoinList( AND ) {}
@@ -353,7 +353,7 @@ class SC_CORE_EXPORT OrList : public MultList {
 class SC_CORE_EXPORT ComplexList {
         friend class ultList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, ComplexList & );
+        friend std::ostream & operator<< ( std::ostream &, ComplexList & );
 
     public:
         ComplexList( AndList * alist = NULL ) : list( 0 ), head( alist ), next( 0 ),

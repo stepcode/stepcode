@@ -42,7 +42,7 @@ InstMgr::PrintSortedFileIds() {
     int i = 0;
     for( i = 0; i < count; i++ ) {
         mn = ( MgrNode * )( ( *sortedMaster )[i] );
-        cout << i << " " << mn->GetFileId() << endl;
+        std::cout << i << " " << mn->GetFileId() << std::endl;
     }
 }
 
@@ -129,9 +129,9 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
             continue;
         }
         if( debug_level > 3 )
-            cerr << "In VerifyInstances:  "
+            std::cerr << "In VerifyInstances:  "
                  << "new MgrNode for " << mn->GetFileId() << " with state "
-                 << mn->CurrState() << endl;
+                 << mn->CurrState() << std::endl;
         if( !mn->MgrNodeListMember( completeSE ) ) {
             se = mn->GetApplication_instance();
             if( se->ValidLevel( &err, this, 0 ) < SEVERITY_USERMSG ) {
@@ -200,7 +200,7 @@ int InstMgr::VerifyEntity( int fileId, const char * expectedType ) {
 
 MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState ) {
     if( debug_level > 3 ) {
-        cout << "#" << se->StepFileId() << " append node to InstMgr" << endl;
+        std::cout << "#" << se->StepFileId() << " append node to InstMgr" << std::endl;
     }
     MgrNode * mn = 0;
 
@@ -225,11 +225,11 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
     mn = new MgrNode( se, listState );
 
     if( debug_level > 3 )
-        cerr << "new MgrNode for " << mn->GetFileId() << " with state "
-             << mn->CurrState() << endl;
+        std::cerr << "new MgrNode for " << mn->GetFileId() << " with state "
+             << mn->CurrState() << std::endl;
     if( listState == noStateSE )
-        cout << "append to InstMgr **ERROR ** node #" << se->StepFileId() <<
-             " doesn't have state information" << endl;
+        std::cout << "append to InstMgr **ERROR ** node #" << se->StepFileId() <<
+             " doesn't have state information" << std::endl;
     master->Append( mn );
     (*sortedMaster)[mn->GetFileId()] = mn;
     //PrintSortedFileIds();
@@ -264,30 +264,30 @@ void InstMgr::ChangeState( MgrNode * node, stateEnum listState ) {
     switch( listState ) {
         case completeSE:
             if( debug_level > 3 )
-                cout << "#" << node->GetApplication_instance()->StepFileId() <<
+                std::cout << "#" << node->GetApplication_instance()->StepFileId() <<
                      " change node to InstMgr's complete list\n";
             node->ChangeState( listState );
             break;
         case incompleteSE:
             if( debug_level > 3 )
-                cout << "#" << node->GetApplication_instance()->StepFileId() <<
+                std::cout << "#" << node->GetApplication_instance()->StepFileId() <<
                      " change node to InstMgr's incomplete list\n";
             node->ChangeState( listState );
             break;
         case newSE:
             if( debug_level > 3 )
-                cout << "#" << node->GetApplication_instance()->StepFileId() <<
+                std::cout << "#" << node->GetApplication_instance()->StepFileId() <<
                      " change node to InstMgr's new list\n";
             node->ChangeState( listState );
             break;
         case deleteSE:
             if( debug_level > 3 )
-                cout << "#" << node->GetApplication_instance()->StepFileId() <<
+                std::cout << "#" << node->GetApplication_instance()->StepFileId() <<
                      " change node to InstMgr's delete list\n";
             node->ChangeState( listState );
             break;
         case noStateSE:
-            cout << "#" << node->GetApplication_instance()->StepFileId() <<
+            std::cout << "#" << node->GetApplication_instance()->StepFileId() <<
                  "ERROR can't change this node state\n";
             node->Remove();
             break;

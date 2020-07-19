@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <fstream>
-using namespace std;
 
 extern "C"
 {
@@ -126,8 +125,8 @@ class EntList {
         friend class OrList;
         friend class ComplexList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, EntList & );
-        friend ostream & operator<< ( ostream &, MultList & );
+        friend std::ostream & operator<< ( std::ostream &, EntList & );
+        friend std::ostream & operator<< ( std::ostream &, MultList & );
 
     public:
         EntList( JoinType j ) : join( j ), prev( 0 ), next( 0 ), viable( UNKNOWN ),
@@ -154,7 +153,7 @@ class EntList {
             viable = UNKNOWN;
         }
         int siblings();
-        virtual void write( ostream & ) = 0;
+        virtual void write( std::ostream & ) = 0;
         // write out my contents to stream
 
         // List access functions.  They access desired children based on their
@@ -195,7 +194,7 @@ class EntList {
 
 class SimpleList : public EntList {
         friend class ComplexList;
-        friend ostream & operator<< ( ostream &, SimpleList & );
+        friend std::ostream & operator<< ( std::ostream &, SimpleList & );
 
     public:
         SimpleList( const char * n ) : EntList( SIMPLE ), I_marked( NOMARK ) {
@@ -222,7 +221,7 @@ class SimpleList : public EntList {
             viable = UNKNOWN;
             I_marked = NOMARK;
         }
-        void write( ostream & );
+        void write( std::ostream & );
 
     private:
         char name[BUFSIZ];    // Name of entity we correspond to.
@@ -235,7 +234,7 @@ class MultList : public EntList {
 
         friend class ComplexList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, MultList & );
+        friend std::ostream & operator<< ( std::ostream &, MultList & );
 
     public:
         MultList( JoinType j ) : EntList( j ), numchildren( 0 ), childList( 0 ) {}
@@ -263,7 +262,7 @@ class MultList : public EntList {
         void unmarkAll( EntNode * );
         int prevKnown( EntList * );
         void reset();
-        void write( ostream & );
+        void write( std::ostream & );
 
     protected:
         int numchildren;
@@ -297,7 +296,7 @@ class AndOrList : public JoinList {
 class AndList : public JoinList {
         friend class MultList;
         friend class ComplexList;
-        friend ostream & operator<< ( ostream &, ComplexList & );
+        friend std::ostream & operator<< ( std::ostream &, ComplexList & );
 
     public:
         AndList() : JoinList( AND ), supertype( 0 ) {}
@@ -342,7 +341,7 @@ class ComplexList {
 
         friend class MultList;
         friend class ComplexCollect;
-        friend ostream & operator<< ( ostream &, ComplexList & );
+        friend std::ostream & operator<< ( std::ostream &, ComplexList & );
 
     public:
         ComplexList( AndList * alist = NULL ) : list( 0 ), head( alist ), next( 0 ),
@@ -379,7 +378,7 @@ class ComplexList {
         int Dependent() {
             return dependent;
         }
-        void write( ostream & );
+        void write( std::ostream & );
         int getEntListMaxLevel() {
             return head->getMaxLevel();
         }

@@ -39,7 +39,7 @@ class EntityDescriptor;
 
 extern SC_CORE_EXPORT int SetErrOnNull( const char * attrValue, ErrorDescriptor * error );
 
-extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
+extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( std::istream & in, ErrorDescriptor * err, const char * tokenList,
         InstMgrBase * instances, int addFileId );
 
 extern SC_CORE_EXPORT SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
@@ -62,18 +62,18 @@ extern SC_CORE_EXPORT SDAI_Application_instance * STEPread_reference( const char
         InstMgrBase * instances, int addFileId );
 ////////////////////
 
-extern SC_CORE_EXPORT int QuoteInString( istream & in );
+extern SC_CORE_EXPORT int QuoteInString( std::istream & in );
 
 extern SC_CORE_EXPORT void AppendChar( char c, int & index, char *& s, int & sSize );
 
-extern SC_CORE_EXPORT void PushPastString( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastString( std::istream & in, std::string & s, ErrorDescriptor * err );
 
-extern SC_CORE_EXPORT void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastImbedAggr( std::istream & in, std::string & s, ErrorDescriptor * err );
 
-extern SC_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err );
+extern SC_CORE_EXPORT void PushPastAggr1Dim( std::istream & in, std::string & s, ErrorDescriptor * err );
 
 class SC_CORE_EXPORT STEPattribute {
-        friend ostream & operator<< ( ostream &, STEPattribute & );
+        friend std::ostream & operator<< ( std::ostream &, STEPattribute & );
         friend class SDAI_Application_instance;
     protected:
         bool _derive;
@@ -103,9 +103,9 @@ class SC_CORE_EXPORT STEPattribute {
             void * p;
         } ptr;
 
-        char SkipBadAttr( istream & in, char * StopChars );
+        char SkipBadAttr( std::istream & in, char * StopChars );
         void AddErrorInfo();
-        void STEPwriteError( ostream& out, unsigned int line, const char* desc );
+        void STEPwriteError( std::ostream& out, unsigned int line, const char* desc );
 
     public:
         void incrRefCount() {
@@ -132,14 +132,14 @@ class SC_CORE_EXPORT STEPattribute {
 
         Severity StrToVal( const char * s, InstMgrBase * instances = 0,
                            int addFileId = 0 );
-        Severity STEPread( istream & in = cin, InstMgrBase * instances = 0,
+        Severity STEPread( std::istream & in = std::cin, InstMgrBase * instances = 0,
                            int addFileId = 0, const char * currSch = NULL, bool strict = true );
 
         /// return the attr value as a string
-        string asStr( const char * currSch = 0 ) const;
+	std::string asStr( const char * currSch = 0 ) const;
 
-        /// put the attr value in ostream
-        void STEPwrite( ostream & out = cout, const char * currSch = 0 );
+        /// put the attr value in std::ostream
+        void STEPwrite( std::ostream & out = std::cout, const char * currSch = 0 );
         void ShallowCopy( const STEPattribute * sa );
 
         Severity set_null();

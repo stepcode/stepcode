@@ -32,39 +32,39 @@ int main() {
 
     const STEPentity * entArr[4];  // our array of entity pointers
 
-    cout << "Creating an SdaiRectangle..." << endl;
+    std::cout << "Creating an SdaiRectangle..." << std::endl;
     SdaiRectangle rect;
     rect.item_name_( "MyRect" );
     rect.item_color_( Color__orange );
     rect.number_of_sides_( 4 );
     rect.height_( 5 );
     rect.width_( 10 );
-    cout << "Rectangle: (" << rect.opcode() << ") " << endl;
-    cout << "  Name: " << rect.item_name_().c_str() << endl;
-    cout << "  Color: " << rect.item_color_() << endl;
-    cout << "  Sides: " << rect.number_of_sides_() << endl;
-    cout << "  Height: " << rect.height_() << endl;
-    cout << "  Width:  " << rect.width_() << endl;
-    cout << endl;
+    std::cout << "Rectangle: (" << rect.opcode() << ") " << std::endl;
+    std::cout << "  Name: " << rect.item_name_().c_str() << std::endl;
+    std::cout << "  Color: " << rect.item_color_() << std::endl;
+    std::cout << "  Sides: " << rect.number_of_sides_() << std::endl;
+    std::cout << "  Height: " << rect.height_() << std::endl;
+    std::cout << "  Width:  " << rect.width_() << std::endl;
+    std::cout << std::endl;
     entArr[0] = &rect;
 
-    cout << "Creating an SdaiSquare..." << endl;
+    std::cout << "Creating an SdaiSquare..." << std::endl;
     SdaiSquare square;
     square.item_name_( "MySquare" );
     square.item_color_( Color__green );
     square.number_of_sides_( 4 );
     square.height_( 3 );
     square.width_( 3 );
-    cout << "Square: (" << square.opcode() << ") " << endl;
-    cout << "  Name: " << square.item_name_().c_str() << endl;
-    cout << "  Color: " << square.item_color_() << endl;
-    cout << "  Sides: " << square.number_of_sides_() << endl;
-    cout << "  Height: " << square.height_() << endl;
-    cout << "  Width:  " << square.width_() << endl;
-    cout << endl;
+    std::cout << "Square: (" << square.opcode() << ") " << std::endl;
+    std::cout << "  Name: " << square.item_name_().c_str() << std::endl;
+    std::cout << "  Color: " << square.item_color_() << std::endl;
+    std::cout << "  Sides: " << square.number_of_sides_() << std::endl;
+    std::cout << "  Height: " << square.height_() << std::endl;
+    std::cout << "  Width:  " << square.width_() << std::endl;
+    std::cout << std::endl;
     entArr[1] = &square;
 
-    cout << "Creating an SdaiTriangle..." << endl;
+    std::cout << "Creating an SdaiTriangle..." << std::endl;
     SdaiTriangle tri;
     tri.item_name_( "MyTri" );
     tri.item_color_( Color__blue );
@@ -72,34 +72,34 @@ int main() {
     tri.side1_length_( 3 );
     tri.side2_length_( 4 );
     tri.side3_length_( 5 );
-    cout << "Triangle: (" << tri.opcode() << ") " << endl;
-    cout << "  Name: " << tri.item_name_().c_str() << endl;
-    cout << "  Color: " << tri.item_color_() << endl;
-    cout << "  Sides: " << tri.number_of_sides_() << endl;
-    cout << "  Side 1: " << tri.side1_length_() << endl;
-    cout << "  Side 2: " << tri.side2_length_() << endl;
-    cout << "  Side 3: " << tri.side3_length_() << endl;
-    cout << endl;
+    std::cout << "Triangle: (" << tri.opcode() << ") " << std::endl;
+    std::cout << "  Name: " << tri.item_name_().c_str() << std::endl;
+    std::cout << "  Color: " << tri.item_color_() << std::endl;
+    std::cout << "  Sides: " << tri.number_of_sides_() << std::endl;
+    std::cout << "  Side 1: " << tri.side1_length_() << std::endl;
+    std::cout << "  Side 2: " << tri.side2_length_() << std::endl;
+    std::cout << "  Side 3: " << tri.side3_length_() << std::endl;
+    std::cout << std::endl;
     entArr[2] = &tri;
 
-    cout << "Creating an SdaiCircle..." << endl;
+    std::cout << "Creating an SdaiCircle..." << std::endl;
     SdaiCircle circ;
     circ.item_name_( "MyCirc" );
     circ.item_color_( Color__red );
     circ.number_of_sides_( 1 );
     circ.radius_( 15 );
-    cout << "Circle: (" << circ.opcode() << ") " << endl;
-    cout << "  Name: " << circ.item_name_().c_str() << endl;
-    cout << "  Color: " << circ.item_color_() << endl;
-    cout << "  Sides: " << circ.number_of_sides_() << endl;
-    cout << "  Radius: " << circ.radius_() << endl;
-    cout << endl;
+    std::cout << "Circle: (" << circ.opcode() << ") " << std::endl;
+    std::cout << "  Name: " << circ.item_name_().c_str() << std::endl;
+    std::cout << "  Color: " << circ.item_color_() << std::endl;
+    std::cout << "  Sides: " << circ.number_of_sides_() << std::endl;
+    std::cout << "  Radius: " << circ.radius_() << std::endl;
+    std::cout << std::endl;
     entArr[3] = &circ;
 
-    cout << "And now, all entities in STEP Exchange Format!" << endl << endl;
+    std::cout << "And now, all entities in STEP Exchange Format!" << std::endl << std::endl;
     SEarrIterator SEitr( entArr, 4 );
     for( SEitr = 0; !SEitr; ++SEitr ) {
-        SEitr()->STEPwrite( cout );
+        SEitr()->STEPwrite( std::cout );
     }
 }
 

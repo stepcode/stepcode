@@ -14,7 +14,7 @@ SelectAggregate::~SelectAggregate() {
 
 
 /// if exchangeFileFormat == 1 then delims are required.
-Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
+Severity SelectAggregate::ReadValue( std::istream & in, ErrorDescriptor * err,
                                      const TypeDescriptor * elem_type, InstMgrBase * insts,
                                      int addFileId, int assignVal,
                                      int exchangeFileFormat, const char * currSch ) {
@@ -29,7 +29,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     char c;
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     c = in.peek(); // does not advance input
 
@@ -54,7 +54,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     SelectNode * item = 0;
 
-    in >> ws;
+    in >> std::ws;
     // take a peek to see if there are any elements before committing to an
     // element
     c = in.peek(); // does not advance input
@@ -95,7 +95,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
             AddNode( item );
         }
 
-        in >> ws; // skip white space (although should already be skipped)
+        in >> std::ws; // skip white space (although should already be skipped)
         in.get( c ); // read delim
 
         // CheckRemainingInput should have left the input right at the delim
@@ -159,14 +159,14 @@ Severity SelectNode::StrToVal( const char * s, ErrorDescriptor * err,
                                InstMgrBase * insts, int addFileId ) {
     (void) elem_type; //unused
     (void) addFileId; //unused
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     if( err->severity( node->STEPread( in, err, insts ) ) != SEVERITY_NULL ) {
         err->AppendToDetailMsg( node ->Error() );
     }
     return err->severity();
 }
 
-Severity SelectNode::StrToVal( istream & in, ErrorDescriptor * err,
+Severity SelectNode::StrToVal( std::istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId, const char * currSch ) {
     return STEPread( in, err, elem_type, insts, addFileId, currSch );
@@ -175,18 +175,18 @@ Severity SelectNode::StrToVal( istream & in, ErrorDescriptor * err,
 Severity SelectNode::STEPread( const char * s, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return STEPread( in, err, elem_type, insts, addFileId );
 }
 
-Severity SelectNode::STEPread( istream & in, ErrorDescriptor * err,
+Severity SelectNode::STEPread( std::istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId, const char * currSch ) {
     (void) elem_type; //unused
     if( !node )  {
-        cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n"
+        std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n"
              << _POC_ "\n";
-        cerr << "function:  SelectNode::STEPread \n" << "\n";
+        std::cerr << "function:  SelectNode::STEPread \n" << "\n";
         return SEVERITY_BUG;
     }
     err->severity( node->STEPread( in, err, insts, 0, addFileId, currSch ) );
@@ -214,7 +214,7 @@ const char * SelectNode::STEPwrite( std::string & s, const char * currSch ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void SelectNode::STEPwrite( ostream & out ) {
+void SelectNode::STEPwrite( std::ostream & out ) {
     if( !node || ( node->is_null() ) ) {  //  nothing
         out << "$";
     }

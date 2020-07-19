@@ -27,7 +27,7 @@ invAttrListNode * STEPinvAttrList::operator []( int n ) {
         }
     }
     if( !a ) {
-        cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
+        std::cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
         << __LINE__ << "\n" << _POC_ << "\n\n";
     }
     return a;

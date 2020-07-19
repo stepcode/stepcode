@@ -15,18 +15,18 @@
 #include <sc_memmgr.h>
 
 DebugLevel ErrorDescriptor::_debug_level = DEBUG_OFF;
-ostream  * ErrorDescriptor::_out = 0;
+std::ostream  * ErrorDescriptor::_out = 0;
 
 void
-ErrorDescriptor::PrintContents( ostream & out ) const {
-    out << "Severity: " << severityString() << endl;
+ErrorDescriptor::PrintContents( std::ostream & out ) const {
+    out << "Severity: " << severityString() << std::endl;
     if( !_userMsg.empty() ) {
-        out << "User message in parens:" << endl << "(";
-        out << UserMsg() << ")" << endl;
+        out << "User message in parens:" << std::endl << "(";
+        out << UserMsg() << ")" << std::endl;
     }
     if( !_detailMsg.empty() ) {
-        out << "Detailed message in parens:" << endl << "(";
-        out << DetailMsg() << ")" << endl;
+        out << "Detailed message in parens:" << std::endl << "(";
+        out << DetailMsg() << ")" << std::endl;
     }
 }
 
@@ -107,9 +107,9 @@ ErrorDescriptor::GetCorrSeverity( const char * s ) {
             return SEVERITY_MAX;
         }
     }
-    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+    std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
          << "\n" << _POC_ "\n";
-    cerr << "Calling ErrorDescriptor::GetCorrSeverity() with null string\n";
+    std::cerr << "Calling ErrorDescriptor::GetCorrSeverity() with null string\n";
     return SEVERITY_BUG;
 }
 

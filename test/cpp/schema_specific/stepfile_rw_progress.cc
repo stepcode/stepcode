@@ -65,7 +65,7 @@ int main( int argc, char * argv[] ) {
     float progress = 0.0;
 
     if( argc != 2 ) {
-        cerr << "Wrong number of args. Use: " << argv[0] << " file.stp" << endl;
+        std::cerr << "Wrong number of args. Use: " << argv[0] << " file.stp" << std::endl;
         exit( EXIT_FAILURE );
     }
 
@@ -79,14 +79,14 @@ int main( int argc, char * argv[] ) {
     r.detach();
     Severity readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
     if( progress < 55 ) { //55 is arbitrary. should be >50 due to how GetReadProgress() works.
-        cerr << "Error: Read progress (" << progress << ") never exceeded the threshold (55). Exiting." << endl;
+        std::cerr << "Error: Read progress (" << progress << ") never exceeded the threshold (55). Exiting." << std::endl;
         exit( EXIT_FAILURE );
     } else {
-        cout << "Read progress reached " << progress << "% - success." << endl;
+        std::cout << "Read progress reached " << progress << "% - success." << std::endl;
     }
     progress = 0;
 
@@ -96,14 +96,14 @@ int main( int argc, char * argv[] ) {
     w.detach();
     readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
     if( progress < 55 ) {
-        cerr << "Error: Write progress (" << progress << ") never exceeded the threshold (55). Exiting." << endl;
+        std::cerr << "Error: Write progress (" << progress << ") never exceeded the threshold (55). Exiting." << std::endl;
         exit( EXIT_FAILURE );
     } else {
-        cout << "Write progress reached " << progress << "% - success." << endl;
+        std::cout << "Write progress reached " << progress << "% - success." << std::endl;
     }
 
     exit( EXIT_SUCCESS );

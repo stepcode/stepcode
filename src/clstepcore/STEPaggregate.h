@@ -40,7 +40,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
 
     protected:
 
-        virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
+        virtual Severity ReadValue( std::istream & in, ErrorDescriptor * err,
                                     const TypeDescriptor * elem_type,
                                     InstMgrBase * insts, int addFileId = 0,
                                     int assignVal = 1, int ExchangeFileFormat = 1,
@@ -56,7 +56,7 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
 
-        virtual Severity AggrValidLevel( istream & in, ErrorDescriptor * err,
+        virtual Severity AggrValidLevel( std::istream & in, ErrorDescriptor * err,
                                          const TypeDescriptor * elem_type, InstMgrBase * insts,
                                          int optional, char * tokenList, int addFileId = 0,
                                          int clearError = 0 );
@@ -65,13 +65,13 @@ class SC_CORE_EXPORT STEPaggregate :  public SingleLinkList {
         virtual Severity StrToVal( const char * s, ErrorDescriptor * err = 0,
                                    const TypeDescriptor * elem_type = 0,
                                    InstMgrBase * insts = 0, int addFileId = 0 );
-        virtual Severity STEPread( istream & in, ErrorDescriptor * err,
+        virtual Severity STEPread( std::istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type = 0,
                                    InstMgrBase * insts = 0, int addFileId = 0,
                                    const char * currSch = 0 );
 // OUTPUT
         virtual const char * asStr( std::string & s ) const;
-        virtual void STEPwrite( ostream & out = cout, const char * = 0 ) const;
+        virtual void STEPwrite( std::ostream & out = std::cout, const char * = 0 ) const;
 
         virtual SingleLinkNode * NewNode();
         void AddNode( SingleLinkNode * );
@@ -98,15 +98,15 @@ public:
 
     //  INPUT
     virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
-    virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
+    virtual Severity StrToVal( std::istream & in, ErrorDescriptor * err );
 
     virtual Severity STEPread( const char * s, ErrorDescriptor * err );
-    virtual Severity STEPread( istream & in, ErrorDescriptor * err );
+    virtual Severity STEPread( std::istream & in, ErrorDescriptor * err );
 
     //  OUTPUT
     virtual const char * asStr( std::string & s );
     virtual const char * STEPwrite( std::string & s, const char * = 0 );
-    virtual void STEPwrite( ostream & out = cout );
+    virtual void STEPwrite( std::ostream & out = std::cout );
 };
 typedef  STEPnode  * STEPnodeH;
 

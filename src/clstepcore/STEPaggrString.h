@@ -34,15 +34,15 @@ public:
     SDAI_String  value;
     //  INPUT
     virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
-    virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
+    virtual Severity StrToVal( std::istream & in, ErrorDescriptor * err );
 
     virtual Severity STEPread( const char * s, ErrorDescriptor * err );
-    virtual Severity STEPread( istream & in, ErrorDescriptor * err );
+    virtual Severity STEPread( std::istream & in, ErrorDescriptor * err );
 
     //  OUTPUT
     virtual const char * asStr( std::string & s );
     virtual const char * STEPwrite( std::string & s, const char * = 0 );
-    virtual void    STEPwrite( ostream & out = cout );
+    virtual void    STEPwrite( std::ostream & out = std::cout );
 
     //  CONSTRUCTORS
     StringNode( StringNode & sn );

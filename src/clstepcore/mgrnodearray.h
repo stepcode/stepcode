@@ -81,7 +81,7 @@ class SC_CORE_EXPORT MgrNodeArraySorted : public GenNodeArray {
 
         virtual int Insert( GenericNode * gn );
         virtual int Insert( GenericNode * gn, int index ) {
-            cerr <<
+		std::cerr <<
                  "Call MgrNodeArraySorted::Insert() without index argument instead.\n"
                  << "index argument: " << index << " being ignored.\n";
             return Insert( gn );

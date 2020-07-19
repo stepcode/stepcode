@@ -46,7 +46,7 @@ ComplexCollect::ComplexCollect( Express express )
             continue;
         }
 #ifdef COMPLEX_INFO
-        cout << "Processing entity " << ENTITYget_name( ent ) << endl;
+        std::cout << "Processing entity " << ENTITYget_name( ent ) << std::endl;
 #endif
         if( ent->u.entity->subtypes != NULL ) {
             cl = new ComplexList( ent, this );
@@ -67,7 +67,7 @@ ComplexCollect::ComplexCollect( Express express )
     while( cl ) {
         if( cl->Dependent() ) {
 #ifdef COMPLEX_INFO
-            cout << "\nRemoving dependent entity " << cl->supertype() << endl;
+            std::cout << "\nRemoving dependent entity " << cl->supertype() << std::endl;
 #endif
             remove( cl );
             if( prev ) {
@@ -121,7 +121,7 @@ ComplexList::ComplexList( Entity ent, ComplexCollect * col )
     addSuper( ent );
     if( ( exp = ent->u.entity->subtype_expression ) != NULL ) {
 #ifdef COMPLEX_INFO
-        cout << "  Has a sub expression\n";
+        std::cout << "  Has a sub expression\n";
 #endif
         head->processSubExp( exp, ent, col );
         buildList();
@@ -144,7 +144,7 @@ ComplexList::ComplexList( Entity ent, ComplexCollect * col )
         // now so its supers will be able to find it.  But mark that this
         // does not stand on its own:
 #ifdef COMPLEX_INFO
-        cout << "  " << ENTITYget_name( ent ) << " is dependent\n";
+        std::cout << "  " << ENTITYget_name( ent ) << " is dependent\n";
 #endif
         dependent = TRUE;
     }
@@ -182,7 +182,7 @@ void MultList::processSubExp( Expression exp, Entity super,
         case entity_:
             ent = findEnt( super, exp->type->symbol.name );
 #ifdef COMPLEX_INFO
-            cout << "    Adding subtype " << ENTITYget_name( ent ) << endl;
+            std::cout << "    Adding subtype " << ENTITYget_name( ent ) << std::endl;
 #endif
             addSimpleAndSubs( ent, col );
             break;
@@ -205,12 +205,12 @@ void MultList::processSubExp( Expression exp, Entity super,
             } else {
                 if( oe->op_code == OP_AND ) {
 #ifdef COMPLEX_INFO
-                    cout << "    Processing AND\n";
+                    std::cout << "    Processing AND\n";
 #endif
                     mult = new AndList;
                 } else {
 #ifdef COMPLEX_INFO
-                    cout << "    Processing ANDOR\n";
+                    std::cout << "    Processing ANDOR\n";
 #endif
                     mult = new AndOrList;
                 }
@@ -221,7 +221,7 @@ void MultList::processSubExp( Expression exp, Entity super,
             break;
         case oneof_:
 #ifdef COMPLEX_INFO
-            cout << "    Processing ONEOF\n";
+            std::cout << "    Processing ONEOF\n";
 #endif
             mult = new OrList;
             appendList( mult );
@@ -290,8 +290,8 @@ void ComplexList::addImplicitSubs( Linked_List subs, ComplexCollect * col )
     if( !contains( &node ) ) {
         // We've found an implicit subtype.
 #ifdef COMPLEX_INFO
-        cout << "  Adding implicit subtype " << ENTITYget_name( subEnt )
-             << endl;
+        std::cout << "  Adding implicit subtype " << ENTITYget_name( subEnt )
+             << std::endl;
 #endif
         if( none_yet ) {
             // If this is the first one, replace the previous subtype list
@@ -342,12 +342,12 @@ void MultList::addSimpleAndSubs( Entity newEnt, ComplexCollect * col )
 
     // If newEnt has subtypes, find or build the corresponding ComplexList:
 #ifdef COMPLEX_INFO
-    cout << "    Subtype is a supertype ...\n";
+    std::cout << "    Subtype is a supertype ...\n";
 #endif
     if( newEnt->search_id == TRUE ) {
         // We've processed child already, find its ComplexList in col:
 #ifdef COMPLEX_INFO
-        cout << "      was built already ... finding it\n";
+        std::cout << "      was built already ... finding it\n";
 #endif
         sublist = col->find( ENTITYget_name( newEnt ) );
         // Make a copy and append to this:
@@ -361,7 +361,7 @@ void MultList::addSimpleAndSubs( Entity newEnt, ComplexCollect * col )
         // member of Collect, we'll be able to find it easily.  After all the
         // entities are processed, we'll remove this.
 #ifdef COMPLEX_INFO
-        cout << "      never built before ... building it now\n";
+        std::cout << "      never built before ... building it now\n";
 #endif
         sublist = new ComplexList( newEnt, col );
         col->insert( sublist );

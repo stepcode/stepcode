@@ -228,7 +228,7 @@ typedef SDAI_Application_instance * STEPentityPtr;
 typedef SDAI_Application_instance * STEPentityH;
 
 extern SC_CORE_EXPORT SDAI_Application_instance *
-ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
+ReadEntityRef( std::istream & in, ErrorDescriptor * err, const char * tokenList,
                InstMgrBase * instances, int addFileId );
 
 #define SdaiInteger SDAI_Integer

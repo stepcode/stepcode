@@ -706,7 +706,7 @@ int main( void ) {
 
     sfile->WriteExchangeFile( "outfile.stp" );
     if( sfile->Error().severity() < SEVERITY_USERMSG ) {
-        sfile->Error().PrintContents( cout );
+        sfile->Error().PrintContents( std::cout );
     }
 
     header_instances->DeleteInstances();

@@ -14,7 +14,7 @@
 #include <sc_memmgr.h>
 
 // Local function prototypes:
-static void writeheader( ostream &, int );
+static void writeheader( std::ostream &, int );
 
 void print_complex( ComplexCollect & collect, const char * filename )
 /*
@@ -27,9 +27,9 @@ void print_complex( ComplexCollect & collect, const char * filename )
     ComplexList * cl;
     if( collect.clists ) {
         // If there's something in this collect, print it out:
-        cout << "\nHere's everything:\n";
+        std::cout << "\nHere's everything:\n";
         for( cl = collect.clists; cl != NULL; cl = cl->next ) {
-            cout << *cl << endl;
+            std::cout << *cl << std::endl;
         }
     }
 #endif
@@ -43,14 +43,14 @@ void ComplexCollect::write( const char * fname )
  * ComplexList structures contained in this.
  */
 {
-    ofstream complex;
+    std::ofstream complex;
     ComplexList * clist;
     int maxlevel, listmax;
 
     // Open the stream:
     complex.open( fname );
     if( !complex ) {
-        cerr << "ERROR: Could not create output file " << fname << endl;
+        std::cerr << "ERROR: Could not create output file " << fname << std::endl;
         // yikes this is pretty drastic, Sun C++ doesn't like this anyway DAS
 //  exit(-1);
         return;
@@ -60,8 +60,8 @@ void ComplexCollect::write( const char * fname )
     // If there's nothing in this, make function a stub (very little was
     // printed in writeheader() also):
     if( clists == NULL ) {
-        complex << "    return 0;" << endl;
-        complex << "}" << endl;
+        complex << "    return 0;" << std::endl;
+        complex << "}" << std::endl;
         complex.close();
         return;
     }
@@ -89,7 +89,7 @@ void ComplexCollect::write( const char * fname )
     complex << "    cc = new ComplexCollect;\n";
     clist = clists;
     while( clist ) {
-        complex << endl;
+        complex << std::endl;
         complex << "    // ComplexList with supertype \"" << clist->supertype()
                 << "\":\n";
         clist->write( complex );
@@ -99,11 +99,11 @@ void ComplexCollect::write( const char * fname )
 
     // Close up:
     complex << "\n    return cc;\n";
-    complex << "}" << endl;
+    complex << "}" << std::endl;
     complex.close();
 }
 
-static void writeheader( ostream & os, int noLists )
+static void writeheader( std::ostream & os, int noLists )
 /*
  * Writes the header for the complex file.
  */
@@ -111,38 +111,38 @@ static void writeheader( ostream & os, int noLists )
     // If there are no ComplexLists in the ComplexCollect, make this function
     // a stub:
     if( noLists ) {
-        os << "/*" << endl
+        os << "/*" << std::endl
            << " * This file normally contains instantiation statements to\n"
            << " * create complex support structures.  For the current EXPRESS\n"
            << " * file, however, there are no complex entities, so this\n"
            << " * function is a stub.\n"
-           << " */" << endl << endl;
+           << " */" << std::endl << std::endl;
         os << "#include \"complexSupport.h\"\n#include \"sc_memmgr.h\"\n\n";
-        os << "ComplexCollect *gencomplex()" << endl;
-        os << "{" << endl;
+        os << "ComplexCollect *gencomplex()" << std::endl;
+        os << "{" << std::endl;
         return;
     }
 
     // Otherwise, write file and function comments:
-    os << "/*" << endl
+    os << "/*" << std::endl
        << " * This file contains instantiation statements to create complex\n"
        << " * support structures.  The structures will be used in the SCL to\n"
        << " * validate user requests to instantiate complex entities.\n"
-       << " */" << endl << endl;
+       << " */" << std::endl << std::endl;
     os << "#include \"complexSupport.h\"\n#include \"sc_memmgr.h\"\n\n";
-    os << "ComplexCollect *gencomplex()" << endl;
-    os << "    /*" << endl
+    os << "ComplexCollect *gencomplex()" << std::endl;
+    os << "    /*" << std::endl
        << "     * This function contains instantiation statements for all the\n"
        << "     * ComplexLists and EntLists in a ComplexCollect.  The instan-\n"
        << "     * stiation statements were generated in order of lower to\n"
        << "     * higher, and last to first to simplify creating some of the\n"
        << "     * links between structures.  Because of this, the code is not\n"
        << "     * very readable, but does the trick.\n"
-       << "     */" << endl;
-    os << "{" << endl;
+       << "     */" << std::endl;
+    os << "{" << std::endl;
 }
 
-void ComplexList::write( ostream & os )
+void ComplexList::write( std::ostream & os )
 /*
  * Generates C++ code in os which will create an instantiation of a CList
  * which will recreate this.
@@ -154,7 +154,7 @@ void ComplexList::write( ostream & os )
     os << "    cl->head->setLevel( 0 );\n";
 }
 
-void MultList::write( ostream & os )
+void MultList::write( std::ostream & os )
 /*
  * Writes to os code to instantiate a replica of this.  Does so by first
  * recursing to replicate this's children, and then instantiating this.
@@ -197,7 +197,7 @@ void MultList::write( ostream & os )
     // The above line will set node's childList and numchidren count.
 }
 
-void SimpleList::write( ostream & os )
+void SimpleList::write( std::ostream & os )
 /*
  * Writes to os a statement to instantiate this.
  */

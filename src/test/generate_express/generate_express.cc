@@ -47,12 +47,12 @@ main() {
         str.Append( StrToLower( schema->Name(), tmp ) );
         str.Append( ".exp" );
         efile = new ofstream( str.c_str() );
-        cout << "Generating: " << str << endl;
+        std::cout << "Generating: " << str << std::endl;
         schema->GenerateExpress( *efile );
         efile->close();
         delete efile;
 
         schema = registry->NextSchema();
     }
-    cout << "Done!" << endl;
+    std::cout << "Done!" << std::endl;
 }

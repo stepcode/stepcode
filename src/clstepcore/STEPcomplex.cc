@@ -9,7 +9,7 @@
 #include "sc_memmgr.h"
 
 extern const char *
-ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );
+ReadStdKeyword( std::istream & in, std::string & buf, int skipInitWS );
 
 
 STEPcomplex::STEPcomplex( Registry * registry, int fileid )
@@ -86,7 +86,7 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
             prev = eptr;
         } else {
             invalid = true;
-            cerr << "ERROR: Invalid entity \"" << eptr->Name()
+            std::cerr << "ERROR: Invalid entity \"" << eptr->Name()
                  << "\" found in complex entity.\n";
             if( !prev ) {
                 // if we need to delete the first node,
@@ -128,14 +128,14 @@ void STEPcomplex::Initialize( const char ** names, const char * schnm ) {
         _error.severity( SEVERITY_WARNING );
         _error.UserMsg(
             "Entity combination does not represent a legal complex entity" );
-        cerr << "ERROR: Could not create instance of the following complex"
-             << " entity:" << endl;
+        std::cerr << "ERROR: Could not create instance of the following complex"
+             << " entity:" << std::endl;
         eptr = ents;
         while( eptr ) {
-            cerr << *eptr << endl;
+            std::cerr << *eptr << std::endl;
             eptr = eptr->next;
         }
-        cerr << endl;
+        std::cerr << std::endl;
         return;
     }
 
@@ -262,7 +262,7 @@ void STEPcomplex::AddEntityPart( const char * name ) {
             scomplex->head = this;
             AppendEntity( scomplex );
         } else {
-            cout << scomplex->_error.DetailMsg() << endl;
+            std::cout << scomplex->_error.DetailMsg() << std::endl;
             delete scomplex;
         }
     }
@@ -276,7 +276,7 @@ STEPcomplex * STEPcomplex::EntityPart( const char * name, const char * currSch )
                 return scomp;
             }
         } else {
-            cout << "Bug in STEPcomplex::EntityPart(): entity part has "
+            std::cout << "Bug in STEPcomplex::EntityPart(): entity part has "
                  << "no EntityDescriptor\n";
         }
         scomp = scomp->sc;
@@ -308,7 +308,7 @@ Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
     (void) error; //unused
     (void) im;
     (void) clearError;
-    cout << "STEPcomplex::ValidLevel() not implemented.\n";
+    std::cout << "STEPcomplex::ValidLevel() not implemented.\n";
     return SEVERITY_NULL;
 }
 
@@ -322,7 +322,7 @@ void STEPcomplex::AppendEntity( STEPcomplex * stepc ) {
 
 // READ
 Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * instance_set,
-                                istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
+                                std::istream & in, const char * currSch, bool /*useTechCor*/, bool /*strict*/ ) {
     char c;
     std::string typeNm;
     STEPcomplex * stepc = 0;
@@ -336,20 +336,20 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
         stepc = stepc->sc;
     }
 
-    in >> ws;
+    in >> std::ws;
     in.get( c );
     if( c == '(' ) { // opening paren for subsuperRecord
-        in >> ws;
+        in >> std::ws;
         c = in.peek();
         while( c != ')' ) {
             typeNm.clear();
-            in >> ws;
+            in >> std::ws;
             ReadStdKeyword( in, typeNm, 1 ); // read the type name
-            in >> ws;
+            in >> std::ws;
             c = in.peek();
             if( c != '(' ) {
                 _error.AppendToDetailMsg( "Missing open paren before entity attr values.\n" );
-                cout << "ERROR: missing open paren\n";
+                std::cout << "ERROR: missing open paren\n";
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
                 STEPread_error( c, 0, in, currSch );
                 return _error.severity();
@@ -360,17 +360,17 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
                 //WARNING need to seek to the correct position when this is done... how?
                 stepc->SDAI_Application_instance::STEPread( id, addFileId, instance_set, in, currSch );
             } else {
-                cout << "ERROR: complex entity part \"" << typeNm << "\" does not exist." << endl;;
+                std::cout << "ERROR: complex entity part \"" << typeNm << "\" does not exist." << std::endl;;
                 _error.AppendToDetailMsg( "Complex entity part of instance does not exist.\n" );
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
                 STEPread_error( c, 0, in, currSch );
                 return _error.severity();
             }
-            in >> ws;
+            in >> std::ws;
             c = in.peek();
         }
         if( c != ')' ) {
-            cout << "ERROR: missing ending paren for complex entity instance." << endl;
+            std::cout << "ERROR: missing ending paren for complex entity instance." << std::endl;
         } else {
             in.get( c );    // read the closing paren
         }
@@ -387,7 +387,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
 #ifdef buildwhileread
 // READ
 Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * instance_set,
-                                istream & in, const char * currSch ) {
+                                std::istream & in, const char * currSch ) {
     ClearError( 1 );
     STEPfile_id = id;
 
@@ -398,25 +398,25 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
     }
 
     char c;
-    in >> ws;
+    in >> std::ws;
     in.get( c );
     if( c == '(' ) {
         std::string s;
-        in >> ws;
+        in >> std::ws;
         in.get( c );
         while( in && ( c != '(' ) && !isspace( c ) ) { // get the entity name
             s.Append( c );
             in.get( c );
         }
         if( isspace( c ) ) {
-            in >> ws;
+            in >> std::ws;
             in.get( c );
         }
 
         if( c != '(' ) {
             _error.AppendToDetailMsg(
                 "Missing open paren before entity attr values.\n" );
-            cout << "ERROR: missing open paren\n";
+            std::cout << "ERROR: missing open paren\n";
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
             STEPread_error( c, 0, in, currSch );
             return _error.severity();
@@ -424,12 +424,12 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
             in.putback( c );
         }
 
-        cout << s << endl;
+        std::cout << s << std::endl;
         BuildAttrs( s.c_str() );
         SDAI_Application_instance::STEPread( id, addFileId, instance_set,
                                              in, currSch );
 
-        in >> ws;
+        in >> std::ws;
         in.get( c );
         while( c != ')' ) {
             s.set_null();
@@ -438,13 +438,13 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
                 in.get( c );
             }
             if( isspace( c ) ) {
-                in >> ws;
+                in >> std::ws;
                 in.get( c );
             }
             if( c != '(' ) {
                 _error.AppendToDetailMsg(
                     "Missing open paren before entity attr values.\n" );
-                cout << "ERROR: missing open paren\n";
+                std::cout << "ERROR: missing open paren\n";
                 _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
                 STEPread_error( c, 0, in, currSch );
                 return _error.severity();
@@ -452,7 +452,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
                 in.putback( c );
             }
 
-            cout << s << endl; // diagnostics DAS
+            std::cout << s << std::endl; // diagnostics DAS
 
             STEPcomplex * stepc = new STEPcomplex( _registry );
             AppendEntity( stepc );
@@ -460,7 +460,7 @@ Severity STEPcomplex::STEPread( int id, int addFileId, class InstMgrBase * insta
             stepc->SDAI_Application_instance::STEPread( id, addFileId,
                     instance_set, in,
                     currSch );
-            in >> ws;
+            in >> std::ws;
             in.get( c );
         }
     }
@@ -571,14 +571,14 @@ void STEPcomplex::BuildAttrs( const char * s ) {
     }
 }
 
-void STEPcomplex::STEPread_error( char c, int index, istream & in, const char * schnm ) {
+void STEPcomplex::STEPread_error( char c, int index, std::istream & in, const char * schnm ) {
     (void) schnm; //unused
-    cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << endl;
-    streampos p = in.tellg();
+    std::cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << std::endl;
+    std::streampos p = in.tellg();
     std::string q, r;
     getline( in, q );
     getline( in, r );
-    cout << "Remainder of this line:" << endl << c << q << endl << "Next line:" << endl << r << endl;
+    std::cout << "Remainder of this line:" << std::endl << c << q << std::endl << "Next line:" << std::endl << r << std::endl;
     in.seekg( p );
 }
 
@@ -590,7 +590,7 @@ void STEPcomplex::STEPread_error( char c, int index, istream & in, const char * 
 ** alphabetical order.  The nodes are sorted alphabetically according to their
 ** original names but not according to their renamed names (DAR 6/5/97).
 */
-void STEPcomplex::STEPwrite( ostream & out, const char * currSch, int writeComment ) {
+void STEPcomplex::STEPwrite( std::ostream & out, const char * currSch, int writeComment ) {
     if( writeComment && !p21Comment.empty() ) {
         out << p21Comment;
     }
@@ -602,11 +602,11 @@ void STEPcomplex::STEPwrite( ostream & out, const char * currSch, int writeComme
 const char * STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
     buf.clear();
 
-    stringstream ss;
+    std::stringstream ss;
     ss << "#" << STEPfile_id << "=(";
     WriteExtMapEntities( ss, currSch );
     ss << ");";
-    ss << ends;
+    ss << std::ends;
 
     buf.append( ss.str() );
 
@@ -614,7 +614,7 @@ const char * STEPcomplex::STEPwrite( std::string & buf, const char * currSch ) {
 }
 
 /** \copydoc STEPcomplex::STEPwrite */
-void STEPcomplex::WriteExtMapEntities( ostream & out, const char * currSch ) {
+void STEPcomplex::WriteExtMapEntities( std::ostream & out, const char * currSch ) {
     std::string tmp;
     out << StrToUpper( EntityName( currSch ), tmp );
     out << "(";
@@ -660,7 +660,7 @@ const char * STEPcomplex::WriteExtMapEntities( std::string & buf, const char * c
 void STEPcomplex::CopyAs( SDAI_Application_instance * se ) {
     if( !se->IsComplex() ) {
         char errStr[BUFSIZ];
-        cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "
+        std::cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "
              << __FILE__ <<  __LINE__ << "\n" << _POC_ "\n";
         sprintf( errStr,
                  "STEPcomplex::CopyAs(): %s - entity #%d.\n",
@@ -701,7 +701,7 @@ SDAI_Application_instance * STEPcomplex::Replicate() {
         nameList[i] = ( std::string * )0;
         if( i == 63 ) {
             char errStr[BUFSIZ];
-            cerr << "STEPcomplex::Replicate() name buffer too small:  "
+            std::cerr << "STEPcomplex::Replicate() name buffer too small:  "
                  << __FILE__ <<  __LINE__ << "\n" << _POC_ "\n";
             sprintf( errStr,
                      "STEPcomplex::Replicate(): %s - entity #%d.\n",

@@ -106,7 +106,7 @@ void SDAI_Application_instance::InitIAttrs() {
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
     char errStr[BUFSIZ];
     if( IsComplex() ) {
-        cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
+        std::cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
         sprintf( errStr,
                  "SDAI_Application_instance::Replicate(): %s - entity #%d.\n",
@@ -147,7 +147,7 @@ void SDAI_Application_instance::PrependP21Comment( const std::string & s ) {
     p21Comment.insert( 0, s );
 }
 
-void SDAI_Application_instance::STEPwrite_reference( ostream & out ) {
+void SDAI_Application_instance::STEPwrite_reference( std::ostream & out ) {
     out << "#" << STEPfile_id;
 }
 
@@ -328,7 +328,7 @@ void SDAI_Application_instance::ClearError( int clearAttrs ) {
 ** Side Effects:  writes out the SCOPE section for an entity
 ** Status:  stub FIXME
 *******************************************************************/
-void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
+void SDAI_Application_instance::beginSTEPwrite( std::ostream & out ) {
     out << "begin STEPwrite ... \n" ;
     out.flush();
 
@@ -349,7 +349,7 @@ void SDAI_Application_instance::beginSTEPwrite( ostream & out ) {
 ** Problems:  does not print out the SCOPE section of an entity
 **
 *******************************************************************/
-void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
+void SDAI_Application_instance::STEPwrite( std::ostream & out, const char * currSch,
         int writeComments ) {
     std::string tmp;
     if( writeComments && !p21Comment.empty() ) {
@@ -370,12 +370,12 @@ void SDAI_Application_instance::STEPwrite( ostream & out, const char * currSch,
     out << ");\n";
 }
 
-void SDAI_Application_instance::endSTEPwrite( ostream & out ) {
+void SDAI_Application_instance::endSTEPwrite( std::ostream & out ) {
     out << "end STEPwrite ... \n" ;
     out.flush();
 }
 
-void SDAI_Application_instance::WriteValuePairs( ostream & out,
+void SDAI_Application_instance::WriteValuePairs( std::ostream & out,
         const char * currSch,
         int writeComments, int mixedCase ) {
     std::string s, tmp, tmp2;
@@ -387,10 +387,10 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
     if( eDesc ) {
         if( mixedCase ) {
             out << "#" << STEPfile_id << " "
-                << eDesc->QualifiedName( s ) << endl;
+                << eDesc->QualifiedName( s ) << std::endl;
         } else {
             out << "#" << STEPfile_id << " "
-                << StrToUpper( eDesc->QualifiedName( s ), tmp ) << endl;
+                << StrToUpper( eDesc->QualifiedName( s ), tmp ) << std::endl;
         }
     }
 
@@ -408,10 +408,10 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
                     << "." << StrToUpper( attributes[i].aDesc->Name(), tmp2 ) << " ";
             }
             ( attributes[i] ).STEPwrite( out, currSch );
-            out << endl;
+            out << std::endl;
         }
     }
-    out << endl;
+    out << std::endl;
 }
 
 
@@ -463,7 +463,7 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
  ** instance. i.e. a close quote followed by a semicolon optionally
  ** having whitespace between them.
  ******************************************************************/
-void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, const char * schnm ) {
+void SDAI_Application_instance::STEPread_error( char c, int i, std::istream & in, const char * schnm ) {
     (void) in;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
@@ -513,7 +513,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
  ** Status:
  ******************************************************************/
 Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
-        InstMgrBase * instance_set, istream & in,
+        InstMgrBase * instance_set, std::istream & in,
         const char * currSch, bool useTechCor, bool strict ) {
     STEPfile_id = id;
     char c = '\0';
@@ -524,7 +524,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
     ClearError( 1 );
 
-    in >> ws;
+    in >> std::ws;
     in >> c; // read the open paren
     if( c != '(' ) {
         PrependEntityErrMsg();
@@ -545,11 +545,11 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
     for( i = 0 ; i < n; i++ ) {
         ReadTokenSeparator( in, &p21Comment );
         if( attributes[i].aDesc->AttrType() == AttrType_Redefining ) {
-            in >> ws;
+            in >> std::ws;
             c = in.peek();
             if( !useTechCor ) { // i.e. use pre-technical corrigendum encoding
                 in >> c; // read what should be the '*'
-                in >> ws;
+                in >> std::ws;
                 if( c == '*' ) {
                     in >> c; // read the delimiter i.e. ',' or ')'
                 } else {
@@ -571,9 +571,9 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                 if( c == ')' ) { // assume you are at the end so read last char
                     in >> c;
                 }
-                cout << "Entity #" << STEPfile_id
+                std::cout << "Entity #" << STEPfile_id
                      << " skipping redefined attribute "
-                     << attributes[i].aDesc->Name() << endl << endl << flush;
+                     << attributes[i].aDesc->Name() << std::endl << std::endl << std::flush;
             }
             // increment counter to read following attr since these attrs
             // aren't written or read => there won't be a delimiter either
@@ -650,7 +650,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
             tmp += c;
         }
         if( in.good() && ( c == ')' ) ) {
-            in >> ws; // skip whitespace
+            in >> std::ws; // skip whitespace
             in.get( c );
             tmp += c;
             if( c == ';' ) {
@@ -666,13 +666,13 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 }
 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
-SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
+SDAI_Application_instance * ReadEntityRef( std::istream & in, ErrorDescriptor * err, const char * tokenList,
         InstMgrBase * instances, int addFileId ) {
     char c;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
-    in >> ws;
+    in >> std::ws;
     in >> c;
     switch( c ) {
         case '@':
@@ -695,7 +695,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
 
                 id += addFileId;
                 if( !instances ) {
-                    cerr << "Internal error:  " << __FILE__ <<  __LINE__
+                    std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                          << "\n" << _POC_ "\n";
                     sprintf( errStr,
                              "STEPread_reference(): %s - entity #%d %s.\n",
@@ -717,7 +717,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                     if( inst ) {
                         return ( inst );
                     } else {
-                        cerr << "Internal error:  " << __FILE__ <<  __LINE__
+                        std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
                              << "\n" << _POC_ "\n";
                         sprintf( errStr,
                                  "STEPread_reference(): %s - entity #%d %s.\n",
@@ -751,7 +751,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
 /// read an entity reference and return a pointer to the SDAI_Application_instance
 SDAI_Application_instance * ReadEntityRef( const char * s, ErrorDescriptor * err, const char * tokenList,
         InstMgrBase * instances, int addFileId ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return ReadEntityRef( in, err, tokenList, instances, addFileId );
 }
 
@@ -771,7 +771,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                  "missing or invalid EntityDescriptor\n" );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
-        cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
+        std::cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
              << "\n" << _POC_ "\n";
         return SEVERITY_BUG;
     }
@@ -782,7 +782,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                  "for SDAI_Application_instance argument." );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
-        cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
+        std::cerr << "Internal error:  " << __FILE__ << ":" <<  __LINE__
              << "\n" << _POC_ "\n";
         return SEVERITY_BUG;
     }
@@ -819,7 +819,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                  se->STEPfile_id, "missing or invalid EntityDescriptor\n" );
         err->AppendToUserMsg( messageBuf );
         err->AppendToDetailMsg( messageBuf );
-        cerr << "Internal error:  " << __FILE__ <<  __LINE__
+        std::cerr << "Internal error:  " << __FILE__ <<  __LINE__
              << "\n" << _POC_ "\n";
         return SEVERITY_BUG;
     }

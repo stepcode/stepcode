@@ -16,7 +16,7 @@
 int main( int argc, char * argv[] ) {
 
     if( argc != 2 ) {
-        cerr << "Wrong number of args. Use: " << argv[0] << " file.stp" << endl;
+        std::cerr << "Wrong number of args. Use: " << argv[0] << " file.stp" << std::endl;
         exit( 1 );
     }
 
@@ -27,7 +27,7 @@ int main( int argc, char * argv[] ) {
     sfile.ReadExchangeFile( argv[1] );
     Severity readSev = sfile.Error().severity();
     if( readSev != SEVERITY_NULL ) {
-        sfile.Error().PrintContents( cout );
+        sfile.Error().PrintContents( std::cout );
         exit( EXIT_FAILURE );
     }
 
@@ -41,19 +41,19 @@ int main( int argc, char * argv[] ) {
     int descAggrCount = 0;
     while( attrDesc != 0 ) {
         if( ( attrDesc->NonRefType() == ARRAY_TYPE ) && ( attrDesc->AggrElemType() == sdaiINTEGER ) ) {
-            cout << "Array attribute: " << attrDesc->Name();
+            std::cout << "Array attribute: " << attrDesc->Name();
             const AggrTypeDescriptor * atd = ( const AggrTypeDescriptor * ) attrDesc->DomainType();
             if( !( atd->Bound1Type() == bound_constant ) || !( atd->Bound2Type() == bound_runtime ) ) {
-                cerr << "Invalid bounds. Exiting." << endl;
+                std::cerr << "Invalid bounds. Exiting." << std::endl;
                 exit( EXIT_FAILURE );
             }
-            cout << " -- bound 1 is a constant (" << atd->Bound1() << "). bound 2 depends upon the instance." << endl;
+            std::cout << " -- bound 1 is a constant (" << atd->Bound1() << "). bound 2 depends upon the instance." << std::endl;
             descAggrCount++;
         }
         attrDesc = aditr.NextAttrDesc();
     }
     if( descAggrCount != 1 ) {
-        cerr << "Expected 1 aggregate attribute descriptor, found " << descAggrCount << ". Exiting." << endl;
+        std::cerr << "Expected 1 aggregate attribute descriptor, found " << descAggrCount << ". Exiting." << std::endl;
         exit( EXIT_FAILURE );
     }
 
@@ -69,13 +69,13 @@ int main( int argc, char * argv[] ) {
         STEPattributeList & sal = ent->attributes;
         int id = ent->StepFileId();
 
-        cout << "Ent #" << id << " - ";
+        std::cout << "Ent #" << id << " - ";
         if( cnt != 3 ) {
-            cerr << "Expected 3 attributes, found " << cnt << ". Exiting." << endl;
+            std::cerr << "Expected 3 attributes, found " << cnt << ". Exiting." << std::endl;
             exit( EXIT_FAILURE );
         }
         if( id > 2 ) {
-            cerr << "Expected 2 instances, found " << cnt << ". Exiting." << endl;
+            std::cerr << "Expected 2 instances, found " << cnt << ". Exiting." << std::endl;
             exit( EXIT_FAILURE );
         }
         //loop over the attributes
@@ -83,11 +83,11 @@ int main( int argc, char * argv[] ) {
             const AttrDescriptor * ad = sal[i].getADesc();
             if( ( ad->NonRefType() == ARRAY_TYPE ) && ( ad->AggrElemType() == sdaiINTEGER ) ) {
                 b2 = ( ( AggrTypeDescriptor * ) ad->DomainType() )->Bound2Runtime( ent );
-                cout << "bound 2: " << b2 << " values: ";
+                std::cout << "bound 2: " << b2 << " values: ";
                 instAggrCnt++;
                 if( ( ( id == 1 ) && ( b2 != 3 ) ) || ( ( id == 2 ) && ( b2 != 5 ) ) ) {
-                    cerr << "Instance " << id << ": value " << b2 << " is invalid for bound 2.";
-                    cerr << " Expecting 3 for instance #1 or 5 for #2." << endl;
+                    std::cerr << "Instance " << id << ": value " << b2 << " is invalid for bound 2.";
+                    std::cerr << " Expecting 3 for instance #1 or 5 for #2." << std::endl;
                     exit( EXIT_FAILURE );
                 }
             }
@@ -98,21 +98,21 @@ int main( int argc, char * argv[] ) {
         IntNode * aggrNode = ( IntNode * ) vertex_counts->GetHead();
         while( aggrNode != 0 ) {
             if( node >= b2 ) {
-                cerr << "Instance " << id << ": Number of values exceeds upper bound. Exiting." << endl;
+                std::cerr << "Instance " << id << ": Number of values exceeds upper bound. Exiting." << std::endl;
                 exit( EXIT_FAILURE );
             }
-            cout << aggrNode->value << " ";
+            std::cout << aggrNode->value << " ";
             if( aggrValues[id - 1][node] != aggrNode->value ) {
-                cerr << "Instance " << id << ": aggregate value " << aggrNode->value << " at index " << node << " is incorrect. Exiting." << endl;
+                std::cerr << "Instance " << id << ": aggregate value " << aggrNode->value << " at index " << node << " is incorrect. Exiting." << std::endl;
                 exit( EXIT_FAILURE );
             }
             aggrNode = ( IntNode * ) aggrNode->NextNode();
             node++;
         }
-        cout << endl;
+        std::cout << std::endl;
 
         if( instAggrCnt != 1 ) {
-            cerr << "Expected 1 aggregate attribute in this instance, found " << instAggrCnt << ". Exiting." << endl;
+            std::cerr << "Expected 1 aggregate attribute in this instance, found " << instAggrCnt << ". Exiting." << std::endl;
             exit( EXIT_FAILURE );
         }
 

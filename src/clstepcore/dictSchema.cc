@@ -56,46 +56,46 @@ void Schema::AddProcedure( const std::string & p ) {
 }
 
 /// the whole schema
-void Schema::GenerateExpress( ostream & out ) const {
+void Schema::GenerateExpress( std::ostream & out ) const {
     std::string tmp;
-    out << endl << "(* Generating: " << Name() << " *)" << endl;
-    out << endl << "SCHEMA " << StrToLower( Name(), tmp ) << ";" << endl;
+    out << std::endl << "(* Generating: " << Name() << " *)" << std::endl;
+    out << std::endl << "SCHEMA " << StrToLower( Name(), tmp ) << ";" << std::endl;
     GenerateUseRefExpress( out );
     // print TYPE definitions
-    out << endl << "(* ////////////// TYPE Definitions *)" << endl;
+    out << std::endl << "(* ////////////// TYPE Definitions *)" << std::endl;
     GenerateTypesExpress( out );
 
     // print Entity definitions
-    out << endl << "(* ////////////// ENTITY Definitions *)" << endl;
+    out << std::endl << "(* ////////////// ENTITY Definitions *)" << std::endl;
     GenerateEntitiesExpress( out );
 
     int count, i;
     if( _global_rules != 0 ) {
-        out << endl << "(* *************RULES************* *)" << endl;
+        out << std::endl << "(* *************RULES************* *)" << std::endl;
         count = _global_rules->Count();
         for( i = 0; i <  count; i++ ) {
-            out << endl << ( *_global_rules )[i]->rule_text_() << endl;
+            out << std::endl << ( *_global_rules )[i]->rule_text_() << std::endl;
         }
     }
     if( !_function_list.empty() ) {
-        out << "(* *************FUNCTIONS************* *)" << endl;
+        out << "(* *************FUNCTIONS************* *)" << std::endl;
         count = _function_list.size();
         for( i = 0; i <  count; i++ ) {
-            out << endl << _function_list[i] << endl;
+            out << std::endl << _function_list[i] << std::endl;
         }
     }
     if( !_procedure_list.empty() ) {
-        out << "(* *************PROCEDURES************* *)" << endl;
+        out << "(* *************PROCEDURES************* *)" << std::endl;
         count = _procedure_list.size();
         for( i = 0; i <  count; i++ ) {
-            out << endl << _procedure_list[i] << endl;
+            out << std::endl << _procedure_list[i] << std::endl;
         }
     }
-    out << endl << "END_SCHEMA;" << endl;
+    out << std::endl << "END_SCHEMA;" << std::endl;
 }
 
 /// USE, REFERENCE definitions
-void Schema::GenerateUseRefExpress( ostream & out ) const {
+void Schema::GenerateUseRefExpress( std::ostream & out ) const {
     int i, k;
     int intf_count;
     int count;
@@ -114,8 +114,8 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
             count = is->explicit_items_()->Count();
 
             if( count > 0 ) {
-                out << endl << "    USE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
+                out << std::endl << "    USE FROM "
+                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << std::endl;
                 out << "       (";
 
                 first_time = 1;
@@ -123,7 +123,7 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                     if( first_time ) {
                         first_time = 0;
                     } else {
-                        out << "," << endl << "\t";
+                        out << "," << std::endl << "\t";
                     }
                     if( !( ( *( is->explicit_items_() ) )[k]->original_id_().size() ) ) {
                         // not renamed
@@ -133,11 +133,11 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                         out << " AS " << ( *( is->explicit_items_() ) )[k]->new_id_();
                     }
                 }
-                out << ");" << endl;
+                out << ");" << std::endl;
             } else if( is->all_objects_() ) {
-                out << endl << "    USE FROM "
+                out << std::endl << "    USE FROM "
                 << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
-                << endl;
+                << std::endl;
             }
         }
     }
@@ -154,8 +154,8 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
 
 
             if( count > 0 ) {
-                out << endl << "    REFERENCE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
+                out << std::endl << "    REFERENCE FROM "
+                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << std::endl;
                 out << "       (";
 
                 first_time = 1;
@@ -163,7 +163,7 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                     if( first_time ) {
                         first_time = 0;
                     } else {
-                        out << "," << endl << "\t";
+                        out << "," << std::endl << "\t";
                     }
                     if( ( !( *( is->explicit_items_() ) )[k]->original_id_().size() ) ) {
                         // not renamed
@@ -174,38 +174,38 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                         << ( *( is->explicit_items_() ) )[k]->new_id_();
                     }
                 }
-                out << ");" << endl;
+                out << ");" << std::endl;
             } else if( is->all_objects_() ) {
-                out << endl << "    REFERENCE FROM "
+                out << std::endl << "    REFERENCE FROM "
                 << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
-                << endl;
+                << std::endl;
             }
         }
     }
 }
 
 /// TYPE definitions
-void Schema::GenerateTypesExpress( ostream & out ) const {
+void Schema::GenerateTypesExpress( std::ostream & out ) const {
     TypeDescItr tdi( _typeList );
     tdi.ResetItr();
     std::string tmp;
 
     const TypeDescriptor * td = tdi.NextTypeDesc();
     while( td ) {
-        out << endl << td->GenerateExpress( tmp );
+        out << std::endl << td->GenerateExpress( tmp );
         td = tdi.NextTypeDesc();
     }
 }
 
 /// Entity definitions
-void Schema::GenerateEntitiesExpress( ostream & out ) const {
+void Schema::GenerateEntitiesExpress( std::ostream & out ) const {
     EntityDescItr edi( _entList );
     edi.ResetItr();
     std::string tmp;
 
     const EntityDescriptor * ed = edi.NextEntityDesc();
     while( ed ) {
-        out << endl << ed->GenerateExpress( tmp );
+        out << std::endl << ed->GenerateExpress( tmp );
         ed = edi.NextEntityDesc();
     }
 }

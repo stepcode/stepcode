@@ -58,16 +58,16 @@ Severity GenericAggrNode::StrToVal( const char * s, ErrorDescriptor * err ) {
 }
 
 //TODO
-Severity GenericAggrNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity GenericAggrNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
 Severity GenericAggrNode::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * ) s );
+    std::istringstream in( ( char * ) s );
     return value.STEPread( in, err );
 }
 
-Severity GenericAggrNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity GenericAggrNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
@@ -82,6 +82,6 @@ const char * GenericAggrNode::STEPwrite( std::string & s, const char * currSch )
     return value.STEPwrite( s );
 }
 
-void GenericAggrNode::STEPwrite( ostream & out ) {
+void GenericAggrNode::STEPwrite( std::ostream & out ) {
     value.STEPwrite( out );
 }

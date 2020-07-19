@@ -41,7 +41,7 @@ const char * SDAI_Binary::c_str( void ) const {
     return content.c_str();
 }
 
-void SDAI_Binary::STEPwrite( ostream & out ) const {
+void SDAI_Binary::STEPwrite( std::ostream & out ) const {
     const char * str = 0;
     if( empty() ) {
         out << "$";
@@ -72,7 +72,7 @@ const char * SDAI_Binary::STEPwrite( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_Binary::ReadBinary( std::istream & in, ErrorDescriptor * err, int AssignVal,
                                   int needDelims ) {
     if( AssignVal ) {
         clear();
@@ -82,7 +82,7 @@ Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int Assig
     char messageBuf[512];
     messageBuf[0] = '\0';
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     if( in.good() ) {
         char c;
@@ -143,19 +143,19 @@ Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int Assig
 }
 
 Severity SDAI_Binary::StrToVal( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s ); // sz defaults to length of s
+    std::istringstream in( ( char * )s ); // sz defaults to length of s
     return ReadBinary( in, err, 1, 0 );
 }
 
 /////////////////////////////////////////////////
 
 /// reads a binary in exchange file format delimited by double quotes
-Severity SDAI_Binary::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity SDAI_Binary::STEPread( std::istream & in, ErrorDescriptor * err ) {
     return ReadBinary( in, err, 1, 1 );
 }
 
 Severity SDAI_Binary::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return STEPread( in, err );
 }
 
@@ -178,14 +178,14 @@ Severity SDAI_Binary::STEPread( const char * s, ErrorDescriptor * err ) {
 **   null then attrValue must only contain a valid value and nothing else
 **   following.
 ******************************************************************************/
-Severity SDAI_Binary::BinaryValidLevel( istream & in, ErrorDescriptor * err,
+Severity SDAI_Binary::BinaryValidLevel( std::istream & in, ErrorDescriptor * err,
                                         int optional, char * tokenList,
                                         int needDelims, int clearError ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
     char c = in.peek();
     if( c == '$' || in.eof() ) {
         if( !optional ) {
@@ -216,7 +216,7 @@ Severity SDAI_Binary::BinaryValidLevel( istream & in, ErrorDescriptor * err,
 Severity SDAI_Binary::BinaryValidLevel( const char * value, ErrorDescriptor * err,
                                         int optional, char * tokenList,
                                         int needDelims, int clearError ) {
-    istringstream in( ( char * )value );
+    std::istringstream in( ( char * )value );
     return BinaryValidLevel( in, err, optional, tokenList,
                              needDelims, clearError );
 }

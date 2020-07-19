@@ -20,14 +20,14 @@
 
 MgrNodeList::MgrNodeList( stateEnum type ) : GenNodeList( new MgrNode() ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeList::MgrNodeList()\n";
+//  std::cout << "MgrNodeList::MgrNodeList()\n";
     listType = type;
     ( ( MgrNode * )head )->currState = type;
 }
 
 void MgrNodeList::Remove( GenericNode * node ) {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "MgrNodeList::Remove()\n";
+//  std::cout << "MgrNodeList::Remove()\n";
     GenNodeList::Remove( node );
 // DON'T DO THIS    ((MgrNode *)node)->currState = noStateSE;
 }

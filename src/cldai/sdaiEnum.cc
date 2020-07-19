@@ -107,7 +107,7 @@ int SDAI_LOGICAL::set_value( const int i )  {
         return ( v = i );
     }
     // otherwise
-    cerr << "(OLD Warning:) invalid enumeration value " << i
+    std::cerr << "(OLD Warning:) invalid enumeration value " << i
          << " for " <<  Name() << "\n";
     DebugDisplay();
     return  no_elements() + 1 ;
@@ -134,7 +134,7 @@ int SDAI_LOGICAL::set_value( const char * n )  {
     return v;
 }
 
-Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_LOGICAL::ReadEnum( std::istream & in, ErrorDescriptor * err, int AssignVal,
                                  int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -144,7 +144,7 @@ Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int Assign
     char messageBuf[512];
     messageBuf[0] = '\0';
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     if( in.good() ) {
         char c;
@@ -246,7 +246,7 @@ Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int Assign
             err->AppendToDetailMsg( messageBuf );
             err->AppendToUserMsg( messageBuf );
         }
-    } else { // hit eof (assuming there was no error state for istream passed in)
+    } else { // hit eof (assuming there was no error state for std::istream passed in)
         err->GreaterSeverity( SEVERITY_INCOMPLETE );
     }
     return err->severity();
@@ -374,19 +374,19 @@ void SDAI_Enum::nullify() {
  ** debugging purposes
  ** Status:  ok 2/1/91
  ******************************************************************/
-void SDAI_Enum::DebugDisplay( ostream & out ) const {
+void SDAI_Enum::DebugDisplay( std::ostream & out ) const {
     std::string tmp;
-    out << "Current " << Name() << " value: " << endl
-        << "  cardinal: " <<  v  << endl
-        << "  string: " << asStr( tmp ) << endl
+    out << "Current " << Name() << " value: " << std::endl
+        << "  cardinal: " <<  v  << std::endl
+        << "  string: " << asStr( tmp ) << std::endl
         << "  Part 21 file format: ";
     STEPwrite( out );
-    out << endl;
+    out << std::endl;
 
-    out << "Valid values are: " << endl;
+    out << "Valid values are: " << std::endl;
     int i = 0;
     while( i < ( no_elements() + 1 ) ) {
-        out << i << " " << element_at( i ) << endl;
+        out << i << " " << element_at( i ) << std::endl;
         i++;
     }
     out << "\n";
@@ -407,7 +407,7 @@ void SDAI_Enum::DebugDisplay( ostream & out ) const {
 **  true => delimiters must be valid;
 **  true or false => non-matching delimiters are flagged as an error
 */
-Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal,
+Severity SDAI_Enum::ReadEnum( std::istream & in, ErrorDescriptor * err, int AssignVal,
                               int needDelims ) {
     if( AssignVal ) {
         set_null();
@@ -417,7 +417,7 @@ Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal
     char messageBuf[512];
     messageBuf[0] = '\0';
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     if( in.good() ) {
         char c;
@@ -519,14 +519,14 @@ Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal
             err->AppendToDetailMsg( messageBuf );
             err->AppendToUserMsg( messageBuf );
         }
-    } else { // hit eof (assuming there was no error state for istream passed in)
+    } else { // hit eof (assuming there was no error state for std::istream passed in)
         err->GreaterSeverity( SEVERITY_INCOMPLETE );
     }
     return err->severity();
 }
 
 Severity SDAI_Enum::StrToVal( const char * s, ErrorDescriptor * err, int optional ) {
-    istringstream in( ( char * )s ); // sz defaults to length of s
+    std::istringstream in( ( char * )s ); // sz defaults to length of s
 
     ReadEnum( in, err, 1, 0 );
     if( ( err->severity() == SEVERITY_INCOMPLETE ) && optional ) {
@@ -538,12 +538,12 @@ Severity SDAI_Enum::StrToVal( const char * s, ErrorDescriptor * err, int optiona
 
 /// reads an enumerated value in STEP file format
 Severity SDAI_Enum::STEPread( const char * s, ErrorDescriptor * err, int optional ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return STEPread( in, err, optional );
 }
 
 /// reads an enumerated value in STEP file format
-Severity SDAI_Enum::STEPread( istream & in, ErrorDescriptor * err, int optional ) {
+Severity SDAI_Enum::STEPread( std::istream & in, ErrorDescriptor * err, int optional ) {
     ReadEnum( in, err, 1, 1 );
     if( ( err->severity() == SEVERITY_INCOMPLETE ) && optional ) {
         err->severity( SEVERITY_NULL );
@@ -562,7 +562,7 @@ const char * SDAI_Enum::asStr( std::string & s ) const  {
     }
 }
 
-void SDAI_Enum::STEPwrite( ostream & out )  const  {
+void SDAI_Enum::STEPwrite( std::ostream & out )  const  {
     if( is_null() ) {
         out << '$';
     } else {
@@ -583,14 +583,14 @@ const char * SDAI_Enum::STEPwrite( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-Severity SDAI_Enum::EnumValidLevel( istream & in, ErrorDescriptor * err,
+Severity SDAI_Enum::EnumValidLevel( std::istream & in, ErrorDescriptor * err,
                                     int optional, char * tokenList,
                                     int needDelims, int clearError ) {
     if( clearError ) {
         err->ClearErrorMsg();
     }
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
     char c = ' ';
     c = in.peek();
     if( c == '$' || in.eof() ) {
@@ -623,7 +623,7 @@ Severity SDAI_Enum::EnumValidLevel( istream & in, ErrorDescriptor * err,
 Severity SDAI_Enum::EnumValidLevel( const char * value, ErrorDescriptor * err,
                                     int optional, char * tokenList,
                                     int needDelims, int clearError ) {
-    istringstream in( ( char * )value );
+    std::istringstream in( ( char * )value );
     return EnumValidLevel( in, err, optional, tokenList, needDelims,
                            clearError );
 }
@@ -672,7 +672,7 @@ int SDAI_Enum::set_value( const int i )  {
         return ( v = i );
     }
     // otherwise
-    cerr << "(OLD Warning:) invalid enumeration value " << i
+    std::cerr << "(OLD Warning:) invalid enumeration value " << i
          << " for " <<  Name() << "\n";
     DebugDisplay();
     return  no_elements() + 1 ;
@@ -688,7 +688,7 @@ SDAI_Enum & SDAI_Enum::operator= ( const SDAI_Enum & Senum ) {
     return *this;
 }
 
-ostream & operator<< ( ostream & out, const SDAI_Enum & a ) {
+std::ostream & operator<< ( std::ostream & out, const SDAI_Enum & a ) {
     std::string tmp;
     out << a.asStr( tmp );
     return out;

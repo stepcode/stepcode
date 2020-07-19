@@ -69,7 +69,7 @@ Severity BinaryNode::StrToVal( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity BinaryNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity BinaryNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
@@ -78,7 +78,7 @@ Severity BinaryNode::StrToVal( istream & in, ErrorDescriptor * err ) {
  * a valid value will still be assigned if it exists before the garbage.
  */
 Severity BinaryNode::STEPread( const char * s, ErrorDescriptor * err ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
 
     value.STEPread( in, err );
     CheckRemainingInput( in, err, "binary", ",)" );
@@ -88,7 +88,7 @@ Severity BinaryNode::STEPread( const char * s, ErrorDescriptor * err ) {
 /**
  * this function assumes you will check for garbage following input
  */
-Severity BinaryNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity BinaryNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     return value.STEPread( in, err );
 }
 
@@ -102,7 +102,7 @@ const char * BinaryNode::STEPwrite( std::string & s, const char * ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void BinaryNode::STEPwrite( ostream & out ) {
+void BinaryNode::STEPwrite( std::ostream & out ) {
     value.STEPwrite( out );
 }
 

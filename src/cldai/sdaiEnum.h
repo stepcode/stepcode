@@ -16,7 +16,7 @@
 #include <sc_export.h>
 
 class SC_DAI_EXPORT SDAI_Enum {
-        friend     ostream & operator<< ( ostream &, const SDAI_Enum & );
+        friend     std::ostream & operator<< ( std::ostream &, const SDAI_Enum & );
     protected:
         int v;  //  integer value of enumeration instance
         //  mapped to a symbolic value in the elements
@@ -28,7 +28,7 @@ class SC_DAI_EXPORT SDAI_Enum {
     public:
         virtual ~SDAI_Enum() {};
 
-        void PrintContents( ostream & out = std::cout ) const {
+        void PrintContents( std::ostream & out = std::cout ) const {
             DebugDisplay( out );
         }
 
@@ -43,7 +43,7 @@ class SC_DAI_EXPORT SDAI_Enum {
                                  int optional, char * tokenList,
                                  int needDelims = 0, int clearError = 1 );
 
-        Severity EnumValidLevel( istream & in, ErrorDescriptor * err,
+        Severity EnumValidLevel( std::istream & in, ErrorDescriptor * err,
                                  int optional, char * tokenList,
                                  int needDelims = 0, int clearError = 1 );
 
@@ -52,11 +52,11 @@ class SC_DAI_EXPORT SDAI_Enum {
         }
 
         const char * asStr( std::string & s ) const;
-        void STEPwrite( ostream & out = std::cout )  const;
+        void STEPwrite( std::ostream & out = std::cout )  const;
         const char * STEPwrite( std::string & s ) const;
 
         Severity StrToVal( const char * s, ErrorDescriptor * err, int optional = 1 );
-        Severity STEPread( istream & in, ErrorDescriptor * err, int optional = 1 );
+        Severity STEPread( std::istream & in, ErrorDescriptor * err, int optional = 1 );
         Severity STEPread( const char * s, ErrorDescriptor * err, int optional = 1 );
 
         virtual int put( int val );
@@ -74,10 +74,10 @@ class SC_DAI_EXPORT SDAI_Enum {
         ///FIXME need to rewrite this function, but strange implementation...
         virtual int exists() const;
         virtual void nullify();
-        void DebugDisplay( ostream & out = std::cout ) const;
+        void DebugDisplay( std::ostream & out = std::cout ) const;
 
     protected:
-        virtual Severity ReadEnum( istream & in, ErrorDescriptor * err,
+        virtual Severity ReadEnum( std::istream & in, ErrorDescriptor * err,
                                    int AssignVal = 1, int needDelims = 1 );
 };
 
@@ -116,7 +116,7 @@ class SC_DAI_EXPORT SDAI_LOGICAL :
     protected:
         virtual int set_value( const int n );
         virtual int set_value( const char * n );
-        virtual Severity ReadEnum( istream & in, ErrorDescriptor * err,
+        virtual Severity ReadEnum( std::istream & in, ErrorDescriptor * err,
                                    int AssignVal = 1, int needDelims = 1 );
 
 };

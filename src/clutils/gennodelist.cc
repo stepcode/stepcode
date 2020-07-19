@@ -54,7 +54,7 @@ GenNodeList::Remove( GenericNode * node ) {
 }
 void GenNodeList::ClearEntries() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "GenNodeList::ClearEntries()\n";
+//  std::cout << "GenNodeList::ClearEntries()\n";
     GenericNode * gnPrev = head->Next();
     GenericNode * gn = gnPrev->Next();
 
@@ -70,7 +70,7 @@ void GenNodeList::ClearEntries() {
 
 void GenNodeList::DeleteEntries() {
 //    if(debug_level >= PrintFunctionTrace)
-//  cout << "GenNodeList::DeleteEntries()\n";
+//  std::cout << "GenNodeList::DeleteEntries()\n";
     GenericNode * gnPrev = head->Next();
     GenericNode * gn;
     head->next = 0;

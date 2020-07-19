@@ -16,7 +16,7 @@ EntityAggregate::~EntityAggregate() {
 
 
 /// if exchangeFileFormat == 1 then delims are required.
-Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
+Severity EntityAggregate::ReadValue( std::istream & in, ErrorDescriptor * err,
                                      const TypeDescriptor * elem_type, InstMgrBase * insts,
                                      int addFileId, int assignVal,
                                      int exchangeFileFormat, const char * ) {
@@ -31,7 +31,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     char c;
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     c = in.peek(); // does not advance input
 
@@ -56,7 +56,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     EntityNode * item = 0;
 
-    in >> ws;
+    in >> std::ws;
     // take a peek to see if there are any elements before committing to an
     // element
     c = in.peek(); // does not advance input
@@ -97,7 +97,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
             AddNode( item );
         }
 
-        in >> ws; // skip white space (although should already be skipped)
+        in >> std::ws; // skip white space (although should already be skipped)
         in.get( c ); // read delim
 
         // CheckRemainingInput should have left the input right at the delim
@@ -175,7 +175,7 @@ Severity EntityNode::StrToVal( const char * s, ErrorDescriptor * err,
     return err->severity();
 }
 
-Severity EntityNode::StrToVal( istream & in, ErrorDescriptor * err,
+Severity EntityNode::StrToVal( std::istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId ) {
     return STEPread( in, err, elem_type, insts, addFileId );
@@ -184,11 +184,11 @@ Severity EntityNode::StrToVal( istream & in, ErrorDescriptor * err,
 Severity EntityNode::STEPread( const char * s, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return STEPread( in, err, elem_type, insts, addFileId );
 }
 
-Severity EntityNode::STEPread( istream & in, ErrorDescriptor * err,
+Severity EntityNode::STEPread( std::istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId ) {
     SDAI_Application_instance * se = ReadEntityRef( in, err, ",)", insts,
@@ -230,7 +230,7 @@ const char * EntityNode::STEPwrite( std::string & s, const char * ) {
     return const_cast<char *>( s.c_str() );
 }
 
-void EntityNode::STEPwrite( ostream & out ) {
+void EntityNode::STEPwrite( std::ostream & out ) {
     if( !node || ( node == S_ENTITY_NULL ) ) { //  nothing
         out << "$";
     }

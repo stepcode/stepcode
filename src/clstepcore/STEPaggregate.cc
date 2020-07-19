@@ -51,9 +51,9 @@ STEPaggregate::~STEPaggregate() {
 
 STEPaggregate & STEPaggregate::ShallowCopy( const STEPaggregate & a ) {
     (void) a; // unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
          << "\n" << _POC_ "\n";
-    cerr << "function:  STEPaggregate::ShallowCopy \n" << "\n";
+    std::cerr << "function:  STEPaggregate::ShallowCopy \n" << "\n";
     return *this;
 }
 
@@ -67,7 +67,7 @@ Severity STEPaggregate::AggrValidLevel( const char * value, ErrorDescriptor * er
         err->ClearErrorMsg();
     }
 
-    istringstream in( ( char * )value ); // sz defaults to length of s
+    std::istringstream in( ( char * )value ); // sz defaults to length of s
 
     ReadValue( in, err, elem_type, insts, addFileId, 0, 0 );
     elem_type->AttrTypeName( buf );
@@ -79,7 +79,7 @@ Severity STEPaggregate::AggrValidLevel( const char * value, ErrorDescriptor * er
 }
 
 /// require exchange file format
-Severity STEPaggregate::AggrValidLevel( istream & in, ErrorDescriptor * err,
+Severity STEPaggregate::AggrValidLevel( std::istream & in, ErrorDescriptor * err,
                                         const TypeDescriptor * elem_type, InstMgrBase * insts,
                                         int optional, char * tokenList, int addFileId,
                                         int clearError ) {
@@ -98,7 +98,7 @@ Severity STEPaggregate::AggrValidLevel( istream & in, ErrorDescriptor * err,
 }
 
 /// if exchangeFileFormat == 1 then paren delims are required.
-Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
+Severity STEPaggregate::ReadValue( std::istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type, InstMgrBase * insts,
                                    int addFileId, int assignVal, int exchangeFileFormat,
                                    const char * ) {
@@ -116,7 +116,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     char c;
 
-    in >> ws; // skip white space
+    in >> std::ws; // skip white space
 
     c = in.peek(); // does not advance input
 
@@ -141,7 +141,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
     STEPnode * item = 0;
 
-    in >> ws;
+    in >> std::ws;
     // take a peek to see if there are any elements before committing to an
     // element
     c = in.peek(); // does not advance input
@@ -183,7 +183,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
             AddNode( item );
         }
 
-        in >> ws; // skip white space (although should already be skipped)
+        in >> std::ws; // skip white space (although should already be skipped)
         in.get( c ); // read delim
 
         // CheckRemainingInput should have left the input right at the delim
@@ -208,13 +208,13 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
 Severity STEPaggregate::StrToVal( const char * s, ErrorDescriptor * err,
                                   const TypeDescriptor * elem_type, InstMgrBase * insts,
                                   int addFileId ) {
-    istringstream in( ( char * )s );
+    std::istringstream in( ( char * )s );
     return ReadValue( in, err, elem_type, insts, addFileId, 1, 0 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Severity STEPaggregate::STEPread( istream & in, ErrorDescriptor * err,
+Severity STEPaggregate::STEPread( std::istream & in, ErrorDescriptor * err,
                                   const TypeDescriptor * elem_type, InstMgrBase * insts,
                                   int addFileId, const char * currSch ) {
     return ReadValue( in, err, elem_type, insts, addFileId, 1, 1, currSch );
@@ -239,7 +239,7 @@ const char * STEPaggregate::asStr( std::string & s ) const {
     return const_cast<char *>( s.c_str() );
 }
 
-void STEPaggregate::STEPwrite( ostream & out, const char * currSch ) const {
+void STEPaggregate::STEPwrite( std::ostream & out, const char * currSch ) const {
     if( !_null ) {
         out << '(';
         STEPnode * n = ( STEPnode * )head;
@@ -258,8 +258,8 @@ void STEPaggregate::STEPwrite( ostream & out, const char * currSch ) const {
 }
 
 SingleLinkNode * STEPaggregate::NewNode() {
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPaggregate::NewNode \n" << _POC_ << "\n";
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPaggregate::NewNode \n" << _POC_ << "\n";
     return 0;
 }
 
@@ -281,7 +281,7 @@ void STEPaggregate::Empty() {
 Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
     // defined in subtypes
     (void) s; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
     );
@@ -292,10 +292,10 @@ Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return SEVERITY_BUG;
 }
 
-Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity STEPnode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     // defined in subtypes
     (void) in; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
     );
@@ -309,8 +309,8 @@ Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
 Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
     //  defined in subclasses
     (void) s; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
 
     err->AppendToDetailMsg(
@@ -322,10 +322,10 @@ Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
     return SEVERITY_BUG;
 }
 
-Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity STEPnode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     (void) in; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
 
     err->AppendToDetailMsg(
@@ -339,8 +339,8 @@ Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
 const char * STEPnode::asStr( std::string & s ) {
     //  defined in subclasses
     (void) s; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPnode::asStr called instead of virtual function.\n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPnode::asStr called instead of virtual function.\n"
          << _POC_ << "\n";
 
     return "";
@@ -364,16 +364,16 @@ const char * STEPnode::asStr( std::string & s ) {
 const char * STEPnode::STEPwrite( std::string & s, const char * currSch ) {
     (void) s; //unused
     (void) currSch; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";
     return "";
 }
 
-void STEPnode::STEPwrite( ostream & out ) {
+void STEPnode::STEPwrite( std::ostream & out ) {
     (void) out; //unused
-    cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
-    cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
+    std::cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
+    std::cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";
 }
 

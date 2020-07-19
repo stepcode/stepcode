@@ -59,7 +59,7 @@ Severity RealNode::StrToVal( const char * s, ErrorDescriptor * err ) {
     return err->severity();
 }
 
-Severity RealNode::StrToVal( istream & in, ErrorDescriptor * err ) {
+Severity RealNode::StrToVal( std::istream & in, ErrorDescriptor * err ) {
     if( ReadReal( value, in, err, ",)" ) ) { // returns true if value is assigned
         _null = 0;
     } else {
@@ -79,7 +79,7 @@ Severity RealNode::STEPread( const char * s, ErrorDescriptor * err ) {
     return err->severity();
 }
 
-Severity RealNode::STEPread( istream & in, ErrorDescriptor * err ) {
+Severity RealNode::STEPread( std::istream & in, ErrorDescriptor * err ) {
     if( ReadReal( value, in, err, ",)" ) ) { // returns true if value is assigned
         _null = 0;
     } else {
@@ -105,7 +105,7 @@ const char * RealNode::STEPwrite( std::string & s, const char * ) {
     return s.c_str();
 }
 
-void RealNode::STEPwrite( ostream & out ) {
+void RealNode::STEPwrite( std::ostream & out ) {
     std::string s;
     out << STEPwrite( s );
 }

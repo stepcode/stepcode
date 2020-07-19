@@ -37,7 +37,7 @@ SC_UTILS_EXPORT char    *    PrettyNewName( const char * oldname );
 SC_UTILS_EXPORT char    *    EntityClassName( char * oldname );
 
 SC_UTILS_EXPORT bool StrEndsWith( const std::string & s, const char * suffix );
-SC_UTILS_EXPORT std::string  GetLiteralStr( istream & in, ErrorDescriptor * err );
+SC_UTILS_EXPORT std::string  GetLiteralStr( std::istream & in, ErrorDescriptor * err );
 
 extern SC_UTILS_EXPORT Severity CheckRemainingInput( std::istream & in, ErrorDescriptor * err,
   const char * typeName, // used in error message
