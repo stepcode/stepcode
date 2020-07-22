@@ -131,7 +131,7 @@ int test_express_rename_resolve() {
     use_ref->old = ent_ref;
     use_ref->nnew = ent_ref;
     use_ref->rename_type = use;
-    LISTadd_last(cur_schema->u.schema->uselist, (Generic) use_ref);
+    LISTadd_last(cur_schema->u.schema->uselist, use_ref);
     use_ref->schema = ref_schema;
     
     RENAMEresolve(use_ref, cur_schema);

@@ -366,7 +366,7 @@ Expression QUERYcreate( Symbol * local, Expression aggregate ) {
 
     Variable v = VARcreate( e2, Type_Attribute );
 
-    DICTdefine( s->symbol_table, local->name, ( Generic )v, &e2->symbol, OBJ_VARIABLE );
+    DICTdefine( s->symbol_table, local->name, v, &e2->symbol, OBJ_VARIABLE );
     e->u.query = QUERY_new();
     e->u.query->scope = s;
     e->u.query->local = v;
