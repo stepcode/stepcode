@@ -164,7 +164,6 @@ Linked_List SCOPEget_entities_superclass_order( Scope scope ) {
  * caller is in a better position to describe the error with context
  */
 void *SCOPEfind( Scope scope, char * name, int type ) {
-    extern void *SCOPE_find( Scope , char *, int );
     extern Dictionary EXPRESSbuiltins;  /* procedures/functions */
     void *x;
 
