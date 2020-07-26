@@ -3,7 +3,12 @@
 
 #include "express/symbol.h"
 
-inline struct Symbol_ *SYMBOL_new();
-inline void SYMBOL_destroy(struct Symbol_ *x);
+inline struct Symbol_ *SYMBOL_new() {
+    return ALLOC_new(&SYMBOL_fl);
+}
+
+inline void SYMBOL_destroy(struct Symbol_ *x) {
+    ALLOC_destroy(&SYMBOL_fl,(Freelist *)x);
+}
 
 #endif /* __SYMBOL_IMPL_H_ */

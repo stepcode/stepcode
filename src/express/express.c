@@ -343,7 +343,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
         }
 
         model->u.express->basename = ( char * )sc_malloc( length + 1 );
-        memcpy( model->u.express->basename, filename, length );
+        memcpy( model->u.express->basename, start, length );
         model->u.express->basename[length] = '\0';
 
         /* get new copy of filename to avoid being smashed */
@@ -813,7 +813,7 @@ void EXPRESSresolve( Express model ) {
 
         if( schema->u.schema->usedict ) {
             Hash_Iterator iv;
-            DICTdo_init( schema->u.schema->usedict, &iv, '*' )
+            HASHdo_init( schema->u.schema->usedict, &iv, OBJ_ANY )
             while( (ep = HASHdo( &iv )) ) {
                 r = ep->data;
                 

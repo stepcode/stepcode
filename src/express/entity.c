@@ -318,7 +318,7 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
         ep = HASHsearch( entity->symbol_table, e, HASH_INSERT);
     }
     if( !ep ) {
-        LISTadd_last( entity->u.entity->attributes, ( Generic )attr );
+        LISTadd_last( entity->u.entity->attributes, attr );
         VARput_offset( attr, entity->u.entity->attribute_count );
         entity->u.entity->attribute_count++;
     }

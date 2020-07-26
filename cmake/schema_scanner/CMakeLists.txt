@@ -21,10 +21,10 @@ set(schema_scanner_src
   ${SC_ROOT}/src/exp2cxx/class_strings.c
   ${SC_ROOT}/src/express/generated/expparse.c
   ${SC_ROOT}/src/express/generated/expscan.c
+  ${SC_ROOT}/src/express/lexsupport.c
   ${SC_ROOT}/src/express/alg.c
   ${SC_ROOT}/src/express/alloc.c
   ${SC_ROOT}/src/express/caseitem.c
-  ${SC_ROOT}/src/express/dict.c
   ${SC_ROOT}/src/express/entity.c
   ${SC_ROOT}/src/express/error.c
   ${SC_ROOT}/src/express/exp_kw.c
@@ -32,7 +32,6 @@ set(schema_scanner_src
   ${SC_ROOT}/src/express/express.c
   ${SC_ROOT}/src/express/factory.c
   ${SC_ROOT}/src/express/hash.c
-  ${SC_ROOT}/src/express/lexact.c
   ${SC_ROOT}/src/express/linklist.c
   ${SC_ROOT}/src/express/memory.c
   ${SC_ROOT}/src/express/object.c
@@ -45,11 +44,13 @@ set(schema_scanner_src
   ${SC_ROOT}/src/express/symbol.c
   ${SC_ROOT}/src/express/type.c
   ${SC_ROOT}/src/express/variable.c
+  ${SC_ROOT}/src/auxlib/bstrlib.c
   ${CMAKE_CURRENT_SOURCE_DIR}/schemaScanner.cc
  )
 
 include_directories(
   ${SC_ROOT}/include/
+  ${SC_ROOT}/src/auxlib
   ${SC_ROOT}/src/express/
   ${SC_ROOT}/src/express/generated
   ${SC_ROOT}/src/base

@@ -42,6 +42,9 @@
 #define PRIME1           37
 #define PRIME2      1048583
 
+extern inline struct Symbol_ *SYMBOL_new();
+extern inline void SYMBOL_destroy(struct Symbol_ *x);
+
 Hash_Table
 HASH_Table_new() {
     return ALLOC_new(&HASH_Table_fl);
@@ -49,7 +52,7 @@ HASH_Table_new() {
 
 void
 HASH_Table_destroy(Hash_Table x) {
-    ALLOC_destroy(&HASH_Table_fl,(Freelist *)(Generic)x);
+    ALLOC_destroy(&HASH_Table_fl,(Freelist *)x);
 }
 
 void

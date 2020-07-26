@@ -1,17 +1,11 @@
 
-set(SC_AUXLIB_SOURCES bstrlib.c)
-
-set(SC_AUXLIB_HDRS bstrlib.h)
-
-include_directories(
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  )
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 if (${SC_MEMMGR_ENABLE_CHECKS})
   add_definitions(-DSC_MEMMGR_ENABLE_CHECKS)
 endif()
 
-SC_ADDLIB(auxlib "${SC_AUXLIB_SOURCES}" "")
+SC_ADDLIB(auxlib STATIC SOURCES bstrlib.c)
 
 # Local Variables:
 # tab-width: 8
