@@ -536,7 +536,7 @@ def ODD(V):
 # Python note:
 # @TODO: implement the ROLESOF function
 def ROLESOF(V):
-    raise NotImplemented("Function ROLESOF not implemented")
+    raise NotImplementedError("Function ROLESOF not implemented")
 
 # EXPRESS definition:
 # ===================  
@@ -639,7 +639,7 @@ def TYPEOF(V):
 #The usedin function returns each entity instance that uses a specified entity instance in a
 #specified role.
 def USEDIN(T,R):
-    raise NotImplemented("USEDIN function not yet implemented.")
+    raise NotImplementedError("USEDIN function not yet implemented.")
 
 # EXPRESS definition:
 # ===================  
@@ -691,7 +691,7 @@ def VALUE(V):
 def VALUE_IN(C,V):
     if not isinstance(C,Aggregate):
         raise TypeError("VALUE_IN method takes an aggregate as first parameter")
-    raise NotImplemented("VALUE_IN function not yet implemented")
+    raise NotImplementedError("VALUE_IN function not yet implemented")
 
 # EXPRESS definition:
 # ===================  
