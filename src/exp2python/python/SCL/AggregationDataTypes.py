@@ -179,7 +179,7 @@ class ARRAY(BaseType.Type, BaseType.Aggregate):
             raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
         else:
             value = self._container[index-self._bound_1]
-            if not self._optional and value==None:
+            if not self._optional and value is None:
                 raise AssertionError("Not OPTIONAL prevent the value with index %i from being None (default). Please set the value first."%index)
             return value
  
@@ -239,7 +239,7 @@ class LIST(BaseType.Type, BaseType.Aggregate):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
-        if bound_2 == None:
+        if bound_2 is None:
             self._unbounded = True
         elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
@@ -313,7 +313,7 @@ class LIST(BaseType.Type, BaseType.Aggregate):
                 raise IndexError("ARRAY index out of bound (upper bound is %i, passed %i)"%(self._bound_2,index))
             else:
                 value = self._container[index-self._bound_1]
-                if value == None:
+                if value is None:
                     raise AssertionError("Value with index %i not defined. Please set the value first."%index)
                 return value
         #case unbounded
@@ -322,7 +322,7 @@ class LIST(BaseType.Type, BaseType.Aggregate):
                 raise AssertionError("Value with index %i not defined. Please set the value first."%index)
             else:
                 value = self._container[index-self._bound_1]
-                if value == None:
+                if value is None:
                     raise AssertionError("Value with index %i not defined. Please set the value first."%index)
                 return value
  
@@ -413,7 +413,7 @@ class BAG(BaseType.Type, BaseType.Aggregate):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
-        if bound_2 == None:
+        if bound_2 is None:
             self._unbounded = True
         elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
@@ -531,7 +531,7 @@ class SET(BaseType.Type, BaseType.Aggregate):
             raise TypeError("LIST lower bound must be an integer")
         # bound_2 can be set to None
         self._unbounded = False
-        if bound_2 == None:
+        if bound_2 is None:
             self._unbounded = True
         elif not isinstance(bound_2, int):
             raise TypeError("LIST upper bound must be an integer")
