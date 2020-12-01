@@ -4,39 +4,6 @@ include_directories(
   ${SC_SOURCE_DIR}/src/base
   )
 
-# Set up the information we need to feed the generated source management
-# scripts
-set(BASELINE_INFORMATION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/generated/verification_info.cmake")
-set(PROJECT_CMAKE_DIR "${SC_SOURCE_DIR}/cmake")
-set(MD5_FILELIST
-  "${CMAKE_CURRENT_SOURCE_DIR}/expscan.l"
-  "${CMAKE_CURRENT_SOURCE_DIR}/expparse.y"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.h"
-  )
-configure_file(${SC_SOURCE_DIR}/cmake/md5_gen.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake @ONLY)
-configure_file(${SC_SOURCE_DIR}/cmake/md5_verify.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake @ONLY)
-
-# Convenience target to generate an updated verification_info.cmake file
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
-  )
-add_custom_target(express_md5gen DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel)
-
-# Target for actually checking cached MD5 sums against files
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
-  DEPENDS ${MD5_FILELIST}
-  )
-add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel)
-
-
 # Depending on whether we're using pre-generated sources or building them on
 # the fly, set up targets and source lists.
 if(SC_GENERATE_LP_SOURCES)
@@ -133,14 +100,6 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
     target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
   endif()
 
-  if(SC_GENERATE_LP_SOURCES)
-    add_custom_command(TARGET express POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-    )
-  else()
-    add_dependencies(express express_verify)
-  endif()
-
   if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
     add_dependencies(express version_string)
   endif()
@@ -148,14 +107,6 @@ endif()
 
 if($CACHE{SC_BUILD_STATIC_LIBS})
   SC_ADDLIB(express-static STATIC SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
-
-  if(SC_GENERATE_LP_SOURCES)
-    add_custom_command(TARGET express-static POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-    )
-  else()
-    add_dependencies(express-static express_verify)
-  endif()
  
   if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
     add_dependencies(express-static version_string)
