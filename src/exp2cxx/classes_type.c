@@ -183,11 +183,11 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     /*  constructors    */
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     tdnm[BUFSIZ-1] = '\0';
-    fprintf( inc, "  public:\n        %s (const char * n =0, Enum"
-             "TypeDescriptor *et =%s);\n", n, tdnm );
+    fprintf( inc, "  public:\n        %s (const char * n =0, EnumTypeDescriptor *et =%s);\n", n, tdnm );
     fprintf( inc, "        %s (%s e, EnumTypeDescriptor *et =%s)\n"
              "                : type(et) {  set_value (e);  }\n",
              n, EnumName( TYPEget_name( type ) ), tdnm );
+    fprintf( inc, "        %s (const %s &e) { set_value(e); }\n", n, TYPEget_ctype( type ));
 
     /*  destructor  */
     fprintf( inc, "        ~%s () { }\n", n );
