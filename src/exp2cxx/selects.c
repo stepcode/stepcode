@@ -1493,7 +1493,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
                      "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n", dm );
             fprintf( f,
                      "        if( _%s && ( _%s != S_ENTITY_NULL) &&\n "
-                     "              ( CurrentUnderlyingType()->CanBe( _%s->getEDesc() ) ) ) {\n"
+                     "              ( CurrentUnderlyingType()->CanBe( _%s->eDesc ) ) ) {\n"
                      "            return severity();\n", dm, dm, dm );
             fprintf( f,
                      "        } else {\n "
@@ -1680,7 +1680,7 @@ void SELlib_print_protected( const Type type,  FILE * f ) {
     if( TYPEis_select( t ) ) {
         fprintf( f,
                  "    //  %s\n"  /*  item name  */
-                 "    if( %s->CanBe( se->getEDesc() ) ) {\n"
+                 "    if( %s->CanBe( se->eDesc ) ) {\n"
                  "        _%s.AssignEntity (se);\n"  /* underlying data member */
                  "        return SetUnderlyingType (%s);\n"  /* td */
                  "    }\n",

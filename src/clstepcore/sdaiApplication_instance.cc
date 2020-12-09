@@ -172,10 +172,6 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
     }
 }
 
-const EntityDescriptor* SDAI_Application_instance::getEDesc() const {
-    return eDesc;
-}
-
 // BUG implement this -- FIXME function is never used
 SDAI_Application_instance * SDAI_Application_instance::GetMiEntity( char * entName ) {
     std::string s1, s2;
@@ -790,9 +786,9 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
     // DAVE: Can an entity be used in an Express TYPE so that this
     // EntityDescriptor would have type REFERENCE_TYPE -- it looks like NO
 
-    else if( se->getEDesc() ) {
+    else if( se->eDesc ) {
         // is se a descendant of ed?
-        if( se->getEDesc()->IsA( ed ) ) {
+        if( se->eDesc->IsA( ed ) ) {
             return SEVERITY_NULL;
         } else {
             if( se->IsComplex() ) {

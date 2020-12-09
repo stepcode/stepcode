@@ -116,8 +116,8 @@ class SC_LAZYFILE_EXPORT lazyRefs {
                         ias.i = rinst;
                         _inst->setInvAttr( ia, ias );
                     } else if( ai->GetFileId() != (int)inst ) {
-                        std::cerr << "ERROR: two instances (" << rinst << ", #" << rinst->GetFileId() << "=" << rinst->getEDesc()->Name();
-                        std::cerr << " and " << ai << ", #" << ai->GetFileId() <<"=" << ai->getEDesc()->Name() << ") refer to inst ";
+                        std::cerr << "ERROR: two instances (" << rinst << ", #" << rinst->GetFileId() << "=" << rinst->eDesc->Name();
+                        std::cerr << " and " << ai << ", #" << ai->GetFileId() <<"=" << ai->eDesc->Name() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
                         // TODO _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
                     }
@@ -184,7 +184,7 @@ class SC_LAZYFILE_EXPORT lazyRefs {
                 }
                 ++iai;
             }
-            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->getEDesc()->Name() << std::endl;
+            std::cerr << "Error! inverse attr " << ia->Name() << " (" << ia << ") not found in iAMap for entity " << inst->eDesc->Name() << std::endl;
             abort();
             iAstruct nil = {nullptr};
             return nil;
@@ -279,7 +279,7 @@ class SC_LAZYFILE_EXPORT lazyRefs {
 
 
             // 1. find inverse attrs with recursion
-            getInverseAttrs( ai->getEDesc(), _iaList );
+            getInverseAttrs( ai->eDesc, _iaList );
 
             //2. find reverse refs, map id to type (stop if there are no inverse attrs or no refs)
             if( _iaList.size() == 0 || !mapRefsToTypes() ) {
