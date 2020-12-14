@@ -1,4 +1,4 @@
-#    C M A K E L I S T S . T X T   F O R   S T E P C O D E
+#                C M A K E L I S T S . T X T
 #
 # This file is Copyright (c) 2010 United States Government as
 # represented by the U.S. Army Research Laboratory.
@@ -38,14 +38,7 @@
 # This file contains the top level CMakeLists.txt logic for the
 # STEPcode software package.
 
-
 project(SC)
-
-# SC version
-set(SC_VERSION_MAJOR 0)
-set(SC_VERSION_MINOR 9)
-set(SC_VERSION_PATCH 1)
-set(SC_VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR}.${SC_VERSION_PATCH})
 
 # Minimum required version of CMake
 cmake_minimum_required(VERSION 3.12)
@@ -53,14 +46,24 @@ if (POLICY CMP0077)
   cmake_policy(SET CMP0077 OLD)
 endif (POLICY CMP0077)
 
+# SC version
+set(SC_VERSION_MAJOR 0)
+set(SC_VERSION_MINOR 9)
+set(SC_VERSION_PATCH 1)
+set(SC_VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR}.${SC_VERSION_PATCH})
+
+# Set language standards
+set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
 set(SC_CMAKE_DIR "${SC_SOURCE_DIR}/cmake")
-if(NOT SC_IS_SUBBUILD)
-  set(CMAKE_MODULE_PATH "${SC_CMAKE_DIR};${CMAKE_MODULE_PATH}")
-else(NOT SC_IS_SUBBUILD)
-  set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${SC_CMAKE_DIR}")
-endif(NOT SC_IS_SUBBUILD)
+list(APPEND CMAKE_MODULE_PATH "${SC_CMAKE_DIR}")
 
 # OpenBSD has its own naming conventions.  Set a platform variable based on
 # the OS name so we can test for it succinctly.
@@ -72,13 +75,13 @@ endif ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
 include(${SC_CMAKE_DIR}/SC_Build_opts.cmake)
 
 # SC_ADDEXEC and SC_ADDLIB macros, dllimport/export, etc
-include(${SC_CMAKE_DIR}/SC_Targets.cmake)
+include(SC_Targets)
 
 # Macros related to paths
-include(${SC_CMAKE_DIR}/SC_Paths.cmake)
+include(SC_Paths)
 
 # locale stuff
-include(${SC_CMAKE_DIR}/SC_Locale.cmake)
+include(SC_Locale)
 
 # logic related to regenerating the lexer and parser source code
 include(${SC_CMAKE_DIR}/SC_Regenerate.cmake)
@@ -91,7 +94,7 @@ if(NOT DEFINED SC_BUILD_SCHEMAS)
   list(APPEND CONFIG_END_MESSAGES
     "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a"
     "     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS")
-  #this makes SC_BUILD_SCHEMAS show up in cmake-gui
+#this makes SC_BUILD_SCHEMAS show up in cmake-gui
   set(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built")
 endif(NOT DEFINED SC_BUILD_SCHEMAS)
 
