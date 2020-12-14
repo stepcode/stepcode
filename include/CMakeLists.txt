@@ -36,7 +36,6 @@ install(FILES ordered_attrs.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
 
 install(FILES ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_cf.h
-  ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h
   DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode)
 
 # Local Variables:

@@ -95,7 +95,7 @@ if(NOT DEFINED SC_BUILD_SCHEMAS)
     "** CMake variable SC_BUILD_SCHEMAS was not set. Defaults to building ALL schemas, which will take a"
     "     while; see http://stepcode.org/mw/index.php?title=STEPcode_CMake_variables#SC_BUILD_SCHEMAS")
 #this makes SC_BUILD_SCHEMAS show up in cmake-gui
-  set(SC_BUILD_SCHEMAS "ALL" CACHE string "Semicolon-separated list of paths to EXPRESS schemas to be built")
+  set(SC_BUILD_SCHEMAS "ALL" CACHE STRING "Semicolon-separated list of paths to EXPRESS schemas to be built")
 endif(NOT DEFINED SC_BUILD_SCHEMAS)
 
 if(NOT SC_IS_SUBBUILD)
@@ -105,7 +105,7 @@ if(NOT SC_IS_SUBBUILD)
     ".. Generating step can take a while if you are building several schemas.")
 endif(NOT SC_IS_SUBBUILD)
 
-# create config headers sc_cf.h and sc_version_string.h
+# create config headers sc_cf.h
 include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)
 
 
