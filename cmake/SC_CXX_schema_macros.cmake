@@ -93,7 +93,7 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
     ${SC_SOURCE_DIR}/src/base/judy/src
   )
   # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
-  if($CACHE{SC_BUILD_SHARED_LIBS})
+  if(BUILD_SHARED_LIBS)
     SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${sourceFiles} LINK_LIBRARIES stepdai stepcore stepeditor steputils base TESTABLE)
     add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
     if(WIN32)

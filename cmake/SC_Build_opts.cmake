@@ -16,10 +16,10 @@ macro(OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT)
 endmacro(OPTION_WITH_DEFAULT OPTION_NAME OPTION_STRING OPTION_DEFAULT)
 
 # build shared libs by default
-OPTION_WITH_DEFAULT(SC_BUILD_SHARED_LIBS "Build shared libs" ON)
+option(BUILD_SHARED_LIBS "Build shared libs" ON)
 
 # don't build static libs by default
-OPTION_WITH_DEFAULT(SC_BUILD_STATIC_LIBS "Build static libs" OFF)
+OPTION_WITH_DEFAULT(BUILD_STATIC_LIBS "Build static libs" OFF)
 
 OPTION_WITH_DEFAULT(SC_PYTHON_GENERATOR "Compile exp2python" ON)
 OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
@@ -39,8 +39,8 @@ OPTION_WITH_DEFAULT(SC_ENABLE_COVERAGE "Enable code coverage test" OFF)
 if(SC_ENABLE_COVERAGE)
   set(SC_ENABLE_TESTING ON CACHE BOOL "Testing enabled by coverage option" FORCE)
   # build static libs, better coverage report
-  set(SC_BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
-  set(SC_BUILD_STATIC_LIBS ON CACHE BOOL "Build static libs" FORCE)
+  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
+  set(BUILD_STATIC_LIBS ON CACHE BOOL "Build static libs" FORCE)
   set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
   set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)

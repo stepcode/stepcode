@@ -151,7 +151,7 @@ add_subdirectory(doc)
 
 # 'make core' builds everything that isn't generated. for devs.
 add_custom_target(core)
-if($CACHE{SC_BUILD_SHARED_LIBS})
+if(BUILD_SHARED_LIBS)
   add_dependencies(core stepdai stepeditor exp2cxx check-express)
 else()
   add_dependencies(core stepdai-static stepeditor-static exp2cxx check-express)
