@@ -27,9 +27,6 @@ OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 OPTION_WITH_DEFAULT(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
 
-option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
-mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
-
 option(DEBUGGING_GENERATED_SOURCES "disable md5 verification of generated sources" OFF)
 mark_as_advanced(DEBUGGING_GENERATED_SOURCES)
 
@@ -51,12 +48,10 @@ endif(SC_ENABLE_COVERAGE)
 #---------------------------------------------------------------------
 # Testing option
 OPTION_WITH_DEFAULT(SC_ENABLE_TESTING "Enable unittesting framework" OFF)
-if(SC_ENABLE_TESTING)
-  if(NOT ${SC_BUILD_EXPRESS_ONLY} AND NOT DEFINED SC_BUILD_SCHEMAS)
-    set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
-  endif()
+if(SC_ENABLE_TESTING AND NOT DEFINED SC_BUILD_SCHEMAS)
+  set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
   include(CTest)
-endif(SC_ENABLE_TESTING)
+endif()
 
 #---------------------------------------------------------------------
 # Executable install option
