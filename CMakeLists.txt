@@ -71,7 +71,8 @@ if ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
   set(OPENBSD ON)
 endif ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
 
-# Path setup - relative build paths and output directories
+#---------------------------------------------------------------------
+# Set up various relative path variables and build output directories
 include(Path_Setup)
 
 # testing and compilation options, build output dirs, install dirs, uninstall, package creation, etc
@@ -87,7 +88,7 @@ include(SC_Paths)
 include(SC_Locale)
 
 # logic related to regenerating the lexer and parser source code
-include(${SC_CMAKE_DIR}/SC_Regenerate.cmake)
+include(SC_Regenerate)
 
 if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
   set(SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs")
@@ -109,22 +110,17 @@ if(NOT SC_IS_SUBBUILD)
 endif(NOT SC_IS_SUBBUILD)
 
 # create config headers sc_cf.h
-include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)
+include(SC_Config_Headers)
 
 
 ################
 
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 11)
-
 if(MSVC)
   # Disable warning for preferred usage of secure functions (example strcpy should be strcpy_s, ...)
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS)
-else()
+endif()
+if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
   add_definitions(-pedantic -W -Wall -Wundef -Wfloat-equal -Wshadow -Winline -Wno-long-long)
-  if(HAVE_NULLPTR)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-  endif(HAVE_NULLPTR)
 endif()
 
 include_directories(
