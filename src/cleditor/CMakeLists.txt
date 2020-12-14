@@ -27,14 +27,14 @@ include_directories(
   ${SC_SOURCE_DIR}/src/clutils
   )
 
-if($CACHE{SC_BUILD_SHARED_LIBS})
+if(BUILD_SHARED_LIBS)
   SC_ADDLIB(stepeditor SHARED SOURCES ${LIBSTEPEDITOR_SRCS} LINK_LIBRARIES stepcore stepdai steputils base)
   if(WIN32)
     target_compile_definitions(stepeditor PRIVATE SC_EDITOR_DLL_EXPORTS)
   endif()
 endif()
 
-if($CACHE{SC_BUILD_STATIC_LIBS})
+if(BUILD_STATIC_LIBS)
   SC_ADDLIB(stepeditor-static STATIC SOURCES ${LIBSTEPEDITOR_SRCS} LINK_LIBRARIES stepcore-static stepdai-static steputils-static base-static)
 endif()
 

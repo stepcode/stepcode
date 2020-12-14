@@ -32,14 +32,14 @@ include_directories(
 
 set(_libdeps stepcore stepdai steputils base stepeditor)
 
-if($CACHE{SC_BUILD_SHARED_LIBS})
+if(BUILD_SHARED_LIBS)
   SC_ADDLIB(steplazyfile SHARED SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES ${_libdeps})
   if(WIN32)
     target_compile_definitions(steplazyfile PRIVATE SC_LAZYFILE_DLL_EXPORTS)
   endif()
 endif()
 
-if($CACHE{SC_BUILD_STATIC_LIBS})
+if(BUILD_STATIC_LIBS)
   SC_ADDLIB(steplazyfile-static STATIC SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
 endif()
 
