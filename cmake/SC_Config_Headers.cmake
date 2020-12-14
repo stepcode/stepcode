@@ -99,7 +99,7 @@ endif(SC_ENABLE_CXX11)
 # Now that all the tests are done, configure the sc_cf.h file:
 get_property(CONFIG_H_FILE_CONTENTS GLOBAL PROPERTY SC_CONFIG_H_CONTENTS)
 file(WRITE ${CONFIG_H_FILE} "${CONFIG_H_FILE_CONTENTS}")
-configure_file(${CONFIG_H_FILE} ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_cf.h)
+configure_file(${CONFIG_H_FILE} ${SC_BINARY_DIR}/${INCLUDE_DIR}/sc_cf.h)
 
 # Local Variables:
 # tab-width: 8

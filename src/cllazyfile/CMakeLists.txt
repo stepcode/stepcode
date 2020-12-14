@@ -47,7 +47,7 @@ SC_ADDEXEC(lazy_test SOURCES lazy_test.cc LINK_LIBRARIES steplazyfile stepeditor
 target_compile_definitions(lazy_test PRIVATE NO_REGISTRY)
 
 install(FILES ${SC_CLLAZYFILE_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cllazyfile)
+  DESTINATION ${INCLUDE_DIR}/stepcode/cllazyfile)
 
 # Local Variables:
 # tab-width: 8

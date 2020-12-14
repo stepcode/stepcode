@@ -48,7 +48,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
 endif()
 
 install(FILES ${SC_CLDAI_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cldai)
+  DESTINATION ${INCLUDE_DIR}/stepcode/cldai)
 
 # Local Variables:
 # tab-width: 8

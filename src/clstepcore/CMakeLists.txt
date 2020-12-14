@@ -145,7 +145,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
 endif()
 
 install(FILES ${SC_CLSTEPCORE_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clstepcore)
+  DESTINATION ${INCLUDE_DIR}/stepcode/clstepcore)
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)

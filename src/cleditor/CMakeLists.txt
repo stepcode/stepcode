@@ -39,7 +39,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
 endif()
 
 install(FILES ${SC_CLEDITOR_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/cleditor)
+  DESTINATION ${INCLUDE_DIR}/stepcode/cleditor)
 
 # Local Variables:
 # tab-width: 8

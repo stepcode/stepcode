@@ -1,27 +1,3 @@
-# BIN and LIB directories
-if(NOT DEFINED BIN_DIR)
-  set(BIN_DIR bin)
-endif(NOT DEFINED BIN_DIR)
-
-if(NOT DEFINED LIB_DIR)
-  set(LIB_DIR lib)
-endif(NOT DEFINED LIB_DIR)
-
-# testing and compilation options, build output dirs, install dirs, etc
-# included by root CMakeLists
-
-if(NOT DEFINED INCLUDE_INSTALL_DIR)
-  set(INCLUDE_INSTALL_DIR include)
-endif(NOT DEFINED INCLUDE_INSTALL_DIR)
-
-if(NOT DEFINED LIB_INSTALL_DIR)
-  set(LIB_INSTALL_DIR lib)
-endif(NOT DEFINED LIB_INSTALL_DIR)
-
-if(NOT DEFINED BIN_INSTALL_DIR)
-  set(BIN_INSTALL_DIR bin)
-endif(NOT DEFINED BIN_INSTALL_DIR)
-
 if(NOT DEFINED SC_BUILD_TYPE)
   set(SC_BUILD_TYPE "Debug" CACHE STRING "Build type") # By default set debug build
 endif(NOT DEFINED SC_BUILD_TYPE)
@@ -50,12 +26,6 @@ OPTION_WITH_DEFAULT(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 
 OPTION_WITH_DEFAULT(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 OPTION_WITH_DEFAULT(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
-
-# Should we use C++11?
-OPTION_WITH_DEFAULT(SC_ENABLE_CXX11 "Build with C++ 11 features" ON)
-
-# Get version from git
-OPTION_WITH_DEFAULT(SC_GIT_VERSION "Build using version from git" ON)
 
 option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 mark_as_advanced(SC_BUILD_EXPRESS_ONLY)

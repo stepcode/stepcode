@@ -61,7 +61,7 @@ if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/judy/src")
 endif(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/judy/src")
 
 install(FILES ${SC_BASE_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/base)
+  DESTINATION ${INCLUDE_DIR}/stepcode/base)
 
 # Local Variables:
 # tab-width: 8

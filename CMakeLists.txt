@@ -71,6 +71,9 @@ if ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
   set(OPENBSD ON)
 endif ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
 
+# Path setup - relative build paths and output directories
+include(Path_Setup)
+
 # testing and compilation options, build output dirs, install dirs, uninstall, package creation, etc
 include(${SC_CMAKE_DIR}/SC_Build_opts.cmake)
 

@@ -41,7 +41,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
 endif()
 
 install(FILES ${SC_CLUTILS_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/clutils)
+  DESTINATION ${INCLUDE_DIR}/stepcode/clutils)
 
 # Local Variables:
 # tab-width: 8
