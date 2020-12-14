@@ -102,6 +102,12 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
         target_compile_options("${PROJECT_NAME}" PRIVATE "/bigobj")
       endif()
     endif()
+    # TODO - ideally we would avoid generating code that triggers this warning, but figuring out
+    # how to do so is a non-trivial exercise.  In the meantime, suppress the (very verbose) warnings
+    # we get due to this issue so it doesn't mask other problems.
+    if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+      target_compile_options("${PROJECT_NAME}" PRIVATE "-Wno-ignored-qualifiers")
+    endif()
   endif()
 
   if($CACHE{SC_BUILD_STATIC_LIBS})
