@@ -386,7 +386,7 @@ char *EXPRto_python(Expression e)
 
     buf = (char *)sc_malloc(bufsize);
     if(!buf) {
-        fprintf(stderr, "%s failed to allocate buffer: %s\n", __FUNCTION__, strerror(errno));
+        fprintf(stderr, "%s failed to allocate buffer: %s\n", __func__, strerror(errno));
         abort();
     }
 
@@ -483,7 +483,7 @@ char *EXPRto_python(Expression e)
 
     temp = (char *)sc_realloc(buf, 1 + strlen(buf));
     if(temp == 0) {
-        fprintf(stderr, "%s failed to realloc buffer: %s\n", __FUNCTION__, strerror(errno));
+        fprintf(stderr, "%s failed to realloc buffer: %s\n", __func__, strerror(errno));
         abort();
     }
 

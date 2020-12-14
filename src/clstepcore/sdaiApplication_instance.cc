@@ -706,6 +706,7 @@ SDAI_Application_instance *ReadEntityRef(istream &in, ErrorDescriptor *err, cons
             err->AppendToDetailMsg("Use of @ instead of # to identify entity.\n");
             err->GreaterSeverity(SEVERITY_WARNING);
         // no break statement here on purpose
+	    [[gnu::fallthrough]];
         case '#': {
             int id = -1;
             in >>  id;
@@ -914,9 +915,12 @@ Severity EntityValidLevel(const char *attrValue,   // string contain entity ref
 
     if((found1 > 0) || (found2 > 0)) {
         if((found1 == 2) || (found2 == 2)) {
-            sprintf(messageBuf,
+            int ocnt = snprintf(messageBuf, BUFSIZ,
                     " Attribute's Entity Reference %s is %s data \'%s\'.\n",
                     attrValue, "followed by invalid", tmp);
+	    if (ocnt < BUFSIZ) {
+		    fprintf(stderr, "Warning - truncation of Attribute's Entry Reference msg\n");
+	    }
             err->AppendToUserMsg(messageBuf);
             err->AppendToDetailMsg(messageBuf);
             err->GreaterSeverity(SEVERITY_WARNING);
