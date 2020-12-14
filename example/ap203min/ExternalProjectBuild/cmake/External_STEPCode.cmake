@@ -22,7 +22,3 @@ ENDIF()
 
 SET( STEPCODE_BINARY_DIR ${BINARY_DIR} )
 
-# SC CMake does not honor -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-# Consequently, force Debug so it installs in ../sc-install directory
-# instead of /usr/local/lib.
-#

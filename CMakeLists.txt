@@ -75,8 +75,74 @@ endif ("${CMAKE_SYSTEM}" MATCHES ".*OpenBSD.*")
 # Set up various relative path variables and build output directories
 include(Path_Setup)
 
-# testing and compilation options, build output dirs, install dirs, uninstall, package creation, etc
-include(${SC_CMAKE_DIR}/SC_Build_opts.cmake)
+#---------------------------------------------------------------------
+# The following logic is what allows binaries to run successfully in
+# the build directory AND install directory.  Thanks to plplot for
+# identifying the necessity of setting CMAKE_INSTALL_NAME_DIR on OSX.
+# Documentation of these options is available at
+# http://www.cmake.org/Wiki/CMake_RPATH_handling
+
+# use, i.e. don't skip the full RPATH for the build tree
+if(NOT DEFINED CMAKE_SKIP_BUILD_RPATH)
+  set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+endif()
+
+# when building, don't use the install RPATH already
+# (but later on when installing)
+if(NOT DEFINED CMAKE_BUILD_WITH_INSTALL_RPATH)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+endif()
+
+# the RPATH/INSTALL_NAME_DIR to be used when installing
+if (NOT APPLE)
+  if(NOT DEFINED CMAKE_INSTALL_RPATH)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib:\$ORIGIN/../lib")
+  endif()
+endif(NOT APPLE)
+# On OSX, we need to set INSTALL_NAME_DIR instead of RPATH
+# http://www.cmake.org/cmake/help/cmake-2-8-docs.html#variable:CMAKE_INSTALL_NAME_DIR
+if(NOT DEFINED CMAKE_INSTALL_NAME_DIR)
+  set(CMAKE_INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+# add the automatically determined parts of the RPATH which point to
+# directories outside the build tree to the install RPATH
+if(NOT DEFINED CMAKE_INSTALL_RPATH_USE_LINK_PATH)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
+
+
+#---------------------------------------------------------------------
+# Build options
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_STATIC_LIBS "Build static libraries" OFF)
+
+option(SC_PYTHON_GENERATOR "Compile exp2python" ON)
+option(SC_CPP_GENERATOR "Compile exp2cxx" ON)
+
+option(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
+option(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
+
+option(SC_ENABLE_COVERAGE "Enable code coverage test" OFF)
+if (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+  set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+  set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage" CACHE STRING "Extra compile flags required by code coverage" FORCE)
+  set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
+endif (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+
+option(SC_ENABLE_TESTING "Enable unittesting framework" OFF)
+if(SC_ENABLE_TESTING)
+  if(NOT DEFINED SC_BUILD_SCHEMAS)
+    set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
+  endif()
+  include(CTest)
+endif(SC_ENABLE_TESTING)
+
+# TODO - BRL-CAD is the only known user of this option, and it will be
+# transitioning to a new setup that won't need it - once that's done,
+# we should just remove this option.
+option(SC_SKIP_EXEC_INSTALL "Skip installing executables" OFF)
+mark_as_advanced(SC_SKIP_EXEC_INSTALL)
 
 # SC_ADDEXEC and SC_ADDLIB macros, dllimport/export, etc
 include(SC_Targets)
@@ -89,6 +155,9 @@ include(SC_Locale)
 
 # logic related to regenerating the lexer and parser source code
 include(SC_Regenerate)
+
+# create config headers sc_cf.h and sc_version_string.h
+include(SC_Config_Headers)
 
 if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
   set(SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs")
@@ -145,13 +214,19 @@ if(SC_ENABLE_TESTING)
 endif(SC_ENABLE_TESTING)
 add_subdirectory(doc)
 
-# 'make core' builds everything that isn't generated. for devs.
-add_custom_target(core)
-if(BUILD_SHARED_LIBS)
-  add_dependencies(core stepdai stepeditor exp2cxx check-express)
-else()
-  add_dependencies(core stepdai-static stepeditor-static exp2cxx check-express)
-endif()
+if(NOT SC_IS_SUBBUILD)
+    #-----------------------------------------------------------------------------
+  # SC Packaging
+  # $make package
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
+  set(CPACK_SET_DESTDIR "ON")
+  set(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
+  set(CPACK_PACKAGE_NAME SC)
+  set(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
+  include(CPack)
+endif(NOT SC_IS_SUBBUILD)
+
 
 # CONFIG_END_MESSAGES - list of messages to be printed after everything else is done.
 # THIS MUST BE LAST to ensure that they are visible to the user without scrolling.
