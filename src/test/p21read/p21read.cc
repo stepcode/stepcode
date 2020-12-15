@@ -155,7 +155,7 @@ int main(int argc, char *argv[])
     char     *flnm;
 
     // p21 ReadExchangeFile()
-    benchmark stats();
+    benchmark stats;
 
     cout << argv[0] << ": load file ..." << endl;
     if(argc >= (sc_optind + 1)) {
