@@ -40,7 +40,8 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(steplazyfile-static STATIC SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
+  set(_libdeps stepcore-static stepdai-static steputils-static base-static stepeditor-static)
+  SC_ADDLIB(steplazyfile-static STATIC SOURCES ${clLazyFile_SRCS} LINK_LIBRARIES ${_libdeps})
 endif()
 
 SC_ADDEXEC(lazy_test SOURCES lazy_test.cc LINK_LIBRARIES steplazyfile stepeditor NO_INSTALL)
