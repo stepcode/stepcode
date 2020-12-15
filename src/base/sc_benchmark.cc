@@ -94,13 +94,13 @@ benchmark::~benchmark()
     if(!stopped) {
         stop();
         if(debug) {
-		std::cerr << "benchmark::~benchmark(): stop was not called before destructor!" << std::endl;
+            std::cerr << "benchmark::~benchmark(): stop was not called before destructor!" << std::endl;
         }
         out();
     }
-    if (benchVals_str) {
-	    free((void *)benchVals_str);
-	    benchVals_str = NULL;
+    if(benchVals_str) {
+        free((void *)benchVals_str);
+        benchVals_str = NULL;
     }
 }
 
@@ -146,7 +146,7 @@ const char *benchmark::str()
 
 void benchmark::out()
 {
-	std::cout << str() << std::endl;
+    std::cout << str() << std::endl;
 }
 
 const char *benchmark::str(const benchVals &bv)
@@ -154,9 +154,9 @@ const char *benchmark::str(const benchVals &bv)
     std::stringstream ss;
     ss << " Physical memory: " << bv.physMemKB << "kb; Virtual memory: " << bv.virtMemKB;
     ss << "kb; User CPU time: " << bv.userMilliseconds << "ms; System CPU time: " << bv.sysMilliseconds << "ms";
-    if (benchVals_str) {
-	    free((void *)benchVals_str);
-	    benchVals_str = NULL;
+    if(benchVals_str) {
+        free((void *)benchVals_str);
+        benchVals_str = NULL;
     }
     benchVals_str = (char *)calloc(ss.str().length() + 1, sizeof(char));
     snprintf(benchVals_str, ss.str().length(), "%s", ss.str().c_str());

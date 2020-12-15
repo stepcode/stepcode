@@ -42,7 +42,7 @@ class SC_BASE_EXPORT benchmark
     protected:
         benchVals initialVals, laterVals;
         bool debug, stopped;
-	char *benchVals_str = NULL;
+        char *benchVals_str = NULL;
 
     public:
         benchmark(bool debugMessages = true);
