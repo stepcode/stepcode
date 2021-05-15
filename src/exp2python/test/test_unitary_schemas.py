@@ -38,7 +38,6 @@ from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 
 class TestSelectDataType(unittest.TestCase):
     '''

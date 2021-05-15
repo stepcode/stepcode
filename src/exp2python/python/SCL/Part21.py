@@ -3,7 +3,8 @@
 #
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
 # Copyright (c) 2014, Christopher HORLER (cshorler@googlemail.com)
-#
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
+
 # All rights reserved.
 #
 # This file is part of the StepClassLibrary (SCL).
@@ -41,19 +42,6 @@ import ply.yacc as yacc
 from ply.lex import LexError
 
 logger = logging.getLogger(__name__)
-
-# ensure Python 2.6 compatibility
-if not hasattr(logging, 'NullHandler'):
-    class NullHandler(logging.Handler):
-        def handle(self, record):
-            pass
-        def emit(self, record):
-            pass
-        def createLock(self):
-            self.lock = None
-        
-    setattr(logging, 'NullHandler', NullHandler)
-        
 logger.addHandler(logging.NullHandler())
 
 ####################################################################################################
@@ -212,39 +200,39 @@ class Lexer(object):
 ####################################################################################################
 # Simple Model
 ####################################################################################################
-class P21File:
+class P21File(object):
     def __init__(self, header, *sections):
         self.header = header
         self.sections = list(*sections)
 
-class P21Header:
+class P21Header(object):
     def __init__(self, file_description, file_name, file_schema):
         self.file_description = file_description
         self.file_name = file_name
         self.file_schema = file_schema
         self.extra_headers = []
 
-class HeaderEntity:
+class HeaderEntity(object):
     def __init__(self, type_name, *params):
         self.type_name = type_name
         self.params = list(params) if params else []
 
-class Section:
+class Section(object):
     def __init__(self, entities):
         self.entities = entities
 
-class SimpleEntity:
+class SimpleEntity(object):
     def __init__(self, ref, type_name, *params):
         self.ref = ref
         self.type_name = type_name
         self.params = list(params) if params else []
 
-class ComplexEntity:
+class ComplexEntity(object):
     def __init__(self, ref, *params):
         self.ref = ref
         self.params = list(params) if params else []
 
-class TypedParameter:
+class TypedParameter(object):
     def __init__(self, type_name, *params):
         self.type_name = type_name
         self.params = list(params) if params else None

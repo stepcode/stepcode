@@ -1,4 +1,6 @@
 # Copyright (c) 2011-2012, Thomas Paviot (tpaviot@gmail.com)
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
+
 # All rights reserved.
 
 # This file is part of the StepClassLibrary (SCL).

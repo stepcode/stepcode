@@ -1,4 +1,3 @@
-from __future__ import print_function
 # Copyright (c) 2011-2012, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 

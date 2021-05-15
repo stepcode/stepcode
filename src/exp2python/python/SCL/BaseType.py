@@ -1,4 +1,3 @@
-from __future__ import print_function
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 
@@ -54,7 +53,7 @@ class Type(object):
         else:
             return self._typedef
 
-class Aggregate:
+class Aggregate(object):
     '''
     This is an abstract class. ARRAY, LIST, SET and BAG inherit from this class
     '''

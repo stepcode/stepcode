@@ -1,3 +1,9 @@
 /build
 *.kdev4
 .kdev_include_paths
+.DS_Store
+__pycache__
+
+**/python/dist
+
+**/python/*.egg-info/

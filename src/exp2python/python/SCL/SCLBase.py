@@ -1,3 +1,4 @@
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 

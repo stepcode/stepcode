@@ -31,7 +31,7 @@
 
 import sys
 from enum import Enum
-import BaseType
+from SCL import BaseType
 
 class ENUMERATION(Enum):
     """
