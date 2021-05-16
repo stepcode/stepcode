@@ -33,6 +33,7 @@ import sys
 from enum import Enum
 from SCL import BaseType
 
+
 class ENUMERATION(Enum):
     """
     EXPRESS definition:
