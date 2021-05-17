@@ -35,13 +35,13 @@
 # These test cases seems to rely on secondary modules (e.g., test_select_data_type) 
 # that are no longer part of the stepcode repository. I've left this file in place for
 # now in case others know about its origins or use. Its file name is now prefixed with 
-# a "legacy_..." tag to avoid it being picked up by unittest discover.
+# a underscore (i.e., "_test...") to avoid it being picked up by unittest discover.
 #
 
 import unittest
 import sys
-sys.path.append('../examples/unitary_schemas')
-
+sys.path.append('../../examples/unitary_schemas')
+sys.path.append("../..")
 from SCL.SCLBase import *
 from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
