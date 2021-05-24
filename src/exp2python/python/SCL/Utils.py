@@ -1,4 +1,6 @@
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
+
 # All rights reserved.
 
 # This file is part of the StepClassLibrary (SCL).
@@ -30,7 +32,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ''' This module provide string utils'''
-from __future__ import print_function
 
 def process_nested_parent_str(attr_str,idx=0):
     '''
@@ -62,10 +63,10 @@ def process_nested_parent_str(attr_str,idx=0):
     return params,k
 
 if __name__=="__main__":
-    print(process_nested_parent_str2("'A'")[0])
-    print(process_nested_parent_str2("30.0,0.0,5.0")[0])
-    print(process_nested_parent_str2("1,2,(3,4,5),6,7,8")[0])
-    print(process_nested_parent_str2("(#9149,#9166),#9142,.T.")[0])
+    print(process_nested_parent_str("'A'")[0])
+    print(process_nested_parent_str("30.0,0.0,5.0")[0])
+    print(process_nested_parent_str("1,2,(3,4,5),6,7,8")[0])
+    print(process_nested_parent_str("(#9149,#9166),#9142,.T.")[0])
 
 
 

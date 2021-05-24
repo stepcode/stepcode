@@ -1,3 +1,4 @@
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 
@@ -32,9 +33,8 @@
 """
 Docstrings are courtesy of ISO 10303-11:1994(E)
 """
-from __future__ import print_function
 
-class NUMBER:
+class NUMBER(object):
     """
     EXPRESS definition:
     ===================
@@ -134,7 +134,7 @@ class STRING(str):
     """
     pass
     
-class LOGICAL:
+class LOGICAL(object):
     """
     The logical data type has as its domain the three literals true, false and unknown.
     Syntax:

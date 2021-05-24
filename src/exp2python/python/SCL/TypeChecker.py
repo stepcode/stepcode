@@ -1,5 +1,5 @@
-from __future__ import print_function
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
+# Copyright (c) 2021, Devon Sparks (devonsparks.com)
 # All rights reserved.
 
 # This file is part of the StepClassLibrary (SCL).
@@ -30,8 +30,8 @@ from __future__ import print_function
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from ConstructedDataTypes import ENUMERATION, SELECT
-import BaseType
+from SCL.ConstructedDataTypes import ENUMERATION, SELECT
+from SCL import BaseType
 
 RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = True
 DEBUG = False
