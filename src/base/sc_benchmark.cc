@@ -13,6 +13,7 @@
 #endif
 
 #include <assert.h>
+#include <cstdio>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
