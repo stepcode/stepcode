@@ -1,6 +1,7 @@
 #include "express/memory.h"
 
 #include "express/alloc.h"
+#include "express/alg.h"
 
 #include "express/hash.h"
 #include "express/symbol.h"
@@ -25,11 +26,6 @@ struct freelist_head TYPEHEAD_fl;
 struct freelist_head TYPEBODY_fl;
 
 struct freelist_head VAR_fl;
-
-struct freelist_head FUNC_fl;
-struct freelist_head RULE_fl;
-struct freelist_head PROC_fl;
-struct freelist_head WHERE_fl;
 
 struct freelist_head ENTITY_fl;
 
