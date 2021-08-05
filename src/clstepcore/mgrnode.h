@@ -25,17 +25,15 @@ class DisplayNode;
 
 #include <editordefines.h>
 
-#include <sc_nullptr.h>
-
 class InstMgr;
 
 class SC_CORE_EXPORT MgrNodeBase : public GenericNode {
     public:
         virtual inline SDAI_Application_instance * GetSTEPentity() {
             abort();
-            return nullptr;
+            return NULL;
         };
-    virtual ~MgrNodeBase() {};
+        virtual ~MgrNodeBase() {};
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -78,10 +76,10 @@ class SC_CORE_EXPORT MgrNode : public MgrNodeBase {
         virtual ~MgrNode();
 
 // STATE LIST OPERATIONS
-        int MgrNodeListMember( stateEnum s )  {
+        int MgrNodeListMember( stateEnum s ) {
             return ( currState == s );
         }
-        stateEnum  CurrState()      {
+        stateEnum  CurrState() {
             return  currState;
         }
         // returns next or prev member variables
@@ -129,15 +127,15 @@ class SC_CORE_EXPORT MgrNode : public MgrNodeBase {
         DisplayNode *& displayNode() {
             return di;
         }
-        int ArrayIndex()        {
+        int ArrayIndex() {
             return arrayIndex;
         }
-        void ArrayIndex( int index )  {
+        void ArrayIndex( int index ) {
             arrayIndex = index;
         }
 
         // OBSOLETE
-        SDAI_Application_instance  * GetSTEPentity()   {
+        SDAI_Application_instance  * GetSTEPentity() {
             return se;
         }
     protected:

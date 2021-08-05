@@ -1,4 +1,4 @@
-
+#define _XOPEN_SOURCE /* for S_IFDIR */
 #include "sc_mkdir.h"
 
 #include <sys/stat.h>
@@ -10,11 +10,11 @@
 
 /* cross-platform mkdir */
 int sc_mkdir( const char * path ) {
-    #ifdef _WIN32
+#ifdef _WIN32
     return mkdir( path );
-    #else
+#else
     return mkdir( path, 0777 );
-    #endif /* _WIN32 */
+#endif /* _WIN32 */
 }
 
 /* return -1 if error, 0 if created, 1 if dir existed already */

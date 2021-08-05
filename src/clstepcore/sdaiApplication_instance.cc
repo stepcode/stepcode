@@ -20,8 +20,6 @@
 #include "sdaiApplication_instance.h"
 #include "superInvAttrIter.h"
 
-#include <sc_nullptr.h>
-
 SDAI_Application_instance NilSTEPentity;
 
 bool isNilSTEPentity( const SDAI_Application_instance * ai ) {
@@ -218,8 +216,8 @@ STEPattribute * SDAI_Application_instance::GetSTEPattribute( const char * nm, co
     // keep going until no more attributes, or attribute is found
     while( ( a = NextAttribute() ) ) {
         if( 0 == strcmp( nm, a ->Name() ) &&
-            //if entity isn't null, check for a match. NOTE: should we use IsA(), CanBe(), or Name()?
-            ( entity ? ( 0 != a->aDesc->Owner().IsA( entity ) ) : true ) ) {
+                //if entity isn't null, check for a match. NOTE: should we use IsA(), CanBe(), or Name()?
+                ( entity ? ( 0 != a->aDesc->Owner().IsA( entity ) ) : true ) ) {
             break;
         }
     }
@@ -464,7 +462,7 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
  ** having whitespace between them.
  ******************************************************************/
 void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, const char * schnm ) {
-    (void) in;
+    ( void ) in;
     char errStr[BUFSIZ];
     errStr[0] = '\0';
 
@@ -834,10 +832,10 @@ int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
     scanBuf[0] = '\0';
 
     std::stringstream fmtstr;
-    fmtstr << " %" << BUFSIZ -1 << "s ";
+    fmtstr << " %" << BUFSIZ - 1 << "s ";
     //fmtstr contains " %ns " where n is BUFSIZ -1
 
-    int numFound = sscanf( ( char * )attrValue , fmtstr.str().c_str() , scanBuf );
+    int numFound = sscanf( ( char * )attrValue, fmtstr.str().c_str(), scanBuf );
 
     if( numFound == EOF ) {
         error->GreaterSeverity( SEVERITY_INCOMPLETE );
@@ -876,16 +874,16 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 
     // fmtstr2 contains "%d %ns" where n is BUFSIZ-1
     fmtstr2 << " %d %" << BUFSIZ - 1 << "s ";
- 
+
     // check for both forms:  #id or id
-    int found1 = sscanf( ( char * )attrValue, fmtstr1.str().c_str() , &fileId, tmp );
-    int found2 = sscanf( ( char * )attrValue, fmtstr2.str().c_str() , &fileId, tmp );
+    int found1 = sscanf( ( char * )attrValue, fmtstr1.str().c_str(), &fileId, tmp );
+    int found2 = sscanf( ( char * )attrValue, fmtstr2.str().c_str(), &fileId, tmp );
 
     if( ( found1 > 0 ) || ( found2 > 0 ) ) {
         if( ( found1 == 2 ) || ( found2 == 2 ) ) {
             sprintf( messageBuf,
-                     " Attribute's Entity Reference %s is %s data \'%s\'.\n",
-                     attrValue, "followed by invalid", tmp );
+                                 " Attribute's Entity Reference %s is %s data \'%s\'.\n",
+                                 attrValue, "followed by invalid", tmp );
             err->AppendToUserMsg( messageBuf );
             err->AppendToDetailMsg( messageBuf );
             err->GreaterSeverity( SEVERITY_WARNING );
@@ -924,7 +922,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 ** Status:  untested 7/31/90
 ** \Returns  reference to an attribute pointer
 ******************************************************************/
-STEPattribute * SDAI_Application_instance::NextAttribute()  {
+STEPattribute * SDAI_Application_instance::NextAttribute() {
     int i = AttributeCount();
     ++_cur;
     if( i < _cur ) {
@@ -933,7 +931,7 @@ STEPattribute * SDAI_Application_instance::NextAttribute()  {
     return &attributes [_cur - 1];
 }
 
-int SDAI_Application_instance::AttributeCount()  {
+int SDAI_Application_instance::AttributeCount() {
     return  attributes.list_length();
 }
 
@@ -942,7 +940,7 @@ const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_attribute * 
     memset( &ias, 0, sizeof ias );
     iAMap_t::const_iterator it = iAMap.find( ia );
     if( it != iAMap.end() ) {
-        ias = (*it).second;
+        ias = ( *it ).second;
     }
     return ias;
 }
@@ -950,18 +948,18 @@ const iAstruct SDAI_Application_instance::getInvAttr( const Inverse_attribute * 
 const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::getInvAttr( const char * name ) const {
     iAMap_t::const_iterator it = iAMap.begin();
     for( ; it != iAMap.end(); ++it ) {
-        if( 0 == strcmp( it->first->Name(), name) ) {
+        if( 0 == strcmp( it->first->Name(), name ) ) {
             return *it;
         }
     }
     iAstruct z;
     memset( &z, 0, sizeof z );
-    iAMap_t::value_type nil( (Inverse_attribute *) nullptr, z );
+    iAMap_t::value_type nil( ( Inverse_attribute * ) NULL, z );
     return nil;
 }
 
-void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias )  {
-    iAMap_t::iterator it = iAMap.find(ia);
+void SDAI_Application_instance::setInvAttr( const Inverse_attribute * const ia, const iAstruct ias ) {
+    iAMap_t::iterator it = iAMap.find( ia );
     if( it != iAMap.end() ) {
         it->second = ias;
     } else {
