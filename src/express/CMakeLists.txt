@@ -127,7 +127,7 @@ SET(EXPRESS_PRIVATE_HDRS
 variable_watch(SC_ADDLIB_EXPRESS_ARG_LINK_LIBRARIES)
 variable_watch(SC_ADDLIB_EXPRESS-STATIC_ARG_LINK_LIBRARIES)
 
-if($CACHE{SC_BUILD_SHARED_LIBS})
+if("$CACHE{SC_BUILD_SHARED_LIBS}" OR NOT "$CACHE{SC_BUILD_STATIC_LIBS}")
   SC_ADDLIB(express SHARED SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base)
   if(WIN32)
     target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
@@ -153,7 +153,7 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
   else()
     add_dependencies(express-static express_verify)
   endif()
- 
+
 endif()
 
 SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})

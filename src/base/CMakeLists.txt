@@ -32,7 +32,7 @@ if($CACHE{SC_MEMMGR_ENABLE_CHECKS})
   add_definitions(-DSC_MEMMGR_ENABLE_CHECKS)
 endif()
 
-if($CACHE{SC_BUILD_SHARED_LIBS})
+if(BUILD_SHARED_LIBS)
   SC_ADDLIB(base SHARED SOURCES ${SC_BASE_SOURCES})
   if(WIN32)
     target_link_libraries(base psapi)
@@ -40,7 +40,7 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
   endif()
 endif()
 
-if($CACHE{SC_BUILD_STATIC_LIBS})
+if(BUILD_STATIC_LIBS)
   SC_ADDLIB(base-static STATIC SOURCES ${SC_BASE_SOURCES})
   if(WIN32)
     target_link_libraries(base-static psapi)
@@ -61,7 +61,7 @@ if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/judy/src")
 endif(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/judy/src")
 
 install(FILES ${SC_BASE_HDRS}
-  DESTINATION ${INCLUDE_INSTALL_DIR}/stepcode/base)
+  DESTINATION ${INCLUDE_DIR}/stepcode/base)
 
 # Local Variables:
 # tab-width: 8

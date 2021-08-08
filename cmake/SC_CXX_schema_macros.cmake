@@ -93,7 +93,7 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
     ${SC_SOURCE_DIR}/src/base/judy/src
   )
   # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
-  if($CACHE{SC_BUILD_SHARED_LIBS})
+  if(BUILD_SHARED_LIBS)
     SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${sourceFiles} LINK_LIBRARIES stepdai stepcore stepeditor steputils base TESTABLE)
     add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
     if(WIN32)
@@ -101,6 +101,12 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
       if(MSVC)
         target_compile_options("${PROJECT_NAME}" PRIVATE "/bigobj")
       endif()
+    endif()
+    # TODO - ideally we would avoid generating code that triggers this warning, but figuring out
+    # how to do so is a non-trivial exercise.  In the meantime, suppress the (very verbose) warnings
+    # we get due to this issue so it doesn't mask other problems.
+    if(${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
+      target_compile_options("${PROJECT_NAME}" PRIVATE "-Wno-ignored-qualifiers")
     endif()
   endif()
 
