@@ -1,4 +1,3 @@
-# create sc_cf.h and sc_version_string.h
 
 # Take the sc config file template as the starting point for
 # sc_cf.h.in - scripts may need to append to the template, so
@@ -18,6 +17,7 @@ if(NOT COMMAND CONFIG_H_APPEND)
 endif(NOT COMMAND CONFIG_H_APPEND)
 file(READ ${SC_SOURCE_DIR}/include/sc_cf_cmake.h.in CONFIG_H_FILE_CONTENTS)
 CONFIG_H_APPEND(SC "${CONFIG_H_FILE_CONTENTS}")
+# create sc_cf.h
 
 include(CheckLibraryExists)
 include(CheckIncludeFile)
@@ -101,32 +101,6 @@ get_property(CONFIG_H_FILE_CONTENTS GLOBAL PROPERTY SC_CONFIG_H_CONTENTS)
 file(WRITE ${CONFIG_H_FILE} "${CONFIG_H_FILE_CONTENTS}")
 configure_file(${CONFIG_H_FILE} ${SC_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_cf.h)
 
-# ------------------------
-
-# create sc_version_string.h, http://stackoverflow.com/questions/3780667
-# Using 'ver_string' instead of 'sc_version_string.h' is a trick to force the
-# command to always execute when the custom target is built. It works because
-# a file by that name never exists.
-if(SC_GIT_VERSION)
-  configure_file(${SC_CMAKE_DIR}/sc_version_string.cmake ${SC_BINARY_DIR}/sc_version_string.cmake @ONLY)
-  add_custom_target(version_string ALL DEPENDS ver_string)
-  # creates sc_version_string.h using cmake script
-  add_custom_command(OUTPUT ver_string
-    COMMAND ${CMAKE_COMMAND} -DSOURCE_DIR=${SC_SOURCE_DIR} -DBINARY_DIR=${SC_BINARY_DIR} -P ${SC_BINARY_DIR}/sc_version_string.cmake
-    )
-  # sc_version_string.h is a generated file
-else(SC_GIT_VERSION)
-  set(VER_HDR "
-  #ifndef SC_VERSION_STRING
-  #define SC_VERSION_STRING
-  static char sc_version[512] = {\"${SC_VERSION}\"};
-  #endif"
-  )
-  file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h "${VER_HDR}")
-endif(SC_GIT_VERSION)
-set_source_files_properties(${CMAKE_CURRENT_BINARY_DIR}/${INCLUDE_INSTALL_DIR}/sc_version_string.h
-  PROPERTIES GENERATED TRUE
-  HEADER_FILE_ONLY TRUE )
 
 # Local Variables:
 # tab-width: 8

@@ -42,13 +42,10 @@ project(SC)
 
 # SC version
 set(SC_VERSION_MAJOR 0)
-set(SC_VERSION_MINOR 8-dev)
-set(SC_VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR})
+set(SC_VERSION_MINOR 9)
+set(SC_VERSION_PATCH 1)
+set(SC_VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR}.${SC_VERSION_PATCH})
 
-# SC ABI version. SC_ABI_SOVERSION should be incremented
-# for each release introducing API incompatibilities
-set(SC_ABI_SOVERSION 2)
-set(SC_ABI_VERSION ${SC_ABI_SOVERSION}.0.0)
 
 # Minimum required version of CMake
 cmake_minimum_required(VERSION 3.6.3)
@@ -99,8 +96,8 @@ if(NOT SC_IS_SUBBUILD)
     ".. Generating step can take a while if you are building several schemas.")
 endif(NOT SC_IS_SUBBUILD)
 
-# create config headers sc_cf.h and sc_version_string.h
 include(${SC_CMAKE_DIR}/SC_Config_Headers.cmake)
+# create config headers sc_cf.h
 
 
 ################
@@ -144,6 +141,19 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
 else()
   add_dependencies(core stepdai-static stepeditor-static exp2cxx check-express)
 endif()
+if(NOT SC_IS_SUBBUILD)
+    #-----------------------------------------------------------------------------
+  # SC Packaging
+  # $make package
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
+  set(CPACK_SET_DESTDIR "ON")
+  set(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
+  set(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
+  set(CPACK_PACKAGE_NAME SC)
+  set(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
+  include(CPack)
+endif(NOT SC_IS_SUBBUILD)
+
 
 # CONFIG_END_MESSAGES - list of messages to be printed after everything else is done.
 # THIS MUST BE LAST to ensure that they are visible to the user without scrolling.

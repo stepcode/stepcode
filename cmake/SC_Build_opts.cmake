@@ -145,17 +145,6 @@ if(NOT SC_IS_SUBBUILD)
   set(CMAKE_INSTALL_PREFIX ${SC_INSTALL_PREFIX} CACHE INTERNAL "Prefix prepended to install directories if target destination is not absolute, immutable" FORCE)
 
   #-----------------------------------------------------------------------------
-  # SC Packaging
-  # $make package
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "STEPcode")
-  set(CPACK_SET_DESTDIR "ON")
-  set(CPACK_PACKAGE_VERSION_MAJOR ${SC_VERSION_MAJOR})
-  set(CPACK_PACKAGE_VERSION_MINOR ${SC_VERSION_MINOR})
-  set(CPACK_PACKAGE_NAME SC)
-  set(CPACK_PACKAGE_CONTACT "SC Developers <scl-dev@googlegroups.com>")
-  include(CPack)
-
-  #-----------------------------------------------------------------------------
   # Uninstall target
   # From http://www.cmake.org/Wiki/CMake_FAQ#Can_I_do_.22make_uninstall.22_with_CMake.3F
   configure_file(

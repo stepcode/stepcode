@@ -141,9 +141,6 @@ if($CACHE{SC_BUILD_SHARED_LIBS})
     add_dependencies(express express_verify)
   endif()
 
-  if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-    add_dependencies(express version_string)
-  endif()
 endif()
 
 if($CACHE{SC_BUILD_STATIC_LIBS})
@@ -157,9 +154,6 @@ if($CACHE{SC_BUILD_STATIC_LIBS})
     add_dependencies(express-static express_verify)
   endif()
  
-  if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-    add_dependencies(express-static version_string)
-  endif()
 endif()
 
 SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})

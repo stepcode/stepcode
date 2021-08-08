@@ -31,9 +31,6 @@ if(SC_PYTHON_GENERATOR)
    )
  SC_ADDEXEC(exp2python SOURCES ${exp2python_SOURCES} LINK_LIBRARIES express base)
 
-  if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-    add_dependencies(exp2python version_string)
-  endif(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
 endif(SC_PYTHON_GENERATOR)
 
 # Local Variables:
