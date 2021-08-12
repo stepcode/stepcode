@@ -126,17 +126,24 @@ if (LEMON_EXECUTABLE)
       get_filename_component(_in_y_path ${LemonInput} ABSOLUTE)
       get_filename_component(_in_y_file ${LemonInput} NAME)
 
-      # TODO: is this really necessary?
+      # Stage the source file in the binary directory for lemon.  We need to make
+      # sure it's fully copied, so use a sentinel guard
       add_custom_command(
 	OUTPUT ${_in_y_file}
 	COMMAND ${CMAKE_COMMAND} -E copy ${_in_y_path} ${CMAKE_CURRENT_BINARY_DIR}
 	)
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${_in_y_file}.sentinel
+	COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/${_in_y_file}.sentinel
+	DEPENDS ${_in_y_file}
+	)
+      add_custom_target(${Name}_input_cpy DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${_in_y_file}.sentinel)
 
       # execute lemon
       add_custom_command(
 	OUTPUT ${_out_src_file}
 	COMMAND ${LEMON_EXECUTABLE} -T${LEMON_TEMPLATE} ${LEMON_EXECUTABLE_opts} ${_in_y_file}
-	DEPENDS ${_in_y_file}
+	DEPENDS ${Name}_input_cpy
 	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 	COMMENT "[LEMON][${Name}] Building parser with ${LEMON_EXECUTABLE}"
 	)
