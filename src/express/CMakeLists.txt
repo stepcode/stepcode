@@ -7,14 +7,17 @@ include_directories(
 # Depending on whether we're using pre-generated sources or building them on
 # the fly, set up targets and source lists.
 if(SC_GENERATE_LP_SOURCES)
-  LEMON_TARGET(ExpParser expparse.y)
+  LEMON_TARGET(ExpParser expparse.y expparse.c
+    COMPILE_FLAGS "-p -c"
+    DEFINES_FILE "expparse.h"
+    )
   PERPLEX_TARGET(ExpScanner expscan.l)
   ADD_PERPLEX_LEMON_DEPENDENCY(ExpScanner ExpParser)
 
   add_library(objlib_expscan_c OBJECT ${PERPLEX_ExpScanner_SRC})
   set_property(TARGET objlib_expscan_c PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_SRC})
+  add_library(objlib_expparse_c OBJECT ${LEMON_ExpParser_OUTPUTS})
   set_property(TARGET objlib_expparse_c PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 else(SC_GENERATE_LP_SOURCES)

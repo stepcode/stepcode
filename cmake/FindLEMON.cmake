@@ -156,8 +156,11 @@ if (LEMON_EXECUTABLE)
       set(LEMON_${Name}_INCLUDE_DIR "${CMAKE_CURRENT_BINARY_DIR}" PARENT_SCOPE)
       set(LEMON_${Name}_OUTPUTS "${_out_src_file}" PARENT_SCOPE)
 
+      # TODO - remove once perplex goes away...
+      add_custom_target(${Name} DEPENDS ${_out_hdr_file})
+
       # make sure we clean up generated output and copied input
-      set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${LEMON_${Name}_OUTPUTS}")
+      set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${_out_src_file}")
       set_property(DIRECTORY APPEND PROPERTY ADDITIONAL_MAKE_CLEAN_FILES "${CMAKE_CURRENT_BINARY_DIR}/${_in_y_file}")
 
     endfunction(LEMON_TARGET)

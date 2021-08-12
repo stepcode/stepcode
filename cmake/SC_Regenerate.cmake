@@ -30,6 +30,7 @@ if(NOT "${SC_GENERATE_LEXER_PARSER}" STREQUAL "OFF")
   # NOTE: lemon doesn't have a stable versioning system (it's always 1)
   find_package(LEMON ${_verbosity})
   find_package(RE2C 1.0.3 ${_verbosity})
+  find_package(PERPLEX ${_verbosity})
   
   if(LEMON_FOUND AND RE2C_FOUND)
     set(SC_GENERATE_LP_SOURCES 1)
