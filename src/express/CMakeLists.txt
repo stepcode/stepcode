@@ -85,6 +85,36 @@ if(SC_GENERATE_LP_SOURCES)
   set_source_files_properties(express.c lexact.c PROPERTIES OBJECT_DEPENDS "${PERPLEX_ExpScanner_HDR};${LEMON_ExpParser_HDR}")
 endif()
 
+if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
+  add_library(express SHARED ${EXPRESS_OBJS})
+  target_link_libraries(express base)
+  if(OPENBSD)
+    set_target_properties(express PROPERTIES VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR})
+  else(OPENBSD)
+    set_target_properties(express PROPERTIES VERSION ${SC_VERSION} SOVERSION ${SC_VERSION_MAJOR})
+  endif(OPENBSD)
+  if(APPLE)
+    set_property(TARGET express APPEND PROPERTY LINK_FLAGS "-flat_namespace -undefined suppress")
+  endif(APPLE)
+  install(TARGETS express
+    RUNTIME DESTINATION ${BIN_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    ARCHIVE DESTINATION ${LIB_DIR})
+
+  if(MSVC)
+    set_property(TARGET express APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
+    set_property(TARGET express APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
+  endif(MSVC)
+endif()
+
+if(BUILD_STATIC_LIBS)
+  add_library(express-static STATIC ${EXPRESS_OBJS})
+  install(TARGETS express-static
+    RUNTIME DESTINATION ${BIN_DIR}
+    LIBRARY DESTINATION ${LIB_DIR}
+    ARCHIVE DESTINATION ${LIB_DIR})
+endif()
+
 # TODO
 # Currently, fedex.c provides the main() for multiple programs. These programs
 # provide custom behavior by defining EXPRESSinit_init (called by fedex.c's
@@ -99,26 +129,16 @@ set(CHECK_EXPRESS_SOURCES
   inithook.c
  )
 
-SET(EXPRESS_PRIVATE_HDRS
-  exptoks.h
-  stack.h
-  )
-
-variable_watch(SC_ADDLIB_EXPRESS_ARG_LINK_LIBRARIES)
-variable_watch(SC_ADDLIB_EXPRESS-STATIC_ARG_LINK_LIBRARIES)
-
-if("$CACHE{SC_BUILD_SHARED_LIBS}" OR NOT "$CACHE{SC_BUILD_STATIC_LIBS}")
-  SC_ADDLIB(express SHARED SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base)
-  if(WIN32)
-    target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
-  endif()
+add_executable(check-express ${CHECK_EXPRESS_SOURCES})
+if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
+  target_link_libraries(check-express express base)
+else()
+  target_link_libraries(check-express express-static base-static)
 endif()
-
-if($CACHE{SC_BUILD_STATIC_LIBS})
-  SC_ADDLIB(express-static STATIC SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
-endif()
-
-SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})
+install(TARGETS check-express
+  RUNTIME DESTINATION ${BIN_DIR}
+  LIBRARY DESTINATION ${LIB_DIR}
+  ARCHIVE DESTINATION ${LIB_DIR})
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)
