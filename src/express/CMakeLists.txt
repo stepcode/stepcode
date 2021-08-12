@@ -4,39 +4,6 @@ include_directories(
   ${SC_SOURCE_DIR}/src/base
   )
 
-# Set up the information we need to feed the generated source management
-# scripts
-set(BASELINE_INFORMATION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/generated/verification_info.cmake")
-set(PROJECT_CMAKE_DIR "${SC_SOURCE_DIR}/cmake")
-set(MD5_FILELIST
-  "${CMAKE_CURRENT_SOURCE_DIR}/expscan.l"
-  "${CMAKE_CURRENT_SOURCE_DIR}/expparse.y"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expscan.h"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.c"
-  "${CMAKE_CURRENT_SOURCE_DIR}/generated/expparse.h"
-  )
-configure_file(${SC_SOURCE_DIR}/cmake/md5_gen.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake @ONLY)
-configure_file(${SC_SOURCE_DIR}/cmake/md5_verify.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake @ONLY)
-
-# Convenience target to generate an updated verification_info.cmake file
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.cmake
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel
-  )
-add_custom_target(express_md5gen DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_md5gen.sentinel)
-
-# Target for actually checking cached MD5 sums against files
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
-  COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-  COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel
-  DEPENDS ${MD5_FILELIST}
-  )
-add_custom_target(express_verify DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/express_verify.sentinel)
-
-
 # Depending on whether we're using pre-generated sources or building them on
 # the fly, set up targets and source lists.
 if(SC_GENERATE_LP_SOURCES)
@@ -87,6 +54,8 @@ foreach(_src ${EXPRESS_SOURCES})
     string(REPLACE "." "_" _suffix ${_src})
     set(_objlib "objlib_${_suffix}")
     add_library(${_objlib} OBJECT ${_src})
+    add_dependencies(${_objlib} objlib_expscan_c)
+    add_dependencies(${_objlib} objlib_expparse_c)
     # TODO: probably PIC should be used everywhere...
     set_property(TARGET ${_objlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
     list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:${_objlib}>)
@@ -132,28 +101,10 @@ if("$CACHE{SC_BUILD_SHARED_LIBS}" OR NOT "$CACHE{SC_BUILD_STATIC_LIBS}")
   if(WIN32)
     target_compile_definitions(express PRIVATE SC_EXPRESS_DLL_EXPORTS)
   endif()
-
-  if(SC_GENERATE_LP_SOURCES)
-    add_custom_command(TARGET express POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-    )
-  else()
-    add_dependencies(express express_verify)
-  endif()
-
 endif()
 
 if($CACHE{SC_BUILD_STATIC_LIBS})
   SC_ADDLIB(express-static STATIC SOURCES "dummy.c" ${EXPRESS_OBJS} LINK_LIBRARIES base-static)
-
-  if(SC_GENERATE_LP_SOURCES)
-    add_custom_command(TARGET express-static POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/express_verify.cmake
-    )
-  else()
-    add_dependencies(express-static express_verify)
-  endif()
-
 endif()
 
 SC_ADDEXEC(check-express SOURCES ${CHECK_EXPRESS_SOURCES} LINK_LIBRARIES express base ${SC_EXEC_NOINSTALL})
