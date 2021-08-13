@@ -138,12 +138,6 @@ if(SC_ENABLE_TESTING)
   include(CTest)
 endif(SC_ENABLE_TESTING)
 
-# TODO - BRL-CAD is the only known user of this option, and it will be
-# transitioning to a new setup that won't need it - once that's done,
-# we should just remove this option.
-option(SC_SKIP_EXEC_INSTALL "Skip installing executables" OFF)
-mark_as_advanced(SC_SKIP_EXEC_INSTALL)
-
 # SC_ADDEXEC and SC_ADDLIB macros, dllimport/export, etc
 include(SC_Targets)
 
