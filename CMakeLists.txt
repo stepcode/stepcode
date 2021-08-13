@@ -40,6 +40,12 @@
 
 project(SC)
 
+# Minimum required version of CMake
+cmake_minimum_required(VERSION 3.12)
+if (POLICY CMP0077)
+  cmake_policy(SET CMP0077 OLD)
+endif (POLICY CMP0077)
+
 # SC version
 set(SC_VERSION_MAJOR 0)
 set(SC_VERSION_MINOR 9)
@@ -53,12 +59,6 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Minimum required version of CMake
-cmake_minimum_required(VERSION 3.6.3)
-cmake_policy(SET CMP0003 NEW)
-cmake_policy(SET CMP0026 NEW)
-cmake_policy(SET CMP0057 NEW)
 
 # CMake derives much of its functionality from modules, typically
 # stored in one directory - let CMake know where to find them.
