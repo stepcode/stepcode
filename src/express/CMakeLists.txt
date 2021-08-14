@@ -57,22 +57,22 @@ set(EXPRESS_SOURCES
   ordered_attrs.cc
   info.c
   factory.c
- )
+  )
 
 set(EXPRESS_OBJS)
 foreach(_src ${EXPRESS_SOURCES})
-    string(REPLACE "." "_" _suffix ${_src})
-    set(_objlib "objlib_${_suffix}")
-    add_library(${_objlib} OBJECT ${_src})
-    add_dependencies(${_objlib} objlib_expscan_c)
-    add_dependencies(${_objlib} objlib_expparse_c)
+  string(REPLACE "." "_" _suffix ${_src})
+  set(_objlib "objlib_${_suffix}")
+  add_library(${_objlib} OBJECT ${_src})
+  add_dependencies(${_objlib} objlib_expscan_c)
+  add_dependencies(${_objlib} objlib_expparse_c)
   if(MSVC)
     set_property(TARGET ${_objlib} APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
     set_property(TARGET ${_objlib} APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
   endif(MSVC)
-    # TODO: probably PIC should be used everywhere...
-    set_property(TARGET ${_objlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
-    list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:${_objlib}>)
+  # TODO: probably PIC should be used everywhere...
+  set_property(TARGET ${_objlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
+  list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:${_objlib}>)
 endforeach()
 
 list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expscan_c>)
@@ -81,9 +81,9 @@ list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:objlib_expparse_c>)
 
 if(SC_GENERATE_LP_SOURCES)
   set_property(TARGET objlib_expparse_c objlib_express_c objlib_lexact_c 
-	       APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
+    APPEND PROPERTY INCLUDE_DIRECTORIES "${PERPLEX_ExpScanner_INCLUDE_DIR}")
   set_property(TARGET objlib_expscan_c objlib_express_c objlib_lexact_c
-               APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
+    APPEND PROPERTY INCLUDE_DIRECTORIES "${LEMON_ExpParser_INCLUDE_DIR}")
   # OBJECT libraries are not targets, and so an explicit dependency is required
   set_source_files_properties(express.c lexact.c PROPERTIES OBJECT_DEPENDS "${PERPLEX_ExpScanner_HDR};${LEMON_ExpParser_HDR}")
 endif()
@@ -130,7 +130,7 @@ endif()
 set(CHECK_EXPRESS_SOURCES
   fedex.c
   inithook.c
- )
+  )
 
 add_executable(check-express ${CHECK_EXPRESS_SOURCES})
 if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
