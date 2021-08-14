@@ -22,6 +22,13 @@ else(SC_GENERATE_LP_SOURCES)
   include_directories(generated)
 endif(SC_GENERATE_LP_SOURCES)
 
+if(MSVC)
+  set_property(TARGET objlib_expscan_c APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
+  set_property(TARGET objlib_expscan_c APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
+  set_property(TARGET objlib_expparse_c APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
+  set_property(TARGET objlib_expparse_c APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
+endif(MSVC)
+
 set(EXPRESS_SOURCES
   symbol.c
   type.c
@@ -56,6 +63,10 @@ foreach(_src ${EXPRESS_SOURCES})
     add_library(${_objlib} OBJECT ${_src})
     add_dependencies(${_objlib} objlib_expscan_c)
     add_dependencies(${_objlib} objlib_expparse_c)
+  if(MSVC)
+    set_property(TARGET ${_objlib} APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
+    set_property(TARGET ${_objlib} APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
+  endif(MSVC)
     # TODO: probably PIC should be used everywhere...
     set_property(TARGET ${_objlib} PROPERTY POSITION_INDEPENDENT_CODE ON)
     list(APPEND EXPRESS_OBJS $<TARGET_OBJECTS:${_objlib}>)
