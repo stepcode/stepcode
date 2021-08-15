@@ -2,6 +2,7 @@
 #define SCL_CF_H
 
 /**** Define statements for CMake ****/
+#cmakedefine SC_VERSION "@SC_VERSION@"
 #cmakedefine HAVE_NDIR_H 1
 #cmakedefine HAVE_STDINT_H 1
 #cmakedefine HAVE_SYS_STAT_H 1
@@ -26,5 +27,6 @@
 
 #cmakedefine HAVE_STD_THREAD 1
 #cmakedefine HAVE_STD_CHRONO 1
+#cmakedefine HAVE_NULLPTR 1
 
 #endif /* SCL_CF_H */

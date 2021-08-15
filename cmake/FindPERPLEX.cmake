@@ -240,12 +240,12 @@ if(NOT COMMAND ADD_PERPLEX_LEMON_DEPENDENCY)
       message(SEND_ERROR "PERPLEX target `${PERPLEXTarget}' does not exists.")
     endif()
 
-    if(NOT LEMON_${LemonTarget}_HDR)
+    if(NOT TARGET ${LemonTarget})
       message(SEND_ERROR "Lemon target `${LemonTarget}' does not exists.")
     endif()
 
     set_source_files_properties(${PERPLEX_${PERPLEXTarget}_SRC}
-      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_HDR})
+      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_OUTPUT_HEADER})
   endmacro(ADD_PERPLEX_LEMON_DEPENDENCY)
 endif(NOT COMMAND ADD_PERPLEX_LEMON_DEPENDENCY)
 

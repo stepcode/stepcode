@@ -20,8 +20,6 @@
 #include "sdaiApplication_instance.h"
 #include "superInvAttrIter.h"
 
-#include <sc_nullptr.h>
-
 SDAI_Application_instance NilSTEPentity;
 
 bool isNilSTEPentity( const SDAI_Application_instance * ai ) {
@@ -956,7 +954,7 @@ const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::
     }
     iAstruct z;
     memset( &z, 0, sizeof z );
-    iAMap_t::value_type nil( (Inverse_attribute *) nullptr, z );
+    iAMap_t::value_type nil( ( Inverse_attribute * ) NULL, z );
     return nil;
 }
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.6.3)
+cmake_minimum_required(VERSION 3.12)
 #c++ tests that depend on a particular schema
 
 include_directories( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${SC_SOURCE_DIR}/src/clutils
@@ -9,6 +9,10 @@ include_directories( ${SC_SOURCE_DIR}/src/cldai ${SC_SOURCE_DIR}/src/cleditor ${
 # added as a workaround for changed behavior in newer cmake
 # versions (changes somewhere between 2.8 and 3.1)
 function(get_sdai_incl_dir out_path_var sdai_lib)
+  if (NOT TARGET sdai_${sdai_lib})
+    message("sdai_${sdai_lib} is not a target")
+    return()
+  endif (NOT TARGET sdai_${sdai_lib})
   if(NOT "${sdai_${sdai_lib}_SOURCE_DIR}" STREQUAL "")
     set(${out_path_var} "${sdai_${sdai_lib}_SOURCE_DIR}" PARENT_SCOPE)
     return()
