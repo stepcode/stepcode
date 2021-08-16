@@ -78,7 +78,7 @@ const char * GenericAggrNode::asStr( std::string & s ) {
 }
 
 const char * GenericAggrNode::STEPwrite( std::string & s, const char * currSch ) {
-    (void) currSch; //unused
+    ( void ) currSch; //unused
     return value.STEPwrite( s );
 }
 

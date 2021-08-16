@@ -98,7 +98,7 @@ void lazyInstMgr::openFile( std::string fname ) {
     //create a place in the vector and remember its location, then free lock
     ///FIXME begin atomic op
     size_t i = _files.size();
-    _files.push_back( (lazyFileReader * ) 0 );
+    _files.push_back( ( lazyFileReader * ) 0 );
     ///FIXME end atomic op
     lazyFileReader * lfr = new lazyFileReader( fname, this, i );
     _files[i] = lfr;
@@ -171,7 +171,7 @@ instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
         bool isNewElement = ( checkedDependencies->insert( dependencies.at( curPos ) ) ).second;
         if( isNewElement ) {
             _fwdRefsVec = _fwdRefs->find( dependencies.at( curPos ) );
-            
+
             if( _fwdRefsVec != 0 ) {
                 dependencies.insert( dependencies.end(), _fwdRefsVec->begin(), _fwdRefsVec->end() );
             }

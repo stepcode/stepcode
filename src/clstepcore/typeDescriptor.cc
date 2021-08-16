@@ -125,7 +125,7 @@ void TypeDescriptor::addAltName( const char * schnm, const char * newnm ) {
 void TypeDescriptor::AttrTypeName( std::string & buf, const char * schnm ) const {
     const char * sn = Name( schnm );
     if( sn ) {
-        StrToLower( sn , buf );
+        StrToLower( sn, buf );
     } else {
         buf = _description;
     }

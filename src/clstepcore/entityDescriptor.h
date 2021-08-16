@@ -41,7 +41,7 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
-   public:
+    public:
         Uniqueness_rule__set_var _uniqueness_rules; // initially a null pointer
 
         // pointer to a function that will create a new instance of a SDAI_Application_instance

@@ -110,7 +110,7 @@ void exp_output( char * buf, unsigned int len ) {
     FILE * fp = ( exppp_fp ? exppp_fp : stdout );
 
     error_sym.line += count_newlines( buf );
-    printedSpaceLast = ( *( buf + len - 1) == ' ' );
+    printedSpaceLast = ( *( buf + len - 1 ) == ' ' );
     if( exppp_buf ) {
         /* output to string */
         if( len > exppp_buflen ) {
@@ -145,7 +145,7 @@ void wrap( const char * fmt, ... ) {
     len = strlen( buf );
 
     /* eliminate leading whitespace */
-    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ){
+    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ) {
         start++;
         len--;
     }
@@ -158,7 +158,7 @@ void wrap( const char * fmt, ... ) {
      * to use #3: temporarily change exppp_linelength; it doesn't make sense to change indent2
      */
     if( ( ( ( curpos + len ) > exppp_linelength ) && ( ( indent2 + len ) < exppp_linelength ) )
-        || ( ( exppp_linelength == indent2 ) && ( curpos > indent2 ) ) ) {
+            || ( ( exppp_linelength == indent2 ) && ( curpos > indent2 ) ) ) {
         /* move to new continuation line */
         char line[1000];
         sprintf( line, "\n%*s", indent2, "" );
@@ -168,7 +168,7 @@ void wrap( const char * fmt, ... ) {
     }
 
     /* eliminate leading whitespace  - again */
-    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ){
+    while( ( *start == ' ' ) && ( ( printedSpaceLast ) || ( *( start + 1 ) == ' ' ) ) ) {
         start++;
         len--;
     }
@@ -253,7 +253,7 @@ int minimum( int a, int b, int c ) {
  * \returns const char pointer to static buffer containing ascii representation of real
  */
 const char * real2exp( double r ) {
-    #define PP_SMALL_BUF_SZ 80
+#define PP_SMALL_BUF_SZ 80
     static char result[PP_SMALL_BUF_SZ] = { 0 };
     char * pos = result, * lcNumeric = setlocale( LC_NUMERIC, NULL );
 
@@ -315,7 +315,7 @@ const char * real2exp( double r ) {
     }
     assert( strlen( result ) < PP_SMALL_BUF_SZ - 1 );
     return result;
-    #undef PP_SMALL_BUF_SZ
+#undef PP_SMALL_BUF_SZ
 }
 
 /** Find next '.' in null-terminated string, return number of chars
@@ -336,7 +336,7 @@ int nextBreakpoint( const char * pos, const char * end ) {
 /** true if it makes sense to break before printing next part of the string */
 bool shouldBreak( int len ) {
     if( ( curpos > indent2 ) &&
-        ( ( curpos + len ) > exppp_linelength ) ) {
+            ( ( curpos + len ) > exppp_linelength ) ) {
         return true;
     }
     return false;
@@ -352,7 +352,7 @@ void maybeBreak( int len, bool first ) {
         }
     } else if( first ) {
         /* staying on same line */
-        raw( "%s", ( printedSpaceLast ? "'": " '" ) );
+        raw( "%s", ( printedSpaceLast ? "'" : " '" ) );
     }
 }
 
@@ -372,7 +372,7 @@ void breakLongStr( const char * in ) {
 
     if( ( inlen == 0 ) || ( ( ( int ) inlen + curpos ) < exppp_linelength ) ) {
         /* short enough to fit on current line */
-        raw( "%s'%s'", ( printedSpaceLast ? "": " " ), in );
+        raw( "%s'%s'", ( printedSpaceLast ? "" : " " ), in );
         return;
     }
 
@@ -384,7 +384,7 @@ void breakLongStr( const char * in ) {
         raw( "%.*s", i, iptr );
         iptr += i;
     }
-    raw( "' ");
+    raw( "' " );
 }
 
 /* Interfacing Definitions */

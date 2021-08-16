@@ -59,7 +59,7 @@ typedef struct Linked_List_ * Linked_List;
 typedef struct Link_ {
     struct Link_  * next;
     struct Link_  * prev;
-    void *data;
+    void * data;
 } * Link;
 
 struct Linked_List_ {
@@ -128,16 +128,16 @@ extern SC_EXPRESS_EXPORT void LISTinitialize( void );
 extern SC_EXPRESS_EXPORT void LISTcleanup( void );
 extern SC_EXPRESS_EXPORT Linked_List LISTcreate( void );
 extern SC_EXPRESS_EXPORT Linked_List LISTcopy( Linked_List );
-extern SC_EXPRESS_EXPORT void LISTsort( Linked_List, int (*comp)(void*, void*) );
+extern SC_EXPRESS_EXPORT void LISTsort( Linked_List, int ( *comp )( void *, void * ) );
 extern SC_EXPRESS_EXPORT void LISTswap( Link, Link );
-extern SC_EXPRESS_EXPORT void *  LISTadd_first( Linked_List, void * );
-extern SC_EXPRESS_EXPORT void *  LISTadd_last( Linked_List, void * );
-extern SC_EXPRESS_EXPORT void *  LISTadd_after( Linked_List, Link, void * );
-extern SC_EXPRESS_EXPORT void *  LISTadd_before( Linked_List, Link, void * );
-extern SC_EXPRESS_EXPORT void *  LISTremove_first( Linked_List );
-extern SC_EXPRESS_EXPORT void *  LISTget_first( Linked_List );
-extern SC_EXPRESS_EXPORT void *  LISTget_second( Linked_List );
-extern SC_EXPRESS_EXPORT void *  LISTget_nth( Linked_List, int );
+extern SC_EXPRESS_EXPORT void  * LISTadd_first( Linked_List, void * );
+extern SC_EXPRESS_EXPORT void  * LISTadd_last( Linked_List, void * );
+extern SC_EXPRESS_EXPORT void  * LISTadd_after( Linked_List, Link, void * );
+extern SC_EXPRESS_EXPORT void  * LISTadd_before( Linked_List, Link, void * );
+extern SC_EXPRESS_EXPORT void  * LISTremove_first( Linked_List );
+extern SC_EXPRESS_EXPORT void  * LISTget_first( Linked_List );
+extern SC_EXPRESS_EXPORT void  * LISTget_second( Linked_List );
+extern SC_EXPRESS_EXPORT void  * LISTget_nth( Linked_List, int );
 extern SC_EXPRESS_EXPORT void LISTfree( Linked_List );
 extern SC_EXPRESS_EXPORT int  LISTget_length( Linked_List );
 extern SC_EXPRESS_EXPORT bool LISTempty( Linked_List list );

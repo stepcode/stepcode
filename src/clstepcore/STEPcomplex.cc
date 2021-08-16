@@ -305,9 +305,9 @@ const EntityDescriptor * STEPcomplex::IsA( const EntityDescriptor * ed ) const {
 
 Severity STEPcomplex::ValidLevel( ErrorDescriptor * error, InstMgrBase * im,
                                   int clearError ) {
-    (void) error; //unused
-    (void) im;
-    (void) clearError;
+    ( void ) error; //unused
+    ( void ) im;
+    ( void ) clearError;
     cout << "STEPcomplex::ValidLevel() not implemented.\n";
     return SEVERITY_NULL;
 }
@@ -572,7 +572,7 @@ void STEPcomplex::BuildAttrs( const char * s ) {
 }
 
 void STEPcomplex::STEPread_error( char c, int index, istream & in, const char * schnm ) {
-    (void) schnm; //unused
+    ( void ) schnm; //unused
     cout << "STEPcomplex::STEPread_error(), index=" << index << ", entity #" << STEPfile_id << "." << endl;
     streampos p = in.tellg();
     std::string q, r;

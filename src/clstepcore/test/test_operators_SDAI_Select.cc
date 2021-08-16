@@ -15,7 +15,7 @@ using namespace std;
 class TestSdaiSelect: public SDAI_Select {
     public:
         TestSdaiSelect( SelectTypeDescriptor * s, TypeDescriptor * t, BASE_TYPE b, SDAI_String v, ErrorDescriptor e ):
-                SDAI_Select( s, t ) {
+            SDAI_Select( s, t ) {
             base_type = b;
             val = v;
             _error = e;
@@ -25,7 +25,7 @@ class TestSdaiSelect: public SDAI_Select {
             SDAI_Select::operator=( other );
             return *this;
         }
-        SDAI_Select& operator=( const SDAI_Select& other ) {
+        SDAI_Select & operator=( const SDAI_Select & other ) {
             SDAI_Select::operator=( other );
             return *this;
         }
@@ -41,13 +41,26 @@ class TestSdaiSelect: public SDAI_Select {
         }
 
         // dummy implementations of pure virtual funcs
-        const TypeDescriptor* AssignEntity( SDAI_Application_instance * /*i*/ ) { return (TypeDescriptor *)0; }
-        SDAI_Select* NewSelect(){ return (SDAI_Select *)0; }
-        BASE_TYPE ValueType() const { return sdaiBOOLEAN; }
-        void STEPwrite_content( std::ostream& /*o*/, const char* /*a*/ ) const {}
-        Severity StrToVal_content( const char* /*a*/, InstMgrBase* /*m*/ ) { return SEVERITY_NULL; }
-        Severity STEPread_content(std::istream& i, InstMgrBase* m, const char* c, int n, const char* d) {
-            (void)i; (void)m; (void)c; (void)n; (void)d; return SEVERITY_NULL;
+        const TypeDescriptor * AssignEntity( SDAI_Application_instance * /*i*/ ) {
+            return ( TypeDescriptor * )0;
+        }
+        SDAI_Select * NewSelect() {
+            return ( SDAI_Select * )0;
+        }
+        BASE_TYPE ValueType() const {
+            return sdaiBOOLEAN;
+        }
+        void STEPwrite_content( std::ostream & /*o*/, const char * /*a*/ ) const {}
+        Severity StrToVal_content( const char * /*a*/, InstMgrBase * /*m*/ ) {
+            return SEVERITY_NULL;
+        }
+        Severity STEPread_content( std::istream & i, InstMgrBase * m, const char * c, int n, const char * d ) {
+            ( void )i;
+            ( void )m;
+            ( void )c;
+            ( void )n;
+            ( void )d;
+            return SEVERITY_NULL;
         }
 };
 

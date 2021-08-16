@@ -9,7 +9,7 @@
 
 void SCOPEresolve_subsupers( Scope scope ) {
     DictionaryEntry de;
-    void *x;
+    void * x;
     char type;
     Symbol * sym;
     Type t;
@@ -49,7 +49,7 @@ void SCOPEresolve_subsupers( Scope scope ) {
 
 void SCOPEresolve_expressions_statements( Scope s ) {
     DictionaryEntry de;
-    void *x;
+    void * x;
     Variable v;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &

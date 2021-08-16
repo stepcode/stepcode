@@ -76,7 +76,7 @@ typedef struct Rename {
     Schema schema;
     struct Symbol_ * old;
     struct Symbol_ * nnew;
-    void *object;     /**< once object has been looked up */
+    void * object;    /**< once object has been looked up */
     char type;      /**< drat, need to remember this once renames have been
                      * resolved to avoid looking them up in the dictionary again */
     enum rename_type rename_type;
@@ -140,7 +140,7 @@ extern SC_EXPRESS_EXPORT void     SCHEMAadd_use( Schema, Symbol *, Symbol *, Sym
 extern SC_EXPRESS_EXPORT void     SCHEMAadd_reference( Schema, Symbol *, Symbol *, Symbol * );
 extern SC_EXPRESS_EXPORT void     SCHEMAdefine_use( Schema, Rename * );
 extern SC_EXPRESS_EXPORT void     SCHEMAdefine_reference( Schema, Rename * );
-extern SC_EXPRESS_EXPORT void *   SCHEMAfind( Schema, char * name, int search_refs );
+extern SC_EXPRESS_EXPORT void  *  SCHEMAfind( Schema, char * name, int search_refs );
 extern SC_EXPRESS_EXPORT Scope    SCOPEcreate( char );
 extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_tiny( char );
 extern SC_EXPRESS_EXPORT Scope    SCOPEcreate_nostab( char );

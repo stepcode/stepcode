@@ -47,7 +47,7 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
         }
         if( c == '\'' ) {
             //push past string
-            _file.seekg( _file.tellg() - std::streampos(1) );
+            _file.seekg( _file.tellg() - std::streampos( 1 ) );
             GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
@@ -129,7 +129,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 }
                 break;
             case '\'':
-                _file.seekg( _file.tellg() - std::streampos(1) );
+                _file.seekg( _file.tellg() - std::streampos( 1 ) );
                 GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
                 break;
             case '=':
@@ -155,7 +155,7 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                     if( _file.get() == ';' ) {
                         return _file.tellg();
                     } else {
-                        _file.seekg( _file.tellg() - std::streampos(1) );
+                        _file.seekg( _file.tellg() - std::streampos( 1 ) );
                     }
                 }
             default:
@@ -186,7 +186,7 @@ instanceID sectionReader::readInstanceNumber() {
     if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
         findNormalString( "*/" );
     } else {
-        _file.seekg( _file.tellg() - std::streampos(1) );
+        _file.seekg( _file.tellg() - std::streampos( 1 ) );
     }
     skipWS();
     c = _file.get();
@@ -200,7 +200,7 @@ instanceID sectionReader::readInstanceNumber() {
 
     size_t instanceIDLength = std::numeric_limits<instanceID>::digits10 + 1;
     char * buffer = new char[ instanceIDLength + 1 ]; // +1 for the terminating character
-    
+
     std::stringstream errorMsg;
 
     do {
@@ -210,7 +210,7 @@ instanceID sectionReader::readInstanceNumber() {
             digits++;
 
         } else {
-            _file.seekg( _file.tellg() - std::streampos(1) );
+            _file.seekg( _file.tellg() - std::streampos( 1 ) );
             break;
         }
 
@@ -222,7 +222,7 @@ instanceID sectionReader::readInstanceNumber() {
             _error->DetailMsg( errorMsg.str() );
 
             delete buffer;
-            return 0;    
+            return 0;
         }
 
     } while( _file.good() );
@@ -230,9 +230,9 @@ instanceID sectionReader::readInstanceNumber() {
     skipWS();
 
     if( _file.good() && ( digits > 0 ) && ( _file.get() == '=' ) ) {
-        id = strtoull( buffer, NULL, 10); 
+        id = strtoull( buffer, NULL, 10 );
         if( id == std::numeric_limits<instanceID>::max() ) {
-            //Handling those cases where although the number of digits is equal, but the id value is greater then equal to the maximum allowed value. 
+            //Handling those cases where although the number of digits is equal, but the id value is greater then equal to the maximum allowed value.
             errorMsg << "A very large instance ID caused an overflow. Skipping data section " << _sectionID << ".";
 
             _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -309,7 +309,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         assert( inst->getEDesc() );
         _file.seekg( begin );
         findNormalString( "(" );
-        _file.seekg( _file.tellg() - std::streampos(1) );
+        _file.seekg( _file.tellg() - std::streampos( 1 ) );
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
         //TODO do something with 'sev'
         inst->InitIAttrs();

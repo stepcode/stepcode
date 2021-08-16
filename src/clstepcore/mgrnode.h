@@ -33,7 +33,7 @@ class SC_CORE_EXPORT MgrNodeBase : public GenericNode {
             abort();
             return NULL;
         };
-    virtual ~MgrNodeBase() {};
+        virtual ~MgrNodeBase() {};
 };
 
 //////////////////////////////////////////////////////////////////////////////

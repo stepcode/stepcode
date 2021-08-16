@@ -87,20 +87,20 @@ void printAccessHookHdr( FILE *, const char * );
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema );
 void TypeBody_Description( TypeBody body, char * buf );
 
-void STATEMENTSPrint( Linked_List stmts , int indent_level, FILE * file );
+void STATEMENTSPrint( Linked_List stmts, int indent_level, FILE * file );
 void STATEMENTPrint( Statement s, int indent_level, FILE * file );
 void STATEMENTlist_out( Linked_List stmts, int indent_level, FILE * file );
-void EXPRESSION__out( Expression e, int paren, Op_Code previous_op , FILE * file );
-void EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op , FILE * file );
+void EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE * file );
+void EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op, FILE * file );
 void EXPRESSIONop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE * file );
-void EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE* file );
-void ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * file );
-void ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op , FILE * file );
+void EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE * file );
+void ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op, FILE * file );
+void ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op, FILE * file );
 void ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int paren, FILE * file );
-void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE* file );
+void ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, Op_Code previous_op, FILE * file );
 void CASEout( struct Case_Statement_ *c, int level, FILE * file );
 void LOOPpyout( struct Loop_ *loop, int level, FILE * file );
-void WHEREPrint( Linked_List wheres, int level , FILE * file );
+void WHEREPrint( Linked_List wheres, int level, FILE * file );
 
 void Type_Description( const Type, char * );
 
@@ -135,31 +135,37 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
 }
 
 char * strliteral_py_dup( char * orig_buf ) {
-    char * new_buf = strdup(orig_buf);
+    char * new_buf = strdup( orig_buf );
     char * tmp = new_buf;
 
-    while ((tmp = strstr(tmp, "\\x9"))) {
-        tmp++ ; *tmp = 't'; tmp++;
-        memmove(tmp, tmp+1, strlen(tmp));
+    while( ( tmp = strstr( tmp, "\\x9" ) ) ) {
+        tmp++ ;
+        *tmp = 't';
+        tmp++;
+        memmove( tmp, tmp + 1, strlen( tmp ) );
     }
 
     tmp = new_buf;
-    while ((tmp = strstr(tmp, "\\xA"))) {
-        tmp++ ; *tmp = 'n'; tmp++;
-        memmove(tmp, tmp+1, strlen(tmp));
+    while( ( tmp = strstr( tmp, "\\xA" ) ) ) {
+        tmp++ ;
+        *tmp = 'n';
+        tmp++;
+        memmove( tmp, tmp + 1, strlen( tmp ) );
     }
 
     tmp = new_buf;
-    while ((tmp = strstr(tmp, "\\xD"))) {
-        tmp++ ; *tmp = 'r'; tmp++;
-        memmove(tmp, tmp+1, strlen(tmp));
+    while( ( tmp = strstr( tmp, "\\xD" ) ) ) {
+        tmp++ ;
+        *tmp = 'r';
+        tmp++;
+        memmove( tmp, tmp + 1, strlen( tmp ) );
     }
-    
+
     return new_buf;
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
-    (void) arg; /* unused param */
+    ( void ) arg; /* unused param */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }
@@ -175,7 +181,7 @@ int Handle_FedPlus_Args( int i, char * arg ) {
 
 bool is_python_keyword( char * word ) {
     int i;
-    const char* keyword_list[] = {"class", "pass", NULL};
+    const char * keyword_list[] = {"class", "pass", NULL};
     bool python_keyword = false;
 
     for( i = 0; keyword_list[i] != NULL; i++ ) {
@@ -363,14 +369,14 @@ print_aggregate_type( FILE * file, Type t ) {
 
 #define BIGBUFSIZ   100000
 
-char* EXPRto_python( Expression e ) {
+char * EXPRto_python( Expression e ) {
     char * buf;
     char * temp;
     unsigned int bufsize = BIGBUFSIZ;
 
     buf = ( char * )sc_malloc( bufsize );
     if( !buf ) {
-        fprintf(stderr, "%s failed to allocate buffer: %s\n", __FUNCTION__, strerror(errno) );
+        fprintf( stderr, "%s failed to allocate buffer: %s\n", __FUNCTION__, strerror( errno ) );
         abort();
     }
 
@@ -391,7 +397,7 @@ char* EXPRto_python( Expression e ) {
             snprintf( buf, bufsize, "%s", e->u.binary );
             break;
         case logical_:
-             switch( e->u.logical ) {
+            switch( e->u.logical ) {
                 case Ltrue:
                     strcpy( buf, "True" );
                     break;
@@ -402,7 +408,7 @@ char* EXPRto_python( Expression e ) {
                     strcpy( buf, "None" );
                     break;
             }
-           break;
+            break;
         case boolean_:
             switch( e->u.logical ) {
                 case Ltrue:
@@ -412,46 +418,46 @@ char* EXPRto_python( Expression e ) {
                     strcpy( buf, "False" );
                     break;
             }
-           break;
+            break;
         case string_:
             if( TYPEis_encoded( e->type ) ) {
-				snprintf( buf, bufsize, "binascii.unhexlify('%s')", e->symbol.name );
+                snprintf( buf, bufsize, "binascii.unhexlify('%s')", e->symbol.name );
             } else {
-				temp = strliteral_py_dup( e->symbol.name );
-				strncpy( buf, temp, bufsize );
-				free(temp);
+                temp = strliteral_py_dup( e->symbol.name );
+                strncpy( buf, temp, bufsize );
+                free( temp );
             }
             break;
         case entity_:
         case identifier_:
         case attribute_:
         case enumeration_:
-            snprintf( buf, bufsize, "%s.%s", TYPEget_name(e->type), e->symbol.name );
+            snprintf( buf, bufsize, "%s.%s", TYPEget_name( e->type ), e->symbol.name );
             break;
         case query_:
-			strcpy( buf, "# query_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "# query_ NOT_IMPLEMENTED!" );
             break;
         case self_:
             strcpy( buf, "self" );
             break;
-        case funcall_:
-        {
-                int i = 0;
-                snprintf( buf, bufsize, "%s(", e->symbol.name );
-                LISTdo( e->u.funcall.list, arg, Expression ) {
-                    i++;
-                    if( i != 1 ) {
-                        strcat( buf, ", " );
-                    }
-                    temp = EXPRto_python( arg );
-                    strcat( buf, temp );
-                    free( temp );
-                } LISTod
-                strcat( buf, ")" );
-                break;
+        case funcall_: {
+            int i = 0;
+            snprintf( buf, bufsize, "%s(", e->symbol.name );
+            LISTdo( e->u.funcall.list, arg, Expression ) {
+                i++;
+                if( i != 1 ) {
+                    strcat( buf, ", " );
+                }
+                temp = EXPRto_python( arg );
+                strcat( buf, temp );
+                free( temp );
+            }
+            LISTod
+            strcat( buf, ")" );
+            break;
         }
         case op_:
-			strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
             break;
         case aggregate_:
             strcpy( buf, "# aggregate_ NOT_IMPLEMENTED!" );
@@ -465,9 +471,9 @@ char* EXPRto_python( Expression e ) {
             abort();
     }
 
-    temp = ( char * )sc_realloc( buf, 1 + strlen(buf) );
+    temp = ( char * )sc_realloc( buf, 1 + strlen( buf ) );
     if( temp == 0 ) {
-        fprintf(stderr, "%s failed to realloc buffer: %s\n", __FUNCTION__, strerror(errno) );
+        fprintf( stderr, "%s failed to realloc buffer: %s\n", __FUNCTION__, strerror( errno ) );
         abort();
     }
 
@@ -520,18 +526,19 @@ process_aggregate( FILE * file, Type t ) {
 }
 
 
-int count_supertypes(Entity f) {
+int count_supertypes( Entity f ) {
     int top_count;
     int child_count;
     Linked_List list;
 
-    list = ENTITYget_supertypes(f);
+    list = ENTITYget_supertypes( f );
     top_count = 0;
     LISTdo( list, e, Entity )
-        child_count = 1;
-        child_count += count_supertypes(e);
-        if (child_count > top_count)
-            top_count = child_count;
+    child_count = 1;
+    child_count += count_supertypes( e );
+    if( child_count > top_count ) {
+        top_count = child_count;
+    }
     LISTod;
 
     return top_count;
@@ -541,12 +548,12 @@ int cmp_python_mro( void * e1, void * e2 ) {
     int e1_chain_len, e2_chain_len;
 
     /* TODO: This should do something more intelligent */
-    e1_chain_len = count_supertypes( ( Entity ) e1);
-    e2_chain_len = count_supertypes( ( Entity ) e2);
+    e1_chain_len = count_supertypes( ( Entity ) e1 );
+    e2_chain_len = count_supertypes( ( Entity ) e2 );
 
-    if (e1_chain_len == e2_chain_len) {
+    if( e1_chain_len == e2_chain_len ) {
         return 0;
-    } else if (e1_chain_len > e2_chain_len) {
+    } else if( e1_chain_len > e2_chain_len ) {
         return 1;
     } else {
         return -1;
@@ -581,7 +588,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
     * Look for inheritance and super classes
     */
     list = ENTITYget_supertypes( entity );
-    LISTsort(list, cmp_python_mro);
+    LISTsort( list, cmp_python_mro );
     num_parent = 0;
     if( ! LISTempty( list ) ) {
         LISTdo( list, e, Entity )
@@ -674,16 +681,19 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                         fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
                         index_attribute++;
                     }
-                } LISTod
+                }
+                LISTod
                 num_parent++;
-            } LISTod
+            }
+            LISTod
         }
         LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
             generate_attribute_name( v, attrnm );
             if( !VARis_derived( v ) && !VARget_inverse( v ) ) {
                 fprintf( file, "%s,", attrnm );
             }
-        } LISTod
+        }
+        LISTod
         /* close constructor method */
         if( generate_constructor ) {
             fprintf( file, " ):\n" );
@@ -693,7 +703,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
         index_attribute = 0;
         if( ! LISTempty( list ) ) {
             LISTdo( list, e, Entity ) {
-                if (is_python_keyword(ENTITYget_name( e ))) {
+                if( is_python_keyword( ENTITYget_name( e ) ) ) {
                     fprintf( file, "\t\t%s_.__init__(self , ", ENTITYget_name( e ) );
                 } else {
                     fprintf( file, "\t\t%s.__init__(self , ", ENTITYget_name( e ) );
@@ -705,10 +715,12 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                         fprintf( file, "inherited%i__%s , ", index_attribute, parent_attrnm );
                         index_attribute++;
                     }
-                } LISTod
+                }
+                LISTod
                 num_parent++;
                 fprintf( file, ")\n" ); /*separator for parent classes names */
-            } LISTod
+            }
+            LISTod
         }
         /* init variables in constructor */
         LISTdo( ENTITYget_attributes( entity ), v, Variable )
@@ -724,7 +736,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
         LISTdo( ENTITYget_attributes( entity ), v, Variable )
         generate_attribute_name( v, attrnm );
         fprintf( file, "\n\t@property\n" );
-        if ( !strcmp(attrnm, "property") ) {
+        if( !strcmp( attrnm, "property" ) ) {
             fprintf( file, "\tdef __%s(self):\n", attrnm );
             rename_python_property = true;
         } else {
@@ -742,7 +754,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
             fprintf( file, "\n\t\treturn attribute_eval\n" );
         }
         /* fset */
-        if ( !strcmp(attrnm, "property") ) {
+        if( !strcmp( attrnm, "property" ) ) {
             fprintf( file, "\t@__%s.setter\n", attrnm );
             fprintf( file, "\tdef __%s(self, value):\n", attrnm );
         } else {
@@ -767,7 +779,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n" );
-                } else if (attr_type && is_python_keyword(attr_type)) {
+                } else if( attr_type && is_python_keyword( attr_type ) ) {
                     fprintf( file, "%s_):\n", attr_type );
                 } else {
                     fprintf( file, "%s):\n", attr_type );
@@ -778,7 +790,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
                     fprintf( file, "):\n\t" );
-                } else if (attr_type && is_python_keyword(attr_type)) {
+                } else if( attr_type && is_python_keyword( attr_type ) ) {
                     fprintf( file, "%s_):\n\t", attr_type );
                 } else {
                     fprintf( file, "%s):\n\t", attr_type );
@@ -789,7 +801,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                 fprintf( file, "\t\t\tself._%s = ", attrnm );
                 print_aggregate_type( file, t );
                 fprintf( file, "(value)\n" );
-            } else if (attr_type && is_python_keyword(attr_type)) {
+            } else if( attr_type && is_python_keyword( attr_type ) ) {
                 fprintf( file, "\t\t\tself._%s = %s_(value)\n", attrnm, attr_type );
             } else {
                 fprintf( file, "\t\t\tself._%s = %s(value)\n", attrnm, attr_type );
@@ -815,7 +827,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
     /* before exiting, process where rules */
     WHEREPrint( entity->where, 0, file );
 
-    if ( rename_python_property ) {
+    if( rename_python_property ) {
         fprintf( file, "\tproperty = __property\n" );
     }
 }
@@ -852,7 +864,8 @@ int get_attribute_number( Entity entity ) {
                         found = 1;
                     }
                 }
-            } LISTod
+            }
+            LISTod
             if( found ) {
                 return i;
             } else {
@@ -862,7 +875,8 @@ int get_attribute_number( Entity entity ) {
                 fprintf( stderr, "Internal error:  %s:%d\nAttribute %s not found. \n", __FILE__, __LINE__, VARget_name( a )->symbol.name );
             }
         }
-    } LISTod
+    }
+    LISTod
     return -1;
 }
 
@@ -947,7 +961,8 @@ FUNCPrint( Function function, FILES * files ) {
         expr_name = VARget_name( v );
         param_name = strdup( EXPget_name( expr_name ) );
         fprintf( files->lib, "%s,", param_name );
-    } LISTod
+    }
+    LISTod
     fprintf( files->lib, "):\n" );
 
     /* print function docstring */
@@ -957,7 +972,8 @@ FUNCPrint( Function function, FILES * files ) {
         param_name = strdup( EXPget_name( expr_name ) );
         fprintf( files->lib, "\t:param %s\n", param_name );
         fprintf( files->lib, "\t:type %s:%s\n", param_name, GetAttrTypeName( VARget_type( v ) ) );
-    } LISTod
+    }
+    LISTod
     fprintf( files->lib, "\t'''\n" );
 
     /* process statements. The indent_level is set to 1 (the number of tabs \t) */
@@ -966,7 +982,7 @@ FUNCPrint( Function function, FILES * files ) {
 }
 
 void
-STATEMENTSPrint( Linked_List stmts , int indent_level, FILE * file ) {
+STATEMENTSPrint( Linked_List stmts, int indent_level, FILE * file ) {
     LISTdo( stmts, stmt, Statement )
     STATEMENTPrint( stmt, indent_level, file );
     LISTod
@@ -1005,12 +1021,12 @@ STATEMENTPrint( Statement s, int indent_level, FILE * file ) {
             fprintf( file, "\n" );
             break;
         case STMT_LOOP:
-            LOOPpyout( s->u.loop, indent_level , file );
+            LOOPpyout( s->u.loop, indent_level, file );
             break;
         case STMT_ALIAS:
             fprintf( file, "%s = %s\n", s->symbol.name,
                      s->u.alias->variable->name->symbol.name );
-            STATEMENTlist_out( s->u.alias->statements, indent_level , file );
+            STATEMENTlist_out( s->u.alias->statements, indent_level, file );
             break;
         case STMT_SKIP:
             fprintf( file, "break\n" ); /* @TODO: is that correct? */
@@ -1026,7 +1042,7 @@ STATEMENTPrint( Statement s, int indent_level, FILE * file ) {
             break;
         case STMT_COND:
             fprintf( file, "if (" );
-            EXPRESSION_out( s->u.cond->test, 0 , file );
+            EXPRESSION_out( s->u.cond->test, 0, file );
             fprintf( file, "):\n" );
             STATEMENTlist_out( s->u.cond->code, indent_level + 1, file );
             if( s->u.cond->otherwise ) {
@@ -1073,7 +1089,8 @@ CASEout( struct Case_Statement_ *c, int level, FILE * file ) {
                 /* print action */
                 STATEMENTPrint( ci->action, level + 1, file );
                 if_number++;
-            } LISTod
+            }
+            LISTod
         } else {
             /* print OTHERWISE */
             python_indent( file, level );
@@ -1082,59 +1099,60 @@ CASEout( struct Case_Statement_ *c, int level, FILE * file ) {
             /* print action */
             STATEMENTPrint( ci->action, level + 1, file );
         }
-    } LISTod
+    }
+    LISTod
 }
 
 void
 LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
     Variable v;
-    
-    if (loop->scope) {
+
+    if( loop->scope ) {
         DictionaryEntry de;
 
         /* TODO: if incr != 0 && ((incr > 0 && start < stop) || (incr < 0 && start > stop)): */
         DICTdo_init( loop->scope->symbol_table, &de );
         v = ( Variable )DICTdo( &de );
         fprintf( file, "for %s in range(", v->name->symbol.name );
-        EXPRESSION_out( loop->scope->u.incr->init, 0 , file );
+        EXPRESSION_out( loop->scope->u.incr->init, 0, file );
         fprintf( file, "," );
-        EXPRESSION_out( loop->scope->u.incr->end, 0 , file );
+        EXPRESSION_out( loop->scope->u.incr->end, 0, file );
         fprintf( file, "," ); /* parser always forces a "by" expr */
-        EXPRESSION_out( loop->scope->u.incr->increment, 0 , file );
+        EXPRESSION_out( loop->scope->u.incr->increment, 0, file );
         fprintf( file, "):\n" );
-        
+
         if( loop->while_expr ) {
             fprintf( file, "if " );
-            EXPRESSION_out( loop->while_expr, 0 , file );
-            fprintf( file, ":\n");
-            STATEMENTlist_out( loop->statements, level + 2 , file );
+            EXPRESSION_out( loop->while_expr, 0, file );
+            fprintf( file, ":\n" );
+            STATEMENTlist_out( loop->statements, level + 2, file );
         } else {
-            STATEMENTlist_out( loop->statements, level + 1 , file );
+            STATEMENTlist_out( loop->statements, level + 1, file );
         }
 
         if( loop->until_expr ) {
             fprintf( file, "if " );
-            EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            EXPRESSION_out( loop->until_expr, 0, file );
+            fprintf( file, ":\n\tbreak\n" );
         }
     } else if( loop->while_expr ) {
         fprintf( file, "while " );
-        EXPRESSION_out( loop->while_expr, 0 , file );
-        fprintf( file, ":\n");
-        STATEMENTlist_out( loop->statements, level + 1 , file );
+        EXPRESSION_out( loop->while_expr, 0, file );
+        fprintf( file, ":\n" );
+        STATEMENTlist_out( loop->statements, level + 1, file );
 
         if( loop->until_expr ) {
             fprintf( file, "if " );
-            EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            EXPRESSION_out( loop->until_expr, 0, file );
+            fprintf( file, ":\n\tbreak\n" );
         }
     } else {
         fprintf( file, "while True:\n" );
-        STATEMENTlist_out( loop->statements, level + 1 , file );
+        STATEMENTlist_out( loop->statements, level + 1, file );
 
         fprintf( file, "if " );
-        EXPRESSION_out( loop->until_expr, 0 , file );
-        fprintf( file, ":\n\tbreak\n");
+        EXPRESSION_out( loop->until_expr, 0, file );
+        fprintf( file, ":\n\tbreak\n" );
     }
 
 }
@@ -1152,7 +1170,7 @@ STATEMENTlist_out( Linked_List stmts, int indent_level, FILE * file ) {
 **
 ******************************************************************/
 void
-ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * file ) {
+ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op, FILE * file ) {
     int i;  /* trusty temporary */
     switch( TYPEis( e->type ) ) {
         case integer_:
@@ -1192,9 +1210,9 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                char* tmp = strliteral_py_dup(e->symbol.name);
+                char * tmp = strliteral_py_dup( e->symbol.name );
                 fprintf( file, "'%s'", tmp );
-                free(tmp);
+                free( tmp );
             }
             break;
         case entity_:
@@ -1205,7 +1223,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             fprintf( file, "%s", e->symbol.name );
             break;
         case enumeration_:
-            fprintf( file, "%s.%s", TYPEget_name(e->type), e->symbol.name );
+            fprintf( file, "%s.%s", TYPEget_name( e->type ), e->symbol.name );
             break;
         case query_:
 
@@ -1223,7 +1241,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             if( i != 1 ) {
                 fprintf( file, "," );
             }
-            ATTRIBUTE_INITIALIZER_out( arg, 0 , file );
+            ATTRIBUTE_INITIALIZER_out( arg, 0, file );
             LISTod
             fprintf( file, ")" );
             break;
@@ -1238,7 +1256,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             if( i != 1 ) {
                 fprintf( file, "," );
             }
-            ATTRIBUTE_INITIALIZER_out( arg, 0 , file );
+            ATTRIBUTE_INITIALIZER_out( arg, 0, file );
             LISTod
             fprintf( file, "]" );
             break;
@@ -1267,7 +1285,7 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
 **     include, and initialization files for a specific entity class
 ******************************************************************/
 void
-EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
+EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE * file ) {
     int i;  /* trusty temporary */
     switch( TYPEis( e->type ) ) {
         case integer_:
@@ -1307,9 +1325,9 @@ EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
             if( TYPEis_encoded( e->type ) ) {
                 fprintf( file, "\"%s\"", e->symbol.name );
             } else {
-                char* tmp = strliteral_py_dup(e->symbol.name);
+                char * tmp = strliteral_py_dup( e->symbol.name );
                 fprintf( file, "'%s'", tmp );
-                free(tmp);
+                free( tmp );
             }
             break;
         case entity_:
@@ -1324,7 +1342,7 @@ EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
             fprintf( file, "%s", e->symbol.name );
             break;
         case enumeration_:
-            fprintf( file, "%s.%s", TYPEget_name(e->type), e->symbol.name );
+            fprintf( file, "%s.%s", TYPEget_name( e->type ), e->symbol.name );
             break;
         case query_:
 
@@ -1342,7 +1360,7 @@ EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
             if( i != 1 ) {
                 fprintf( file, "," );
             }
-            EXPRESSION_out( arg, 0 , file );
+            EXPRESSION_out( arg, 0, file );
             LISTod
             fprintf( file, ")" );
             break;
@@ -1357,7 +1375,7 @@ EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
             if( i != 1 ) {
                 fprintf( file, "," );
             }
-            EXPRESSION_out( arg, 0 , file );
+            EXPRESSION_out( arg, 0, file );
             LISTod
             fprintf( file, "]" );
             break;
@@ -1381,11 +1399,11 @@ EXPRESSION__out( Expression e, int paren, Op_Code previous_op, FILE* file ) {
 }
 
 void
-ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, FILE* file ) {
+ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op, FILE * file ) {
     /* TODO: refactor, eliminate Op_Subexpression for enumerations */
     Type op1_type = EXPget_type( oe->op1 );
-    if ( TYPEis_enumeration( op1_type ) ) {
-        fprintf( file, "%s.%s", TYPEget_name( op1_type ), EXPget_name( oe->op2 ) ); 
+    if( TYPEis_enumeration( op1_type ) ) {
+        fprintf( file, "%s.%s", TYPEget_name( op1_type ), EXPget_name( oe->op2 ) );
         return;
     }
     switch( oe->op_code ) {
@@ -1419,8 +1437,8 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             ATTRIBUTE_INITIALIZERop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+        /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
+        /*    break; */
         case OP_INST_EQUAL:
             ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1439,7 +1457,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             break;
         case OP_NOT_EQUAL:
             /*EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file); */
-            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD , file );
+            ATTRIBUTE_INITIALIZERop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_NOT:
             ATTRIBUTE_INITIALIZERop1_out( oe, " not ", paren, file );
@@ -1467,7 +1485,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             fprintf( file, "]" );
             break;
         case OP_SUBCOMPONENT:
-            ATTRIBUTE_INITIALIZER_out( oe->op1, 1 , file );
+            ATTRIBUTE_INITIALIZER_out( oe->op1, 1, file );
             fprintf( file, "[" );
             ATTRIBUTE_INITIALIZER_out( oe->op2, 0, file );
             fprintf( file, ":" );
@@ -1481,7 +1499,7 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
 
 /* print expression that has op and operands */
 void
-EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, FILE* file ) {
+EXPRESSIONop__out( struct Op_Subexpression * oe, int paren, Op_Code previous_op, FILE * file ) {
     switch( oe->op_code ) {
         case OP_AND:
             EXPRESSIONop2_out( oe, " and ", paren, PAD, file );
@@ -1513,8 +1531,8 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+        /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
+        /*    break; */
         case OP_INST_EQUAL:
             EXPRESSIONop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1533,7 +1551,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             break;
         case OP_NOT_EQUAL:
             /*EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file); */
-            EXPRESSIONop2_out( oe, " != ", paren, PAD , file );
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_NOT:
             EXPRESSIONop1_out( oe, " not ", paren, file );
@@ -1561,7 +1579,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             fprintf( file, "]" );
             break;
         case OP_SUBCOMPONENT:
-            EXPRESSION_out( oe->op1, 1 , file );
+            EXPRESSION_out( oe->op1, 1, file );
             fprintf( file, "[" );
             EXPRESSION_out( oe->op2, 0, file );
             fprintf( file, ":" );
@@ -1578,7 +1596,7 @@ EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    EXPRESSION__out( eo->op1, 1, eo->op_code , file );
+    EXPRESSION__out( eo->op1, 1, eo->op_code, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1597,7 +1615,7 @@ ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code , file );
+    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1638,7 +1656,7 @@ ATTRIBUTE_INITIALIZERop1_out( struct Op_Subexpression * eo, char * opcode, int p
 }
 
 void
-WHEREPrint( Linked_List wheres, int level , FILE * file ) {
+WHEREPrint( Linked_List wheres, int level, FILE * file ) {
     int where_rule_number = 0;
 
     python_indent( file, level );
@@ -1659,7 +1677,7 @@ WHEREPrint( Linked_List wheres, int level , FILE * file ) {
         fprintf( file, "\t\teval_unnamed_wr_%i = ", where_rule_number );
     }
     /*EXPRESSION_out( w->expr, level+1 , file ); */
-    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1 , file );
+    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1, file );
     /* raise exception if rule violated */
     if( strcmp( w->label->name, "<unnamed>" ) ) {
         fprintf( file, "\n\t\tif not eval_%s_wr:\n", w->label->name );
@@ -1706,8 +1724,8 @@ ENTITYPrint( Entity entity, FILES * files ) {
 */
 const char *
 EnumCElementName( Type type, Expression expr )  {
-    (void) type;
-    (void) expr;
+    ( void ) type;
+    ( void ) expr;
     return NULL;
 }
 
@@ -1812,7 +1830,7 @@ TypeBody_Description( TypeBody body, char * buf ) {
         case set_:
         case list_:
             switch( body->type ) {
-                    /* ignore the aggregate bounds for now */
+                /* ignore the aggregate bounds for now */
                 case aggregate_:
                     strcat( buf, " AGGREGATE OF" );
                     break;
@@ -1932,9 +1950,9 @@ isMultiDimAggregateType( const Type t ) {
    reference since it has an Express name associated with it.
 */
 int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
-    (void) t; /* unused - FIXME implement or eliminate this function */
-    (void) buf;
-    (void) schema;
+    ( void ) t; /* unused - FIXME implement or eliminate this function */
+    ( void ) buf;
+    ( void ) schema;
     return 1;
 }
 
@@ -1959,15 +1977,15 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
 
     int where_rule_number = 0;
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
 
     if( TYPEis_enumeration( type ) && ( i = TYPEget_ancestor( type ) ) != NULL ) {
         /* If we're a renamed enum type, just print a few typedef's to the
            original and some specialized create functions: */
         strncpy( base, StrToLower( EnumName( TYPEget_name( i ) ) ), BUFSIZ );
-        base[BUFSIZ-1]='\0';
+        base[BUFSIZ - 1] = '\0';
         strncpy( nm, StrToLower( EnumName( TYPEget_name( type ) ) ), BUFSIZ );
-        nm[BUFSIZ-1]='\0';
+        nm[BUFSIZ - 1] = '\0';
         fprintf( files->lib, "%s = %s\n", nm, base );
         return;
     }
@@ -1984,7 +2002,7 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             TYPEselect_lib_print( type, files -> lib );
         } else if( TYPEis_enumeration( type ) ) {
             TYPEenum_lib_print( type, files -> lib );
-        } else { 
+        } else {
             /* the defined datatype inherits from the base type */
             fprintf( files->lib, "# Defined datatype %s\n", TYPEget_name( type ) );
             fprintf( files->lib, "class %s(", TYPEget_name( type ) );

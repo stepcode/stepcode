@@ -67,7 +67,7 @@ bool notGenerated( const Type t ) {
     /* from addRenameTypedefs() in multpass.c - check for renamed
      * enums and selects - exp2cxx prints typedefs for them */
     if( ( TYPEis_enumeration( t ) || TYPEis_select( t ) ) && ( TYPEget_head( t ) ) ) {
-            return true;
+        return true;
     }
     return false;
 }
@@ -127,7 +127,7 @@ string makeShortName( const char * longName ) {
 
 /** write a CMakeLists.txt file for the schema; print its directory to stdout for CMake's add_subdirectory() command */
 void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, int ecount,
-                                           stringstream & th, stringstream & ti, int tcount ) {
+                 stringstream & th, stringstream & ti, int tcount ) {
     string shortName = makeShortName( schemaName );
     if( mkDirIfNone( shortName.c_str() ) < 0 ) {
         cerr << "Error creating directory " << shortName << " at " << __FILE__ << ":" << __LINE__;
@@ -136,8 +136,8 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     }
     size_t nameLen = strlen( schemaName );
     string schema_upper( nameLen, char() );
-    for( size_t i = 0; i < nameLen; ++i) {
-        schema_upper[i] = toupper(schemaName[i]);
+    for( size_t i = 0; i < nameLen; ++i ) {
+        schema_upper[i] = toupper( schemaName[i] );
     }
     string cmListsPath = shortName;
     cmListsPath += "/CMakeLists.txt";
@@ -230,7 +230,7 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     }
 }
 
-void printSchemaFilenames( Schema sch ){
+void printSchemaFilenames( Schema sch ) {
     const int numColumns = 2;
     const int colWidth = 75;
     const char * tab = "     ";
@@ -244,7 +244,7 @@ void printSchemaFilenames( Schema sch ){
     int ecount = 0, tcount = 0;
 
     DictionaryEntry de;
-    void *x;
+    void * x;
     filenames_t fn;
     DICTdo_init( sch->symbol_table, &de );
     while( 0 != ( x = DICTdo( &de ) ) ) {

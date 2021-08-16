@@ -47,7 +47,7 @@ bool ComplexList::toplevel( const char * name ) {
     EntList * slist = head->childList;
 
     while( slist ) {
-        if( * dynamic_cast< SimpleList * >(slist) == name ) {
+        if( * dynamic_cast< SimpleList * >( slist ) == name ) {
             return true;
         }
         slist = slist->next;
@@ -76,7 +76,7 @@ void ComplexList::buildList() {
     }
 
     // Add first node based on supertype:
-    list = new EntNode( ( dynamic_cast< SimpleList * >(head->childList ))->name );
+    list = new EntNode( ( dynamic_cast< SimpleList * >( head->childList ) )->name );
     // Recursively add all descendents:
     while( sibling ) {
         addChildren( sibling );
@@ -105,7 +105,7 @@ void ComplexList::addChildren( EntList * ent ) {
             child = child->next;
         }
     } else {
-        nm = ( dynamic_cast<SimpleList *>(ent) )->name;
+        nm = ( dynamic_cast<SimpleList *>( ent ) )->name;
         while( prev != NULL && ( comp = strcmp( prev->name, nm ) ) < 0 ) {
             prev2 = prev;
             prev = prev->next;

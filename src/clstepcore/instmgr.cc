@@ -165,10 +165,12 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
 ///////////////////////////////////////////////////////////////////////////////
 
 MgrNode * InstMgr::FindFileId( int fileId ) {
-	std::map<int, MgrNode *>::iterator it;
-	it=sortedMaster->find(fileId);
-	if (it == sortedMaster->end()) return ( MgrNode * )0;
-	return it->second;
+    std::map<int, MgrNode *>::iterator it;
+    it = sortedMaster->find( fileId );
+    if( it == sortedMaster->end() ) {
+        return ( MgrNode * )0;
+    }
+    return it->second;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,7 +233,7 @@ MgrNode * InstMgr::Append( SDAI_Application_instance * se, stateEnum listState )
         cout << "append to InstMgr **ERROR ** node #" << se->StepFileId() <<
              " doesn't have state information" << endl;
     master->Append( mn );
-    (*sortedMaster)[mn->GetFileId()] = mn;
+    ( *sortedMaster )[mn->GetFileId()] = mn;
     //PrintSortedFileIds();
     return mn;
 }
@@ -308,7 +310,7 @@ InstMgr::EntityKeywordCount( const char * name ) {
     MgrNode * node;
     SDAI_Application_instance * se;
     int n = InstanceCount();
-    const char *pretty_name = PrettyTmpName( name );
+    const char * pretty_name = PrettyTmpName( name );
     for( int j = 0; j < n; ++j ) {
         node = GetMgrNode( j );
         se = node->GetApplication_instance();
@@ -357,7 +359,7 @@ SDAI_Application_instance *
 InstMgr::GetApplication_instance( const char * entityKeyword, int starting_index ) {
     MgrNode * node;
     SDAI_Application_instance * se;
-    const char *pretty_name = PrettyTmpName( entityKeyword );
+    const char * pretty_name = PrettyTmpName( entityKeyword );
 
     int count = InstanceCount();
     for( int j = starting_index; j < count; ++j ) {
@@ -374,7 +376,7 @@ SDAI_Application_instance *
 InstMgr::GetSTEPentity( const char * entityKeyword, int starting_index ) {
     MgrNode * node;
     SDAI_Application_instance * se;
-    const char *pretty_name = PrettyTmpName( entityKeyword );
+    const char * pretty_name = PrettyTmpName( entityKeyword );
 
     int count = InstanceCount();
     for( int j = starting_index; j < count; ++j ) {

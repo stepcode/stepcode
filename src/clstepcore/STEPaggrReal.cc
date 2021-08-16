@@ -38,7 +38,7 @@ RealNode::RealNode() {
     value = S_REAL_NULL;
 }
 
-RealNode::RealNode( SDAI_Real v) {
+RealNode::RealNode( SDAI_Real v ) {
     value = v;
 }
 

@@ -34,7 +34,7 @@ void SingleLinkList::Empty() {
 SingleLinkNode * SingleLinkList::NewNode() {
     //  defined in subtypes
     std::cerr << "\n\n******BUG****** a virtually defined function should \n"
-    << "be called for SingleLinkList::NewNode()\n\n";
+              << "be called for SingleLinkList::NewNode()\n\n";
     return new SingleLinkNode();
 }
 

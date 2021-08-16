@@ -22,7 +22,8 @@ void SCOPEadd_inorder( Linked_List list, Scope s ) {
                 SCOPEget_name( ( Type )( link->data ) ) ) ) {
         k = link;
         break;
-    } LISTod
+    }
+    LISTod
 
     LISTadd_before( list, k, s );
 }
@@ -32,10 +33,11 @@ void SCOPEaddvars_inorder( Linked_List list, Variable v ) {
     Link k = 0;
 
     LISTdo_links( list, link )
-    if( 0 > strcmp( v->name->symbol.name,  ( ( Variable ) link->data )->name->symbol.name ) ) {
+    if( 0 > strcmp( v->name->symbol.name, ( ( Variable ) link->data )->name->symbol.name ) ) {
         k = link;
         break;
-    } LISTod
+    }
+    LISTod
 
     LISTadd_before( list, k, v );
 }
@@ -61,7 +63,8 @@ void SCOPErules_out( Scope s, int level ) {
 
         LISTdo( alpha, ru, Rule ) {
             RULE_out( ru, level );
-        } LISTod
+        }
+        LISTod
 
         LISTfree( alpha );
     }
@@ -88,7 +91,8 @@ void SCOPEfuncs_out( Scope s, int level ) {
 
         LISTdo( alpha, fun, Function ) {
             FUNC_out( fun, level );
-        } LISTod
+        }
+        LISTod
 
         LISTfree( alpha );
     }
@@ -115,7 +119,8 @@ void SCOPEprocs_out( Scope s, int level ) {
 
         LISTdo( alpha, pr, Procedure ) {
             PROC_out( pr, level );
-        } LISTod
+        }
+        LISTod
 
         LISTfree( alpha );
     }
@@ -234,7 +239,8 @@ void SCOPEconsts_out( Scope s, int level ) {
         }
         LISTdo( alpha, cnst, Variable ) {
             SCOPEconst_out( cnst, level, max_indent );
-        } LISTod
+        }
+        LISTod
         LISTfree( alpha );
     }
     raw( "%*sEND_CONSTANT;\n", level, "" );
@@ -243,11 +249,12 @@ void SCOPEconsts_out( Scope s, int level ) {
 /** insert variable v into list, keeping the list ordered by ascending v->offset */
 void SCOPElocals_order( Linked_List list, Variable v ) {
     LISTdo_links( list, link ) {
-        if( v->offset < ( (Variable) link->data )->offset ) {
+        if( v->offset < ( ( Variable ) link->data )->offset ) {
             LISTadd_before( list, link, v );
             return;
         }
-    } LISTod
+    }
+    LISTod
     LISTadd_last( list, v );
 }
 
@@ -313,7 +320,8 @@ void SCOPElocals_out( Scope s, int level ) {
         }
 
         raw( ";\n" );
-    } LISTod
+    }
+    LISTod
     LISTfree( orderedLocals );
 
     raw( "%*sEND_LOCAL;\n", level, "" );
@@ -339,7 +347,8 @@ void SCOPEentities_out( Scope s, int level ) {
 
         LISTdo( alpha, en, Entity ) {
             ENTITY_out( en, level );
-        } LISTod
+        }
+        LISTod
 
         LISTfree( alpha );
     }
@@ -365,7 +374,8 @@ void SCOPEtypes_out( Scope s, int level ) {
 
         LISTdo( alpha, ty, Type ) {
             TYPE_out( ty, level );
-        } LISTod
+        }
+        LISTod
 
         LISTfree( alpha );
     }

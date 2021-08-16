@@ -16,10 +16,10 @@
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
  *                                                        Name, FundamentalType, Originating Schema, Description */
 const TypeDescriptor * const t_sdaiINTEGER  = new TypeDescriptor( "INTEGER", sdaiINTEGER, 0, "INTEGER" );
-const TypeDescriptor * const t_sdaiREAL     = new TypeDescriptor( "REAL",    sdaiREAL,    0, "Real"    );
-const TypeDescriptor * const t_sdaiNUMBER   = new TypeDescriptor( "NUMBER",  sdaiNUMBER,  0, "Number"  );
-const TypeDescriptor * const t_sdaiSTRING   = new TypeDescriptor( "STRING",  sdaiSTRING,  0, "String"  );
-const TypeDescriptor * const t_sdaiBINARY   = new TypeDescriptor( "BINARY",  sdaiBINARY,  0, "Binary"  );
+const TypeDescriptor * const t_sdaiREAL     = new TypeDescriptor( "REAL",    sdaiREAL,    0, "Real" );
+const TypeDescriptor * const t_sdaiNUMBER   = new TypeDescriptor( "NUMBER",  sdaiNUMBER,  0, "Number" );
+const TypeDescriptor * const t_sdaiSTRING   = new TypeDescriptor( "STRING",  sdaiSTRING,  0, "String" );
+const TypeDescriptor * const t_sdaiBINARY   = new TypeDescriptor( "BINARY",  sdaiBINARY,  0, "Binary" );
 const TypeDescriptor * const t_sdaiBOOLEAN  = new TypeDescriptor( "BOOLEAN", sdaiBOOLEAN, 0, "Boolean" );
 const TypeDescriptor * const t_sdaiLOGICAL  = new TypeDescriptor( "LOGICAL", sdaiLOGICAL, 0, "Logical" );
 

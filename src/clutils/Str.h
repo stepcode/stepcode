@@ -40,8 +40,8 @@ SC_UTILS_EXPORT bool StrEndsWith( const std::string & s, const char * suffix );
 SC_UTILS_EXPORT std::string  GetLiteralStr( istream & in, ErrorDescriptor * err );
 
 extern SC_UTILS_EXPORT Severity CheckRemainingInput( std::istream & in, ErrorDescriptor * err,
-  const char * typeName, // used in error message
-  const char * tokenList ); // e.g. ",)"
+        const char * typeName, // used in error message
+        const char * tokenList ); // e.g. ",)"
 extern SC_UTILS_EXPORT Severity CheckRemainingInput( std::istream & in, ErrorDescriptor * err, const std::string typeName, const char * tokenList );
 
 #endif

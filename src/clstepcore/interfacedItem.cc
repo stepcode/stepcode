@@ -8,7 +8,7 @@ Interfaced_item::Interfaced_item( const Interfaced_item & ii ): Dictionary_insta
 }
 
 Interfaced_item::Interfaced_item( const char * foreign_schema )
-: _foreign_schema( foreign_schema ) {
+    : _foreign_schema( foreign_schema ) {
 }
 
 Interfaced_item::~Interfaced_item() {

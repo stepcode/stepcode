@@ -24,14 +24,16 @@ void CASEout( struct Case_Statement_ * c, int level ) {
         if( ci->labels ) {
             LISTdo_n( ci->labels, label, Expression, b ) {
                 len = EXPRlength( label );
-            } LISTod
+            }
+            LISTod
         } else {
             len = strlen( "OTHERWISE" );
         }
         if( len > max_indent ) {
             max_indent = len;
         }
-    } LISTod
+    }
+    LISTod
     curpos = old_curpos;
 
     level += exppp_nesting_indent;
@@ -53,7 +55,8 @@ void CASEout( struct Case_Statement_ * c, int level ) {
 
                 /* print action */
                 STMT_out( ci->action, level + exppp_nesting_indent );
-            } LISTod
+            }
+            LISTod
         } else {
             /* print OTHERWISE */
             indent2 = level + exppp_continuation_indent;
@@ -64,7 +67,8 @@ void CASEout( struct Case_Statement_ * c, int level ) {
             /* print action */
             STMT_out( ci->action, level + exppp_nesting_indent );
         }
-    } LISTod
+    }
+    LISTod
 
     raw( "%*sEND_CASE;\n", level, "" );
 }

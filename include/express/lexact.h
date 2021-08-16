@@ -106,8 +106,8 @@ extern SC_EXPRESS_EXPORT int  SCANprocess_semicolon( const char *, int );
 extern SC_EXPRESS_EXPORT void SCANsave_comment( const char * );
 extern SC_EXPRESS_EXPORT bool SCANread( void );
 extern SC_EXPRESS_EXPORT void SCANinclude_file( char * );
-       SC_EXPRESS_EXPORT void SCANlowerize( char * );
-       SC_EXPRESS_EXPORT void SCANupperize( char * );
+SC_EXPRESS_EXPORT void SCANlowerize( char * );
+SC_EXPRESS_EXPORT void SCANupperize( char * );
 extern SC_EXPRESS_EXPORT char  *  SCANstrdup( const char * );
 extern SC_EXPRESS_EXPORT long SCANtell( void );
 

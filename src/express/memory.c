@@ -53,7 +53,7 @@ struct freelist_head INCR_fl;
 
 void MEMORYinitialize() {
     _ALLOCinitialize();
-    
+
     ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 50, 50 );
     ALLOCinitialize( &HASH_Element_fl, sizeof( struct Element_ ), 500, 100 );
 
@@ -61,9 +61,9 @@ void MEMORYinitialize() {
     ALLOCinitialize( &LIST_fl, sizeof( struct Linked_List_ ), 100, 50 );
 
     ALLOCinitialize( &SYMBOL_fl, sizeof( struct Symbol_ ), 100, 100 );
-    
+
     ALLOCinitialize( &SCOPE_fl, sizeof( struct Scope_ ), 100, 50 );
-    
+
     ALLOCinitialize( &TYPEHEAD_fl, sizeof( struct TypeHead_ ), 500, 100 );
     ALLOCinitialize( &TYPEBODY_fl, sizeof( struct TypeBody_ ), 200, 100 );
 
@@ -75,10 +75,10 @@ void MEMORYinitialize() {
     ALLOCinitialize( &WHERE_fl, sizeof( struct Where_ ),    100, 50 );
 
     ALLOCinitialize( &ENTITY_fl, sizeof( struct Entity_ ), 500, 100 );
-    
+
     ALLOCinitialize( &SCHEMA_fl, sizeof( struct Schema_ ), 40, 20 );
     ALLOCinitialize( &REN_fl, sizeof( struct Rename ), 30, 30 );
-    
+
     ALLOCinitialize( &CASE_IT_fl, sizeof( struct Case_Item_ ), 500, 100 );
 
     ALLOCinitialize( &EXP_fl, sizeof( struct Expression_ ), 500, 200 );

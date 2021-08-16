@@ -46,14 +46,14 @@ int main( int argc, char * argv[] ) {
     }
     cout << "instance #" << instance->StepFileId() << endl;
 
-    SDAI_Application_instance::iAMap_t::value_type v = instance->getInvAttr("isdefinedby");
+    SDAI_Application_instance::iAMap_t::value_type v = instance->getInvAttr( "isdefinedby" );
     iAstruct attr = v.second; //instance->getInvAttr(ia);
-        if( attr.a && attr.a->EntryCount() ) {
-            cout << "Map: found " << attr.a->EntryCount() << " inverse references." << endl;
-        } else {
-            cout << "Map: found no inverse references. ias " << (void *) &(v.second) << ", ia " << (void*) v.first << endl;
-            exitStatus = EXIT_FAILURE;
-        }
+    if( attr.a && attr.a->EntryCount() ) {
+        cout << "Map: found " << attr.a->EntryCount() << " inverse references." << endl;
+    } else {
+        cout << "Map: found no inverse references. ias " << ( void * ) &( v.second ) << ", ia " << ( void * ) v.first << endl;
+        exitStatus = EXIT_FAILURE;
+    }
 
     EntityAggregate * aggr = instance->isdefinedby_(); //should be filled in when the file is loaded? not sure how to do it using STEPfile...
     if( attr.a != aggr ) {

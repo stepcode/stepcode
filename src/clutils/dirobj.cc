@@ -70,7 +70,7 @@ DirObj::DirObj( const char * dirName ) {
     const int defaultSize = 256;
 
     fileListSize = defaultSize;
-    fileList = new char*[fileListSize];
+    fileList = new char * [fileListSize];
     fileCount = 0;
     LoadDirectory( dirName );
 }
@@ -233,7 +233,7 @@ std::string DirObj::Normalize( const std::string & path ) {
         buf.assign( b );
 
 #if !defined(_WIN32)
-	free(b);
+        free( b );
 #endif
     }
 
@@ -284,7 +284,7 @@ void DirObj::CheckIndex( int index ) {
 
     if( index >= fileListSize ) {
         fileListSize = ( index + 1 ) * 2;
-        newstrbuf = new char*[fileListSize];
+        newstrbuf = new char * [fileListSize];
         memmove( newstrbuf, fileList, fileCount * sizeof( char * ) );
         delete [] fileList;
         fileList = newstrbuf;

@@ -98,7 +98,8 @@ void ENTITYunique_out( Linked_List u, int level ) {
                 max_indent = length;
             }
         }
-    } LISTod
+    }
+    LISTod
 
     level += exppp_nesting_indent;
     indent2 = level + max_indent + strlen( ": " ) + exppp_continuation_indent;
@@ -120,9 +121,11 @@ void ENTITYunique_out( Linked_List u, int level ) {
                 }
                 EXPR_out( e, 0 );
             }
-        } LISTod
+        }
+        LISTod
         raw( ";\n" );
-    } LISTod
+    }
+    LISTod
 }
 
 void ENTITYinverse_out( Linked_List attrs, int level ) {
@@ -138,7 +141,8 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
                 max_indent = length;
             }
         }
-    } LISTod
+    }
+    LISTod
 
     if( max_indent == 0 ) {
         return;
@@ -167,7 +171,8 @@ void ENTITYinverse_out( Linked_List attrs, int level ) {
 
             raw( ";\n" );
         }
-    } LISTod
+    }
+    LISTod
 }
 
 void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
@@ -187,7 +192,8 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
                 max_indent = length;
             }
         }
-    } LISTod
+    }
+    LISTod
 
     if( max_indent == 0 ) {
         return;
@@ -230,7 +236,8 @@ void ENTITYattrs_out( Linked_List attrs, int derived, int level ) {
 
             raw( ";\n" );
         }
-    } LISTod
+    }
+    LISTod
 }
 
 char * ENTITYto_string( Entity e ) {

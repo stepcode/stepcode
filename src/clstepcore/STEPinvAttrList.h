@@ -35,7 +35,7 @@ typedef EntityAggregate * ( *getterA_t )( const SDAI_Application_instance * );
  * @{
  */
 class SC_CORE_EXPORT invAttrListNode :  public SingleLinkNode {
-    friend class STEPinvAttrList;
+        friend class STEPinvAttrList;
     protected:
         invAttrListNode( Inverse_attribute * a ) : attr( a ) {};
         Inverse_attribute * attr;
@@ -47,7 +47,7 @@ class SC_CORE_EXPORT invAttrListNode :  public SingleLinkNode {
 };
 
 class SC_CORE_EXPORT invAttrListNodeI : public invAttrListNode {
-    friend class STEPinvAttrList;
+        friend class STEPinvAttrList;
     protected:
         setterI_t set;
         getterI_t get;
@@ -66,7 +66,7 @@ class SC_CORE_EXPORT invAttrListNodeI : public invAttrListNode {
 };
 
 class SC_CORE_EXPORT invAttrListNodeA : public invAttrListNode {
-    friend class STEPinvAttrList;
+        friend class STEPinvAttrList;
     protected:
         setterA_t set;
         getterA_t get;

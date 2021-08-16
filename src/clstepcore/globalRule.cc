@@ -1,12 +1,12 @@
 #include "globalRule.h"
 
 Global_rule::Global_rule()
-: _entities( 0 ), _where_rules( 0 ), _parent_schema( 0 ) {
+    : _entities( 0 ), _where_rules( 0 ), _parent_schema( 0 ) {
 }
 
 Global_rule::Global_rule( const char * n, Schema_ptr parent_sch, const std::string & rt )
-: _name( n ), _entities( 0 ), _where_rules( 0 ), _parent_schema( parent_sch ),
-_rule_text( rt ) {
+    : _name( n ), _entities( 0 ), _where_rules( 0 ), _parent_schema( parent_sch ),
+      _rule_text( rt ) {
 }
 
 /// not fully implemented

@@ -93,7 +93,7 @@ struct SelectTag_ {
 
 const char   *  GetTypeDescriptorName( Type t );
 char      *     format_for_stringout( char * orig_buf, char * return_buf );
-void            format_for_std_stringout( FILE* f, char* orig_buf );
+void            format_for_std_stringout( FILE * f, char * orig_buf );
 const char   *  CheckWord( const char * );
 const char   *  StrToLower( const char * );
 const char   *  StrToUpper( const char * );
@@ -103,8 +103,8 @@ FILE      *     FILEcreate( const char * );
 void            FILEclose( FILE * );
 const char   *  ClassName( const char * );
 const char   *  ENTITYget_classname( Entity );
-void            FUNCPrint( Function function, FILES* files );
-void            RULEPrint( Rule rule, FILES* files );
+void            FUNCPrint( Function function, FILES * files );
+void            RULEPrint( Rule rule, FILES * files );
 void            ENTITYPrint( Entity, FILES * );
 const char   *  StrToConstant( const char * );
 void            TYPEselect_print( Type, FILES *, Schema );
@@ -116,9 +116,9 @@ void            TYPEprint_descriptions( const Type, FILES *, Schema );
 void            TYPEprint_init( const Type type, FILES * files, Schema schema );
 void            AGGRprint_init( FILES * files, const Type t,
                                 const char * var_name, const char * aggr_name );
-void            TYPEselect_init_print( const Type type, FILE* f );
+void            TYPEselect_init_print( const Type type, FILE * f );
 void            MODELPrint( Entity, FILES *, Schema, int );
-void            MODELprint_new( Entity entity, FILES* files );
+void            MODELprint_new( Entity entity, FILES * files );
 void            MODELPrintConstructorBody( Entity, FILES *, Schema/*, int*/ );
 const char   *  PrettyTmpName( const char * oldname );
 const char   *  EnumName( const char * oldname );
@@ -128,7 +128,7 @@ const char   *  AccessType( Type t );
 const char   *  TYPEget_ctype( const Type t );
 void            print_file( Express );
 void            resolution_success( void );
-void            SCHEMAprint( Schema schema, FILES* files, int suffix );
+void            SCHEMAprint( Schema schema, FILES * files, int suffix );
 Type            TYPEget_ancestor( Type t );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 

@@ -20,7 +20,8 @@ void populateAttrList( oaList & list, Entity ent ) {
     //recurse through supertypes
     LISTdo( ent->u.entity->supertypes, super, Entity ) {
         populateAttrList( list, super );
-    } LISTod
+    }
+    LISTod
     //then look at ent's own attrs, checking against attrs with index >= attrCount
     //derivation check only - leave deduplication for later
     LISTdo( ent->u.entity->attributes, attr, Variable ) {
@@ -36,8 +37,8 @@ void populateAttrList( oaList & list, Entity ent ) {
         }
         if( unique ) {
             orderedAttr * oa = new orderedAttr;
-            oa->attr=attr;
-            oa->creator=ent;
+            oa->attr = attr;
+            oa->creator = ent;
             if( attr->initializer ) {
                 // attrs derived by their owner are omitted from part 21 - section 10.2.3
                 oa->deriver = ent;
@@ -47,7 +48,8 @@ void populateAttrList( oaList & list, Entity ent ) {
             oa->redefiner = 0;
             list.push_back( oa );
         }
-    } LISTod
+    }
+    LISTod
 }
 
 ///compare attr name and creator, remove all but first occurrence
@@ -57,7 +59,7 @@ void dedupList( oaList & list ) {
     for( it = list.begin(); it != list.end(); it++ ) {
         for( jt = it + 1; jt != list.end(); jt++ ) {
             if( ( 0 == strcasecmp( ( * it )->attr->name->symbol.name, ( * jt )->attr->name->symbol.name ) ) &&
-                ( 0 == strcasecmp( ( * it )->creator->symbol.name, ( * jt )->creator->symbol.name ) ) ) {
+                    ( 0 == strcasecmp( ( * it )->creator->symbol.name, ( * jt )->creator->symbol.name ) ) ) {
                 //fprintf( stderr, "erasing %s created by %s\n", ( * jt )->attr->name->symbol.name, ( * jt )->creator->symbol.name );
                 jt--;
                 list.erase( jt + 1 );

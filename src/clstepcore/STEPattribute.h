@@ -105,7 +105,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         char SkipBadAttr( istream & in, char * StopChars );
         void AddErrorInfo();
-        void STEPwriteError( ostream& out, unsigned int line, const char* desc );
+        void STEPwriteError( ostream & out, unsigned int line, const char * desc );
 
     public:
         void incrRefCount() {
@@ -153,18 +153,18 @@ class SC_CORE_EXPORT STEPattribute {
          * \sa is_null()
          */
         ///@{
-        SDAI_Integer              * Integer();
-        SDAI_Real                 * Real();
-        SDAI_Real                 * Number();
-        SDAI_String               * String();
-        SDAI_Binary               * Binary();
+        SDAI_Integer        *       Integer();
+        SDAI_Real         *         Real();
+        SDAI_Real         *         Number();
+        SDAI_String        *        String();
+        SDAI_Binary        *        Binary();
         SDAI_Application_instance * Entity();
-        STEPaggregate             * Aggregate();
-        SDAI_Enum                 * Enum();
-        SDAI_LOGICAL              * Logical();
-        SDAI_BOOLEAN              * Boolean();
-        SDAI_Select               * Select();
-        SCLundefined              * Undefined();
+        STEPaggregate       *       Aggregate();
+        SDAI_Enum         *         Enum();
+        SDAI_LOGICAL        *       Logical();
+        SDAI_BOOLEAN        *       Boolean();
+        SDAI_Select        *        Select();
+        SCLundefined        *       Undefined();
         ///@}
 
         /// allows direct access to the union containing attr data (dangerous!)
@@ -220,13 +220,13 @@ class SC_CORE_EXPORT STEPattribute {
             _error.ClearErrorMsg();
         }
 
-        Severity ValidLevel( const char* attrValue, ErrorDescriptor* error, InstMgrBase * im, bool clearError = true );
+        Severity ValidLevel( const char * attrValue, ErrorDescriptor * error, InstMgrBase * im, bool clearError = true );
 
 ////////////////// Constructors
 
         STEPattribute( const STEPattribute & a );
         STEPattribute(): _derive( false ), _mustDeletePtr( false ),
-                         _redefAttr( 0 ), aDesc( 0 ), refCount( 0 )  {
+            _redefAttr( 0 ), aDesc( 0 ), refCount( 0 )  {
             memset( & ptr, 0, sizeof( ptr ) );
         }
         ~STEPattribute();
@@ -239,7 +239,7 @@ class SC_CORE_EXPORT STEPattribute {
         //  REAL & NUMBER
         STEPattribute( const class AttrDescriptor & d, SDAI_Real * p );
         //  ENTITY
-        STEPattribute( const class AttrDescriptor & d, SDAI_Application_instance* *p );
+        STEPattribute( const class AttrDescriptor & d, SDAI_Application_instance * *p );
         //  AGGREGATE
         STEPattribute( const class AttrDescriptor & d, STEPaggregate * p );
         //  ENUMERATION  and Logical
@@ -254,7 +254,7 @@ class SC_CORE_EXPORT STEPattribute {
         SC_CORE_EXPORT friend bool operator != ( const STEPattribute & a1, const STEPattribute & a2 );
 
         /// return true if aDesc's match (behavior of old operator==)
-        SC_CORE_EXPORT friend bool sameADesc ( const STEPattribute & a1, const STEPattribute & a2 );
+        SC_CORE_EXPORT friend bool sameADesc( const STEPattribute & a1, const STEPattribute & a2 );
 };
 
 #endif

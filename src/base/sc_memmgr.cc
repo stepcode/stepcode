@@ -309,8 +309,8 @@ void sc_memmgr::deallocate( void * addr, const char * file, const int line ) {
         }
     }
 #else
-    (void) file; // quell unused param warnings
-    (void) line;
+    ( void ) file; // quell unused param warnings
+    ( void ) line;
 #endif /* SC_MEMMGR_ENABLE_CHECKS */
 
     // Deallocate

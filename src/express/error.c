@@ -98,8 +98,10 @@ static struct Error_ LibErrors[] = {
     [FILE_UNREADABLE] = {SEVERITY_ERROR, "Could not read file %s: %s", NULL, false},
     [FILE_UNWRITABLE] = {SEVERITY_ERROR, "Could not write file %s: %s", NULL, false},
     [WARN_UNSUPPORTED_LANG_FEAT] = {SEVERITY_WARNING, "Unsupported language feature (%s) at %s:%d", "unsupported", false},
-    [WARN_SMALL_REAL] = {SEVERITY_WARNING, "REALs with extremely small magnitude may be interpreted as zero by other EXPRESS parsers "
-                                           "(IEEE 754 float denormals are sometimes rounded to zero) - fabs(%f) <= FLT_MIN.", "limits", false},
+    [WARN_SMALL_REAL] = {
+        SEVERITY_WARNING, "REALs with extremely small magnitude may be interpreted as zero by other EXPRESS parsers "
+        "(IEEE 754 float denormals are sometimes rounded to zero) - fabs(%f) <= FLT_MIN.", "limits", false
+    },
     /* lexact.c */
     [INCLUDE_FILE] = {SEVERITY_ERROR, "Could not open include file `%s'.", NULL, false},
     [UNMATCHED_CLOSE_COMMENT] = {SEVERITY_ERROR, "unmatched close comment", NULL, false},
@@ -202,12 +204,12 @@ static jmp_buf ERROR_safe_env;
 
 #define error_file stderr /**< message buffer file */
 
-static int ERROR_vprintf( const char *format, va_list ap ) {
+static int ERROR_vprintf( const char * format, va_list ap ) {
     int result = vsnprintf( ERROR_string, ERROR_string_end - ERROR_string, format, ap );
 
-    if(result < 0) {
+    if( result < 0 ) {
         ERROR_string = ERROR_string_end;
-    } else if(result > (ERROR_string_end - ERROR_string)) {
+    } else if( result > ( ERROR_string_end - ERROR_string ) ) {
         ERROR_string = ERROR_string_end;
     } else {
         ERROR_string = ERROR_string + result;
@@ -215,7 +217,7 @@ static int ERROR_vprintf( const char *format, va_list ap ) {
     return result;
 }
 
-static int ERROR_printf( const char *format, ... ) {
+static int ERROR_printf( const char * format, ... ) {
     int result;
     va_list ap;
     va_start( ap, format );
@@ -256,75 +258,75 @@ void ERRORcleanup( void ) {
     sc_free( ERROR_string_base );
 }
 
-void ERRORset_warning(char * name, bool warn_only) {
+void ERRORset_warning( char * name, bool warn_only ) {
     Error err;
     bool found = false;
-    
-    for (unsigned int errnum = 0; errnum < (sizeof LibErrors / sizeof LibErrors[0]); errnum++) {
+
+    for( unsigned int errnum = 0; errnum < ( sizeof LibErrors / sizeof LibErrors[0] ); errnum++ ) {
         err = &LibErrors[errnum];
-        if (err->severity <= SEVERITY_WARNING && !strcmp(err->name, name)) {
+        if( err->severity <= SEVERITY_WARNING && !strcmp( err->name, name ) ) {
             found = true;
             err->override = warn_only;
         }
-    }    
-    
-    if (!found) {
+    }
+
+    if( !found ) {
         fprintf( stderr, "unknown warning: %s\n", name );
         if( ERRORusage_function ) {
             ( *ERRORusage_function )();
         } else {
-            EXPRESSusage(1);
+            EXPRESSusage( 1 );
         }
     }
 }
 
 void ERRORset_all_warnings( bool warn_only ) {
     Error err;
-    
-    for (unsigned int errnum = 0; errnum < (sizeof LibErrors / sizeof LibErrors[0]); errnum++) {
+
+    for( unsigned int errnum = 0; errnum < ( sizeof LibErrors / sizeof LibErrors[0] ); errnum++ ) {
         err = &LibErrors[errnum];
-	if (err->severity <= SEVERITY_WARNING) {
+        if( err->severity <= SEVERITY_WARNING ) {
             err->override = warn_only;
-	}
-    }    
+        }
+    }
 }
 
-char * ERRORget_warnings_help(const char* prefix, const char *eol) {
+char * ERRORget_warnings_help( const char * prefix, const char * eol ) {
     unsigned int sz = 2048, len, clen;
-    char *buf, *nbuf;
+    char * buf, *nbuf;
     Error err;
-    
-    clen = strlen(prefix) + strlen(eol) + 1;
-    
-    buf = sc_malloc(sz);
-    if (!buf) {
-        fprintf(error_file, "failed to allocate memory for warnings help!\n");
+
+    clen = strlen( prefix ) + strlen( eol ) + 1;
+
+    buf = sc_malloc( sz );
+    if( !buf ) {
+        fprintf( error_file, "failed to allocate memory for warnings help!\n" );
     }
     buf[0] = '\0';
-    
-    for (unsigned int errnum = 0; errnum < (sizeof LibErrors / sizeof LibErrors[0]); errnum++) {
+
+    for( unsigned int errnum = 0; errnum < ( sizeof LibErrors / sizeof LibErrors[0] ); errnum++ ) {
         err = &LibErrors[errnum];
-        if (err->name) {
-            len = strlen(buf) + strlen(err->name) + clen;
-            if (len > sz) {
+        if( err->name ) {
+            len = strlen( buf ) + strlen( err->name ) + clen;
+            if( len > sz ) {
                 sz *= 2;
-                nbuf = sc_realloc(buf, sz);
-                if (!nbuf) {
-                    fprintf(error_file, "failed to reallocate / grow memory for warnings help!\n");            
+                nbuf = sc_realloc( buf, sz );
+                if( !nbuf ) {
+                    fprintf( error_file, "failed to reallocate / grow memory for warnings help!\n" );
                 }
                 buf = nbuf;
             }
-            strcat(buf, prefix);
-            strcat(buf, err->name);
-            strcat(buf, eol);
+            strcat( buf, prefix );
+            strcat( buf, err->name );
+            strcat( buf, eol );
         }
     }
-    
+
     return buf;
 }
 
 bool
-ERRORis_enabled(enum ErrorCode errnum) {
+ERRORis_enabled( enum ErrorCode errnum ) {
     Error err = &LibErrors[errnum];
     return !err->override;
 }
@@ -344,7 +346,7 @@ ERRORreport( enum ErrorCode errnum, ... ) {
     va_start( args, errnum );
     Error what = &LibErrors[errnum];
 
-    if (errnum != SUBORDINATE_FAILED && ERRORis_enabled(errnum) ) {
+    if( errnum != SUBORDINATE_FAILED && ERRORis_enabled( errnum ) ) {
         if( what->severity >= SEVERITY_ERROR ) {
             fprintf( error_file, "ERROR PE%03d: ", errnum );
             vfprintf( error_file, what->message, args );
@@ -384,7 +386,7 @@ ERRORreport_with_line( enum ErrorCode errnum, int line, ... ) {
 
     sym.filename = current_filename;
     sym.line = line;
-    ERRORreport_with_symbol(errnum, &sym, args);
+    ERRORreport_with_symbol( errnum, &sym, args );
 }
 
 void
@@ -393,7 +395,7 @@ ERRORreport_with_symbol( enum ErrorCode errnum, Symbol * sym, ... ) {
     va_start( args, sym );
     Error what = &LibErrors[errnum];
 
-    if (errnum != SUBORDINATE_FAILED && ERRORis_enabled(errnum)) {
+    if( errnum != SUBORDINATE_FAILED && ERRORis_enabled( errnum ) ) {
         if( __ERROR_buffer_errors ) {
             int child, parent;
 
@@ -485,7 +487,7 @@ void ERROR_start_message_buffer( void ) {
 }
 
 void ERROR_flush_message_buffer( void ) {
-    if(!__ERROR_buffer_errors) {
+    if( !__ERROR_buffer_errors ) {
         return;
     }
 
@@ -520,12 +522,12 @@ void ERROR_flush_message_buffer( void ) {
 }
 
 void ERRORabort( int sig ) {
-    (void) sig; /* quell unused param warning */
+    ( void ) sig; /* quell unused param warning */
 
     /* TODO: rework - fprintf is not atomic
      * so ERRORflush_messages() is unsafe if __ERROR_buffer_errors is set
      */
-    
+
     /* NOTE: signals can be caught in gdb,
      * no need for special treatment of debugging scenario */
     if( ERROR_unsafe ) {

@@ -405,9 +405,9 @@ Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
                 err->AppendToDetailMsg( "Invalid Enumeration, Logical, or Boolean value in SELECT type.\n" );
                 err->GreaterSeverity( SEVERITY_WARNING );
                 break;
-                // set the underlying type
-                // call STEPread
-                // return
+            // set the underlying type
+            // call STEPread
+            // return
 
             case '\'': // assign string
                 base_type = STRING_TYPE;
@@ -424,14 +424,14 @@ Severity SDAI_Select::STEPread( istream & in, ErrorDescriptor * err,
             case '#':
                 base_type = ENTITY_TYPE;
                 break;
-                // call STEPread_reference
-                // set the underlying type
+            // call STEPread_reference
+            // set the underlying type
 
-                // assign entity
-                // read the reference
-                // match type to underlying type
-                // assign the value
-                // set the underlying type
+            // assign entity
+            // read the reference
+            // match type to underlying type
+            // assign the value
+            // set the underlying type
 
             case '(': {
                 err->AppendToDetailMsg( "Invalid aggregate value in SELECT type.\n" );

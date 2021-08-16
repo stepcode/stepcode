@@ -63,8 +63,8 @@ typedef union YYSTYPE {
     Qualified_Attr * qualified_attr;
     Real             rVal;
     Statement        statement;
-    Symbol         * symbol;
-    char           * string;
+    Symbol     *     symbol;
+    char      *      string;
     Type             type;
     TypeBody         typebody;
     Variable         variable;

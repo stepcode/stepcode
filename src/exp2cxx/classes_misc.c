@@ -39,7 +39,7 @@ FILE * FILEcreate( const char * filename ) {
         return ( NULL );
     }
 
-    fn = StrToConstant ( filename );
+    fn = StrToConstant( filename );
     fprintf( file, "#ifndef  %s\n", fn );
     fprintf( file, "#define  %s\n\n", fn );
 

@@ -13,21 +13,22 @@ void WHEREprint( const char * tename, Linked_List wheres, FILE * impl, Schema sc
         }
 
         LISTdo( wheres, w, Where ) {
-            fprintf( impl, "        str.clear();\n");
+            fprintf( impl, "        str.clear();\n" );
             if( w->label ) {
                 fprintf( impl, "        str.append( \"%s: (\" );\n", w->label->name );
             } else {
                 /* no label */
-                fprintf( impl, "        str.append( \"(\" );\n");
+                fprintf( impl, "        str.append( \"(\" );\n" );
             }
             format_for_std_stringout( impl, EXPRto_string( w->expr ) );
 
-            fprintf( impl, "        str.append( \");\\n\" );\n");
+            fprintf( impl, "        str.append( \");\\n\" );\n" );
 
             fprintf( impl, "        wr = new Where_rule( str.c_str() );\n" );
             fprintf( impl, "        %s%s%s->_where_rules->Append( wr );\n", ( schema ? SCHEMAget_name( schema ) : "" ), ( schema ? "::" ENT_PREFIX : "" ), tename );
 
-        } LISTod
+        }
+        LISTod
     }
 }
 
@@ -39,7 +40,7 @@ void UNIQUEprint( Entity entity, FILE * impl, Schema schema ) {
         fprintf( impl, "        Uniqueness_rule * ur;\n" );
         LISTdo( uniqs, list, Linked_List ) {
             int i = 0;
-            fprintf( impl, "        str.clear();\n");
+            fprintf( impl, "        str.clear();\n" );
             LISTdo_n( list, e, Expression, b ) {
                 i++;
                 if( i == 1 ) {
@@ -49,13 +50,15 @@ void UNIQUEprint( Entity entity, FILE * impl, Schema schema ) {
                     }
                 } else {
                     if( i > 2 ) {
-                        fprintf( impl, "    str.append( \", \" );\n");
+                        fprintf( impl, "    str.append( \", \" );\n" );
                     }
                     format_for_std_stringout( impl, EXPRto_string( e ) );
                 }
-            } LISTod
+            }
+            LISTod
             fprintf( impl, "    ur = new Uniqueness_rule( str.c_str() );\n" );
             fprintf( impl, "    %s::%s%s->_uniqueness_rules->Append(ur);\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
-        } LISTod
+        }
+        LISTod
     }
 }

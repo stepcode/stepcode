@@ -477,7 +477,7 @@ std::string STEPattribute::asStr( const char * currSch ) const {
 }
 
 /// write '$' to out, put message in error, write brief error to stderr
-void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char* desc ) {
+void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char * desc ) {
     out << "$";
     cerr << "Internal error:  " << __FILE__ << ":" << line << "\n" << _POC_ "\n";
 
@@ -657,7 +657,7 @@ void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
                     break;
                 default:
                     std::cerr << "WARNING: Reached default case for BaseType() in STEPattribute::"
-                                << "ShallowCopy(). New attribute may be invalid." << std::endl;
+                              << "ShallowCopy(). New attribute may be invalid." << std::endl;
                     ptr.a = new STEPaggregate;
                     break;
             }
@@ -682,7 +682,7 @@ void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
         case ENUM_TYPE:
         default:
             std::cerr << "WARNING: Reached default case for NonRefType() in STEPattribute::"
-                        << "ShallowCopy(). New attribute may be invalid." << std::endl;
+                      << "ShallowCopy(). New attribute may be invalid." << std::endl;
             memcpy( & ptr, & ( sa->ptr ), sizeof( sa->ptr ) );
             break;
     }
@@ -824,7 +824,7 @@ bool STEPattribute::is_null()  const {
 
 // these get the attr value
 
-SDAI_Integer * STEPattribute::Integer(){
+SDAI_Integer * STEPattribute::Integer() {
     if( NonRefType() == INTEGER_TYPE ) {
         return ptr.i;
     }
@@ -868,7 +868,7 @@ SDAI_Binary * STEPattribute::Binary() {
 
 STEPaggregate * STEPattribute::Aggregate() {
     if( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
-        || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) ) {
+            || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) ) {
         return ptr.a;
     }
     return 0;
@@ -961,13 +961,13 @@ void STEPattribute::Entity( SDAI_Application_instance * ent ) {
     if( ptr.c ) {
         delete ptr.c;
     }
-    ptr.c = new (SDAI_Application_instance * );
+    ptr.c = new( SDAI_Application_instance * );
     *( ptr.c ) = ent;
 }
 
 void STEPattribute::Aggregate( STEPaggregate * aggr ) {
     assert( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
-    || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) );
+            || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) );
     if( ptr.a ) {
         *( ptr.a ) = * aggr;
     } else {
@@ -1034,7 +1034,7 @@ bool operator == ( const STEPattribute & a1, const STEPattribute & a2 ) {
     if( & a1 == & a2 ) {
         return true;
     }
-    if( a1._derive == a2._derive && a1.aDesc == a2.aDesc && a1._redefAttr == a2._redefAttr ){
+    if( a1._derive == a2._derive && a1.aDesc == a2.aDesc && a1._redefAttr == a2._redefAttr ) {
         if( 0 == memcmp( & a1.ptr, & a2.ptr, sizeof( a1.ptr ) ) ) {
             return true;
         } else {
@@ -1050,7 +1050,7 @@ bool operator == ( const STEPattribute & a1, const STEPattribute & a2 ) {
  *  \return true if not equal
  */
 bool operator != ( const STEPattribute & a1, const STEPattribute & a2 ) {
-  return !( a1 == a2 );
+    return !( a1 == a2 );
 }
 
 /// return true if the attr descriptor is identical
@@ -1241,7 +1241,7 @@ char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
 /// NOTE this code only does shallow copies. It may be necessary to do more, in which case
 /// the destructor and assignment operator will also need examined.
 STEPattribute::STEPattribute( const STEPattribute & a ) : _derive( a._derive ), _mustDeletePtr( false ),
-_redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
+    _redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
     ShallowCopy( & a );
 
     //NOTE may need to do a deep copy for the following types since they are classes
@@ -1267,69 +1267,69 @@ _redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
      *
      *        default:
      *            break;
-}
-*/
+    }
+    */
 }
 
 ///  INTEGER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.i = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  BINARY
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Binary * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.b = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  STRING
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_String * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.S = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  REAL & NUMBER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Real * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.r = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  ENTITY
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Application_instance * *p ):
-_derive( false ), _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _derive( false ), _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.c = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  AGGREGATE
 STEPattribute::STEPattribute( const class AttrDescriptor & d, STEPaggregate * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.a =  p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  ENUMERATION  and Logical
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Enum * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.e = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  SELECT
 STEPattribute::STEPattribute( const class AttrDescriptor & d, class SDAI_Select * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.sh = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
 ///  UNDEFINED
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SCLundefined * p ): _derive( false ),
-_mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
+    _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     ptr.u = p;
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
@@ -1350,12 +1350,12 @@ STEPattribute::~STEPattribute() {
                 break;
             case BOOLEAN_TYPE:
                 if( ptr.e ) {
-                    delete ( SDAI_BOOLEAN * ) ptr.e;
+                    delete( SDAI_BOOLEAN * ) ptr.e;
                     ptr.e = 0;
                 }
             case LOGICAL_TYPE:
                 if( ptr.e ) {
-                    delete ( SDAI_LOGICAL * ) ptr.e;
+                    delete( SDAI_LOGICAL * ) ptr.e;
                     ptr.e = 0;
                 }
                 break;

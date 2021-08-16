@@ -90,7 +90,7 @@
 void * ParseAlloc( void * ( *mallocProc )( size_t ) );
 void ParseFree( void * parser, void ( *freeProc )( void * ) );
 void Parse( void * parser, int tokenID, YYSTYPE data, parse_data_t parseData );
-void ParseTrace(FILE *TraceFILE, char *zTracePrompt);
+void ParseTrace( FILE * TraceFILE, char * zTracePrompt );
 
 Linked_List EXPRESS_path;
 int EXPRESSpass;
@@ -105,8 +105,8 @@ extern char   EXPRESSgetopt_options[];  /* initialized elsewhere */
 int ( *EXPRESSgetopt )( int, char * ) = NULL;
 bool    EXPRESSignore_duplicate_schemas      = false;
 
-Function funcdef(char *name, int pcount, Type ret_typ);
-void procdef(char *name, int pcount);
+Function funcdef( char * name, int pcount, Type ret_typ );
+void procdef( char * name, int pcount );
 void BUILTINSinitialize();
 Dictionary EXPRESSbuiltins; /* procedures/functions */
 
@@ -279,7 +279,7 @@ void EXPRESSinitialize( void ) {
     STMTinitialize();
 
     SCANinitialize();
-   
+
     BUILTINSinitialize();
 
     EXPRESS_PATHinit(); /* note, must follow defn of errors it needs! */
@@ -410,7 +410,7 @@ static Express PARSERrun( char * filename, FILE * fp ) {
  * Sept 2013 - remove unused param enum rename_type type (TODO should this be used)?
  */
 static void * SCOPEfind_for_rename( Scope schema, char * name ) {
-    void *result;
+    void * result;
     Rename * rename;
 
     /* object can only appear in top level symbol table */
@@ -428,7 +428,8 @@ static void * SCOPEfind_for_rename( Scope schema, char * name ) {
         if( result ) {
             return( result );
         }
-    } LISTod;
+    }
+    LISTod;
 
     /* Occurs in a partially USE'd schema? */
     rename = ( Rename * )DICTlookup( schema->u.schema->usedict, name );
@@ -454,7 +455,7 @@ static void * SCOPEfind_for_rename( Scope schema, char * name ) {
 }
 
 void RENAMEresolve( Rename * r, Schema s ) {
-    void *remote;
+    void * remote;
 
     /*   if (is_resolved_rename_raw(r->old)) return;*/
     if( r->object ) {
@@ -579,7 +580,7 @@ static void connect_lists( Dictionary modeldict, Schema schema, Linked_List list
     r = ( Rename * )l->data;
     r->schema = EXPRESSfind_schema( modeldict, r->schema_sym->name );
     if( !r->schema ) {
-        ERRORreport_with_symbol(UNDEFINED_SCHEMA,
+        ERRORreport_with_symbol( UNDEFINED_SCHEMA,
                                  r->schema_sym,
                                  r->schema_sym->name );
         resolve_failed_raw( r->old );
@@ -601,7 +602,7 @@ static void connect_schema_lists( Dictionary modeldict, Schema schema, Linked_Li
     sym = ( Symbol * )list->data;
     ref_schema = EXPRESSfind_schema( modeldict, sym->name );
     if( !ref_schema ) {
-        ERRORreport_with_symbol(UNDEFINED_SCHEMA, sym, sym->name );
+        ERRORreport_with_symbol( UNDEFINED_SCHEMA, sym, sym->name );
         resolve_failed( schema );
         list->data = NULL;
     } else {
@@ -643,21 +644,22 @@ void EXPRESSresolve( Express model ) {
     LISTdo( PARSEnew_schemas, print_schema, Schema ) {
         if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
             fprintf( stderr, "pass %d: %s (schema)\n",
-                    EXPRESSpass, print_schema->symbol.name );
+                     EXPRESSpass, print_schema->symbol.name );
         }
 
         if( print_schema->u.schema->uselist )
             connect_lists( model->symbol_table,
-                        print_schema, print_schema->u.schema->uselist );
+                           print_schema, print_schema->u.schema->uselist );
         if( print_schema->u.schema->reflist )
             connect_lists( model->symbol_table,
-                        print_schema, print_schema->u.schema->reflist );
+                           print_schema, print_schema->u.schema->reflist );
 
         connect_schema_lists( model->symbol_table,
-                            print_schema, print_schema->u.schema->use_schemas );
+                              print_schema, print_schema->u.schema->use_schemas );
         connect_schema_lists( model->symbol_table,
-                            print_schema, print_schema->u.schema->ref_schemas );
-    } LISTod;
+                              print_schema, print_schema->u.schema->ref_schemas );
+    }
+    LISTod;
 
     LISTfree( PARSEnew_schemas );
     PARSEnew_schemas = 0;   /* just in case */
@@ -779,59 +781,59 @@ void EXPRESSresolve( Express model ) {
     }
 }
 
-Function funcdef(char *name, int pcount, Type ret_typ) {
-    Function f = ALGcreate(OBJ_FUNCTION);
+Function funcdef( char * name, int pcount, Type ret_typ ) {
+    Function f = ALGcreate( OBJ_FUNCTION );
     f->symbol.name = name;
     f->u.func->pcount = pcount;
     f->u.func->return_type = ret_typ;
     f->u.func->builtin = true;
-    resolved_all(f);
-    DICTdefine(EXPRESSbuiltins, name, f, 0, OBJ_FUNCTION);
+    resolved_all( f );
+    DICTdefine( EXPRESSbuiltins, name, f, 0, OBJ_FUNCTION );
     return f;
 }
 
-void procdef(char *name, int pcount) {
-    Procedure p = ALGcreate(OBJ_PROCEDURE);
+void procdef( char * name, int pcount ) {
+    Procedure p = ALGcreate( OBJ_PROCEDURE );
     p->symbol.name = name;
     p->u.proc->pcount = pcount;
     p->u.proc->builtin = true;
-    resolved_all(p);
-    DICTdefine(EXPRESSbuiltins, name, p, 0, OBJ_PROCEDURE);
+    resolved_all( p );
+    DICTdefine( EXPRESSbuiltins, name, p, 0, OBJ_PROCEDURE );
 }
 
 void BUILTINSinitialize() {
     EXPRESSbuiltins = DICTcreate( 35 );
-    procdef("INSERT", 3 );
-    procdef("REMOVE", 2 );
+    procdef( "INSERT", 3 );
+    procdef( "REMOVE", 2 );
 
-    funcdef("ABS",    1, Type_Number );
-    funcdef("ACOS",   1, Type_Real );
-    funcdef("ASIN",   1, Type_Real );
-    funcdef("ATAN",   2, Type_Real );
-    funcdef("BLENGTH", 1, Type_Integer );
-    funcdef("COS",    1, Type_Real );
-    funcdef("EXISTS", 1, Type_Boolean );
-    funcdef("EXP",    1, Type_Real );
-    funcdef("FORMAT", 2, Type_String );
-    funcdef("HIBOUND", 1, Type_Integer );
-    funcdef("HIINDEX", 1, Type_Integer );
-    funcdef("LENGTH", 1, Type_Integer );
-    funcdef("LOBOUND", 1, Type_Integer );
-    funcdef("LOG",    1, Type_Real );
-    funcdef("LOG10",  1, Type_Real );
-    funcdef("LOG2",   1, Type_Real );
-    funcdef("LOINDEX", 1, Type_Integer );
-    funcdef("ODD",    1, Type_Logical );
-    funcdef("ROLESOF", 1, Type_Set_Of_String );
-    funcdef("SIN",    1, Type_Real );
-    funcdef("SIZEOF", 1, Type_Integer );
-    funcdef("SQRT",   1, Type_Real );
-    funcdef("TAN",    1, Type_Real );
-    funcdef("TYPEOF", 1, Type_Set_Of_String );
-    funcdef("VALUE",   1, Type_Number );
-    funcdef("VALUE_IN",    2, Type_Logical );
-    funcdef("VALUE_UNIQUE", 1, Type_Logical );
+    funcdef( "ABS",    1, Type_Number );
+    funcdef( "ACOS",   1, Type_Real );
+    funcdef( "ASIN",   1, Type_Real );
+    funcdef( "ATAN",   2, Type_Real );
+    funcdef( "BLENGTH", 1, Type_Integer );
+    funcdef( "COS",    1, Type_Real );
+    funcdef( "EXISTS", 1, Type_Boolean );
+    funcdef( "EXP",    1, Type_Real );
+    funcdef( "FORMAT", 2, Type_String );
+    funcdef( "HIBOUND", 1, Type_Integer );
+    funcdef( "HIINDEX", 1, Type_Integer );
+    funcdef( "LENGTH", 1, Type_Integer );
+    funcdef( "LOBOUND", 1, Type_Integer );
+    funcdef( "LOG",    1, Type_Real );
+    funcdef( "LOG10",  1, Type_Real );
+    funcdef( "LOG2",   1, Type_Real );
+    funcdef( "LOINDEX", 1, Type_Integer );
+    funcdef( "ODD",    1, Type_Logical );
+    funcdef( "ROLESOF", 1, Type_Set_Of_String );
+    funcdef( "SIN",    1, Type_Real );
+    funcdef( "SIZEOF", 1, Type_Integer );
+    funcdef( "SQRT",   1, Type_Real );
+    funcdef( "TAN",    1, Type_Real );
+    funcdef( "TYPEOF", 1, Type_Set_Of_String );
+    funcdef( "VALUE",   1, Type_Number );
+    funcdef( "VALUE_IN",    2, Type_Logical );
+    funcdef( "VALUE_UNIQUE", 1, Type_Logical );
 
-    FUNC_NVL = funcdef("NVL",    2, Type_Generic );
-    FUNC_USEDIN = funcdef("USEDIN",  2, Type_Bag_Of_Generic );
+    FUNC_NVL = funcdef( "NVL",    2, Type_Generic );
+    FUNC_USEDIN = funcdef( "USEDIN",  2, Type_Bag_Of_Generic );
 }

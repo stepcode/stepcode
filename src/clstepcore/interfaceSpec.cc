@@ -90,8 +90,8 @@ void Interface_spec__set::Clear() {
 ///////////////////////////////////////////////////////////////////////////////
 
 Interface_spec::Interface_spec()
-: _explicit_items( new Explicit_item_id__set ),
-_implicit_items( 0 ), _all_objects( 0 ) {
+    : _explicit_items( new Explicit_item_id__set ),
+      _implicit_items( 0 ), _all_objects( 0 ) {
 }
 
 /// not tested
@@ -101,7 +101,7 @@ Interface_spec::Interface_spec( Interface_spec & is ): Dictionary_instance() {
     int i;
     for( i = 0; i < count; i++ ) {
         ( *_explicit_items )[i] =
-        ( *( is._explicit_items ) )[i];
+            ( *( is._explicit_items ) )[i];
     }
     _current_schema_id = is._current_schema_id;
     _foreign_schema_id = is._foreign_schema_id;
@@ -111,9 +111,9 @@ Interface_spec::Interface_spec( Interface_spec & is ): Dictionary_instance() {
 
 Interface_spec::Interface_spec( const char * cur_sch_id,
                                 const char * foreign_sch_id, int all_objects )
-: _current_schema_id( cur_sch_id ), _explicit_items( new Explicit_item_id__set ),
-_implicit_items( 0 ), _foreign_schema_id( foreign_sch_id ),
-_all_objects( all_objects ) {
+    : _current_schema_id( cur_sch_id ), _explicit_items( new Explicit_item_id__set ),
+      _implicit_items( 0 ), _foreign_schema_id( foreign_sch_id ),
+      _all_objects( all_objects ) {
 }
 
 Interface_spec::~Interface_spec() {

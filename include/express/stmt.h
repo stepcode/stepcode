@@ -57,14 +57,14 @@
 /************/
 
 typedef struct Statement_  * Statement,
-        *Alias,
-        *Assignment,
-        *Case_Statement,
-        *Compound_Statement,
-        *Conditional,
-        *Loop,
-        *Procedure_Call,
-        *Return_Statement;
+            *Alias,
+            *Assignment,
+            *Case_Statement,
+            *Compound_Statement,
+            *Conditional,
+            *Loop,
+            *Procedure_Call,
+            *Return_Statement;
 
 typedef struct Scope_ * Increment;
 
@@ -227,8 +227,8 @@ extern SC_EXPRESS_EXPORT Statement STATEMENT_SKIP;
 
 extern SC_EXPRESS_EXPORT Statement    STMTcreate( int );
 extern SC_EXPRESS_EXPORT Statement    ALIAScreate( struct Scope_ *, Variable, Linked_List );
-extern SC_EXPRESS_EXPORT Statement    CASEcreate( Expression , Linked_List );
-extern SC_EXPRESS_EXPORT Statement    ASSIGNcreate( Expression , Expression );
+extern SC_EXPRESS_EXPORT Statement    CASEcreate( Expression, Linked_List );
+extern SC_EXPRESS_EXPORT Statement    ASSIGNcreate( Expression, Expression );
 extern SC_EXPRESS_EXPORT Statement    COMP_STMTcreate( Linked_List );
 extern SC_EXPRESS_EXPORT Statement    CONDcreate( Expression, Linked_List, Linked_List );
 extern SC_EXPRESS_EXPORT Statement    LOOPcreate( struct Scope_ *, Expression, Expression, Linked_List );

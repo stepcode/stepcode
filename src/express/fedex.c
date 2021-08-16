@@ -198,7 +198,7 @@ int main( int argc, char ** argv ) {
                     if( ERRORusage_function ) {
                         ( *ERRORusage_function )();
                     } else {
-                        EXPRESSusage(1);
+                        EXPRESSusage( 1 );
                     }
                 }
                 break;

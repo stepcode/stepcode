@@ -116,7 +116,7 @@ void ALLOCinitialize( struct freelist_head * flh, unsigned int size, int alloc1,
 }
 
 void * ALLOC_new( struct freelist_head * flh ) {
-    void *obj;
+    void * obj;
 
 #ifndef NOSTAT
     flh->alloc++;

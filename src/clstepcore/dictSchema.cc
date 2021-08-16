@@ -4,9 +4,9 @@
 #include "entityDescriptor.h"
 
 Schema::Schema( const char * schemaName )
-: _use_interface_list( new Interface_spec__set ),
-_ref_interface_list( new Interface_spec__set ),
-_function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
+    : _use_interface_list( new Interface_spec__set ),
+      _ref_interface_list( new Interface_spec__set ),
+      _function_list( 0 ), _procedure_list( 0 ), _global_rules( 0 ) {
     _name = schemaName;
 }
 
@@ -115,7 +115,7 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
 
             if( count > 0 ) {
                 out << endl << "    USE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
+                    << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
                 out << "       (";
 
                 first_time = 1;
@@ -136,8 +136,8 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                 out << ");" << endl;
             } else if( is->all_objects_() ) {
                 out << endl << "    USE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
-                << endl;
+                    << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
+                    << endl;
             }
         }
     }
@@ -155,7 +155,7 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
 
             if( count > 0 ) {
                 out << endl << "    REFERENCE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
+                    << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << endl;
                 out << "       (";
 
                 first_time = 1;
@@ -171,14 +171,14 @@ void Schema::GenerateUseRefExpress( ostream & out ) const {
                     } else { // renamed
                         out << ( *( is->explicit_items_() ) )[k]->original_id_();
                         out << " AS "
-                        << ( *( is->explicit_items_() ) )[k]->new_id_();
+                            << ( *( is->explicit_items_() ) )[k]->new_id_();
                     }
                 }
                 out << ");" << endl;
             } else if( is->all_objects_() ) {
                 out << endl << "    REFERENCE FROM "
-                << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
-                << endl;
+                    << StrToLower( is->foreign_schema_id_().c_str(), tmp ) << ";"
+                    << endl;
             }
         }
     }

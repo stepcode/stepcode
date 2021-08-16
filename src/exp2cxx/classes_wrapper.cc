@@ -144,8 +144,10 @@ void numberAttributes( Scope scope ) {
     LISTdo( list, e, Entity ) {
         LISTdo_n( ENTITYget_attributes( e ), v, Variable, b ) {
             v->idx = count++;
-        } LISTod
-    } LISTod
+        }
+        LISTod
+    }
+    LISTod
 }
 
 /******************************************************************
@@ -189,12 +191,14 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
             TYPEprint_typedefs( t, files->classes );
             //print in namespace. Some logic copied from TypeDescriptorName()
             fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
-        } SCOPEod
+        }
+        SCOPEod
 
         fprintf( files->classes, "\n// Entity class typedefs:" );
         LISTdo( list, e, Entity ) {
             ENTITYprint_classes( e, files->classes );
-        } LISTod
+        }
+        LISTod
     }
 
     /* fill in the values for the type descriptors and print the enumerations */
@@ -232,7 +236,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
                 t->search_id = PROCESSED;
             }
         }
-    } SCOPEod
+    }
+    SCOPEod
 
     if( redefs ) {
         // Here we process redefined enumerations.  See note, 2 loops ago.
@@ -267,7 +272,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 
             t->search_id = PROCESSED;
         }
-    } SCOPEod
+    }
+    SCOPEod
 
     fprintf( files -> inc, "\n/*        **************  ENTITIES          */\n" );
     fprintf( files -> lib, "\n/*        **************  ENTITIES          */\n" );
@@ -278,7 +284,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
             ENTITYPrint( e, files, schema, col->externMapping( ENTITYget_name( e ) ) );
             e->search_id = PROCESSED;
         }
-    } LISTod
+    }
+    LISTod
 
     if( cnt <= 1 ) {
         int index = 0;
@@ -290,7 +297,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files -> inc, "    SdaiModel_contents_%s();\n", SCHEMAget_name( schema ) );
         LISTdo( list, e, Entity ) {
             MODELprint_new( e, files );
-        } LISTod
+        }
+        LISTod
 
         fprintf( files->inc, "\n};\n\n" );
 
@@ -306,13 +314,15 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files->lib, "    SDAI_Entity_extent_ptr eep = (SDAI_Entity_extent_ptr)0;\n\n" );
         LISTdo( list, e, Entity ) {
             MODELPrintConstructorBody( e, files, schema );
-        } LISTod
+        }
+        LISTod
         fprintf( files -> lib, "}\n" );
         index = 0;
         LISTdo( list, e, Entity ) {
             MODELPrint( e, files, schema, index );
             index++;
-        } LISTod
+        }
+        LISTod
     }
 
     LISTfree( list );
@@ -321,8 +331,8 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 /** open/init unity files which allow faster compilation with fewer translation units */
 void initUnityFiles( const char * schName, FILES * files ) {
     const char * unity = "\n/** this file is for unity builds, which allow faster compilation\n"
-    " * with fewer translation units. not compatible with all compilers!\n */\n\n"
-    "#include \"schema.h\"\n";
+                         " * with fewer translation units. not compatible with all compilers!\n */\n\n"
+                         "#include \"schema.h\"\n";
     std::string name = schName;
     name.append( "_unity_" );
     size_t prefixLen = name.length();
@@ -361,12 +371,12 @@ void closeUnityFiles( FILES * files ) {
 
 ///write tail of initfile, close it
 void INITFileFinish( FILE * initfile, Schema schema ) {
-    fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n");
+    fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n" );
     fprintf( initfile, "    EntityDescItr edi( *%s::schema->EntsWInverse() );\n", SCHEMAget_name( schema ) );
-    fprintf( initfile, "    EntityDescriptor * ed;\n");
+    fprintf( initfile, "    EntityDescriptor * ed;\n" );
     fprintf( initfile, "    const char * nm = %s::schema->Name();\n", SCHEMAget_name( schema ) );
-    fprintf( initfile, "    while( 0 != ( ed = edi.NextEntityDesc_nc() ) ) {\n");
-    fprintf( initfile, "        ed->InitIAttrs( reg, nm );\n");
+    fprintf( initfile, "    while( 0 != ( ed = edi.NextEntityDesc_nc() ) ) {\n" );
+    fprintf( initfile, "        ed->InitIAttrs( reg, nm );\n" );
     fprintf( initfile, "    }\n}\n" );
     FILEclose( initfile );
 }
@@ -390,9 +400,9 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     FILE * libfile,
          * incfile,
          * schemafile = files->incall,
-         * schemainit = files->initall,
-         * initfile,
-         * createall = files->create;
+           * schemainit = files->initall,
+             * initfile,
+             * createall = files->create;
     Rule r;
     Function f;
     Procedure p;

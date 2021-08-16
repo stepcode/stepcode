@@ -5,11 +5,11 @@
 
 class SC_CORE_EXPORT Dictionary_instance {
 
-protected:
-    Dictionary_instance() {}
-    Dictionary_instance( const Dictionary_instance & ) {}
+    protected:
+        Dictionary_instance() {}
+        Dictionary_instance( const Dictionary_instance & ) {}
 
-    virtual ~Dictionary_instance() {};
+        virtual ~Dictionary_instance() {};
 };
 
 

@@ -32,9 +32,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
 
     /* Defined Types based on SIMPLE types */
     SCOPEdo_types( scope, t, de )
-    if ( ( t->search_id == CANPROCESS )
+    if( ( t->search_id == CANPROCESS )
             && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
-            && ( TYPEget_ancestor( t ) == NULL) ) {
+            && ( TYPEget_ancestor( t ) == NULL ) ) {
         TYPEprint_descriptions( t, files, schema );
         t->search_id = PROCESSED;
     }
@@ -44,10 +44,10 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
      * TODO: recursive approach
      */
     SCOPEdo_types( scope, t, de )
-    if ( ( t->search_id == CANPROCESS )
+    if( ( t->search_id == CANPROCESS )
             && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
             && ( ( i = TYPEget_head( t ) ) != NULL ) ) {
-        if (i->search_id == PROCESSED) {
+        if( i->search_id == PROCESSED ) {
             TYPEprint_descriptions( t, files, schema );
             t->search_id = PROCESSED;
         }

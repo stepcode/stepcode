@@ -157,8 +157,8 @@ SingleLinkNode * SelectNode::NewNode() {
 Severity SelectNode::StrToVal( const char * s, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId ) {
-    (void) elem_type; //unused
-    (void) addFileId; //unused
+    ( void ) elem_type; //unused
+    ( void ) addFileId; //unused
     istringstream in( ( char * )s );
     if( err->severity( node->STEPread( in, err, insts ) ) != SEVERITY_NULL ) {
         err->AppendToDetailMsg( node ->Error() );
@@ -182,7 +182,7 @@ Severity SelectNode::STEPread( const char * s, ErrorDescriptor * err,
 Severity SelectNode::STEPread( istream & in, ErrorDescriptor * err,
                                const TypeDescriptor * elem_type,
                                InstMgrBase * insts, int addFileId, const char * currSch ) {
-    (void) elem_type; //unused
+    ( void ) elem_type; //unused
     if( !node )  {
         cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n"
              << _POC_ "\n";

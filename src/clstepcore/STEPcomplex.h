@@ -72,7 +72,7 @@ class SC_CORE_EXPORT STEPcomplex : public SDAI_Application_instance {
                                    istream & in = cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
 
-        virtual void STEPread_error( char c, int index, istream& in, const char * schnm );
+        virtual void STEPread_error( char c, int index, istream & in, const char * schnm );
 
 // WRITE
         virtual void STEPwrite( ostream & out = cout, const char * currSch = NULL,

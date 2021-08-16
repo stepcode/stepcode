@@ -71,7 +71,7 @@ SEL_ITEMget_enumtype( Type t ) {
  ** \returns type used to represent the underlying type in a select class
  */
 const char * TYPEget_utype( Type t )  {
-    (void) t; /* unused */
+    ( void ) t; /* unused */
     return NULL;
 }
 
@@ -82,7 +82,7 @@ determines if the given entity is a member of the list.
 RETURNS the member if it is a member; otherwise 0 is returned.
 *******************/
 void *
-LISTmember( const Linked_List list, void *e ) {
+LISTmember( const Linked_List list, void * e ) {
     Link node;
     for( node = list->mark->next; node != list->mark; node = node->next )
         if( e == node -> data ) {
@@ -588,7 +588,7 @@ TYPEselect_lib_print( const Type type, FILE * f ) {
     /* first compute the number of types (necessary to insert commas) */
     nbr_select = 0;
     LISTdo( SEL_TYPEget_items( type ), t, Type )
-    (void) t; /* unused */
+    ( void ) t; /* unused */
     nbr_select++;
     LISTod;
     /* then write types */

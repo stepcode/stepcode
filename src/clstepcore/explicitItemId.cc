@@ -5,7 +5,7 @@ Explicit_item_id::Explicit_item_id() {
 }
 
 Explicit_item_id::Explicit_item_id( const Explicit_item_id & eii )
-: Interfaced_item( eii ) {
+    : Interfaced_item( eii ) {
     _local_definition = eii._local_definition;
     _original_id = eii._original_id;
     _new_id = eii._new_id;

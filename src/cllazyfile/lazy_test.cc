@@ -79,13 +79,13 @@ void printDeps( lazyInstMgr & mgr ) {
 
     instanceID id = p.key;
     instanceSet * dependencies = mgr.instanceDependencies( id );
-        
-    std::cout << std::endl <<"Dependencies" << std::endl << "==============" << std::endl;
+
+    std::cout << std::endl << "Dependencies" << std::endl << "==============" << std::endl;
     instanceSet::const_iterator it( dependencies->begin() ), end( dependencies->end() );
 
     std::cout << "Example: Instance #" << id << " is recursively dependent on " << dependencies->size() << " instances: ";
     int i;
-    for(i = 0; it != end && i < displayInstances; it++, i++ ) {
+    for( i = 0; it != end && i < displayInstances; it++, i++ ) {
         std::cout << *it << " ";
     }
 
@@ -167,7 +167,7 @@ int main( int argc, char ** argv ) {
 //     std::cout << "Total types: " << mgr->getNumTypes() << std::endl;
 
     instWithRef = printRefs( *mgr );
-    printDeps( *mgr ); 
+    printDeps( *mgr );
 
 #ifndef NO_REGISTRY
     if( instWithRef ) {
@@ -186,7 +186,7 @@ int main( int argc, char ** argv ) {
         std::cout << "Number of instances loaded now: " << mgr->loadedInstanceCount() << std::endl;
     }
 #else
-    (void) instWithRef; // unused
+    ( void ) instWithRef; // unused
 #endif //NO_REGISTRY
 
     stats.out();

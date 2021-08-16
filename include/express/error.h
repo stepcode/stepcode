@@ -150,12 +150,12 @@ enum Severity {
 
 struct Error_ {
     enum Severity severity;
-    const char *message;
-    const char *name;
+    const char * message;
+    const char * name;
     bool override;
 };
 
-typedef struct Error_ *Error;
+typedef struct Error_ * Error;
 
 /****************/
 /* modules used */
@@ -225,7 +225,7 @@ extern SC_EXPRESS_EXPORT void ERRORset_all_warnings( bool );
 extern SC_EXPRESS_EXPORT void ERRORsafe( jmp_buf env );
 extern SC_EXPRESS_EXPORT void ERRORunsafe( void );
 
-extern char * ERRORget_warnings_help(const char* prefix, const char *eol);
-extern bool ERRORis_enabled(enum ErrorCode errnum);
+extern char * ERRORget_warnings_help( const char * prefix, const char * eol );
+extern bool ERRORis_enabled( enum ErrorCode errnum );
 
 #endif /* ERROR_H */

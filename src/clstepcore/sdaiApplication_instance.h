@@ -51,10 +51,10 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
     public: //TODO make these private?
         STEPattributeList attributes;
 
-	/* see mgrnode.cc where -1 is returned when there is no sdai
-	 * instance.  might be possible to treat 0 for this purpose
-	 * instead of negative so the ID's can become unsigned.
-	 */
+        /* see mgrnode.cc where -1 is returned when there is no sdai
+         * instance.  might be possible to treat 0 for this purpose
+         * instead of negative so the ID's can become unsigned.
+         */
         int               STEPfile_id;
 
         ErrorDescriptor   _error;
@@ -146,7 +146,7 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
                                    class InstMgrBase * instance_set,
                                    std::istream & in = std::cin, const char * currSch = NULL,
                                    bool useTechCor = true, bool strict = true );
-        virtual void STEPread_error( char c, int i, std::istream& in, const char * schnm );
+        virtual void STEPread_error( char c, int i, std::istream & in, const char * schnm );
 
 // WRITE
         virtual void STEPwrite( std::ostream & out = std::cout, const char * currSch = NULL,

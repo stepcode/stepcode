@@ -118,7 +118,8 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
         } else {
             fprintf( file, "        %s::schema->ref_interface_list_()->Append(is);\n", SCHEMAget_name( schema ) );
         }
-    } LISTod
+    }
+    LISTod
 
     if( !refdict ) {
         return;
@@ -170,14 +171,14 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
                 sprintf( td_name, "/* Rule not implemented */ 0" );
             } else if( re->type == OBJ_ENTITY ) {
                 sprintf( td_name, "%s%s%s",
-                        SCOPEget_name( ( ( Entity )re->object )->superscope ),
-                        ENT_PREFIX, ENTITYget_name( ( Entity )re->object ) );
+                         SCOPEget_name( ( ( Entity )re->object )->superscope ),
+                         ENT_PREFIX, ENTITYget_name( ( Entity )re->object ) );
             } else {
                 sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", re->type );
             }
             if( re->old != re->nnew ) {
                 fprintf( file, "        // object %s AS %s\n", re->old->name,
-                        re->nnew->name );
+                         re->nnew->name );
                 if( !strcmp( type, "USE" ) ) {
                     fprintf( file, "        ui = new Used_item(\"%s\", %s, \"%s\", \"%s\");\n", re->schema->symbol.name, td_name, re->old->name, re->nnew->name );
                     fprintf( file, "        is->explicit_items_()->Append(ui);\n" );
@@ -199,13 +200,14 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
                     fprintf( file, "        %s::schema->interface_().explicit_items_()->Append(ri);\n", SCHEMAget_name( schema ) );
                 }
             }
-        } LISTod
+        }
+        LISTod
     }
     HASHdestroy( dict );
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
-    (void) arg; /* unused */
+    ( void ) arg; /* unused */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }

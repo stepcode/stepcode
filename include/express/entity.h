@@ -151,7 +151,7 @@ extern SC_EXPRESS_EXPORT bool      ENTITYhas_immediate_supertype( Entity, Entity
 extern SC_EXPRESS_EXPORT Variable     ENTITYget_named_attribute( Entity, char * );
 extern SC_EXPRESS_EXPORT Linked_List  ENTITYget_all_attributes( Entity );
 extern SC_EXPRESS_EXPORT bool      ENTITYhas_supertype( Entity, Entity );
-extern SC_EXPRESS_EXPORT void     ENTITYadd_instance( Entity, void *);
+extern SC_EXPRESS_EXPORT void     ENTITYadd_instance( Entity, void * );
 extern SC_EXPRESS_EXPORT int      ENTITYget_initial_offset( Entity );
 extern SC_EXPRESS_EXPORT int      ENTITYdeclares_variable( Entity, struct Variable_ * );
 

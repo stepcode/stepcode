@@ -2,8 +2,8 @@
 #define __DRIVER_H_
 
 struct test_def {
-    const char *name;
-    int (*testfunc) (void);
+    const char * name;
+    int ( *testfunc )( void );
 };
 
 void setup();

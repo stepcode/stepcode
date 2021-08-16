@@ -5,7 +5,7 @@ Implicit_item_id::Implicit_item_id() {
 }
 
 Implicit_item_id::Implicit_item_id( Implicit_item_id & iii )
-: Interfaced_item( iii ) {
+    : Interfaced_item( iii ) {
     _local_definition = iii._local_definition;
 }
 

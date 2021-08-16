@@ -51,7 +51,7 @@ void SCOPEinitialize( void ) {
  */
 void SCOPE_get_entities( Scope scope, Linked_List result ) {
     DictionaryEntry de;
-    void *x;
+    void * x;
 
     DICTdo_type_init( scope->symbol_table, &de, OBJ_ENTITY );
     while( 0 != ( x = DICTdo( &de ) ) ) {
@@ -64,7 +64,7 @@ void SCOPE_get_entities( Scope scope, Linked_List result ) {
  */
 void SCOPE_get_functions( Scope scope, Linked_List result ) {
     DictionaryEntry de;
-    void *x;
+    void * x;
 
     DICTdo_type_init( scope->symbol_table, &de, OBJ_FUNCTION );
     while( 0 != ( x = DICTdo( &de ) ) ) {
@@ -85,7 +85,7 @@ Linked_List SCOPEget_functions( Scope scope ) {
  */
 void SCOPE_get_rules( Scope scope, Linked_List result ) {
     DictionaryEntry de;
-    void *x;
+    void * x;
 
     DICTdo_type_init( scope->symbol_table, &de, OBJ_RULE );
     while( 0 != ( x = DICTdo( &de ) ) ) {
@@ -163,9 +163,9 @@ Linked_List SCOPEget_entities_superclass_order( Scope scope ) {
  * note that object found is not actually checked, only because
  * caller is in a better position to describe the error with context
  */
-void *SCOPEfind( Scope scope, char * name, int type ) {
+void * SCOPEfind( Scope scope, char * name, int type ) {
     extern Dictionary EXPRESSbuiltins;  /* procedures/functions */
-    void *x;
+    void * x;
 
     __SCOPE_search_id++;
 
@@ -186,8 +186,8 @@ void *SCOPEfind( Scope scope, char * name, int type ) {
  * the supertype/subtype hierarchy
  * EH???  -> lookup an object when the current scope is not a schema
  */
-void *SCOPE_find( Scope scope, char * name, int type ) {
-    void *result;
+void * SCOPE_find( Scope scope, char * name, int type ) {
+    void * result;
     Rename * rename;
 
     if( scope->search_id == __SCOPE_search_id ) {

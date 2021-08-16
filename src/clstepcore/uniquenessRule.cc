@@ -3,7 +3,7 @@
 #include <string.h>
 
 Uniqueness_rule::Uniqueness_rule()
-: _parent_entity( 0 ) {
+    : _parent_entity( 0 ) {
 }
 
 Uniqueness_rule::Uniqueness_rule( const Uniqueness_rule & ur ): Dictionary_instance() {

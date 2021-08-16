@@ -196,24 +196,24 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 
         // TODO implement these
 
-            // add another schema to registry
-            //void addSchema( void ( *initFn )() );
+        // add another schema to registry
+        //void addSchema( void ( *initFn )() );
 
-            //list all instances that one instance depends on (recursive)
-            //std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
+        //list all instances that one instance depends on (recursive)
+        //std::vector<instanceID> instanceDependencies( instanceID id ); //set is faster?
 
-            /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
-                 same as above, but with list of instances */
-            //std::vector<instanceID> notDependencies(...)
+        /* * the opposite of instanceDependencies() - all instances that are *not* dependencies of one particular instance
+             same as above, but with list of instances */
+        //std::vector<instanceID> notDependencies(...)
 
-            //renumber instances so that they are numbered 1..N where N is the total number of instances
-            //void normalizeInstanceIds();
+        //renumber instances so that they are numbered 1..N where N is the total number of instances
+        //void normalizeInstanceIds();
 
-            //find data that is repeated and eliminate, if possible
-            //void eliminateDuplicates();
+        //find data that is repeated and eliminate, if possible
+        //void eliminateDuplicates();
 
-            //tell instMgr to use instances from this section
-            //void useDataSection( sectionID id );
+        //tell instMgr to use instances from this section
+        //void useDataSection( sectionID id );
 
         // TODO support references from one file to another
 };

@@ -127,7 +127,7 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
 void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
     Function f = 0;
     Symbol * sym;
-    void *x;
+    void * x;
     Entity e;
     Type t;
     bool func_args_checked = false;
@@ -143,13 +143,13 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
             x = SCOPEfind( scope, expr->symbol.name,
                            SCOPE_FIND_FUNCTION | SCOPE_FIND_ENTITY );
             if( !x ) {
-                ERRORreport_with_symbol(UNDEFINED_FUNC, &expr->symbol, expr->symbol.name );
+                ERRORreport_with_symbol( UNDEFINED_FUNC, &expr->symbol, expr->symbol.name );
                 resolve_failed( expr );
                 break;
             }
             if( ( DICT_type != OBJ_FUNCTION ) && ( DICT_type != OBJ_ENTITY ) ) {
                 sym = OBJget_symbol( x, DICT_type );
-                ERRORreport_with_symbol(FUNCALL_NOT_A_FUNCTION, &expr->symbol, sym->name );
+                ERRORreport_with_symbol( FUNCALL_NOT_A_FUNCTION, &expr->symbol, sym->name );
                 resolve_failed( expr );
                 break;
             }
@@ -174,7 +174,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 /* to NVL code later which assumes args are present */
                 if( LISTget_length( expr->u.funcall.list ) !=
                         f->u.func->pcount ) {
-                    ERRORreport_with_symbol(WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name,
+                    ERRORreport_with_symbol( WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name,
                                              LISTget_length( expr->u.funcall.list ),
                                              f->u.func->pcount );
                 }
@@ -263,7 +263,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 if( typecheck == Type_Unknown ) {
                     return;
                 } else {
-                    ERRORreport_with_symbol(UNDEFINED, &expr->symbol, expr->symbol.name );
+                    ERRORreport_with_symbol( UNDEFINED, &expr->symbol, expr->symbol.name );
                     resolve_failed( expr );
                     break;
                 }
@@ -309,7 +309,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                     /* but I don't think that's a problem */
 
                     if( ( ( Function )x )->u.func->pcount != 0 ) {
-                        ERRORreport_with_symbol(WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name, 0,
+                        ERRORreport_with_symbol( WRONG_ARG_COUNT, &expr->symbol, expr->symbol.name, 0,
                                                  f->u.func->pcount );
                         resolve_failed( expr );
                     } else {
@@ -341,7 +341,7 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 found_self = true;
                 resolved_all( expr );
             } else {
-                ERRORreport_with_symbol(SELF_IS_UNKNOWN, &scope->symbol );
+                ERRORreport_with_symbol( SELF_IS_UNKNOWN, &scope->symbol );
                 resolve_failed( expr );
             }
             break;
@@ -360,14 +360,14 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 /* retrieve the common aggregate type */
                 t = TYPE_retrieve_aggregate( expr->return_type, 0 );
                 if( !t ) {
-                    ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
+                    ERRORreport_with_symbol( QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
                     resolve_failed( expr );
                     break;
                 }
             } else if( TYPEis_runtime( expr->return_type ) ) {
                 t = Type_Runtime;
             } else {
-                ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
+                ERRORreport_with_symbol( QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
                 resolve_failed( expr );
                 break;
             }
@@ -412,14 +412,14 @@ int ENTITYresolve_subtype_expression( Expression expr, Entity ent/*was scope*/, 
         /* must be a simple entity reference */
         ent_ref = ( Entity )SCOPEfind( ent->superscope, expr->symbol.name, SCOPE_FIND_ENTITY );
         if( !ent_ref ) {
-            ERRORreport_with_symbol(UNKNOWN_SUBTYPE, &ent->symbol,
+            ERRORreport_with_symbol( UNKNOWN_SUBTYPE, &ent->symbol,
                                      expr->symbol.name, ent->symbol.name );
             i = RESOLVE_FAILED;
         } else if( DICT_type != OBJ_ENTITY ) {
             Symbol * sym = OBJget_symbol( ent_ref, DICT_type );
             /* line number should really be on supertype name, */
             /* but all we have easily is the entity line number */
-            ERRORreport_with_symbol(SUBTYPE_RESOLVE, &ent->symbol,
+            ERRORreport_with_symbol( SUBTYPE_RESOLVE, &ent->symbol,
                                      expr->symbol.name, sym->line );
             i = RESOLVE_FAILED;
         } else {
@@ -507,7 +507,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
         if( !is_resolve_failed( type->u.type->head ) ) {
             if( ERRORis_enabled( TYPE_IS_ENTITY ) ) {
                 if( TYPEis_entity( type->u.type->head ) ) {
-                    ERRORreport_with_symbol(TYPE_IS_ENTITY, &type->symbol, type->u.type->head->u.type->body->entity->symbol.name );
+                    ERRORreport_with_symbol( TYPE_IS_ENTITY, &type->symbol, type->u.type->head->u.type->body->entity->symbol.name );
                     resolve_failed( type );
                 }
             }
@@ -525,7 +525,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
                                       SCOPE_FIND_ANYTHING ^ SCOPE_FIND_VARIABLE );
         /*              SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY);*/
         if( !ref_type ) {
-            ERRORreport_with_symbol(UNDEFINED_TYPE, &type->symbol, type->symbol.name );
+            ERRORreport_with_symbol( UNDEFINED_TYPE, &type->symbol, type->symbol.name );
             *typeaddr = Type_Bad; /* just in case */
             resolve_failed( type );
         } else if( DICT_type == OBJ_TYPE ) {
@@ -543,7 +543,7 @@ void TYPE_resolve( Type * typeaddr /*, Scope scope*/ ) {
 
             type = *typeaddr = ( ( Entity )ref_type )->u.entity->type;
         } else {
-            ERRORreport_with_symbol(NOT_A_TYPE, &type->symbol, type->symbol.name,
+            ERRORreport_with_symbol( NOT_A_TYPE, &type->symbol, type->symbol.name,
                                      OBJget_type( DICT_type ) );
             resolve_failed( type );
         }
@@ -595,7 +595,7 @@ void VAR_resolve_types( Variable v ) {
             type = type->u.type->body->base;
         }
         if( type->u.type->body->type != entity_ ) {
-            ERRORreport_with_symbol(INVERSE_BAD_ENTITY,
+            ERRORreport_with_symbol( INVERSE_BAD_ENTITY,
                                      &v->name->symbol, v->inverse_symbol->name );
         } else {
             attr = VARfind( type->u.type->body->entity, v->inverse_symbol->name, 1 );
@@ -603,7 +603,7 @@ void VAR_resolve_types( Variable v ) {
                 v->inverse_attribute = attr;
                 failed |= is_resolve_failed( attr->name );
             } else {
-                ERRORreport_with_symbol(INVERSE_BAD_ATTR,
+                ERRORreport_with_symbol( INVERSE_BAD_ATTR,
                                          v->inverse_symbol, v->inverse_symbol->name, type->u.type->body->entity->symbol.name );
             }
         }
@@ -703,12 +703,12 @@ void STMTresolve( Statement statement, Scope scope ) {
             if( proc ) {
                 if( DICT_type != OBJ_PROCEDURE ) {
                     Symbol * newsym = OBJget_symbol( proc, DICT_type );
-                    ERRORreport_with_symbol(EXPECTED_PROC, &statement->symbol, proc_name, newsym->line );
+                    ERRORreport_with_symbol( EXPECTED_PROC, &statement->symbol, proc_name, newsym->line );
                 } else {
                     statement->u.proc->procedure = proc;
                 }
             } else {
-                ERRORreport_with_symbol(NO_SUCH_PROCEDURE, &statement->symbol, proc_name );
+                ERRORreport_with_symbol( NO_SUCH_PROCEDURE, &statement->symbol, proc_name );
             }
             LISTdo( statement->u.proc->parameters, e, Expression )
             EXPresolve( e, scope, Type_Dont_Care );
@@ -774,18 +774,18 @@ void ENTITYresolve_expressions( Entity e ) {
             sname = attr->name->e.op1->e.op2->symbol.name;
             if( !strcmp( sname, e->symbol.name ) ||
                     !( sup = ENTITYfind_inherited_entity( e, sname, 0 ) ) ) {
-                ERRORreport_with_symbol(REDECL_NO_SUCH_SUPERTYPE,
-                                        &attr->name->e.op1->e.op2->symbol,
-                                        attr->name->e.op1->e.op2->symbol.name,
-                                        VARget_simple_name( attr ) );
+                ERRORreport_with_symbol( REDECL_NO_SUCH_SUPERTYPE,
+                                         &attr->name->e.op1->e.op2->symbol,
+                                         attr->name->e.op1->e.op2->symbol.name,
+                                         VARget_simple_name( attr ) );
                 resolve_failed( attr->name );
             } else {
                 sname = VARget_simple_name( attr );
                 if( !ENTITY_get_local_attribute( sup, sname ) ) {
-                    ERRORreport_with_symbol(REDECL_NO_SUCH_ATTR,
-                                            &attr->name->e.op2->symbol,
-                                            sname,
-                                            sup->symbol.name );
+                    ERRORreport_with_symbol( REDECL_NO_SUCH_ATTR,
+                                             &attr->name->e.op2->symbol,
+                                             sname,
+                                             sup->symbol.name );
                     resolve_failed( attr->name );
                 }
                 /* should be ok to share this ptr */
@@ -794,19 +794,21 @@ void ENTITYresolve_expressions( Entity e ) {
         } else {
             /* new attribute declaration */
             LISTdo_n( e->u.entity->supertypes, supr, Entity, b ) {
-                    if( ENTITYget_named_attribute( supr,
-                                                attr->name->symbol.name ) ) {
-                        ERRORreport_with_symbol(OVERLOADED_ATTR,
-                                                &attr->name->symbol,
-                                                attr->name->symbol.name,
-                                                supr->symbol.name );
-                        resolve_failed( attr->name );
-                    }
-            } LISTod;
+                if( ENTITYget_named_attribute( supr,
+                                               attr->name->symbol.name ) ) {
+                    ERRORreport_with_symbol( OVERLOADED_ATTR,
+                                             &attr->name->symbol,
+                                             attr->name->symbol.name,
+                                             supr->symbol.name );
+                    resolve_failed( attr->name );
+                }
+            }
+            LISTod;
         }
         VARresolve_expressions( attr, e );
         status |= is_resolve_failed( attr->name );
-    } LISTod;
+    }
+    LISTod;
 
     DICTdo_type_init( e->symbol_table, &de, OBJ_VARIABLE );
     while( 0 != ( v = ( Variable )DICTdo( &de ) ) ) {
@@ -843,12 +845,14 @@ void ENTITYcheck_missing_supertypes( Entity ent ) {
                 found = true;
                 break;
             }
-        } LISTod;
+        }
+        LISTod;
         if( !found ) {
-            ERRORreport_with_symbol(MISSING_SUPERTYPE, &sub->symbol, ent->symbol.name, sub->symbol.name );
+            ERRORreport_with_symbol( MISSING_SUPERTYPE, &sub->symbol, ent->symbol.name, sub->symbol.name );
             resolve_failed( sub );
         }
-    } LISTod;
+    }
+    LISTod;
 }
 
 /** calculate number of attributes inheritance, following up superclass chain */
@@ -870,7 +874,7 @@ int ENTITY_check_subsuper_cyclicity( Entity e, Entity enew ) {
     /* as well */
     LISTdo( enew->u.entity->subtypes, sub, Entity )
     if( e == sub ) {
-        ERRORreport_with_symbol(SUBSUPER_LOOP, &sub->symbol, e->symbol.name );
+        ERRORreport_with_symbol( SUBSUPER_LOOP, &sub->symbol, e->symbol.name );
         return 1;
     }
     if( sub->search_id == __SCOPE_search_id ) {
@@ -878,7 +882,7 @@ int ENTITY_check_subsuper_cyclicity( Entity e, Entity enew ) {
     }
     sub->search_id = __SCOPE_search_id;
     if( ENTITY_check_subsuper_cyclicity( e, sub ) ) {
-        ERRORreport_with_symbol(SUBSUPER_CONTINUATION, &sub->symbol, sub->symbol.name );
+        ERRORreport_with_symbol( SUBSUPER_CONTINUATION, &sub->symbol, sub->symbol.name );
         return 1;
     }
     LISTod;
@@ -895,7 +899,7 @@ int TYPE_check_select_cyclicity( TypeBody tb, Type tnew ) {
     LISTdo( tnew->u.type->body->list, item, Type )
     if( item->u.type->body->type == select_ ) {
         if( tb == item->u.type->body ) {
-            ERRORreport_with_symbol(SELECT_LOOP,
+            ERRORreport_with_symbol( SELECT_LOOP,
                                      &item->symbol, item->symbol.name );
             return 1;
         }
@@ -904,7 +908,7 @@ int TYPE_check_select_cyclicity( TypeBody tb, Type tnew ) {
         }
         item->search_id = __SCOPE_search_id;
         if( TYPE_check_select_cyclicity( tb, item ) ) {
-            ERRORreport_with_symbol(SELECT_CONTINUATION,
+            ERRORreport_with_symbol( SELECT_CONTINUATION,
                                      &item->symbol, item->symbol.name );
             return 1;
         }
@@ -926,7 +930,7 @@ void ENTITYresolve_types( Entity e );
 void SCOPEresolve_types( Scope s ) {
     Variable var;
     DictionaryEntry de;
-    void *x;
+    void * x;
 
     if( print_objects_while_running & OBJ_SCOPE_BITS &
             OBJget_bits( s->type ) ) {
@@ -966,7 +970,7 @@ void SCOPEresolve_types( Scope s ) {
                 if( is_not_resolvable( ( Schema )x ) ) {
                     break;
                 }
-                /*FALLTHRU*/
+            /*FALLTHRU*/
             case OBJ_PROCEDURE:
             case OBJ_RULE:
             case OBJ_FUNCTION:
@@ -1005,12 +1009,12 @@ void ENTITYresolve_supertypes( Entity e ) {
     LISTdo( e->u.entity->supertype_symbols, sym, Symbol * ) {
         ref_entity = ( Entity )SCOPEfind( e->superscope, sym->name, SCOPE_FIND_ENTITY );
         if( !ref_entity ) {
-            ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, sym, sym->name, e->symbol.name );
+            ERRORreport_with_symbol( UNKNOWN_SUPERTYPE, sym, sym->name, e->symbol.name );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else if( DICT_type != OBJ_ENTITY ) {
             Symbol * newsym = OBJget_symbol( ref_entity, DICT_type );
-            ERRORreport_with_symbol(SUPERTYPE_RESOLVE, sym, sym->name, newsym->line );
+            ERRORreport_with_symbol( SUPERTYPE_RESOLVE, sym, sym->name, newsym->line );
             /*          ENTITY_resolve_failed = 1;*/
             resolve_failed( e );
         } else {
@@ -1031,7 +1035,8 @@ void ENTITYresolve_supertypes( Entity e ) {
                     found = true;
                     break;
                 }
-            } LISTod
+            }
+            LISTod
             if( !found ) {
                 if( !ref_entity->u.entity->subtypes ) {
                     ref_entity->u.entity->subtypes = LISTcreate();
@@ -1039,7 +1044,8 @@ void ENTITYresolve_supertypes( Entity e ) {
                 LISTadd_last( ref_entity->u.entity->subtypes, e );
             }
         }
-    } LISTod;
+    }
+    LISTod;
 }
 
 void ENTITYresolve_subtypes( Entity e ) {
@@ -1094,7 +1100,7 @@ void ENTITYresolve_uniques( Entity e ) {
             if( ( attr2 ) && ( attr != attr2 ) && ( ENTITYdeclares_variable( e, attr2 ) ) ) {
                 /* attr exists in type + supertype - it's a redeclaration.
                  * in this case, qualifiers are unnecessary; print a warning */
-                ERRORreport_with_symbol(UNIQUE_QUAL_REDECL, &( expr->e.op2->symbol ), expr->e.op2->symbol.name, e->symbol.name );
+                ERRORreport_with_symbol( UNIQUE_QUAL_REDECL, &( expr->e.op2->symbol ), expr->e.op2->symbol.name, e->symbol.name );
             }
             if( !attr ) {
                 /*      ERRORreport_with_symbol(ERROR_unknown_attr_in_entity,*/
@@ -1106,8 +1112,10 @@ void ENTITYresolve_uniques( Entity e ) {
             if( ENTITYdeclares_variable( e, attr ) ) {
                 attr->flags.unique = 1;
             }
-        } LISTod;
-    } LISTod;
+        }
+        LISTod;
+    }
+    LISTod;
     e->symbol.resolved |= failed;
 }
 
@@ -1123,7 +1131,8 @@ void ENTITYresolve_types( Entity e ) {
         /* resolve in context of superscope to allow "X : X;" */
         VARresolve_types( att );
         failed |= is_resolve_failed( att->name );
-    } LISTod;
+    }
+    LISTod;
 
     /*
      * resolve the 'unique' list
@@ -1187,7 +1196,7 @@ int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     found_self = false;
     EXPresolve( w->expr, scope, Type_Dont_Care );
     if( need_self && ! found_self ) {
-        ERRORreport_with_symbol(MISSING_SELF,
+        ERRORreport_with_symbol( MISSING_SELF,
                                  w->label,
                                  w->label->name );
         w->label->resolved = RESOLVE_FAILED;

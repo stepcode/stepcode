@@ -50,7 +50,7 @@ STEPaggregate::~STEPaggregate() {
 }
 
 STEPaggregate & STEPaggregate::ShallowCopy( const STEPaggregate & a ) {
-    (void) a; // unused
+    ( void ) a; // unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__
          << "\n" << _POC_ "\n";
     cerr << "function:  STEPaggregate::ShallowCopy \n" << "\n";
@@ -102,8 +102,8 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
                                    const TypeDescriptor * elem_type, InstMgrBase * insts,
                                    int addFileId, int assignVal, int exchangeFileFormat,
                                    const char * ) {
-    (void) insts; //not used in ReadValue() for this class
-    (void) addFileId; //not used in ReadValue() for this class
+    ( void ) insts; //not used in ReadValue() for this class
+    ( void ) addFileId; //not used in ReadValue() for this class
 
     ErrorDescriptor errdesc;
     char errmsg[BUFSIZ];
@@ -280,7 +280,7 @@ void STEPaggregate::Empty() {
 
 Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
     // defined in subtypes
-    (void) s; //unused
+    ( void ) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
@@ -294,7 +294,7 @@ Severity STEPnode::StrToVal( const char * s, ErrorDescriptor * err ) {
 
 Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
     // defined in subtypes
-    (void) in; //unused
+    ( void ) in; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     err->AppendToDetailMsg(
         " function: STEPnode::StrToVal() called instead of virtual function.\n"
@@ -308,7 +308,7 @@ Severity STEPnode::StrToVal( istream & in, ErrorDescriptor * err ) {
 
 Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
     //  defined in subclasses
-    (void) s; //unused
+    ( void ) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -323,7 +323,7 @@ Severity STEPnode::STEPread( const char * s, ErrorDescriptor * err ) {
 }
 
 Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
-    (void) in; //unused
+    ( void ) in; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPread called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -338,7 +338,7 @@ Severity STEPnode::STEPread( istream & in, ErrorDescriptor * err ) {
 
 const char * STEPnode::asStr( std::string & s ) {
     //  defined in subclasses
-    (void) s; //unused
+    ( void ) s; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::asStr called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -362,8 +362,8 @@ const char * STEPnode::asStr( std::string & s ) {
  * SCLundefined's, this is not implemented.)
  */
 const char * STEPnode::STEPwrite( std::string & s, const char * currSch ) {
-    (void) s; //unused
-    (void) currSch; //unused
+    ( void ) s; //unused
+    ( void ) currSch; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";
@@ -371,7 +371,7 @@ const char * STEPnode::STEPwrite( std::string & s, const char * currSch ) {
 }
 
 void STEPnode::STEPwrite( ostream & out ) {
-    (void) out; //unused
+    ( void ) out; //unused
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  STEPnode::STEPwrite called instead of virtual function.\n"
          << _POC_ << "\n";

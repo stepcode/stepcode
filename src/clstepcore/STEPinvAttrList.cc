@@ -7,8 +7,8 @@
 #include <ExpDict.h>
 #include "sc_memmgr.h"
 
-invAttrListNodeI::invAttrListNodeI(Inverse_attribute* a, setterI_t s, getterI_t g): invAttrListNode(a), set( s ), get( g ) {}
-invAttrListNodeA::invAttrListNodeA(Inverse_attribute* a, setterA_t s, getterA_t g): invAttrListNode(a), set( s ), get( g ) {}
+invAttrListNodeI::invAttrListNodeI( Inverse_attribute * a, setterI_t s, getterI_t g ): invAttrListNode( a ), set( s ), get( g ) {}
+invAttrListNodeA::invAttrListNodeA( Inverse_attribute * a, setterA_t s, getterA_t g ): invAttrListNode( a ), set( s ), get( g ) {}
 
 invAttrListNodeI::~invAttrListNodeI() {}
 invAttrListNodeA::~invAttrListNodeA() {}
@@ -28,7 +28,7 @@ invAttrListNode * STEPinvAttrList::operator []( int n ) {
     }
     if( !a ) {
         cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
-        << __LINE__ << "\n" << _POC_ << "\n\n";
+             << __LINE__ << "\n" << _POC_ << "\n\n";
     }
     return a;
 }
@@ -47,7 +47,7 @@ void STEPinvAttrList::push( Inverse_attribute * a, setterA_t s, getterA_t g ) {
         }
         an = ( invAttrListNode * )( an->next );
     }
-    invAttrListNode * ialn = (invAttrListNode *) new invAttrListNodeA( a, s, g );
+    invAttrListNode * ialn = ( invAttrListNode * ) new invAttrListNodeA( a, s, g );
     AppendNode( ialn );
 }
 
@@ -61,6 +61,6 @@ void STEPinvAttrList::push( Inverse_attribute * a, setterI_t s, getterI_t g ) {
         }
         an = ( invAttrListNode * )( an->next );
     }
-    invAttrListNode * ialn = (invAttrListNode *) new invAttrListNodeI( a, s, g );
+    invAttrListNode * ialn = ( invAttrListNode * ) new invAttrListNodeI( a, s, g );
     AppendNode( ialn );
 }

@@ -50,7 +50,7 @@ static bool checkItem( Type, Scope, Schema, int *, int );
 static int ENUMcanBeProcessed( Type, Schema );
 static int inSchema( Scope, Scope );
 static void addRenameTypedefs( Schema, FILE * );
-static void addAggrTypedefs( Schema , FILE * );
+static void addAggrTypedefs( Schema, FILE * );
 static void addUseRefNames( Schema, FILE * );
 
 /**
@@ -312,13 +312,15 @@ static bool checkTypes( Schema schema ) {
                         attribs = ENTITYget_all_attributes( ent );
                         LISTdo_n( attribs, attr, Variable, z ) {
                             if( checkItem( attr->type, type, schema,
-                                        &unknowncnt, 1 ) ) {
+                                           &unknowncnt, 1 ) ) {
                                 break;
                             }
-                        } LISTod
+                        }
+                        LISTod
                         LISTfree( attribs );
                     }
-                } LISTod
+                }
+                LISTod
                 /* One more condition - if we're a select which is a rename of
                 // another select - we must also make sure the original select
                 // is in this schema or has been processed.  Since a rename-
@@ -341,7 +343,8 @@ static bool checkTypes( Schema schema ) {
                 // go on. */
                 retval = true;
             }
-        } SCOPEod
+        }
+        SCOPEod
     } while( unknowncnt > 0 );
     /* We loop to deal with the following situation:  Say sel A contains enum B
     // as an item, but A appears earlier in the EXPRESS file than B.  In such a
@@ -443,7 +446,8 @@ static void markDescs( Entity ent ) {
     ent->search_id = CANTPROCESS;
     LISTdo( ENTITYget_subtypes( ent ), sub, Entity ) {
         markDescs( sub );
-    } LISTod
+    }
+    LISTod
 }
 
 /**
@@ -623,15 +627,15 @@ static void addRenameTypedefs( Schema schema, FILE * classes ) {
             }
             if( TYPEis_enumeration( t ) ) {
                 strncpy( nm, TYPEget_ctype( t ), BUFSIZ - 1 );
-                nm[BUFSIZ-1] = '\0';
+                nm[BUFSIZ - 1] = '\0';
                 strncpy( basenm, TYPEget_ctype( i ), BUFSIZ - 1 );
-                basenm[BUFSIZ-1] = '\0';
+                basenm[BUFSIZ - 1] = '\0';
                 fprintf( classes, "typedef %s_agg        %s_agg;\n", basenm, nm );
             } else {
                 strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ - 1 );
-                nm[BUFSIZ-1] = '\0';
+                nm[BUFSIZ - 1] = '\0';
                 strncpy( basenm, SelectName( TYPEget_name( i ) ), BUFSIZ - 1 );
-                basenm[BUFSIZ-1] = '\0';
+                basenm[BUFSIZ - 1] = '\0';
                 fprintf( classes, "typedef       %s         %s;\n", basenm, nm );
                 fprintf( classes, "typedef       %s_agg     %s_agg;\n\n", basenm, nm );
                 fprintf( classes, "typedef       %s *       %s_ptr;\n", nm, nm );
@@ -640,7 +644,8 @@ static void addRenameTypedefs( Schema schema, FILE * classes ) {
                 fprintf( classes, "typedef const %s_agg *   %s_agg_ptr_c;\n", nm, nm );
             }
         }
-    } SCOPEod
+    }
+    SCOPEod
 }
 
 /**
@@ -669,14 +674,15 @@ static void addAggrTypedefs( Schema schema, FILE * classes ) {
                     firsttime = false;
                 }
                 strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
-                nm[BUFSIZ-1] = '\0';
+                nm[BUFSIZ - 1] = '\0';
                 fprintf( classes, "typedef %s        %s;\n", TYPEget_ctype( t ), nm );
                 fprintf( classes, "typedef       %s *   %sH;\n", nm, nm );
                 fprintf( classes, "typedef       %s *   %s_ptr;\n", nm, nm );
                 fprintf( classes, "typedef const %s *   %s_ptr_c;\n", nm, nm );
             }
         }
-    } SCOPEod
+    }
+    SCOPEod
 }
 
 /**

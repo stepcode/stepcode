@@ -26,14 +26,14 @@ filenames_t fnames = { impl, header };
 
 filenames_t getEntityFilenames( Entity e ) {
     const char * name = ENTITYget_classname( e );
-    snprintf( header, BUFSIZ-1, "entity/%s.h", name );
-    snprintf( impl, BUFSIZ-1, "entity/%s.cc", name );
+    snprintf( header, BUFSIZ - 1, "entity/%s.h", name );
+    snprintf( impl, BUFSIZ - 1, "entity/%s.cc", name );
     return fnames;
 }
 
 filenames_t getTypeFilenames( Type t ) {
     const char * name = TYPEget_ctype( t );
-    snprintf( header, BUFSIZ-1, "type/%s.h", name );
-    snprintf( impl, BUFSIZ-1, "type/%s.cc", name );
+    snprintf( header, BUFSIZ - 1, "type/%s.h", name );
+    snprintf( impl, BUFSIZ - 1, "type/%s.cc", name );
     return fnames;
 }

@@ -254,13 +254,13 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
         /* use entity provided in group reference */
         ref_entity = ENTITYfind_inherited_entity( e, grp_ref->name, 0 );
         if( !ref_entity ) {
-            ERRORreport_with_symbol(UNKNOWN_SUPERTYPE, grp_ref, grp_ref->name, e->symbol.name );
+            ERRORreport_with_symbol( UNKNOWN_SUPERTYPE, grp_ref, grp_ref->name, e->symbol.name );
             return 0;
         }
         attr = ( Variable )DICTlookup( ref_entity->symbol_table,
                                        attr_ref->name );
         if( !attr ) {
-            ERRORreport_with_symbol(UNKNOWN_ATTR_IN_ENTITY, attr_ref, attr_ref->name,
+            ERRORreport_with_symbol( UNKNOWN_ATTR_IN_ENTITY, attr_ref, attr_ref->name,
                                      ref_entity->symbol.name );
             /*      resolve_failed(e);*/
         }
@@ -269,11 +269,11 @@ Variable ENTITYresolve_attr_ref( Entity e, Symbol * grp_ref, Symbol * attr_ref )
         where = NULL;
         attr = ENTITYfind_inherited_attribute( e, attr_ref->name, &where );
         if( !attr /* was ref_entity? */ ) {
-            ERRORreport_with_symbol(UNKNOWN_ATTR_IN_ENTITY,
+            ERRORreport_with_symbol( UNKNOWN_ATTR_IN_ENTITY,
                                      attr_ref, attr_ref->name,
                                      e->symbol.name );
         } else if( where != NULL ) {
-            ERRORreport_with_symbol(IMPLICIT_DOWNCAST, attr_ref,
+            ERRORreport_with_symbol( IMPLICIT_DOWNCAST, attr_ref,
                                      where->name );
         }
     }
@@ -324,7 +324,7 @@ void ENTITYadd_attribute( Entity entity, Variable attr ) {
 ** \param instance new instance
 ** Add an item to the instance list of an entity.
 */
-void ENTITYadd_instance( Entity entity, void *instance ) {
+void ENTITYadd_instance( Entity entity, void * instance ) {
     if( entity->u.entity->instances == LIST_NULL ) {
         entity->u.entity->instances = LISTcreate();
     }

@@ -12,10 +12,10 @@ int main() {
     /* globals */
     exppp_fp = stdout;
     exppp_linelength = 40;
-/*
-    indent2 = 30;
-    curpos = 20;
-*/
+    /*
+        indent2 = 30;
+        curpos = 20;
+    */
     for( i = 0; i < exppp_linelength + 10; i += 15 ) {
         for( c = 2; c < exppp_linelength + 10; c += 13 ) {
             curpos = c;

@@ -50,7 +50,8 @@ void WHERE_out( Linked_List wheres, int level ) {
                 max_indent = strlen( w->label->name );
             }
         }
-    } LISTod
+    }
+    LISTod
 
     if( max_indent > 10 ) {
         /* don't bother indenting completely for
@@ -69,6 +70,7 @@ void WHERE_out( Linked_List wheres, int level ) {
         }
         EXPR_out( w->expr, max_indent );
         raw( ";\n" );
-    } LISTod
+    }
+    LISTod
 }
 

@@ -94,7 +94,7 @@ struct SelectTag_ {
 
 const char   *  GetTypeDescriptorName( Type t );
 char      *     format_for_stringout( char * orig_buf, char * return_buf );
-void            format_for_std_stringout( FILE* f, char* orig_buf );
+void            format_for_std_stringout( FILE * f, char * orig_buf );
 const char   *  CheckWord( const char * );
 const char   *  StrToLower( const char * );
 const char   *  StrToUpper( const char * );
@@ -107,13 +107,13 @@ void            FUNCPrint( Function, FILES *, Schema );
 void            RULEPrint( Rule, FILES *, Schema );
 const char   *  StrToConstant( const char * );
 void            MODELPrint( Entity, FILES *, Schema, int );
-void            MODELprint_new( Entity entity, FILES* files );
+void            MODELprint_new( Entity entity, FILES * files );
 void            MODELPrintConstructorBody( Entity, FILES *, Schema/*, int*/ );
 const char   *  PrettyTmpName( const char * oldname );
 const char   *  EnumName( const char * oldname );
 void            print_file( Express );
 void            resolution_success( void );
-void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
+void            SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 void            numberAttributes( Scope scope );
 

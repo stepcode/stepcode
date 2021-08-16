@@ -75,7 +75,7 @@ class EntNode {
             multSupers( 0 ) {
             strcpy( name, nm );
         }
-        EntNode( char *[] );  // given a list, create a linked list of EntNodes
+        EntNode( char * [] ); // given a list, create a linked list of EntNodes
         ~EntNode() {
             if( next ) {
                 delete next;

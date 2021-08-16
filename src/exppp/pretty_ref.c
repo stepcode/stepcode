@@ -62,7 +62,8 @@ void REFout( Dictionary refdict, Linked_List reflist, char * type, int level ) {
             if( r->old != r->nnew ) {
                 wrap( " AS %s", r->nnew->name );
             }
-        } LISTod
+        }
+        LISTod
         raw( " );\n" );
     }
     HASHdestroy( dict );

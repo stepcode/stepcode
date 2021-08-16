@@ -182,7 +182,7 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     /*  constructors    */
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
     fprintf( inc, "  public:\n        %s (const char * n =0, Enum"
              "TypeDescriptor *et =%s);\n", n, tdnm );
     fprintf( inc, "        %s (%s e, EnumTypeDescriptor *et =%s)\n"
@@ -261,7 +261,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     DICTdo_type_init( ENUM_TYPEget_items( type ), &de, OBJ_ENUM );
     while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
         strncpy( c_enum_ele, EnumCElementName( type, expr ), BUFSIZ );
-	c_enum_ele[BUFSIZ-1] = '\0';
+        c_enum_ele[BUFSIZ - 1] = '\0';
         fprintf( f, "  case %s:  return \"%s\";\n",
                  c_enum_ele,
                  StrToUpper( EXPget_name( expr ) ) );
@@ -303,9 +303,9 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
 void TYPEPrint_h( const Type type, FILE * file ) {
     DEBUG( "Entering TYPEPrint_h for %s\n", TYPEget_ctype( type ) );
 
-    if ( TYPEis_enumeration( type ) ) {
+    if( TYPEis_enumeration( type ) ) {
         TYPEenum_inc_print( type, file );
-    } else if ( TYPEis_select( type ) ) {
+    } else if( TYPEis_select( type ) ) {
         TYPEselect_inc_print( type, file );
     }
 
@@ -321,9 +321,9 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     fprintf( impl, "#include \"sc_memmgr.h\"\n" );
     fprintf( impl, "#include \"%s\"\n\n", names->header );
 
-    if ( TYPEis_enumeration( type ) ) {
+    if( TYPEis_enumeration( type ) ) {
         TYPEenum_lib_print( type, impl );
-    } else if ( TYPEis_select( type ) ) {
+    } else if( TYPEis_select( type ) ) {
         TYPEselect_lib_print( type, impl );
     }
 
@@ -337,7 +337,7 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     DEBUG( "DONE TYPEPrint_cc\n" );
 }
 
-void TYPEPrint( const Type type, FILES *files, Schema schema ) {
+void TYPEPrint( const Type type, FILES * files, Schema schema ) {
     FILE * hdr, * impl;
     filenames_t names = getTypeFilenames( type );
 
@@ -346,7 +346,7 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
     fprintf( files->init, "    init_%s( reg );\n", TYPEget_ctype( type ) );
 
     if( mkDirIfNone( "type" ) == -1 ) {
-        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
+        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__ );
         perror( 0 );
         abort();
     }
@@ -381,10 +381,10 @@ static void printEnumCreateHdr( FILE * inc, const Type type ) {
 static void printEnumCreateBody( FILE * lib, const Type type ) {
     const char * nm = TYPEget_ctype( type );
     char tdnm[BUFSIZ];
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
 
     fprintf( lib, "\nSDAI_Enum *\ncreate_%s ()\n{\n", nm );
     fprintf( lib, "    return new %s( \"\", %s );\n}\n\n", nm, tdnm );
@@ -402,7 +402,7 @@ static void printEnumAggrCrBody( FILE * lib, const Type type ) {
     char tdnm[BUFSIZ];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
 
     fprintf( lib, "\nSTEPaggregate *\ncreate_%s_agg ()\n{\n", n );
     fprintf( lib, "    return new %s_agg( %s );\n}\n", n, tdnm );
@@ -445,14 +445,14 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
               printed last since they depend on the others.)
              */
             strncpy( nm, TYPEget_ctype( t ), BUFSIZ );
-	    nm[BUFSIZ-1] = '\0';
+            nm[BUFSIZ - 1] = '\0';
             fprintf( classes, "class %s_agg;\n", nm );
         }
     } else if( TYPEis_select( t ) ) {
         if( !TYPEget_head( t ) ) {
             /* Same comment as above. */
             strncpy( nm, SelectName( TYPEget_name( t ) ), BUFSIZ );
-	    nm[BUFSIZ-1] = '\0';
+            nm[BUFSIZ - 1] = '\0';
             fprintf( classes, "class %s;\n", nm );
             fprintf( classes, "typedef       %s *   %s_ptr;\n", nm, nm );
             fprintf( classes, "typedef const %s *   %s_ptr_c;\n", nm, nm );
@@ -480,7 +480,7 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
                gates of aggregates) of enum's and selects.
              */
             strncpy( nm, ClassName( TYPEget_name( t ) ), BUFSIZ );
-	    nm[BUFSIZ-1] = '\0';
+            nm[BUFSIZ - 1] = '\0';
             fprintf( classes, "typedef       %s       %s;\n", TYPEget_ctype( t ), nm );
             if( TYPEis_aggregate( t ) ) {
                 fprintf( classes, "typedef       %s *     %sH;\n", nm, nm );
@@ -513,7 +513,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     Type i;
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
+    tdnm[BUFSIZ - 1] = '\0';
 
     /* define type descriptor pointer */
     /*  in source - declare the real definition of the pointer */
@@ -554,7 +554,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
 
     if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
         if( TYPEis_enumeration( type ) ) {
-                TYPEPrint( type, files, schema );
+            TYPEPrint( type, files, schema );
         } /* so we don't do anything for non-enums??? */
     } else {
         TYPEprint_new( type, files->create, schema, false );
@@ -946,7 +946,7 @@ void TypeBody_Description( TypeBody body, char * buf ) {
         case set_:
         case list_:
             switch( body->type ) {
-                    /* ignore the aggregate bounds for now */
+                /* ignore the aggregate bounds for now */
                 case aggregate_:
                     strcat( buf, " AGGREGATE OF" );
                     break;
@@ -980,7 +980,7 @@ void TypeBody_Description( TypeBody body, char * buf ) {
                     }
                     break;
                 default:
-                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    fprintf( stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
                     abort();
             }
 

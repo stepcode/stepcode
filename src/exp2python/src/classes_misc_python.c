@@ -447,7 +447,8 @@ Entity ENTITYput_superclass( Entity entity ) {
                     printf( "\tin ENTITY %s\n\tSUPERTYPE %s IGNORED.\n\n",
                             ENTITYget_name( entity ), ENTITYget_name( e ) );
                 }
-            } LISTod
+            }
+            LISTod
         }
         tag = ( EntityTag ) malloc( sizeof( struct EntityTag_ ) );
         tag -> superclass = super;

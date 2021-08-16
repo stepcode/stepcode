@@ -40,13 +40,13 @@ class SDAI_Application_instance;
  *  f. (optional / TODO ) for performance, cache list edL - it may be useful in the future
  *     -- best to store such that the most recently (frequently?) used lists are retained and others are discarded
  */
- /* ****
- * ALTERNATE for 2a, 3c:
- * for each type t in edL, use lim->getInstances( t ) to get a list of instances of that type, Lt
- * for each instance i in Lt, check if it is in _r
- * if so, load it
- * BENEFIT: no need to write lazyInstMgr::getTypeStr() (however, it might be necessary in the future regardless)
- */
+/* ****
+* ALTERNATE for 2a, 3c:
+* for each type t in edL, use lim->getInstances( t ) to get a list of instances of that type, Lt
+* for each instance i in Lt, check if it is in _r
+* if so, load it
+* BENEFIT: no need to write lazyInstMgr::getTypeStr() (however, it might be necessary in the future regardless)
+*/
 
 //TODO screen out instances that appear to be possible inverse refs but aren't actually
 //      note - doing this well will require major changes, since each inst automatically loads every instance that it references
@@ -115,9 +115,9 @@ class SC_LAZYFILE_EXPORT lazyRefs {
                     if( !ai ) {
                         ias.i = rinst;
                         _inst->setInvAttr( ia, ias );
-                    } else if( ai->GetFileId() != (int)inst ) {
+                    } else if( ai->GetFileId() != ( int )inst ) {
                         std::cerr << "ERROR: two instances (" << rinst << ", #" << rinst->GetFileId() << "=" << rinst->getEDesc()->Name();
-                        std::cerr << " and " << ai << ", #" << ai->GetFileId() <<"=" << ai->getEDesc()->Name() << ") refer to inst ";
+                        std::cerr << " and " << ai << ", #" << ai->GetFileId() << "=" << ai->getEDesc()->Name() << ") refer to inst ";
                         std::cerr << _inst->GetFileId() << ", but its inverse attribute is not an aggregation type!" << std::endl;
                         // TODO _error->GreaterSeverity( SEVERITY_INPUT_ERROR );
                     }
@@ -168,7 +168,7 @@ class SC_LAZYFILE_EXPORT lazyRefs {
             for( int i = 0; i < inst->attributes.list_length(); i++ ) {
 //                 std::cout << "attr " << i << " name " << inst->attributes[i].Name() << ", entity " << inst->EntityName() << std::endl;
                 if( ( strcasecmp( name, inst->attributes[i].Name() ) == 0 ) &&
-                    ( strcasecmp( entity, inst->attributes[i].getADesc()->Owner().Name() ) == 0 ) ) {
+                        ( strcasecmp( entity, inst->attributes[i].getADesc()->Owner().Name() ) == 0 ) ) {
                     return i;
                 }
             }

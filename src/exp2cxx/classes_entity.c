@@ -65,11 +65,12 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
     LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
         generate_attribute_name( v, attrnm );
         fprintf( file, "%s * %s::%s%d%s%s = 0;\n",
-                ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
-                SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
-                ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm );
-    } LISTod
-    fprintf( file, "\n");
+                 ( VARget_inverse( v ) ? "Inverse_attribute" : ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
+                 SCHEMAget_name( schema ), ATTR_PREFIX, v->idx,
+                 ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ), attrnm );
+    }
+    LISTod
+    fprintf( file, "\n" );
 }
 
 /** prints the member functions for the class representing an entity.  These go in the .cc file
@@ -97,17 +98,19 @@ void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file,
             /*  retrieval  and  assignment   */
             ATTRprint_access_methods( entnm, a, file, schema );
         }
-    } LISTod
+    }
+    LISTod
     /* //////////////// */
     if( multiple_inheritance ) {
         LISTdo( neededAttr, attr, Variable ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
                 ATTRprint_access_methods( entnm, attr, file, schema );
             }
-        } LISTod
+        }
+        LISTod
     }
     /* //////////////// */
-    
+
     fprintf( file, "\n" );
 }
 
@@ -131,14 +134,16 @@ int get_attribute_number( Entity entity ) {
                         found = 1;
                     }
                 }
-            } LISTod
+            }
+            LISTod
             if( found ) {
                 return i;
             } else {
                 fprintf( stderr, "Internal error at %s:%d: attribute %s not found\n", __FILE__, __LINE__, EXPget_name( VARget_name( a ) ) );
             }
         }
-    } LISTod
+    }
+    LISTod
     return -1;
 }
 
@@ -154,7 +159,7 @@ void ENTITYhead_print( Entity entity, FILE * file ) {
     Entity super = 0;
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ );
-    entnm[BUFSIZ-1] = '\0';
+    entnm[BUFSIZ - 1] = '\0';
 
     /* inherit from either supertype entity class or root class of
        all - i.e. SDAI_Application_instance */
@@ -203,11 +208,13 @@ void DataMemberInitializers( Entity entity, bool * first, Linked_List neededAttr
     Linked_List attr_list = ENTITYget_attributes( entity );
     LISTdo( attr_list, attr, Variable ) {
         DataMemberInit( first, attr, lib );
-    } LISTod;
+    }
+    LISTod;
     if( multiple_inheritance ) {
         LISTdo( neededAttr, attr, Variable ) {
             DataMemberInit( first, attr, lib );
-        } LISTod
+        }
+        LISTod
     }
 }
 
@@ -247,7 +254,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     char entnm [BUFSIZ];
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
-    entnm[BUFSIZ-1] = '\0';
+    entnm[BUFSIZ - 1] = '\0';
 
     fprintf( file, "    public: \n" );
 
@@ -269,7 +276,8 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
             /*  retrieval  and  assignment  */
             ATTRsign_access_methods( a, file );
         }
-    } LISTod
+    }
+    LISTod
 
     /* //////////////// */
     if( multiple_inheritance ) {
@@ -279,7 +287,8 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
             if( ! VARis_derived( attr ) && ! VARis_overrider( entity, attr ) ) {
                 ATTRsign_access_methods( attr, file );
             }
-        } LISTod
+        }
+        LISTod
     }
     /* //////////////// */
     fprintf( file, "};\n\n" );
@@ -302,7 +311,7 @@ void ENTITYinc_print( Entity entity, Linked_List neededAttr, FILE * file ) {
 }
 
 /** initialize attributes in the constructor; used for two different constructors */
-void initializeAttrs( Entity e, FILE* file ) {
+void initializeAttrs( Entity e, FILE * file ) {
     const orderedAttr * oa;
     orderedAttrsInit( e );
     while( 0 != ( oa = nextAttr() ) ) {
@@ -363,14 +372,14 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                     DataMemberInitializers( entity, &firstInitializer, neededAttr, file );
                     fprintf( file, " {\n" );
                     fprintf( file, "        /*  parent: %s  */\n%s\n%s\n", parent,
-                            "        /* Ignore the first parent since it is */",
-                            "        /* part of the main inheritance hierarchy */"  );
+                             "        /* Ignore the first parent since it is */",
+                             "        /* part of the main inheritance hierarchy */" );
                     principalSuper = e; /* principal SUPERTYPE */
                 } else {
                     fprintf( file, "        /*  parent: %s  */\n", ENTITYget_classname( e ) );
                     fprintf( file, "    HeadEntity(this);\n" );
                     fprintf( file, "    AppendMultInstance(new %s(this));\n",
-                            ENTITYget_classname( e ) );
+                             ENTITYget_classname( e ) );
 
                     if( super_cnt == 2 ) {
                         printf( "\nMULTIPLE INHERITANCE for entity: %s\n",
@@ -380,7 +389,8 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                     }
                     printf( "        SUPERTYPE %d: %s\n", super_cnt, ENTITYget_name( e ) );
                 }
-            } LISTod;
+            }
+            LISTod;
 
         } else {    /*  if entity has no supertypes, it's at top of hierarchy  */
             /*  no parent class constructor has been printed, so still need an opening brace */
@@ -413,12 +423,12 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                     fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
                 }
                 fprintf( file, "    %sa = new STEPattribute( * %s::",
-                        ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
-                        SCHEMAget_name( schema ) );
+                         ( first ? "STEPattribute * " : "" ), /*   first time through, declare 'a' */
+                         SCHEMAget_name( schema ) );
                 fprintf( file, "%s%d%s%s", ATTR_PREFIX, a->idx, ( VARis_type_shifter( a ) ? "R" : "" ), attrnm );
                 fprintf( file, ", %s%s_%s );\n",
-                        ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
-                        ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
+                         ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * ) " : "" ),
+                         ( TYPEis_aggregate( t ) ? "" : "& " ), attrnm );
                 if( first ) {
                     first = false;
                 }
@@ -433,11 +443,12 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
                 redefined attribute to redefining attribute */
                 if( VARis_type_shifter( a ) ) {
                     fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
-                            VARget_simple_name( a ) );
+                             VARget_simple_name( a ) );
                 }
             }
         }
-    } LISTod;
+    }
+    LISTod;
 
     initializeAttrs( entity, file );
 
@@ -580,14 +591,14 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                         fprintf( file, "    _%s = new %s;\n", attrnm, TYPEget_ctype( t ) );
                     }
                     fprintf( file, "    %sa = new STEPattribute( * %s::%s%d%s%s, %s %s_%s );\n",
-                            ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
-                            SCHEMAget_name( schema ),
-                            ATTR_PREFIX, a->idx,
-                            ( VARis_type_shifter( a ) ? "R" : "" ),
-                            attrnm,
-                            ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
-                            ( TYPEis_aggregate( t ) ? "" : "&" ),
-                            attrnm );
+                             ( first ? "STEPattribute * " : "" ), /*   first time through, declare a */
+                             SCHEMAget_name( schema ),
+                             ATTR_PREFIX, a->idx,
+                             ( VARis_type_shifter( a ) ? "R" : "" ),
+                             attrnm,
+                             ( TYPEis_entity( t ) ? "( SDAI_Application_instance_ptr * )" : "" ),
+                             ( TYPEis_aggregate( t ) ? "" : "&" ),
+                             attrnm );
 
                     if( first ) {
                         first = false;
@@ -607,11 +618,12 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                     /* if it is redefining another attribute make connection of redefined attribute to redefining attribute */
                     if( VARis_type_shifter( a ) ) {
                         fprintf( file, "    MakeRedefined( a, \"%s\" );\n",
-                                VARget_simple_name( a ) );
+                                 VARget_simple_name( a ) );
                     }
                 }
             }
-        } LISTod
+        }
+        LISTod
 
         initializeAttrs( entity, file );
 
@@ -756,20 +768,20 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                      attrnm );
             fprintf( impl, "\n      new %s( \"%s\",",
                      ( VARget_inverse( v ) ? "Inverse_attribute" :
-                         ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
+                       ( VARis_derived( v ) ? "Derived_attribute" : "AttrDescriptor" ) ),
                      /* attribute name param */
                      generate_dict_attr_name( v, dict_attrnm ) );
 
-                     /* following assumes we are not in a nested */
-                     /* entity otherwise we should search upward */
-                     /* for schema */
-                     /* attribute's type  */
+            /* following assumes we are not in a nested */
+            /* entity otherwise we should search upward */
+            /* for schema */
+            /* attribute's type  */
             fprintf( impl, " %s::%s%s, %s,\n", TYPEget_name( TYPEget_body( v->type )->entity->superscope ),
                      ENT_PREFIX, TYPEget_name( v->type ), ( VARget_optional( v ) ? "LTrue" : "LFalse" ) );
             fprintf( impl, "       %s%s, *%s::%s%s);\n", ( VARget_unique( v ) ? "LTrue" : "LFalse" ),
                      /* Support REDEFINED */
                      ( VARget_inverse( v ) ? "" : ( VARis_derived( v ) ? ", AttrType_Deriving" :
-                         ( VARis_type_shifter( v ) ? ", AttrType_Redefining" : ", AttrType_Explicit" ) ) ),
+                                                    ( VARis_type_shifter( v ) ? ", AttrType_Redefining" : ", AttrType_Explicit" ) ) ),
                      schema_name, ENT_PREFIX, TYPEget_name( entity ) );
         } else {
             /* type reference */
@@ -917,7 +929,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                     fprintf( impl, "// inverse entity 3 %s\n", TYPEget_body( v->type )->base->symbol.name );
                     break;
                 default:
-                    fprintf(stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
+                    fprintf( stderr, "Error: reached default case at %s:%d", __FILE__, __LINE__ );
                     abort();
             }
         }
@@ -934,13 +946,13 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
 }
 
 void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, Schema schema ) {
-    const char *name = ENTITYget_classname( entity );
+    const char * name = ENTITYget_classname( entity );
     DEBUG( "Entering ENTITYPrint_h for %s\n", name );
 
     ENTITYhead_print( entity, header );
     DataMemberPrint( entity, neededAttr, header );
     MemberFunctionSign( entity, neededAttr, header );
-    
+
     fprintf( header, "void init_%s(Registry& reg);\n\n", name );
 
     fprintf( header, "namespace %s {\n", SCHEMAget_name( schema ) );
@@ -953,7 +965,7 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
 
 void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema, bool externMap ) {
     const char * name = ENTITYget_classname( entity );
-    
+
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
     fprintf( impl, "#include \"schema.h\"\n" );
@@ -966,7 +978,7 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
         LIBstructor_print_w_args( entity, neededAttr, impl, schema );
     }
     LIBmemberFunctionPrint( entity, neededAttr, impl, schema );
-    
+
     fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
     fprintf( impl, "    std::string str;\n\n" );
     ENTITYprint_descriptors( entity, createall, impl, schema, externMap );
@@ -1008,7 +1020,8 @@ static void collectAttributes( Linked_List curList, const Entity curEntity, enum
     /*  prepend this entity's attributes to the result list */
     LISTdo( ENTITYget_attributes( curEntity ), attr, Variable ) {
         LISTadd_first( curList, attr );
-    } LISTod;
+    }
+    LISTod;
 }
 
 static bool listContainsVar( Linked_List l, Variable v ) {
@@ -1078,7 +1091,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         LIST_destroy( required );
     }
     if( mkDirIfNone( "entity" ) == -1 ) {
-        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
+        fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__ );
         perror( 0 );
         abort();
     }

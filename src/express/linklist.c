@@ -58,31 +58,34 @@ void LISTfree( Linked_List list ) {
     LIST_destroy( list );
 }
 
-void LISTsort( Linked_List list, int (*comp)(void*, void*)) {
+void LISTsort( Linked_List list, int ( *comp )( void *, void * ) ) {
     unsigned int moved;
     Link node, prev;
 
-    if (LISTempty(list))
+    if( LISTempty( list ) ) {
         return;
+    }
 
-    while (true) {
-        for ( node = list->mark->next, moved = 0; node != list->mark; node = node->next ) {
+    while( true ) {
+        for( node = list->mark->next, moved = 0; node != list->mark; node = node->next ) {
             prev = node->prev;
-            if (prev != list->mark && comp(prev->data, node->data) < 0) {
-                LISTswap(prev, node);
+            if( prev != list->mark && comp( prev->data, node->data ) < 0 ) {
+                LISTswap( prev, node );
                 moved++;
             }
         }
-        if (moved == 0)
+        if( moved == 0 ) {
             break;
+        }
     }
 }
 
 void LISTswap( Link p, Link q ) {
-    void *tmp;
+    void * tmp;
 
-    if( p == LINK_NULL || q == LINK_NULL || p == q )
+    if( p == LINK_NULL || q == LINK_NULL || p == q ) {
         return;
+    }
 
     tmp = p->data;
     p->data = q->data;
@@ -90,7 +93,7 @@ void LISTswap( Link p, Link q ) {
 }
 
 
-void *LISTadd_first( Linked_List list, void *item ) {
+void * LISTadd_first( Linked_List list, void * item ) {
     Link        node;
 
     node = LINK_new();
@@ -100,7 +103,7 @@ void *LISTadd_first( Linked_List list, void *item ) {
     return item;
 }
 
-void *LISTadd_last( Linked_List list, void *item ) {
+void * LISTadd_last( Linked_List list, void * item ) {
     Link        node;
 
     node = LINK_new();
@@ -110,7 +113,7 @@ void *LISTadd_last( Linked_List list, void *item ) {
     return item;
 }
 
-void *LISTadd_after( Linked_List list, Link link, void *item ) {
+void * LISTadd_after( Linked_List list, Link link, void * item ) {
     Link node;
 
     if( link == LINK_NULL ) {
@@ -124,7 +127,7 @@ void *LISTadd_after( Linked_List list, Link link, void *item ) {
     return item;
 }
 
-void *LISTadd_before( Linked_List list, Link link, void *item ) {
+void * LISTadd_before( Linked_List list, Link link, void * item ) {
     Link node;
 
     if( link == LINK_NULL ) {
@@ -142,9 +145,9 @@ void *LISTadd_before( Linked_List list, Link link, void *item ) {
 }
 
 
-void *LISTremove_first( Linked_List list ) {
+void * LISTremove_first( Linked_List list ) {
     Link        node;
-    void *item;
+    void * item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -157,9 +160,9 @@ void *LISTremove_first( Linked_List list ) {
     return item;
 }
 
-void *LISTget_first( Linked_List list ) {
+void * LISTget_first( Linked_List list ) {
     Link node;
-    void *item;
+    void * item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -169,9 +172,9 @@ void *LISTget_first( Linked_List list ) {
     return item;
 }
 
-void *LISTget_second( Linked_List list ) {
+void * LISTget_second( Linked_List list ) {
     Link        node;
-    void *item;
+    void * item;
 
     node = list->mark->next;
     if( node == list->mark ) {
@@ -186,7 +189,7 @@ void *LISTget_second( Linked_List list ) {
 }
 
 /** first is 1, not 0 */
-void *LISTget_nth( Linked_List list, int n ) {
+void * LISTget_nth( Linked_List list, int n ) {
     int count = 1;
     Link node;
 

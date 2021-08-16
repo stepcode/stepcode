@@ -12,14 +12,14 @@ lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std
         parent->getInstMgr()->addLazyInstance( nl );
     }
 
-    if(  sectionReader::_error->severity() <= SEVERITY_WARNING ) {
+    if( sectionReader::_error->severity() <= SEVERITY_WARNING ) {
         sectionReader::_error->PrintContents( std::cerr );
-        if(  sectionReader::_error->severity() <= SEVERITY_INPUT_ERROR ) {
+        if( sectionReader::_error->severity() <= SEVERITY_INPUT_ERROR ) {
             _error = true;
-            return;        
+            return;
         }
     }
-        
+
     if( !_file.good() ) {
         _error = true;
         return;

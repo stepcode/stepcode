@@ -47,8 +47,8 @@ void DICTprint( Dictionary dict ) {
 
     while( 0 != ( e = ( HASHlist( &de ) ) ) ) {
         fprintf( stderr, "key <%s>  data <%s>  line <%d>  <\"%c\" %s>  <%s>\n",
-                e->key, e->data, e->symbol->line, e->type,
-                OBJget_type( e->type ), e->symbol->filename );
+                 e->key, e->data, e->symbol->line, e->type,
+                 OBJget_type( e->type ), e->symbol->filename );
     }
 }
 
@@ -65,7 +65,7 @@ void DICTcleanup( void ) {
  * error directly if there is a duplicate value.
  * \return 0 on success, 1 on failure
  */
-int DICTdefine( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
+int DICTdefine( Dictionary dict, char * name, void * obj, Symbol * sym, char type ) {
     struct Element_ new, *old;
 
     new.key = name;
@@ -99,7 +99,7 @@ int DICTdefine( Dictionary dict, char * name, void *obj, Symbol * sym, char type
         } else {
             ERRORreport_with_symbol( DUPLICATE_DECL_DIFF_FILE, sym, name, old->symbol->line, old->symbol->filename );
         }
-        ERRORreport(SUBORDINATE_FAILED);
+        ERRORreport( SUBORDINATE_FAILED );
         return( 1 );
     }
     return 0;
@@ -113,7 +113,7 @@ int DICTdefine( Dictionary dict, char * name, void *obj, Symbol * sym, char type
  * their unusual behavior with respect to scoping and visibility rules
  * \sa DICTdefine()
  */
-int DICT_define( Dictionary dict, char * name, void *obj, Symbol * sym, char type ) {
+int DICT_define( Dictionary dict, char * name, void * obj, Symbol * sym, char type ) {
     struct Element_ e, *e2;
 
     e.key = name;
@@ -130,7 +130,7 @@ int DICT_define( Dictionary dict, char * name, void *obj, Symbol * sym, char typ
     } else {
         ERRORreport_with_symbol( DUPLICATE_DECL_DIFF_FILE, sym, name, e2->symbol->line, e2->symbol->filename );
     }
-    ERRORreport(SUBORDINATE_FAILED);
+    ERRORreport( SUBORDINATE_FAILED );
     return( 1 );
 }
 
@@ -153,7 +153,7 @@ void DICTundefine( Dictionary dict, char * name ) {
 ** \param name name to look up
 ** \return the value found, NULL if not found
 */
-void *DICTlookup( Dictionary dictionary, char * name ) {
+void * DICTlookup( Dictionary dictionary, char * name ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -172,7 +172,7 @@ void *DICTlookup( Dictionary dictionary, char * name ) {
 /** like DICTlookup but returns symbol, too
  * \sa DICTlookup()
  */
-void *DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
+void * DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     struct Element_ e, *ep;
 
     if( !dictionary ) {
@@ -189,7 +189,7 @@ void *DICTlookup_symbol( Dictionary dictionary, char * name, Symbol ** sym ) {
     return( NULL );
 }
 
-void *DICTdo( DictionaryEntry * dict_entry ) {
+void * DICTdo( DictionaryEntry * dict_entry ) {
     if( 0 == HASHlist( dict_entry ) ) {
         return 0;
     }

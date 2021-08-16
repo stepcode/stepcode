@@ -101,7 +101,7 @@ bool attrIsObj( Type t ) {
 /** print attr descriptors to the namespace
  * \p attr_count_tmp is a _copy_ of attr_count
  */
-void ATTRnames_print( Entity entity, FILE* file ) {
+void ATTRnames_print( Entity entity, FILE * file ) {
     char attrnm [BUFSIZ];
 
     LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
@@ -111,7 +111,8 @@ void ATTRnames_print( Entity entity, FILE* file ) {
                  ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" : ( VARis_type_shifter( v ) ? "R" : ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm );
-    } LISTod
+    }
+    LISTod
 }
 
 /** prints out the current attribute for an entity's c++ class definition
@@ -141,7 +142,7 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
         }
         if( isAggregate( a ) )        {
             /*  if it's a named type, comment the type  */
-            if( ( etype = TYPEget_name ( TYPEget_nonaggregate_base_type( VARget_type( a ) ) ) ) ) {
+            if( ( etype = TYPEget_name( TYPEget_nonaggregate_base_type( VARget_type( a ) ) ) ) ) {
                 fprintf( file, "          //  of  %s\n", etype );
             }
         }
@@ -171,7 +172,7 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
     generate_attribute_func_name( a, attrnm );
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    ctype[BUFSIZ-1] = '\0';
+    ctype[BUFSIZ - 1] = '\0';
 
     if( attrIsObj( t ) ) {
         /* object or pointer, so provide const and non-const methods */
@@ -212,7 +213,7 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE *
     char funcnm [BUFSIZ];  /*  name of member function  */
     generate_attribute_func_name( a, funcnm );
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    ctype[BUFSIZ-1] = '\0';
+    ctype[BUFSIZ - 1] = '\0';
     if( TYPEis_entity( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
         fprintf( file, "\n%s%s %s::%s() ", ctype, ( returnsConst ? "_c" : "" ), classnm, funcnm );
     } else {
@@ -246,7 +247,7 @@ void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * f
     generate_attribute_func_name( a, funcnm );
 
     strncpy( ctype, AccessType( t ), BUFSIZ );
-    ctype[BUFSIZ-1] = '\0';
+    ctype[BUFSIZ - 1] = '\0';
     fprintf( file, "\nvoid %s::%s( const %s x ) ", entnm, funcnm, ctype );
 
     return;
@@ -272,7 +273,7 @@ void AGGRprint_access_methods( const char * entnm, Variable a, FILE * file,
  * \p dir is either "returned" or "assigned"
  */
 void ATTRprint_access_methods_entity_logging( const char * entnm, const char * funcnm, const char * nm,
-                                              const char * var, const char * dir, FILE * file ) {
+        const char * var, const char * dir, FILE * file ) {
     if( print_logging ) {
         fprintf( file, "#ifdef SC_LOGGING\n" );
         fprintf( file, "    if( *logStream ) {\n" );
@@ -296,18 +297,18 @@ void ATTRprint_access_methods_entity_logging( const char * entnm, const char * f
 void ATTRprint_access_methods_entity( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
                                       const char * ctype, Variable a, FILE * file ) {
     fprintf( file, "{\n" );
-    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file );
     fprintf( file, "    if( !_%s ) {\n        _%s = new %s;\n    }\n", attrnm, attrnm, TypeName( a->type ) );
     fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
     ATTRprint_access_methods_get_head( entnm, a, file, true );
     fprintf( file, "const {\n" );
-    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file );
     fprintf( file, "    return (%s) _%s;\n}\n", ctype, attrnm );
 
     ATTRprint_access_methods_put_head( entnm, a, file );
     fprintf( file, "{\n" );
-    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file);
+    ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file );
     fprintf( file, "    _%s = x;\n}\n", attrnm );
     return;
 }
@@ -426,12 +427,12 @@ void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm,
     ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
     fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
 
-/* don't need a const method for logical or boolean
- * ATTRprint_access_methods_get_head( entnm, a, file, true );
- * fprintf( file, "const {\n" );
- * ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
- * fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
-*/
+    /* don't need a const method for logical or boolean
+     * ATTRprint_access_methods_get_head( entnm, a, file, true );
+     * fprintf( file, "const {\n" );
+     * ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, false );
+     * fprintf( file, "    return (const %s) _%s;\n}\n", ctype, attrnm );
+    */
     ATTRprint_access_methods_put_head( entnm, a, file );
     fprintf( file, "{\n" );
     ATTRprint_access_methods_log_bool_logging( entnm, attrnm, funcnm, file, true );
@@ -445,7 +446,7 @@ void INVprint_access_methods( const char * entnm, const char * attrnm, const cha
     char iaName[BUFSIZ] = {0};
     snprintf( iaName, BUFSIZ - 1, "%s::%s%d%s%s", SCHEMAget_name( schema ), ATTR_PREFIX, a->idx,
               /* can it ever be anything but "I"? */
-             ( VARis_derived( a ) ? "D" : ( VARis_type_shifter( a ) ? "R" : ( VARget_inverse( a ) ? "I" : "" ) ) ), attrnm );
+              ( VARis_derived( a ) ? "D" : ( VARis_type_shifter( a ) ? "R" : ( VARget_inverse( a ) ? "I" : "" ) ) ), attrnm );
 
     if( isAggregate( a ) ) {
         /* following started as AGGRprint_access_methods() */
@@ -462,20 +463,20 @@ void INVprint_access_methods( const char * entnm, const char * attrnm, const cha
         ATTRprint_access_methods_get_head( entnm, a, file, false );
         /* following started as ATTRprint_access_methods_entity() */
         fprintf( file, "{\n" );
-        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file );
         fprintf( file, "    iAstruct ias = getInvAttr( %s );\n", iaName );
-        fprintf( file, "    /* no 'new' - doesn't make sense to create an SDAI_Application_instance\n     * since it isn't generic like EntityAggregate */\n");
+        fprintf( file, "    /* no 'new' - doesn't make sense to create an SDAI_Application_instance\n     * since it isn't generic like EntityAggregate */\n" );
         fprintf( file, "    return (%s) ias.i;\n}\n", ctype );
 
         ATTRprint_access_methods_get_head( entnm, a, file, true );
         fprintf( file, "const {\n" );
-        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file);
+        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, attrnm, "returned", file );
         fprintf( file, "    iAstruct ias = getInvAttr( %s );\n", iaName );
         fprintf( file, "    return (%s) ias.i;\n}\n", ctype );
 
         ATTRprint_access_methods_put_head( entnm, a, file );
         fprintf( file, "{\n" );
-        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file);
+        ATTRprint_access_methods_entity_logging( entnm, funcnm, nm, 0, "assigned", file );
         fprintf( file, "    iAstruct ias;\n    ias.i = x;    setInvAttr( %s, ias );\n}\n", iaName );
     }
 }

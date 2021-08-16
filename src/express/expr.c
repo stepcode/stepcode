@@ -195,26 +195,29 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                     }
                     options += nr;
                 }
-            } LISTod
+            }
+            LISTod
             /* go through supertypes and subtypes, comparing. for any subtypes in supertypes, remove item from subtypes
              * would be possible to delete items from subt while going through the list... worth the effort?
              */
-            LISTdo( subt, s, Symbol* ) {
+            LISTdo( subt, s, Symbol * ) {
                 bool found = false;
                 LISTdo_n( supert, t, Type, b ) {
                     if( 0 == strcmp( s->name, t->symbol.name ) ) {
                         found = true;
                         break;
                     }
-                } LISTod
+                }
+                LISTod
                 if( !found ) {
                     LISTadd_last( uniqSubs, s );
                 }
-            } LISTod
+            }
+            LISTod
             if( ( LISTget_length( uniqSubs ) == 0 ) && ( LISTget_length( supert ) == 1 ) && ( options > 1 ) ) {
                 options = 1;
                 /* this ensures that v is set correctly and wasn't overwritten */
-                EXP_resolve_op_dot_fuzzy( (Type) LISTget_first( supert ), sref, e, v, dt, &w, s_id );
+                EXP_resolve_op_dot_fuzzy( ( Type ) LISTget_first( supert ), sref, e, v, dt, &w, s_id );
             }
             if( options > 1 ) {
                 /* found more than one, so ambiguous */
@@ -287,10 +290,10 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     LISTod;
 
                     if( all_enums ) {
-                        ERRORreport_with_symbol(CASE_SKIP_LABEL, &op2->symbol, op2->symbol.name );
+                        ERRORreport_with_symbol( CASE_SKIP_LABEL, &op2->symbol, op2->symbol.name );
                     } else {
                         /* no possible resolutions */
-                        ERRORreport_with_symbol(UNDEFINED_ATTR, &op2->symbol, op2->symbol.name );
+                        ERRORreport_with_symbol( UNDEFINED_ATTR, &op2->symbol, op2->symbol.name );
                     }
                     resolve_failed( expr );
                     return( Type_Bad );
@@ -298,7 +301,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     /* only one possible resolution */
                     if( dt == OBJ_VARIABLE ) {
                         if( where ) {
-                            ERRORreport_with_symbol(IMPLICIT_DOWNCAST, &op2->symbol, where->name );
+                            ERRORreport_with_symbol( IMPLICIT_DOWNCAST, &op2->symbol, where->name );
                         }
 
                         if( v == VARIABLE_NULL ) {
@@ -323,7 +326,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     /* compile-time ambiguous */
                     if( where ) {
                         /* this is actually a warning, not an error */
-                        ERRORreport_with_symbol(AMBIG_IMPLICIT_DOWNCAST, &op2->symbol, where->name );
+                        ERRORreport_with_symbol( AMBIG_IMPLICIT_DOWNCAST, &op2->symbol, where->name );
                     }
                     return( Type_Runtime );
             }
@@ -371,7 +374,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
              * which calls EXP_resolve_op_dot_fuzzy(). */
             item = ( Expression )DICTlookup( TYPEget_enum_tags( op1type ), op2->symbol.name );
             if( !item ) {
-                ERRORreport_with_symbol(ENUM_NO_SUCH_ITEM, &op2->symbol,
+                ERRORreport_with_symbol( ENUM_NO_SUCH_ITEM, &op2->symbol,
                                          op1type->symbol.name, op2->symbol.name );
                 resolve_failed( expr );
                 return( Type_Bad );
@@ -386,15 +389,15 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
         case bag_:
         case list_:
         case set_:
-            ERRORreport_with_symbol(ATTRIBUTE_REF_ON_AGGREGATE,
+            ERRORreport_with_symbol( ATTRIBUTE_REF_ON_AGGREGATE,
                                      &op2->symbol, op2->symbol.name );
-            /*FALLTHRU*/
+        /*FALLTHRU*/
         case unknown_:  /* unable to resolved operand */
             /* presumably error has already been reported */
             resolve_failed( expr );
             return( Type_Bad );
         default:
-            ERRORreport_with_symbol(ATTRIBUTE_REF_FROM_NON_ENTITY,
+            ERRORreport_with_symbol( ATTRIBUTE_REF_FROM_NON_ENTITY,
                                      &op2->symbol, op2->symbol.name );
             resolve_failed( expr );
             return( Type_Bad );
@@ -491,7 +494,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             ent_ref =
                 ( Entity )ENTITYfind_inherited_entity( tmp, op2->symbol.name, 1 );
             if( !ent_ref ) {
-                ERRORreport_with_symbol(GROUP_REF_NO_SUCH_ENTITY,
+                ERRORreport_with_symbol( GROUP_REF_NO_SUCH_ENTITY,
                                          &op2->symbol, op2->symbol.name );
                 resolve_failed( expr );
                 return( Type_Bad );
@@ -519,7 +522,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
             switch( options ) {
                 case 0:
                     /* no possible resolutions */
-                    ERRORreport_with_symbol(GROUP_REF_NO_SUCH_ENTITY,
+                    ERRORreport_with_symbol( GROUP_REF_NO_SUCH_ENTITY,
                                              &op2->symbol, op2->symbol.name );
                     resolve_failed( expr );
                     return( Type_Bad );
@@ -549,7 +552,7 @@ Type EXPresolve_op_group( Expression expr, Scope scope ) {
         case list_:
         case set_:
         default:
-            ERRORreport_with_symbol(GROUP_REF_UNEXPECTED_TYPE,
+            ERRORreport_with_symbol( GROUP_REF_UNEXPECTED_TYPE,
                                      &op1->symbol );
             return( Type_Bad );
     }
@@ -619,13 +622,13 @@ void EXPresolve_op_default( Expression e, Scope s ) {
 
 /* prototype for this func cannot change - it is passed as a fn pointer */
 Type EXPresolve_op_unknown( Expression e, Scope s ) {
-    (void) e; /* quell unused param warning */
-    (void) s;
+    ( void ) e; /* quell unused param warning */
+    ( void ) s;
     ERRORreport( INTERNAL_UNRECOGNISED_OP_IN_EXPRESOLVE );
     return Type_Bad;
 }
 
-typedef Type (Resolve_expr_func) ( Expression , Scope );
+typedef Type( Resolve_expr_func )( Expression, Scope );
 
 Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
@@ -644,7 +647,7 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
     } else if( op1type == Type_Runtime ) {
         return( Type_Runtime );
     } else if( op1type->u.type->body->type == binary_ ) {
-        ERRORreport_with_symbol(WARN_UNSUPPORTED_LANG_FEAT, &e->symbol, "indexing on a BINARY", __FILE__, __LINE__ );
+        ERRORreport_with_symbol( WARN_UNSUPPORTED_LANG_FEAT, &e->symbol, "indexing on a BINARY", __FILE__, __LINE__ );
         return( Type_Binary );
     } else if( op1type->u.type->body->type == generic_ ) {
         return( Type_Generic );
@@ -686,15 +689,15 @@ Type EXPresolve_op_array_like( Expression e, Scope s ) {
             return( lasttype->u.type->body->base );
         } else if( numNonAggr == 0 ) {
             /*  All aggregates, but different types */
-            ERRORreport_with_symbol(WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
+            ERRORreport_with_symbol( WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
             return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         } else if( numAggr != 0 ) {
             /*  One or more aggregates, one or more nonaggregates */
-            ERRORreport_with_symbol(WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
+            ERRORreport_with_symbol( WARN_INDEXING_MIXED, &e->symbol, op1type->symbol.name );
             return( lasttype->u.type->body->base ); /*  WARNING I'm assuming that any of the types is acceptable!!! */
         }   /*  Else, all are nonaggregates. This is an error. */
     }
-    ERRORreport_with_symbol(INDEXING_ILLEGAL, &e->symbol );
+    ERRORreport_with_symbol( INDEXING_ILLEGAL, &e->symbol );
     return( Type_Unknown );
 }
 
@@ -803,7 +806,7 @@ int EXPget_integer_value( Expression expression ) {
     if( expression->return_type->u.type->body->type == integer_ ) {
         return INT_LITget_value( expression );
     } else {
-        ERRORreport(INTEGER_EXPRESSION_EXPECTED);
+        ERRORreport( INTEGER_EXPRESSION_EXPECTED );
         return 0;
     }
 }

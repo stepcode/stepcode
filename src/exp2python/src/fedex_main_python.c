@@ -14,7 +14,7 @@
 extern void print_fedex_version( void );
 
 static void exp2python_usage( void ) {
-    char *warnings_help_msg = ERRORget_warnings_help("\t", "\n");
+    char * warnings_help_msg = ERRORget_warnings_help( "\t", "\n" );
     fprintf( stderr, "usage: %s [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "\t-v produces the version description below\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
@@ -22,7 +22,7 @@ static void exp2python_usage( void ) {
     fprintf( stderr, "\t-i warning ignore\n" );
     fprintf( stderr, "and <warning> is one of:\n" );
     fprintf( stderr, "\tnone\n\tall\n" );
-    fprintf( stderr, "%s", warnings_help_msg);
+    fprintf( stderr, "%s", warnings_help_msg );
     fprintf( stderr, "and <object_type> is one or more of:\n" );
     fprintf( stderr, "	e	entity\n" );
     fprintf( stderr, "	p	procedure\n" );
@@ -44,7 +44,7 @@ void resolution_success( void ) {
 }
 
 int success( Express model ) {
-    (void) model; /* unused */
+    ( void ) model; /* unused */
     printf( "Done.\n" );
     return( 0 );
 }

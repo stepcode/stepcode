@@ -122,7 +122,8 @@ void EXPR__out( Expression e, int paren, unsigned int previous_op ) {
                     }
                 }
                 EXPR_out( arg, 0 );
-            } LISTod
+            }
+            LISTod
             raw( "]" );
             break;
         case oneof_: {
@@ -364,7 +365,8 @@ void EXPRstring( char * buffer, Expression e ) {
                     }
                 }
                 EXPRstring( buffer + strlen( buffer ), arg );
-            } LISTod
+            }
+            LISTod
             strcat( buffer, "]" );
             break;
         case oneof_:
@@ -377,7 +379,8 @@ void EXPRstring( char * buffer, Expression e ) {
                     strcat( buffer, ", " );
                 }
                 EXPRstring( buffer + strlen( buffer ), arg );
-            } LISTod
+            }
+            LISTod
 
             strcat( buffer, " )" );
             break;

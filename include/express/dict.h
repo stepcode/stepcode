@@ -102,9 +102,9 @@ extern SC_EXPRESS_EXPORT void     DICTcleanup( void );
 extern SC_EXPRESS_EXPORT int      DICTdefine( Dictionary, char *, void *, Symbol *, char );
 extern SC_EXPRESS_EXPORT int      DICT_define( Dictionary, char *, void *, Symbol *, char );
 extern SC_EXPRESS_EXPORT void     DICTundefine( Dictionary, char * );
-extern SC_EXPRESS_EXPORT void *   DICTlookup( Dictionary, char * );
-extern SC_EXPRESS_EXPORT void *   DICTlookup_symbol( Dictionary, char *, Symbol ** );
-extern SC_EXPRESS_EXPORT void *   DICTdo( DictionaryEntry * );
+extern SC_EXPRESS_EXPORT void  *  DICTlookup( Dictionary, char * );
+extern SC_EXPRESS_EXPORT void  *  DICTlookup_symbol( Dictionary, char *, Symbol ** );
+extern SC_EXPRESS_EXPORT void  *  DICTdo( DictionaryEntry * );
 extern SC_EXPRESS_EXPORT void     DICTprint( Dictionary );
 
 #endif /*DICTIONARY_H*/

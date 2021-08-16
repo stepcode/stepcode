@@ -8,12 +8,11 @@
 #endif
 
 int
-main ()
-{
-  int s;
-  wait (&s);
-  s = WIFEXITED (s) ? WEXITSTATUS (s) : 1;
-  ;
-  return 0;
+main() {
+    int s;
+    wait( &s );
+    s = WIFEXITED( s ) ? WEXITSTATUS( s ) : 1;
+    ;
+    return 0;
 }
 

@@ -13,17 +13,17 @@
 extern "C" {
 #endif
 
-    typedef struct {
-        long virtMemKB, physMemKB, userMilliseconds, sysMilliseconds;
-    } benchVals;
+typedef struct {
+    long virtMemKB, physMemKB, userMilliseconds, sysMilliseconds;
+} benchVals;
 
-    /** return a benchVals struct with four current statistics for this process:
-     * virtual and physical memory use in kb,
-     * user and system cpu time in ms
-     *
-     * not yet implemented for OSX or Windows.
-     */
-    SC_BASE_EXPORT benchVals getMemAndTime( );
+/** return a benchVals struct with four current statistics for this process:
+ * virtual and physical memory use in kb,
+ * user and system cpu time in ms
+ *
+ * not yet implemented for OSX or Windows.
+ */
+SC_BASE_EXPORT benchVals getMemAndTime( );
 
 #ifdef __cplusplus
 }

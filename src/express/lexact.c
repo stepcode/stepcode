@@ -389,7 +389,7 @@ int SCANprocess_semicolon( const char * yytext, int commentp ) {
 }
 
 void SCANsave_comment( const char * yytext ) {
-    strncpy( last_comment_ , yytext, SCAN_COMMENT_LENGTH - 1 );
+    strncpy( last_comment_, yytext, SCAN_COMMENT_LENGTH - 1 );
     last_comment = last_comment_;
 }
 

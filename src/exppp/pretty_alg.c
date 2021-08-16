@@ -53,7 +53,8 @@ void ALGargs_out( Linked_List args, int level ) {
         }
         previoustype = v->type;
         previousVAR = v->flags.var;
-    } LISTod
+    }
+    LISTod
 
     wrap( " : " );
     TYPE_head_out( previoustype, NOLEVEL );

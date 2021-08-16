@@ -283,13 +283,15 @@ static int checkTypes( Schema schema ) {
                     attribs = ENTITYget_all_attributes( ent );
                     LISTdo_n( attribs, attr, Variable, b ) {
                         if( checkItem( attr->type, type, schema,
-                                    &unknowncnt, 1 ) ) {
+                                       &unknowncnt, 1 ) ) {
                             break;
                         }
-                    } LISTod
+                    }
+                    LISTod
                     LISTfree( attribs );
                 }
-            } LISTod
+            }
+            LISTod
             /* One more condition - if we're a select which is a rename of
             // another select - we must also make sure the original select
             // is in this schema or has been processed.  Since a rename-

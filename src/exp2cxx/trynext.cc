@@ -35,7 +35,7 @@ MatchType MultList::tryNext( EntNode * ents )
 
     child = firstCandidate( child );
     while( child != NULL ) {
-        if( ( retval = ( dynamic_cast< MultList * >(child) )->tryNext( ents ) ) == MATCHALL ) {
+        if( ( retval = ( dynamic_cast< MultList * >( child ) )->tryNext( ents ) ) == MATCHALL ) {
             // We're done - a good solution was found.
             return MATCHALL;
         }
@@ -115,11 +115,11 @@ MatchType OrList::tryNext( EntNode * ents )
     // First try other choices of descendants of current choice:
     child = getChild( choice );
     if( child->multiple() ) {
-    	MatchType retval;
+        MatchType retval;
         // I.e., if there are (or may be) more choices within the current
         // choice, try those first.  We must be sure to exhaust all choices in
         // our descendants before moving on.
-        retval = ( dynamic_cast< MultList * >(child) )->tryNext( ents );        
+        retval = ( dynamic_cast< MultList * >( child ) )->tryNext( ents );
         if( retval == MATCHALL ) {
             return MATCHALL;
         }

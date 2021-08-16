@@ -45,7 +45,7 @@ SingleLinkNode * EnumAggregate::NewNode() {
     //  defined in subclass
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  EnumAggregate::NewNode () called instead of virtual function. \n"
-    << _POC_ << "\n";
+         << _POC_ << "\n";
     return 0;
 }
 
@@ -90,7 +90,7 @@ EnumNode::~EnumNode() {
 SingleLinkNode * EnumNode::NewNode() {
     cerr << "Internal error:  " << __FILE__ << ": " <<  __LINE__ << "\n" ;
     cerr << "function:  EnumNode::NewNode () called instead of virtual function. \n"
-    << _POC_ << "\n";
+         << _POC_ << "\n";
     return 0;
 }
 

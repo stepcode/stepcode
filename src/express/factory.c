@@ -166,7 +166,7 @@ Scope SCOPEcreate_nostab( char type ) {
 /** Create and return a schema. */
 Schema SCHEMAcreate( void ) {
     Scope s = SCOPEcreate( OBJ_SCHEMA );
-    s->enum_table = DICTcreate(50);
+    s->enum_table = DICTcreate( 50 );
     s->u.schema = SCHEMA_new();
     return s;
 }

@@ -26,7 +26,7 @@
 char * entityName, _buf[512] = { 0 };
 
 /** prints usage info specific to print_attrs */
-void my_usage(void) {
+void my_usage( void ) {
     EXPRESSusage( 0 );
     printf( "   ----\n\t-a <entity>: print attrs for <entity>\n" );
     exit( 2 );
@@ -35,7 +35,7 @@ void my_usage(void) {
 /** prints info about one attr */
 void describeAttr( const orderedAttr * oa ) {
     const char * visible_p21 = "    Y    ", * hidden_p21 = "    N    ", * explicit_derived = "    *    ";
-    const char * visibility, * descrip1="", * descrip2="", * descrip3=0;
+    const char * visibility, * descrip1 = "", * descrip2 = "", * descrip3 = 0;
     if( oa->deriver ) {
         assert( 0 == oa->attr->inverse_attribute && "Can't be derived *and* an inverse attribute" );
         descrip1 = "derived in ";
@@ -53,13 +53,13 @@ void describeAttr( const orderedAttr * oa ) {
     } else {
         visibility = visible_p21;
     }
-    printf("%s|%22s |%22s | %s%s%s%s\n", visibility, oa->attr->name->symbol.name,
-           oa->creator->symbol.name, descrip1, descrip2, ( ( descrip3 ) ? " in " : "" ), ( ( descrip3 ) ? descrip3 : "" ) );
+    printf( "%s|%22s |%22s | %s%s%s%s\n", visibility, oa->attr->name->symbol.name,
+            oa->creator->symbol.name, descrip1, descrip2, ( ( descrip3 ) ? " in " : "" ), ( ( descrip3 ) ? descrip3 : "" ) );
 }
 
 void print_attrs( Entity ent ) {
     const orderedAttr * oa;
-    const char * dashes="--------------------------------------------------------------------------";
+    const char * dashes = "--------------------------------------------------------------------------";
     printf( "Entity %s\n%s\n%s\n%s\n", ent->symbol.name, dashes,
             " In P21? |       attr name       |        creator        |     detail", dashes );
     orderedAttrsInit( ent );
@@ -74,9 +74,9 @@ void find_and_print( Express model ) {
     Schema s;
     Entity e;
     DICTdo_init( model->symbol_table, &de );
-    while( 0 != ( s = (Schema) DICTdo( &de ) ) ) {
+    while( 0 != ( s = ( Schema ) DICTdo( &de ) ) ) {
         printf( "Schema %s\n", s->symbol.name );
-        e = (Entity) DICTlookup( s->symbol_table, entityName );
+        e = ( Entity ) DICTlookup( s->symbol_table, entityName );
         if( e ) {
             print_attrs( e );
         }
