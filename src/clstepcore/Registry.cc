@@ -260,7 +260,7 @@ SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * s
             se->Error().severity( SEVERITY_WARNING );
             se->Error().UserMsg( "ENTITY requires external mapping" );
         }
-        se->setEDesc( entd );
+        se->eDesc = entd;
         return se;
     } else {
         return ENTITY_NULL;

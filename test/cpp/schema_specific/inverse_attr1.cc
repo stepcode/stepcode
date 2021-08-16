@@ -43,7 +43,7 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
                 EntityNode * en = ( EntityNode * ) relObj->GetHead();
                 SdaiObject * obj = ( SdaiObject * ) en->node;
                 cout << "file id " << obj->StepFileId() << "; name "
-                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->getEDesc()->Name() << endl;
+                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->eDesc->Name() << endl;
             }
             ent_id = i;
         }

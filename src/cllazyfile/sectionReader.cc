@@ -306,7 +306,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         if( !comment.empty() ) {
             inst->AddP21Comment( comment );
         }
-        assert( inst->getEDesc() );
+        assert( inst->eDesc );
         _file.seekg( begin );
         findNormalString( "(" );
         _file.seekg( _file.tellg() - std::streampos(1) );
