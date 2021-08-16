@@ -313,6 +313,11 @@ SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_LOGICAL & t ) {
     return *this;
 }
 
+SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_BOOLEAN & t ) {
+    v = t;
+    return *this;
+}
+
 SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const  Boolean t ) {
     v = t;
     return *this;
