@@ -226,6 +226,6 @@ extern SC_EXPRESS_EXPORT void ERRORsafe( jmp_buf env );
 extern SC_EXPRESS_EXPORT void ERRORunsafe( void );
 
 extern SC_EXPRESS_EXPORT char * ERRORget_warnings_help(const char* prefix, const char *eol);
-extern bool ERRORis_enabled(enum ErrorCode errnum);
+extern SC_EXPRESS_EXPORT bool ERRORis_enabled(enum ErrorCode errnum);
 
 #endif /* ERROR_H */
