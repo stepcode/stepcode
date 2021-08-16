@@ -34,7 +34,7 @@ extern int multiple_inheritance;
                   ((t)->u.type->body->type == integer_) || \
                   ((t)->u.type->body->type == number_) )
 #define PRINT_BUG_REPORT  \
-     fprintf( f, "    std::cerr << __FILE__ << \":\" << __LINE__ <<  \":  ERROR" \
+     fprintf( f, "std::cerr << __FILE__ << \":\" << __LINE__ <<  \":  ERROR" \
               " in schema library:  \\n\" \n    << _POC_ << \"\\n\\n\";\n");
 
 #define PRINT_SELECTBUG_WARNING(f) \
