@@ -405,17 +405,17 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     if( suffix == 0 ) {
         ocnt = snprintf( sufnm, MAX_LEN, "%s", schnm );
         if( ocnt > MAX_LEN ) {
-            std::cerr << "Warning - classes_wrapper.cc line 425 - sufnm not large enough to hold schnm\n";
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold schnm\n";
         }
     } else {
         ocnt = snprintf( sufnm, MAX_LEN, "%s_%d", schnm, suffix );
         if( ocnt > MAX_LEN ) {
-            std::cerr << "Warning - classes_wrapper.cc line 430 - sufnm not large enough to hold string\n";
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
         }
     }
     ocnt = snprintf( fnm, MAX_LEN, "%s.h", sufnm );
     if( ocnt > MAX_LEN ) {
-        std::cerr << "Warning - classes_wrapper.cc line 436 - sufnm not large enough to hold string\n";
+        std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
     }
 
     if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
@@ -459,7 +459,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     // 3. header for namespace to contain all formerly-global variables
     ocnt = snprintf( fnm, MAX_LEN, "%sNames.h", schnm );
     if( ocnt > MAX_LEN ) {
-        std::cerr << "Warning - classes_wrapper.cc line 480 - fnm not large enough to hold schnm\n";
+        std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - fnm not large enough to hold schnm\n";
     }
 
     if( !( files->names = FILEcreate( fnm ) ) ) {
@@ -478,7 +478,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         /* I.e., if this is our first pass with schema */
         ocnt = snprintf( fnm, MAX_LEN, "%s.init.cc", schnm );
         if( ocnt > MAX_LEN ) {
-            std::cerr << "Warning - classes_wrapper.cc line 499 - fnm not large enough to hold string\n";
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - fnm not large enough to hold string\n";
         }
 
         /* Note - We use schnm (without the "_x" suffix sufnm has) since we
@@ -545,7 +545,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         /* Just reopen the .init.cc (in append mode): */
         ocnt = snprintf( fnm, MAX_LEN, "%s.init.cc", schnm );
         if( ocnt > MAX_LEN ) {
-            std::cerr << "Warning - classes_wrapper.cc line 558 - sufnm not large enough to hold string\n";
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
         }
 
         initfile = files->init = fopen( fnm, "a" );
