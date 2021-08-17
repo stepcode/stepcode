@@ -1,7 +1,4 @@
-   Travis-CI   |   AppVeyor CI
-:-------------:|:---------------:
-Linux, OSX (LLVM) | Windows (MSVC)
-[![Build Status](https://travis-ci.org/stepcode/stepcode.svg?branch=master)](https://travis-ci.org/stepcode/stepcode) | [![Build status](https://ci.appveyor.com/api/projects/status/3fbr9t9gfa812oqu?svg=true)](https://ci.appveyor.com/project/mpictor/stepcode)
+![Build Status](https://github.com/stepcode/stepcode/actions/workflows/build.yml/badge.svg?branch=develop)
 
 ***********************************************************************
 STEPcode v0.8 -- github.com/stepcode/stepcode
