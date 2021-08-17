@@ -227,6 +227,14 @@ if(NOT COMMAND PERPLEX_TARGET)
     set(PERPLEX_${Name}_SRC ${${PVAR_PREFIX}_OUT_SRC_FILE})
     set(PERPLEX_${Name}_HDR ${${PVAR_PREFIX}_OUT_HDR_FILE})
     set(PERPLEX_${Name}_INCLUDE_DIR ${${PVAR_PREFIX}_WORKING_DIR})
+
+    add_custom_command(
+      OUTPUT ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel
+      COMMAND ${CMAKE_COMMAND} -E touch ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel
+      DEPENDS ${${PVAR_PREFIX}_OUT_SRC_FILE} ${${PVAR_PREFIX}_OUT_HDR_FILE}
+      )
+    add_custom_target(${Name} DEPENDS ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel)
+
   endmacro(PERPLEX_TARGET)
 endif(NOT COMMAND PERPLEX_TARGET)
 
