@@ -75,21 +75,15 @@ extern SC_CORE_EXPORT void PushPastAggr1Dim( istream & in, std::string & s, Erro
 class SC_CORE_EXPORT STEPattribute {
         friend ostream & operator<< ( ostream &, STEPattribute & );
         friend class SDAI_Application_instance;
-    protected:
-        bool _derive;
-        bool _mustDeletePtr; ///if a member uses new to create an object in ptr
-        ErrorDescriptor _error;
-        STEPattribute * _redefAttr;
-        const AttrDescriptor * aDesc;
-        int refCount;
 
+    public:
         /** \union ptr
-        ** You know which of these to use based on the return value of
-        ** NonRefType() - see below. BASE_TYPE is defined in baseType.h
-        ** This variable points to an appropriate member variable in the entity
-        ** class in the generated schema class library (the entity class is
-        ** inherited from SDAI_Application_instance)
-        */
+            ** You know which of these to use based on the return value of
+            ** NonRefType() - see below. BASE_TYPE is defined in baseType.h
+            ** This variable points to an appropriate member variable in the entity
+            ** class in the generated schema class library (the entity class is
+            ** inherited from SDAI_Application_instance)
+            */
         union attrUnion {
             SDAI_String * S;                 // STRING_TYPE
             SDAI_Integer * i;                // INTEGER_TYPE (Integer is a long int)
@@ -102,6 +96,18 @@ class SC_CORE_EXPORT STEPattribute {
             SCLundefined * u;                // UNKNOWN_TYPE
             void * p;
         } ptr;
+
+
+    protected:
+        bool _derive;
+        bool _mustDeletePtr; ///if a member uses new to create an object in ptr
+        ErrorDescriptor _error;
+        STEPattribute * _redefAttr;
+    public:
+        const AttrDescriptor * aDesc;
+
+    protected:
+        int refCount;
 
         char SkipBadAttr( istream & in, char * StopChars );
         void AddErrorInfo();
@@ -137,6 +143,7 @@ class SC_CORE_EXPORT STEPattribute {
 
         /// return the attr value as a string
         string asStr( const char * currSch = 0 ) const;
+        const char * asStr( std::string &, const char * = 0 ) const;
 
         /// put the attr value in ostream
         void STEPwrite( ostream & out = cout, const char * currSch = 0 );
@@ -166,11 +173,6 @@ class SC_CORE_EXPORT STEPattribute {
         SDAI_Select               * Select();
         SCLundefined              * Undefined();
         ///@}
-
-        /// allows direct access to the union containing attr data (dangerous!)
-        attrUnion * Raw() {
-            return & ptr;
-        }
 
         /**
          * These functions allow setting the attribute value.

@@ -36,8 +36,8 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
 
     public:
         typedef std::map< const Inverse_attribute * const, iAstruct> iAMap_t;
-    protected:
         const EntityDescriptor * eDesc;
+    protected:
 #ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable: 4251 )
@@ -89,10 +89,6 @@ class SC_CORE_EXPORT SDAI_Application_instance  : public SDAI_DAObject_SDAI  {
         /// initialize inverse attribute list
         void InitIAttrs();
 
-        void setEDesc( const EntityDescriptor * const ed ) {
-            eDesc = ed;
-        }
-        const EntityDescriptor * getEDesc() const;
         void StepFileId( int fid ) {
             STEPfile_id = fid;
         }

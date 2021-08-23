@@ -388,6 +388,100 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
  ** \returns the value of the attribute
  ** Status:  complete 3/91
  *********************************************************************/
+const char * STEPattribute::asStr( std::string & str, const char * currSch ) const {
+    ostringstream ss;
+
+    str.clear();
+
+    // The attribute has been derived by a subtype's attribute
+    if( IsDerived() )  {
+        str = "*";
+        return const_cast<char *>( str.c_str() );
+    }
+
+    // The attribute has been redefined by the attribute pointed
+    // to by _redefAttr so write the redefined value.
+    if( _redefAttr )  {
+        return _redefAttr->asStr( str, currSch );
+    }
+
+    if( is_null() )  {
+        str = "";
+        return const_cast<char *>( str.c_str() );
+    }
+
+    switch( NonRefType() ) {
+        case INTEGER_TYPE:
+            ss << *( ptr.i );
+            str += ss.str();
+            break;
+
+        case NUMBER_TYPE:
+        case REAL_TYPE:
+
+            ss.precision( ( int ) Real_Num_Precision );
+            ss << *( ptr.r );
+            str += ss.str();
+            break;
+
+        case ENTITY_TYPE:
+            // print instance id only if not empty pointer
+            // and has value assigned
+            if( ( *( ptr.c ) == S_ENTITY_NULL ) || ( *( ptr.c ) == 0 ) ) {
+                break;
+            } else {
+                ( *( ptr.c ) )->STEPwrite_reference( str );
+            }
+            break;
+
+        case BINARY_TYPE:
+            if( !( ( ptr.b )->empty() ) ) {
+                ( ptr.b ) -> STEPwrite( str );
+            }
+            break;
+
+        case STRING_TYPE:
+            if( !( ( ptr.S )->empty() ) ) {
+                return ( ptr.S ) -> asStr( str );
+            }
+            break;
+
+        case AGGREGATE_TYPE:
+        case ARRAY_TYPE:      // DAS
+        case BAG_TYPE:        // DAS
+        case SET_TYPE:        // DAS
+        case LIST_TYPE:       // DAS
+            return  ptr.a->asStr( str ) ;
+
+        case ENUM_TYPE:
+        case BOOLEAN_TYPE:
+        case LOGICAL_TYPE:
+            return ptr.e -> asStr( str );
+
+        case SELECT_TYPE:
+            ptr.sh -> STEPwrite( str, currSch );
+            return const_cast<char *>( str.c_str() );
+
+        case REFERENCE_TYPE:
+        case GENERIC_TYPE:
+            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+                 << "\n" << _POC_ "\n";
+            return 0;
+
+        case UNKNOWN_TYPE:
+        default:
+            return ( ptr.u -> asStr( str ) );
+    }
+    return const_cast<char *>( str.c_str() );
+}
+
+
+/*****************************************************************//**
+ ** \fn asStr
+ ** \param currSch - used for select type writes.  See commenting in SDAI_Select::STEPwrite().
+ ** \returns the value of the attribute
+ ** Status:  complete 3/91
+ *********************************************************************/
 std::string STEPattribute::asStr( const char * currSch ) const {
     ostringstream ss;
     std::string str;
