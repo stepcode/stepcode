@@ -41,6 +41,11 @@ SDAI_String & SDAI_String::operator= ( const char * s ) {
     return *this;
 }
 
+SDAI_String & SDAI_String::operator= ( const SDAI_String & s ) {
+    content = s.content;
+    return *this;
+}
+
 bool SDAI_String::operator== ( const char * s ) const {
     return ( content == s );
 }

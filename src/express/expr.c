@@ -231,6 +231,8 @@ static int EXP_resolve_op_dot_fuzzy( Type selection, Symbol sref, Expression * e
                 *e = item;
                 *dt = DICT_type;
                 return 1;
+            } else {
+                return 0;
             }
         default:
             return 0;
@@ -317,6 +319,7 @@ Type EXPresolve_op_dot( Expression expr, Scope scope ) {
                     } else {
                         fprintf( stderr, "EXPresolved_op_dot: attribute not an attribute?\n" );
                         ERRORabort( 0 );
+                        return( Type_Bad );
                     }
 
                 default:
@@ -601,13 +604,13 @@ Type EXPresolve_op_relational( Expression e, Scope s ) {
 void EXPresolve_op_default( Expression e, Scope s ) {
     int failed = 0;
 
-    switch( OPget_number_of_operands( e->e.op_code ) ) {
-        case 3:
-            EXPresolve( e->e.op3, s, Type_Dont_Care );
-            failed = is_resolve_failed( e->e.op3 );
-        case 2:
-            EXPresolve( e->e.op2, s, Type_Dont_Care );
-            failed |= is_resolve_failed( e->e.op2 );
+    if( OPget_number_of_operands( e->e.op_code ) == 3 ) {
+        EXPresolve( e->e.op3, s, Type_Dont_Care );
+        failed = is_resolve_failed( e->e.op3 );
+    }
+    if( OPget_number_of_operands( e->e.op_code ) == 2 ) {
+        EXPresolve( e->e.op2, s, Type_Dont_Care );
+        failed |= is_resolve_failed( e->e.op2 );
     }
     EXPresolve( e->e.op1, s, Type_Dont_Care );
     if( failed || is_resolve_failed( e->e.op1 ) ) {

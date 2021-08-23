@@ -1080,7 +1080,7 @@ JudySlot * judy_prv( Judy * judy ) {
 //        returning previous entry.
 
 JudySlot * judy_del( Judy * judy ) {
-    int slot, off, size, type, high;
+    int slot, off, size, type;
     JudySlot * table, *inner;
     JudySlot next, *node;
     int keysize, cnt;
@@ -1133,7 +1133,6 @@ JudySlot * judy_del( Judy * judy ) {
                 table = ( JudySlot * )( next & JUDY_mask );
                 inner = ( JudySlot * )( table[slot >> 4] & JUDY_mask );
                 inner[slot & 0x0F] = 0;
-                high = slot & 0xF0;
 
                 for( cnt = 16; cnt--; )
                     if( inner[cnt] ) {
