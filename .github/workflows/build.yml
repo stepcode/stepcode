@@ -185,7 +185,7 @@ jobs:
         run: |
           git clone --depth 1 git://github.com/BRL-CAD/brlcad.git -b main
           cd brlcad/src/other/ext && rm -rf stepcode
-          git clone --depth 1 git://github.com/starseeker/stepcode.git -b develop
+          git clone --depth 1 git://github.com/stepcode/stepcode.git -b develop
           # Ordinarily BRL-CAD keeps track of what files are supposed to be
           # present in the repository.  In this case we're not interested in
           # updating the list to the working stepcode filelist, so use an empty
@@ -243,7 +243,7 @@ jobs:
           git clone --depth 1 git://github.com/BRL-CAD/brlcad.git -b main
           cd brlcad/src/other/ext
           cmake -E rm -r stepcode
-          git clone --depth 1 git://github.com/starseeker/stepcode.git -b develop
+          git clone --depth 1 git://github.com/stepcode/stepcode.git -b develop
           # Ordinarily BRL-CAD keeps track of what files are supposed to be
           # present in the repository.  In this case we're not interested in
           # updating the list to the working stepcode filelist, so use an empty
