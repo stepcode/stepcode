@@ -32,7 +32,6 @@
 """
 Docstrings are courtesy of ISO 10303-11:1994(E)
 """
-from __future__ import print_function
 
 class NUMBER:
     """

@@ -1,4 +1,3 @@
-from __future__ import print_function
 def process_nested_parent_str(attr_str):
     '''
     The first letter should be a parenthesis

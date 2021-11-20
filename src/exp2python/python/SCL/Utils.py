@@ -30,7 +30,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ''' This module provide string utils'''
-from __future__ import print_function
 
 def process_nested_parent_str(attr_str,idx=0):
     '''

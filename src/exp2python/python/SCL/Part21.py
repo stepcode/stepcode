@@ -41,19 +41,6 @@ import ply.yacc as yacc
 from ply.lex import LexError
 
 logger = logging.getLogger(__name__)
-
-# ensure Python 2.6 compatibility
-if not hasattr(logging, 'NullHandler'):
-    class NullHandler(logging.Handler):
-        def handle(self, record):
-            pass
-        def emit(self, record):
-            pass
-        def createLock(self):
-            self.lock = None
-        
-    setattr(logging, 'NullHandler', NullHandler)
-        
 logger.addHandler(logging.NullHandler())
 
 ####################################################################################################
