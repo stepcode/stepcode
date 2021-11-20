@@ -11,8 +11,7 @@ See [test_parser](tests/test_parser.py) for use of the `SCL.Part21` parser with 
 
 # Building
 
-The SCL Python package can be built directly using [PyPA's build module](https://github.com/pypa/build)
-
+The SCL Python package can be built directly using [PyPA's build module](https://github.com/pypa/build). Run `python3 -m build` from this directory.
 # License
 
 See [LICENSE](LICENSE)
