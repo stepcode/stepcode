@@ -31,7 +31,7 @@
 
 __doc__ = "This module defines EXPRESS rules"
 
-class Rule(object):
+class Rule:
     '''
     This class describes a RULE
     @TODO: to be implemented
