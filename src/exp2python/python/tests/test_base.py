@@ -415,9 +415,9 @@ class TestENUMERATION(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
 
-class ob1(object):
+class ob1:
     pass
-class ob2(object):
+class ob2:
     pass
 class TestSELECT(unittest.TestCase):
     def test_select(self):
