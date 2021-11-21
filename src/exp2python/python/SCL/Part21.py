@@ -53,7 +53,7 @@ base_tokens = ['INTEGER', 'REAL', 'USER_DEFINED_KEYWORD', 'STANDARD_KEYWORD', 'S
 ####################################################################################################
 # Lexer 
 ####################################################################################################
-class Lexer(object):
+class Lexer:
     tokens = list(base_tokens)
     states = (('slurp', 'exclusive'),)
         
@@ -239,7 +239,7 @@ class TypedParameter:
 ####################################################################################################
 # Parser
 ####################################################################################################
-class Parser(object):
+class Parser:
     tokens = list(base_tokens)
     start = 'exchange_file'
     

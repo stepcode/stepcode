@@ -58,7 +58,7 @@ class ENUMERATION(Enum):
     """
     pass
        
-class SELECT(object):
+class SELECT:
     """ A select data type has as its domain the union of the domains of the named data types in
     its select list. The select data type is a generalization of each of the named data types in its
     select list.
