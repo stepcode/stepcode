@@ -1,4 +1,4 @@
-#    C M A K E L I S T S . T X T   F O R   S T E P C O D E
+#                C M A K E L I S T S . T X T
 #
 # This file is Copyright (c) 2010 United States Government as
 # represented by the U.S. Army Research Laboratory.
@@ -130,12 +130,9 @@ if (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
   set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
 endif (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
 
-option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
-mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
-
 option(SC_ENABLE_TESTING "Enable unittesting framework" OFF)
 if(SC_ENABLE_TESTING)
-  if(NOT "${SC_BUILD_EXPRESS_ONLY}" AND NOT DEFINED SC_BUILD_SCHEMAS)
+  if(NOT DEFINED SC_BUILD_SCHEMAS)
     set(SC_BUILD_SCHEMAS "ALL") #test all schemas, unless otherwise specified
   endif()
   include(CTest)
@@ -160,10 +157,10 @@ if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
   set(SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs")
 endif(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
 
-if(NOT "${SC_BUILD_EXPRESS_ONLY}" AND NOT DEFINED SC_BUILD_SCHEMAS)
+if(NOT DEFINED SC_BUILD_SCHEMAS)
   list(APPEND CONFIG_END_MESSAGES
     "** Note: CMake variable SC_BUILD_SCHEMAS was not set - defaults to building ALL schemas")
-# this makes SC_BUILD_SCHEMAS show up in cmake-gui
+#this makes SC_BUILD_SCHEMAS show up in cmake-gui
   set(SC_BUILD_SCHEMAS "ALL" CACHE STRING "Semicolon-separated list of paths to EXPRESS schemas to be built")
 endif()
 
