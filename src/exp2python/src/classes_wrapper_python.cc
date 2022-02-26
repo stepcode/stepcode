@@ -164,7 +164,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
 
 void SCHEMAprint( Schema schema, FILES * files, int suffix ) {
     int ocnt = 0;
-    char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
+    char schnm[MAX_LEN+1], sufnm[MAX_LEN+1], fnm[MAX_LEN+1], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile;
     /**********  create files based on name of schema   ***********/
@@ -285,7 +285,7 @@ getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ******************************************************************/
 void
 EXPRESSPrint( Express express, FILES * files ) {
-    char fnm [MAX_LEN];
+    char fnm [MAX_LEN+1];
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
     /* new */
