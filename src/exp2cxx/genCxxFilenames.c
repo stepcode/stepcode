@@ -17,8 +17,8 @@
  */
 
 /* these buffers are shared amongst (and potentially overwritten by) all functions in this file */
-char impl[ BUFSIZ ] = {0};
-char header[ BUFSIZ ] = {0};
+char impl[ BUFSIZ+1 ] = {0};
+char header[ BUFSIZ+1 ] = {0};
 
 /* struct containing pointers to above buffers. pointers are 'const char *' */
 filenames_t fnames = { impl, header };

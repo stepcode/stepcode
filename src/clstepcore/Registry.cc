@@ -79,7 +79,7 @@ void Registry::DeleteContents() {
 const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const {
     const EntityDescriptor * entd;
     const SchRename * altlist;
-    char schformat[BUFSIZ], altName[BUFSIZ];
+    char schformat[BUFSIZ+1], altName[BUFSIZ+1];
 
     if( check_case ) {
         entd = ( EntityDescriptor * )SC_HASHfind( primordialSwamp, ( char * )e );

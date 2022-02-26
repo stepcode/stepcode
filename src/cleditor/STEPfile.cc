@@ -117,7 +117,7 @@ Severity STEPfile::ReadHeader( istream & in ) {
     int fileid;
     std::string keywd;
     char c = '\0';
-    char buf [BUFSIZ];
+    char buf [BUFSIZ+1];
 
     std::string strbuf;
 
@@ -442,7 +442,7 @@ int STEPfile::ReadData1( istream & in ) {
 
     char c;
     int instance_count = 0;
-    char buf[BUFSIZ];
+    char buf[BUFSIZ+1];
     buf[0] = '\0';
     std::string tmpbuf;
 
@@ -565,7 +565,7 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
     _warningCount = 0;  // reset error count
 
     char c;
-    char buf[BUFSIZ];
+    char buf[BUFSIZ+1];
     buf[0] = '\0';
     std::string tmpbuf;
 
@@ -730,7 +730,7 @@ int STEPfile::FindDataSection( istream & in ) {
 }
 
 int STEPfile::FindHeaderSection( istream & in ) {
-    char buf[BUFSIZ];
+    char buf[BUFSIZ+1];
     char * b = buf;
 
     *b = '\0';
@@ -1150,7 +1150,7 @@ SDAI_Application_instance * STEPfile::ReadInstance( istream & in, ostream & out,
     Severity sev = SEVERITY_NULL;
 
     std::string tmpbuf;
-    char errbuf[BUFSIZ];
+    char errbuf[BUFSIZ+1];
     errbuf[0] = '\0';
     std::string currSch;
     std::string objnm;
@@ -1603,7 +1603,7 @@ void STEPfile::WriteValuePairsData( ostream & out, int writeComments, int mixedC
 
 Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     Severity rval = SEVERITY_NULL;
-    char errbuf[BUFSIZ];
+    char errbuf[BUFSIZ+1];
 
     SetFileIdIncrement();
     int total_insts = 0,  valid_insts = 0;
