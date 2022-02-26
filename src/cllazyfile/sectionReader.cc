@@ -26,6 +26,9 @@ sectionReader::sectionReader( lazyFileReader * parent, std::ifstream & file, std
     _error = new ErrorDescriptor();
 }
 
+sectionReader::~sectionReader() {
+     delete _error;
+}
 
 std::streampos sectionReader::findNormalString( const std::string & str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
@@ -221,7 +224,7 @@ instanceID sectionReader::readInstanceNumber() {
             _error->UserMsg( "A very large instance ID encountered" );
             _error->DetailMsg( errorMsg.str() );
 
-            delete buffer;
+            delete[] buffer;
             return 0;    
         }
 
