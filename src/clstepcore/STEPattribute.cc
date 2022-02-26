@@ -1263,7 +1263,7 @@ ostream & operator<< ( ostream & out, STEPattribute & a ) {
 * value.
 ******************************************************************/
 void STEPattribute::AddErrorInfo() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
     if( SEVERITY_INPUT_ERROR < _error.severity() &&
             _error.severity() < SEVERITY_NULL ) {
@@ -1293,7 +1293,7 @@ char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
     // read bad data until end of this attribute or entity.
     char * foundCh = 0;
     char c = '\0';
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     _error.GreaterSeverity( SEVERITY_WARNING );

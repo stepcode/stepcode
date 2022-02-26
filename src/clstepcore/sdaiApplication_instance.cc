@@ -102,7 +102,7 @@ void SDAI_Application_instance::InitIAttrs() {
 }
 
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
@@ -416,7 +416,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
 const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char * currSch ) {
     buf.clear();
 
-    char instanceInfo[BUFSIZ];
+    char instanceInfo[BUFSIZ+1];
 
     std::string tmp;
     sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
@@ -438,7 +438,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
 }
 
 void SDAI_Application_instance::PrependEntityErrMsg() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
@@ -459,7 +459,7 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
  ******************************************************************/
 void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, const char * schnm ) {
     (void) in;
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
@@ -511,7 +511,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
         const char * currSch, bool useTechCor, bool strict ) {
     STEPfile_id = id;
     char c = '\0';
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
     Severity severe;
     int i = 0;
@@ -663,7 +663,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
         InstMgrBase * instances, int addFileId ) {
     char c;
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     in >> ws;
@@ -756,7 +756,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                            // to match. (this must be an
                            // EntityDescriptor)
                            ErrorDescriptor * err ) {
-    char messageBuf [BUFSIZ];
+    char messageBuf [BUFSIZ+1];
     messageBuf[0] = '\0';
 
     if( !ed || ( ed->NonRefType() != ENTITY_TYPE ) ) {
@@ -825,7 +825,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
  * DAVE: Is this needed will sscanf return 1 if assignment suppression is used?
  */
 int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
-    char scanBuf[BUFSIZ];
+    char scanBuf[BUFSIZ+1];
     scanBuf[0] = '\0';
 
     std::stringstream fmtstr;
@@ -853,9 +853,9 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
                            // to match. (this must be an
                            // EntityDescriptor)
                            ErrorDescriptor * err, InstMgrBase * im, int clearError ) {
-    char tmp [BUFSIZ];
+    char tmp [BUFSIZ+1];
     tmp[0] = '\0';
-    char messageBuf [BUFSIZ];
+    char messageBuf [BUFSIZ+1];
     messageBuf[0] = '\0';
     std::stringstream fmtstr1, fmtstr2;
 

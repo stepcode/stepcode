@@ -556,7 +556,7 @@ int cmp_python_mro( void * e1, void * e2 ) {
 void
 LIBdescribe_entity( Entity entity, FILE * file ) {
     int attr_count_tmp = attr_count;
-    char attrnm [BUFSIZ], parent_attrnm[BUFSIZ];
+    char attrnm [BUFSIZ+1], parent_attrnm[BUFSIZ+1];
     char * attr_type;
     bool generate_constructor = true; /*by default, generates a python constructor */
     bool single_inheritance = false;
@@ -1970,10 +1970,10 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 
 void
 TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
-    char tdnm [BUFSIZ],
+    char tdnm [BUFSIZ+1],
          typename_buf [MAX_LEN],
-         base [BUFSIZ],
-         nm [BUFSIZ];
+         base [BUFSIZ+1],
+         nm [BUFSIZ+1];
     Type i;
 
     int where_rule_number = 0;
