@@ -95,7 +95,7 @@ void SingleLinkList::AppendNode( SingleLinkNode * item ) {
 }
 
 void SingleLinkList::DeleteNode( SingleLinkNode * item ) {
-    if( head ) {
+    if( head && item ) {
         SingleLinkNode * trailer = 0;
         SingleLinkNode * leader = head;
         while( leader ) {
@@ -111,6 +111,7 @@ void SingleLinkList::DeleteNode( SingleLinkNode * item ) {
                     tail = trailer;
                 }
                 delete item;
+		return;
             } else {
                 if( trailer ) {
                     trailer = trailer->NextNode();
