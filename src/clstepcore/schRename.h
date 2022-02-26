@@ -22,8 +22,10 @@
 class SC_CORE_EXPORT SchRename {
 public:
     SchRename( const char * sch = "\0", const char * newnm = "\0" ) : next( 0 ) {
-        strcpy( schName, sch );
-        strcpy( newName, newnm );
+        strncpy( schName, sch, BUFSIZ );
+	schName[BUFSIZ] = '\0';
+        strncpy( newName, newnm, BUFSIZ );
+	newName[BUFSIZ] = '\0';
     }
     ~SchRename() {
         delete next;
