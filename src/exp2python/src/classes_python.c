@@ -175,7 +175,7 @@ int Handle_FedPlus_Args( int i, char * arg ) {
 
 bool is_python_keyword( char * word ) {
     int i;
-    const char* keyword_list[] = {"class", "pass", NULL};
+    const char* keyword_list[] = {"class", "pass", "property", NULL};
     bool python_keyword = false;
 
     for( i = 0; keyword_list[i] != NULL; i++ ) {
