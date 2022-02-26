@@ -1026,9 +1026,9 @@ void TypeBody_Description( TypeBody body, char * buf ) {
 
 const char * IdlEntityTypeName( Type t ) {
     static char name [BUFSIZ+1];
-    strcpy( name, TYPE_PREFIX );
+    strncpy( name, TYPE_PREFIX, BUFSIZ );
     if( TYPEget_name( t ) ) {
-        strcpy( name, FirstToUpper( TYPEget_name( t ) ) );
+	strncpy( name, FirstToUpper( TYPEget_name( t ) ), BUFSIZ );
     } else {
         return TYPEget_ctype( t );
     }
@@ -1061,14 +1061,14 @@ const char * GetAggrElemType( const Type type ) {
 
         /*      case TYPE_ENTITY:   */
         if( class == entity_ ) {
-            strcpy( retval, IdlEntityTypeName( bt ) );
+	    strncpy( retval, IdlEntityTypeName( bt ), BUFSIZ );
         }
 
         /*      case TYPE_ENUM:     */
         /*  case TYPE_SELECT:   */
         if( ( class == enumeration_ )
                 || ( class == select_ ) )  {
-            strcpy( retval, TYPEget_ctype( bt ) );
+	    strncpy( retval, TYPEget_ctype( bt ), BUFSIZ );
         }
 
         /*  case TYPE_LOGICAL:  */
@@ -1165,18 +1165,14 @@ const char * TYPEget_idl_type( const Type t ) {
     /*      case TYPE_ENTITY:   */
     if( class == entity_ ) {
         /* better do this because the return type might go away */
-        strcpy( retval, IdlEntityTypeName( t ) );
+	strncpy( retval, IdlEntityTypeName( t ), BUFSIZ - 4 );
         strcat( retval, "_ptr" );
         return retval;
     }
     /*    case TYPE_ENUM:   */
     /*    case TYPE_SELECT: */
     if( class == enumeration_ ) {
-        strncpy( retval, EnumName( TYPEget_name( t ) ), BUFSIZ - 2 );
-
-        strcat( retval, " /*" );
-        strcat( retval, IdlEntityTypeName( t ) );
-        strcat( retval, "*/ " );
+	snprintf( retval, BUFSIZ, "%s /*%s*/ ", EnumName(TYPEget_name(t)), IdlEntityTypeName(t) );
         return retval;
     }
     if( class == select_ )  {
@@ -1201,9 +1197,8 @@ const char * TYPEget_idl_type( const Type t ) {
 char * TYPEget_express_type( const Type t ) {
     Class_Of_Type class;
     Type bt;
-    char retval [BUFSIZ+1];
-    char * n, * permval, * aggr_type;
-
+    char retval [BUFSIZ+1] = {'\0'};
+    char * n = NULL, * permval = NULL, * aggr_type = NULL;
 
     /*  1.  "DEFINED" types */
     /*    case TYPE_ENUM:   */
@@ -1293,7 +1288,9 @@ char * TYPEget_express_type( const Type t ) {
 void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const char * aggr_name, const char * cname, Expression bound, int boundNr ) {
     if( bound->symbol.resolved ) {
         if( bound->type == Type_Funcall ) {
-            fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, EXPRto_string( bound ) );
+	    char *bound_str = EXPRto_string(bound);
+            fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, bound_str );
+            sc_free(bound_str);
         } else {
             fprintf( impl, "        %s->SetBound%d( %d );\n", var_name, boundNr, bound->u.integer );
         }
