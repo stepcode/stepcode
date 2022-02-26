@@ -30,7 +30,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from enum import Enum
-import BaseType
+from . import BaseType
 
 class ENUMERATION(Enum):
     """
