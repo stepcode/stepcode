@@ -193,6 +193,7 @@ void SCHEMAprint( Schema schema, FILES * files, int suffix ) {
     }
     fprintf( libfile, "import sys\n" );
     fprintf( libfile, "\n" );
+    fprintf( libfile, "from SCL import SCLBase\n" );
     fprintf( libfile, "from SCL.SCLBase import *\n" );
     fprintf( libfile, "from SCL.SimpleDataTypes import *\n" );
     fprintf( libfile, "from SCL.ConstructedDataTypes import *\n" );

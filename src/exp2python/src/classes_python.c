@@ -429,7 +429,7 @@ char* EXPRto_python( Expression e ) {
             snprintf( buf, bufsize, "%s.%s", TYPEget_name(e->type), e->symbol.name );
             break;
         case query_:
-			strcpy( buf, "# query_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('query_'))" );
             break;
         case self_:
             strcpy( buf, "self" );
@@ -451,13 +451,13 @@ char* EXPRto_python( Expression e ) {
                 break;
         }
         case op_:
-			strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('op_'))" );
             break;
         case aggregate_:
-            strcpy( buf, "# aggregate_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('aggregate_'))" );
             break;
         case oneof_: {
-            strcpy( buf, "# oneof_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('oneof_'))" );
             break;
         }
         default:
