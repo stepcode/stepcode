@@ -51,7 +51,7 @@ SDAI_Entity_extent__set::SDAI_Entity_extent__set( int defaultSize ) {
 }
 
 SDAI_Entity_extent__set::~SDAI_Entity_extent__set() {
-    delete _buf;
+    delete[] _buf;
 }
 
 void SDAI_Entity_extent__set::Check( int index ) {
@@ -62,7 +62,7 @@ void SDAI_Entity_extent__set::Check( int index ) {
         _bufsize = ( index + 1 ) * 2;
         newbuf = new SDAI_Entity_extent_ptr[_bufsize];
         memmove( newbuf, _buf, _count * sizeof( SDAI_Entity_extent_ptr ) );
-        delete _buf;
+        delete[] _buf;
         _buf = newbuf;
     }
 }

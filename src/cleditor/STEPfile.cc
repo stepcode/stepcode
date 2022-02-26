@@ -851,6 +851,8 @@ SDAI_Application_instance * STEPfile::CreateInstance( istream & in, ostream & ou
                 << " User Defined Entity in DATA section ignored.\n"
                 << "\tData lost: \'!" << objnm << "\': " << tmpbuf
                 << endl;
+	    if (scopelist)
+               delete[] scopelist;
             return ENTITY_NULL;
         } else {
             schnm = schemaName();
@@ -879,6 +881,8 @@ SDAI_Application_instance * STEPfile::CreateInstance( istream & in, ostream & ou
         out << "ERROR: instance #" << fileid << " \'" << objnm
             << "\': " << result.UserMsg()
             << ".\n\tData lost: " << tmpbuf << "\n\n";
+        if (scopelist)
+           delete[] scopelist;
         return ENTITY_NULL;
     }
     obj -> STEPfile_id = fileid;
@@ -887,6 +891,10 @@ SDAI_Application_instance * STEPfile::CreateInstance( istream & in, ostream & ou
     SkipInstance( in, tmpbuf );
 
     ReadTokenSeparator( in );
+
+    if (scopelist)
+       delete[] scopelist;
+
     return obj;
 }
 
@@ -1531,9 +1539,11 @@ void STEPfile::WriteHeaderInstance( SDAI_Application_instance * obj, ostream & o
 void STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
 // Get the FileName instance from _headerInstances
     SDAI_Application_instance * se = 0;
+    bool del_se = false;
     se = _headerInstances->GetApplication_instance( "File_Name" );
     if( se == ENTITY_NULL ) {
         se = ( SDAI_Application_instance * )HeaderDefaultFileName();
+	del_se = true;
     }
 
 //set some of the attribute values at time of output
@@ -1553,6 +1563,9 @@ void STEPfile::WriteHeaderInstanceFileName( ostream & out ) {
 
 //output the values to the file
     WriteHeaderInstance( se, out );
+
+    if (del_se)
+       delete se;
 }
 
 void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
@@ -1563,8 +1576,11 @@ void STEPfile::WriteHeaderInstanceFileDescription( ostream & out ) {
         // ERROR: no File_Name instance in _headerInstances
         // create a File_Name instance
         se = ( SDAI_Application_instance * )HeaderDefaultFileDescription();
+	WriteHeaderInstance(se, out);
+	delete se;
+    } else {
+        WriteHeaderInstance( se, out );
     }
-    WriteHeaderInstance( se, out );
 }
 
 void STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
@@ -1575,8 +1591,11 @@ void STEPfile::WriteHeaderInstanceFileSchema( ostream & out ) {
         // ERROR: no File_Name instance in _headerInstances
         // create a File_Name instance
         se = ( SDAI_Application_instance * ) HeaderDefaultFileSchema();
+        WriteHeaderInstance( se, out );
+	delete se;
+    } else {
+        WriteHeaderInstance( se, out );
     }
-    WriteHeaderInstance( se, out );
 }
 
 void STEPfile::WriteData( ostream & out, int writeComments ) {
