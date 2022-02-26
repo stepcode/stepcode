@@ -50,6 +50,7 @@ void * SC_HASHfind( Hash_TableP t, char * s ) {
 
     e.key = s;
     e.symbol = 0; /*  initialize to 0 - 25-Apr-1994 - kcm */
+    e.type = '*';
     ep = SC_HASHsearch( t, &e, HASH_FIND );
     return( ep ? ep->data : 0 );
 }
@@ -61,6 +62,7 @@ void SC_HASHinsert( Hash_TableP t, char * s, void * data ) {
     e.key = s;
     e.data = data;
     e.symbol = 0;
+    e.type = '*';
     e2 = SC_HASHsearch( t, &e, HASH_INSERT );
     if( e2 ) {
         fprintf( stderr, "%s: Redeclaration of %s\n", __func__, s );
@@ -258,6 +260,9 @@ struct Element * SC_HASHsearch( Hash_TableP table, const struct Element * item, 
             /*STRINGfree(deleteme->key);*/
             SC_HASH_Element_destroy( deleteme );
             --table->KeyCount;
+	    // TODO - we shouldn't be returning this pointer - it invites a
+            // USE_AFTER_FREE error.  Could we just replace SC_HASH completely
+            // with one of the C++ containers?
             return( deleteme ); /* of course, user shouldn't deref this! */
         case HASH_INSERT:
             /* if trying to insert it (twice), let them know */
