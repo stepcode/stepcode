@@ -1104,6 +1104,7 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         fprintf( file, "):\n" );
         
         if( loop->while_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->while_expr, 0 , file );
             fprintf( file, ":\n");
@@ -1113,9 +1114,12 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         }
 
         if( loop->until_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            fprintf( file, ":\n" );
+            python_indent( file, level + 2 );
+            fprintf( file, "break\n" );
         }
     } else if( loop->while_expr ) {
         fprintf( file, "while " );
@@ -1124,17 +1128,23 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         STATEMENTlist_out( loop->statements, level + 1 , file );
 
         if( loop->until_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            fprintf( file, ":\n" );
+            python_indent( file, level + 2 );
+            fprintf( file, "break\n" );
         }
     } else {
         fprintf( file, "while True:\n" );
         STATEMENTlist_out( loop->statements, level + 1 , file );
 
+        python_indent( file, level + 1 );
         fprintf( file, "if " );
         EXPRESSION_out( loop->until_expr, 0 , file );
-        fprintf( file, ":\n\tbreak\n");
+        fprintf( file, ":\n" );
+        python_indent( file, level + 2 );
+        fprintf( file, "break\n" );
     }
 
 }
