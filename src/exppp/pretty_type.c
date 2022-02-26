@@ -151,7 +151,7 @@ void TYPE_body_out( Type t, int level ) {
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 count++;
             }
-            names = ( char ** )sc_malloc( count * sizeof( char * ) );
+            names = ( char ** )sc_calloc( count, sizeof( char * ) );
             DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 names[expr->u.integer - 1] = expr->symbol.name;
