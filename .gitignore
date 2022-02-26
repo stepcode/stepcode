@@ -10,6 +10,7 @@
 [._]*.sw[a-p]
 [._]s[a-v][a-z]
 [._]sw[a-p]
+**/__pycache__/
 
 # OS specific files
 .DS_Store
