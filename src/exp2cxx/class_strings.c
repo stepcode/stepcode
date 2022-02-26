@@ -185,7 +185,7 @@ char ToUpper( char c ) {
 }
 
 const char * StrToLower( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     if( !word ) {
         return 0;
@@ -200,7 +200,7 @@ const char * StrToLower( const char * word ) {
 }
 
 const char * StrToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -212,7 +212,7 @@ const char * StrToUpper( const char * word ) {
 }
 
 const char * StrToConstant( const char * word ) {
-    static char newword[MAX_LEN];
+    static char newword[MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -229,7 +229,7 @@ const char * StrToConstant( const char * word ) {
 }
 
 const char * FirstToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
 
     strncpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );

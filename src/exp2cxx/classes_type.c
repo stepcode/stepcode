@@ -832,7 +832,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
 
     const char * ctype = TYPEget_ctype( t );
     int count = type_count++;
-    char name_buf[MAX_LEN];
+    char name_buf[MAX_LEN+1];
     int s;
 
     switch( TYPEget_body( t )->type ) {
@@ -878,7 +878,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
     } else {
         Type base = 0;
         /* no name, recurse */
-        char callee_buffer[MAX_LEN];
+        char callee_buffer[MAX_LEN+1];
         if( TYPEget_body( t ) ) {
             base = TYPEget_body( t )->base;
         }

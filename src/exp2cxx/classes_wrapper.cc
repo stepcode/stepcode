@@ -386,7 +386,7 @@ void INITFileFinish( FILE * initfile, Schema schema ) {
  ******************************************************************/
 void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) {
     int ocnt = 0;
-    char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
+    char schnm[MAX_LEN+1], sufnm[MAX_LEN+1], fnm[MAX_LEN+1], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile,
          * incfile,
@@ -628,7 +628,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ** Status:  24-Feb-1992 new -kcm
  ******************************************************************/
 void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
-    char fnm [MAX_LEN], *np;
+    char fnm [MAX_LEN+1], *np;
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
     FILE * incfile;

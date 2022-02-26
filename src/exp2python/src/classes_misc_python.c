@@ -111,7 +111,7 @@ ToUpper( char c ) {
 
 const char *
 StrToLower( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     if( !word ) {
         return 0;
@@ -126,7 +126,7 @@ StrToLower( const char * word ) {
 }
 
 const char * StrToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     char ToUpper( char c );
 
@@ -140,7 +140,7 @@ const char * StrToUpper( const char * word ) {
 }
 
 const char * StrToConstant( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -242,7 +242,7 @@ const char * PrettyTmpName( const char * oldname ) {
 /** This function is out of date DAS */
 const char * EnumName( const char * oldname ) {
     int j = 0;
-    static char newname [MAX_LEN];
+    static char newname [MAX_LEN+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -258,7 +258,7 @@ const char * EnumName( const char * oldname ) {
 
 const char * SelectName( const char * oldname ) {
     int j = 0;
-    static char newname [MAX_LEN];
+    static char newname [MAX_LEN+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -274,7 +274,7 @@ const char * SelectName( const char * oldname ) {
 }
 
 const char * FirstToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
 
     strncpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );

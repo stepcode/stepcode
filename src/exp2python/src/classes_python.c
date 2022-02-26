@@ -1971,7 +1971,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 void
 TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
     char tdnm [BUFSIZ+1],
-         typename_buf [MAX_LEN],
+         typename_buf [MAX_LEN+1],
          base [BUFSIZ+1],
          nm [BUFSIZ+1];
     Type i;

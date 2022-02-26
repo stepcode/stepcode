@@ -827,7 +827,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                );
     } else {
         /* manufacture new one(s) on the spot */
-        char typename_buf[MAX_LEN];
+        char typename_buf[MAX_LEN+1];
         print_typechain( header, impl, v->type, typename_buf, schema, v->name->symbol.name );
         fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s::%s%s);\n",
