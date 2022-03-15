@@ -1209,7 +1209,11 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             break;
         case entity_:
         case identifier_:
-            fprintf( file, "self.%s", e->symbol.name );
+            if( previous_op == OP_DOT || previous_op == OP_GROUP ) {
+                fprintf( file, "%s", e->symbol.name );
+            } else {
+                fprintf( file, "self.%s", e->symbol.name );
+            }
             break;
         case attribute_:
             fprintf( file, "%s", e->symbol.name );
@@ -1429,8 +1433,8 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             ATTRIBUTE_INITIALIZERop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+            ATTRIBUTE_INITIALIZERop2_out( oe, " in ", paren, PAD, file );
+            break;
         case OP_INST_EQUAL:
             ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1511,7 +1515,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            EXPRESSIONop2__out( oe, " != ", paren, PAD, previous_op, file );
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_EXP:
             EXPRESSIONop2_out( oe, " ** ", paren, PAD, file );
@@ -1523,8 +1527,8 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+            EXPRESSIONop2_out( oe, " in ", paren, PAD, file );
+            break;
         case OP_INST_EQUAL:
             EXPRESSIONop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1542,8 +1546,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " % ", paren, PAD, file );
             break;
         case OP_NOT_EQUAL:
-            /*EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file); */
-            EXPRESSIONop2_out( oe, " != ", paren, PAD , file );
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_NOT:
             EXPRESSIONop1_out( oe, " not ", paren, file );
@@ -1588,7 +1591,7 @@ EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    EXPRESSION__out( eo->op1, 1, eo->op_code , file );
+    EXPRESSION__out( eo->op1, 1, OP_UNKNOWN, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1607,7 +1610,7 @@ ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code , file );
+    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, OP_UNKNOWN, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1668,8 +1671,8 @@ WHEREPrint( Linked_List wheres, int level , FILE * file ) {
         fprintf( file, "\tdef unnamed_wr_%i(self):\n", where_rule_number );
         fprintf( file, "\t\teval_unnamed_wr_%i = ", where_rule_number );
     }
-    /*EXPRESSION_out( w->expr, level+1 , file ); */
-    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1 , file );
+
+    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1, file );
     /* raise exception if rule violated */
     if( strcmp( w->label->name, "<unnamed>" ) ) {
         fprintf( file, "\n\t\tif not eval_%s_wr:\n", w->label->name );
