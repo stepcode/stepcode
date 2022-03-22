@@ -2012,22 +2012,26 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             } else {
                 fprintf( files->lib, "%s):\n", output );
             }
-            fprintf( files->lib, "\tdef __init__(self,*kargs):\n" );
-            fprintf( files->lib, "\t\tpass\n" );
-            /* call the where / rules */
-            LISTdo( type->where, w, Where )
-            if( strcmp( w->label->name, "<unnamed>" ) ) {
-                /* define a function with the name 'label' */
-                fprintf( files->lib, "\t\tself.%s()\n", w->label->name );
-            } else {
-                /* no label */
-                fprintf( files->lib, "\t\tself.unnamed_wr_%i()\n", where_rule_number );
-                where_rule_number ++;
+
+	    if (LISTempty(type->where)) {
+                fprintf( files->lib, "\tpass\n" );
+	    } else {
+                fprintf( files->lib, "\tdef __init__(self, *args):\n" );
+                /* call the where / rules */
+                LISTdo( type->where, w, Where )
+                if( strcmp( w->label->name, "<unnamed>" ) ) {
+                    /* define a function with the name 'label' */
+                    fprintf( files->lib, "\t\tself.%s()\n", w->label->name );
+                } else {
+                    /* no label */
+                    fprintf( files->lib, "\t\tself.unnamed_wr_%i()\n", where_rule_number );
+                    where_rule_number ++;
+                }
+                LISTod
+                fprintf( files->lib, "\n" );
+                /* then we process the where rules */
+                WHEREPrint( type->where, 0, files->lib );
             }
-            LISTod
-            fprintf( files->lib, "\n" );
-            /* then we process the where rules */
-            WHEREPrint( type->where, 0, files->lib );
         }
     } else { /* TODO: cleanup, currently this is deadcode */
         switch( TYPEget_body( type )->type ) {
