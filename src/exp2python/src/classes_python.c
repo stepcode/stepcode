@@ -1469,7 +1469,10 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
             break;
         case OP_GROUP:
-            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            ATTRIBUTE_INITIALIZER_out(oe->op1, 1, file);
+            fprintf(file, "._scl_group(");
+            EXPRESSION_out(oe->op2, 0, file);
+            fprintf(file, ")");
             break;
         case OP_NEGATE:
             ATTRIBUTE_INITIALIZERop1_out( oe, "-", paren, file );
@@ -1562,7 +1565,10 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
             break;
         case OP_GROUP:
-            EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
+            EXPRESSION_out(oe->op1, 1, file);
+            fprintf(file, "._scl_group(");
+            EXPRESSION_out(oe->op2, 0, file);
+            fprintf(file, ")");
             break;
         case OP_NEGATE:
             EXPRESSIONop1_out( oe, "-", paren, file );
