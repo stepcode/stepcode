@@ -762,7 +762,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
             /* if the argument is not optional */
             if( !VARget_optional( v ) ) {
                 fprintf( file, "\t\t# Mandatory argument\n" );
-                fprintf( file, "\t\tassert value != None, 'Argument \"value\" is mandatory and cannot be set to None'\n" );
+                fprintf( file, "\t\tassert value is not None, 'Argument \"value\" is mandatory and cannot be set to None'\n" );
                 fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
@@ -773,7 +773,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                     fprintf( file, "%s):\n", attr_type );
                 }
             } else {
-                fprintf( file, "\t\tif value != None: # OPTIONAL attribute\n\t" );
+                fprintf( file, "\t\tif value is not None: # OPTIONAL attribute\n\t" );
                 fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
