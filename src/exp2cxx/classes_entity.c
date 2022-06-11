@@ -16,7 +16,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #include <sc_memmgr.h>
 #include <stdlib.h>
-#include <sc_stdbool.h>
+#include <stdbool.h>
 #include <assert.h>
 #include <sc_mkdir.h>
 #include "classes.h"
