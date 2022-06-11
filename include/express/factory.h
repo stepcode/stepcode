@@ -3,6 +3,6 @@
 
 #include "sc_export.h"
 
-SC_EXPRESS_EXPORT void FACTORYinitialize();
+extern SC_EXPRESS_EXPORT void FACTORYinitialize();
 
 #endif /* __FACTORY_H_ */
