@@ -1,4 +1,5 @@
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
+# Copyright (c) 2022, Chris Horler (cshorler@googlemail.com)
 # All rights reserved.
 
 # This file is part of the StepClassLibrary (SCL).
@@ -29,7 +30,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-class BaseEntityClass(object):
+__all__ = ['BaseEntityClass']
+
+def raise_(exc):
+    raise exc
+
+class BaseEntityClass:
     """ A class that allows advanced __repr__ features for entity instances
     """
     def __repr__(self):

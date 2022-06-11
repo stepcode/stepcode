@@ -29,30 +29,31 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     DictionaryEntry de;
     Type i;
     int redefs = 0;// index = 0;
+    int skipped;
 
-    /* Defined Types based on SIMPLE types */
-    SCOPEdo_types( scope, t, de )
-    if ( ( t->search_id == CANPROCESS )
-            && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
-            && ( TYPEget_ancestor( t ) == NULL) ) {
-        TYPEprint_descriptions( t, files, schema );
-        t->search_id = PROCESSED;
-    }
-    SCOPEod
+    while( 1 ) {
+        skipped = 0;
 
-    /* Defined Types with defined ancestor head
-     * TODO: recursive approach
-     */
-    SCOPEdo_types( scope, t, de )
-    if ( ( t->search_id == CANPROCESS )
-            && !( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) )
-            && ( ( i = TYPEget_head( t ) ) != NULL ) ) {
-        if (i->search_id == PROCESSED) {
+        SCOPEdo_types( scope, t, de )
+        if( TYPEis_enumeration( t ) || TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+            continue;
+        }
+
+        i = TYPEget_head( t );
+        if( ( !i || i->search_id == PROCESSED )
+                && t->search_id == CANPROCESS ) {
             TYPEprint_descriptions( t, files, schema );
             t->search_id = PROCESSED;
+        } else if( t->search_id == CANPROCESS ) {
+            skipped++;
+        }
+
+        SCOPEod
+
+        if( !skipped ) {
+            break;
         }
     }
-    SCOPEod
 
     /* fill in the values for the type descriptors */
     /* and print the enumerations */
@@ -74,14 +75,15 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     SCOPEod
 
     SCOPEdo_types( scope, t, de )
+    if( TYPEis_select( t ) || TYPEis_aggregate( t ) ) {
+        continue;
+    }
+
     // Do the non-redefined enumerations:
     if( ( t->search_id == CANPROCESS )
             && !( TYPEis_enumeration( t ) && TYPEget_head( t ) ) ) {
         TYPEprint_descriptions( t, files, schema );
-        if( !TYPEis_select( t ) ) {
-            // Selects have a lot more processing and are done below.
-            t->search_id = PROCESSED;
-        }
+        t->search_id = PROCESSED;
     }
     SCOPEod;
 
@@ -101,11 +103,13 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     // we don't have to worry about printing B before A.  This is checked in
     // TYPEselect_print().
     SCOPEdo_types( scope, t, de )
-    if( t->search_id == CANPROCESS ) {
+    if( t->search_id == CANPROCESS  && TYPEis_select( t ) ) {
         // Only selects haven't been processed yet and may still be set to
         // CANPROCESS.
         //FIXME this function is not implemented!
 //         TYPEselect_print( t, files, schema );
+        // TODO: due to conditional error we were previously executing this above without realising
+        TYPEprint_descriptions( t, files, schema );
         t->search_id = PROCESSED;
     }
     SCOPEod;
@@ -130,6 +134,14 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema ) {
     RULEPrint( r, files );
     LISTod;
     LISTfree( rule_list );
+
+    // TODO: check dependencies
+    SCOPEdo_types( scope, t, de )
+    if( t->search_id == CANPROCESS && TYPEis_aggregate( t ) ) {
+        TYPEprint_descriptions( t, files, schema );
+        t->search_id = PROCESSED;
+    }
+    SCOPEod
 
 }
 
@@ -181,6 +193,7 @@ void SCHEMAprint( Schema schema, FILES * files, int suffix ) {
     }
     fprintf( libfile, "import sys\n" );
     fprintf( libfile, "\n" );
+    fprintf( libfile, "from SCL import SCLBase\n" );
     fprintf( libfile, "from SCL.SCLBase import *\n" );
     fprintf( libfile, "from SCL.SimpleDataTypes import *\n" );
     fprintf( libfile, "from SCL.ConstructedDataTypes import *\n" );

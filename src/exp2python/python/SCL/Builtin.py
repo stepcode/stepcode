@@ -32,9 +32,9 @@
 __doc__ = "This module defines EXPRESS built in constants and functions"
 import math
 
-from SimpleDataTypes import *
-from BaseType import Aggregate
-from AggregationDataTypes import *
+from .SimpleDataTypes import *
+from .BaseType import Aggregate
+from .AggregationDataTypes import *
 
 SCL_float_epsilon = 1e-7
 # Builtin constants

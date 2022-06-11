@@ -31,14 +31,16 @@
 
 import unittest
 import sys
-sys.path.append('../examples/unitary_schemas')
+import os
+
+here = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(here, "..", "..", "examples", "unitary_schemas"))
 
 from SCL.SCLBase import *
 from SCL.SimpleDataTypes import *
 from SCL.ConstructedDataTypes import *
 from SCL.AggregationDataTypes import *
 from SCL.TypeChecker import check_type
-from SCL.Expr import *
 
 class TestSelectDataType(unittest.TestCase):
     '''

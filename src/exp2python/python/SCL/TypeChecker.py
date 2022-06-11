@@ -1,4 +1,3 @@
-from __future__ import print_function
 # Copyright (c) 2011, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 
@@ -30,8 +29,8 @@ from __future__ import print_function
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from ConstructedDataTypes import ENUMERATION, SELECT
-import BaseType
+from .ConstructedDataTypes import ENUMERATION, SELECT
+from . import BaseType
 
 RAISE_EXCEPTION_IF_TYPE_DOES_NOT_MATCH = True
 DEBUG = False

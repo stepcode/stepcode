@@ -403,10 +403,9 @@ class TestSET(unittest.TestCase):
 #
 class TestENUMERATION(unittest.TestCase):
     def test_simple_enum(self):
-        scp = sys.modules[__name__]
-        ahead_or_behind = ENUMERATION('ahead','behind',scope=scp)
-        check_type(ahead,ahead_or_behind)
-        check_type(behind,ahead_or_behind)
+        ahead_or_behind = ENUMERATION('ahead_or_behind', 'ahead behind', module=__name__)
+        check_type(ahead_or_behind.ahead,ahead_or_behind)
+        check_type(ahead_or_behind.behind,ahead_or_behind)
         try:
             check_type("some string",ahead_or_behind)
         except TypeError:
@@ -416,9 +415,9 @@ class TestENUMERATION(unittest.TestCase):
         else:
             self.fail('ExpectedException not thrown')
 
-class ob1(object):
+class ob1:
     pass
-class ob2(object):
+class ob2:
     pass
 class TestSELECT(unittest.TestCase):
     def test_select(self):

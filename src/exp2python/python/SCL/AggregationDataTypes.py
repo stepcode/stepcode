@@ -29,11 +29,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from SimpleDataTypes import *
-from TypeChecker import check_type
-import BaseType
+from .SimpleDataTypes import *
+from .TypeChecker import check_type
+from . import BaseType
 
-class BaseAggregate(object):
+class BaseAggregate:
     """ A class that define common properties to ARRAY, LIST, SET and BAG.
     """
     def __init__( self ,  bound1 , bound2 , base_type ):

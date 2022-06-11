@@ -29,9 +29,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 from enum import Enum
-import BaseType
+from . import BaseType
 
 class ENUMERATION(Enum):
     """
@@ -59,7 +58,7 @@ class ENUMERATION(Enum):
     """
     pass
        
-class SELECT(object):
+class SELECT:
     """ A select data type has as its domain the union of the domains of the named data types in
     its select list. The select data type is a generalization of each of the named data types in its
     select list.
