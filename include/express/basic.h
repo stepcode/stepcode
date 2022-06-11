@@ -82,7 +82,7 @@
 #ifdef HAVE_STDBOOL_H
 # include <stdbool.h>
 #else
-# include <sc_stdbool.h>
+# include <stdbool.h>
 #endif
 
 #if defined(_MSC_VER) && (_MSC_VER < 1900) && !defined(__cplusplus)

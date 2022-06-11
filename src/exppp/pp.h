@@ -4,7 +4,7 @@
 #ifndef PP_H
 #define PP_H
 
-#include <sc_stdbool.h>
+#include <stdbool.h>
 #include <express/symbol.h>
 
 extern int indent2;                             /**< where continuation lines start */

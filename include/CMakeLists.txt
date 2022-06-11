@@ -32,7 +32,6 @@ install(FILES ${exppp_HDRS}
 
 install(FILES ordered_attrs.h
   sc_export.h
-  sc_stdbool.h
   DESTINATION ${INCLUDE_DIR}/stepcode)
 
 install(FILES ${SC_BINARY_DIR}/${INCLUDE_DIR}/sc_cf.h
