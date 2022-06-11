@@ -1,7 +1,7 @@
 
 #define SC_MEMMGR_CC
 
-#include <sc_cf.h>
+#include "config.h"
 #include "sc_memmgr.h"
 
 #include <stdio.h>

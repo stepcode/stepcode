@@ -35,7 +35,7 @@ install(FILES ordered_attrs.h
   sc_stdbool.h
   DESTINATION ${INCLUDE_DIR}/stepcode)
 
-install(FILES ${SC_BINARY_DIR}/${INCLUDE_DIR}/sc_cf.h
+install(FILES ${SC_BINARY_DIR}/${INCLUDE_DIR}/config.h
   DESTINATION ${INCLUDE_DIR}/stepcode)
 
 # Local Variables:

@@ -18,7 +18,7 @@
 * values for the EXPRESS base types.
 */
 
-#include "sc_cf.h"
+#include "config.h"
 #include <sc_export.h>
 
 extern const char * SCLversion;

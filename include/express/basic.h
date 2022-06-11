@@ -71,7 +71,7 @@
  *
  */
 
-#include <sc_cf.h>
+#include "config.h"
 #include <sc_export.h>
 #include <stdio.h>
 

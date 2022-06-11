@@ -24,7 +24,7 @@
  * Revision 1.11  1997/10/22 16:10:26  sauderd
  * This would #include stdarg.h if __STDC__ was defined otherwise it would
  * #include vararg.h. I changed it to check the configure generated config file
- * named sc_cf.h (if HAVE_CONFIG_H is defined - it's also defined by
+ * named config.h (if HAVE_CONFIG_H is defined - it's also defined by
  * configure) to see if HAVE_STDARG_H is defined. If it is it #includes stdarg.h
  * otherwise it #includes vararg.h. If HAVE_CONFIG_H isn't defined then it works
  * like it used to.
