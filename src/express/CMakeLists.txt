@@ -57,6 +57,7 @@ add_library(express-obj OBJECT ${EXPRESS_SOURCES})
 add_dependencies(express-obj base)
 if(MSVC)
   set_property(TARGET express-obj APPEND PROPERTY COMPILE_DEFINITIONS "SC_EXPRESS_DLL_EXPORTS")
+  set_property(TARGET express-obj APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS "SC_EXPRESS_DLL_IMPORTS")
 endif(MSVC)
 
 
