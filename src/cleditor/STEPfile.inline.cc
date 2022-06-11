@@ -179,7 +179,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
         return( 0 );
     } else {
         if( SetFileName( filename ).empty() && ( filename.compare( "-" ) != 0 ) ) {
-            char msg[BUFSIZ];
+            char msg[BUFSIZ+1];
             sprintf( msg, "Unable to find file for input: \'%s\'. File not read.\n", filename.c_str() );
             _error.AppendToUserMsg( msg );
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -196,7 +196,7 @@ istream * STEPfile::OpenInputFile( const std::string filename ) {
     }
 
     if( !in || !( in -> good() ) ) {
-        char msg[BUFSIZ];
+        char msg[BUFSIZ+1];
         sprintf( msg, "Unable to open file for input: \'%s\'. File not read.\n", filename.c_str() );
         _error.AppendToUserMsg( msg );
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -231,7 +231,7 @@ ofstream * STEPfile::OpenOutputFile( std::string filename ) {
         }
     } else {
         if( SetFileName( filename ).empty() ) {
-            char msg[BUFSIZ];
+            char msg[BUFSIZ+1];
             sprintf( msg, "can't find file: %s\nFile not written.\n", filename.c_str() );
             _error.AppendToUserMsg( msg );
             _error.GreaterSeverity( SEVERITY_INPUT_ERROR );

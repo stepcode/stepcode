@@ -1,7 +1,7 @@
 #ifndef LAZYTYPES_H
 #define LAZYTYPES_H
 
-#include "sc_cf.h"
+#include "config.h"
 
 #include <iostream>
 #include <vector>

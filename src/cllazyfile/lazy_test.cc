@@ -2,7 +2,7 @@
 #include <sc_benchmark.h>
 #include "SdaiSchemaInit.h"
 #include "sc_memmgr.h"
-#include <sc_cf.h>
+#include "config.h"
 
 #ifndef NO_REGISTRY
 # include "schema.h"

@@ -608,7 +608,7 @@ static int inSchema( Scope scope, Scope super )
 static void addRenameTypedefs( Schema schema, FILE * classes ) {
     DictionaryEntry de;
     Type i;
-    char nm[BUFSIZ], basenm[BUFSIZ];
+    char nm[BUFSIZ+1], basenm[BUFSIZ+1];
     static bool firsttime = true;
 
     SCOPEdo_types( schema, t, de ) {
@@ -654,7 +654,7 @@ static void addAggrTypedefs( Schema schema, FILE * classes ) {
     DictionaryEntry de;
     Type i;
     static bool firsttime = true;
-    char nm[BUFSIZ];
+    char nm[BUFSIZ+1];
 
     SCOPEdo_types( schema, t, de ) {
         if( TYPEis_aggregate( t ) ) {
@@ -691,7 +691,7 @@ static void addUseRefNames( Schema schema, FILE * create ) {
     Dictionary useRefDict;
     DictionaryEntry de;
     Rename * rnm;
-    char * oldnm, schNm[BUFSIZ];
+    char * oldnm, schNm[BUFSIZ+1];
     static bool firsttime = true;
 
     if( ( useRefDict = schema->u.schema->usedict ) != NULL ) {

@@ -70,7 +70,7 @@ int isAggregateType( const Type t ) {
 /** \returns a pointer to a static buffer, containing a string which is the type used by the c++ data member access functions */
 const char * AccessType( Type t ) {
     Class_Of_Type class;
-    static char nm [BUFSIZ];
+    static char nm [BUFSIZ+1];
     strncpy( nm, TypeName( t ), BUFSIZ - 4 );
     if( TYPEis_entity( t ) ) {
         strcat( nm, "_ptr" );
@@ -102,7 +102,7 @@ const char * AccessType( Type t ) {
  */
 const char * PrettyTmpName( const char * oldname ) {
     int i = 0;
-    static char newname [BUFSIZ];
+    static char newname [BUFSIZ+1];
     newname [0] = '\0';
     while( ( oldname [i] != '\0' ) && ( i < BUFSIZ ) ) {
         newname [i] = ToLower( oldname [i] );
@@ -203,7 +203,7 @@ const char * FundamentalType( const Type t, int report_reftypes ) {
  * TypeDescriptor or subtype of TypeDescriptor to represent Type t in the dictionary.
  */
 const char * TypeDescriptorName( Type t ) {
-    static char b [BUFSIZ];
+    static char b [BUFSIZ+1];
     Schema parent = t->superscope;
     /* NOTE - I corrected a prev bug here in which the *current* schema was
     ** passed to this function.  Now we take "parent" - the schema in which

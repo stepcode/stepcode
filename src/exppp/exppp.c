@@ -435,7 +435,7 @@ int prep_string() {
     }
     string_func_in_use = true;
 
-    exppp_buf = exppp_bufp = ( char * )sc_malloc( BIGBUFSIZ );
+    exppp_buf = exppp_bufp = ( char * )sc_malloc( BIGBUFSIZ + 1 );
     if( !exppp_buf ) {
         fprintf( stderr, "failed to allocate exppp buffer\n" );
         return 1;

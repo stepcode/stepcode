@@ -74,7 +74,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "sc_cf.h"
+#include "config.h"
 #include "sc_memmgr.h"
 #include "sc_export.h"
 #include "sc_getopt.h"

@@ -21,7 +21,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
                                      int addFileId, int assignVal,
                                      int exchangeFileFormat, const char * ) {
     ErrorDescriptor errdesc;
-    char errmsg[BUFSIZ];
+    char errmsg[BUFSIZ+1];
     int value_cnt = 0;
     std::string buf;
 

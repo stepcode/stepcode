@@ -104,8 +104,8 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
     DictionaryEntry de;
     struct Rename * r;
     Linked_List list;
-    char td_name[BUFSIZ];
-    char sch_name[BUFSIZ];
+    char td_name[BUFSIZ+1];
+    char sch_name[BUFSIZ+1];
 
     strncpy( sch_name, PrettyTmpName( SCHEMAget_name( schema ) ), BUFSIZ );
 

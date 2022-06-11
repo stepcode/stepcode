@@ -102,7 +102,7 @@ bool attrIsObj( Type t ) {
  * \p attr_count_tmp is a _copy_ of attr_count
  */
 void ATTRnames_print( Entity entity, FILE* file ) {
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
 
     LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
         generate_attribute_name( v, attrnm );
@@ -121,7 +121,7 @@ void ATTRnames_print( Entity entity, FILE* file ) {
  * \param file file being written to
  */
 void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
     const char * ctype, * etype;
     if( !VARget_inverse( a ) && ( VARget_initializer( a ) == EXPRESSION_NULL ) ) {
         ctype = TYPEget_ctype( VARget_type( a ) );
@@ -130,11 +130,24 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
             fprintf( stderr, "Warning: in entity %s, the type for attribute %s is not fully implemented\n", ENTITYget_name( entity ), attrnm );
         }
         if( TYPEis_entity( VARget_type( a ) ) ) {
-            fprintf( file, "        SDAI_Application_instance_ptr _%s;", attrnm );
+            fprintf( file, "        SDAI_Application_instance_ptr _%s = NULL;", attrnm );
         } else if( TYPEis_aggregate( VARget_type( a ) ) ) {
-            fprintf( file, "        %s_ptr _%s;", ctype, attrnm );
+            fprintf( file, "        %s_ptr _%s = NULL;", ctype, attrnm );
         } else {
-            fprintf( file, "        %s _%s;", ctype, attrnm );
+            Class_Of_Type class = TYPEget_type(VARget_type(a));
+            switch (class) {
+                  case boolean_:
+                    fprintf(file, "        %s _%s = false;", ctype, attrnm);
+                    break;
+                  case integer_:
+                    fprintf(file, "        %s _%s = 0;", ctype, attrnm);
+                    break;
+                  case real_:
+                    fprintf(file, "        %s _%s = 0.0;", ctype, attrnm);
+                    break;
+                default:
+                    fprintf(file, "        %s _%s;", ctype, attrnm);
+            }
         }
         if( VARget_optional( a ) ) {
             fprintf( file, "    //  OPTIONAL" );
@@ -165,8 +178,8 @@ void DataMemberPrintAttr( Entity entity, Variable a, FILE * file ) {
 void ATTRsign_access_methods( Variable a, FILE * file ) {
 
     Type t = VARget_type( a );
-    char ctype [BUFSIZ];
-    char attrnm [BUFSIZ];
+    char ctype [BUFSIZ+1];
+    char attrnm [BUFSIZ+1];
 
     generate_attribute_func_name( a, attrnm );
 
@@ -208,8 +221,8 @@ void ATTRsign_access_methods( Variable a, FILE * file ) {
  ******************************************************************/
 void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE * file, bool returnsConst ) {
     Type t = VARget_type( a );
-    char ctype [BUFSIZ];   /*  return type of the get function  */
-    char funcnm [BUFSIZ];  /*  name of member function  */
+    char ctype [BUFSIZ+1];   /*  return type of the get function  */
+    char funcnm [BUFSIZ+1];  /*  name of member function  */
     generate_attribute_func_name( a, funcnm );
     strncpy( ctype, AccessType( t ), BUFSIZ );
     ctype[BUFSIZ-1] = '\0';
@@ -240,8 +253,8 @@ void ATTRprint_access_methods_get_head( const char * classnm, Variable a, FILE *
 void ATTRprint_access_methods_put_head( const char * entnm, Variable a, FILE * file ) {
 
     Type t = VARget_type( a );
-    char ctype [BUFSIZ];
-    char funcnm [BUFSIZ];
+    char ctype [BUFSIZ+1];
+    char funcnm [BUFSIZ+1];
 
     generate_attribute_func_name( a, funcnm );
 
@@ -442,7 +455,7 @@ void ATTRprint_access_methods_log_bool( const char * entnm, const char * attrnm,
 /** print access methods for inverse attrs, using iAMap */
 void INVprint_access_methods( const char * entnm, const char * attrnm, const char * funcnm, const char * nm,
                               const char * ctype, Variable a, FILE * file, Schema schema ) {
-    char iaName[BUFSIZ] = {0};
+    char iaName[BUFSIZ+1] = {0};
     snprintf( iaName, BUFSIZ - 1, "%s::%s%d%s%s", SCHEMAget_name( schema ), ATTR_PREFIX, a->idx,
               /* can it ever be anything but "I"? */
              ( VARis_derived( a ) ? "D" : ( VARis_type_shifter( a ) ? "R" : ( VARget_inverse( a ) ? "I" : "" ) ) ), attrnm );
@@ -490,12 +503,12 @@ void INVprint_access_methods( const char * entnm, const char * attrnm, const cha
 void ATTRprint_access_methods( const char * entnm, Variable a, FILE * file, Schema schema ) {
     Type t = VARget_type( a );
     Class_Of_Type classType;
-    char ctype [BUFSIZ];  /*  type of data member  */
-    char attrnm [BUFSIZ];
-    char membernm[BUFSIZ];
-    char funcnm [BUFSIZ];  /*  name of member function  */
+    char ctype [BUFSIZ+1];  /*  type of data member  */
+    char attrnm [BUFSIZ+1];
+    char membernm[BUFSIZ+1];
+    char funcnm [BUFSIZ+1];  /*  name of member function  */
 
-    char nm [BUFSIZ];
+    char nm [BUFSIZ+1];
     /* I believe nm has the name of the underlying type without Sdai in front of it */
     if( TYPEget_name( t ) ) {
         strncpy( nm, FirstToUpper( TYPEget_name( t ) ), BUFSIZ - 1 );
