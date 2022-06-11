@@ -153,7 +153,7 @@ include(SC_Locale)
 # logic related to regenerating the lexer and parser source code
 include(SC_Regenerate)
 
-# create config header sc_cf.h
+# create config.h header
 include(SC_Config_Headers)
 
 if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
@@ -173,10 +173,6 @@ if(NOT SC_IS_SUBBUILD)
     "    you see 'Configuring done' below. Headers and features vary by compiler."
     ".. Generating step can take a while if you are building several schemas.")
 endif(NOT SC_IS_SUBBUILD)
-
-# create config headers sc_cf.h
-include(SC_Config_Headers)
-
 
 ################
 

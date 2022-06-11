@@ -6,7 +6,7 @@
  * print_attrs -a <entity> <schema>
  */
 
-#include "sc_cf.h"
+#include "config.h"
 #include <stdlib.h>
 #ifdef HAVE_SYS_PARAM_H
 #  include <sys/param.h>

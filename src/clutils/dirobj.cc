@@ -39,7 +39,7 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sc_cf.h>
+#include "config.h"
 #include <dirobj.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>

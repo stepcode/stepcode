@@ -11,7 +11,7 @@
 */
 
 
-#include <sc_cf.h>
+#include "config.h"
 
 #include <gennode.h>
 #include <gennodelist.h>
