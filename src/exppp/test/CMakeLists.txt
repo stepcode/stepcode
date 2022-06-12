@@ -14,7 +14,7 @@ add_test(NAME build_exppp
   )
 
 # this executable doesn't really check the results, just ensures no segfaults. ought to improve it...
-SC_ADDEXEC(tst_breakLongStr SOURCES ${breakLongStr_SRCS} LINK_LIBRARIES express base TESTABLE)
+SC_ADDEXEC(tst_breakLongStr SOURCES ${breakLongStr_SRCS} LINK_LIBRARIES express TESTABLE)
 add_test(NAME build_tst_breakLongStr
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   COMMAND ${CMAKE_COMMAND} --build .

@@ -1,7 +1,6 @@
 include_directories(
   ${CMAKE_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${SC_SOURCE_DIR}/src/base
   )
 
 # Depending on whether we're using pre-generated sources or building them on
@@ -93,7 +92,6 @@ endif()
 
 if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
   add_library(express SHARED ${EXPRESS_OBJS})
-  target_link_libraries(express base)
   if(OPENBSD)
     set_target_properties(express PROPERTIES VERSION ${SC_VERSION_MAJOR}.${SC_VERSION_MINOR})
   else(OPENBSD)
@@ -137,9 +135,9 @@ set(CHECK_EXPRESS_SOURCES
 
 add_executable(check-express ${CHECK_EXPRESS_SOURCES})
 if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
-  target_link_libraries(check-express express base)
+  target_link_libraries(check-express express)
 else()
-  target_link_libraries(check-express express-static base-static)
+  target_link_libraries(check-express express-static)
 endif()
 install(TARGETS check-express
   RUNTIME DESTINATION ${BIN_DIR}

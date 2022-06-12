@@ -27,7 +27,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include <errno.h>
 
-#include "sc_memmgr.h"
 #include "classes.h"
 #include "expr.h"
 
@@ -43,11 +42,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #define PAD 1
 #define NOPAD   0
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#  include "sc_stdio.h"
-#  define snprintf c99_snprintf
-#endif
 
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
@@ -368,7 +362,7 @@ char* EXPRto_python( Expression e ) {
     char * temp;
     unsigned int bufsize = BIGBUFSIZ;
 
-    buf = ( char * )sc_malloc( bufsize );
+    buf = ( char * )malloc( bufsize );
     if( !buf ) {
         fprintf( stderr, "%s failed to allocate buffer: %s\n", __func__, strerror( errno ) );
         abort();
@@ -465,7 +459,7 @@ char* EXPRto_python( Expression e ) {
             abort();
     }
 
-    temp = ( char * )sc_realloc( buf, 1 + strlen(buf) );
+    temp = ( char * )realloc( buf, 1 + strlen(buf) );
     if( temp == 0 ) {
         fprintf( stderr, "%s failed to realloc buffer: %s\n", __func__, strerror( errno ) );
         abort();

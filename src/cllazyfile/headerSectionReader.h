@@ -8,7 +8,6 @@
 #include "lazyFileReader.h"
 #include "sectionReader.h"
 #include "lazyTypes.h"
-#include "sc_memmgr.h"
 
 #include "sc_export.h"
 

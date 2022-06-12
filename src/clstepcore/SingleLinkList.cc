@@ -11,7 +11,6 @@
 */
 
 #include <SingleLinkList.h>
-#include "sc_memmgr.h"
 #include <iostream>
 
 

@@ -4,7 +4,6 @@
 #include <fstream>
 #include <set>
 #include "lazyTypes.h"
-#include "sc_memmgr.h"
 #include "sc_export.h"
 #include "errordesc.h"
 #include "STEPcomplex.h"

@@ -2,14 +2,11 @@
 #define SC_BENCHMARK_H
 /// \file sc_benchmark.h memory info, timers, etc for benchmarking
 
-#include "sc_export.h"
-
 #ifdef __cplusplus
 #include <iostream>
 #include <iosfwd>
 #include <string>
 
-#include "sc_memmgr.h"
 extern "C" {
 #endif
 
@@ -23,7 +20,7 @@ extern "C" {
      *
      * not yet implemented for OSX or Windows.
      */
-    SC_BASE_EXPORT benchVals getMemAndTime( );
+    benchVals getMemAndTime( );
 
 #ifdef __cplusplus
 }
@@ -39,7 +36,7 @@ extern "C" {
  * depends on getMemAndTime() above - may not work on all platforms.
  */
 
-class SC_BASE_EXPORT benchmark {
+class benchmark {
     protected:
         benchVals initialVals, laterVals;
 #ifdef _MSC_VER

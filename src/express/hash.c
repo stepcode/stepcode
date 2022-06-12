@@ -109,7 +109,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sc_memmgr.h"
 #include "express/hash.h"
 
 /*
@@ -293,7 +292,7 @@ HASHdestroy( Hash_Table table ) {
                         p = q;
                     }
                 }
-                sc_free( table->Directory[i] );
+                free( table->Directory[i] );
             }
         }
         HASH_Table_destroy( table );

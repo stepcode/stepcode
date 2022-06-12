@@ -1,4 +1,3 @@
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory.h>
@@ -12,12 +11,6 @@
 #include <express/express.h>
 #include "pp.h"
 #include "exppp.h"
-
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#  include "sc_stdio.h"
-#  define snprintf c99_snprintf
-#endif
 
 /* PP_SMALL_BUF_SZ is a macro used in a few places where const int causes
  * "warning: ISO C90 forbids variable length array 'buf' [-Wvla]"
@@ -435,7 +428,7 @@ int prep_string() {
     }
     string_func_in_use = true;
 
-    exppp_buf = exppp_bufp = ( char * )sc_malloc( BIGBUFSIZ + 1 );
+    exppp_buf = exppp_bufp = ( char * )malloc( BIGBUFSIZ + 1 );
     if( !exppp_buf ) {
         fprintf( stderr, "failed to allocate exppp buffer\n" );
         return 1;
@@ -453,7 +446,7 @@ int prep_string() {
 }
 
 char * finish_string() {
-    char * b = ( char * )sc_realloc( exppp_buf, 1 + exppp_maxbuflen - exppp_buflen );
+    char * b = ( char * )realloc( exppp_buf, 1 + exppp_maxbuflen - exppp_buflen );
 
     if( b == 0 ) {
         fprintf( stderr, "failed to reallocate exppp buffer\n" );

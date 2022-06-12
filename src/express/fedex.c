@@ -75,9 +75,7 @@
 #include <stdio.h>
 
 #include "config.h"
-#include "sc_memmgr.h"
 #include "sc_export.h"
-#include "sc_getopt.h"
 #include "express/error.h"
 #include "express/express.h"
 #include "express/resolve.h"
@@ -86,6 +84,68 @@
 #ifdef YYDEBUG
 extern int exp_yydebug;
 #endif /*YYDEBUG*/
+
+char  * sc_optarg;        // global argument pointer
+int sc_optind = 0;     // global argv index
+
+int sc_getopt( int argc, char * argv[], char * optstring ) {
+    static char * next = NULL;
+    if( sc_optind == 0 ) {
+        next = NULL;
+    }
+
+    sc_optarg = NULL;
+
+    if( next == NULL || *next == '\0' ) {
+        if( sc_optind == 0 ) {
+            sc_optind++;
+        }
+
+        if( sc_optind >= argc || argv[sc_optind][0] != '-' || argv[sc_optind][1] == '\0' ) {
+            sc_optarg = NULL;
+            if( sc_optind < argc ) {
+                sc_optarg = argv[sc_optind];
+            }
+            return EOF;
+        }
+
+        if( strcmp( argv[sc_optind], "--" ) == 0 ) {
+            sc_optind++;
+            sc_optarg = NULL;
+            if( sc_optind < argc ) {
+                sc_optarg = argv[sc_optind];
+            }
+            return EOF;
+        }
+
+        next = argv[sc_optind];
+        next++;     // skip past -
+        sc_optind++;
+    }
+
+    char c = *next++;
+    char * cp = strchr( optstring, c );
+
+    if( cp == NULL || c == ':' ) {
+        return '?';
+    }
+
+    cp++;
+    if( *cp == ':' ) {
+        if( *next != '\0' ) {
+            sc_optarg = next;
+            next = NULL;
+        } else if( sc_optind < argc ) {
+            sc_optarg = argv[sc_optind];
+            sc_optind++;
+        } else {
+            return '?';
+        }
+    }
+
+    return c;
+}
+
 
 char EXPRESSgetopt_options[256] = "Bbd:e:i:w:p:rvz"; /* larger than the string because exp2cxx, exppp, etc may append their own options */
 static int no_need_to_work = 0; /* TRUE if we can exit gracefully without doing any work */

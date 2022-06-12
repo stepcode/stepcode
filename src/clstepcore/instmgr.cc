@@ -18,7 +18,6 @@
 
 #include <sdai.h>
 #include <instmgr.h>
-#include "sc_memmgr.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //  debug_level >= 2 => tells when a command is chosen

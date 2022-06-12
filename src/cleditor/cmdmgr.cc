@@ -11,7 +11,6 @@
 */
 
 #include <cmdmgr.h>
-#include "sc_memmgr.h"
 
 ReplicateLinkNode * ReplicateList::FindNode( MgrNode * mn ) {
     ReplicateLinkNode * rln = ( ReplicateLinkNode * )GetHead();

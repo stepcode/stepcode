@@ -4,9 +4,8 @@
 
 #include "complexSupport.h"
 #include "class_strings.h"
-#include <sc_memmgr.h>
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
@@ -91,7 +90,6 @@ void print_file_header( FILES * files ) {
     files -> initall = FILEcreate( "schema.cc" );
     fprintf( files->initall, "\n// in the exp2cxx source code, this file is generally referred to as files->initall or schemainit\n" );
     fprintf( files->initall, "#include \"schema.h\"\n" );
-    fprintf( files->initall, "#include \"sc_memmgr.h\"\n" );
     fprintf( files->initall, "class Registry;\n" );
 
     fprintf( files->initall, "\nvoid SchemaInit (Registry & reg) {\n" );
@@ -105,7 +103,6 @@ void print_file_header( FILES * files ) {
     files -> create = FILEcreate( "SdaiAll.cc" );
     fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
     fprintf( files->create, "#include \"schema.h\"\n" );
-    fprintf( files->create, "#include \"sc_memmgr.h\"\n" );
     fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
 
     // This file declares all entity classes as incomplete types.  This will
@@ -424,7 +421,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
     fprintf( incfile, "#include \"schema.h\"\n" );
-    fprintf( incfile, "#include \"sc_memmgr.h\"\n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -445,7 +441,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
 #else
     fprintf( libfile, "#include \"schema.h\"\n" );
 #endif
-    fprintf( libfile, "#include \"sc_memmgr.h\"\n" );
 
     fprintf( libfile,
              "\n#ifdef  SC_LOGGING \n"
@@ -500,7 +495,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
                  "#endif\n" );
 #endif
         fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
-        fprintf( initfile, "#include <sc_memmgr.h>\n" );
 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 

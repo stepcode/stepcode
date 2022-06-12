@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sc_memmgr.h>
 
 /* constants */
 #define HASH_NULL       (Hash_TableP)NULL

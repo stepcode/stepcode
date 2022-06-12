@@ -14,18 +14,24 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
-#include <sc_memmgr.h>
-#include <path2str.h>
+#define _XOPEN_SOURCE /* for S_IFDIR */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#ifdef _WIN32
+#  include <direct.h>
+#endif /* _WIN32 */
+
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include "classes.h"
 #include "class_strings.h"
 #include "genCxxFilenames.h"
 #include <ordered_attrs.h>
 #include "rules.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 static int type_count;  /**< number each temporary type for same reason as \sa attr_count */
 
@@ -42,6 +48,59 @@ int isMultiDimAggregateType( const Type t );
 
 void Type_Description( const Type, char * );
 void TypeBody_Description( TypeBody body, char * buf );
+
+/* cross-platform mkdir */
+static int sc_mkdir( const char * path ) {
+    #ifdef _WIN32
+    return mkdir( path );
+    #else
+    return mkdir( path, 0777 );
+    #endif /* _WIN32 */
+}
+
+/* return -1 if error, 0 if created, 1 if dir existed already */
+static int mkDirIfNone( const char * path ) {
+    struct stat s;
+    if( stat( path, &s ) != 0 ) {
+        if( errno == ENOENT ) {
+            return sc_mkdir( path );
+        }
+    } else if( s.st_mode & S_IFDIR ) {
+        return 1;
+    }
+    /* either stat returned an error other than ENOENT, or 'path' exists but isn't a dir */
+    return -1;
+}
+
+#ifdef _WIN32
+/* for windows, rewrite backslashes in paths
+ * that will be written to generated code
+ */
+static const char * path2str_fn( const char * fileMacro ) {
+    static char * result = 0;
+    static size_t rlen = 0;
+    char * p;
+    if( rlen < strlen( fileMacro ) ) {
+        if( result ) {
+            free( result );
+        }
+        rlen = strlen( fileMacro );
+        result = ( char * )malloc( rlen * sizeof( char ) + 1 );
+    }
+    strcpy( result, fileMacro );
+    p = result;
+    while( *p ) {
+        if( *p == '\\' ) {
+            *p = '/';
+        }
+        p++;
+    }
+    return result;
+}
+#  define path2str(path) path2str_fn(path)
+#else
+#  define path2str(path) path
+#endif
 
 /** write representation of expression to end of buf
  *
@@ -317,7 +376,6 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     DEBUG( "Entering TYPEPrint_cc for %s\n", names->impl );
 
     fprintf( impl, "#include \"schema.h\"\n" );
-    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
     fprintf( impl, "#include \"%s\"\n\n", names->header );
 
     if ( TYPEis_enumeration( type ) ) {
@@ -634,7 +692,7 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR )
         char * temp;
         temp = non_unique_types_string( type );
         fprintf( create, "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n", TYPEtd_name( type ), temp );
-        sc_free( temp );
+        free( temp );
         TYPEprint_nm_ft_desc( schema, type, create, "," );
         fprintf( create, "                  (SelectCreator) create_%s);        // Creator function\n", SelectName( TYPEget_name( type ) ) );
     } else {
@@ -1271,7 +1329,7 @@ char * TYPEget_express_type( const Type t ) {
 
         /*  this will declare extra memory when aggregate is > 1D  */
 
-        permval = ( char * )sc_malloc( strlen( retval ) * sizeof( char ) + 1 );
+        permval = ( char * )malloc( strlen( retval ) * sizeof( char ) + 1 );
         strcpy( permval, retval );
         return permval;
 
@@ -1290,7 +1348,7 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
         if( bound->type == Type_Funcall ) {
 	    char *bound_str = EXPRto_string(bound);
             fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, bound_str );
-            sc_free(bound_str);
+            free(bound_str);
         } else {
             fprintf( impl, "        %s->SetBound%d( %d );\n", var_name, boundNr, bound->u.integer );
         }

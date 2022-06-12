@@ -14,7 +14,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include "sc_memmgr.h"
 
 /**
  * Loops through descendants of this, invoking their matchOR functions.

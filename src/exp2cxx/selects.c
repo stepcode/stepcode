@@ -16,13 +16,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 extern int multiple_inheritance;
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
 #include "classes_type.h"
 #include "classes_attribute.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 #define BASE_SELECT "SDAI_Select"
 
@@ -397,7 +396,7 @@ char * non_unique_types_string( const Type type ) {
     non_unique_types_vector( type, tvec );
 
     /* build type string from vector */
-    typestr = ( char * )sc_malloc( BUFSIZ + 1 );
+    typestr = ( char * )malloc( BUFSIZ + 1 );
     typestr[0] = '\0';
     strcat( typestr, ( char * )"(" );
     for( i = 0; i <= tnumber; i++ ) {
@@ -1866,7 +1865,7 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
     }
 
     /*  mark the type as being processed  */
-    tag = ( SelectTag ) sc_malloc( sizeof( struct SelectTag_ ) );
+    tag = ( SelectTag ) malloc( sizeof( struct SelectTag_ ) );
     tag -> started = 1;
     tag -> complete = 0;
     TYPEput_clientData( t, ( ClientData ) tag );
@@ -1938,7 +1937,7 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;
 
-    sc_free( tag );
+    free( tag );
 }
 #undef BASE_SELECT
 

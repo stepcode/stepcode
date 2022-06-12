@@ -11,7 +11,6 @@
 
 #include <ExpDict.h>
 #include <Registry.h>
-#include "sc_memmgr.h"
 
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
  *                                                        Name, FundamentalType, Originating Schema, Description */

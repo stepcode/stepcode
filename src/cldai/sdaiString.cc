@@ -11,7 +11,6 @@
 
 #include <sdai.h>
 #include <sstream>
-#include "sc_memmgr.h"
 
 SDAI_String::SDAI_String( const char * str, size_t max ) {
     if( !str ) {

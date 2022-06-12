@@ -12,7 +12,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include <sc_memmgr.h>
 
 EntNode::EntNode( char * namelist[] )
 /*
