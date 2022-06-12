@@ -34,8 +34,6 @@
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)
 #include <STEPundefined.h>
 
-#include "sc_memmgr.h"
-
 /**
  * \returns The new file name for the class.
  * \param newName The file name to be set.

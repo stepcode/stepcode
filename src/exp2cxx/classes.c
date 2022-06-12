@@ -25,14 +25,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include "classes.h"
 #include <ordered_attrs.h>
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 int multiple_inheritance = 1;
 int print_logging = 0;
@@ -96,7 +94,7 @@ void format_for_std_stringout( FILE * f, char * orig_buf ) {
         optr++;
     }
     fprintf( f, "%s", s_end );
-    sc_free( orig_buf );
+    free( orig_buf );
 }
 
 void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * type, FILE * file ) {

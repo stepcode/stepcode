@@ -6,7 +6,6 @@
 #include <STEPattribute.h>
 #include <STEPaggregate.h>
 #include <sstream>
-#include "sc_memmgr.h"
 
 extern const char *
 ReadStdKeyword( istream & in, std::string & buf, int skipInitWS );

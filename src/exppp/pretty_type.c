@@ -5,7 +5,6 @@
 #include <stdlib.h>
 
 #include <express/error.h>
-#include <sc_memmgr.h>
 
 #include "exppp.h"
 #include "pp.h"
@@ -151,7 +150,7 @@ void TYPE_body_out( Type t, int level ) {
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 count++;
             }
-            names = ( char ** )sc_calloc( count, sizeof( char * ) );
+            names = ( char ** )calloc( count, sizeof( char * ) );
             DICTdo_type_init( t->symbol_table, &de, OBJ_EXPRESSION );
             while( 0 != ( expr = ( Expression )DICTdo( &de ) ) ) {
                 names[expr->u.integer - 1] = expr->symbol.name;
@@ -175,7 +174,7 @@ void TYPE_body_out( Type t, int level ) {
                 raw( names[i] );
             }
             raw( " )" );
-            sc_free( ( char * )names );
+            free( ( char * )names );
         }
         break;
         case select_:

@@ -2,7 +2,6 @@
 #define P21HEADERSECTIONREADER_H
 
 #include "headerSectionReader.h"
-#include "sc_memmgr.h"
 #include "sc_export.h"
 
 class SC_LAZYFILE_EXPORT p21HeaderSectionReader: public headerSectionReader {

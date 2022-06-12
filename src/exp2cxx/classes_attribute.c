@@ -10,22 +10,15 @@ The conventions used in this binding follow the proposed specification
 for the STEP Standard Data Access Interface as defined in document
 N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 *******************************************************************/
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include <ordered_attrs.h>
 #include <type.h>
 #include "classes.h"
 #include "classes_attribute.h"
 
-#include <sc_trace_fprintf.h>
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#  include "sc_stdio.h"
-#  define snprintf c99_snprintf
-#endif
+#include "./trace_fprintf.h"
 
 extern int old_accessors;
 extern int print_logging;
@@ -64,7 +57,7 @@ char * generate_attribute_name( Variable a, char * out ) {
         }
     }
     *q = '\0';
-    sc_free( temp );
+    free( temp );
     return out;
 }
 

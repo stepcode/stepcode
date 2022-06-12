@@ -27,7 +27,6 @@
 #include <math.h>
 
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 /*
 #include <EntityExtent.h>

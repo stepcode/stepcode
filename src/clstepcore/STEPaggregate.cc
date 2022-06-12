@@ -17,7 +17,6 @@
 #include <STEPattribute.h>
 #include <instmgr.h>
 #include <ExpDict.h>
-#include "sc_memmgr.h"
 
 
 /**

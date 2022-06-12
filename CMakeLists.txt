@@ -120,7 +120,6 @@ option(BUILD_STATIC_LIBS "Build static libraries" OFF)
 option(SC_PYTHON_GENERATOR "Compile exp2python" ON)
 option(SC_CPP_GENERATOR "Compile exp2cxx" ON)
 
-option(SC_MEMMGR_ENABLE_CHECKS "Enable sc_memmgr's memory leak detection" OFF)
 option(SC_TRACE_FPRINTF "Enable extra comments in generated code so the code's source in exp2cxx may be located" OFF)
 
 option(SC_ENABLE_COVERAGE "Enable code coverage test" OFF)
@@ -189,7 +188,6 @@ include_directories(
   ${SC_BINARY_DIR}/include
  )
 
-add_subdirectory(src/base)
 add_subdirectory(src/express)
 add_subdirectory(src/exppp)
 add_subdirectory(src/exp2cxx)

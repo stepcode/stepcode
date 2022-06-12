@@ -16,8 +16,6 @@
  * #include "lazyP28DataSectionReader.h"
  * #include "p28HeaderSectionReader.h"
  */
-#include "sc_memmgr.h"
-
 class lazyInstMgr;
 class Registry;
 class headerSectionReader;

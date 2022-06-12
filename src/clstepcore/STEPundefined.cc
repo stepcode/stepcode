@@ -13,7 +13,6 @@
 #include <stdio.h> // to get the BUFSIZ #define
 #include <STEPattribute.h>
 #include <STEPundefined.h>
-#include "sc_memmgr.h"
 
 /** \class SCLundefined
 **    helper functions for reading unknown types

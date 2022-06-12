@@ -31,11 +31,10 @@
  * Date:        04/09/97                                                     *
  *****************************************************************************/
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 int isAggregateType( const Type t );
 
@@ -189,7 +188,7 @@ static void initializeMarks( Express express )
     DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         schema->search_id = UNPROCESSED;
-        schema->clientData = ( int * )sc_malloc( sizeof( int ) );
+        schema->clientData = ( int * )malloc( sizeof( int ) );
         *( int * )schema->clientData = 0;
         SCOPEdo_entities( schema, ent, de_ent )
         ent->search_id = NOTKNOWN;
@@ -207,7 +206,7 @@ static void cleanupMarks( Express express ) {
     DICTdo_type_init( express->symbol_table, &de_sch, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de_sch ) ) != 0 ) {
         if( schema->clientData ) {
-            sc_free( schema->clientData );
+            free( schema->clientData );
             schema->clientData = NULL;
         }
     }

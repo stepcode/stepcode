@@ -3,7 +3,6 @@
 
 #include "lazyDataSectionReader.h"
 #include "lazyFileReader.h"
-#include "sc_memmgr.h"
 #include "sc_export.h"
 
 class SC_LAZYFILE_EXPORT lazyP21DataSectionReader: public lazyDataSectionReader {

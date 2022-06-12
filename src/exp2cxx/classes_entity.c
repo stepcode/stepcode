@@ -14,11 +14,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
-#include <sc_memmgr.h>
+#define _XOPEN_SOURCE /* for S_IFDIR */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#ifdef _WIN32
+#  include <direct.h>
+#endif /* _WIN32 */
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include "classes.h"
 #include "classes_entity.h"
 #include "class_strings.h"
@@ -26,10 +31,33 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <ordered_attrs.h>
 #include "rules.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 extern int multiple_inheritance;
 extern int old_accessors;
+
+/* cross-platform mkdir */
+static int sc_mkdir( const char * path ) {
+    #ifdef _WIN32
+    return mkdir( path );
+    #else
+    return mkdir( path, 0777 );
+    #endif /* _WIN32 */
+}
+
+/* return -1 if error, 0 if created, 1 if dir existed already */
+static int mkDirIfNone( const char * path ) {
+    struct stat s;
+    if( stat( path, &s ) != 0 ) {
+        if( errno == ENOENT ) {
+            return sc_mkdir( path );
+        }
+    } else if( s.st_mode & S_IFDIR ) {
+        return 1;
+    }
+    /* either stat returned an error other than ENOENT, or 'path' exists but isn't a dir */
+    return -1;
+}
 
 /* attribute numbering used to use a global variable attr_count.
  * it could be tricky keep the numbering consistent when making
@@ -676,7 +704,7 @@ char * generate_dict_attr_name( Variable a, char * out ) {
     }
     *q = '\0';
 
-    sc_free( temp );
+    free( temp );
     return out;
 }
 
@@ -864,15 +892,15 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
 
     if( VARis_derived( v ) && v->initializer ) {
         tmp = EXPRto_string( v->initializer );
-        tmp2 = ( char * )sc_malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
+        tmp2 = ( char * )malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
         fprintf( impl, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm, format_for_stringout( tmp, tmp2 ) );
-        sc_free( tmp );
-        sc_free( tmp2 );
+        free( tmp );
+        free( tmp2 );
     }
     if( VARget_inverse( v ) ) {
         fprintf( impl, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
@@ -957,7 +985,6 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
     fprintf( impl, "#include \"schema.h\"\n" );
-    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
     fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
 
     LIBdescribe_entity( entity, impl, schema );

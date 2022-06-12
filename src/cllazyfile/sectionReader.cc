@@ -5,9 +5,14 @@
 #include <set>
 #include <string>
 #include <assert.h>
+#include <limits.h>
+
+#ifdef _WIN32
+#  define strtoull _strtoui64
+#  define ULLONG_MAX _UI64_MAX
+#endif
 
 #include "Registry.h"
-#include "sc_strtoull.h"
 #include "sdaiApplication_instance.h"
 #include "read_func.h"
 #include "SdaiSchemaInit.h"

@@ -17,7 +17,6 @@
 #include <cmath>
 
 #include <cstring>
-#include "sc_memmgr.h"
 
 extern void HeaderSchemaInit( Registry & reg );
 
