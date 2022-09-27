@@ -9,7 +9,7 @@
 
 /**
  * \class EnumAggregate
- * This is a minimal representions for a collection of SDAI_Enum
+ * This is a minimal representation for a collection of SDAI_Enum
  */
 class SC_CORE_EXPORT EnumAggregate  :  public STEPaggregate {
 public:
@@ -55,7 +55,7 @@ SC_CORE_EXPORT BOOLEANS * create_BOOLEANS();
 
 /**
  * * \class EnumNode
- ** This is a minimal representions for node in lists of SDAI_Enum
+ ** This is a minimal representation for node in lists of SDAI_Enum
  */
 class SC_CORE_EXPORT EnumNode  : public STEPnode {
 public:

@@ -11,7 +11,7 @@
 
 /**
  * * \class SelectAggregate
- ** This is a minimal represention for a collection of SDAI_Select
+ ** This is a minimal representation for a collection of SDAI_Select
  */
 class SC_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
 public:
@@ -35,7 +35,7 @@ typedef        SelectAggregate_ptr  SelectAggregate_var;
 
 /**
  * * \class SelectNode
- ** This is a minimal representions for node in lists of SDAI_Select
+ ** This is a minimal representation for node in lists of SDAI_Select
  */
 class SC_CORE_EXPORT SelectNode  : public STEPnode {
 public:
