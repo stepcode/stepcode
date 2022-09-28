@@ -1,7 +1,7 @@
 # Copyright (c) 2011-2012, Thomas Paviot (tpaviot@gmail.com)
 # All rights reserved.
 
-# This file is part StepClassLibrary (SCL).
+# This file is part of the STEPCODE project.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
