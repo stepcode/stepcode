@@ -36,11 +36,11 @@ import os
 here = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(here, "..", "..", "examples", "unitary_schemas"))
 
-from SCL.SCLBase import *
-from SCL.SimpleDataTypes import *
-from SCL.ConstructedDataTypes import *
-from SCL.AggregationDataTypes import *
-from SCL.TypeChecker import check_type
+from stepcode.SCLBase import *
+from stepcode.SimpleDataTypes import *
+from stepcode.ConstructedDataTypes import *
+from stepcode.AggregationDataTypes import *
+from stepcode.TypeChecker import check_type
 
 class TestSelectDataType(unittest.TestCase):
     '''
