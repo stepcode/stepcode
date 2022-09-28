@@ -30,7 +30,7 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
-from SCL.Part21 import Parser
+from stepcode.Part21 import Parser
 
 ShapesSample ="""
 ISO-10303-21;

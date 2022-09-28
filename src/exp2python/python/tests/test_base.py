@@ -32,10 +32,10 @@
 import sys
 import unittest
 
-from SCL.SimpleDataTypes import *
-from SCL.TypeChecker import *
-from SCL.ConstructedDataTypes import *
-from SCL.AggregationDataTypes import *
+from stepcode.SimpleDataTypes import *
+from stepcode.TypeChecker import *
+from stepcode.ConstructedDataTypes import *
+from stepcode.AggregationDataTypes import *
 
 #
 # Simple data types
