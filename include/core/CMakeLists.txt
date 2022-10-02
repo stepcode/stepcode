@@ -5,7 +5,7 @@ set(CORE_HDRS
   baseType.h
   complexSupport.h
   create_Aggr.h
-# derivedAttribute.h
+  derivedAttribute.h
 # dictSchema.h
 # dictdefs.h
 # dictionaryInstance.h

@@ -38,7 +38,7 @@
 #include "entityDescriptor.h"
 #include "enumTypeDescriptor.h"
 #include "core/attrDescriptor.h"
-#include "derivedAttribute.h"
+#include "core/derivedAttribute.h"
 #include "inverseAttribute.h"
 
 #include "core/create_Aggr.h"

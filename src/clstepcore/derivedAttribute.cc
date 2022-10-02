@@ -1,4 +1,4 @@
-#include "derivedAttribute.h"
+#include "core/derivedAttribute.h"
 
 Derived_attribute::Derived_attribute( const char * name, const TypeDescriptor * domainType,
                                       Logical optional, Logical unique, AttrType_Enum at, const EntityDescriptor & owner )
