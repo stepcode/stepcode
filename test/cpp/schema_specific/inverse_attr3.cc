@@ -5,7 +5,7 @@
  * This test originally used STEPfile, which didn't work. Fixing STEPfile would have been very difficult, it uses lazyInstMgr now.
  */
 #include "config.h"
-#include <lazyInstMgr.h>
+#include "lazy/lazyInstMgr.h"
 #include <lazyRefs.h>
 #include "core/sdai.h"
 #include "core/STEPattribute.h"

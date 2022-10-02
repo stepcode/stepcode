@@ -1,6 +1,6 @@
-#include "lazyDataSectionReader.h"
-#include "lazyFileReader.h"
-#include "lazyInstMgr.h"
+#include "lazy/lazyDataSectionReader.h"
+#include "lazy/lazyFileReader.h"
+#include "lazy/lazyInstMgr.h"
 #include <iostream>
 
 lazyDataSectionReader::lazyDataSectionReader( lazyFileReader * parent, std::ifstream & file,

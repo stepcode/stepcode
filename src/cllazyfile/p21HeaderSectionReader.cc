@@ -1,11 +1,11 @@
 #include <assert.h>
 #include <string.h>
 
-#include "p21HeaderSectionReader.h"
-#include "headerSectionReader.h"
-#include "sectionReader.h"
-#include "lazyInstMgr.h"
-#include "judyL2Array.h"
+#include "lazy/p21HeaderSectionReader.h"
+#include "lazy/headerSectionReader.h"
+#include "lazy/sectionReader.h"
+#include "lazy/lazyInstMgr.h"
+#include "lazy/judyL2Array.h"
 
 
 void p21HeaderSectionReader::findSectionStart() {

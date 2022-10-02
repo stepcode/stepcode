@@ -1,4 +1,4 @@
-#include "lazyInstMgr.h"
+#include "lazy/lazyInstMgr.h"
 #include "./sc_benchmark.h"
 #include "editor/SdaiSchemaInit.h"
 #include "config.h"

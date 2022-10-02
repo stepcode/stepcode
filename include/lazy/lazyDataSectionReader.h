@@ -3,8 +3,8 @@
 
 #include <map>
 #include <iostream>
-#include "sectionReader.h"
-#include "lazyTypes.h"
+#include "lazy/sectionReader.h"
+#include "lazy/lazyTypes.h"
 
 #include "sc_export.h"
 

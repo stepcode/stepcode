@@ -8,9 +8,9 @@
 #include "sc_export.h"
 
 // PART 21
-#include "lazyP21DataSectionReader.h"
-#include "p21HeaderSectionReader.h"
-#include "headerSectionReader.h"
+#include "lazy/lazyP21DataSectionReader.h"
+#include "lazy/p21HeaderSectionReader.h"
+#include "lazy/headerSectionReader.h"
 
 /* // PART 28
  * #include "lazyP28DataSectionReader.h"

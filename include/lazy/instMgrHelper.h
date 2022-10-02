@@ -4,7 +4,7 @@
 #include <sc_export.h>
 
 #include "core/mgrnode.h"
-#include <lazyInstMgr.h>
+#include "lazy/lazyInstMgr.h"
 #include "core/instmgr.h"
 
 /**

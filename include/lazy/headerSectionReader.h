@@ -5,9 +5,9 @@
 #include <fstream>
 
 #include "judyL2Array.h"
-#include "lazyFileReader.h"
-#include "sectionReader.h"
-#include "lazyTypes.h"
+#include "lazy/lazyFileReader.h"
+#include "lazy/sectionReader.h"
+#include "lazy/lazyTypes.h"
 
 #include "sc_export.h"
 

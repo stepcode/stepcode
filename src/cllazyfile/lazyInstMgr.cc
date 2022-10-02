@@ -1,9 +1,9 @@
-#include "lazyTypes.h"
-#include "lazyInstMgr.h"
+#include "lazy/lazyTypes.h"
+#include "lazy/lazyInstMgr.h"
 #include "core/Registry.h"
 #include "core/SubSuperIterators.h"
 #include "editor/SdaiSchemaInit.h"
-#include "instMgrHelper.h"
+#include "lazy/instMgrHelper.h"
 #include "lazyRefs.h"
 
 #include "core/sdaiApplication_instance.h"

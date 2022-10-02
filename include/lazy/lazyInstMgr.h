@@ -5,9 +5,9 @@
 #include <string>
 #include <assert.h>
 
-#include "lazyDataSectionReader.h"
-#include "lazyFileReader.h"
-#include "lazyTypes.h"
+#include "lazy/lazyDataSectionReader.h"
+#include "lazy/lazyFileReader.h"
+#include "lazy/lazyTypes.h"
 
 #include "core/Registry.h"
 #include "sc_export.h"

@@ -1,10 +1,10 @@
 #include <assert.h>
 
 
-#include "lazyFileReader.h"
-#include "lazyDataSectionReader.h"
-#include "headerSectionReader.h"
-#include "lazyInstMgr.h"
+#include "lazy/lazyFileReader.h"
+#include "lazy/lazyDataSectionReader.h"
+#include "lazy/headerSectionReader.h"
+#include "lazy/lazyInstMgr.h"
 
 void lazyFileReader::initP21() {
     _header = new p21HeaderSectionReader( this, _file, 0, -1 );

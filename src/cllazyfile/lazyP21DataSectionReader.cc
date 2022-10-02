@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <set>
-#include "lazyP21DataSectionReader.h"
-#include "lazyInstMgr.h"
+#include "lazy/lazyP21DataSectionReader.h"
+#include "lazy/lazyInstMgr.h"
 
 lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file,
         std::streampos start, sectionID sid ):

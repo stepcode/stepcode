@@ -18,10 +18,10 @@
 #include "editor/SdaiSchemaInit.h"
 #include "core/STEPcomplex.h"
 
-#include "sectionReader.h"
-#include "lazyFileReader.h"
-#include "lazyInstMgr.h"
-#include "lazyTypes.h"
+#include "lazy/sectionReader.h"
+#include "lazy/lazyFileReader.h"
+#include "lazy/lazyInstMgr.h"
+#include "lazy/lazyTypes.h"
 
 #include "current_function.hpp"
 

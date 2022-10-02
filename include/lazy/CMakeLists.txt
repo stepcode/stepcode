@@ -1,5 +1,18 @@
 set(LAZY_HDRS
-
+  headerSectionReader.h
+  lazyFileReader.h
+  lazyP21DataSectionReader.h
+  p21HeaderSectionReader.h
+  lazyDataSectionReader.h
+  lazyInstMgr.h
+  lazyTypes.h
+  sectionReader.h
+  instMgrHelper.h
+  judy.h
+  judyL2Array.h
+  judyLArray.h
+  judyS2Array.h
+  judySArray.h
   )
 
 install(FILES ${LAZY_HDRS}

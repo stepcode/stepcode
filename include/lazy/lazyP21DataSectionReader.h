@@ -1,8 +1,8 @@
 #ifndef LAZYP21DATASECTIONREADER_H
 #define LAZYP21DATASECTIONREADER_H
 
-#include "lazyDataSectionReader.h"
-#include "lazyFileReader.h"
+#include "lazy/lazyDataSectionReader.h"
+#include "lazy/lazyFileReader.h"
 #include "sc_export.h"
 
 class SC_LAZYFILE_EXPORT lazyP21DataSectionReader: public lazyDataSectionReader {

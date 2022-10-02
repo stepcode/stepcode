@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <set>
-#include "lazyTypes.h"
+#include "lazy/lazyTypes.h"
 #include "sc_export.h"
 #include "errordesc.h"
 #include "core/STEPcomplex.h"

@@ -7,8 +7,8 @@
 #include <vector>
 
 #include "sc_export.h"
-#include "lazyTypes.h"
-#include "lazyInstMgr.h"
+#include "lazy/lazyTypes.h"
+#include "lazy/lazyInstMgr.h"
 #include "core/ExpDict.h"
 #include "core/SubSuperIterators.h"
 #include "core/STEPattribute.h"
