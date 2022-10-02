@@ -1,4 +1,4 @@
-#include "core/interfacedItem.h"
+#include "clstepcore/interfacedItem.h"
 
 Interfaced_item::Interfaced_item() {
 }

@@ -37,11 +37,11 @@ install(FILES ordered_attrs.h
 install(FILES ${SC_BINARY_DIR}/${INCLUDE_DIR}/config.h
   DESTINATION ${INCLUDE_DIR}/stepcode)
 
-add_subdirectory(core)
-add_subdirectory(dai)
-add_subdirectory(editor)
-add_subdirectory(lazy)
-add_subdirectory(utils)
+add_subdirectory(cldai)
+add_subdirectory(cleditor)
+add_subdirectory(cllazyfile)
+add_subdirectory(clstepcore)
+add_subdirectory(clutils)
 
 # Local Variables:
 # tab-width: 8

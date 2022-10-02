@@ -75,12 +75,12 @@ void print_file_header( FILES * files ) {
     fprintf( files->incall, "#include <sys/time.h>\n" );
     fprintf( files->incall, "#endif\n" );
 
-    fprintf( files->incall, "#include \"core/sdai.h\"\n\n" );
-    fprintf( files->incall, "\n#include \"core/Registry.h\"\n" );
-    fprintf( files->incall, "\n#include \"core/STEPaggregate.h\"\n" );
-    fprintf( files->incall, "\n#include \"core/STEPundefined.h\"\n" );
-    fprintf( files->incall, "\n#include \"core/ExpDict.h\"\n" );
-    fprintf( files->incall, "\n#include \"core/STEPattribute.h\"\n" );
+    fprintf( files->incall, "#include \"clstepcore/sdai.h\"\n\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/Registry.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPaggregate.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPundefined.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/ExpDict.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPattribute.h\"\n" );
 
     fprintf( files->incall, "\n#include <Sdaiclasses.h>\n" );
 
@@ -494,7 +494,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
                  "#include \"schema.h\"\n"
                  "#endif\n" );
 #endif
-        fprintf( initfile, "#include \"core/Registry.h\"\n#include <string>\n" );
+        fprintf( initfile, "#include \"clstepcore/Registry.h\"\n#include <string>\n" );
 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 

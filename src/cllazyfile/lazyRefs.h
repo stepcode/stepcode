@@ -7,12 +7,12 @@
 #include <vector>
 
 #include "sc_export.h"
-#include "lazy/lazyTypes.h"
-#include "lazy/lazyInstMgr.h"
-#include "core/ExpDict.h"
-#include "core/SubSuperIterators.h"
-#include "core/STEPattribute.h"
-#include "core/STEPaggregate.h"
+#include "cllazyfile/lazyTypes.h"
+#include "cllazyfile/lazyInstMgr.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/SubSuperIterators.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/STEPaggregate.h"
 
 #ifdef _WIN32
 #define strcasecmp _strcmpi

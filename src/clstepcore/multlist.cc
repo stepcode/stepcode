@@ -13,7 +13,7 @@
  * Date:        9/18/96                                                      *
  *****************************************************************************/
 
-#include "core/complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Deletes the childList of this, before this is deleted.

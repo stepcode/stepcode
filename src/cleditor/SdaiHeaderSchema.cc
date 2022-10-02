@@ -10,9 +10,9 @@ extern ofstream * logStream;
 #define SCLLOGFILE "scl.log"
 #endif
 
-#include "core/ExpDict.h"
-#include "core/STEPattribute.h"
-#include "editor/SdaiHeaderSchema.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/STEPattribute.h"
+#include "cleditor/SdaiHeaderSchema.h"
 
 Schema * s_header_section_schema = 0;
 

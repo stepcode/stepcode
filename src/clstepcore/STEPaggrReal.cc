@@ -1,4 +1,4 @@
-#include "core/STEPaggrReal.h"
+#include "clstepcore/STEPaggrReal.h"
 
 /** \file STEPaggrReal.cc
  * implementation of classes RealAggregate and RealNode

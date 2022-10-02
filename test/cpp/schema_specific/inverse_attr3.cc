@@ -5,13 +5,13 @@
  * This test originally used STEPfile, which didn't work. Fixing STEPfile would have been very difficult, it uses lazyInstMgr now.
  */
 #include "config.h"
-#include "lazy/lazyInstMgr.h"
+#include "cllazyfile/lazyInstMgr.h"
 #include <lazyRefs.h>
-#include "core/sdai.h"
-#include "core/STEPattribute.h"
-#include "core/ExpDict.h"
-#include "core/Registry.h"
-#include "utils/errordesc.h"
+#include "clstepcore/sdai.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/Registry.h"
+#include "clutils/errordesc.h"
 #include <algorithm>
 #include <string>
 #include <superInvAttrIter.h>

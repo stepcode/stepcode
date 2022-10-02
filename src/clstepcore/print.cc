@@ -7,7 +7,7 @@
  * Date:        10/31/96                                                     *
  *****************************************************************************/
 
-#include "core/complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 // Local function prototypes:
 static char * joinText( JoinType, char * );

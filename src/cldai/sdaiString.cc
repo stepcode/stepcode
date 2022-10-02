@@ -9,7 +9,7 @@
 * and is not subject to copyright.
 */
 
-#include "core/sdai.h"
+#include "clstepcore/sdai.h"
 #include <sstream>
 
 SDAI_String::SDAI_String( const char * str, size_t max ) {

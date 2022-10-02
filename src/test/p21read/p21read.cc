@@ -13,12 +13,12 @@
 */
 
 extern void SchemaInit( class Registry & );
-#include "editor/STEPfile.h"
-#include "core/sdai.h"
-#include "core/STEPattribute.h"
-#include "core/ExpDict.h"
-#include "core/Registry.h"
-#include "utils/errordesc.h"
+#include "cleditor/STEPfile.h"
+#include "clstepcore/sdai.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/Registry.h"
+#include "clutils/errordesc.h"
 #include <algorithm>
 #include <string>
 #include "sc_benchmark.h"

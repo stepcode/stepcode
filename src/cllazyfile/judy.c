@@ -60,7 +60,7 @@
 #  endif
 #endif
 
-#include "lazy/judy.h"
+#include "cllazyfile/judy.h"
 
 #include <string.h>
 #include <stdio.h>

@@ -12,11 +12,11 @@
 
 #include <stdio.h>
 
-#include "core/read_func.h"
-#include "core/STEPaggregate.h"
-#include "core/STEPattribute.h"
-#include "core/instmgr.h"
-#include "core/ExpDict.h"
+#include "clstepcore/read_func.h"
+#include "clstepcore/STEPaggregate.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/instmgr.h"
+#include "clstepcore/ExpDict.h"
 
 
 /**

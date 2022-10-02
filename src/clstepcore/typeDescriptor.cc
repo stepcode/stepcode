@@ -1,4 +1,4 @@
-#include "core/typeDescriptor.h"
+#include "clstepcore/typeDescriptor.h"
 
 TypeDescriptor::TypeDescriptor( )
     : _name( 0 ), altNames( 0 ), _fundamentalType( UNKNOWN_TYPE ),

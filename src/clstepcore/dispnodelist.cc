@@ -12,13 +12,13 @@
 
 /* $Id: dispnodelist.cc,v 3.0.1.2 1997/11/05 22:11:40 sauderd DP3.1 $ */
 
-#include "utils/gennode.h"
-#include "utils/gennodelist.h"
+#include "clutils/gennode.h"
+#include "clutils/gennodelist.h"
 
-#include "core/mgrnode.h"
-#include "core/mgrnodelist.h"
-#include "core/dispnode.h"
-#include "core/dispnodelist.h"
+#include "clstepcore/mgrnode.h"
+#include "clstepcore/mgrnodelist.h"
+#include "clstepcore/dispnode.h"
+#include "clstepcore/dispnodelist.h"
 
 void DisplayNodeList::Remove( GenericNode * node ) {
     GenNodeList::Remove( node );

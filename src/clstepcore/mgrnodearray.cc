@@ -32,9 +32,9 @@ static int PrintFunctionTrace = 2;
 // values within functions get printed out
 //static int PrintValues = 3;
 
-#include "core/mgrnodearray.h"
+#include "clstepcore/mgrnodearray.h"
 //#include <STEPentity.h>
-#include "core/sdai.h"
+#include "clstepcore/sdai.h"
 
 #include <string.h> // to get bcopy() - ANSI
 

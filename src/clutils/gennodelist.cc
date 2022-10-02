@@ -12,10 +12,10 @@
 
 /* $Id: gennodelist.cc,v 3.0.1.2 1997/11/05 22:33:49 sauderd DP3.1 $  */
 
-#include "utils/gennode.h"
-#include "utils/gennodelist.h"
+#include "clutils/gennode.h"
+#include "clutils/gennodelist.h"
 //#include <gennode.inline.h>
-#include "utils/gennodearray.h"
+#include "clutils/gennodearray.h"
 
 // inserts after existNode
 void GenNodeList::InsertAfter( GenericNode * newNode,

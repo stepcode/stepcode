@@ -4,7 +4,7 @@
 // it since your modifications will be lost if exp2cxx is used to
 // regenerate it.
 
-#include "editor/SdaiHeaderSchema.h"
+#include "cleditor/SdaiHeaderSchema.h"
 
 void HeaderInitSchemasAndEnts( Registry & reg ) {
     Uniqueness_rule_ptr ur;

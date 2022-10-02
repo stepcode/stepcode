@@ -1,4 +1,4 @@
-#include "core/STEPaggrGeneric.h"
+#include "clstepcore/STEPaggrGeneric.h"
 #include <sstream>
 
 /** \file STEPaggrGeneric.cc

@@ -1,4 +1,4 @@
-#include "core/sdai.h"
+#include "clstepcore/sdai.h"
 
 SDAI_Session_instance::SDAI_Session_instance() {
 }

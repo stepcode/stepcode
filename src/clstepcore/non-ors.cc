@@ -10,7 +10,7 @@
  * Date:        10/17/96                                                     *
  *****************************************************************************/
 
-#include "core/complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Checks if we match the nodes of ents.  If only one unmarked is left

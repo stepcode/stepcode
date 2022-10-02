@@ -11,7 +11,7 @@
  * Date:        11/14/96                                                     *
  *****************************************************************************/
 
-#include "core/complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Inserts a new ComplexList to our list.  The ComplexLists are ordered by

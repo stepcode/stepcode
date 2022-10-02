@@ -1,4 +1,4 @@
-#include "core/implicitItemId.h"
+#include "clstepcore/implicitItemId.h"
 
 Implicit_item_id::Implicit_item_id() {
     _local_definition = 0;

@@ -24,15 +24,15 @@
 #include <algorithm>
 #include <vector>
 
-#include "editor/STEPfile.h"
-#include "core/sdai.h"
-#include "core/STEPcomplex.h"
-#include "core/STEPattribute.h"
-#include "editor/SdaiHeaderSchema.h"
+#include "cleditor/STEPfile.h"
+#include "clstepcore/sdai.h"
+#include "clstepcore/STEPcomplex.h"
+#include "clstepcore/STEPattribute.h"
+#include "cleditor/SdaiHeaderSchema.h"
 
 // STEPundefined contains
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)
-#include "core/STEPundefined.h"
+#include "clstepcore/STEPundefined.h"
 
 /**
  * \returns The new file name for the class.

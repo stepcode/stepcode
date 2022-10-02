@@ -1,4 +1,4 @@
-#include "core/STEPaggrEnum.h"
+#include "clstepcore/STEPaggrEnum.h"
 #include <sstream>
 
 /** \file StepaggrEnum.cc

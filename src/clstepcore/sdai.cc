@@ -1,7 +1,7 @@
 #include <limits.h>
 #include <cfloat>
 
-#include "core/sdai.h"
+#include "clstepcore/sdai.h"
 
 const char * SCLversion = "STEPcode, github.com/stepcode/stepcode";
 

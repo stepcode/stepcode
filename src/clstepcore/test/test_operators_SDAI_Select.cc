@@ -6,9 +6,9 @@
 
 #include <iostream>
 
-#include "core/ExpDict.h"
-#include "core/baseType.h"
-#include "core/sdaiSelect.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/baseType.h"
+#include "clstepcore/sdaiSelect.h"
 
 using namespace std;
 

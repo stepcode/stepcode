@@ -10,8 +10,8 @@
 * and is not subject to copyright.
 */
 
-#include "core/STEPattributeList.h"
-#include "core/STEPattribute.h"
+#include "clstepcore/STEPattributeList.h"
+#include "clstepcore/STEPattribute.h"
 
 AttrListNode::AttrListNode( STEPattribute * a ) {
     attr = a;
