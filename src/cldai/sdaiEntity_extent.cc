@@ -3,7 +3,6 @@
 //#include <EntityExtent.h>
 
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 SDAI_Entity_extent::SDAI_Entity_extent( )
     : _definition( 0 ), _definition_name( 0 ), _owned_by( 0 ) {
@@ -56,7 +55,7 @@ void SDAI_Entity_extent::owned_by_( SDAI_Model_contents__list_var& mclv ) {
 }
 
 SDAI_Model_contents__list_var SDAI_Entity_extent ::owned_by_() const {
-    return ( const SDAI_Model_contents__list_var ) &_owned_by;
+    return ( SDAI_Model_contents__list_var ) &_owned_by;
 }
 
 /*

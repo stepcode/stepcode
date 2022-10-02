@@ -8,7 +8,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include <sc_memmgr.h>
 
 // Local function prototypes:
 static char * joinText( JoinType, char * );

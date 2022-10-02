@@ -1,8 +1,7 @@
 #include "lazyInstMgr.h"
-#include <sc_benchmark.h>
+#include "./sc_benchmark.h"
 #include "SdaiSchemaInit.h"
-#include "sc_memmgr.h"
-#include <sc_cf.h>
+#include "config.h"
 
 #ifndef NO_REGISTRY
 # include "schema.h"
@@ -111,14 +110,14 @@ void dumpComplexInst( STEPcomplex * c ) {
         STEPcomplex * complex = c->head;
         while( complex ) {
             if( complex->IsComplex() ) {
-                std::cout << "Complex component " << complex->getEDesc()->Name() << " at depth " << depth << " with attr list size ";
+                std::cout << "Complex component " << complex->eDesc->Name() << " at depth " << depth << " with attr list size ";
                 std::cout << complex->_attr_data_list.size() << std::endl;
 //                 dumpComplexInst( complex, depth + 1 );
             } else {
                 //probably won't ever get here...
                 SDAI_Application_instance * ai = dynamic_cast< SDAI_Application_instance * >( complex );
                 if( ai ) {
-                    std::cout << "non-complex component at depth " << depth << ", " << ai->getEDesc()->Name() << std::endl;
+                    std::cout << "non-complex component at depth " << depth << ", " << ai->eDesc->Name() << std::endl;
                 } else {
                     std::cout << "unknown component at depth " << depth << ": " << complex << std::endl;
                 }

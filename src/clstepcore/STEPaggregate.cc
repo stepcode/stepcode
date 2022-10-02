@@ -17,7 +17,6 @@
 #include <STEPattribute.h>
 #include <instmgr.h>
 #include <ExpDict.h>
-#include "sc_memmgr.h"
 
 
 /**
@@ -106,7 +105,7 @@ Severity STEPaggregate::ReadValue( istream & in, ErrorDescriptor * err,
     (void) addFileId; //not used in ReadValue() for this class
 
     ErrorDescriptor errdesc;
-    char errmsg[BUFSIZ];
+    char errmsg[BUFSIZ+1];
     int value_cnt = 0;
     std::string buf;
 

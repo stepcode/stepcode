@@ -18,7 +18,6 @@
 
 #include <sdai.h>
 #include <instmgr.h>
-#include "sc_memmgr.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //  debug_level >= 2 => tells when a command is chosen
@@ -94,7 +93,7 @@ void InstMgr::DeleteInstances() {
 enum Severity
 InstMgr::VerifyInstances( ErrorDescriptor & err ) {
     int errorCount = 0;
-    char errbuf[BUFSIZ];
+    char errbuf[BUFSIZ+1];
 
     int n = InstanceCount();
     MgrNode * mn;

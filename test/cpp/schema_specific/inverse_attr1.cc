@@ -3,8 +3,7 @@
 ** Test inverse attributes; uses a tiny schema similar to a subset of IFC2x3
 **
 */
-#include <sc_cf.h>
-#include "sc_version_string.h"
+#include "config.h"
 #include "SubSuperIterators.h"
 #include <STEPfile.h>
 #include <sdai.h>
@@ -17,8 +16,68 @@
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
-#include <sc_getopt.h>
 #include "schema.h"
+
+char  * sc_optarg;        // global argument pointer
+int sc_optind = 0;     // global argv index
+
+int sc_getopt( int argc, char * argv[], char * optstring ) {
+    static char * next = NULL;
+    if( sc_optind == 0 ) {
+        next = NULL;
+    }
+
+    sc_optarg = NULL;
+
+    if( next == NULL || *next == '\0' ) {
+        if( sc_optind == 0 ) {
+            sc_optind++;
+        }
+
+        if( sc_optind >= argc || argv[sc_optind][0] != '-' || argv[sc_optind][1] == '\0' ) {
+            sc_optarg = NULL;
+            if( sc_optind < argc ) {
+                sc_optarg = argv[sc_optind];
+            }
+            return EOF;
+        }
+
+        if( strcmp( argv[sc_optind], "--" ) == 0 ) {
+            sc_optind++;
+            sc_optarg = NULL;
+            if( sc_optind < argc ) {
+                sc_optarg = argv[sc_optind];
+            }
+            return EOF;
+        }
+
+        next = argv[sc_optind];
+        next++;     // skip past -
+        sc_optind++;
+    }
+
+    char c = *next++;
+    char * cp = strchr( optstring, c );
+
+    if( cp == NULL || c == ':' ) {
+        return '?';
+    }
+
+    cp++;
+    if( *cp == ':' ) {
+        if( *next != '\0' ) {
+            sc_optarg = next;
+            next = NULL;
+        } else if( sc_optind < argc ) {
+            sc_optarg = argv[sc_optind];
+            sc_optind++;
+        } else {
+            return '?';
+        }
+    }
+
+    return c;
+}
 
 ///first way of finding inverse attrs
 bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
@@ -44,7 +103,7 @@ bool findInverseAttrs1( InverseAItr iai, InstMgr & instList ) {
                 EntityNode * en = ( EntityNode * ) relObj->GetHead();
                 SdaiObject * obj = ( SdaiObject * ) en->node;
                 cout << "file id " << obj->StepFileId() << "; name "
-                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->getEDesc()->Name() << endl;
+                     << instList.GetApplication_instance( obj->StepFileId() - 1 )->eDesc->Name() << endl;
             }
             ent_id = i;
         }

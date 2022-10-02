@@ -27,7 +27,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <stdlib.h>
 #include <errno.h>
 
-#include "sc_memmgr.h"
 #include "classes.h"
 #include "expr.h"
 
@@ -43,11 +42,6 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 #define PAD 1
 #define NOPAD   0
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#  include "sc_stdio.h"
-#  define snprintf c99_snprintf
-#endif
 
 int isAggregateType( const Type t );
 int isAggregate( Variable a );
@@ -175,7 +169,7 @@ int Handle_FedPlus_Args( int i, char * arg ) {
 
 bool is_python_keyword( char * word ) {
     int i;
-    const char* keyword_list[] = {"class", "pass", NULL};
+    const char* keyword_list[] = {"class", "pass", "property", NULL};
     bool python_keyword = false;
 
     for( i = 0; keyword_list[i] != NULL; i++ ) {
@@ -368,9 +362,9 @@ char* EXPRto_python( Expression e ) {
     char * temp;
     unsigned int bufsize = BIGBUFSIZ;
 
-    buf = ( char * )sc_malloc( bufsize );
+    buf = ( char * )malloc( bufsize );
     if( !buf ) {
-        fprintf(stderr, "%s failed to allocate buffer: %s\n", __FUNCTION__, strerror(errno) );
+        fprintf( stderr, "%s failed to allocate buffer: %s\n", __func__, strerror( errno ) );
         abort();
     }
 
@@ -429,7 +423,7 @@ char* EXPRto_python( Expression e ) {
             snprintf( buf, bufsize, "%s.%s", TYPEget_name(e->type), e->symbol.name );
             break;
         case query_:
-			strcpy( buf, "# query_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('query_'))" );
             break;
         case self_:
             strcpy( buf, "self" );
@@ -451,13 +445,13 @@ char* EXPRto_python( Expression e ) {
                 break;
         }
         case op_:
-			strcpy( buf, "# op_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('op_'))" );
             break;
         case aggregate_:
-            strcpy( buf, "# aggregate_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('aggregate_'))" );
             break;
         case oneof_: {
-            strcpy( buf, "# oneof_ NOT_IMPLEMENTED!" );
+            strcpy( buf, "SCLBase.raise_(NotImplementedError('oneof_'))" );
             break;
         }
         default:
@@ -465,9 +459,9 @@ char* EXPRto_python( Expression e ) {
             abort();
     }
 
-    temp = ( char * )sc_realloc( buf, 1 + strlen(buf) );
+    temp = ( char * )realloc( buf, 1 + strlen(buf) );
     if( temp == 0 ) {
-        fprintf(stderr, "%s failed to realloc buffer: %s\n", __FUNCTION__, strerror(errno) );
+        fprintf( stderr, "%s failed to realloc buffer: %s\n", __func__, strerror( errno ) );
         abort();
     }
 
@@ -556,7 +550,7 @@ int cmp_python_mro( void * e1, void * e2 ) {
 void
 LIBdescribe_entity( Entity entity, FILE * file ) {
     int attr_count_tmp = attr_count;
-    char attrnm [BUFSIZ], parent_attrnm[BUFSIZ];
+    char attrnm [BUFSIZ+1], parent_attrnm[BUFSIZ+1];
     char * attr_type;
     bool generate_constructor = true; /*by default, generates a python constructor */
     bool single_inheritance = false;
@@ -762,7 +756,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
             /* if the argument is not optional */
             if( !VARget_optional( v ) ) {
                 fprintf( file, "\t\t# Mandatory argument\n" );
-                fprintf( file, "\t\tassert value != None, 'Argument \"value\" is mandatory and cannot be set to None'\n" );
+                fprintf( file, "\t\tassert value is not None, 'Argument \"value\" is mandatory and cannot be set to None'\n" );
                 fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
@@ -773,7 +767,7 @@ LIBdescribe_entity( Entity entity, FILE * file ) {
                     fprintf( file, "%s):\n", attr_type );
                 }
             } else {
-                fprintf( file, "\t\tif value != None: # OPTIONAL attribute\n\t" );
+                fprintf( file, "\t\tif value is not None: # OPTIONAL attribute\n\t" );
                 fprintf( file, "\t\tif not check_type(value," );
                 if( TYPEis_aggregate( t ) ) {
                     process_aggregate( file, t );
@@ -1104,6 +1098,7 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         fprintf( file, "):\n" );
         
         if( loop->while_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->while_expr, 0 , file );
             fprintf( file, ":\n");
@@ -1113,9 +1108,12 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         }
 
         if( loop->until_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            fprintf( file, ":\n" );
+            python_indent( file, level + 2 );
+            fprintf( file, "break\n" );
         }
     } else if( loop->while_expr ) {
         fprintf( file, "while " );
@@ -1124,17 +1122,23 @@ LOOPpyout( struct Loop_ *loop, int level, FILE * file ) {
         STATEMENTlist_out( loop->statements, level + 1 , file );
 
         if( loop->until_expr ) {
+            python_indent( file, level + 1 );
             fprintf( file, "if " );
             EXPRESSION_out( loop->until_expr, 0 , file );
-            fprintf( file, ":\n\tbreak\n");
+            fprintf( file, ":\n" );
+            python_indent( file, level + 2 );
+            fprintf( file, "break\n" );
         }
     } else {
         fprintf( file, "while True:\n" );
         STATEMENTlist_out( loop->statements, level + 1 , file );
 
+        python_indent( file, level + 1 );
         fprintf( file, "if " );
         EXPRESSION_out( loop->until_expr, 0 , file );
-        fprintf( file, ":\n\tbreak\n");
+        fprintf( file, ":\n" );
+        python_indent( file, level + 2 );
+        fprintf( file, "break\n" );
     }
 
 }
@@ -1199,7 +1203,11 @@ ATTRIBUTE_INITIALIZER__out( Expression e, int paren, int previous_op , FILE * fi
             break;
         case entity_:
         case identifier_:
-            fprintf( file, "self.%s", e->symbol.name );
+            if( previous_op == OP_DOT || previous_op == OP_GROUP ) {
+                fprintf( file, "%s", e->symbol.name );
+            } else {
+                fprintf( file, "self.%s", e->symbol.name );
+            }
             break;
         case attribute_:
             fprintf( file, "%s", e->symbol.name );
@@ -1419,8 +1427,8 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             ATTRIBUTE_INITIALIZERop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+            ATTRIBUTE_INITIALIZERop2_out( oe, " in ", paren, PAD, file );
+            break;
         case OP_INST_EQUAL:
             ATTRIBUTE_INITIALIZERop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1455,7 +1463,10 @@ ATTRIBUTE_INITIALIZERop__out( struct Op_Subexpression* oe, int paren, Op_Code pr
             ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
             break;
         case OP_GROUP:
-            ATTRIBUTE_INITIALIZERop2_out( oe, ".", paren, NOPAD, file );
+            ATTRIBUTE_INITIALIZER_out(oe->op1, 1, file);
+            fprintf(file, "._scl_group(");
+            EXPRESSION_out(oe->op2, 0, file);
+            fprintf(file, ")");
             break;
         case OP_NEGATE:
             ATTRIBUTE_INITIALIZERop1_out( oe, "-", paren, file );
@@ -1501,7 +1512,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " * ", paren, PAD, file );
             break;
         case OP_XOR:
-            EXPRESSIONop2__out( oe, " != ", paren, PAD, previous_op, file );
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_EXP:
             EXPRESSIONop2_out( oe, " ** ", paren, PAD, file );
@@ -1513,8 +1524,8 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " > ", paren, PAD, file );
             break;
         case OP_IN:
-            /*    EXPRESSIONop2_out( oe, " in ", paren, PAD, file ); */
-            /*    break; */
+            EXPRESSIONop2_out( oe, " in ", paren, PAD, file );
+            break;
         case OP_INST_EQUAL:
             EXPRESSIONop2_out( oe, " == ", paren, PAD, file );
             break;
@@ -1532,8 +1543,7 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, " % ", paren, PAD, file );
             break;
         case OP_NOT_EQUAL:
-            /*EXPRESSIONop2_out( oe, ( char * )0, paren, PAD ,file); */
-            EXPRESSIONop2_out( oe, " != ", paren, PAD , file );
+            EXPRESSIONop2_out( oe, " != ", paren, PAD, file );
             break;
         case OP_NOT:
             EXPRESSIONop1_out( oe, " not ", paren, file );
@@ -1549,7 +1559,10 @@ EXPRESSIONop__out( struct Op_Subexpression* oe, int paren, Op_Code previous_op, 
             EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
             break;
         case OP_GROUP:
-            EXPRESSIONop2_out( oe, ".", paren, NOPAD, file );
+            EXPRESSION_out(oe->op1, 1, file);
+            fprintf(file, "._scl_group(");
+            EXPRESSION_out(oe->op2, 0, file);
+            fprintf(file, ")");
             break;
         case OP_NEGATE:
             EXPRESSIONop1_out( oe, "-", paren, file );
@@ -1578,7 +1591,7 @@ EXPRESSIONop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    EXPRESSION__out( eo->op1, 1, eo->op_code , file );
+    EXPRESSION__out( eo->op1, 1, OP_UNKNOWN, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1597,7 +1610,7 @@ ATTRIBUTE_INITIALIZERop2__out( struct Op_Subexpression * eo, char * opcode, int 
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         fprintf( file, "(" );
     }
-    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, eo->op_code , file );
+    ATTRIBUTE_INITIALIZER__out( eo->op1, 1, OP_UNKNOWN, file );
     if( pad ) {
         fprintf( file, " " );
     }
@@ -1658,8 +1671,8 @@ WHEREPrint( Linked_List wheres, int level , FILE * file ) {
         fprintf( file, "\tdef unnamed_wr_%i(self):\n", where_rule_number );
         fprintf( file, "\t\teval_unnamed_wr_%i = ", where_rule_number );
     }
-    /*EXPRESSION_out( w->expr, level+1 , file ); */
-    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1 , file );
+
+    ATTRIBUTE_INITIALIZER_out( w->expr, level + 1, file );
     /* raise exception if rule violated */
     if( strcmp( w->label->name, "<unnamed>" ) ) {
         fprintf( file, "\n\t\tif not eval_%s_wr:\n", w->label->name );
@@ -1951,10 +1964,10 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 
 void
 TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
-    char tdnm [BUFSIZ],
-         typename_buf [MAX_LEN],
-         base [BUFSIZ],
-         nm [BUFSIZ];
+    char tdnm [BUFSIZ+1],
+         typename_buf [MAX_LEN+1],
+         base [BUFSIZ+1],
+         nm [BUFSIZ+1];
     Type i;
 
     int where_rule_number = 0;
@@ -1993,22 +2006,26 @@ TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
             } else {
                 fprintf( files->lib, "%s):\n", output );
             }
-            fprintf( files->lib, "\tdef __init__(self,*kargs):\n" );
-            fprintf( files->lib, "\t\tpass\n" );
-            /* call the where / rules */
-            LISTdo( type->where, w, Where )
-            if( strcmp( w->label->name, "<unnamed>" ) ) {
-                /* define a function with the name 'label' */
-                fprintf( files->lib, "\t\tself.%s()\n", w->label->name );
-            } else {
-                /* no label */
-                fprintf( files->lib, "\t\tself.unnamed_wr_%i()\n", where_rule_number );
-                where_rule_number ++;
+
+	    if (LISTempty(type->where)) {
+                fprintf( files->lib, "\tpass\n" );
+	    } else {
+                fprintf( files->lib, "\tdef __init__(self, *args):\n" );
+                /* call the where / rules */
+                LISTdo( type->where, w, Where )
+                if( strcmp( w->label->name, "<unnamed>" ) ) {
+                    /* define a function with the name 'label' */
+                    fprintf( files->lib, "\t\tself.%s()\n", w->label->name );
+                } else {
+                    /* no label */
+                    fprintf( files->lib, "\t\tself.unnamed_wr_%i()\n", where_rule_number );
+                    where_rule_number ++;
+                }
+                LISTod
+                fprintf( files->lib, "\n" );
+                /* then we process the where rules */
+                WHEREPrint( type->where, 0, files->lib );
             }
-            LISTod
-            fprintf( files->lib, "\n" );
-            /* then we process the where rules */
-            WHEREPrint( type->where, 0, files->lib );
         }
     } else { /* TODO: cleanup, currently this is deadcode */
         switch( TYPEget_body( type )->type ) {

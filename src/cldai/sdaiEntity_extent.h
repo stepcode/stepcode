@@ -56,7 +56,7 @@ class SC_DAI_EXPORT SDAI_Entity_extent : public SDAI_Session_instance {
             return &_instances;
         }
         SDAI_DAObject__set_var instances_() const {
-            return ( const SDAI_DAObject__set_var )&_instances;
+            return ( SDAI_DAObject__set_var )&_instances;
         }
 
 // need to implement Model_contents__list

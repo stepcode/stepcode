@@ -6,7 +6,7 @@
 
 const char * ClassName( const char * oldname ) {
     int i = 0, j = 0;
-    static char newname [BUFSIZ];
+    static char newname [BUFSIZ+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -152,12 +152,12 @@ const char * TYPE_get_ctype( const Type t, char * retval, size_t buf_siz ) {
 }
 
 const char * TYPEget_ctype( const Type t ) {
-    static char retval [BUFSIZ] = {0};
+    static char retval [BUFSIZ+1] = {0};
     return TYPE_get_ctype( t, retval, BUFSIZ );
 }
 
 const char * TypeName( Type t ) {
-    static char name [BUFSIZ];
+    static char name [BUFSIZ+1];
     strcpy( name, TYPE_PREFIX );
     if( TYPEget_name( t ) ) {
         strncat( name, FirstToUpper( TYPEget_name( t ) ), BUFSIZ - strlen( TYPE_PREFIX ) - 1 );
@@ -185,7 +185,7 @@ char ToUpper( char c ) {
 }
 
 const char * StrToLower( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     if( !word ) {
         return 0;
@@ -200,7 +200,7 @@ const char * StrToLower( const char * word ) {
 }
 
 const char * StrToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -212,7 +212,7 @@ const char * StrToUpper( const char * word ) {
 }
 
 const char * StrToConstant( const char * word ) {
-    static char newword[MAX_LEN];
+    static char newword[MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -229,7 +229,7 @@ const char * StrToConstant( const char * word ) {
 }
 
 const char * FirstToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
 
     strncpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );

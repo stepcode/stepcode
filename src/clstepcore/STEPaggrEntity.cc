@@ -21,9 +21,10 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
                                      int addFileId, int assignVal,
                                      int exchangeFileFormat, const char * ) {
     ErrorDescriptor errdesc;
-    char errmsg[BUFSIZ];
+    char errmsg[BUFSIZ+1];
     int value_cnt = 0;
     std::string buf;
+    bool free_item = false;
 
     if( assignVal ) {
         Empty();    // read new values and discard existing ones
@@ -67,6 +68,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     // It is used to read the values
     else if( !assignVal ) {
         item = new EntityNode();
+        free_item = true;
     }
 
     while( in.good() && ( c != ')' ) ) {
@@ -114,8 +116,12 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
     } else { // expectation for end paren delim has not been met
         err->GreaterSeverity( SEVERITY_INPUT_ERROR );
         err->AppendToUserMsg( "Missing close paren for aggregate value" );
+	if (free_item)
+           delete item;
         return SEVERITY_INPUT_ERROR;
     }
+    if (free_item)
+       delete item;
     return err->severity();
 }
 

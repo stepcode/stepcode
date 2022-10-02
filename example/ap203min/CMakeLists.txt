@@ -6,7 +6,7 @@
 # for the use of this file.
 #
 project(AP203Minimum)
-cmake_minimum_required(VERSION 3.6.3)
+cmake_minimum_required(VERSION 3.12)
 
 # Set STEPCODE_ROOT_DIR to point to the root of the STEPcode source tree.
 if(NOT DEFINED STEPCODE_ROOT_DIR)
@@ -14,14 +14,14 @@ if(NOT DEFINED STEPCODE_ROOT_DIR)
 endif(NOT DEFINED STEPCODE_ROOT_DIR)
 
 # STEPCODE_ROOT_DIR is relative or absolute path?
-if(EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/SC_VERSION.txt")
+if(EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/src/express/express.c")
   set(STEPCODE_ROOT_DIR "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}")
   message("** STEPCODE_ROOT_DIR is a relative path; converted to absolute path: ${STEPCODE_ROOT_DIR}.")
 else()
-  if(NOT EXISTS "${STEPCODE_ROOT_DIR}/SC_VERSION.txt")
+  if(NOT EXISTS "${STEPCODE_ROOT_DIR}/src/express/express.c")
     message(FATAL_ERROR "****  Cannot locate STEPCODE_ROOT_DIR - try an absolute path.")
-  endif(NOT EXISTS "${STEPCODE_ROOT_DIR}/SC_VERSION.txt")
-endif(EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/SC_VERSION.txt")
+  endif(NOT EXISTS "${STEPCODE_ROOT_DIR}/src/express/express.c")
+endif(EXISTS "${CMAKE_BINARY_DIR}/${STEPCODE_ROOT_DIR}/src/express/express.c")
 
 
 # Use STEPcode as library, but build from this build process.
@@ -51,14 +51,13 @@ endif(NOT EXISTS ${SCHEMA_FILE})
 
 get_filename_component(SCHEMA_SN ${SCHEMA_FILE} NAME)
 string(REGEX REPLACE "\(.*\).[Ee][Xx][Pp]" "sdai_\\1" SCHEMA_LINK_NAME ${SCHEMA_SN})
-set(STEPCODE_LIBRARIES base stepcore stepeditor stepdai steputils ${SCHEMA_LINK_NAME})
+set(STEPCODE_LIBRARIES stepcore stepeditor stepdai steputils ${SCHEMA_LINK_NAME})
 
 # Add STEPCode project to CMake build.
 add_subdirectory(${STEPCODE_ROOT_DIR} "${CMAKE_CURRENT_BINARY_DIR}/sc" EXCLUDE_FROM_ALL)
 
 # Set up STEPcode include directories.
 set(STEPCODE_INCLUDE_DIR
-  ${STEPCODE_ROOT_DIR}/src/base
   ${STEPCODE_ROOT_DIR}/src/clstepcore
   ${STEPCODE_ROOT_DIR}/src/cldai
   ${STEPCODE_ROOT_DIR}/src/clutils

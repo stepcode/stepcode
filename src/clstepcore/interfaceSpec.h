@@ -13,19 +13,25 @@ public:
 #pragma warning( push )
 #pragma warning( disable: 4251 )
 #endif
-    Express_id _current_schema_id; // schema containing the USE/REF stmt
-                                   
-    // non-SDAI, not useful for SDAI use of Interface_spec (it would need to
-    // be a list).
-    // schema that defined the USE/REFd objects
-    Express_id _foreign_schema_id;
+        Express_id _current_schema_id; // schema containing the USE/REF stmt
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
+        // set of objects from USE/REFERENCE stmt(s)
+        Explicit_item_id__set_var _explicit_items;
+        Implicit_item_id__set_var _implicit_items; //not yet initialized for schema
 
-    // set of objects from USE/REFERENCE stmt(s)
-    Explicit_item_id__set_var _explicit_items;
-    Implicit_item_id__set_var _implicit_items; //not yet initialized for schema
+#ifdef _MSC_VER
+#pragma warning( push )
+#pragma warning( disable: 4251 )
+#endif
+        // non-SDAI, not useful for SDAI use of Interface_spec (it would need to
+        // be a list).
+        // schema that defined the USE/REFd objects
+        Express_id _foreign_schema_id;
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif
 
     // non-SDAI, not useful for SDAI use of Interface_spec (it would need to
     // be a list of ints).

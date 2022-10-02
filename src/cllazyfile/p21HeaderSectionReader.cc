@@ -33,6 +33,7 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     namedLazyInstance i;
     static instanceID nextFreeInstance = 4; // 1-3 are reserved per 10303-21
 
+    i.refs = 0;
     i.loc.begin = _file.tellg();
     i.loc.section = _sectionID;
     skipWS();

@@ -1,0 +1,277 @@
+name: STEPCODE
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  windows:
+    name: Windows Latest MSVC
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add github workspace to path
+        # https://github.community/t/deprecated-add-path/136621
+        run: echo "$ENV{GITHUB_WORKSPACE}" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Add cl.exe to PATH
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DSC_ENABLE_TESTING=ON
+          # We do the following in order to help ensure files are "flushed"
+          # to disk before compilation is attempted
+          # https://superuser.com/a/1553374/1286142
+          powershell Write-VolumeCache C
+          powershell Write-VolumeCache D
+
+      - name: Build
+        run: cd build && ninja -j1 -v
+
+      - name: Test
+        run: |
+          cd build && ctest -j1 .
+
+  linux:
+    name: Ubuntu Latest GCC
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+        # TODO - we will want this when the new parser work comes in,
+        # as we won't need perplex and the system tools should suffice
+        # to exercise the generator logic:
+        #
+        #  - name: Setup - System
+        #    env:
+        #      DEBIAN_FRONTEND: noninteractive
+        #    run: |
+        #      sudo apt-get update
+        #      # Install dev tools
+        #      sudo apt-get install re2c lemon
+        #      sudo apt-get clean
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cmake -S . -G Ninja -B build -D ENABLE_ALL=ON -D CMAKE_BUILD_TYPE=Release -DSC_ENABLE_TESTING=ON
+
+      - name: Build
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cmake --build build --config Release
+
+      - name: Test
+        run: |
+          cd build && ctest -j1 . -C Release
+
+  linux_clang:
+    name: Ubuntu Latest Clang
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+        # TODO - we will want this when the new parser work comes in,
+        # as we won't need perplex and the system tools should suffice
+        # to exercise the generator logic:
+        #
+        #  - name: Setup - System
+        #    env:
+        #      DEBIAN_FRONTEND: noninteractive
+        #    run: |
+        #      sudo apt-get update
+        #      # Install dev tools
+        #      sudo apt-get install re2c lemon
+        #      sudo apt-get clean
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          CC=clang CXX=clang++ cmake -S . -G Ninja -B build -D ENABLE_ALL=ON -D CMAKE_BUILD_TYPE=Release -DSC_ENABLE_TESTING=ON
+
+      - name: Build
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          CC=clang CXX=clang++ cmake --build build --config Release
+
+      - name: Test
+        run: |
+          cd build && ctest -j1 . -C Release
+
+
+  osx:
+    name: macOS Latest Clang
+    runs-on: macos-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          export CC=clang
+          export CXX=clang++
+          cmake -S . -G Ninja -B build -D CMAKE_BUILD_TYPE=Release -DSC_ENABLE_TESTING=ON
+
+      - name: Build
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cd build && ninja -j1
+
+      - name: Test
+        run: |
+          cd build && ctest -j1 . -C Release
+
+  brlcad_linux:
+    name: BRL-CAD Linux step-g Test
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Setup - System
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update
+          # Install dev tools
+          sudo apt-get install re2c lemon
+          sudo apt-get clean
+
+      - name: Checkout
+        run: |
+          git clone --depth 1 https://github.com/BRL-CAD/brlcad.git -b main
+          cd brlcad/src/other/ext && rm -rf stepcode
+          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
+          # Ordinarily BRL-CAD keeps track of what files are supposed to be
+          # present in the repository.  In this case we're not interested in
+          # updating the list to the working stepcode filelist, so use an empty
+          # list instead
+          echo "set(stepcode_ignore_files)" > stepcode.dist
+          cd ../../../../
+
+
+      - name: Configure
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cd brlcad
+          cmake -S . -G Ninja -B build -DENABLE_ALL=ON -DCMAKE_BUILD_TYPE=Release -DEXT_BUILD_VERBOSE=ON
+          cd ..
+
+      - name: Build
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cd brlcad
+          cmake --build build --config Release --target step-g
+          cd ..
+
+      - name: Test
+        run: |
+          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
+          cd brlcad/build
+          ./bin/step-g ../db/nist/NIST_MBE_PMI_3.stp -o nist3.g
+          cd ../..
+
+
+  brlcad_windows:
+    name: BRL-CAD Windows step-g Test
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+    steps:
+      - name: Setup - CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - Ninja
+        uses: seanmiddleditch/gha-setup-ninja@master
+
+      - name: Add github workspace to path
+        # https://github.community/t/deprecated-add-path/136621
+        run: echo "$ENV{GITHUB_WORKSPACE}" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Add cl.exe to PATH
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Checkout
+        run: |
+          git clone --depth 1 https://github.com/BRL-CAD/brlcad.git -b main
+          cd brlcad/src/other/ext
+          cmake -E rm -r stepcode
+          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
+          # Ordinarily BRL-CAD keeps track of what files are supposed to be
+          # present in the repository.  In this case we're not interested in
+          # updating the list to the working stepcode filelist, so use an empty
+          # list instead
+          echo "set(stepcode_ignore_files)" > stepcode.dist
+          cd ../../../../
+
+      - name: Configure
+        run: |
+          cd brlcad && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DSC_ENABLE_TESTING=ON
+          cd ..
+          # We do the following in order to help ensure files are "flushed"
+          # to disk before compilation is attempted
+          # https://superuser.com/a/1553374/1286142
+          powershell Write-VolumeCache C
+          powershell Write-VolumeCache D
+
+      - name: Build
+        run: |
+          cd brlcad/build
+          ninja -j1 -v step-g
+          cd ../..
+
+      - name: Test
+        run: |
+          cd brlcad/build
+          ./bin/step-g.exe ../db/nist/NIST_MBE_PMI_3.stp -o nist3.g
+          cd ../..
+

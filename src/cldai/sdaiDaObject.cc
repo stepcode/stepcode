@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

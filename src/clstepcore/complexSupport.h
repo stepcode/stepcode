@@ -132,7 +132,7 @@ class SC_CORE_EXPORT EntNode {
 
     private:
         MarkType mark;
-        char name[BUFSIZ];
+        char name[BUFSIZ+1];
         bool multSupers;  ///< do I correspond to an entity with >1 supertype?
         EntNode * lastSmaller( EntNode * ); ///< used by ::sort()
 };
@@ -173,26 +173,27 @@ class SC_CORE_EXPORT EntList {
         // but all we need.
         EntList * firstNot( JoinType );
         EntList * nextNot( JoinType j ) {
-            return next->firstNot( j );
+            return ( next ) ? next->firstNot( j ) : NULL;
         }
         EntList * firstWanted( MatchType );
         EntList * nextWanted( MatchType mat ) {
-            return next->firstWanted( mat );
+            return ( next ) ? next->firstWanted( mat ) : NULL;
         }
         EntList * lastNot( JoinType );
         EntList * prevNot( JoinType j ) {
-            return prev->lastNot( j );
+            return ( prev ) ? prev->lastNot( j ) : NULL;
         }
         EntList * lastWanted( MatchType );
         EntList * prevWanted( MatchType mat ) {
-            return prev->lastWanted( mat );
+            return ( prev ) ? prev->lastWanted( mat ) : NULL;
         }
 
         JoinType join;
         int multiple() {
             return ( join != SIMPLE );
         }
-        EntList * next, *prev;
+        EntList * next = NULL;
+        EntList * prev = NULL;
 
     protected:
         MatchType viable;
@@ -237,7 +238,7 @@ class SC_CORE_EXPORT SimpleList : public EntList {
         }
 
     private:
-        char name[BUFSIZ];    ///< Name of entity we correspond to.
+        char name[BUFSIZ+1];    ///< Name of entity we correspond to.
         MarkType I_marked; ///< Did I mark, and with what type of mark.
 };
 

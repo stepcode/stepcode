@@ -8,7 +8,6 @@
 #include "lazyFileReader.h"
 #include "sectionReader.h"
 #include "lazyTypes.h"
-#include "sc_memmgr.h"
 
 #include "sc_export.h"
 
@@ -31,6 +30,7 @@ class SC_LAZYFILE_EXPORT headerSectionReader: public sectionReader {
             //FIXME delete each instance?! maybe add to clear, since it iterates over everything already
             //enum clearHow { rawData, deletePointers }
             _headerInstances->clear();
+	    delete _headerInstances;
         }
 };
 

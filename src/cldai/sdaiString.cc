@@ -11,7 +11,6 @@
 
 #include <sdai.h>
 #include <sstream>
-#include "sc_memmgr.h"
 
 SDAI_String::SDAI_String( const char * str, size_t max ) {
     if( !str ) {
@@ -38,6 +37,11 @@ SDAI_String::~SDAI_String( void ) {
 
 SDAI_String & SDAI_String::operator= ( const char * s ) {
     content = std::string( s );
+    return *this;
+}
+
+SDAI_String & SDAI_String::operator= ( const SDAI_String & s ) {
+    content = s.content;
     return *this;
 }
 

@@ -75,7 +75,7 @@ bool TypeDescriptor::CurrName( const char * other, const char * schNm ) const {
         // other better = the alt name.
         return ( !StrCmpIns( _altname, other ) );
     } else {
-        // If we have no desginated alternate name when the current schema =
+        // If we have no designated alternate name when the current schema =
         // schNm, other must = our _name.
         return ( OurName( other ) );
     }
@@ -132,7 +132,7 @@ void TypeDescriptor::AttrTypeName( std::string & buf, const char * schnm ) const
 }
 
 const char * TypeDescriptor::GenerateExpress( std::string & buf ) const {
-    char tmp[BUFSIZ];
+    char tmp[BUFSIZ+1];
     buf = "TYPE ";
     buf.append( StrToLower( Name(), tmp ) );
     buf.append( " = " );

@@ -39,7 +39,7 @@
  * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include <sc_cf.h>
+#include "config.h"
 #include <dirobj.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
@@ -57,8 +57,6 @@
 #ifdef _WIN32
 #include <shlwapi.h>
 #endif
-
-#include <sc_memmgr.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -257,10 +255,11 @@ std::string DirObj::Normalize( const std::string & path ) {
 const char * DirObj::ValidDirectories( const char * path ) {
 #ifdef _WIN32
     static char buf[MAX_PATH + 1];
+    strncpy(buf, path, MAX_PATH);
 #else
     static char buf[MAXPATHLEN + 1];
+    strncpy(buf, path, MAXPATHLEN);
 #endif
-    strcpy( buf, path );
     int i = strlen( path );
 
     while( !IsADirectory( RealPath( buf ) ) && i >= 0 ) {
@@ -326,8 +325,8 @@ void DirObj::InsertFile( const char * f, int index ) {
 
 void DirObj::RemoveFile( int index ) {
     if( index < --fileCount ) {
+	free(fileList[index]);
         const char ** spot = ( const char ** )&fileList[index];
-        delete spot;
         memmove( spot, spot + 1, ( fileCount - index )*sizeof( char * ) );
     }
 }

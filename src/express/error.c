@@ -24,7 +24,7 @@
  * Revision 1.11  1997/10/22 16:10:26  sauderd
  * This would #include stdarg.h if __STDC__ was defined otherwise it would
  * #include vararg.h. I changed it to check the configure generated config file
- * named sc_cf.h (if HAVE_CONFIG_H is defined - it's also defined by
+ * named config.h (if HAVE_CONFIG_H is defined - it's also defined by
  * configure) to see if HAVE_STDARG_H is defined. If it is it #includes stdarg.h
  * otherwise it #includes vararg.h. If HAVE_CONFIG_H isn't defined then it works
  * like it used to.
@@ -58,16 +58,10 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "sc_memmgr.h"
 #include "express/express.h"
 #include "express/error.h"
 #include "express/info.h"
 #include "express/linklist.h"
-
-#if defined(_MSC_VER) && _MSC_VER < 1900
-#  include "sc_stdio.h"
-#  define vsnprintf c99_vsnprintf
-#endif
 
 static struct Error_ LibErrors[] = {
     /* dict.c */
@@ -233,7 +227,7 @@ static void ERROR_nexterror() {
 
 /** Initialize the Error module */
 void ERRORinitialize( void ) {
-    ERROR_string_base = ( char * )sc_malloc( ERROR_MAX_SPACE );
+    ERROR_string_base = ( char * )malloc( ERROR_MAX_SPACE );
     ERROR_string_end = ERROR_string_base + ERROR_MAX_SPACE;
     ERROR_start_message_buffer();
 
@@ -253,7 +247,7 @@ void ERRORinitialize( void ) {
 
 /** Clean up the Error module */
 void ERRORcleanup( void ) {
-    sc_free( ERROR_string_base );
+    free( ERROR_string_base );
 }
 
 void ERRORset_warning(char * name, bool warn_only) {
@@ -296,7 +290,7 @@ char * ERRORget_warnings_help(const char* prefix, const char *eol) {
     
     clen = strlen(prefix) + strlen(eol) + 1;
     
-    buf = sc_malloc(sz);
+    buf = malloc(sz);
     if (!buf) {
         fprintf(error_file, "failed to allocate memory for warnings help!\n");
     }
@@ -308,7 +302,7 @@ char * ERRORget_warnings_help(const char* prefix, const char *eol) {
             len = strlen(buf) + strlen(err->name) + clen;
             if (len > sz) {
                 sz *= 2;
-                nbuf = sc_realloc(buf, sz);
+                nbuf = realloc(buf, sz);
                 if (!nbuf) {
                     fprintf(error_file, "failed to reallocate / grow memory for warnings help!\n");            
                 }
