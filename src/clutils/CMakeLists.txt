@@ -22,6 +22,7 @@ set(SC_CLUTILS_HDRS
 include_directories(
   ${SC_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include/stepcode
   )
 
 if(BUILD_SHARED_LIBS)

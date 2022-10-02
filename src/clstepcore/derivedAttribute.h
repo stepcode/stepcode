@@ -1,7 +1,7 @@
 #ifndef DERIVEDATTRIBUTE_H
 #define DERIVEDATTRIBUTE_H
 
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 
 #include "sc_export.h"
 

@@ -1,4 +1,4 @@
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 
 AttrDescriptor::AttrDescriptor( const char * name, const TypeDescriptor * domainType,
                                 Logical optional, Logical unique, AttrType_Enum at,

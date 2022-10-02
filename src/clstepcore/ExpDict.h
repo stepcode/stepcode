@@ -28,7 +28,7 @@
 #include <Str.h>
 
 // each of these contains linked list, list node, iterator
-#include "attrDescriptorList.h"
+#include "core/attrDescriptorList.h"
 #include "inverseAttributeList.h"
 #include "typeDescriptorList.h"
 #include "entityDescriptorList.h"
@@ -37,7 +37,7 @@
 #include "typeDescriptor.h"
 #include "entityDescriptor.h"
 #include "enumTypeDescriptor.h"
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 #include "derivedAttribute.h"
 #include "inverseAttribute.h"
 
@@ -56,7 +56,7 @@
 #include "dictSchema.h"
 #include "schRename.h"
 
-#include "aggrTypeDescriptor.h"
+#include "core/aggrTypeDescriptor.h"
 #include "selectTypeDescriptor.h"
 #include "stringTypeDescriptor.h"
 #include "realTypeDescriptor.h"

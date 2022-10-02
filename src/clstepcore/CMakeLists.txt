@@ -63,9 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  aggrTypeDescriptor.h
-  attrDescriptor.h
-  attrDescriptorList.h
   baseType.h
   complexSupport.h
   create_Aggr.h
@@ -125,6 +122,7 @@ set(SC_CLSTEPCORE_HDRS
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include/stepcode
   ${SC_SOURCE_DIR}/src/cldai
   ${SC_SOURCE_DIR}/src/cleditor
   ${SC_SOURCE_DIR}/src/clutils

@@ -21,6 +21,7 @@ SET(SC_CLEDITOR_HDRS
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include/stepcode
   ${SC_SOURCE_DIR}/src/cldai
   ${SC_SOURCE_DIR}/src/clstepcore
   ${SC_SOURCE_DIR}/src/clutils

@@ -1,7 +1,7 @@
 #ifndef INVERSEATTRIBUTE_H
 #define INVERSEATTRIBUTE_H
 
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 
 class SC_CORE_EXPORT Inverse_attribute  :    public AttrDescriptor  {
 

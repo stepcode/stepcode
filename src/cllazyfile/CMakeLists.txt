@@ -29,6 +29,7 @@ set( SC_CLLAZYFILE_HDRS
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include/stepcode
   ${SC_SOURCE_DIR}/src/cleditor
   ${SC_SOURCE_DIR}/src/cldai
   ${SC_SOURCE_DIR}/src/clstepcore

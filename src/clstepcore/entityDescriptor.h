@@ -2,9 +2,9 @@
 #define ENTITYDESCRIPTOR_H
 
 #include "typeDescriptor.h"
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 #include "uniquenessRule.h"
-#include "attrDescriptorList.h"
+#include "core/attrDescriptorList.h"
 #include "inverseAttributeList.h"
 
 #include "sc_export.h"

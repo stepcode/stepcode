@@ -2,7 +2,7 @@
 
 #include "entityDescriptor.h"
 #include "Registry.h"
-#include "attrDescriptor.h"
+#include "core/attrDescriptor.h"
 #include "inverseAttribute.h"
 #include "SubSuperIterators.h"
 

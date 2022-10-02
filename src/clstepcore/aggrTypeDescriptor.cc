@@ -1,4 +1,4 @@
-#include "aggrTypeDescriptor.h"
+#include "core/aggrTypeDescriptor.h"
 
 STEPaggregate * AggrTypeDescriptor::CreateAggregate() {
     if( CreateNewAggr ) {
