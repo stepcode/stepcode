@@ -9,7 +9,7 @@
 #include "sc_export.h"
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
-#include "ExpDict.h"
+#include "core/ExpDict.h"
 #include "SubSuperIterators.h"
 #include <STEPattribute.h>
 #include <STEPaggregate.h>

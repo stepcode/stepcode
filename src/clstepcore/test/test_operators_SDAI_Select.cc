@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-#include "ExpDict.h"
+#include "core/ExpDict.h"
 #include "core/baseType.h"
 #include "sdaiSelect.h"
 

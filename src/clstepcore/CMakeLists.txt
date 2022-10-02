@@ -63,12 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  entityDescriptor.h
-  entityDescriptorList.h
-  enumTypeDescriptor.h
-  ExpDict.h
-  explicitItemId.h
-  globalRule.h
   implicitItemId.h
   instmgr.h
   interfaceSpec.h

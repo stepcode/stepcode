@@ -17,7 +17,7 @@
 #include <instmgr.h>
 #include <STEPundefined.h>
 #include <STEPaggregate.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <sdai.h>
 
 // REAL_NUM_PRECISION is defined in STEPattribute.h, and is also used

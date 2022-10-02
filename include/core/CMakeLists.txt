@@ -11,12 +11,12 @@ set(CORE_HDRS
   dictionaryInstance.h
   dispnode.h
   dispnodelist.h
-# entityDescriptor.h
-# entityDescriptorList.h
-# enumTypeDescriptor.h
-# ExpDict.h
-# explicitItemId.h
-# globalRule.h
+  entityDescriptor.h
+  entityDescriptorList.h
+  enumTypeDescriptor.h
+  ExpDict.h
+  explicitItemId.h
+  globalRule.h
 # implicitItemId.h
 # instmgr.h
 # interfaceSpec.h

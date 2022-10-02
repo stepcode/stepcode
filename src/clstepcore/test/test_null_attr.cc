@@ -1,4 +1,4 @@
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <STEPattribute.h>
 #include <sdaiString.h>
 

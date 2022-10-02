@@ -5,7 +5,7 @@
 //subtypesiterator shouldn't need tested separately from supertypesiterator since there is very little difference
 
 #include "SubSuperIterators.h"
-#include "ExpDict.h"
+#include "core/ExpDict.h"
 #include <iomanip>
 
 int main( int /*argc*/, char ** /*argv*/ ) {

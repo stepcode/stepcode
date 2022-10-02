@@ -16,7 +16,7 @@
 #include <STEPaggregate.h>
 #include <STEPattribute.h>
 #include <instmgr.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 
 
 /**

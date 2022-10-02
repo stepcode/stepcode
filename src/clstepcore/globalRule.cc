@@ -1,4 +1,4 @@
-#include "globalRule.h"
+#include "core/globalRule.h"
 
 Global_rule::Global_rule()
 : _entities( 0 ), _where_rules( 0 ), _parent_schema( 0 ) {

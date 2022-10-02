@@ -1,7 +1,7 @@
 ///test constructors, destructor, shallow copy, assignment operators for STEPattribute
 
 #include <STEPattribute.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <stdint.h>
 
 

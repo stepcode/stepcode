@@ -16,7 +16,7 @@
 #include <iostream>
 
 /* General SCL stuff */
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <STEPfile.h>
 #include <STEPattribute.h>
 #include <sdai.h>

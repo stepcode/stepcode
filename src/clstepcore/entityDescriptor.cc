@@ -1,6 +1,6 @@
 #include <string>
 
-#include "entityDescriptor.h"
+#include "core/entityDescriptor.h"
 #include "Registry.h"
 #include "core/attrDescriptor.h"
 #include "inverseAttribute.h"

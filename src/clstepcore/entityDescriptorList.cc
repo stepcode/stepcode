@@ -1,4 +1,4 @@
-#include "entityDescriptorList.h"
+#include "core/entityDescriptorList.h"
 
 EntityDescLinkNode::EntityDescLinkNode() {
     _entityDesc = 0;

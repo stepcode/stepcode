@@ -2,7 +2,7 @@
 #define INTERFACESPEC_H
 
 #include "core/dictionaryInstance.h"
-#include "explicitItemId.h"
+#include "core/explicitItemId.h"
 #include "implicitItemId.h"
 
 #include "sc_export.h"

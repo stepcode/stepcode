@@ -4,7 +4,7 @@
  */
 
 #include <STEPinvAttrList.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 
 invAttrListNodeI::invAttrListNodeI(Inverse_attribute* a, setterI_t s, getterI_t g): invAttrListNode(a), set( s ), get( g ) {}
 invAttrListNodeA::invAttrListNodeA(Inverse_attribute* a, setterA_t s, getterA_t g): invAttrListNode(a), set( s ), get( g ) {}

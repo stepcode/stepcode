@@ -5,7 +5,7 @@
 #include <errordesc.h>
 #include <sdai.h>
 #include "core/baseType.h"
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <Registry.h>
 
 #include <list>

@@ -11,7 +11,7 @@
 */
 
 #include <stdio.h> // to get the BUFSIZ #define
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <sstream>
 #include <string>
 #include <sdai.h>

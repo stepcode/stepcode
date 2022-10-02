@@ -9,7 +9,7 @@
 * and is not subject to copyright.
 */
 
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <Registry.h>
 
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor

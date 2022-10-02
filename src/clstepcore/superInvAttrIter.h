@@ -2,7 +2,7 @@
 #define SUPERINVATTRITER_H
 
 #include "SubSuperIterators.h"
-#include "ExpDict.h"
+#include "core/ExpDict.h"
 
 /**
  * this class implements an iterator for inverse attributes in an EntityDescriptor's supertypes

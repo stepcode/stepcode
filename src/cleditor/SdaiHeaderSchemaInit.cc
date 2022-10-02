@@ -5,7 +5,7 @@
 // regenerate it.
 
 #include <Registry.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <STEPattribute.h>
 #include <SdaiHeaderSchema.h>
 

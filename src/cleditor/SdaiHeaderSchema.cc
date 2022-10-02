@@ -10,7 +10,7 @@ extern ofstream * logStream;
 #define SCLLOGFILE "scl.log"
 #endif
 
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <STEPattribute.h>
 #include <SdaiHeaderSchema.h>
 

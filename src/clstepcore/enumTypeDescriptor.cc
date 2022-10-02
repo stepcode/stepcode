@@ -1,4 +1,4 @@
-#include "enumTypeDescriptor.h"
+#include "core/enumTypeDescriptor.h"
 
 /*
  * why have EnumTypeDescriptor + EnumerationTypeDescriptor ???

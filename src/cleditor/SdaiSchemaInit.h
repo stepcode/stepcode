@@ -13,7 +13,7 @@
 #include <Registry.h>
 #include <STEPaggregate.h>
 #include <STEPundefined.h>
-#include <ExpDict.h>
+#include "core/ExpDict.h"
 #include <STEPattribute.h>
 #include "core/complexSupport.h"
 
