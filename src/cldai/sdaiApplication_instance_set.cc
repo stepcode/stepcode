@@ -24,7 +24,7 @@
  * UArray implementation.
  */
 
-//#include <sdaiApplication_instance_set.h>
+//#include "dai/sdaiApplication_instance_set.h"
 #include "core/sdai.h"
 
 #include <memory.h>

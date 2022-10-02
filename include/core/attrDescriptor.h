@@ -3,7 +3,7 @@
 
 #include "typeDescriptor.h"
 
-#include "sdaiEnum.h"
+#include "dai/sdaiEnum.h"
 
 #include "sc_export.h"
 

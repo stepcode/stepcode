@@ -157,10 +157,10 @@ typedef char * SDAI_Schema_name;
 
 #include <sdaiString.h>
 
-#include <sdaiBinary.h>
+#include "dai/sdaiBinary.h"
 
 // define Object which I am calling sdaiObject for now - DAS
-#include <sdaiObject.h>
+#include "dai/sdaiObject.h"
 
 /******************************************************************************
 ENUMERATION
@@ -172,7 +172,7 @@ ENUMERATION
     *  the value ENUM_NULL is used to represent NULL for all enumerated types
  *****************************************************************************/
 
-#include <sdaiEnum.h>
+#include "dai/sdaiEnum.h"
 
 /******************************************************************************
 BOOLEAN and LOGICAL
@@ -185,11 +185,11 @@ BOOLEAN and LOGICAL
 
 // ***note*** this file needs classes from sdaiEnum.h
 // define DAObjectID and classes PID, PID_DA, PID_SDAI, DAObject, DAObject_SDAI
-#include <sdaiDaObject.h>
+#include "dai/sdaiDaObject.h"
 
 
 #include "core/sdaiApplication_instance.h"
-#include <sdaiApplication_instance_set.h>
+#include "dai/sdaiApplication_instance_set.h"
 
 /******************************************************************************
 SELECT
@@ -204,12 +204,12 @@ class SDAI_Model_contents;
 typedef SDAI_Model_contents * SDAI_Model_contents_ptr;
 typedef SDAI_Model_contents_ptr SDAI_Model_contents_var;
 
-#include <sdaiModel_contents_list.h>
+#include "dai/sdaiModel_contents_list.h"
 
-#include <sdaiSession_instance.h>
-#include <sdaiEntity_extent.h>
-#include <sdaiEntity_extent_set.h>
-#include <sdaiModel_contents.h>
+#include "dai/sdaiSession_instance.h"
+#include "dai/sdaiEntity_extent.h"
+#include "dai/sdaiEntity_extent_set.h"
+#include "dai/sdaiModel_contents.h"
 
 //  ENTITY
 extern SC_CORE_EXPORT SDAI_Application_instance NilSTEPentity;

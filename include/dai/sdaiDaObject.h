@@ -1,9 +1,9 @@
 #ifndef SDAIDAOBJECT_H
 #define SDAIDAOBJECT_H 1
 
-#include <sdaiObject.h>
+#include "dai/sdaiObject.h"
 #include <sdaiString.h>
-#include <sdaiEnum.h>
+#include "dai/sdaiEnum.h"
 
 #include <sc_export.h>
 

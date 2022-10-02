@@ -16,7 +16,7 @@
 #include <iostream>
 
 #include <sc_export.h>
-#include <sdaiDaObject.h>
+#include "dai/sdaiDaObject.h"
 
 class EntityAggregate;
 class Inverse_attribute;
