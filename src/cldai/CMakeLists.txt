@@ -1,5 +1,4 @@
-
-set(LIBSTEPDAI_SRCS
+set(DAI_SRCS
   sdaiApplication_instance_set.cc
   sdaiBinary.cc
   sdaiDaObject.cc
@@ -16,21 +15,19 @@ set(LIBSTEPDAI_SRCS
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/include/stepcode
-  ${SC_SOURCE_DIR}/src/clstepcore
-  ${SC_SOURCE_DIR}/src/clutils
   )
 
 set(_libdeps steputils)
 
 if(BUILD_SHARED_LIBS)
-  SC_ADDLIB(stepdai SHARED SOURCES ${LIBSTEPDAI_SRCS} LINK_LIBRARIES ${_libdeps})
+  SC_ADDLIB(stepdai SHARED SOURCES ${DAI_SRCS} LINK_LIBRARIES ${_libdeps})
   if(WIN32)
     target_compile_definitions(stepdai PRIVATE SC_DAI_DLL_EXPORTS)
   endif()
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(stepdai-static STATIC SOURCES ${LIBSTEPDAI_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
+  SC_ADDLIB(stepdai-static STATIC SOURCES ${DAI_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
 endif()
 
 # Local Variables:

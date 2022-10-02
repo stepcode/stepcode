@@ -1,4 +1,4 @@
-set(LIBSTEPUTILS_SRCS
+set(UTILS_SRCS
   Str.cc
   dirobj.cc
   gennode.cc
@@ -11,11 +11,10 @@ set(LIBSTEPUTILS_SRCS
 include_directories(
   ${SC_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_SOURCE_DIR}/include/stepcode
   )
 
 if(BUILD_SHARED_LIBS)
-  SC_ADDLIB(steputils SHARED SOURCES ${LIBSTEPUTILS_SRCS})
+  SC_ADDLIB(steputils SHARED SOURCES ${UTILS_SRCS})
   if(WIN32)
     target_compile_definitions(steputils PRIVATE SC_UTILS_DLL_EXPORTS)
     target_link_libraries(steputils shlwapi)
@@ -23,7 +22,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(steputils-static STATIC SOURCES ${LIBSTEPUTILS_SRCS})
+  SC_ADDLIB(steputils-static STATIC SOURCES ${UTILS_SRCS})
   if(WIN32)
     target_link_libraries(steputils-static shlwapi)
   endif()

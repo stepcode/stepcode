@@ -1,5 +1,4 @@
-
-set(LIBSTEPEDITOR_SRCS
+set(EDITOR_SRCS
   STEPfile.cc
   STEPfile.inline.cc
   cmdmgr.cc
@@ -12,20 +11,17 @@ set(LIBSTEPEDITOR_SRCS
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/include/stepcode
-  ${SC_SOURCE_DIR}/src/cldai
-  ${SC_SOURCE_DIR}/src/clstepcore
-  ${SC_SOURCE_DIR}/src/clutils
   )
 
 if(BUILD_SHARED_LIBS)
-  SC_ADDLIB(stepeditor SHARED SOURCES ${LIBSTEPEDITOR_SRCS} LINK_LIBRARIES stepcore stepdai steputils)
+  SC_ADDLIB(stepeditor SHARED SOURCES ${EDITOR_SRCS} LINK_LIBRARIES stepcore stepdai steputils)
   if(WIN32)
     target_compile_definitions(stepeditor PRIVATE SC_EDITOR_DLL_EXPORTS)
   endif()
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(stepeditor-static STATIC SOURCES ${LIBSTEPEDITOR_SRCS} LINK_LIBRARIES stepcore-static stepdai-static steputils-static)
+  SC_ADDLIB(stepeditor-static STATIC SOURCES ${EDITOR_SRCS} LINK_LIBRARIES stepcore-static stepdai-static steputils-static)
 endif()
 
 # Local Variables:
