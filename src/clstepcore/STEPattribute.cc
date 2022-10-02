@@ -13,10 +13,10 @@
 #include <string>
 
 #include "core/read_func.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include "core/instmgr.h"
-#include <STEPundefined.h>
-#include <STEPaggregate.h>
+#include "core/STEPundefined.h"
+#include "core/STEPaggregate.h"
 #include "core/ExpDict.h"
 #include "core/sdai.h"
 

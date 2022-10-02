@@ -18,7 +18,7 @@
 /* General SCL stuff */
 #include "core/ExpDict.h"
 #include <STEPfile.h>
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include "core/sdai.h"
 
 /* Stuff more or less specifically for the Example schema */

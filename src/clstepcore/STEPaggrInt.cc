@@ -1,4 +1,4 @@
-#include "STEPaggrInt.h"
+#include "core/STEPaggrInt.h"
 
 
 IntAggregate::IntAggregate() {

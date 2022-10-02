@@ -13,7 +13,7 @@
 
 #include <STEPfile.h>
 #include <SdaiHeaderSchema.h>
-#include <STEPaggregate.h>
+#include "core/STEPaggregate.h"
 #include <cmath>
 
 #include <cstring>

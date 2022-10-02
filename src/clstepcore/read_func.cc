@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "core/sdai.h"
 #include "core/read_func.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include "Str.h"
 
 const int RealNumPrecision = REAL_NUM_PRECISION;

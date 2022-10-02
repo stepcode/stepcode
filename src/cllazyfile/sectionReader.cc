@@ -16,7 +16,7 @@
 #include "core/sdaiApplication_instance.h"
 #include "core/read_func.h"
 #include "SdaiSchemaInit.h"
-#include "STEPcomplex.h"
+#include "core/STEPcomplex.h"
 
 #include "sectionReader.h"
 #include "lazyFileReader.h"

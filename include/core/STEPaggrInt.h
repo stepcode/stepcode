@@ -1,26 +1,27 @@
-#ifndef STEPAGGRREAL_H
-#define STEPAGGRREAL_H
+#ifndef STEPAGGRINT_H
+#define STEPAGGRINT_H
 
-#include "STEPaggregate.h"
+#include "core/STEPaggregate.h"
 #include <sc_export.h>
 
-class SC_CORE_EXPORT RealAggregate  : public STEPaggregate  {
+class SC_CORE_EXPORT IntAggregate  : public STEPaggregate  {
 
 public:
     virtual SingleLinkNode * NewNode();
     virtual STEPaggregate & ShallowCopy( const STEPaggregate & );
 
-    RealAggregate();
-    virtual ~RealAggregate();
+    IntAggregate();
+    virtual ~IntAggregate();
 };
-typedef        RealAggregate  *   RealAggregateH;
-typedef        RealAggregate  *   RealAggregate_ptr;
-typedef  const RealAggregate  *   RealAggregate_ptr_c;
-typedef        RealAggregate_ptr  RealAggregate_var;
+typedef        IntAggregate  *   IntAggregateH;
+typedef        IntAggregate  *   IntAggregate_ptr;
+typedef  const IntAggregate  *   IntAggregate_ptr_c;
+typedef        IntAggregate_ptr  IntAggregate_var;
 
-class SC_CORE_EXPORT RealNode  : public STEPnode {
+
+class SC_CORE_EXPORT IntNode  : public STEPnode {
 public:
-    SDAI_Real  value; // double
+    SDAI_Integer  value; // long int
     //  INPUT
     virtual Severity StrToVal( const char * s, ErrorDescriptor * err );
     virtual Severity StrToVal( istream & in, ErrorDescriptor * err );
@@ -34,13 +35,12 @@ public:
     virtual void    STEPwrite( ostream & out = cout );
 
     //  CONSTRUCTORS
-    RealNode( SDAI_Real v );
-    RealNode();
-    ~RealNode();
+    IntNode( SDAI_Integer v );
+    IntNode();
+    ~IntNode();
 
     virtual SingleLinkNode   *  NewNode();
 };
 
 
-
-#endif //STEPAGGRREAL_H
+#endif //STEPAGGRINT_H

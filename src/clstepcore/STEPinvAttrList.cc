@@ -3,7 +3,7 @@
  * derived from STEPattributeList.cc
  */
 
-#include <STEPinvAttrList.h>
+#include "core/STEPinvAttrList.h"
 #include "core/ExpDict.h"
 
 invAttrListNodeI::invAttrListNodeI(Inverse_attribute* a, setterI_t s, getterI_t g): invAttrListNode(a), set( s ), get( g ) {}

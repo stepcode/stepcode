@@ -36,20 +36,20 @@ set(CORE_HDRS
   sdaiSelect.h
   selectTypeDescriptor.h
   SingleLinkList.h
-# STEPaggregate.h
-# STEPaggrBinary.h
-# STEPaggrEntity.h
-# STEPaggrEnum.h
-# STEPaggrGeneric.h
-# STEPaggrInt.h
-# STEPaggrReal.h
-# STEPaggrSelect.h
-# STEPaggrString.h
-# STEPattribute.h
-# STEPattributeList.h
-# STEPcomplex.h
-# STEPinvAttrList.h
-# STEPundefined.h
+  STEPaggregate.h
+  STEPaggrBinary.h
+  STEPaggrEntity.h
+  STEPaggrEnum.h
+  STEPaggrGeneric.h
+  STEPaggrInt.h
+  STEPaggrReal.h
+  STEPaggrSelect.h
+  STEPaggrString.h
+  STEPattribute.h
+  STEPattributeList.h
+  STEPcomplex.h
+  STEPinvAttrList.h
+  STEPundefined.h
   stringTypeDescriptor.h
   SubSuperIterators.h
   typeDescriptor.h

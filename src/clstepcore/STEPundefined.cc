@@ -11,8 +11,8 @@
 */
 
 #include <stdio.h> // to get the BUFSIZ #define
-#include <STEPattribute.h>
-#include <STEPundefined.h>
+#include "core/STEPattribute.h"
+#include "core/STEPundefined.h"
 
 /** \class SCLundefined
 **    helper functions for reading unknown types

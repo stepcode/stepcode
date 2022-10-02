@@ -7,7 +7,7 @@
 #include "SubSuperIterators.h"
 #include <STEPfile.h>
 #include "core/sdai.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include "core/ExpDict.h"
 #include "core/Registry.h"
 #include <errordesc.h>

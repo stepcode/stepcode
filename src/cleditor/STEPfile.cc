@@ -26,13 +26,13 @@
 
 #include <STEPfile.h>
 #include "core/sdai.h"
-#include <STEPcomplex.h>
-#include <STEPattribute.h>
+#include "core/STEPcomplex.h"
+#include "core/STEPattribute.h"
 #include <SdaiHeaderSchema.h>
 
 // STEPundefined contains
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)
-#include <STEPundefined.h>
+#include "core/STEPundefined.h"
 
 /**
  * \returns The new file name for the class.

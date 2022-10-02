@@ -15,7 +15,7 @@
 #include <sstream>
 #include <string>
 #include "core/sdai.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 
 #ifdef  SC_LOGGING
 #include <fstream.h>

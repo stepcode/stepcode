@@ -21,7 +21,7 @@ class TypeDescriptor;
 #include "core/SingleLinkList.h"
 #include "core/baseType.h"
 #include "core/sdai.h"
-#include <STEPundefined.h>
+#include "core/STEPundefined.h"
 #include <string>
 
 #define     AGGR_NULL   &NilSTEPaggregate
@@ -110,14 +110,14 @@ public:
 };
 typedef  STEPnode  * STEPnodeH;
 
-#include "STEPaggrGeneric.h"
-#include "STEPaggrEntity.h"
-#include "STEPaggrSelect.h"
-#include "STEPaggrString.h"
-#include "STEPaggrBinary.h"
-#include "STEPaggrEnum.h"
-#include "STEPaggrReal.h"
-#include "STEPaggrInt.h"
+#include "core/STEPaggrGeneric.h"
+#include "core/STEPaggrEntity.h"
+#include "core/STEPaggrSelect.h"
+#include "core/STEPaggrString.h"
+#include "core/STEPaggrBinary.h"
+#include "core/STEPaggrEnum.h"
+#include "core/STEPaggrReal.h"
+#include "core/STEPaggrInt.h"
 
 /******************************************************************
  **   FIXME The following classes are currently stubs

@@ -17,7 +17,7 @@
 
 #include <sc_export.h>
 
-/*#include <STEPattribute.h>*/
+/*#include "core/STEPattribute.h"*/
 /*#include <STEPentity.h>*/
 #include "core/sdai.h"
 

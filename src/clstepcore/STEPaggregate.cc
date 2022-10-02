@@ -13,8 +13,8 @@
 #include <stdio.h>
 
 #include "core/read_func.h"
-#include <STEPaggregate.h>
-#include <STEPattribute.h>
+#include "core/STEPaggregate.h"
+#include "core/STEPattribute.h"
 #include "core/instmgr.h"
 #include "core/ExpDict.h"
 

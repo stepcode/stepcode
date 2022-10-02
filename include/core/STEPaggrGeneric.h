@@ -1,7 +1,7 @@
 #ifndef STEPAGGRGENERIC_H
 #define STEPAGGRGENERIC_H
 
-#include "STEPaggregate.h"
+#include "core/STEPaggregate.h"
 #include <sc_export.h>
 
 /** \file STEPaggrGeneric.h

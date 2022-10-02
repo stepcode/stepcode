@@ -1,7 +1,7 @@
 #ifndef STEPAGGRBINARY_H
 #define STEPAGGRBINARY_H
 
-#include "STEPaggregate.h"
+#include "core/STEPaggregate.h"
 #include <sc_export.h>
 
 /** \file STEPaggrBinary.h

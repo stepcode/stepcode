@@ -1,4 +1,4 @@
-#include "STEPaggrString.h"
+#include "core/STEPaggrString.h"
 #include <sstream>
 
 /** \file STEPaggrString.cc

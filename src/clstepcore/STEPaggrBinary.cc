@@ -1,4 +1,4 @@
-#include "STEPaggrBinary.h"
+#include "core/STEPaggrBinary.h"
 #include <sstream>
 
 /** \file STEPaggrBinary.cc

@@ -1,7 +1,7 @@
 #ifndef STEPAGGRENUM_H
 #define STEPAGGRENUM_H
 
-#include "STEPaggregate.h"
+#include "core/STEPaggregate.h"
 #include "sc_export.h"
 /** \file StepaggrEnum.h
  * classes EnumAggregate, LOGICALS, BOOLEANS, EnumNode

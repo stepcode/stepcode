@@ -1,7 +1,7 @@
 #ifndef STEPAGGRSTRING_H
 #define STEPAGGRSTRING_H
 
-#include "STEPaggregate.h"
+#include "core/STEPaggregate.h"
 #include <sc_export.h>
 
 /** \file STEPaggrString.h

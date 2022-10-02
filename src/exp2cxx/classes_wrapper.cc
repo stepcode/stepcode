@@ -77,10 +77,10 @@ void print_file_header( FILES * files ) {
 
     fprintf( files->incall, "#include \"core/sdai.h\"\n\n" );
     fprintf( files->incall, "\n#include \"core/Registry.h\"\n" );
-    fprintf( files->incall, "\n#include <STEPaggregate.h>\n" );
-    fprintf( files->incall, "\n#include <STEPundefined.h>\n" );
+    fprintf( files->incall, "\n#include \"core/STEPaggregate.h\"\n" );
+    fprintf( files->incall, "\n#include \"core/STEPundefined.h\"\n" );
     fprintf( files->incall, "\n#include \"core/ExpDict.h\"\n" );
-    fprintf( files->incall, "\n#include <STEPattribute.h>\n" );
+    fprintf( files->incall, "\n#include \"core/STEPattribute.h\"\n" );
 
     fprintf( files->incall, "\n#include <Sdaiclasses.h>\n" );
 

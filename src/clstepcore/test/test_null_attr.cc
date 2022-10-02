@@ -1,5 +1,5 @@
 #include "core/ExpDict.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include <sdaiString.h>
 
 AttrDescriptor   *ad  = 0;

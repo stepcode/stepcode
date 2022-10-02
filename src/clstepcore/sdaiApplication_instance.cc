@@ -13,8 +13,8 @@
 #include <map>
 #include "core/sdai.h"
 #include "core/instmgr.h"
-#include <STEPcomplex.h>
-#include <STEPattribute.h>
+#include "core/STEPcomplex.h"
+#include "core/STEPattribute.h"
 #include "core/read_func.h" //for ReadTokenSeparator, used when comments are inside entities
 
 #include "core/sdaiApplication_instance.h"

@@ -1,5 +1,5 @@
-#include "STEPaggrEntity.h"
-#include "STEPattribute.h"
+#include "core/STEPaggrEntity.h"
+#include "core/STEPattribute.h"
 #include "core/typeDescriptor.h"
 #include <sstream>
 

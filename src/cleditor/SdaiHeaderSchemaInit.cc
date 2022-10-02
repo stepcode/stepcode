@@ -6,7 +6,7 @@
 
 #include "core/Registry.h"
 #include "core/ExpDict.h"
-#include <STEPattribute.h>
+#include "core/STEPattribute.h"
 #include <SdaiHeaderSchema.h>
 
 void SdaiHEADER_SECTION_SCHEMAInit( Registry & reg ) {

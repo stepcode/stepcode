@@ -40,8 +40,8 @@ class EntityDescriptor;
 class SelectTypeDescriptor;
 class InstMgrBase;
 
-#include "STEPattributeList.h"
-#include "STEPinvAttrList.h"
+#include "core/STEPattributeList.h"
+#include "core/STEPinvAttrList.h"
 
 class STEPattributeList;
 class STEPattribute;

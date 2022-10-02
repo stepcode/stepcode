@@ -11,8 +11,8 @@
 #include "lazyInstMgr.h"
 #include "core/ExpDict.h"
 #include "core/SubSuperIterators.h"
-#include <STEPattribute.h>
-#include <STEPaggregate.h>
+#include "core/STEPattribute.h"
+#include "core/STEPaggregate.h"
 
 #ifdef _WIN32
 #define strcasecmp _strcmpi

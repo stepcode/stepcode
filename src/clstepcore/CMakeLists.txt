@@ -62,23 +62,6 @@ set(LIBSTEPCORE_SRCS
   whereRule.cc
 )
 
-set(SC_CLSTEPCORE_HDRS
-  STEPaggregate.h
-  STEPaggrBinary.h
-  STEPaggrEntity.h
-  STEPaggrEnum.h
-  STEPaggrGeneric.h
-  STEPaggrInt.h
-  STEPaggrReal.h
-  STEPaggrSelect.h
-  STEPaggrString.h
-  STEPattribute.h
-  STEPattributeList.h
-  STEPcomplex.h
-  STEPinvAttrList.h
-  STEPundefined.h
-)
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/include/stepcode
@@ -99,9 +82,6 @@ endif()
 if(BUILD_STATIC_LIBS)
   SC_ADDLIB(stepcore-static STATIC SOURCES ${LIBSTEPCORE_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static>-static)
 endif()
-
-install(FILES ${SC_CLSTEPCORE_HDRS}
-  DESTINATION ${INCLUDE_DIR}/stepcode/clstepcore)
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)
