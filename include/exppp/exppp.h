@@ -1,7 +1,7 @@
 #ifndef EXPPP_H
 #define EXPPP_H
 
-#include <sc_stdbool.h>
+#include <stdbool.h>
 
 #include <sc_export.h>
 

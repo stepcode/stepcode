@@ -111,7 +111,7 @@ ToUpper( char c ) {
 
 const char *
 StrToLower( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     if( !word ) {
         return 0;
@@ -126,7 +126,7 @@ StrToLower( const char * word ) {
 }
 
 const char * StrToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
     char ToUpper( char c );
 
@@ -140,7 +140,7 @@ const char * StrToUpper( const char * word ) {
 }
 
 const char * StrToConstant( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
     int i = 0;
 
     while( word [i] != '\0' ) {
@@ -194,7 +194,7 @@ int isAggregateType( const Type t ) {
  */
 const char * ClassName( const char * oldname ) {
     int i = 0, j = 0;
-    static char newname [BUFSIZ];
+    static char newname [BUFSIZ+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -221,7 +221,7 @@ const char * ENTITYget_classname( Entity ent ) {
 /** returns a new capitalized name, in internal static buffer */
 const char * PrettyTmpName( const char * oldname ) {
     int i = 0;
-    static char newname [BUFSIZ];
+    static char newname [BUFSIZ+1];
     newname [0] = '\0';
     while( ( oldname [i] != '\0' ) && ( i < BUFSIZ ) ) {
         newname [i] = ToLower( oldname [i] );
@@ -242,7 +242,7 @@ const char * PrettyTmpName( const char * oldname ) {
 /** This function is out of date DAS */
 const char * EnumName( const char * oldname ) {
     int j = 0;
-    static char newname [MAX_LEN];
+    static char newname [MAX_LEN+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -258,7 +258,7 @@ const char * EnumName( const char * oldname ) {
 
 const char * SelectName( const char * oldname ) {
     int j = 0;
-    static char newname [MAX_LEN];
+    static char newname [MAX_LEN+1];
     if( !oldname ) {
         return ( "" );
     }
@@ -274,7 +274,7 @@ const char * SelectName( const char * oldname ) {
 }
 
 const char * FirstToUpper( const char * word ) {
-    static char newword [MAX_LEN];
+    static char newword [MAX_LEN+1];
 
     strncpy( newword, word, MAX_LEN );
     newword[0] = ToUpper( newword[0] );
@@ -332,7 +332,7 @@ const char * FundamentalType( const Type t, int report_reftypes ) {
  * the dictionary.
  */
 const char * TypeDescriptorName( Type t ) {
-    static char b [BUFSIZ];
+    static char b [BUFSIZ+1];
     Schema parent = t->superscope;
     /* NOTE - I corrected a prev bug here in which the *current* schema was
     ** passed to this function.  Now we take "parent" - the schema in which

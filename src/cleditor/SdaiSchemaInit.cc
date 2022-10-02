@@ -5,7 +5,6 @@
 // regenerate it.
 
 #include <SdaiSchemaInit.h>
-#include "sc_memmgr.h"
 
 void HeaderSchemaInit( Registry & reg ) {
     HeaderInitSchemasAndEnts( reg );

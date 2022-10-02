@@ -14,18 +14,24 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
-#include <sc_memmgr.h>
-#include <path2str.h>
+#define _XOPEN_SOURCE /* for S_IFDIR */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#ifdef _WIN32
+#  include <direct.h>
+#endif /* _WIN32 */
+
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include "classes.h"
 #include "class_strings.h"
 #include "genCxxFilenames.h"
 #include <ordered_attrs.h>
 #include "rules.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 static int type_count;  /**< number each temporary type for same reason as \sa attr_count */
 
@@ -42,6 +48,59 @@ int isMultiDimAggregateType( const Type t );
 
 void Type_Description( const Type, char * );
 void TypeBody_Description( TypeBody body, char * buf );
+
+/* cross-platform mkdir */
+static int sc_mkdir( const char * path ) {
+    #ifdef _WIN32
+    return mkdir( path );
+    #else
+    return mkdir( path, 0777 );
+    #endif /* _WIN32 */
+}
+
+/* return -1 if error, 0 if created, 1 if dir existed already */
+static int mkDirIfNone( const char * path ) {
+    struct stat s;
+    if( stat( path, &s ) != 0 ) {
+        if( errno == ENOENT ) {
+            return sc_mkdir( path );
+        }
+    } else if( s.st_mode & S_IFDIR ) {
+        return 1;
+    }
+    /* either stat returned an error other than ENOENT, or 'path' exists but isn't a dir */
+    return -1;
+}
+
+#ifdef _WIN32
+/* for windows, rewrite backslashes in paths
+ * that will be written to generated code
+ */
+static const char * path2str_fn( const char * fileMacro ) {
+    static char * result = 0;
+    static size_t rlen = 0;
+    char * p;
+    if( rlen < strlen( fileMacro ) ) {
+        if( result ) {
+            free( result );
+        }
+        rlen = strlen( fileMacro );
+        result = ( char * )malloc( rlen * sizeof( char ) + 1 );
+    }
+    strcpy( result, fileMacro );
+    p = result;
+    while( *p ) {
+        if( *p == '\\' ) {
+            *p = '/';
+        }
+        p++;
+    }
+    return result;
+}
+#  define path2str(path) path2str_fn(path)
+#else
+#  define path2str(path) path
+#endif
 
 /** write representation of expression to end of buf
  *
@@ -101,16 +160,15 @@ void strcat_bounds( TypeBody b, char * buf ) {
  ** Change Date: 5/22/91  CD
  ******************************************************************/
 const char * EnumCElementName( Type type, Expression expr )  {
-    static char buf [BUFSIZ];
+    static char buf [BUFSIZ+1];
     sprintf( buf, "%s__",
              EnumName( TYPEget_name( type ) ) );
-    strcat( buf, StrToLower( EXPget_name( expr ) ) );
-
+    strncat( buf, StrToLower( EXPget_name( expr ) ), BUFSIZ );
     return buf;
 }
 
 char * CheckEnumSymbol( char * s ) {
-    static char b [BUFSIZ];
+    static char b [BUFSIZ+1];
     if( strcmp( s, "sdaiTRUE" )
             && strcmp( s, "sdaiFALSE" )
             && strcmp( s, "sdaiUNKNOWN" ) ) {
@@ -120,7 +178,7 @@ char * CheckEnumSymbol( char * s ) {
     } else {
         strcpy( b, s );
         strcat( b, "_" );
-        fprintf( stderr, "Warning in %s: the enumerated value %s is already being used and has been changed to %s\n", __FUNCTION__, s, b );
+        fprintf( stderr, "Warning in %s: the enumerated value %s is already being used and has been changed to %s\n", __func__, s, b );
         return ( b );
     }
 }
@@ -153,8 +211,8 @@ char * TypeDescription( const Type t ) {
 void TYPEenum_inc_print( const Type type, FILE * inc ) {
     Expression expr;
 
-    char tdnm[BUFSIZ],
-         enumAggrNm[BUFSIZ];
+    char tdnm[BUFSIZ+1],
+         enumAggrNm[BUFSIZ+1];
     const char * n;  /*  pointer to class name  */
     int cnt = 0;
 
@@ -182,12 +240,12 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
 
     /*  constructors    */
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
-    tdnm[BUFSIZ-1] = '\0';
-    fprintf( inc, "  public:\n        %s (const char * n =0, Enum"
-             "TypeDescriptor *et =%s);\n", n, tdnm );
+    tdnm[BUFSIZ - 1] = '\0';
+    fprintf( inc, "  public:\n        %s (const char * n =0, EnumTypeDescriptor *et =%s);\n", n, tdnm );
     fprintf( inc, "        %s (%s e, EnumTypeDescriptor *et =%s)\n"
              "                : type(et) {  set_value (e);  }\n",
              n, EnumName( TYPEget_name( type ) ), tdnm );
+    fprintf( inc, "        %s (const %s &e) { set_value(e); }\n", n, TYPEget_ctype( type ) );
 
     /*  destructor  */
     fprintf( inc, "        ~%s () { }\n", n );
@@ -250,7 +308,7 @@ void TYPEenum_lib_print( const Type type, FILE * f ) {
     DictionaryEntry de;
     Expression expr;
     const char * n;   /*  pointer to class name  */
-    char c_enum_ele [BUFSIZ];
+    char c_enum_ele [BUFSIZ+1];
 
     n = TYPEget_ctype( type );
 
@@ -318,7 +376,6 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     DEBUG( "Entering TYPEPrint_cc for %s\n", names->impl );
 
     fprintf( impl, "#include \"schema.h\"\n" );
-    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
     fprintf( impl, "#include \"%s\"\n\n", names->header );
 
     if ( TYPEis_enumeration( type ) ) {
@@ -380,7 +437,7 @@ static void printEnumCreateHdr( FILE * inc, const Type type ) {
 /** See header comment above by printEnumCreateHdr. */
 static void printEnumCreateBody( FILE * lib, const Type type ) {
     const char * nm = TYPEget_ctype( type );
-    char tdnm[BUFSIZ];
+    char tdnm[BUFSIZ+1];
     tdnm[BUFSIZ-1] = '\0';
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
@@ -399,7 +456,7 @@ static void printEnumAggrCrHdr( FILE * inc, const Type type ) {
 
 static void printEnumAggrCrBody( FILE * lib, const Type type ) {
     const char * n = TYPEget_ctype( type );
-    char tdnm[BUFSIZ];
+    char tdnm[BUFSIZ+1];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
     tdnm[BUFSIZ-1] = '\0';
@@ -424,7 +481,7 @@ static void printEnumAggrCrBody( FILE * lib, const Type type ) {
  ** Dec 2011 - MAP - remove goto
  **************************************************************************/
 void TYPEprint_typedefs( Type t, FILE * classes ) {
-    char nm [BUFSIZ];
+    char nm [BUFSIZ+1];
     Type i;
     bool aggrNot1d = true;  /* added so I can get rid of a goto */
 
@@ -506,10 +563,10 @@ void TYPEprint_typedefs( Type t, FILE * classes ) {
        TYPEprint_init() (below) which is done in exp2cxx's 1st pass only.)
 *****/
 void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
-    char tdnm [BUFSIZ],
-         typename_buf [MAX_LEN],
-         base [BUFSIZ],
-         nm [BUFSIZ];
+    char tdnm [BUFSIZ+1],
+         typename_buf [MAX_LEN+1],
+         base [BUFSIZ+1],
+         nm [BUFSIZ+1];
     Type i;
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
@@ -563,8 +620,8 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
 }
 
 void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema ) {
-    char tdnm [BUFSIZ];
-    char typename_buf[MAX_LEN];
+    char tdnm [BUFSIZ+1];
+    char typename_buf[MAX_LEN+1];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
@@ -635,7 +692,7 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR )
         char * temp;
         temp = non_unique_types_string( type );
         fprintf( create, "        %s = new SelectTypeDescriptor (\n                  ~%s,        //unique elements,\n", TYPEtd_name( type ), temp );
-        sc_free( temp );
+        free( temp );
         TYPEprint_nm_ft_desc( schema, type, create, "," );
         fprintf( create, "                  (SelectCreator) create_%s);        // Creator function\n", SelectName( TYPEget_name( type ) ) );
     } else {
@@ -832,7 +889,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
 
     const char * ctype = TYPEget_ctype( t );
     int count = type_count++;
-    char name_buf[MAX_LEN];
+    char name_buf[MAX_LEN+1];
     int s;
 
     switch( TYPEget_body( t )->type ) {
@@ -878,7 +935,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
     } else {
         Type base = 0;
         /* no name, recurse */
-        char callee_buffer[MAX_LEN];
+        char callee_buffer[MAX_LEN+1];
         if( TYPEget_body( t ) ) {
             base = TYPEget_body( t )->base;
         }
@@ -1026,10 +1083,10 @@ void TypeBody_Description( TypeBody body, char * buf ) {
 }
 
 const char * IdlEntityTypeName( Type t ) {
-    static char name [BUFSIZ];
-    strcpy( name, TYPE_PREFIX );
+    static char name [BUFSIZ+1];
+    strncpy( name, TYPE_PREFIX, BUFSIZ );
     if( TYPEget_name( t ) ) {
-        strcpy( name, FirstToUpper( TYPEget_name( t ) ) );
+	strncpy( name, FirstToUpper( TYPEget_name( t ) ), BUFSIZ );
     } else {
         return TYPEget_ctype( t );
     }
@@ -1039,7 +1096,7 @@ const char * IdlEntityTypeName( Type t ) {
 const char * GetAggrElemType( const Type type ) {
     Class_Of_Type class;
     Type bt;
-    static char retval [BUFSIZ];
+    static char retval [BUFSIZ+1];
 
     if( isAggregateType( type ) ) {
         bt = TYPEget_nonaggregate_base_type( type );
@@ -1062,14 +1119,14 @@ const char * GetAggrElemType( const Type type ) {
 
         /*      case TYPE_ENTITY:   */
         if( class == entity_ ) {
-            strcpy( retval, IdlEntityTypeName( bt ) );
+	    strncpy( retval, IdlEntityTypeName( bt ), BUFSIZ );
         }
 
         /*      case TYPE_ENUM:     */
         /*  case TYPE_SELECT:   */
         if( ( class == enumeration_ )
                 || ( class == select_ ) )  {
-            strcpy( retval, TYPEget_ctype( bt ) );
+	    strncpy( retval, TYPEget_ctype( bt ), BUFSIZ );
         }
 
         /*  case TYPE_LOGICAL:  */
@@ -1097,7 +1154,7 @@ const char * GetAggrElemType( const Type type ) {
 
 const char * TYPEget_idl_type( const Type t ) {
     Class_Of_Type class;
-    static char retval [BUFSIZ];
+    static char retval [BUFSIZ+1];
 
     /*  aggregates are based on their base type
     case TYPE_ARRAY:
@@ -1166,18 +1223,14 @@ const char * TYPEget_idl_type( const Type t ) {
     /*      case TYPE_ENTITY:   */
     if( class == entity_ ) {
         /* better do this because the return type might go away */
-        strcpy( retval, IdlEntityTypeName( t ) );
+	strncpy( retval, IdlEntityTypeName( t ), BUFSIZ - 4 );
         strcat( retval, "_ptr" );
         return retval;
     }
     /*    case TYPE_ENUM:   */
     /*    case TYPE_SELECT: */
     if( class == enumeration_ ) {
-        strncpy( retval, EnumName( TYPEget_name( t ) ), BUFSIZ - 2 );
-
-        strcat( retval, " /*" );
-        strcat( retval, IdlEntityTypeName( t ) );
-        strcat( retval, "*/ " );
+	snprintf( retval, BUFSIZ, "%s /*%s*/ ", EnumName(TYPEget_name(t)), IdlEntityTypeName(t) );
         return retval;
     }
     if( class == select_ )  {
@@ -1202,9 +1255,8 @@ const char * TYPEget_idl_type( const Type t ) {
 char * TYPEget_express_type( const Type t ) {
     Class_Of_Type class;
     Type bt;
-    char retval [BUFSIZ];
-    char * n, * permval, * aggr_type;
-
+    char retval [BUFSIZ+1] = {'\0'};
+    char * n = NULL, * permval = NULL, * aggr_type = NULL;
 
     /*  1.  "DEFINED" types */
     /*    case TYPE_ENUM:   */
@@ -1277,7 +1329,7 @@ char * TYPEget_express_type( const Type t ) {
 
         /*  this will declare extra memory when aggregate is > 1D  */
 
-        permval = ( char * )sc_malloc( strlen( retval ) * sizeof( char ) + 1 );
+        permval = ( char * )malloc( strlen( retval ) * sizeof( char ) + 1 );
         strcpy( permval, retval );
         return permval;
 
@@ -1285,7 +1337,7 @@ char * TYPEget_express_type( const Type t ) {
 
     /*  default returns undefined   */
 
-    fprintf( stderr, "Warning in %s: type %s is undefined\n", __FUNCTION__, TYPEget_name( t ) );
+    fprintf( stderr, "Warning in %s: type %s is undefined\n", __func__, TYPEget_name( t ) );
     return ( "SCLundefined" );
 
 }
@@ -1294,7 +1346,9 @@ char * TYPEget_express_type( const Type t ) {
 void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const char * aggr_name, const char * cname, Expression bound, int boundNr ) {
     if( bound->symbol.resolved ) {
         if( bound->type == Type_Funcall ) {
-            fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, EXPRto_string( bound ) );
+	    char *bound_str = EXPRto_string(bound);
+            fprintf( impl, "        %s->SetBound%dFromExpressFuncall( \"%s\" );\n", var_name, boundNr, bound_str );
+            free(bound_str);
         } else {
             fprintf( impl, "        %s->SetBound%d( %d );\n", var_name, boundNr, bound->u.integer );
         }

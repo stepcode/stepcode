@@ -13,7 +13,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include <sc_memmgr.h>
 
 MultList::~MultList()
 /*

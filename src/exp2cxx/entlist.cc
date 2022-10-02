@@ -14,7 +14,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include <sc_memmgr.h>
 
 int EntList::siblings()
 /*

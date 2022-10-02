@@ -16,13 +16,12 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 extern int multiple_inheritance;
 
-#include <sc_memmgr.h>
 #include <stdlib.h>
 #include "classes.h"
 #include "classes_type.h"
 #include "classes_attribute.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 #define BASE_SELECT "SDAI_Select"
 
@@ -34,7 +33,7 @@ extern int multiple_inheritance;
                   ((t)->u.type->body->type == integer_) || \
                   ((t)->u.type->body->type == number_) )
 #define PRINT_BUG_REPORT  \
-     fprintf( f, "    std::cerr << __FILE__ << \":\" << __LINE__ <<  \":  ERROR" \
+     fprintf( f, "std::cerr << __FILE__ << \":\" << __LINE__ <<  \":  ERROR" \
               " in schema library:  \\n\" \n    << _POC_ << \"\\n\\n\";\n");
 
 #define PRINT_SELECTBUG_WARNING(f) \
@@ -123,7 +122,7 @@ static int compareOrigTypes( Type a, Type b ) {
  compareOrigTypes() above).
  */
 const char * utype_member( const Linked_List list, const Type check, int rename ) {
-    static char r [BUFSIZ];
+    static char r [BUFSIZ+1];
     bool checkIsEntity = TYPEis_entity( check );
 
     LISTdo( list, t, Type ) {
@@ -244,7 +243,7 @@ int unique_types( const Linked_List list ) {
     RETURNS 1 if true, else 0.
 */
 int duplicate_utype_member( const Linked_List list, const Type check ) {
-    char b [BUFSIZ];
+    char b [BUFSIZ+1];
 
     if( TYPEis_entity( check ) ) {
         return FALSE;
@@ -397,7 +396,7 @@ char * non_unique_types_string( const Type type ) {
     non_unique_types_vector( type, tvec );
 
     /* build type string from vector */
-    typestr = ( char * )sc_malloc( BUFSIZ );
+    typestr = ( char * )malloc( BUFSIZ + 1 );
     typestr[0] = '\0';
     strcat( typestr, ( char * )"(" );
     for( i = 0; i <= tnumber; i++ ) {
@@ -450,8 +449,8 @@ char * non_unique_types_string( const Type type ) {
  * \returns the attribute 'check' if an attribute with the same name is on the list, 0 otherwise
  */
 Variable ATTR_LISTmember( Linked_List l, Variable check ) {
-    char nm [BUFSIZ];
-    char cur [BUFSIZ];
+    char nm [BUFSIZ+1];
+    char cur [BUFSIZ+1];
 
     generate_attribute_name( check, nm );
     LISTdo( l, a, Variable ) {
@@ -494,9 +493,9 @@ Linked_List SEL_TYPEgetnew_attribute_list( const Type type ) {
 void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
     int size, j;
     Linked_List data_members = SELgetnew_dmlist( type );
-    char dmname [BUFSIZ],
-         classnm [BUFSIZ],
-         tdnm [BUFSIZ];
+    char dmname [BUFSIZ+1],
+         classnm [BUFSIZ+1],
+         tdnm [BUFSIZ+1];
 
     strncpy( classnm, SelectName( TYPEget_name( type ) ), BUFSIZ );
     classnm[BUFSIZ-1] = '\0';
@@ -583,8 +582,8 @@ void TYPEselect_inc_print_vars( const Type type, FILE * f, Linked_List dups ) {
 * class.
 */
 void TYPEselect_inc_print( const Type type, FILE * f ) {
-    char n[BUFSIZ];   /*  class name  */
-    char tdnm [BUFSIZ];  /*  TypeDescriptor name  */
+    char n[BUFSIZ+1];   /*  class name  */
+    char tdnm [BUFSIZ+1];  /*  TypeDescriptor name  */
     Linked_List dups;
     int dup_result;
     Linked_List attrs;
@@ -708,8 +707,8 @@ void TYPEselect_inc_print( const Type type, FILE * f ) {
 void TYPEselect_lib_print_part_one( const Type type, FILE * f,
                                Linked_List dups, char * n ) {
 #define schema_name SCHEMAget_name(schema)
-    char tdnm[BUFSIZ],
-         nm[BUFSIZ];
+    char tdnm[BUFSIZ+1],
+         nm[BUFSIZ+1];
     int size = strlen( n ) * 2 + 4, j; /* size - for formatting output */
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
@@ -741,7 +740,11 @@ void TYPEselect_lib_print_part_one( const Type type, FILE * f,
         if( ( TYPEis_entity( t ) ) || ( !utype_member( dups, t, 1 ) ) ) {
             if( isAggregateType( t )  && ( t->u.type->body->base ) ) {
                     fprintf( f, "   _%s = new %s;\n", SEL_ITEMget_dmname( t ), TYPEget_utype( t ) );
-            }
+	    } else if (TYPEis_entity(t)) {
+		    // Per TYPEget_utype, any TYPEis_entity is an
+		    // SDAI_Application_instance_ptr - initialize it here.
+		    fprintf(f, "   _%s = NULL;\n", SEL_ITEMget_dmname(t));
+	    }
         }
     } LISTod
     fprintf( f, "   nullify();\n" );
@@ -1049,10 +1052,10 @@ void TYPEselect_lib_part_three_getter( const Type type, const char * classnm, co
 void TYPEselect_lib_print_part_three( const Type type, FILE * f, char * classnm ) {
 #define ENTITYget_type(e)  ((e)->u.entity->type)
 
-    char uent[BUFSIZ],  /*  name of underlying entity type  */
-         utype[BUFSIZ],    /*  underlying type name  */
-         attrnm [BUFSIZ],  /*  attribute name ->  data member = _attrnm  */
-         funcnm[BUFSIZ];   /*  access function name = Attrnm  */
+    char uent[BUFSIZ+1],  /*  name of underlying entity type  */
+         utype[BUFSIZ+1],    /*  underlying type name  */
+         attrnm [BUFSIZ+1],  /*  attribute name ->  data member = _attrnm  */
+         funcnm[BUFSIZ+1];   /*  access function name = Attrnm  */
     Linked_List items = SEL_TYPEget_items( type );
     /* all the items in the select type  */
     Linked_List attrs = SEL_TYPEgetnew_attribute_list( type );
@@ -1151,7 +1154,7 @@ void TYPEselect_lib_print_part_three( const Type type, FILE * f, char * classnm 
  * TYPEselect_lib_print_part_four prints part 4 of the SDAI document of a select class.
  */
 void TYPEselect_lib_print_part_four( const Type type, FILE * f, Linked_List dups, char * n ) {
-    char x[BUFSIZ];
+    char x[BUFSIZ+1];
 
     fprintf( f, "\n    //  part 4\n" );
 
@@ -1280,7 +1283,7 @@ void TYPEselect_init_print( const Type type, FILE * f ) {
 }
 
 void TYPEselect_lib_part21( const Type type, FILE * f ) {
-    char n[BUFSIZ];       /*  pointers to class name(s)  */
+    char n[BUFSIZ+1];       /*  pointers to class name(s)  */
     const char * dm;  /*  data member name */
     Linked_List data_members = SELgetnew_dmlist( type );
 
@@ -1493,7 +1496,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
                      "        _%s = ReadEntityRef(in, &_error, \",)\", instances, addFileId);\n", dm );
             fprintf( f,
                      "        if( _%s && ( _%s != S_ENTITY_NULL) &&\n "
-                     "              ( CurrentUnderlyingType()->CanBe( _%s->getEDesc() ) ) ) {\n"
+                     "              ( CurrentUnderlyingType()->CanBe( _%s->eDesc ) ) ) {\n"
                      "            return severity();\n", dm, dm, dm );
             fprintf( f,
                      "        } else {\n "
@@ -1554,7 +1557,7 @@ void TYPEselect_lib_part21( const Type type, FILE * f ) {
 
 
 void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
-    char n[BUFSIZ];       /*  pointers to class name  */
+    char n[BUFSIZ+1];       /*  pointers to class name  */
     Linked_List data_members = SELgetnew_dmlist( type );
     int enum_cnt = 0;
 
@@ -1680,7 +1683,7 @@ void SELlib_print_protected( const Type type,  FILE * f ) {
     if( TYPEis_select( t ) ) {
         fprintf( f,
                  "    //  %s\n"  /*  item name  */
-                 "    if( %s->CanBe( se->getEDesc() ) ) {\n"
+                 "    if( %s->CanBe( se->eDesc ) ) {\n"
                  "        _%s.AssignEntity (se);\n"  /* underlying data member */
                  "        return SetUnderlyingType (%s);\n"  /* td */
                  "    }\n",
@@ -1713,7 +1716,7 @@ void SELlib_print_protected( const Type type,  FILE * f ) {
 * TYPEselect_lib_print prints the member functions (definitions) of a select class.
 */
 void TYPEselect_lib_print( const Type type, FILE * f ) {
-    char n[BUFSIZ], m[BUFSIZ];
+    char n[BUFSIZ+1], m[BUFSIZ+1];
     const char * z; /*  pointers to class name(s)  */
     Linked_List dups;
     int dup_result;
@@ -1850,7 +1853,7 @@ void TYPEselect_lib_print( const Type type, FILE * f ) {
 void TYPEselect_print( Type t, FILES * files, Schema schema ) {
     SelectTag tag, tmp;
     Type i, bt;  /*  type of elements in an aggregate  */
-    char nm[BUFSIZ], tdnm[BUFSIZ];
+    char nm[BUFSIZ+1], tdnm[BUFSIZ+1];
     FILE * inc = files->inc;
 
     /*  if type is already marked, return  */
@@ -1862,7 +1865,7 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
     }
 
     /*  mark the type as being processed  */
-    tag = ( SelectTag ) sc_malloc( sizeof( struct SelectTag_ ) );
+    tag = ( SelectTag ) malloc( sizeof( struct SelectTag_ ) );
     tag -> started = 1;
     tag -> complete = 0;
     TYPEput_clientData( t, ( ClientData ) tag );
@@ -1934,7 +1937,7 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;
 
-    sc_free( tag );
+    free( tag );
 }
 #undef BASE_SELECT
 

@@ -14,11 +14,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
-#include <sc_memmgr.h>
+#define _XOPEN_SOURCE /* for S_IFDIR */
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <errno.h>
+#ifdef _WIN32
+#  include <direct.h>
+#endif /* _WIN32 */
 #include <stdlib.h>
-#include <sc_stdbool.h>
+#include <stdbool.h>
 #include <assert.h>
-#include <sc_mkdir.h>
 #include "classes.h"
 #include "classes_entity.h"
 #include "class_strings.h"
@@ -26,10 +31,33 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #include <ordered_attrs.h>
 #include "rules.h"
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 extern int multiple_inheritance;
 extern int old_accessors;
+
+/* cross-platform mkdir */
+static int sc_mkdir( const char * path ) {
+    #ifdef _WIN32
+    return mkdir( path );
+    #else
+    return mkdir( path, 0777 );
+    #endif /* _WIN32 */
+}
+
+/* return -1 if error, 0 if created, 1 if dir existed already */
+static int mkDirIfNone( const char * path ) {
+    struct stat s;
+    if( stat( path, &s ) != 0 ) {
+        if( errno == ENOENT ) {
+            return sc_mkdir( path );
+        }
+    } else if( s.st_mode & S_IFDIR ) {
+        return 1;
+    }
+    /* either stat returned an error other than ENOENT, or 'path' exists but isn't a dir */
+    return -1;
+}
 
 /* attribute numbering used to use a global variable attr_count.
  * it could be tricky keep the numbering consistent when making
@@ -59,7 +87,7 @@ void ENTITYnames_print( Entity entity, FILE * file ) {
  * \param schema schema being processed
  */
 void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
 
     fprintf( file, "EntityDescriptor * %s::%s%s = 0;\n", SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ) );
     LISTdo( ENTITYget_attributes( entity ), v, Variable ) {
@@ -81,7 +109,7 @@ void LIBdescribe_entity( Entity entity, FILE * file, Schema schema ) {
 void LIBmemberFunctionPrint( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
 
     Linked_List attr_list;
-    char entnm [BUFSIZ];
+    char entnm [BUFSIZ+1];
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm */
 
@@ -149,7 +177,7 @@ int get_attribute_number( Entity entity ) {
  * \p file  file being written to
  */
 void ENTITYhead_print( Entity entity, FILE * file ) {
-    char entnm [BUFSIZ];
+    char entnm [BUFSIZ+1];
     Linked_List list;
     Entity super = 0;
 
@@ -180,7 +208,7 @@ void ENTITYhead_print( Entity entity, FILE * file ) {
  * skip inverse attrs
  */
 void DataMemberInit( bool * first, Variable a, FILE * lib ) {
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
     if( VARis_derived( a ) || VARget_inverse( a ) ) {
         return;
     }
@@ -244,7 +272,7 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
 
     Linked_List attr_list;
     static int entcode = 0;
-    char entnm [BUFSIZ];
+    char entnm [BUFSIZ+1];
 
     strncpy( entnm, ENTITYget_classname( entity ), BUFSIZ ); /*  assign entnm  */
     entnm[BUFSIZ-1] = '\0';
@@ -328,7 +356,7 @@ void initializeAttrs( Entity e, FILE* file ) {
 void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
 
     Linked_List list;
     Entity principalSuper = 0;
@@ -489,13 +517,13 @@ void LIBstructor_print( Entity entity, Linked_List neededAttr, FILE * file, Sche
 void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * file, Schema schema ) {
     Linked_List attr_list;
     Type t;
-    char attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
 
     Linked_List list;
     int super_cnt = 0;
 
     /* added for calling parents constructor if there is one */
-    char parentnm [BUFSIZ];
+    char parentnm [BUFSIZ+1];
     char * parent = 0;
 
     const char * entnm;
@@ -599,8 +627,8 @@ void LIBstructor_print_w_args( Entity entity, Linked_List neededAttr, FILE * fil
                     fprintf( file, "        /* Put attribute on this class' attributes list so the access functions still work. */\n" );
                     fprintf( file, "    attributes.push( a );\n" );
 
-                    fprintf( file, "        /* Put attribute on the attributes list for the main inheritance hierarchy.  **\n" );
-                    fprintf( file, "        ** The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
+                    fprintf( file, "        /* Put attribute on the attributes list for the main inheritance hierarchy.  */\n" );
+                    fprintf( file, "        /* The push method rejects duplicates found by comparing attrDescriptor's.   */\n" );
                     fprintf( file, "    if( addAttrs ) {\n" );
                     fprintf( file, "        se->attributes.push( a );\n    }\n" );
 
@@ -676,7 +704,7 @@ char * generate_dict_attr_name( Variable a, char * out ) {
     }
     *q = '\0';
 
-    sc_free( temp );
+    free( temp );
     return out;
 }
 
@@ -690,8 +718,8 @@ char * generate_dict_attr_name( Variable a, char * out ) {
 void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schema ) {
 #define entity_name ENTITYget_name(entity)
 #define schema_name SCHEMAget_name(schema)
-    char attrnm [BUFSIZ];
-    char dict_attrnm [BUFSIZ];
+    char attrnm [BUFSIZ+1];
+    char dict_attrnm [BUFSIZ+1];
     const char * super_schema;
     char * tmp, *tmp2;
     bool hasInverse = false;
@@ -827,7 +855,7 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
                );
     } else {
         /* manufacture new one(s) on the spot */
-        char typename_buf[MAX_LEN];
+        char typename_buf[MAX_LEN+1];
         print_typechain( header, impl, v->type, typename_buf, schema, v->name->symbol.name );
         fprintf( impl, "        %s::%s%d%s%s =\n          new %s"
                  "(\"%s\",%s,%s,%s%s,\n          *%s::%s%s);\n",
@@ -864,15 +892,15 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
 
     if( VARis_derived( v ) && v->initializer ) {
         tmp = EXPRto_string( v->initializer );
-        tmp2 = ( char * )sc_malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
+        tmp2 = ( char * )malloc( sizeof( char ) * ( strlen( tmp ) + BUFSIZ ) );
         fprintf( impl, "        %s::%s%d%s%s->initializer_(\"%s\");\n",
                  schema_name, ATTR_PREFIX, v->idx,
                  ( VARis_derived( v ) ? "D" :
                    ( VARis_type_shifter( v ) ? "R" :
                      ( VARget_inverse( v ) ? "I" : "" ) ) ),
                  attrnm, format_for_stringout( tmp, tmp2 ) );
-        sc_free( tmp );
-        sc_free( tmp2 );
+        free( tmp );
+        free( tmp2 );
     }
     if( VARget_inverse( v ) ) {
         fprintf( impl, "        %s::%s%d%s%s->inverted_attr_id_(\"%s\");\n",
@@ -957,7 +985,6 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
     fprintf( impl, "#include \"schema.h\"\n" );
-    fprintf( impl, "#include \"sc_memmgr.h\"\n" );
     fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
 
     LIBdescribe_entity( entity, impl, schema );

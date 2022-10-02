@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>
-#include <sc_stdbool.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "exppp.h"

@@ -5,6 +5,7 @@ set(FEDEX_COMMON_SRCS
 
 set(exp2cxx_SOURCES
   ${FEDEX_COMMON_SRCS}
+  trace_fprintf.c
   fedex_main.c
   classes_wrapper.cc
   classes.c
@@ -31,17 +32,13 @@ set(exp2cxx_SOURCES
   )
 
 include_directories(
+  ${CMAKE_CURRENT_SOURCE_DIR}
   ${SC_SOURCE_DIR}/include
   ${SC_SOURCE_DIR}/include/exppp
   ${SC_SOURCE_DIR}/include/express
-  ${SC_SOURCE_DIR}/src/base
   )
 
-SC_ADDEXEC(exp2cxx SOURCES ${exp2cxx_SOURCES} LINK_LIBRARIES libexppp express base)
-
-if(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
-  add_dependencies(exp2cxx version_string)
-endif(NOT SC_IS_SUBBUILD AND SC_GIT_VERSION)
+SC_ADDEXEC(exp2cxx SOURCES ${exp2cxx_SOURCES} LINK_LIBRARIES libexppp express)
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)

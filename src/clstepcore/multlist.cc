@@ -14,7 +14,6 @@
  *****************************************************************************/
 
 #include "complexSupport.h"
-#include "sc_memmgr.h"
 
 /**
  * Deletes the childList of this, before this is deleted.

@@ -145,6 +145,7 @@ class SC_EDITOR_EXPORT CmdMgr {
     public:
 
         CmdMgr();
+        ~CmdMgr();
 
 // STATE LIST OPERATIONS
         MgrNode   *  GetHead( stateEnum listType );

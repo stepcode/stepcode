@@ -73,7 +73,7 @@ class EntNode {
     public:
         EntNode( const char * nm = "" ) : next( 0 ), mark( NOMARK ),
             multSupers( 0 ) {
-            strcpy( name, nm );
+            strncpy( name, nm, BUFSIZ );
         }
         EntNode( char *[] );  // given a list, create a linked list of EntNodes
         ~EntNode() {
@@ -116,7 +116,7 @@ class EntNode {
 
     private:
         MarkType mark;
-        char name[BUFSIZ];
+        char name[BUFSIZ+1];
         int multSupers;  // do I correspond to an entity with >1 supertype?
 };
 
@@ -225,7 +225,7 @@ class SimpleList : public EntList {
         void write( ostream & );
 
     private:
-        char name[BUFSIZ];    // Name of entity we correspond to.
+        char name[BUFSIZ+1];    // Name of entity we correspond to.
         MarkType I_marked; // Did I mark, and with what type of mark.
 };
 

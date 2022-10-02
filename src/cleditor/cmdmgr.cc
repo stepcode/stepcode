@@ -11,7 +11,6 @@
 */
 
 #include <cmdmgr.h>
-#include "sc_memmgr.h"
 
 ReplicateLinkNode * ReplicateList::FindNode( MgrNode * mn ) {
     ReplicateLinkNode * rln = ( ReplicateLinkNode * )GetHead();
@@ -70,6 +69,16 @@ CmdMgr::CmdMgr() {
     mappedViewList = new DisplayNodeList( mappedView );
     closeList = new DisplayNodeList( notMapped );
     replicateList = new ReplicateList();
+}
+
+CmdMgr::~CmdMgr() {
+    delete completeList;
+    delete incompleteList;
+    delete deleteList;
+    delete mappedWriteList;
+    delete mappedViewList;
+    delete closeList;
+    delete replicateList;
 }
 
 void CmdMgr::ReplicateCmdList( MgrNode * mn ) {

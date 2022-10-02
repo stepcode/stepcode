@@ -25,15 +25,13 @@ class DisplayNode;
 
 #include <editordefines.h>
 
-#include <sc_nullptr.h>
-
 class InstMgr;
 
 class SC_CORE_EXPORT MgrNodeBase : public GenericNode {
     public:
         virtual inline SDAI_Application_instance * GetSTEPentity() {
             abort();
-            return nullptr;
+            return NULL;
         };
     virtual ~MgrNodeBase() {};
 };

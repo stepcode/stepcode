@@ -1,6 +1,5 @@
 
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 /*
 * NIST STEP Core Class Library
@@ -310,6 +309,11 @@ SDAI_BOOLEAN::operator  Boolean() const  {
 
 SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_LOGICAL & t ) {
     set_value( t.asInt() );
+    return *this;
+}
+
+SDAI_BOOLEAN & SDAI_BOOLEAN::operator= ( const SDAI_BOOLEAN & t ) {
+    v = t;
     return *this;
 }
 

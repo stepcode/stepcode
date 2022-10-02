@@ -1,6 +1,5 @@
 
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 /////////    SDAI_Model_contents_instances
 
@@ -27,7 +26,7 @@ SDAI_Model_contents::instances_() {
 
 SDAI_Model_contents_instances_ptr
 SDAI_Model_contents::instances_() const {
-    return ( const SDAI_Model_contents_instances_ptr ) &_instances;
+    return ( SDAI_Model_contents_instances_ptr ) &_instances;
 }
 
 SDAI_Entity_extent__set_var
@@ -37,7 +36,7 @@ SDAI_Model_contents::folders_() {
 
 SDAI_Entity_extent__set_var
 SDAI_Model_contents::folders_() const {
-    return ( const SDAI_Entity_extent__set_var )&_folders;
+    return ( SDAI_Entity_extent__set_var )&_folders;
 }
 
 SDAI_Entity_extent__set_var
@@ -47,7 +46,7 @@ SDAI_Model_contents::populated_folders_() {
 
 SDAI_Entity_extent__set_var
 SDAI_Model_contents::populated_folders_() const {
-    return ( const SDAI_Entity_extent__set_var )&_populated_folders;
+    return ( SDAI_Entity_extent__set_var )&_populated_folders;
 }
 
 SDAI_PID_DA_ptr SDAI_Model_contents::get_object_pid( const SDAI_DAObject_ptr & d ) const {

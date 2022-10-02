@@ -40,7 +40,7 @@ class SC_DAI_EXPORT SDAI_Model_contents_instances : public SDAI_DAObject {
             return &_instances;
         }
         SDAI_DAObject__set_var contents_() const {
-            return ( const SDAI_DAObject__set_var ) &_instances;
+            return ( SDAI_DAObject__set_var ) &_instances;
         }
 
 };

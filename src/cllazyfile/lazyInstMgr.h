@@ -10,7 +10,6 @@
 #include "lazyTypes.h"
 
 #include "Registry.h"
-#include "sc_memmgr.h"
 #include "sc_export.h"
 
 #include "judyLArray.h"

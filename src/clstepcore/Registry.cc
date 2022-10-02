@@ -11,7 +11,6 @@
 
 #include <ExpDict.h>
 #include <Registry.h>
-#include "sc_memmgr.h"
 
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
  *                                                        Name, FundamentalType, Originating Schema, Description */
@@ -79,7 +78,7 @@ void Registry::DeleteContents() {
 const EntityDescriptor * Registry::FindEntity( const char * e, const char * schNm, int check_case ) const {
     const EntityDescriptor * entd;
     const SchRename * altlist;
-    char schformat[BUFSIZ], altName[BUFSIZ];
+    char schformat[BUFSIZ+1], altName[BUFSIZ+1];
 
     if( check_case ) {
         entd = ( EntityDescriptor * )SC_HASHfind( primordialSwamp, ( char * )e );
@@ -235,13 +234,13 @@ void Registry::RemoveType( const char * n ) {
  */
 void Registry::RemoveClones( const EntityDescriptor & e ) {
     const SchRename * alts = e.AltNameList();
-    struct Element * tmp;
 
     while( alts ) {
-        tmp = new Element;
+        struct Element * tmp = new Element;
         tmp->key = ( char * ) alts->objName();
         SC_HASHsearch( primordialSwamp, tmp, HASH_DELETE );
         alts = alts->next;
+	delete tmp;
     }
 }
 
@@ -260,7 +259,7 @@ SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * s
             se->Error().severity( SEVERITY_WARNING );
             se->Error().UserMsg( "ENTITY requires external mapping" );
         }
-        se->setEDesc( entd );
+        se->eDesc = entd;
         return se;
     } else {
         return ENTITY_NULL;

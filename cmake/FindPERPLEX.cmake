@@ -227,6 +227,14 @@ if(NOT COMMAND PERPLEX_TARGET)
     set(PERPLEX_${Name}_SRC ${${PVAR_PREFIX}_OUT_SRC_FILE})
     set(PERPLEX_${Name}_HDR ${${PVAR_PREFIX}_OUT_HDR_FILE})
     set(PERPLEX_${Name}_INCLUDE_DIR ${${PVAR_PREFIX}_WORKING_DIR})
+
+    add_custom_command(
+      OUTPUT ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel
+      COMMAND ${CMAKE_COMMAND} -E touch ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel
+      DEPENDS ${${PVAR_PREFIX}_OUT_SRC_FILE} ${${PVAR_PREFIX}_OUT_HDR_FILE}
+      )
+    add_custom_target(${Name} DEPENDS ${${PVAR_PREFIX}_WORKING_DIR}/${Name}.sentinel)
+
   endmacro(PERPLEX_TARGET)
 endif(NOT COMMAND PERPLEX_TARGET)
 
@@ -240,12 +248,12 @@ if(NOT COMMAND ADD_PERPLEX_LEMON_DEPENDENCY)
       message(SEND_ERROR "PERPLEX target `${PERPLEXTarget}' does not exists.")
     endif()
 
-    if(NOT LEMON_${LemonTarget}_HDR)
+    if(NOT TARGET ${LemonTarget})
       message(SEND_ERROR "Lemon target `${LemonTarget}' does not exists.")
     endif()
 
     set_source_files_properties(${PERPLEX_${PERPLEXTarget}_SRC}
-      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_HDR})
+      PROPERTIES OBJECT_DEPENDS ${LEMON_${LemonTarget}_OUTPUT_HEADER})
   endmacro(ADD_PERPLEX_LEMON_DEPENDENCY)
 endif(NOT COMMAND ADD_PERPLEX_LEMON_DEPENDENCY)
 

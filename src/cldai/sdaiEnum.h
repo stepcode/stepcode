@@ -138,6 +138,7 @@ class SC_DAI_EXPORT SDAI_BOOLEAN :
 
         operator ::Boolean() const;
         SDAI_BOOLEAN & operator=( const SDAI_LOGICAL & t );
+        SDAI_BOOLEAN & operator=( const SDAI_BOOLEAN & t );
 
         SDAI_BOOLEAN & operator=( const ::Boolean t );
         SDAI_LOGICAL operator==( const SDAI_LOGICAL & t ) const;

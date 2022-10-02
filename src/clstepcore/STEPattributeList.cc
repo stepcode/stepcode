@@ -12,7 +12,6 @@
 
 #include <STEPattributeList.h>
 #include <STEPattribute.h>
-#include "sc_memmgr.h"
 
 AttrListNode::AttrListNode( STEPattribute * a ) {
     attr = a;

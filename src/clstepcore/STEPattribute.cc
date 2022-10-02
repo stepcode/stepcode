@@ -19,7 +19,6 @@
 #include <STEPaggregate.h>
 #include <ExpDict.h>
 #include <sdai.h>
-#include "sc_memmgr.h"
 
 // REAL_NUM_PRECISION is defined in STEPattribute.h, and is also used
 // in aggregate real handling (STEPaggregate.cc)  -- IMS 6 Jun 95
@@ -381,6 +380,100 @@ Severity STEPattribute::STEPread( istream & in, InstMgrBase * instances, int add
         }
     }
 }
+
+/*****************************************************************//**
+ ** \fn asStr
+ ** \param currSch - used for select type writes.  See commenting in SDAI_Select::STEPwrite().
+ ** \returns the value of the attribute
+ ** Status:  complete 3/91
+ *********************************************************************/
+const char * STEPattribute::asStr( std::string & str, const char * currSch ) const {
+    ostringstream ss;
+
+    str.clear();
+
+    // The attribute has been derived by a subtype's attribute
+    if( IsDerived() )  {
+        str = "*";
+        return const_cast<char *>( str.c_str() );
+    }
+
+    // The attribute has been redefined by the attribute pointed
+    // to by _redefAttr so write the redefined value.
+    if( _redefAttr )  {
+        return _redefAttr->asStr( str, currSch );
+    }
+
+    if( is_null() )  {
+        str = "";
+        return const_cast<char *>( str.c_str() );
+    }
+
+    switch( NonRefType() ) {
+        case INTEGER_TYPE:
+            ss << *( ptr.i );
+            str += ss.str();
+            break;
+
+        case NUMBER_TYPE:
+        case REAL_TYPE:
+
+            ss.precision( ( int ) Real_Num_Precision );
+            ss << *( ptr.r );
+            str += ss.str();
+            break;
+
+        case ENTITY_TYPE:
+            // print instance id only if not empty pointer
+            // and has value assigned
+            if( ( *( ptr.c ) == S_ENTITY_NULL ) || ( *( ptr.c ) == 0 ) ) {
+                break;
+            } else {
+                ( *( ptr.c ) )->STEPwrite_reference( str );
+            }
+            break;
+
+        case BINARY_TYPE:
+            if( !( ( ptr.b )->empty() ) ) {
+                ( ptr.b ) -> STEPwrite( str );
+            }
+            break;
+
+        case STRING_TYPE:
+            if( !( ( ptr.S )->empty() ) ) {
+                return ( ptr.S ) -> asStr( str );
+            }
+            break;
+
+        case AGGREGATE_TYPE:
+        case ARRAY_TYPE:      // DAS
+        case BAG_TYPE:        // DAS
+        case SET_TYPE:        // DAS
+        case LIST_TYPE:       // DAS
+            return  ptr.a->asStr( str ) ;
+
+        case ENUM_TYPE:
+        case BOOLEAN_TYPE:
+        case LOGICAL_TYPE:
+            return ptr.e -> asStr( str );
+
+        case SELECT_TYPE:
+            ptr.sh -> STEPwrite( str, currSch );
+            return const_cast<char *>( str.c_str() );
+
+        case REFERENCE_TYPE:
+        case GENERIC_TYPE:
+            cerr << "Internal error:  " << __FILE__ <<  __LINE__
+                 << "\n" << _POC_ "\n";
+            return 0;
+
+        case UNKNOWN_TYPE:
+        default:
+            return ( ptr.u -> asStr( str ) );
+    }
+    return const_cast<char *>( str.c_str() );
+}
+
 
 /*****************************************************************//**
  ** \fn asStr
@@ -1169,20 +1262,20 @@ ostream & operator<< ( ostream & out, STEPattribute & a ) {
 * value.
 ******************************************************************/
 void STEPattribute::AddErrorInfo() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
     if( SEVERITY_INPUT_ERROR < _error.severity() &&
             _error.severity() < SEVERITY_NULL ) {
         sprintf( errStr, " Warning: ATTRIBUTE '%s : %s : %d' - ",
-                 Name(), TypeName(), Type() );
+                 Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     } else if( _error.severity() == SEVERITY_INPUT_ERROR ) {
         sprintf( errStr, " Error: ATTRIBUTE '%s : %s : %d' - ",
-                 Name(), TypeName(), Type() );
+                 Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     } else if( _error.severity() <= SEVERITY_BUG ) {
         sprintf( errStr, " BUG: ATTRIBUTE '%s : %s : %d' - ",
-                 Name(), TypeName(), Type() );
+                 Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     }
 }
@@ -1199,7 +1292,7 @@ char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
     // read bad data until end of this attribute or entity.
     char * foundCh = 0;
     char c = '\0';
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     _error.GreaterSeverity( SEVERITY_WARNING );
@@ -1210,12 +1303,12 @@ char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
     if( in.eof() ) {
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
         sprintf( errStr, " Error: attribute '%s : %s : %d' - %s.\n",
-                 Name(), TypeName(), Type(),
+                 Name(), TypeName().c_str(), Type(),
                  "Unexpected EOF when skipping bad attr value" );
         _error.AppendToDetailMsg( errStr );
     } else {
         sprintf( errStr, " Error: attribute '%s : %s : %d' - %s.\n",
-                 Name(), TypeName(), Type(), "Invalid value" );
+                 Name(), TypeName().c_str(), Type(), "Invalid value" );
         _error.AppendToDetailMsg( errStr );
     }
     in.putback( c );
@@ -1353,6 +1446,7 @@ STEPattribute::~STEPattribute() {
                     delete ( SDAI_BOOLEAN * ) ptr.e;
                     ptr.e = 0;
                 }
+                break;
             case LOGICAL_TYPE:
                 if( ptr.e ) {
                     delete ( SDAI_LOGICAL * ) ptr.e;
@@ -1370,11 +1464,11 @@ const char * STEPattribute::Name() const {
     return aDesc->Name();
 }
 
-const char * STEPattribute::TypeName() const {
+std::string STEPattribute::TypeName() const {
     if( _redefAttr )  {
         return _redefAttr->TypeName();
     }
-    return aDesc->TypeName().c_str();
+    return aDesc->TypeName();
 }
 
 BASE_TYPE STEPattribute::Type() const {

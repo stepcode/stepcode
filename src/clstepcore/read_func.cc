@@ -5,7 +5,6 @@
 #include <read_func.h>
 #include <STEPattribute.h>
 #include "Str.h"
-#include "sc_memmgr.h"
 
 const int RealNumPrecision = REAL_NUM_PRECISION;
 
@@ -467,7 +466,7 @@ void PushPastString( istream & in, std::string & s, ErrorDescriptor * err ) {
  * This is used to read aggregates that are part of multidimensional aggregates.
  */
 void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
-    char messageBuf[BUFSIZ];
+    char messageBuf[BUFSIZ+1];
     messageBuf[0] = '\0';
 
     char c;
@@ -506,7 +505,7 @@ void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
  * to contain an aggregate as an element.
  */
 void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
-    char messageBuf[BUFSIZ];
+    char messageBuf[BUFSIZ+1];
     messageBuf[0] = '\0';
 
     char c;

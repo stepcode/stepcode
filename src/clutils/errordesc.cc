@@ -12,7 +12,6 @@
 
 #include <errordesc.h>
 #include <Str.h>
-#include <sc_memmgr.h>
 
 DebugLevel ErrorDescriptor::_debug_level = DEBUG_OFF;
 ostream  * ErrorDescriptor::_out = 0;

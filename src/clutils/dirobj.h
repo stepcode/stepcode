@@ -33,7 +33,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <sc_cf.h>
+#include "config.h"
 #include <sc_export.h>
 #include <stdlib.h>
 
@@ -61,10 +61,10 @@ class SC_UTILS_EXPORT DirObj {
         const char * File( int index );
         // check for file in the currently loaded directory
         bool FileExists( const char * file ) {
-            return Index( file ) ? 1 : 0;
+            return Index( file ) != -1;
         }
         bool FileExists( const std::string & file ) {
-            return Index( file.c_str() ) ? true : false;
+            return Index( file.c_str() ) != -1;
         }
         int Count();
 

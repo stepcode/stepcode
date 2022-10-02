@@ -4,9 +4,8 @@
 
 #include "complexSupport.h"
 #include "class_strings.h"
-#include <sc_memmgr.h>
 
-#include <sc_trace_fprintf.h>
+#include "./trace_fprintf.h"
 
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
@@ -91,7 +90,6 @@ void print_file_header( FILES * files ) {
     files -> initall = FILEcreate( "schema.cc" );
     fprintf( files->initall, "\n// in the exp2cxx source code, this file is generally referred to as files->initall or schemainit\n" );
     fprintf( files->initall, "#include \"schema.h\"\n" );
-    fprintf( files->initall, "#include \"sc_memmgr.h\"\n" );
     fprintf( files->initall, "class Registry;\n" );
 
     fprintf( files->initall, "\nvoid SchemaInit (Registry & reg) {\n" );
@@ -105,7 +103,6 @@ void print_file_header( FILES * files ) {
     files -> create = FILEcreate( "SdaiAll.cc" );
     fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
     fprintf( files->create, "#include \"schema.h\"\n" );
-    fprintf( files->create, "#include \"sc_memmgr.h\"\n" );
     fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
 
     // This file declares all entity classes as incomplete types.  This will
@@ -385,7 +382,8 @@ void INITFileFinish( FILE * initfile, Schema schema ) {
  ** Status:
  ******************************************************************/
 void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) {
-    char schnm[MAX_LEN], sufnm[MAX_LEN], fnm[MAX_LEN], *np;
+    int ocnt = 0;
+    char schnm[MAX_LEN+1], sufnm[MAX_LEN+1], fnm[MAX_LEN+1], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile,
          * incfile,
@@ -402,11 +400,20 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     /*  1.  header file             */
     sprintf( schnm, "%s%s", SCHEMA_FILE_PREFIX, StrToUpper( SCHEMAget_name( schema ) ) ); //TODO change file names to CamelCase?
     if( suffix == 0 ) {
-        sprintf( sufnm, "%s", schnm );
+        ocnt = snprintf( sufnm, MAX_LEN, "%s", schnm );
+        if( ocnt > MAX_LEN ) {
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold schnm\n";
+        }
     } else {
-        sprintf( sufnm, "%s_%d", schnm, suffix );
+        ocnt = snprintf( sufnm, MAX_LEN, "%s_%d", schnm, suffix );
+        if( ocnt > MAX_LEN ) {
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
+        }
     }
-    sprintf( fnm, "%s.h", sufnm );
+    ocnt = snprintf( fnm, MAX_LEN, "%s.h", sufnm );
+    if( ocnt > MAX_LEN ) {
+        std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
+    }
 
     if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
         return;
@@ -414,7 +421,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
     fprintf( incfile, "#include \"schema.h\"\n" );
-    fprintf( incfile, "#include \"sc_memmgr.h\"\n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
 
@@ -435,7 +441,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
 #else
     fprintf( libfile, "#include \"schema.h\"\n" );
 #endif
-    fprintf( libfile, "#include \"sc_memmgr.h\"\n" );
 
     fprintf( libfile,
              "\n#ifdef  SC_LOGGING \n"
@@ -447,7 +452,11 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     fprintf( libfile, "\n#include \"%s.h\"\n", schnm );
 
     // 3. header for namespace to contain all formerly-global variables
-    sprintf( fnm, "%sNames.h", schnm );
+    ocnt = snprintf( fnm, MAX_LEN, "%sNames.h", schnm );
+    if( ocnt > MAX_LEN ) {
+        std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - fnm not large enough to hold schnm\n";
+    }
+
     if( !( files->names = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -462,7 +471,11 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
 
     if( suffix <= 1 ) {
         /* I.e., if this is our first pass with schema */
-        sprintf( fnm, "%s.init.cc", schnm );
+        ocnt = snprintf( fnm, MAX_LEN, "%s.init.cc", schnm );
+        if( ocnt > MAX_LEN ) {
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - fnm not large enough to hold string\n";
+        }
+
         /* Note - We use schnm (without the "_x" suffix sufnm has) since we
         ** only generate a single init.cc file. */
         if( !( initfile = ( files -> init ) = FILEcreate( fnm ) ) ) {
@@ -482,7 +495,6 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
                  "#endif\n" );
 #endif
         fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
-        fprintf( initfile, "#include <sc_memmgr.h>\n" );
 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
@@ -525,7 +537,11 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( files->classes, "\n#include \"%sNames.h\"\n", schnm );
     } else {
         /* Just reopen the .init.cc (in append mode): */
-        sprintf( fnm, "%s.init.cc", schnm );
+        ocnt = snprintf( fnm, MAX_LEN, "%s.init.cc", schnm );
+        if( ocnt > MAX_LEN ) {
+            std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
+        }
+
         initfile = files->init = fopen( fnm, "a" );
     }
 
@@ -606,7 +622,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ** Status:  24-Feb-1992 new -kcm
  ******************************************************************/
 void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
-    char fnm [MAX_LEN], *np;
+    char fnm [MAX_LEN+1], *np;
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
     FILE * incfile;

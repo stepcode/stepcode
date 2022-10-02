@@ -20,8 +20,6 @@
 #include "sdaiApplication_instance.h"
 #include "superInvAttrIter.h"
 
-#include <sc_nullptr.h>
-
 SDAI_Application_instance NilSTEPentity;
 
 bool isNilSTEPentity( const SDAI_Application_instance * ai ) {
@@ -104,7 +102,7 @@ void SDAI_Application_instance::InitIAttrs() {
 }
 
 SDAI_Application_instance * SDAI_Application_instance::Replicate() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
@@ -170,10 +168,6 @@ void SDAI_Application_instance::AppendMultInstance( SDAI_Application_instance * 
         }
         linkTrailing->nextMiEntity = se;
     }
-}
-
-const EntityDescriptor* SDAI_Application_instance::getEDesc() const {
-    return eDesc;
 }
 
 // BUG implement this -- FIXME function is never used
@@ -422,7 +416,7 @@ void SDAI_Application_instance::WriteValuePairs( ostream & out,
 const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char * currSch ) {
     buf.clear();
 
-    char instanceInfo[BUFSIZ];
+    char instanceInfo[BUFSIZ+1];
 
     std::string tmp;
     sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
@@ -444,7 +438,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
 }
 
 void SDAI_Application_instance::PrependEntityErrMsg() {
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
@@ -465,7 +459,7 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
  ******************************************************************/
 void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, const char * schnm ) {
     (void) in;
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     if( _error.severity() == SEVERITY_NULL ) {
@@ -478,7 +472,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
     if( ( i >= 0 ) && ( i < attributes.list_length() ) ) { // i is an attribute
         Error().GreaterSeverity( SEVERITY_WARNING );
         sprintf( errStr, "  invalid data before type \'%s\'\n",
-                 attributes[i].TypeName() );
+                 attributes[i].TypeName().c_str() );
         _error.AppendToDetailMsg( errStr );
     } else {
         Error().GreaterSeverity( SEVERITY_INPUT_ERROR );
@@ -517,7 +511,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
         const char * currSch, bool useTechCor, bool strict ) {
     STEPfile_id = id;
     char c = '\0';
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
     Severity severe;
     int i = 0;
@@ -669,7 +663,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, const char * tokenList,
         InstMgrBase * instances, int addFileId ) {
     char c;
-    char errStr[BUFSIZ];
+    char errStr[BUFSIZ+1];
     errStr[0] = '\0';
 
     in >> ws;
@@ -679,6 +673,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
             err->AppendToDetailMsg( "Use of @ instead of # to identify entity.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
             // no break statement here on purpose
+            [[gnu::fallthrough]];
         case '#': {
             int id = -1;
             in >>  id;
@@ -761,7 +756,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                            // to match. (this must be an
                            // EntityDescriptor)
                            ErrorDescriptor * err ) {
-    char messageBuf [BUFSIZ];
+    char messageBuf [BUFSIZ+1];
     messageBuf[0] = '\0';
 
     if( !ed || ( ed->NonRefType() != ENTITY_TYPE ) ) {
@@ -790,9 +785,9 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
     // DAVE: Can an entity be used in an Express TYPE so that this
     // EntityDescriptor would have type REFERENCE_TYPE -- it looks like NO
 
-    else if( se->getEDesc() ) {
+    else if( se->eDesc ) {
         // is se a descendant of ed?
-        if( se->getEDesc()->IsA( ed ) ) {
+        if( se->eDesc->IsA( ed ) ) {
             return SEVERITY_NULL;
         } else {
             if( se->IsComplex() ) {
@@ -830,7 +825,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
  * DAVE: Is this needed will sscanf return 1 if assignment suppression is used?
  */
 int SetErrOnNull( const char * attrValue, ErrorDescriptor * error ) {
-    char scanBuf[BUFSIZ];
+    char scanBuf[BUFSIZ+1];
     scanBuf[0] = '\0';
 
     std::stringstream fmtstr;
@@ -858,9 +853,9 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
                            // to match. (this must be an
                            // EntityDescriptor)
                            ErrorDescriptor * err, InstMgrBase * im, int clearError ) {
-    char tmp [BUFSIZ];
+    char tmp [BUFSIZ+1];
     tmp[0] = '\0';
-    char messageBuf [BUFSIZ];
+    char messageBuf [BUFSIZ+1];
     messageBuf[0] = '\0';
     std::stringstream fmtstr1, fmtstr2;
 
@@ -883,9 +878,12 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
 
     if( ( found1 > 0 ) || ( found2 > 0 ) ) {
         if( ( found1 == 2 ) || ( found2 == 2 ) ) {
-            sprintf( messageBuf,
-                     " Attribute's Entity Reference %s is %s data \'%s\'.\n",
-                     attrValue, "followed by invalid", tmp );
+            int ocnt = snprintf( messageBuf, BUFSIZ,
+                                 " Attribute's Entity Reference %s is %s data \'%s\'.\n",
+                                 attrValue, "followed by invalid", tmp );
+            if( ocnt < BUFSIZ ) {
+                fprintf( stderr, "Warning - truncation of Attribute's Entry Reference msg\n" );
+            }
             err->AppendToUserMsg( messageBuf );
             err->AppendToDetailMsg( messageBuf );
             err->GreaterSeverity( SEVERITY_WARNING );
@@ -956,7 +954,7 @@ const SDAI_Application_instance::iAMap_t::value_type SDAI_Application_instance::
     }
     iAstruct z;
     memset( &z, 0, sizeof z );
-    iAMap_t::value_type nil( (Inverse_attribute *) nullptr, z );
+    iAMap_t::value_type nil( ( Inverse_attribute * ) NULL, z );
     return nil;
 }
 

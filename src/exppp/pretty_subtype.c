@@ -2,8 +2,6 @@
  * split out of exppp.c 9/21/13
  */
 
-#include <sc_memmgr.h>
-
 #include "exppp.h"
 
 #include "pp.h"
