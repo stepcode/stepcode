@@ -18,7 +18,7 @@
 #include <iostream>
 #include <fstream>
 using namespace std;
-#include "Str.h"
+#include "utils/Str.h"
 
 #define LISTEND 999
 /** \def LISTEND

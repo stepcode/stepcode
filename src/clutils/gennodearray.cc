@@ -13,9 +13,9 @@
 
 #include "config.h"
 
-#include <gennode.h>
-#include <gennodelist.h>
-#include <gennodearray.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
+#include "utils/gennodearray.h"
 
 #ifndef HAVE_MEMMOVE
 extern "C" {

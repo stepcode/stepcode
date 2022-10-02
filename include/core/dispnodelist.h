@@ -17,12 +17,12 @@
 
 #include <sc_export.h>
 
-#include <gennode.h>
+#include "utils/gennode.h"
 //#include <gennode.inline.h>
 #include "editor/editordefines.h"
 #include "core/mgrnode.h"
 #include "core/dispnode.h"
-#include <gennodelist.h>
+#include "utils/gennodelist.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // class DisplayNodeList

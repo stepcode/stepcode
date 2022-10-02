@@ -27,9 +27,9 @@
 // IT IS VERY IMPORTANT THAT THE ORDER OF THE FOLLOWING INCLUDE FILES
 // BE PRESERVED
 
-#include <gennode.h>
-#include <gennodelist.h>
-#include <gennodearray.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
+#include "utils/gennodearray.h"
 
 #include "core/mgrnode.h"
 #include "core/mgrnodelist.h"

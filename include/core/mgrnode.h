@@ -20,8 +20,8 @@ class GenericNode;
 class DisplayNode;
 #include "core/sdai.h"
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
 
 #include "editor/editordefines.h"
 

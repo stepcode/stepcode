@@ -1,4 +1,3 @@
-
 set(LIBSTEPUTILS_SRCS
   Str.cc
   dirobj.cc
@@ -7,16 +6,6 @@ set(LIBSTEPUTILS_SRCS
   gennodearray.cc
   sc_hash.cc
   errordesc.cc
-  )
-
-set(SC_CLUTILS_HDRS
-  dirobj.h
-  errordesc.h
-  gennodearray.h
-  gennode.h
-  gennodelist.h
-  sc_hash.h
-  Str.h
   )
 
 include_directories(
@@ -39,9 +28,6 @@ if(BUILD_STATIC_LIBS)
     target_link_libraries(steputils-static shlwapi)
   endif()
 endif()
-
-install(FILES ${SC_CLUTILS_HDRS}
-  DESTINATION ${INCLUDE_DIR}/stepcode/clutils)
 
 # Local Variables:
 # tab-width: 8

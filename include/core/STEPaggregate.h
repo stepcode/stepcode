@@ -17,7 +17,7 @@ class STEPaggregate;
 class TypeDescriptor;
 
 #include <sc_export.h>
-#include <errordesc.h>
+#include "utils/errordesc.h"
 #include "core/SingleLinkList.h"
 #include "core/baseType.h"
 #include "core/sdai.h"

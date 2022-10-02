@@ -30,8 +30,8 @@ extern const char * SCLversion;
 #include "core/dictdefs.h"
 
 #include "core/baseType.h"
-#include "Str.h"
-#include "errordesc.h"
+#include "utils/Str.h"
+#include "utils/errordesc.h"
 
 typedef std::string Express_id;
 

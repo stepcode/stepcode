@@ -4,7 +4,7 @@
 #include "core/STEPattribute.h"
 #include "core/ExpDict.h"
 #include "core/Registry.h"
-#include <errordesc.h>
+#include "utils/errordesc.h"
 #include <algorithm>
 #include <string>
 #ifdef HAVE_UNISTD_H

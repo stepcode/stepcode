@@ -26,7 +26,7 @@
 #include <memory.h>
 #include <stdlib.h> // to get bcopy for CenterLine
 
-#include <gennode.h>
+#include "utils/gennode.h"
 
 // the initial size of the array
 #define ARRAY_DEFAULT_SIZE (1024)

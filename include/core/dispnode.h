@@ -21,8 +21,8 @@
 /*#include <STEPentity.h>*/
 #include "core/sdai.h"
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
 //#include <gennode.inline.h>
 #include "editor/editordefines.h"
 //#include <mgrnode.h>

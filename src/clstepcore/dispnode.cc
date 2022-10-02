@@ -12,8 +12,8 @@
 
 /* $Id: dispnode.cc,v 3.0.1.2 1997/11/05 22:11:39 sauderd DP3.1 $ */
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
 //#include <gennode.inline.h>
 
 #include "core/dispnode.h"

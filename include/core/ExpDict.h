@@ -25,7 +25,7 @@
 
 #include "core/baseType.h"
 #include "core/dictdefs.h"
-#include <Str.h>
+#include "utils/Str.h"
 
 // each of these contains linked list, list node, iterator
 #include "core/attrDescriptorList.h"

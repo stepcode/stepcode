@@ -12,8 +12,8 @@
 
 /* $Id: gennode.cc,v 3.0.1.4 1997/11/05 22:33:47 sauderd DP3.1 $  */
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // class GenericNode inline functions that depend on other classes

@@ -40,7 +40,7 @@
  */
 
 #include "config.h"
-#include <dirobj.h>
+#include "utils/dirobj.h"
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 #endif

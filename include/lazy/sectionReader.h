@@ -5,7 +5,7 @@
 #include <set>
 #include "lazy/lazyTypes.h"
 #include "sc_export.h"
-#include "errordesc.h"
+#include "utils/errordesc.h"
 #include "core/STEPcomplex.h"
 
 class SDAI_Application_instance;

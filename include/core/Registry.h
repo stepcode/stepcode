@@ -14,9 +14,9 @@
 
 #include <sc_export.h>
 #include "core/sdai.h"
-#include <errordesc.h>
-#include <sc_hash.h>
-#include <Str.h>
+#include "utils/errordesc.h"
+#include "utils/sc_hash.h"
+#include "utils/Str.h"
 #include "core/complexSupport.h"
 
 

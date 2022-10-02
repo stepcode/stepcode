@@ -2,7 +2,7 @@
 #define STEPCOMPLEX_H
 
 #include <sc_export.h>
-#include <errordesc.h>
+#include "utils/errordesc.h"
 #include "core/sdai.h"
 #include "core/baseType.h"
 #include "core/ExpDict.h"

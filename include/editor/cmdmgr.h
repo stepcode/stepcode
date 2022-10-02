@@ -13,9 +13,9 @@
 */
 
 #include <sc_export.h>
-#include <gennode.h>
-#include <gennodelist.h>
-#include <gennodearray.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
+#include "utils/gennodearray.h"
 
 #include "editor/editordefines.h"
 #include "core/mgrnode.h"

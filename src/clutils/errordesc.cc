@@ -10,8 +10,8 @@
 * and is not subject to copyright.
 */
 
-#include <errordesc.h>
-#include <Str.h>
+#include "utils/errordesc.h"
+#include "utils/Str.h"
 
 DebugLevel ErrorDescriptor::_debug_level = DEBUG_OFF;
 ostream  * ErrorDescriptor::_out = 0;

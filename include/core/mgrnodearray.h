@@ -19,14 +19,14 @@
 
 #include <string.h>
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "utils/gennode.h"
+#include "utils/gennodelist.h"
 //#include <gennode.inline.h>
 
 #include "core/mgrnode.h"
 #include "core/mgrnodelist.h"
 
-#include <gennodearray.h>
+#include "utils/gennodearray.h"
 
 #define ARRAY_DEFAULT_SIZE (1024)
 

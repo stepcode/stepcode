@@ -18,8 +18,8 @@
 #include "core/instmgr.h"
 #include "core/Registry.h"
 #include <fstream>
-#include <dirobj.h>
-#include <errordesc.h>
+#include "utils/dirobj.h"
+#include "utils/errordesc.h"
 #include <time.h>
 
 #include "core/read_func.h"

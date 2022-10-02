@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errordesc.h>
+#include "utils/errordesc.h"
 
 #ifndef STRING_DELIM
 #define STRING_DELIM '\''
