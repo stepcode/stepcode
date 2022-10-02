@@ -4,7 +4,7 @@
 // it since your modifications will be lost if exp2cxx is used to
 // regenerate it.
 
-#include <Registry.h>
+#include "core/Registry.h"
 #include "core/ExpDict.h"
 #include <STEPattribute.h>
 #include <SdaiHeaderSchema.h>

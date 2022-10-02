@@ -12,8 +12,8 @@
 
 /* $Id: mgrnodelist.cc,v 3.0.1.2 1997/11/05 22:11:39 sauderd DP3.1 $ */
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
+#include "core/mgrnode.h"
+#include "core/mgrnodelist.h"
 #include "core/dispnode.h"
 #include "core/dispnodelist.h"
 

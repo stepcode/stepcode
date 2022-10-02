@@ -63,19 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  implicitItemId.h
-  instmgr.h
-  interfaceSpec.h
-  interfacedItem.h
-  inverseAttribute.h
-  inverseAttributeList.h
-  mgrnode.h
-  mgrnodearray.h
-  mgrnodelist.h
-  needFunc.h
-  read_func.h
-  realTypeDescriptor.h
-  Registry.h
   schRename.h
   sdai.h
   sdaiApplication_instance.h

@@ -15,7 +15,7 @@
 #include <sc_export.h>
 #include <errordesc.h>
 #include <string>
-#include <read_func.h>
+#include "core/read_func.h"
 
 class SC_CORE_EXPORT SCLundefined  {
     protected:

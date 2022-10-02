@@ -32,7 +32,7 @@ static int PrintFunctionTrace = 2;
 // values within functions get printed out
 //static int PrintValues = 3;
 
-#include <mgrnodearray.h>
+#include "core/mgrnodearray.h"
 //#include <STEPentity.h>
 #include <sdai.h>
 

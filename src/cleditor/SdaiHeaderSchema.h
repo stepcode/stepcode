@@ -6,7 +6,7 @@
 
 #include <sc_export.h>
 #include <sdai.h>
-#include <Registry.h>
+#include "core/Registry.h"
 #include <STEPaggregate.h>
 #include <SdaiHeaderSchemaClasses.h>
 #include <SdaiSchemaInit.h>

@@ -17,19 +17,19 @@ set(CORE_HDRS
   ExpDict.h
   explicitItemId.h
   globalRule.h
-# implicitItemId.h
-# instmgr.h
-# interfaceSpec.h
-# interfacedItem.h
-# inverseAttribute.h
-# inverseAttributeList.h
-# mgrnode.h
-# mgrnodearray.h
-# mgrnodelist.h
-# needFunc.h
-# read_func.h
-# realTypeDescriptor.h
-# Registry.h
+  implicitItemId.h
+  instmgr.h
+  interfaceSpec.h
+  interfacedItem.h
+  inverseAttribute.h
+  inverseAttributeList.h
+  mgrnode.h
+  mgrnodearray.h
+  mgrnodelist.h
+  needFunc.h
+  read_func.h
+  realTypeDescriptor.h
+  Registry.h
 # schRename.h
 # sdai.h
 # sdaiApplication_instance.h

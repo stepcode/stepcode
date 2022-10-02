@@ -2,7 +2,7 @@
 #include <errordesc.h>
 #include <stdio.h>
 #include <sdai.h>
-#include <read_func.h>
+#include "core/read_func.h"
 #include <STEPattribute.h>
 #include "Str.h"
 

@@ -17,7 +17,7 @@ extern void SchemaInit( class Registry & );
 #include <sdai.h>
 #include <STEPattribute.h>
 #include "core/ExpDict.h"
-#include <Registry.h>
+#include "core/Registry.h"
 #include <errordesc.h>
 #include <algorithm>
 #include <string>

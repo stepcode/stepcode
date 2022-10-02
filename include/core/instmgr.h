@@ -31,13 +31,13 @@
 #include <gennodelist.h>
 #include <gennodearray.h>
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
+#include "core/mgrnode.h"
+#include "core/mgrnodelist.h"
 
 #include "core/dispnode.h"
 #include "core/dispnodelist.h"
 
-#include <mgrnodearray.h>
+#include "core/mgrnodearray.h"
 
 class SC_CORE_EXPORT InstMgrBase {
     public:

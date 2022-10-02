@@ -15,8 +15,8 @@
 #include <gennode.h>
 #include <gennodelist.h>
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
+#include "core/mgrnode.h"
+#include "core/mgrnodelist.h"
 #include "core/dispnode.h"
 #include "core/dispnodelist.h"
 

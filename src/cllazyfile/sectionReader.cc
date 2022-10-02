@@ -12,9 +12,9 @@
 #  define ULLONG_MAX _UI64_MAX
 #endif
 
-#include "Registry.h"
+#include "core/Registry.h"
 #include "sdaiApplication_instance.h"
-#include "read_func.h"
+#include "core/read_func.h"
 #include "SdaiSchemaInit.h"
 #include "STEPcomplex.h"
 

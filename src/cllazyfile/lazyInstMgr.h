@@ -9,7 +9,7 @@
 #include "lazyFileReader.h"
 #include "lazyTypes.h"
 
-#include "Registry.h"
+#include "core/Registry.h"
 #include "sc_export.h"
 
 #include "judyLArray.h"

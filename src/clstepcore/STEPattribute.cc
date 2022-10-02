@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <string>
 
-#include <read_func.h>
+#include "core/read_func.h"
 #include <STEPattribute.h>
 #include "core/instmgr.h"
 #include <STEPundefined.h>

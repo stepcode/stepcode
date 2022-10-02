@@ -6,7 +6,7 @@
 #include <sdai.h>
 #include "core/baseType.h"
 #include "core/ExpDict.h"
-#include <Registry.h>
+#include "core/Registry.h"
 
 #include <list>
 

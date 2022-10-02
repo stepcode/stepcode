@@ -10,7 +10,7 @@
 */
 
 #include "core/ExpDict.h"
-#include <Registry.h>
+#include "core/Registry.h"
 
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
  *                                                        Name, FundamentalType, Originating Schema, Description */

@@ -16,13 +16,13 @@
 #include <sc_export.h>
 #include <string>
 #include "core/instmgr.h"
-#include <Registry.h>
+#include "core/Registry.h"
 #include <fstream>
 #include <dirobj.h>
 #include <errordesc.h>
 #include <time.h>
 
-#include <read_func.h>
+#include "core/read_func.h"
 
 //error reporting level
 #define READ_COMPLETE    10

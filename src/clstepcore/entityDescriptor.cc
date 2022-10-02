@@ -1,7 +1,7 @@
 #include <string>
 
 #include "core/entityDescriptor.h"
-#include "Registry.h"
+#include "core/Registry.h"
 #include "core/attrDescriptor.h"
 #include "core/inverseAttribute.h"
 #include "SubSuperIterators.h"

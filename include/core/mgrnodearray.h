@@ -23,8 +23,8 @@
 #include <gennodelist.h>
 //#include <gennode.inline.h>
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
+#include "core/mgrnode.h"
+#include "core/mgrnodelist.h"
 
 #include <gennodearray.h>
 

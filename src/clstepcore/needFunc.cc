@@ -1,4 +1,4 @@
-#include <needFunc.h>
+#include "core/needFunc.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Function defined as a stub (necessary to use the scl)

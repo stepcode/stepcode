@@ -1,6 +1,6 @@
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
-#include "Registry.h"
+#include "core/Registry.h"
 #include <SubSuperIterators.h>
 #include "SdaiSchemaInit.h"
 #include "instMgrHelper.h"

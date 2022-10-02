@@ -3,7 +3,7 @@
 
 #include <sc_export.h>
 
-#include <mgrnode.h>
+#include "core/mgrnode.h"
 #include <lazyInstMgr.h>
 #include "core/instmgr.h"
 
