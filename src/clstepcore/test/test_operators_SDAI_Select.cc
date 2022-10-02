@@ -7,7 +7,7 @@
 #include <iostream>
 
 #include "ExpDict.h"
-#include "baseType.h"
+#include "core/baseType.h"
 #include "sdaiSelect.h"
 
 using namespace std;

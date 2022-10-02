@@ -29,7 +29,7 @@ extern const char * SCLversion;
 
 #include "dictdefs.h"
 
-#include "baseType.h"
+#include "core/baseType.h"
 #include "Str.h"
 #include "errordesc.h"
 

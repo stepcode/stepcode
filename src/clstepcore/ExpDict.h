@@ -23,7 +23,7 @@
 
 #include <SingleLinkList.h>
 
-#include <baseType.h>
+#include "core/baseType.h"
 #include <dictdefs.h>
 #include <Str.h>
 
@@ -41,7 +41,7 @@
 #include "derivedAttribute.h"
 #include "inverseAttribute.h"
 
-#include "create_Aggr.h"
+#include "core/create_Aggr.h"
 #include "dictionaryInstance.h"
 
 #include "uniquenessRule.h"

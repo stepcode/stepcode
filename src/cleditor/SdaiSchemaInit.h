@@ -15,7 +15,7 @@
 #include <STEPundefined.h>
 #include <ExpDict.h>
 #include <STEPattribute.h>
-#include <complexSupport.h>
+#include "core/complexSupport.h"
 
 #include <SdaiHeaderSchemaClasses.h>
 #include <SdaiHeaderSchema.h>

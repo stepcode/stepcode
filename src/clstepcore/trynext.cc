@@ -11,7 +11,7 @@
  * Date:        10/24/96                                                     *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "core/complexSupport.h"
 
 // Local function prototypes:
 static EntList * firstCandidate( EntList * );

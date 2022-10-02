@@ -4,7 +4,7 @@
 #include <sc_export.h>
 #include <errordesc.h>
 #include <sdai.h>
-#include <baseType.h>
+#include "core/baseType.h"
 #include <ExpDict.h>
 #include <Registry.h>
 

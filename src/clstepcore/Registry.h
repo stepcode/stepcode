@@ -17,7 +17,7 @@
 #include <errordesc.h>
 #include <sc_hash.h>
 #include <Str.h>
-#include <complexSupport.h>
+#include "core/complexSupport.h"
 
 
 // defined and created in Registry.cc

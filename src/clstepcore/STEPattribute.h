@@ -16,7 +16,7 @@
 #include <sc_export.h>
 #include <stdio.h>
 #include <errordesc.h>
-#include <baseType.h>
+#include "core/baseType.h"
 
 #include <sdai.h>
 

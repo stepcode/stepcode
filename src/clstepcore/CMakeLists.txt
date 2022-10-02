@@ -63,9 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  baseType.h
-  complexSupport.h
-  create_Aggr.h
   derivedAttribute.h
   dictSchema.h
   dictdefs.h

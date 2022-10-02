@@ -2,7 +2,7 @@
 #include <ctype.h>
 
 #include <STEPcomplex.h>
-#include <complexSupport.h>
+#include "core/complexSupport.h"
 #include <STEPattribute.h>
 #include <STEPaggregate.h>
 #include <sstream>

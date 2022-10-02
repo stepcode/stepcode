@@ -2,9 +2,9 @@ set(CORE_HDRS
   aggrTypeDescriptor.h
   attrDescriptor.h
   attrDescriptorList.h
-# baseType.h
-# complexSupport.h
-# create_Aggr.h
+  baseType.h
+  complexSupport.h
+  create_Aggr.h
 # derivedAttribute.h
 # dictSchema.h
 # dictdefs.h

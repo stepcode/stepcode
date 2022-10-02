@@ -10,7 +10,7 @@
  * Date:        01/07/97                                                     *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "core/complexSupport.h"
 
 /**
  * Destructor for ComplexList.

@@ -13,7 +13,7 @@
  * Date:        9/18/96                                                      *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "core/complexSupport.h"
 
 /**
  * Returns the number of EntLists in this's list (EntList->next, next->next
