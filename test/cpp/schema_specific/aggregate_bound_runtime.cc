@@ -1,9 +1,9 @@
 
 #include <STEPfile.h>
-#include <sdai.h>
+#include "core/sdai.h"
 #include <STEPattribute.h>
-#include <ExpDict.h>
-#include <Registry.h>
+#include "core/ExpDict.h"
+#include "core/Registry.h"
 #include <errordesc.h>
 #include <algorithm>
 #include <string>

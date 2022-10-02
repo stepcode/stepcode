@@ -2,7 +2,7 @@
 #define WHERERULE_H
 
 #include <string>
-#include "sdai.h"
+#include "core/sdai.h"
 #include "core/dictionaryInstance.h"
 #include "typeOrRuleVar.h"
 

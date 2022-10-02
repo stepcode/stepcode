@@ -3,7 +3,7 @@
 
 //typedef's for aggregate creators
 
-#include "sdai.h"
+#include "core/sdai.h"
 #include "sc_export.h"
 
 

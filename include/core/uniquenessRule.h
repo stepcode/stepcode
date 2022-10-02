@@ -3,7 +3,7 @@
 
 #include "core/dictionaryInstance.h"
 
-#include "sdai.h"
+#include "core/sdai.h"
 
 #include "sc_export.h"
 

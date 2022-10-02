@@ -19,7 +19,7 @@
 #include "core/ExpDict.h"
 #include <STEPfile.h>
 #include <STEPattribute.h>
-#include <sdai.h>
+#include "core/sdai.h"
 
 /* Stuff more or less specifically for the Example schema */
 /* The only program that needs this is tstatic.  Since the other programs */
