@@ -155,7 +155,7 @@ typedef char * SDAI_Time_stamp;
 typedef char * SDAI_Entity_name;
 typedef char * SDAI_Schema_name;
 
-#include <sdaiString.h>
+#include "dai/sdaiString.h"
 
 #include "dai/sdaiBinary.h"
 

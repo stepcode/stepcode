@@ -2,7 +2,7 @@
 #define SDAIDAOBJECT_H 1
 
 #include "dai/sdaiObject.h"
-#include <sdaiString.h>
+#include "dai/sdaiString.h"
 #include "dai/sdaiEnum.h"
 
 #include <sc_export.h>
