@@ -1,4 +1,4 @@
-#include "interfaceSpec.h"
+#include "core/interfaceSpec.h"
 
 Interface_spec__set::Interface_spec__set( int defaultSize ) {
     _bufsize = defaultSize;

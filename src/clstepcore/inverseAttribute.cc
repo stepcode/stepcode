@@ -1,4 +1,4 @@
-#include "inverseAttribute.h"
+#include "core/inverseAttribute.h"
 #include <string>
 
 const char * Inverse_attribute::AttrExprDefStr( std::string & s ) const {

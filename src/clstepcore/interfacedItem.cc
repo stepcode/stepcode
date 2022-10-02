@@ -1,4 +1,4 @@
-#include "interfacedItem.h"
+#include "core/interfacedItem.h"
 
 Interfaced_item::Interfaced_item() {
 }

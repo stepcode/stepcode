@@ -15,7 +15,7 @@
 #include <read_func.h>
 #include <STEPaggregate.h>
 #include <STEPattribute.h>
-#include <instmgr.h>
+#include "core/instmgr.h"
 #include "core/ExpDict.h"
 
 

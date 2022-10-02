@@ -12,7 +12,7 @@
 
 #include <map>
 #include <sdai.h>
-#include <instmgr.h>
+#include "core/instmgr.h"
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
 #include <read_func.h> //for ReadTokenSeparator, used when comments are inside entities

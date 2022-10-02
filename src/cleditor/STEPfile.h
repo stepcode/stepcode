@@ -15,7 +15,7 @@
 
 #include <sc_export.h>
 #include <string>
-#include <instmgr.h>
+#include "core/instmgr.h"
 #include <Registry.h>
 #include <fstream>
 #include <dirobj.h>

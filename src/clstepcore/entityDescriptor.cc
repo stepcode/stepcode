@@ -3,7 +3,7 @@
 #include "core/entityDescriptor.h"
 #include "Registry.h"
 #include "core/attrDescriptor.h"
-#include "inverseAttribute.h"
+#include "core/inverseAttribute.h"
 #include "SubSuperIterators.h"
 
 EntityDescriptor::EntityDescriptor( )

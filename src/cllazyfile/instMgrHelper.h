@@ -5,7 +5,7 @@
 
 #include <mgrnode.h>
 #include <lazyInstMgr.h>
-#include <instmgr.h>
+#include "core/instmgr.h"
 
 /**
  * \file instMgrHelper.h helper classes for the lazyInstMgr. Allows use of SDAI_Application_instance class

@@ -17,7 +17,7 @@
 #include "core/dispnode.h"
 #include "core/dispnodelist.h"
 
-#include <instmgr.h>
+#include "core/instmgr.h"
 //#include <STEPentity.h>
 #include <sdai.h>
 
