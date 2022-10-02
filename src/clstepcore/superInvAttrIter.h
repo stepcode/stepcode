@@ -1,7 +1,7 @@
 #ifndef SUPERINVATTRITER_H
 #define SUPERINVATTRITER_H
 
-#include "SubSuperIterators.h"
+#include "core/SubSuperIterators.h"
 #include "core/ExpDict.h"
 
 /**

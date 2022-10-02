@@ -34,7 +34,7 @@ static int PrintFunctionTrace = 2;
 
 #include "core/mgrnodearray.h"
 //#include <STEPentity.h>
-#include <sdai.h>
+#include "core/sdai.h"
 
 #include <string.h> // to get bcopy() - ANSI
 

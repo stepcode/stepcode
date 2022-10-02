@@ -22,7 +22,7 @@
 #include "core/mgrnodelist.h"
 #include "core/dispnode.h"
 #include "core/dispnodelist.h"
-#include <SingleLinkList.h>
+#include "core/SingleLinkList.h"
 
 //#define NUM_CMDMGR_CMDS 9
 // this is the number of columns that contain cmds (as opposed

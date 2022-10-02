@@ -1,5 +1,5 @@
 #include "STEPaggrSelect.h"
-#include "typeDescriptor.h"
+#include "core/typeDescriptor.h"
 #include <sstream>
 
 /** \file STEPaggrSelect.cc

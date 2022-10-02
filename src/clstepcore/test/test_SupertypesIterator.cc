@@ -4,7 +4,7 @@
 
 //subtypesiterator shouldn't need tested separately from supertypesiterator since there is very little difference
 
-#include "SubSuperIterators.h"
+#include "core/SubSuperIterators.h"
 #include "core/ExpDict.h"
 #include <iomanip>
 

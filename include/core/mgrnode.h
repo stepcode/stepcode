@@ -18,7 +18,7 @@
 
 class GenericNode;
 class DisplayNode;
-#include <sdai.h>
+#include "core/sdai.h"
 
 #include <gennode.h>
 #include <gennodelist.h>

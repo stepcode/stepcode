@@ -15,7 +15,7 @@
 class Inverse_attribute;
 
 #include <sc_export.h>
-#include <SingleLinkList.h>
+#include "core/SingleLinkList.h"
 
 class STEPinvAttrList;
 class EntityAggregate;

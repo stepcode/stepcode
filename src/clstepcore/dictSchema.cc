@@ -1,6 +1,6 @@
 #include "core/dictSchema.h"
 
-#include "typeDescriptor.h"
+#include "core/typeDescriptor.h"
 #include "core/entityDescriptor.h"
 
 Schema::Schema( const char * schemaName )

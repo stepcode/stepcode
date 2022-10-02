@@ -25,7 +25,7 @@
 #include <vector>
 
 #include <STEPfile.h>
-#include <sdai.h>
+#include "core/sdai.h"
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
 #include <SdaiHeaderSchema.h>

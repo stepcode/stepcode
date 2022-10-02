@@ -16,7 +16,7 @@
 class STEPattribute;
 
 #include <sc_export.h>
-#include <SingleLinkList.h>
+#include "core/SingleLinkList.h"
 
 class STEPattributeList;
 

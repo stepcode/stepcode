@@ -19,7 +19,7 @@
 
 /*#include <STEPattribute.h>*/
 /*#include <STEPentity.h>*/
-#include <sdai.h>
+#include "core/sdai.h"
 
 #include <gennode.h>
 #include <gennodelist.h>

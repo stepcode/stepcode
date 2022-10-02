@@ -188,7 +188,7 @@ BOOLEAN and LOGICAL
 #include <sdaiDaObject.h>
 
 
-#include <sdaiApplication_instance.h>
+#include "core/sdaiApplication_instance.h"
 #include <sdaiApplication_instance_set.h>
 
 /******************************************************************************
@@ -198,7 +198,7 @@ SELECT
     sdaiSelect.h
 
 ******************************************************************************/
-#include <sdaiSelect.h>
+#include "core/sdaiSelect.h"
 
 class SDAI_Model_contents;
 typedef SDAI_Model_contents * SDAI_Model_contents_ptr;

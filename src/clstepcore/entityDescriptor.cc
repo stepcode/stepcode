@@ -4,7 +4,7 @@
 #include "core/Registry.h"
 #include "core/attrDescriptor.h"
 #include "core/inverseAttribute.h"
-#include "SubSuperIterators.h"
+#include "core/SubSuperIterators.h"
 
 EntityDescriptor::EntityDescriptor( )
     : _abstractEntity( LUnknown ), _extMapping( LUnknown ),

@@ -10,7 +10,7 @@
 #include "lazyTypes.h"
 #include "lazyInstMgr.h"
 #include "core/ExpDict.h"
-#include "SubSuperIterators.h"
+#include "core/SubSuperIterators.h"
 #include <STEPattribute.h>
 #include <STEPaggregate.h>
 

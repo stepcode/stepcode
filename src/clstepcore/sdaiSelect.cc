@@ -14,7 +14,7 @@
 #include "core/ExpDict.h"
 #include <sstream>
 #include <string>
-#include <sdai.h>
+#include "core/sdai.h"
 #include <STEPattribute.h>
 
 #ifdef  SC_LOGGING

@@ -3,7 +3,7 @@
 #define SESSION_INSTANCE_H 1
 
 #include <sc_export.h>
-//#include <sdai.h>
+//#include "core/sdai.h"
 
 class SC_DAI_EXPORT SDAI_Session_instance : public SDAI_sdaiObject {
 

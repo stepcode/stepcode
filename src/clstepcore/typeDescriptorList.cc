@@ -1,4 +1,4 @@
-#include "typeDescriptorList.h"
+#include "core/typeDescriptorList.h"
 
 TypeDescLinkNode::TypeDescLinkNode() {
     _typeDesc = 0;

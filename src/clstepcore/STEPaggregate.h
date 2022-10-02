@@ -18,9 +18,9 @@ class TypeDescriptor;
 
 #include <sc_export.h>
 #include <errordesc.h>
-#include <SingleLinkList.h>
+#include "core/SingleLinkList.h"
 #include "core/baseType.h"
-#include <sdai.h>
+#include "core/sdai.h"
 #include <STEPundefined.h>
 #include <string>
 

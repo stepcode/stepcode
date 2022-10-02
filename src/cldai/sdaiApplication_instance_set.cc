@@ -25,12 +25,12 @@
  */
 
 //#include <sdaiApplication_instance_set.h>
-#include <sdai.h>
+#include "core/sdai.h"
 
 #include <memory.h>
 #include <math.h>
 
-#include "sdaiApplication_instance.h"
+#include "core/sdaiApplication_instance.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

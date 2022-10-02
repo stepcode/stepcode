@@ -2,7 +2,7 @@
 #define READ_FUNC_H
 
 #include <sc_export.h>
-#include <sdai.h>
+#include "core/sdai.h"
 
 /// This was 512. According to 10303-21:2002 section 5.6: comment length is unlimited. FIXME need to check the code for potential problems before eliminating this limit completely.
 #define MAX_COMMENT_LENGTH 8192

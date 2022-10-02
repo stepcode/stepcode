@@ -1,4 +1,4 @@
-#include "typeOrRuleVar.h"
+#include "core/typeOrRuleVar.h"
 
 #include <iostream>
 

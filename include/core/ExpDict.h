@@ -15,13 +15,13 @@
  */
 
 #include <sc_export.h>
-#include <sdai.h>
+#include "core/sdai.h"
 
 #include <vector>
 #include <string>
 #include <assert.h>
 
-#include <SingleLinkList.h>
+#include "core/SingleLinkList.h"
 
 #include "core/baseType.h"
 #include "core/dictdefs.h"

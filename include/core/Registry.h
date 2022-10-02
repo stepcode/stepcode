@@ -13,7 +13,7 @@
 */
 
 #include <sc_export.h>
-#include <sdai.h>
+#include "core/sdai.h"
 #include <errordesc.h>
 #include <sc_hash.h>
 #include <Str.h>

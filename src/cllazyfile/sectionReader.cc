@@ -13,7 +13,7 @@
 #endif
 
 #include "core/Registry.h"
-#include "sdaiApplication_instance.h"
+#include "core/sdaiApplication_instance.h"
 #include "core/read_func.h"
 #include "SdaiSchemaInit.h"
 #include "STEPcomplex.h"

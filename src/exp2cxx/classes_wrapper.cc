@@ -75,7 +75,7 @@ void print_file_header( FILES * files ) {
     fprintf( files->incall, "#include <sys/time.h>\n" );
     fprintf( files->incall, "#endif\n" );
 
-    fprintf( files->incall, "#include <sdai.h>\n\n" );
+    fprintf( files->incall, "#include \"core/sdai.h\"\n\n" );
     fprintf( files->incall, "\n#include \"core/Registry.h\"\n" );
     fprintf( files->incall, "\n#include <STEPaggregate.h>\n" );
     fprintf( files->incall, "\n#include <STEPundefined.h>\n" );
@@ -643,7 +643,7 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include <sdai.h> \n" );
+    fprintf( incfile, "#include \"core/sdai.h\" \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
     /*  1.9 init unity files (large translation units, faster compilation) */

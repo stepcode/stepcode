@@ -1,4 +1,4 @@
-#include "selectTypeDescriptor.h"
+#include "core/selectTypeDescriptor.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // SelectTypeDescriptor functions

@@ -1,5 +1,5 @@
 
-#include <sdai.h>
+#include "core/sdai.h"
 
 /*
 * NIST STEP Core Class Library

@@ -3,7 +3,7 @@
 
 #include <sc_export.h>
 #include <errordesc.h>
-#include <sdai.h>
+#include "core/sdai.h"
 #include "core/baseType.h"
 #include "core/ExpDict.h"
 #include "core/Registry.h"

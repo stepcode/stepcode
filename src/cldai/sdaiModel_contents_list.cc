@@ -23,7 +23,7 @@
 /*
  * UArray implementation.
  */
-#include <sdai.h>
+#include "core/sdai.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

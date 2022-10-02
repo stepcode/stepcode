@@ -20,7 +20,7 @@
 class MgrNode;
 class DisplayNode;
 class DisplayNodelist;
-#include <sdai.h>
+#include "core/sdai.h"
 //class SDAI_Application_instance;
 
 #include <editordefines.h>

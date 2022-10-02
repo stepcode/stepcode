@@ -5,7 +5,7 @@
 // regenerate it.
 
 #include <sc_export.h>
-#include <sdai.h>
+#include "core/sdai.h"
 #include "core/Registry.h"
 #include <STEPaggregate.h>
 #include <SdaiHeaderSchemaClasses.h>

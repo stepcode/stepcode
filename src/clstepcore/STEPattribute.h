@@ -18,7 +18,7 @@
 #include <errordesc.h>
 #include "core/baseType.h"
 
-#include <sdai.h>
+#include "core/sdai.h"
 
 /** \def REAL_NUM_PRECISION
  * this is used to set a const int Real_Num_Precision

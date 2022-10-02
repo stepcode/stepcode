@@ -8,7 +8,7 @@
 
 #include "core/ExpDict.h"
 #include "core/baseType.h"
-#include "sdaiSelect.h"
+#include "core/sdaiSelect.h"
 
 using namespace std;
 

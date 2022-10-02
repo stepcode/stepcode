@@ -2,7 +2,7 @@
 #include <memory.h>
 #include <math.h>
 
-#include <sdai.h>
+#include "core/sdai.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

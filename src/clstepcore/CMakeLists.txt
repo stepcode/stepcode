@@ -63,12 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  schRename.h
-  sdai.h
-  sdaiApplication_instance.h
-  sdaiSelect.h
-  selectTypeDescriptor.h
-  SingleLinkList.h
   STEPaggregate.h
   STEPaggrBinary.h
   STEPaggrEntity.h
@@ -83,13 +77,6 @@ set(SC_CLSTEPCORE_HDRS
   STEPcomplex.h
   STEPinvAttrList.h
   STEPundefined.h
-  stringTypeDescriptor.h
-  SubSuperIterators.h
-  typeDescriptor.h
-  typeDescriptorList.h
-  typeOrRuleVar.h
-  uniquenessRule.h
-  whereRule.h
 )
 
 include_directories(

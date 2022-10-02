@@ -11,13 +11,13 @@
 */
 
 #include <map>
-#include <sdai.h>
+#include "core/sdai.h"
 #include "core/instmgr.h"
 #include <STEPcomplex.h>
 #include <STEPattribute.h>
 #include "core/read_func.h" //for ReadTokenSeparator, used when comments are inside entities
 
-#include "sdaiApplication_instance.h"
+#include "core/sdaiApplication_instance.h"
 #include "superInvAttrIter.h"
 
 SDAI_Application_instance NilSTEPentity;
