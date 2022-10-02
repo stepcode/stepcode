@@ -23,7 +23,7 @@ class DisplayNodelist;
 #include "core/sdai.h"
 //class SDAI_Application_instance;
 
-#include <editordefines.h>
+#include "editor/editordefines.h"
 
 class SC_EDITOR_EXPORT seeInfo : public DisplayNode {
     public:

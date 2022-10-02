@@ -15,7 +15,7 @@
 #include "core/Registry.h"
 #include "core/sdaiApplication_instance.h"
 #include "core/read_func.h"
-#include "SdaiSchemaInit.h"
+#include "editor/SdaiSchemaInit.h"
 #include "core/STEPcomplex.h"
 
 #include "sectionReader.h"

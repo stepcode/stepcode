@@ -17,7 +17,7 @@
 #include <gennodelist.h>
 #include <gennodearray.h>
 
-#include <editordefines.h>
+#include "editor/editordefines.h"
 #include "core/mgrnode.h"
 #include "core/mgrnodelist.h"
 #include "core/dispnode.h"

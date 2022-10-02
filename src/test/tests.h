@@ -17,7 +17,7 @@
 
 /* General SCL stuff */
 #include "core/ExpDict.h"
-#include <STEPfile.h>
+#include "editor/STEPfile.h"
 #include "core/STEPattribute.h"
 #include "core/sdai.h"
 

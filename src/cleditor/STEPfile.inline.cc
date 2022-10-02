@@ -11,8 +11,8 @@
 * and is not subject to copyright.
 */
 
-#include <STEPfile.h>
-#include <SdaiHeaderSchema.h>
+#include "editor/STEPfile.h"
+#include "editor/SdaiHeaderSchema.h"
 #include "core/STEPaggregate.h"
 #include <cmath>
 

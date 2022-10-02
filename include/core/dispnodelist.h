@@ -19,7 +19,7 @@
 
 #include <gennode.h>
 //#include <gennode.inline.h>
-#include <editordefines.h>
+#include "editor/editordefines.h"
 #include "core/mgrnode.h"
 #include "core/dispnode.h"
 #include <gennodelist.h>

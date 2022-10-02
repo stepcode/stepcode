@@ -1,5 +1,11 @@
 set(EDITOR_HDRS
-
+  STEPfile.h
+  cmdmgr.h
+  editordefines.h
+  SdaiHeaderSchema.h
+  SdaiHeaderSchemaClasses.h
+  SdaiSchemaInit.h
+  seeinfodefault.h
   )
 
 install(FILES ${EDITOR_HDRS}

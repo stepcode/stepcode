@@ -8,8 +8,8 @@
 #include "core/sdai.h"
 #include "core/Registry.h"
 #include "core/STEPaggregate.h"
-#include <SdaiHeaderSchemaClasses.h>
-#include <SdaiSchemaInit.h>
+#include "editor/SdaiHeaderSchemaClasses.h"
+#include "editor/SdaiSchemaInit.h"
 
 /////////         ENTITY section_language
 

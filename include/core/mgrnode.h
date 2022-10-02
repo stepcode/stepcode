@@ -23,7 +23,7 @@ class DisplayNode;
 #include <gennode.h>
 #include <gennodelist.h>
 
-#include <editordefines.h>
+#include "editor/editordefines.h"
 
 class InstMgr;
 

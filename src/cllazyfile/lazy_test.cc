@@ -1,6 +1,6 @@
 #include "lazyInstMgr.h"
 #include "./sc_benchmark.h"
-#include "SdaiSchemaInit.h"
+#include "editor/SdaiSchemaInit.h"
 #include "config.h"
 
 #ifndef NO_REGISTRY

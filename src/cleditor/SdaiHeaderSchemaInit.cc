@@ -7,7 +7,7 @@
 #include "core/Registry.h"
 #include "core/ExpDict.h"
 #include "core/STEPattribute.h"
-#include <SdaiHeaderSchema.h>
+#include "editor/SdaiHeaderSchema.h"
 
 void SdaiHEADER_SECTION_SCHEMAInit( Registry & reg ) {
     header_section_schemat_time_stamp_text->ReferentType( t_sdaiSTRING );

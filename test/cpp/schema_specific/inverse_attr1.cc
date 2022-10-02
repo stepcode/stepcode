@@ -5,7 +5,7 @@
 */
 #include "config.h"
 #include "SubSuperIterators.h"
-#include <STEPfile.h>
+#include "editor/STEPfile.h"
 #include "core/sdai.h"
 #include "core/STEPattribute.h"
 #include "core/ExpDict.h"

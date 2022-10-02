@@ -10,7 +10,7 @@
 * and is not subject to copyright.
 */
 
-#include <cmdmgr.h>
+#include "editor/cmdmgr.h"
 
 ReplicateLinkNode * ReplicateList::FindNode( MgrNode * mn ) {
     ReplicateLinkNode * rln = ( ReplicateLinkNode * )GetHead();

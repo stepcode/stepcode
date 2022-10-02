@@ -24,11 +24,11 @@
 #include <algorithm>
 #include <vector>
 
-#include <STEPfile.h>
+#include "editor/STEPfile.h"
 #include "core/sdai.h"
 #include "core/STEPcomplex.h"
 #include "core/STEPattribute.h"
-#include <SdaiHeaderSchema.h>
+#include "editor/SdaiHeaderSchema.h"
 
 // STEPundefined contains
 // void PushPastString (istream& in, std::string &s, ErrorDescriptor *err)

@@ -20,7 +20,7 @@
 #include <gennode.h>
 //#include <gennode.inline.h>
 #include <gennodelist.h>
-#include <editordefines.h>
+#include "editor/editordefines.h"
 
 //////////////////////////////////////////////////////////////////////////////
 // class MgrNodeList

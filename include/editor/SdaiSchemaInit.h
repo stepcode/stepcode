@@ -17,8 +17,8 @@
 #include "core/STEPattribute.h"
 #include "core/complexSupport.h"
 
-#include <SdaiHeaderSchemaClasses.h>
-#include <SdaiHeaderSchema.h>
+#include "editor/SdaiHeaderSchemaClasses.h"
+#include "editor/SdaiHeaderSchema.h"
 
 SC_EDITOR_EXPORT void HeaderSchemaInit( Registry & );
 SC_EDITOR_EXPORT void HeaderInitSchemasAndEnts( Registry & );

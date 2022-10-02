@@ -24,7 +24,7 @@
 #include <gennode.h>
 #include <gennodelist.h>
 //#include <gennode.inline.h>
-#include <editordefines.h>
+#include "editor/editordefines.h"
 //#include <mgrnode.h>
 class MgrNode;
 

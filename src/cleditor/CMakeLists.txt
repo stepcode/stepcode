@@ -9,16 +9,6 @@ set(LIBSTEPEDITOR_SRCS
   SdaiSchemaInit.cc
   )
 
-SET(SC_CLEDITOR_HDRS
-  STEPfile.h
-  cmdmgr.h
-  editordefines.h
-  SdaiHeaderSchema.h
-  SdaiHeaderSchemaClasses.h
-  SdaiSchemaInit.h
-  seeinfodefault.h
-  )
-
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_SOURCE_DIR}/include/stepcode
@@ -37,9 +27,6 @@ endif()
 if(BUILD_STATIC_LIBS)
   SC_ADDLIB(stepeditor-static STATIC SOURCES ${LIBSTEPEDITOR_SRCS} LINK_LIBRARIES stepcore-static stepdai-static steputils-static)
 endif()
-
-install(FILES ${SC_CLEDITOR_HDRS}
-  DESTINATION ${INCLUDE_DIR}/stepcode/cleditor)
 
 # Local Variables:
 # tab-width: 8

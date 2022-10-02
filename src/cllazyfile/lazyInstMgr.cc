@@ -2,7 +2,7 @@
 #include "lazyInstMgr.h"
 #include "core/Registry.h"
 #include "core/SubSuperIterators.h"
-#include "SdaiSchemaInit.h"
+#include "editor/SdaiSchemaInit.h"
 #include "instMgrHelper.h"
 #include "lazyRefs.h"
 
