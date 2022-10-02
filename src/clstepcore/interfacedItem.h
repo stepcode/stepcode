@@ -1,7 +1,7 @@
 #ifndef INTERFACEDITEM_H
 #define INTERFACEDITEM_H
 
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 
 #include "sdai.h"
 

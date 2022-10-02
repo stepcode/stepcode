@@ -20,8 +20,8 @@
 #include <editordefines.h>
 #include <mgrnode.h>
 #include <mgrnodelist.h>
-#include <dispnode.h>
-#include <dispnodelist.h>
+#include "core/dispnode.h"
+#include "core/dispnodelist.h"
 #include <SingleLinkList.h>
 
 //#define NUM_CMDMGR_CMDS 9

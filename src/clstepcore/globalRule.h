@@ -1,7 +1,7 @@
 #ifndef GLOBALRULE_H
 #define GLOBALRULE_H
 
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 #include "whereRule.h"
 #include "entityDescriptorList.h"
 

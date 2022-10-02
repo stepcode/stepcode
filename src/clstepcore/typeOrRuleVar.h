@@ -1,7 +1,7 @@
 #ifndef TYPEORRULEVAR_H
 #define TYPEORRULEVAR_H
 
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 
 #include "sc_export.h"
 

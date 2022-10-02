@@ -1,7 +1,7 @@
 #ifndef INTERFACESPEC_H
 #define INTERFACESPEC_H
 
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 #include "explicitItemId.h"
 #include "implicitItemId.h"
 

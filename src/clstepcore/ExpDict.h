@@ -24,7 +24,7 @@
 #include <SingleLinkList.h>
 
 #include "core/baseType.h"
-#include <dictdefs.h>
+#include "core/dictdefs.h"
 #include <Str.h>
 
 // each of these contains linked list, list node, iterator
@@ -42,7 +42,7 @@
 #include "inverseAttribute.h"
 
 #include "core/create_Aggr.h"
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 
 #include "uniquenessRule.h"
 #include "whereRule.h"
@@ -53,7 +53,7 @@
 #include "interfaceSpec.h"
 #include "typeOrRuleVar.h"
 #include "globalRule.h"
-#include "dictSchema.h"
+#include "core/dictSchema.h"
 #include "schRename.h"
 
 #include "core/aggrTypeDescriptor.h"

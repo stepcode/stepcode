@@ -21,7 +21,7 @@
 //#include <gennode.inline.h>
 #include <editordefines.h>
 #include <mgrnode.h>
-#include <dispnode.h>
+#include "core/dispnode.h"
 #include <gennodelist.h>
 
 ///////////////////////////////////////////////////////////////////////////////

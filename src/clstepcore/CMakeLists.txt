@@ -63,12 +63,6 @@ set(LIBSTEPCORE_SRCS
 )
 
 set(SC_CLSTEPCORE_HDRS
-  derivedAttribute.h
-  dictSchema.h
-  dictdefs.h
-  dictionaryInstance.h
-  dispnode.h
-  dispnodelist.h
   entityDescriptor.h
   entityDescriptorList.h
   enumTypeDescriptor.h

@@ -1,7 +1,7 @@
 #ifndef UNIQUENESSRULE_H
 #define UNIQUENESSRULE_H
 
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 
 #include "sdai.h"
 

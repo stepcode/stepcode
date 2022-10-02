@@ -1,4 +1,4 @@
-#include "dictSchema.h"
+#include "core/dictSchema.h"
 
 #include "typeDescriptor.h"
 #include "entityDescriptor.h"

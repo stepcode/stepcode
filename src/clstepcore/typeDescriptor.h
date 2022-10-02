@@ -3,7 +3,7 @@
 
 #include "schRename.h"
 #include "whereRule.h"
-#include "dictSchema.h"
+#include "core/dictSchema.h"
 
 #include "sc_export.h"
 

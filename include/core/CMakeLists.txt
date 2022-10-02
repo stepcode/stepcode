@@ -6,11 +6,11 @@ set(CORE_HDRS
   complexSupport.h
   create_Aggr.h
   derivedAttribute.h
-# dictSchema.h
-# dictdefs.h
-# dictionaryInstance.h
-# dispnode.h
-# dispnodelist.h
+  dictSchema.h
+  dictdefs.h
+  dictionaryInstance.h
+  dispnode.h
+  dispnodelist.h
 # entityDescriptor.h
 # entityDescriptorList.h
 # enumTypeDescriptor.h

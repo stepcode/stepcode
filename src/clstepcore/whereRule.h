@@ -3,7 +3,7 @@
 
 #include <string>
 #include "sdai.h"
-#include "dictionaryInstance.h"
+#include "core/dictionaryInstance.h"
 #include "typeOrRuleVar.h"
 
 #include "sc_export.h"

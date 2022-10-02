@@ -16,8 +16,8 @@
 #include <gennodelist.h>
 //#include <gennode.inline.h>
 
-#include <dispnode.h>
-#include <dispnodelist.h>
+#include "core/dispnode.h"
+#include "core/dispnodelist.h"
 
 // define this to be the name of the display object
 class StepEntityEditor;
