@@ -4,7 +4,7 @@
 **
 */
 #include "config.h"
-#include "SubSuperIterators.h"
+#include "clstepcore/SubSuperIterators.h"
 #include "cleditor/STEPfile.h"
 #include "clstepcore/sdai.h"
 #include "clstepcore/STEPattribute.h"
