@@ -26,7 +26,7 @@
 #include <memory.h>
 #include <math.h>
 
-#include <sdai.h>
+#include "clstepcore/sdai.h"
 
 /*
 #include <EntityExtent.h>

@@ -12,10 +12,10 @@
 
 /* $Id: mgrnodelist.cc,v 3.0.1.2 1997/11/05 22:11:39 sauderd DP3.1 $ */
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
-#include <dispnode.h>
-#include <dispnodelist.h>
+#include "clstepcore/mgrnode.h"
+#include "clstepcore/mgrnodelist.h"
+#include "clstepcore/dispnode.h"
+#include "clstepcore/dispnodelist.h"
 
 MgrNodeList::MgrNodeList( stateEnum type ) : GenNodeList( new MgrNode() ) {
 //    if(debug_level >= PrintFunctionTrace)

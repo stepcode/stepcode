@@ -4,13 +4,13 @@
 **
 */
 #include "config.h"
-#include "SubSuperIterators.h"
-#include <STEPfile.h>
-#include <sdai.h>
-#include <STEPattribute.h>
-#include <ExpDict.h>
-#include <Registry.h>
-#include <errordesc.h>
+#include "clstepcore/SubSuperIterators.h"
+#include "cleditor/STEPfile.h"
+#include "clstepcore/sdai.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/Registry.h"
+#include "clutils/errordesc.h"
 #include <algorithm>
 #include <string>
 #ifdef HAVE_UNISTD_H

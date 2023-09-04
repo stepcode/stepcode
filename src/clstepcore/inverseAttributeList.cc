@@ -1,5 +1,5 @@
-#include "inverseAttributeList.h"
-#include "inverseAttribute.h"
+#include "clstepcore/inverseAttributeList.h"
+#include "clstepcore/inverseAttribute.h"
 
 Inverse_attributeLinkNode::Inverse_attributeLinkNode() {
     _invAttr = 0;

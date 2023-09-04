@@ -10,7 +10,7 @@
 */
 
 #include <sstream>
-#include <sdai.h>
+#include "clstepcore/sdai.h"
 
 SDAI_Binary::SDAI_Binary( const char * str, int max ) {
     content = std::string( str, max );

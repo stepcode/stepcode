@@ -1,6 +1,6 @@
-#include "attrDescriptorList.h"
+#include "clstepcore/attrDescriptorList.h"
 
-#include "attrDescriptor.h"
+#include "clstepcore/attrDescriptor.h"
 
 AttrDescriptorList::AttrDescriptorList() {
 }

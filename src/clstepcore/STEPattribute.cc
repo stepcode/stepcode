@@ -12,13 +12,13 @@
 #include <iomanip>
 #include <string>
 
-#include <read_func.h>
-#include <STEPattribute.h>
-#include <instmgr.h>
-#include <STEPundefined.h>
-#include <STEPaggregate.h>
-#include <ExpDict.h>
-#include <sdai.h>
+#include "clstepcore/read_func.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/instmgr.h"
+#include "clstepcore/STEPundefined.h"
+#include "clstepcore/STEPaggregate.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/sdai.h"
 
 // REAL_NUM_PRECISION is defined in STEPattribute.h, and is also used
 // in aggregate real handling (STEPaggregate.cc)  -- IMS 6 Jun 95

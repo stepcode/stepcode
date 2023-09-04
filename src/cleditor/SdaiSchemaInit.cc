@@ -4,7 +4,7 @@
 // it since your modifications will be lost if exp2cxx is used to
 // regenerate it.
 
-#include <SdaiSchemaInit.h>
+#include "cleditor/SdaiSchemaInit.h"
 
 void HeaderSchemaInit( Registry & reg ) {
     HeaderInitSchemasAndEnts( reg );

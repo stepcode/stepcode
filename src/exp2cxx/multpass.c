@@ -159,7 +159,7 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     // which hasn't been closed yet.  (That's done on 2nd line below.)) */
     fprintf( files->initall, "     reg.SetCompCollect( gencomplex() );\n" );
     fprintf( files->initall, "}\n\n" );
-    fprintf( files->incall,  "\n#include <complexSupport.h>\n" );
+    fprintf( files->incall,  "\n#include \"clstepcore/complexSupport.h\"\n" );
     fprintf( files->incall,  "ComplexCollect *gencomplex();\n" );
 
     /* Function GetModelContents() is printed at the end of the schema.xx

@@ -11,11 +11,11 @@
 */
 
 #include <stdio.h> // to get the BUFSIZ #define
-#include <ExpDict.h>
+#include "clstepcore/ExpDict.h"
 #include <sstream>
 #include <string>
-#include <sdai.h>
-#include <STEPattribute.h>
+#include "clstepcore/sdai.h"
+#include "clstepcore/STEPattribute.h"
 
 #ifdef  SC_LOGGING
 #include <fstream.h>

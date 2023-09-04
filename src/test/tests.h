@@ -16,10 +16,10 @@
 #include <iostream>
 
 /* General SCL stuff */
-#include <ExpDict.h>
-#include <STEPfile.h>
-#include <STEPattribute.h>
-#include <sdai.h>
+#include "clstepcore/ExpDict.h"
+#include "cleditor/STEPfile.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/sdai.h"
 
 /* Stuff more or less specifically for the Example schema */
 /* The only program that needs this is tstatic.  Since the other programs */

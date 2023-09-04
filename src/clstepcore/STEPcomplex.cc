@@ -1,10 +1,10 @@
 
 #include <ctype.h>
 
-#include <STEPcomplex.h>
-#include <complexSupport.h>
-#include <STEPattribute.h>
-#include <STEPaggregate.h>
+#include "clstepcore/STEPcomplex.h"
+#include "clstepcore/complexSupport.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/STEPaggregate.h"
 #include <sstream>
 
 extern const char *

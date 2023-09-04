@@ -12,16 +12,16 @@
 #  define ULLONG_MAX _UI64_MAX
 #endif
 
-#include "Registry.h"
-#include "sdaiApplication_instance.h"
-#include "read_func.h"
-#include "SdaiSchemaInit.h"
-#include "STEPcomplex.h"
+#include "clstepcore/Registry.h"
+#include "clstepcore/sdaiApplication_instance.h"
+#include "clstepcore/read_func.h"
+#include "cleditor/SdaiSchemaInit.h"
+#include "clstepcore/STEPcomplex.h"
 
-#include "sectionReader.h"
-#include "lazyFileReader.h"
-#include "lazyInstMgr.h"
-#include "lazyTypes.h"
+#include "cllazyfile/sectionReader.h"
+#include "cllazyfile/lazyFileReader.h"
+#include "cllazyfile/lazyInstMgr.h"
+#include "cllazyfile/lazyTypes.h"
 
 #include "current_function.hpp"
 

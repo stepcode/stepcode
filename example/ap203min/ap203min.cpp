@@ -49,15 +49,15 @@
 //  $./AP203Minimum
 //  AP203Minimum    outfile.stp
 
-#include <STEPfile.h>
-#include <sdai.h>
-#include <STEPattribute.h>
-#include <ExpDict.h>
-#include <Registry.h>
-#include <errordesc.h>
+#include <cleditor/STEPfile.h>
+#include <clstepcore/sdai.h>
+#include <clstepcore/STEPattribute.h>
+#include <clstepcore/ExpDict.h>
+#include <clstepcore/Registry.h>
+#include <clutils/errordesc.h>
 
-#include <STEPcomplex.h>
-#include <SdaiHeaderSchema.h>
+#include <clstepcore/STEPcomplex.h>
+#include <cleditor/SdaiHeaderSchema.h>
 
 #include "schema.h"
 

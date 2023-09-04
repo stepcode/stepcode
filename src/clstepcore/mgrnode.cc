@@ -12,14 +12,14 @@
 
 /* $Id: mgrnode.cc,v 3.0.1.3 1997/11/05 22:11:37 sauderd DP3.1 $ */
 
-#include <mgrnode.h>
-#include <mgrnodelist.h>
-#include <dispnode.h>
-#include <dispnodelist.h>
+#include "clstepcore/mgrnode.h"
+#include "clstepcore/mgrnodelist.h"
+#include "clstepcore/dispnode.h"
+#include "clstepcore/dispnodelist.h"
 
-#include <instmgr.h>
+#include "clstepcore/instmgr.h"
 //#include <STEPentity.h>
-#include <sdai.h>
+#include "clstepcore/sdai.h"
 
 #include <iostream>
 

@@ -5,7 +5,7 @@
  * also, hcreate/hdestroy routines added to simulate hsearch(3).
  */
 
-#include <sc_hash.h>
+#include "clutils/sc_hash.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

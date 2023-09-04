@@ -1,6 +1,6 @@
-#include "STEPaggrEntity.h"
-#include "STEPattribute.h"
-#include "typeDescriptor.h"
+#include "clstepcore/STEPaggrEntity.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/typeDescriptor.h"
 #include <sstream>
 
 /** \file STEPaggrEntity.cc

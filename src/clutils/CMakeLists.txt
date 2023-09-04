@@ -1,5 +1,4 @@
-
-set(LIBSTEPUTILS_SRCS
+set(UTILS_SRCS
   Str.cc
   dirobj.cc
   gennode.cc
@@ -9,23 +8,13 @@ set(LIBSTEPUTILS_SRCS
   errordesc.cc
   )
 
-set(SC_CLUTILS_HDRS
-  dirobj.h
-  errordesc.h
-  gennodearray.h
-  gennode.h
-  gennodelist.h
-  sc_hash.h
-  Str.h
-  )
-
 include_directories(
   ${SC_BINARY_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}
   )
 
 if(BUILD_SHARED_LIBS)
-  SC_ADDLIB(steputils SHARED SOURCES ${LIBSTEPUTILS_SRCS})
+  SC_ADDLIB(steputils SHARED SOURCES ${UTILS_SRCS})
   if(WIN32)
     target_compile_definitions(steputils PRIVATE SC_UTILS_DLL_EXPORTS)
     target_link_libraries(steputils shlwapi)
@@ -33,14 +22,11 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(steputils-static STATIC SOURCES ${LIBSTEPUTILS_SRCS})
+  SC_ADDLIB(steputils-static STATIC SOURCES ${UTILS_SRCS})
   if(WIN32)
     target_link_libraries(steputils-static shlwapi)
   endif()
 endif()
-
-install(FILES ${SC_CLUTILS_HDRS}
-  DESTINATION ${INCLUDE_DIR}/stepcode/clutils)
 
 # Local Variables:
 # tab-width: 8

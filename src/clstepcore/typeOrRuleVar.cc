@@ -1,4 +1,4 @@
-#include "typeOrRuleVar.h"
+#include "clstepcore/typeOrRuleVar.h"
 
 #include <iostream>
 

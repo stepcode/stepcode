@@ -10,7 +10,7 @@
  * Date:        9/18/96                                                      *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Check if we matched nm.  We have two possibilities here:  If we have a
