@@ -1,10 +1,10 @@
 #include <string>
 
-#include "entityDescriptor.h"
-#include "Registry.h"
-#include "attrDescriptor.h"
-#include "inverseAttribute.h"
-#include "SubSuperIterators.h"
+#include "clstepcore/entityDescriptor.h"
+#include "clstepcore/Registry.h"
+#include "clstepcore/attrDescriptor.h"
+#include "clstepcore/inverseAttribute.h"
+#include "clstepcore/SubSuperIterators.h"
 
 EntityDescriptor::EntityDescriptor( )
     : _abstractEntity( LUnknown ), _extMapping( LUnknown ),

@@ -1,10 +1,10 @@
 
-#include <errordesc.h>
+#include "clutils/errordesc.h"
 #include <stdio.h>
-#include <sdai.h>
-#include <read_func.h>
-#include <STEPattribute.h>
-#include "Str.h"
+#include "clstepcore/sdai.h"
+#include "clstepcore/read_func.h"
+#include "clstepcore/STEPattribute.h"
+#include "clutils/Str.h"
 
 const int RealNumPrecision = REAL_NUM_PRECISION;
 

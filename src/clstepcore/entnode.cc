@@ -11,7 +11,7 @@
  * Date:        9/18/96                                                      *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Given a list of entity names, creates a sorted linked list of EntNodes

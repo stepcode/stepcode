@@ -75,12 +75,12 @@ void print_file_header( FILES * files ) {
     fprintf( files->incall, "#include <sys/time.h>\n" );
     fprintf( files->incall, "#endif\n" );
 
-    fprintf( files->incall, "#include <sdai.h>\n\n" );
-    fprintf( files->incall, "\n#include <Registry.h>\n" );
-    fprintf( files->incall, "\n#include <STEPaggregate.h>\n" );
-    fprintf( files->incall, "\n#include <STEPundefined.h>\n" );
-    fprintf( files->incall, "\n#include <ExpDict.h>\n" );
-    fprintf( files->incall, "\n#include <STEPattribute.h>\n" );
+    fprintf( files->incall, "#include \"clstepcore/sdai.h\"\n\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/Registry.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPaggregate.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPundefined.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/ExpDict.h\"\n" );
+    fprintf( files->incall, "\n#include \"clstepcore/STEPattribute.h\"\n" );
 
     fprintf( files->incall, "\n#include <Sdaiclasses.h>\n" );
 
@@ -494,7 +494,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
                  "#include \"schema.h\"\n"
                  "#endif\n" );
 #endif
-        fprintf( initfile, "#include <Registry.h>\n#include <string>\n" );
+        fprintf( initfile, "#include \"clstepcore/Registry.h\"\n#include <string>\n" );
 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
@@ -643,7 +643,7 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include <sdai.h> \n" );
+    fprintf( incfile, "#include \"core/sdai.h\" \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
     /*  1.9 init unity files (large translation units, faster compilation) */

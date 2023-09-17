@@ -1,5 +1,5 @@
-#include "create_Aggr.h"
-#include <STEPaggregate.h>
+#include "clstepcore/create_Aggr.h"
+#include "clstepcore/STEPaggregate.h"
 
 EnumAggregate * create_EnumAggregate() {
     return new EnumAggregate;

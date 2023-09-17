@@ -1,7 +1,7 @@
-#include "dictSchema.h"
+#include "clstepcore/dictSchema.h"
 
-#include "typeDescriptor.h"
-#include "entityDescriptor.h"
+#include "clstepcore/typeDescriptor.h"
+#include "clstepcore/entityDescriptor.h"
 
 Schema::Schema( const char * schemaName )
 : _use_interface_list( new Interface_spec__set ),

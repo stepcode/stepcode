@@ -1,12 +1,12 @@
-#include "lazyTypes.h"
-#include "lazyInstMgr.h"
-#include "Registry.h"
-#include <SubSuperIterators.h>
-#include "SdaiSchemaInit.h"
-#include "instMgrHelper.h"
+#include "cllazyfile/lazyTypes.h"
+#include "cllazyfile/lazyInstMgr.h"
+#include "clstepcore/Registry.h"
+#include "clstepcore/SubSuperIterators.h"
+#include "cleditor/SdaiSchemaInit.h"
+#include "cllazyfile/instMgrHelper.h"
 #include "lazyRefs.h"
 
-#include "sdaiApplication_instance.h"
+#include "clstepcore/sdaiApplication_instance.h"
 
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );

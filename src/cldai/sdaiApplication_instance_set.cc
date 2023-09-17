@@ -24,13 +24,13 @@
  * UArray implementation.
  */
 
-//#include <sdaiApplication_instance_set.h>
-#include <sdai.h>
+//#include "cldai/sdaiApplication_instance_set.h"
+#include "clstepcore/sdai.h"
 
 #include <memory.h>
 #include <math.h>
 
-#include "sdaiApplication_instance.h"
+#include "clstepcore/sdaiApplication_instance.h"
 
 // to help ObjectCenter
 #ifndef HAVE_MEMMOVE

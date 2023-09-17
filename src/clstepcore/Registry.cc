@@ -9,8 +9,8 @@
 * and is not subject to copyright.
 */
 
-#include <ExpDict.h>
-#include <Registry.h>
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/Registry.h"
 
 /* these may be shared between multiple Registry instances, so don't create/destroy in Registry ctor/dtor
  *                                                        Name, FundamentalType, Originating Schema, Description */

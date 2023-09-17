@@ -58,10 +58,6 @@ add_subdirectory(${STEPCODE_ROOT_DIR} "${CMAKE_CURRENT_BINARY_DIR}/sc" EXCLUDE_F
 
 # Set up STEPcode include directories.
 set(STEPCODE_INCLUDE_DIR
-  ${STEPCODE_ROOT_DIR}/src/clstepcore
-  ${STEPCODE_ROOT_DIR}/src/cldai
-  ${STEPCODE_ROOT_DIR}/src/clutils
-  ${STEPCODE_ROOT_DIR}/src/cleditor
   ${STEPCODE_BUILD_DIR}/include
   ${STEPCODE_ROOT_DIR}/include
   ${CMAKE_BINARY_DIR}

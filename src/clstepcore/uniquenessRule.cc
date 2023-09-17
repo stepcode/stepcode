@@ -1,4 +1,4 @@
-#include "uniquenessRule.h"
+#include "clstepcore/uniquenessRule.h"
 
 #include <string.h>
 

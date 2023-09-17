@@ -13,7 +13,7 @@
  * Date:        10/17/96                                                     *
  *****************************************************************************/
 
-#include "complexSupport.h"
+#include "clstepcore/complexSupport.h"
 
 /**
  * Loops through descendants of this, invoking their matchOR functions.

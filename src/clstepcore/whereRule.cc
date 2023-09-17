@@ -1,4 +1,4 @@
-#include "whereRule.h"
+#include "clstepcore/whereRule.h"
 
 Where_rule::Where_rule() {
     _type_or_rule = 0;

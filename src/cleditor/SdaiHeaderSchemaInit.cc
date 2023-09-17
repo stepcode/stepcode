@@ -4,10 +4,10 @@
 // it since your modifications will be lost if exp2cxx is used to
 // regenerate it.
 
-#include <Registry.h>
-#include <ExpDict.h>
-#include <STEPattribute.h>
-#include <SdaiHeaderSchema.h>
+#include "clstepcore/Registry.h"
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/STEPattribute.h"
+#include "cleditor/SdaiHeaderSchema.h"
 
 void SdaiHEADER_SECTION_SCHEMAInit( Registry & reg ) {
     header_section_schemat_time_stamp_text->ReferentType( t_sdaiSTRING );

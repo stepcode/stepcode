@@ -1,6 +1,6 @@
-#include <ExpDict.h>
-#include <STEPattribute.h>
-#include <sdaiString.h>
+#include "clstepcore/ExpDict.h"
+#include "clstepcore/STEPattribute.h"
+#include "cldai/sdaiString.h"
 
 AttrDescriptor   *ad  = 0;
 EntityDescriptor *ed  = 0;

@@ -49,7 +49,7 @@
 void PrintAttrTypeWithAnchor( const TypeDescriptor * typeDesc, ofstream & outhtml ) {
     std::string buf;
 
-    // The type.  See src/clstepcore/baseType.h for info
+    // The type.  See clstepcore/baseType.h for info
     PrimitiveType base = typeDesc->Type();
 
     // the type descriptor for the "referent type," if any.

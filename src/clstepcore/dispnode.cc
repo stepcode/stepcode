@@ -12,12 +12,12 @@
 
 /* $Id: dispnode.cc,v 3.0.1.2 1997/11/05 22:11:39 sauderd DP3.1 $ */
 
-#include <gennode.h>
-#include <gennodelist.h>
+#include "clutils/gennode.h"
+#include "clutils/gennodelist.h"
 //#include <gennode.inline.h>
 
-#include <dispnode.h>
-#include <dispnodelist.h>
+#include "clstepcore/dispnode.h"
+#include "clstepcore/dispnodelist.h"
 
 // define this to be the name of the display object
 class StepEntityEditor;
