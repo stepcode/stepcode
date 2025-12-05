@@ -24,7 +24,9 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
+#define _POSIX_C_SOURCE 200809L
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #include "classes.h"
