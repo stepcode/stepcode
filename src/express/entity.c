@@ -292,7 +292,7 @@ Entity ENTITYcopy( Entity e ) {
 }
 
 /** Initialize the Entity module. */
-void ENTITYinitialize() {
+void ENTITYinitialize(void) {
 }
 
 /**

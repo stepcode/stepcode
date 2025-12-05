@@ -58,7 +58,7 @@ struct freelist_head {
 #endif
 };
 
-char * nnew();
+char * nnew(void);
 
 #include "error.h"
 

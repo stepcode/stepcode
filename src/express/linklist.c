@@ -29,7 +29,7 @@ void LISTinitialize( void ) {
 void LISTcleanup( void ) {
 }
 
-Linked_List LISTcreate() {
+Linked_List LISTcreate(void) {
     Linked_List list = LIST_new();
     list->mark = LINK_new();
     list->mark->next = list->mark->prev = list->mark;

@@ -106,7 +106,7 @@ bool    EXPRESSignore_duplicate_schemas      = false;
 
 Function funcdef(char *name, int pcount, Type ret_typ);
 void procdef(char *name, int pcount);
-void BUILTINSinitialize();
+void BUILTINSinitialize(void);
 Dictionary EXPRESSbuiltins; /* procedures/functions */
 
 
@@ -143,7 +143,7 @@ int EXPRESS_succeed( Express model ) {
     return 0;
 }
 
-Express EXPRESScreate() {
+Express EXPRESScreate(void) {
     Express model = SCOPEcreate( OBJ_EXPRESS );
     model->u.express = ( struct Express_ * )calloc( 1, sizeof( struct Express_ ) );
     return model;
@@ -166,7 +166,7 @@ typedef struct Dir {
     char * leaf;
 } Dir;
 
-static void EXPRESS_PATHinit() {
+static void EXPRESS_PATHinit(void) {
     char * p;
     Dir * dir;
 
@@ -245,7 +245,7 @@ static void EXPRESS_PATHfree( void ) {
 }
 
 /** inform object system about bit representation for handling pass diagnostics */
-void PASSinitialize() {
+void PASSinitialize(void) {
 }
 
 /** Initialize the Express package. */
@@ -353,7 +353,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
 }
 
 /* TODO LEMON ought to put this in expparse.h */
-void parserInitState();
+void parserInitState(void);
 
 /** start parsing a new schema file */
 static Express PARSERrun( char * filename, FILE * fp ) {
@@ -798,7 +798,7 @@ void procdef(char *name, int pcount) {
     DICTdefine(EXPRESSbuiltins, name, p, 0, OBJ_PROCEDURE);
 }
 
-void BUILTINSinitialize() {
+void BUILTINSinitialize(void) {
     EXPRESSbuiltins = DICTcreate( 35 );
     procdef("INSERT", 3 );
     procdef("REMOVE", 2 );

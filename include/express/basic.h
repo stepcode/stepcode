@@ -93,8 +93,8 @@
 /* function pointer types */
 /**************************/
 
-typedef void ( *voidFuncptr )();
-typedef int ( *intFuncptr )();
+typedef void ( *voidFuncptr )(void);
+typedef int ( *intFuncptr )(void);
 
 /* Option index - can we get rid of this? */
 extern SC_EXPRESS_EXPORT int sc_optind;

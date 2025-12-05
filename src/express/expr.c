@@ -85,7 +85,7 @@ Expression  LITERAL_PI = EXPRESSION_NULL;
 Expression  LITERAL_ZERO = EXPRESSION_NULL;
 Expression  LITERAL_ONE;
 
-void EXPop_init();
+void EXPop_init(void);
 
 static inline int OPget_number_of_operands( Op_Code op ) {
     if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
@@ -760,7 +760,7 @@ void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_
     EXPop_table[token_number].resolve = resolve_func;
 }
 
-void EXPop_init() {
+void EXPop_init(void) {
     EXPop_create( OP_AND, "AND",      EXPresolve_op_logical );
     EXPop_create( OP_ANDOR, "ANDOR",      EXPresolve_op_logical );
     EXPop_create( OP_ARRAY_ELEMENT, "[array element]", EXPresolve_op_array_like );

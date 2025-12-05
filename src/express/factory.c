@@ -34,7 +34,7 @@ Type Type_Set_Of_String;
 Type Type_Set_Of_Generic;
 Type Type_Bag_Of_Generic;
 
-void FACTORYinitialize() {
+void FACTORYinitialize(void) {
     /* Very commonly-used read-only types */
     Type_Unknown = TYPEcreate( unknown_ );
     Type_Dont_Care = TYPEcreate( special_ );

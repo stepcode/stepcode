@@ -220,7 +220,7 @@ return( false );
 #endif
 
 /** Initialize the Type module */
-void TYPEinitialize() {
+void TYPEinitialize(void) {
 }
 
 /** Clean up the Type module */

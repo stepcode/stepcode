@@ -131,7 +131,7 @@ static long     HashAccesses, HashCollisions;
 */
 
 void
-HASHinitialize() {
+HASHinitialize(void) {
 }
 
 Hash_Table

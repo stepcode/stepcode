@@ -90,7 +90,7 @@
 char * opcode_print( Op_Code o );
 
 /** Initialize the Variable module. */
-void VARinitialize() {
+void VARinitialize(void) {
 }
 
 /** VARget_simple_name
