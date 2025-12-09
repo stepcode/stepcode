@@ -176,12 +176,8 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update
-          # Install dev tools
-          sudo apt-get install re2c lemon
-  sudo apt-get install xserver-xorg-dev libx11-dev libxi-dev libxext-dev libglu1-mesa-dev libfontconfig-dev
-          # Install tools
-          sudo apt-get install astyle re2c xsltproc libxml2-utils
-          # Install dependency dev pkgs
+          sudo apt-get install re2c astyle xsltproc libxml2-utils
+          sudo apt-get install xserver-xorg-dev libx11-dev libxi-dev libxext-dev libglu1-mesa-dev libfontconfig-dev
           sudo apt-get install zlib1g-dev libpng-dev libjpeg-dev libtiff-dev libeigen3-dev libgdal-dev libassimp-dev libopencv-dev
           sudo apt-get clean
 
