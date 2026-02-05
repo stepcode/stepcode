@@ -190,7 +190,6 @@ jobs:
           cd ../..
 
       - name: Build bext
-        shell: powershell
         run: |
           cmake -E make_directory bext_build
           cmake -S bext -B bext_build -DCMAKE_BUILD_TYPE=Release -DUSE_GDAL=OFF -DUSE_TCL=OFF -DUSE_QT=OFF -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}\bext_output
@@ -235,6 +234,12 @@ jobs:
       - name: Add github workspace to path
         # https://github.community/t/deprecated-add-path/136621
         run: echo "$ENV{GITHUB_WORKSPACE}" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Add cl.exe to PATH
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Clone bext
         run: |
