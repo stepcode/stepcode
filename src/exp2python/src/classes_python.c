@@ -1770,7 +1770,7 @@ void strcat_expr( Expression e, char * buf ) {
         strcat( buf, TYPEget_name( e ) );
     } else if( TYPEget_body( e->type )->type == integer_ ) {
         char tmpbuf[30];
-        sprintf( tmpbuf, "%d", e->u.integer );
+        snprintf( tmpbuf, sizeof(tmpbuf), "%d", e->u.integer );
         strcat( buf, tmpbuf );
     } else {
         strcat( buf, "??" );

@@ -3,7 +3,7 @@ set(LIBEXPPP_SOURCES
   pretty_alg.c
   pretty_case.c
   pretty_entity.c
-  pretty_expr.c
+  pretty_expr.cc
   pretty_express.c
   pretty_func.c
   pretty_loop.c

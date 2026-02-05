@@ -154,7 +154,7 @@ void wrap( const char * fmt, ... ) {
         || ( ( exppp_linelength == indent2 ) && ( curpos > indent2 ) ) ) {
         /* move to new continuation line */
         char line[1000];
-        sprintf( line, "\n%*s", indent2, "" );
+        snprintf( line, sizeof(line), "\n%*s", indent2, "" );
         exp_output( line, 1 + indent2 );
 
         curpos = indent2;       /* reset current position */

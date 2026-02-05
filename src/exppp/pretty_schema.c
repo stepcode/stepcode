@@ -69,7 +69,7 @@ char * SCHEMAout( Schema s ) {
             /* since we have to generate a filename, make sure we don't */
             /* overwrite a valuable file */
 
-            sprintf( exppp_filename_buffer, "%s.exp", s->symbol.name );
+            snprintf( exppp_filename_buffer, sizeof(exppp_filename_buffer), "%s.exp", s->symbol.name );
 
             if( 0 != ( f = fopen( exppp_filename_buffer, "r" ) ) ) {
                 char * result = fgets( buf, PP_SMALL_BUF_SZ, f );

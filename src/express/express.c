@@ -227,7 +227,7 @@ static void EXPRESS_PATHinit(void) {
                 strcpy( dir->full, start );
                 dir->leaf = dir->full + length;
             } else {
-                sprintf( dir->full, "%s/", start );
+                snprintf( dir->full, sizeof(dir->full), "%s/", start );
                 dir->leaf = dir->full + length + 1;
             }
             LISTadd_last( EXPRESS_path, dir );
@@ -311,7 +311,9 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
     if( !fp ) {
         /* go down path looking for file */
         LISTdo( EXPRESS_path, dir, Dir * )
-        sprintf( dir->leaf, "%s", filename );
+
+        size_t rem = (size_t)( dir->full + sizeof( dir->full ) - dir->leaf );
+	snprintf( dir->leaf, rem, "%s", filename );
         if( 0 != ( fp = fopen( dir->full, "r" ) ) ) {
             filename = dir->full;
             break;
@@ -530,7 +532,9 @@ Schema EXPRESSfind_schema( Dictionary modeldict, char * name ) {
 
     /* go down path looking for file */
     LISTdo( EXPRESS_path, dir, Dir * )
-    sprintf( dir->leaf, "%s.exp", lower );
+
+    size_t rem = (size_t)( dir->full + sizeof( dir->full ) - dir->leaf );
+    snprintf( dir->leaf, rem, "%s.exp", lower );
     if( print_objects_while_running & OBJ_SCHEMA_BITS ) {
         fprintf( stderr, "pass %d: %s (schema file?)\n",
                  EXPRESSpass, dir->full );

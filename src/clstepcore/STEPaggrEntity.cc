@@ -91,7 +91,7 @@ Severity EntityAggregate::ReadValue( istream & in, ErrorDescriptor * err,
         CheckRemainingInput( in, &errdesc, buf, ",)" );
 
         if( errdesc.severity() < SEVERITY_INCOMPLETE ) {
-            sprintf( errmsg, "  index:  %d\n", value_cnt );
+            snprintf( errmsg, sizeof(errmsg), "  index:  %d\n", value_cnt );
             errdesc.PrependToDetailMsg( errmsg );
             err->AppendFromErrorArg( &errdesc );
         }
@@ -221,7 +221,7 @@ const char * EntityNode::asStr( std::string & s ) {
         return "";
     } else { // otherwise return entity id
         char tmp [64];
-        sprintf( tmp, "#%d", node->STEPfile_id );
+        snprintf( tmp, sizeof(tmp), "#%d", node->STEPfile_id );
         s = tmp;
     }
     return const_cast<char *>( s.c_str() );

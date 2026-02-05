@@ -279,8 +279,9 @@ buf_prints(struct Buf *buf, const char *fmt, const char *s)
 {
     char *t;
 
-    t = (char*)malloc(strlen(fmt) + strlen(s) + 1);
-    sprintf(t, fmt, s);
+    size_t len = strlen(fmt) + strlen(s) + 1;
+    t = (char*)malloc(len);
+    snprintf(t, len, fmt, s);
     buf = buf_strappend(buf, t);
     free(t);
     return buf;
@@ -315,9 +316,10 @@ buf_linedir(struct Buf *buf, const char* filename, int lineno)
 {
     char *t;
     const char fmt[] = "#line %d \"%s\"\n";
-    
-    t = (char*)malloc(strlen(fmt) + strlen(filename) + numDigits(lineno) + 1);
-    sprintf(t, fmt, lineno, filename);
+
+    size_t len = strlen(fmt) + strlen(filename) + numDigits(lineno) + 1;
+    t = (char*)malloc(len);
+    snprintf(t, len, fmt, lineno, filename);
     buf = buf_strappend(buf, t);
     free(t);
     return buf;
@@ -382,9 +384,11 @@ buf_m4_define(struct Buf *buf, const char* def, const char* val)
     char *str;
 
     val = val ? val : "";
-    str = (char*)malloc(strlen(fmt) + strlen(def) + strlen(val) + 2);
 
-    sprintf(str, fmt, def, val);
+    size_t len = strlen(fmt) + strlen(def) + strlen(val) + 2;
+    str = (char*)malloc(len);
+
+    snprintf(str, len, fmt, def, val);
     buf_append(buf, &str, 1);
     return buf;
 }
@@ -400,9 +404,9 @@ buf_m4_undefine(struct Buf *buf, const char* def)
     const char *fmt = "m4_undefine( [[%s]])m4_dnl\n";
     char *str;
 
-    str = (char*)malloc(strlen(fmt) + strlen(def) + 2);
-
-    sprintf(str, fmt, def);
+    size_t len = strlen(fmt) + strlen(def) + 2;
+    str = (char*)malloc(len);
+    snprintf(str, len, fmt, def);
     buf_append(buf, &str, 1);
     return buf;
 }

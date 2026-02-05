@@ -121,17 +121,17 @@ Severity SDAI_Binary::ReadBinary( istream & in, ErrorDescriptor * err, int Assig
             if( !validDelimiters ) {
                 err->GreaterSeverity( SEVERITY_WARNING );
                 if( needDelims )
-                    sprintf( messageBuf,
+                    snprintf( messageBuf, sizeof(messageBuf),
                              "Binary value missing double quote delimiters.\n" );
                 else
-                    sprintf( messageBuf,
+                    snprintf( messageBuf, sizeof(messageBuf),
                              "Mismatched double quote delimiters for binary.\n" );
                 err->AppendToDetailMsg( messageBuf );
                 err->AppendToUserMsg( messageBuf );
             }
         } else {
             err->GreaterSeverity( SEVERITY_WARNING );
-            sprintf( messageBuf, "Invalid binary value.\n" );
+            snprintf( messageBuf, sizeof(messageBuf), "Invalid binary value.\n" );
             err->AppendToDetailMsg( messageBuf );
             err->AppendToUserMsg( messageBuf );
         }

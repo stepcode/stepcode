@@ -1266,15 +1266,15 @@ void STEPattribute::AddErrorInfo() {
     errStr[0] = '\0';
     if( SEVERITY_INPUT_ERROR < _error.severity() &&
             _error.severity() < SEVERITY_NULL ) {
-        sprintf( errStr, " Warning: ATTRIBUTE '%s : %s : %d' - ",
+        snprintf( errStr, sizeof(errStr), " Warning: ATTRIBUTE '%s : %s : %d' - ",
                  Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     } else if( _error.severity() == SEVERITY_INPUT_ERROR ) {
-        sprintf( errStr, " Error: ATTRIBUTE '%s : %s : %d' - ",
+        snprintf( errStr, sizeof(errStr), " Error: ATTRIBUTE '%s : %s : %d' - ",
                  Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     } else if( _error.severity() <= SEVERITY_BUG ) {
-        sprintf( errStr, " BUG: ATTRIBUTE '%s : %s : %d' - ",
+        snprintf( errStr, sizeof(errStr), " BUG: ATTRIBUTE '%s : %s : %d' - ",
                  Name(), TypeName().c_str(), Type() );
         _error.PrependToDetailMsg( errStr );
     }
@@ -1302,12 +1302,12 @@ char STEPattribute::SkipBadAttr( istream & in, char * StopChars ) {
     }
     if( in.eof() ) {
         _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
-        sprintf( errStr, " Error: attribute '%s : %s : %d' - %s.\n",
+        snprintf( errStr, sizeof(errStr), " Error: attribute '%s : %s : %d' - %s.\n",
                  Name(), TypeName().c_str(), Type(),
                  "Unexpected EOF when skipping bad attr value" );
         _error.AppendToDetailMsg( errStr );
     } else {
-        sprintf( errStr, " Error: attribute '%s : %s : %d' - %s.\n",
+        snprintf( errStr, sizeof(errStr), " Error: attribute '%s : %s : %d' - %s.\n",
                  Name(), TypeName().c_str(), Type(), "Invalid value" );
         _error.AppendToDetailMsg( errStr );
     }

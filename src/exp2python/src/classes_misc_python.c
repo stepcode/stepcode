@@ -347,7 +347,7 @@ const char * TypeDescriptorName( Type t ) {
         ** by following through the entity they reference, as above. */
     }
 
-    sprintf( b, "%s%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
+    snprintf( b, sizeof(b), "%s%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
              TYPEget_name( t ) );
     return b;
 }

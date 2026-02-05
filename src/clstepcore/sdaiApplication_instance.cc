@@ -106,7 +106,7 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
     if( IsComplex() ) {
         cerr << "STEPcomplex::Replicate() should be called:  " << __FILE__
              <<  __LINE__ << "\n" << _POC_ "\n";
-        sprintf( errStr,
+        snprintf( errStr, sizeof(errStr),
                  "SDAI_Application_instance::Replicate(): %s - entity #%d.\n",
                  "Programming ERROR - STEPcomplex::Replicate() should be called",
                  STEPfile_id );
@@ -151,7 +151,7 @@ void SDAI_Application_instance::STEPwrite_reference( ostream & out ) {
 
 const char * SDAI_Application_instance::STEPwrite_reference( std::string & buf ) {
     char tmp[64];
-    sprintf( tmp, "#%d", STEPfile_id );
+    snprintf( tmp, sizeof(tmp), "#%d", STEPfile_id );
     buf = tmp;
     return const_cast<char *>( buf.c_str() );
 }
@@ -419,7 +419,7 @@ const char * SDAI_Application_instance::STEPwrite( std::string & buf, const char
     char instanceInfo[BUFSIZ+1];
 
     std::string tmp;
-    sprintf( instanceInfo, "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
+    snprintf( instanceInfo, sizeof(instanceInfo), "#%d=%s(", STEPfile_id, StrToUpper( EntityName( currSch ), tmp ) );
     buf.append( instanceInfo );
 
     int n = attributes.list_length();
@@ -443,7 +443,7 @@ void SDAI_Application_instance::PrependEntityErrMsg() {
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
+        snprintf( errStr, sizeof(errStr), "\nERROR:  ENTITY #%d %s\n", GetFileId(),
                  EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
@@ -464,14 +464,14 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
 
     if( _error.severity() == SEVERITY_NULL ) {
         //  if there is not an error already
-        sprintf( errStr, "\nERROR:  ENTITY #%d %s\n", GetFileId(),
+        snprintf( errStr, sizeof(errStr), "\nERROR:  ENTITY #%d %s\n", GetFileId(),
                  EntityName() );
         _error.PrependToDetailMsg( errStr );
     }
 
     if( ( i >= 0 ) && ( i < attributes.list_length() ) ) { // i is an attribute
         Error().GreaterSeverity( SEVERITY_WARNING );
-        sprintf( errStr, "  invalid data before type \'%s\'\n",
+        snprintf( errStr, sizeof(errStr), "  invalid data before type \'%s\'\n",
                  attributes[i].TypeName().c_str() );
         _error.AppendToDetailMsg( errStr );
     } else {
@@ -487,7 +487,7 @@ void SDAI_Application_instance::STEPread_error( char c, int i, istream & in, con
     _error.AppendToDetailMsg( c );
     _error.AppendToDetailMsg( '\n' );
 
-    sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
+    snprintf( errStr, sizeof(errStr), "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
     return;
 }
@@ -552,7 +552,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
                     // set the severity for this entity
                     _error.GreaterSeverity( severe );
-                    sprintf( errStr, "  %s :  ", attributes[i].Name() );
+                    snprintf( errStr, sizeof(errStr), "  %s :  ", attributes[i].Name() );
                     _error.AppendToDetailMsg( errStr ); // add attr name
                     _error.AppendToDetailMsg(
                         "Since using pre-technical corrigendum... missing asterisk for redefined attr.\n" );
@@ -583,7 +583,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
 
                 // set the severity for this entity
                 _error.GreaterSeverity( severe );
-                sprintf( errStr, "  %s :  ", attributes[i].Name() );
+                snprintf( errStr, sizeof(errStr), "  %s :  ", attributes[i].Name() );
                 _error.AppendToDetailMsg( errStr ); // add attr name
                 _error.AppendToDetailMsg( attributes[i].Error().DetailMsg() );  // add attr error
                 _error.AppendToUserMsg( attributes[i].Error().UserMsg() );
@@ -653,7 +653,7 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
         }
     }
     _error.AppendToDetailMsg( tmp.c_str() );
-    sprintf( errStr, "\nfinished reading #%d\n", STEPfile_id );
+    snprintf( errStr, sizeof(errStr), "\nfinished reading #%d\n", STEPfile_id );
     _error.AppendToDetailMsg( errStr );
 // end of imported code
     return _error.severity();
@@ -678,7 +678,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
             int id = -1;
             in >>  id;
             if( in.fail() ) { //  there's been an error in input
-                sprintf( errStr, "Invalid entity reference value.\n" );
+                snprintf( errStr, sizeof(errStr), "Invalid entity reference value.\n" );
                 err->AppendToDetailMsg( errStr );
                 err->AppendToUserMsg( errStr );
                 err->GreaterSeverity( SEVERITY_WARNING );
@@ -692,7 +692,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                 if( !instances ) {
                     cerr << "Internal error:  " << __FILE__ <<  __LINE__
                          << "\n" << _POC_ "\n";
-                    sprintf( errStr,
+                    snprintf( errStr, sizeof(errStr),
                              "STEPread_reference(): %s - entity #%d %s.\n",
                              "BUG - cannot read reference without the InstMgr",
                              id, "is unknown" );
@@ -714,7 +714,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                     } else {
                         cerr << "Internal error:  " << __FILE__ <<  __LINE__
                              << "\n" << _POC_ "\n";
-                        sprintf( errStr,
+                        snprintf( errStr, sizeof(errStr),
                                  "STEPread_reference(): %s - entity #%d %s.\n",
                                  "BUG - MgrNode::GetSTEPentity returned NULL pointer",
                                  id, "is unknown" );
@@ -724,7 +724,7 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
                         return S_ENTITY_NULL;
                     }
                 } else {
-                    sprintf( errStr, "Reference to non-existent ENTITY #%d.\n",
+                    snprintf( errStr, sizeof(errStr), "Reference to non-existent ENTITY #%d.\n",
                              id );
                     err->AppendToDetailMsg( errStr );
                     err->AppendToUserMsg( errStr );
@@ -761,7 +761,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
 
     if( !ed || ( ed->NonRefType() != ENTITY_TYPE ) ) {
         err->GreaterSeverity( SEVERITY_BUG );
-        sprintf( messageBuf,
+        snprintf( messageBuf, sizeof(messageBuf),
                  " BUG: EntityValidLevel() called with %s",
                  "missing or invalid EntityDescriptor\n" );
         err->AppendToUserMsg( messageBuf );
@@ -772,7 +772,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
     }
     if( !se || ( se == S_ENTITY_NULL ) ) {
         err->GreaterSeverity( SEVERITY_BUG );
-        sprintf( messageBuf,
+        snprintf( messageBuf, sizeof(messageBuf),
                  " BUG: EntityValidLevel() called with null pointer %s\n",
                  "for SDAI_Application_instance argument." );
         err->AppendToUserMsg( messageBuf );
@@ -800,7 +800,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
                 }
             }
             err->GreaterSeverity( SEVERITY_WARNING );
-            sprintf( messageBuf,
+            snprintf( messageBuf, sizeof(messageBuf),
                      " Entity #%d exists but is not a %s or descendant.\n",
                      se->STEPfile_id, ed->Name() );
             err->AppendToUserMsg( messageBuf );
@@ -809,7 +809,7 @@ Severity EntityValidLevel( SDAI_Application_instance * se,
         }
     } else {
         err->GreaterSeverity( SEVERITY_BUG );
-        sprintf( messageBuf,
+        snprintf( messageBuf, sizeof(messageBuf),
                  " BUG: EntityValidLevel(): SDAI_Application_instance #%d has a %s",
                  se->STEPfile_id, "missing or invalid EntityDescriptor\n" );
         err->AppendToUserMsg( messageBuf );
@@ -893,7 +893,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
             SDAI_Application_instance * se = mn->GetSTEPentity();
             return EntityValidLevel( se, ed, err );
         } else {
-            sprintf( messageBuf,
+            snprintf( messageBuf, sizeof(messageBuf),
                      " Attribute's Entity Reference %s does not exist.\n",
                      attrValue );
             err->AppendToUserMsg( messageBuf );
@@ -908,7 +908,7 @@ Severity EntityValidLevel( const char * attrValue, // string contain entity ref
         return err->severity();
     }
 
-    sprintf( messageBuf, "Invalid attribute entity reference value: '%s'.\n",
+    snprintf( messageBuf, sizeof(messageBuf), "Invalid attribute entity reference value: '%s'.\n",
              attrValue );
     err->AppendToUserMsg( messageBuf );
     err->AppendToDetailMsg( messageBuf );

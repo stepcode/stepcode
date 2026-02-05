@@ -153,7 +153,7 @@ std::string WriteReal( SDAI_Real val ) {
     // Also use G instead of g since G writes uppercase E (E instead of e
     // is also required by Part 21) when scientific notation is used - DAS
 
-    sprintf( rbuf, "%.*G", ( int ) RealNumPrecision, val );
+    snprintf( rbuf, sizeof(rbuf), "%.*G", ( int ) RealNumPrecision, val );
     if( !strchr( rbuf, '.' ) ) {
         if( strchr( rbuf, 'E' ) || strchr( rbuf, 'e' ) ) {
             char * expon = strchr( rbuf, 'E' );
@@ -490,7 +490,7 @@ void PushPastImbedAggr( istream & in, std::string & s, ErrorDescriptor * err ) {
         }
         if( c != ')' ) {
             err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-            sprintf( messageBuf, "Invalid aggregate value.\n" );
+            snprintf( messageBuf, sizeof(messageBuf), "Invalid aggregate value.\n" );
             err->AppendToDetailMsg( messageBuf );
             s.append( ")" );
         } else {
@@ -518,7 +518,7 @@ void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
         while( in.good() && ( c != ')' ) ) {
             if( c == '(' ) {
                 err->GreaterSeverity( SEVERITY_WARNING );
-                sprintf( messageBuf, "Invalid aggregate value.\n" );
+                snprintf( messageBuf, sizeof(messageBuf), "Invalid aggregate value.\n" );
                 err->AppendToDetailMsg( messageBuf );
             }
 
@@ -532,7 +532,7 @@ void PushPastAggr1Dim( istream & in, std::string & s, ErrorDescriptor * err ) {
         }
         if( c != ')' ) {
             err->GreaterSeverity( SEVERITY_INPUT_ERROR );
-            sprintf( messageBuf, "Invalid aggregate value.\n" );
+            snprintf( messageBuf, sizeof(messageBuf), "Invalid aggregate value.\n" );
             err->AppendToDetailMsg( messageBuf );
             s.append( ")" );
         } else {

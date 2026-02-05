@@ -170,9 +170,9 @@ void SCHEMAprint( Schema schema, FILES * files, int suffix ) {
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
-    sprintf( schnm, "%s", SCHEMAget_name( schema ) );
+    snprintf( schnm, sizeof(schnm), "%s", SCHEMAget_name( schema ) );
     if( suffix == 0 ) {
-        sprintf( sufnm, "%s", schnm );
+        snprintf( sufnm, sizeof(sufnm), "%s", schnm );
     } else {
         ocnt = snprintf( sufnm, MAX_LEN, "%s_%d", schnm, suffix );
         if( ocnt > MAX_LEN ) {
@@ -185,9 +185,10 @@ void SCHEMAprint( Schema schema, FILES * files, int suffix ) {
     }
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
+    size_t remaining = (size_t)(fnm + sizeof(fnm) - np);
 
     /*  2.  class source file            */
-    sprintf( np, "py" );
+    snprintf( np, remaining, "py" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -296,10 +297,11 @@ EXPRESSPrint( Express express, FILES * files ) {
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
-    sprintf( fnm, "%s.h", schnm = ClassName( EXPRESSget_basename( express ) ) );
+    snprintf( fnm, sizeof(fnm), "%s.h", schnm = ClassName( EXPRESSget_basename( express ) ) );
 
     /*  2.  class source file            */
-    //sprintf( np, "cc" );
+    //size_t remaining = (size_t)(fnm + sizeof(fnm) - np);
+    //snprintf( np, remaining, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }

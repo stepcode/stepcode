@@ -211,10 +211,10 @@ Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int Assign
                 if( !validDelimiters ) {
                     err->GreaterSeverity( SEVERITY_WARNING );
                     if( needDelims )
-                        sprintf( messageBuf,
+                        snprintf( messageBuf, sizeof(messageBuf),
                                  "Enumerated value has invalid period delimiters.\n" );
                     else
-                        sprintf( messageBuf,
+                        snprintf( messageBuf, sizeof(messageBuf),
                                  "Mismatched period delimiters for enumeration.\n" );
                     err->AppendToDetailMsg( messageBuf );
                     err->AppendToUserMsg( messageBuf );
@@ -241,7 +241,7 @@ Severity SDAI_LOGICAL::ReadEnum( istream & in, ErrorDescriptor * err, int Assign
         } else {
             in.putback( c );
             err->GreaterSeverity( SEVERITY_WARNING );
-            sprintf( messageBuf, "Invalid enumeration value.\n" );
+            snprintf( messageBuf, sizeof(messageBuf), "Invalid enumeration value.\n" );
             err->AppendToDetailMsg( messageBuf );
             err->AppendToUserMsg( messageBuf );
         }
@@ -489,10 +489,10 @@ Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal
                 if( !validDelimiters ) {
                     err->GreaterSeverity( SEVERITY_WARNING );
                     if( needDelims )
-                        sprintf( messageBuf,
+                        snprintf( messageBuf, sizeof(messageBuf),
                                  "Enumerated value has invalid period delimiters.\n" );
                     else
-                        sprintf( messageBuf,
+                        snprintf( messageBuf, sizeof(messageBuf),
                                  "Mismatched period delimiters for enumeration.\n" );
                     err->AppendToDetailMsg( messageBuf );
                     err->AppendToUserMsg( messageBuf );
@@ -519,7 +519,7 @@ Severity SDAI_Enum::ReadEnum( istream & in, ErrorDescriptor * err, int AssignVal
         } else {
             in.putback( c );
             err->GreaterSeverity( SEVERITY_WARNING );
-            sprintf( messageBuf, "Invalid enumeration value.\n" );
+            snprintf( messageBuf, sizeof(messageBuf), "Invalid enumeration value.\n" );
             err->AppendToDetailMsg( messageBuf );
             err->AppendToUserMsg( messageBuf );
         }

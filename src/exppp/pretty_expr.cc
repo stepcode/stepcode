@@ -7,11 +7,16 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include <cstdio>
+#include <cstdarg>
+#include <string>
+
+extern "C" {
 #include "exppp.h"
 #include "pp.h"
 
 #include "pretty_expr.h"
-
+}
 
 /** print array bounds */
 void EXPRbounds_out( TypeBody tb ) {
@@ -224,7 +229,7 @@ void EXPRop__out( struct Op_Subexpression * oe, int paren, unsigned int previous
     }
 }
 
-void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int pad, unsigned int previous_op ) {
+void EXPRop2__out( struct Op_Subexpression * eo, const char * opcode, int paren, int pad, unsigned int previous_op ) {
     if( pad && paren && ( eo->op_code != previous_op ) ) {
         wrap( "( " );
     }
@@ -245,7 +250,7 @@ void EXPRop2__out( struct Op_Subexpression * eo, char * opcode, int paren, int p
 /** Print out a one-operand operation.  If there were more than two of these
  * I'd generalize it to do padding, but it's not worth it.
  */
-void EXPRop1_out( struct Op_Subexpression * eo, char * opcode, int paren ) {
+void EXPRop1_out( struct Op_Subexpression * eo, const char * opcode, int paren ) {
     if( paren ) {
         wrap( "( " );
     }
@@ -268,89 +273,124 @@ int EXPRop_length( struct Op_Subexpression * oe ) {
     return 0;
 }
 
-/** returns printable representation of expression rather than printing it
- * originally only used for general references, now being expanded to handle
- * any kind of expression
- * contains fragment of string, adds to it
- */
-void EXPRstring( char * buffer, Expression e ) {
+/* ---- C++ string-based builder (replaces unsafe EXPRstring/EXPRop_string) ---- */
+
+static void appendf( std::string & out, const char * fmt, ... ) {
+    va_list ap;
+    va_start( ap, fmt );
+
+    va_list ap2;
+    va_copy( ap2, ap );
+
+    int n = std::vsnprintf( NULL, 0, fmt, ap );
+    va_end( ap );
+
+    if( n > 0 ) {
+        size_t old = out.size();
+        out.resize( old + ( size_t )n );
+        std::vsnprintf( &out[0] + old, ( size_t )n + 1, fmt, ap2 );
+    }
+
+    va_end( ap2 );
+}
+
+static void EXPRstring_cpp( std::string & out, Expression e );
+
+static void EXPRop_string_cpp( std::string & out, struct Op_Subexpression * oe ) {
+    EXPRstring_cpp( out, oe->op1 );
+    switch( oe->op_code ) {
+        case OP_DOT:
+            out.push_back( '.' );
+            break;
+        case OP_GROUP:
+            out.push_back( '\\' );
+            break;
+        default:
+            out.append( "(* unknown op-expression *)" );
+    }
+    EXPRstring_cpp( out, oe->op2 );
+}
+
+static void EXPRstring_cpp( std::string & out, Expression e ) {
     int i;
 
     switch( TYPEis( e->type ) ) {
         case integer_:
             if( e == LITERAL_INFINITY ) {
-                strcpy( buffer, "?" );
+                out.append( "?" );
             } else {
-                sprintf( buffer, "%d", e->u.integer );
+                appendf( out, "%d", e->u.integer );
             }
             break;
         case real_:
             if( e == LITERAL_PI ) {
-                strcpy( buffer, "PI" );
+                out.append( "PI" );
             } else if( e == LITERAL_E ) {
-                strcpy( buffer, "E" );
+                out.append( "E" );
             } else {
-                sprintf( buffer, "%s", real2exp( e->u.real ) );
+                appendf( out, "%s", real2exp( e->u.real ) );
             }
             break;
         case binary_:
-            sprintf( buffer, "%%%s", e->u.binary ); /* put "%" back */
+            appendf( out, "%%%s", e->u.binary ); /* put "%" back */
             break;
         case logical_:
         case boolean_:
             switch( e->u.logical ) {
                 case Ltrue:
-                    strcpy( buffer, "TRUE" );
+                    out.append( "TRUE" );
                     break;
                 case Lfalse:
-                    strcpy( buffer, "FALSE" );
+                    out.append( "FALSE" );
                     break;
                 default:
-                    strcpy( buffer, "UNKNOWN" );
+                    out.append( "UNKNOWN" );
                     break;
             }
             break;
         case string_:
             if( TYPEis_encoded( e->type ) ) {
-                sprintf( buffer, "\"%s\"", e->symbol.name );
+                appendf( out, "\"%s\"", e->symbol.name );
             } else {
-                sprintf( buffer, "%s", e->symbol.name );
+                appendf( out, "%s", e->symbol.name );
             }
             break;
         case entity_:
         case identifier_:
         case attribute_:
         case enumeration_:
-            strcpy( buffer, e->symbol.name );
+            if( e->symbol.name ) {
+                out.append( e->symbol.name );
+            }
             break;
         case query_:
-            sprintf( buffer, "QUERY ( %s <* ", e->u.query->local->name->symbol.name );
-            EXPRstring( buffer + strlen( buffer ), e->u.query->aggregate );
-            strcat( buffer, " | " );
-            EXPRstring( buffer + strlen( buffer ), e->u.query->expression );
-            strcat( buffer, " )" );
+            appendf( out, "QUERY ( %s <* ", e->u.query->local->name->symbol.name );
+            EXPRstring_cpp( out, e->u.query->aggregate );
+            out.append( " | " );
+            EXPRstring_cpp( out, e->u.query->expression );
+            out.append( " )" );
             break;
         case self_:
-            strcpy( buffer, "SELF" );
+            out.append( "SELF" );
             break;
         case funcall_:
-            sprintf( buffer, "%s( ", e->symbol.name );
+            appendf( out, "%s( ", e->symbol.name );
             i = 0;
             LISTdo( e->u.funcall.list, arg, Expression )
             i++;
             if( i != 1 ) {
-                strcat( buffer, ", " );
+                out.append( ", " );
             }
-            EXPRstring( buffer + strlen( buffer ), arg );
+            EXPRstring_cpp( out, arg );
             LISTod
-            strcat( buffer, " )" );
+            out.append( " )" );
             break;
 
         case op_:
-            EXPRop_string( buffer, &e->e );
+            EXPRop_string_cpp( out, &e->e );
             break;
         case aggregate_:
-            strcpy( buffer, "[" );
+            out.append( "[" );
             i = 0;
             LISTdo( e->u.list, arg, Expression ) {
                 bool repeat = arg->type->u.type->body->flags.repeat;
@@ -358,48 +398,33 @@ void EXPRstring( char * buffer, Expression e ) {
                 i++;
                 if( i != 1 ) {
                     if( repeat ) {
-                        strcat( buffer, " : " );
+                        out.append( " : " );
                     } else {
-                        strcat( buffer, ", " );
+                        out.append( ", " );
                     }
                 }
-                EXPRstring( buffer + strlen( buffer ), arg );
+                EXPRstring_cpp( out, arg );
             } LISTod
-            strcat( buffer, "]" );
+            out.append( "]" );
             break;
         case oneof_:
-            strcpy( buffer, "ONEOF ( " );
+            out.append( "ONEOF ( " );
 
             i = 0;
             LISTdo( e->u.list, arg, Expression ) {
                 i++;
                 if( i != 1 ) {
-                    strcat( buffer, ", " );
+                    out.append( ", " );
                 }
-                EXPRstring( buffer + strlen( buffer ), arg );
+                EXPRstring_cpp( out, arg );
             } LISTod
 
-            strcat( buffer, " )" );
+            out.append( " )" );
             break;
         default:
-            sprintf( buffer, "EXPRstring: unknown expression, type %d", TYPEis( e->type ) );
-            fprintf( stderr, "%s", buffer );
+            appendf( out, "EXPRstring: unknown expression, type %d", TYPEis( e->type ) );
+            fprintf( stderr, "%s", out.c_str() );
     }
-}
-
-void EXPRop_string( char * buffer, struct Op_Subexpression * oe ) {
-    EXPRstring( buffer, oe->op1 );
-    switch( oe->op_code ) {
-        case OP_DOT:
-            strcat( buffer, "." );
-            break;
-        case OP_GROUP:
-            strcat( buffer, "\\" );
-            break;
-        default:
-            strcat( buffer, "(* unknown op-expression *)" );
-    }
-    EXPRstring( buffer + strlen( buffer ), oe->op2 );
 }
 
 /** returns length of printable representation of expression w.o. printing it
@@ -407,10 +432,10 @@ void EXPRop_string( char * buffer, struct Op_Subexpression * oe ) {
  * WARNING this *does* change the global 'curpos'!
  */
 int EXPRlength( Expression e ) {
-    char buffer[10000];
-    *buffer = '\0';
-    EXPRstring( buffer, e );
-    return( strlen( buffer ) );
+    std::string out;
+    out.reserve( 256 );
+    EXPRstring_cpp( out, e );
+    return( ( int )out.size() );
 }
 
 char * EXPRto_string( Expression e ) {
