@@ -208,7 +208,8 @@ jobs:
         run: |
           cmake -E make_directory brlcad_build
           cd brlcad_build
-          cmake -S ../brlcad -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -B build -G Ninja
+          cmake -S ../brlcad -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -G Ninja
+          cd ..
 
       - name: Build
         run: |
@@ -269,9 +270,7 @@ jobs:
       - name: Configure
         run: |
           cmake -E make_directory brlcad_build
-          cd brlcad_build
-          cmake -S ../brlcad -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -B build -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe"
-          cd ..
+          cmake -S brlcad -B brlcad_build -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe"
 
       - name: Build
         run: |
