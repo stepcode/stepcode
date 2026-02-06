@@ -303,6 +303,7 @@ extern SC_EXPRESS_EXPORT void TYPEcleanup( void );
 
 extern SC_EXPRESS_EXPORT bool TYPEinherits_from( Type, enum type_enum );
 extern SC_EXPRESS_EXPORT Type TYPEget_nonaggregate_base_type( Type );
+extern SC_EXPRESS_EXPORT Type TYPEget_aggregate_base( Type );
 
 extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_type( Type, Scope, struct Symbol_ * );
 extern SC_EXPRESS_EXPORT Type TYPEcreate_user_defined_tag( Type, Scope, struct Symbol_ * );

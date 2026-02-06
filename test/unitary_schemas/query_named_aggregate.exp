@@ -1,0 +1,44 @@
+SCHEMA query_named_aggregate_test;
+
+-- Test 1: Defined aggregate type
+TYPE my_set = SET OF INTEGER;
+END_TYPE;
+
+TYPE my_list = LIST OF INTEGER;
+END_TYPE;
+
+-- Test 2: SELECT whose members are defined aggregates with same element type
+TYPE aggregate_select = SELECT (
+    my_set,
+    my_list
+);
+END_TYPE;
+
+-- Test 3: Entity using QUERY over defined aggregate type
+ENTITY test_entity;
+    my_numbers : my_set;
+WHERE
+    -- QUERY over defined aggregate type (not inline)
+    WR1 : SIZEOF(QUERY(n <* SELF.my_numbers | n > 0)) >= 0;
+END_ENTITY;
+
+-- Test 4: Entity using QUERY over SELECT-of-aggregates
+ENTITY test_entity_select;
+    my_aggregate : aggregate_select;
+WHERE
+    -- QUERY over SELECT-of-aggregates type (all members are aggregates with same element type)
+    WR2 : SIZEOF(QUERY(n <* SELF.my_aggregate | n > 10)) >= 0;
+END_ENTITY;
+
+-- Test 5: Nested defined aggregate
+TYPE nested_set = SET OF my_set;
+END_TYPE;
+
+ENTITY test_nested;
+    nested : nested_set;
+WHERE
+    -- QUERY over nested defined aggregate (element type is my_set, which itself is an aggregate)
+    WR3 : SIZEOF(QUERY(s <* SELF.nested | SIZEOF(s) > 0)) >= 0;
+END_ENTITY;
+
+END_SCHEMA;

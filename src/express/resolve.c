@@ -86,7 +86,7 @@ void RESOLVEcleanup( void ) {
 ** Retrieve the aggregate type from the underlying types of the select type t_select
 ** \param t_select the select type to retrieve the aggregate type from
 ** \param t_agg the current aggregate type
-** \return the aggregate type
+** \return the aggregate type (element type common to all aggregate members), or NULL if not all members are aggregates or have different element types
 */
 Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
     if( TYPEis_select( t_select ) ) {
@@ -94,16 +94,34 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
         LISTdo_links( t_select->u.type->body->list, link )
         /* the current underlying type */
         Type t = ( Type ) link->data;
+
         if( TYPEis_select( t ) ) {
             t_agg = TYPE_retrieve_aggregate( t, t_agg );
-        } else if( TYPEis_aggregate( t ) ) {
+        } else if( TYPEinherits_from( t, aggregate_ ) ) {
+            /* Deep aggregate detection: get element type through typedef chains */
+            Type member_base = TYPEget_aggregate_base( t );
+            if( !member_base ) {
+                /* Should not happen if TYPEinherits_from returned true, but be defensive */
+                return 0;
+            }
             if( t_agg ) {
-                if( t_agg != t->u.type->body->base ) {
-                    /* 2 underlying types do not have to the same base */
+                /* Compare element types.
+                 * We need to compare by body->type, not pointer equality,
+                 * because different aggregate definitions may create separate Type instances
+                 * for the same underlying type (e.g., INTEGER). */
+                if( t_agg->u.type->body->type != member_base->u.type->body->type ) {
+                    /* 2 underlying types do not have the same base type */
                     return 0;
                 }
+                /* Additional check: if they're both named types (entities, etc.),
+                 * make sure they refer to the same entity/type */
+                if( TYPEis_entity( t_agg ) && TYPEis_entity( member_base ) ) {
+                    if( t_agg->u.type->body->entity != member_base->u.type->body->entity ) {
+                        return 0;
+                    }
+                }
             } else {
-                t_agg = t->u.type->body->base;
+                t_agg = member_base;
             }
         } else {
             /* the underlying type is neither a select nor an aggregate */
@@ -354,8 +372,16 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 resolve_failed( expr );
                 break;
             }
-            if( TYPEis_aggregate( expr->return_type ) ) {
-                t = expr->u.query->aggregate->return_type->u.type->body->base;
+            /* Deep aggregate detection: check if type inherits from aggregate_ (possibly through typedefs) */
+            if( TYPEinherits_from( expr->return_type, aggregate_ ) ) {
+                /* Use deep unwrapping to get element type */
+                t = TYPEget_aggregate_base( expr->return_type );
+                if( !t ) {
+                    /* Should not happen if TYPEinherits_from returned true, but be defensive */
+                    ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
+                    resolve_failed( expr );
+                    break;
+                }
             } else if( TYPEis_select( expr->return_type ) ) {
                 /* retrieve the common aggregate type */
                 t = TYPE_retrieve_aggregate( expr->return_type, 0 );

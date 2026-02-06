@@ -1,0 +1,25 @@
+SCHEMA select_aggregate_test;
+
+-- Defined aggregate types
+TYPE my_set = SET OF INTEGER;
+END_TYPE;
+
+TYPE my_list = LIST OF INTEGER;
+END_TYPE;
+
+-- SELECT whose members are defined aggregates with same element type
+TYPE aggregate_select = SELECT (
+    my_set,
+    my_list
+);
+END_TYPE;
+
+-- Entity using QUERY over SELECT-of-aggregates
+ENTITY test_select;
+    my_aggregate : aggregate_select;
+WHERE
+    -- QUERY over SELECT-of-aggregates type (all members are aggregates with same element type)
+    WR1 : SIZEOF(QUERY(n <* SELF.my_aggregate | n > 10)) >= 0;
+END_ENTITY;
+
+END_SCHEMA;

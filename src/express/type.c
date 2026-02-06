@@ -239,3 +239,24 @@ Type TYPEget_nonaggregate_base_type( Type t ) {
     return t;
 }
 
+/**
+ * \param t type to examine
+ * \return the element type of the aggregate, or NULL if t does not resolve to an aggregate
+ * Deep aggregate detection: unwrap through defined type chains until hitting an aggregate constructor,
+ * then return that aggregate's element type (base).
+ * Used by QUERY resolution and TYPE_retrieve_aggregate().
+ * NOTE: This assumes types have been resolved (TYPE_resolve has been called).
+ */
+Type TYPEget_aggregate_base( Type t ) {
+    if( !t ) {
+        return NULL;
+    }
+    /* After type resolution, defined types have their body set to point to the true type's body.
+     * So we can directly check if this type inherits from aggregate. */
+    if( TYPEinherits_from( t, aggregate_ ) ) {
+        /* The type is (or resolves to) an aggregate. Return its element type. */
+        return t->u.type->body->base;
+    }
+    return NULL;
+}
+
