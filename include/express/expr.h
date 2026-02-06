@@ -83,7 +83,7 @@ typedef enum {
     OP_MINUS,       OP_MOD,         OP_NEGATE,
     OP_NOT,         OP_NOT_EQUAL,       OP_OR,
     OP_PLUS,        OP_REAL_DIV,        OP_SUBCOMPONENT,
-    OP_TIMES,       OP_XOR,         OP_UNKNOWN,
+    OP_TIMES,       OP_TREAT,       OP_XOR,         OP_UNKNOWN,
     OP_LAST /**< must be last - used only to size tables */
 } Op_Code;
 

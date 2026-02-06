@@ -1,0 +1,11 @@
+SCHEMA simple_test;
+
+ENTITY item_a;
+  name : STRING;
+END_ENTITY;
+
+ENTITY item_b;
+  value : INTEGER;
+END_ENTITY;
+
+END_SCHEMA;

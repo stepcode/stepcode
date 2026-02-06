@@ -1,0 +1,28 @@
+SCHEMA minimal_treat_test;
+
+ENTITY item_a;
+  name : STRING;
+END_ENTITY;
+
+ENTITY item_b;
+  value : INTEGER;
+END_ENTITY;
+
+TYPE my_select = SELECT(item_a, item_b);
+END_TYPE;
+
+FUNCTION test_treat(data : my_select) : STRING;
+  LOCAL
+    result : STRING;
+  END_LOCAL;
+  
+  result := '';
+  
+  IF ('MINIMAL_TREAT_TEST.ITEM_A' IN TYPEOF(data)) THEN
+    result := TREAT(data AS item_a).name;
+  END_IF;
+  
+  RETURN(result);
+END_FUNCTION;
+
+END_SCHEMA;

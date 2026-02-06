@@ -1,0 +1,11 @@
+TYPE permanent_attachment = SELECT(glue, weld);
+END_TYPE;
+
+TYPE temporary_attachment = SELECT(nail, screw);
+END_TYPE;
+
+ENTITY nail;
+  body_length : REAL;
+  head_area : REAL;
+END_ENTITY;
+

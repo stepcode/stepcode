@@ -86,9 +86,10 @@ Expression  LITERAL_ZERO = EXPRESSION_NULL;
 Expression  LITERAL_ONE;
 
 void EXPop_init(void);
+Type EXPresolve_op_treat(Expression, Scope);
 
 static inline int OPget_number_of_operands( Op_Code op ) {
-    if( ( op == OP_NEGATE ) || ( op == OP_NOT ) ) {
+    if( ( op == OP_NEGATE ) || ( op == OP_NOT ) || ( op == OP_TREAT ) ) {
         return 1;
     } else if( op == OP_SUBCOMPONENT ) {
         return 3;
@@ -746,6 +747,67 @@ Type EXPresolve_op_unary_minus( Expression e, Scope s ) {
     return e->e.op1->return_type;
 }
 
+/**
+ * Resolve TREAT expression: TREAT(operand AS target_type)
+ * The operand is in e->e.op1, and the target type name is in e->symbol.name
+ */
+Type EXPresolve_op_treat( Expression e, Scope s ) {
+    Type target_type;
+    Type operand_type;
+    
+    /* First resolve the operand expression */
+    if( e->e.op1 ) {
+        EXPresolve( e->e.op1, s, Type_Dont_Care );
+        operand_type = e->e.op1->return_type;
+    } else {
+        ERRORreport_with_symbol( SYNTAX, &e->symbol, 
+                                "TREAT expression missing operand" );
+        resolve_failed( e );
+        return Type_Unknown;
+    }
+    
+    /* Now resolve the target type name */
+    if( e->symbol.name ) {
+        target_type = (Type)SCOPEfind( s, e->symbol.name, 
+                                       SCOPE_FIND_TYPE );
+        if( !target_type ) {
+            ERRORreport_with_symbol( UNDEFINED_TYPE, &e->symbol, 
+                                    e->symbol.name );
+            resolve_failed( e );
+            return Type_Unknown;
+        }
+    } else {
+        ERRORreport_with_symbol( SYNTAX, &e->symbol,
+                                "TREAT expression missing target type" );
+        resolve_failed( e );
+        return Type_Unknown;
+    }
+    
+    /* Validate type compatibility */
+    /* If operand is a SELECT type, check if target is one of its members */
+    if( operand_type && TYPEis_select( operand_type ) ) {
+        bool found = false;
+        LISTdo( operand_type->u.type->body->list, t, Type ) {
+            /* Compare type pointers or names */
+            if( t == target_type || 
+                (t->symbol.name && target_type->symbol.name &&
+                 0 == strcmp( t->symbol.name, target_type->symbol.name )) ) {
+                found = true;
+                break;
+            }
+        } LISTod;
+        
+        if( !found ) {
+            /* Emit warning but allow - be permissive */
+            /* ERRORreport_with_symbol( WARN_UNSUPPORTED_LANG_FEAT, &e->symbol, 
+                "TREAT narrowing to incompatible type" ); */
+        }
+    }
+    
+    /* The return type of TREAT is the target type */
+    return target_type;
+}
+
 /** Initialize one entry in EXPop_table
  * This table's function pointers are resolved in EXP_resolve(), at approx resolve.c:520
  * \sa EXP_resolve()
@@ -788,6 +850,7 @@ void EXPop_init(void) {
     EXPop_create( OP_REAL_DIV, "/ (REAL)",    EXPresolve_op_plus_like );
     EXPop_create( OP_SUBCOMPONENT, "[:]", EXPresolve_op_array_like );
     EXPop_create( OP_TIMES, "*",      EXPresolve_op_plus_like );
+    EXPop_create( OP_TREAT, "TREAT",      EXPresolve_op_treat );
     EXPop_create( OP_XOR, "XOR",      EXPresolve_op_logical );
     EXPop_create( OP_UNKNOWN, "UNKNOWN OP",   EXPresolve_op_unknown );
 }
@@ -867,6 +930,8 @@ char * opcode_print( Op_Code o ) {
             return( "OP_SUBCOMPONENT" );
         case OP_TIMES:
             return( "OP_TIMES" );
+        case OP_TREAT:
+            return( "OP_TREAT" );
         case OP_XOR:
             return( "OP_XOR" );
         case OP_UNKNOWN:

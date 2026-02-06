@@ -187,6 +187,7 @@ static struct keyword_entry {
     { "TAN",        TOK_BUILTIN_FUNCTION },
     { "THEN",       TOK_THEN },
     { "TO",         TOK_TO },
+    { "TREAT",      TOK_TREAT },
     { "TRUE",       TOK_LOGICAL_LITERAL },
     { "TYPE",       TOK_TYPE },
     { "TYPEOF",     TOK_BUILTIN_FUNCTION },
