@@ -5,7 +5,7 @@ This repo was moved and renamed in May 2012. Previously, it was at
 http://github.com/mpictor/StepClassLibrary
 
 Some are duplicates of changes recorded in the BRL-CAD repo:
-http://brlcad.svn.sourceforge.net/viewvc/brlcad/brlcad/trunk/src/other/step/?view=log
+https://github.com/BRL-CAD/brlcad/tree/158beae4556d94821938368951546384cba53107/src/other/ext/stepcode
 
 Pre-BRL-CAD changes:
 ************************************************************************

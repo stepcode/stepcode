@@ -87,7 +87,7 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
         CheckRemainingInput( in, &errdesc, buf, ",)" );
 
         if( errdesc.severity() < SEVERITY_INCOMPLETE ) {
-            sprintf( errmsg, "  index:  %d\n", value_cnt );
+            snprintf( errmsg, sizeof(errmsg), "  index:  %d\n", value_cnt );
             errdesc.PrependToDetailMsg( errmsg );
             err->AppendFromErrorArg( &errdesc );
         }

@@ -22,6 +22,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 #  include <direct.h>
 #endif /* _WIN32 */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -42,7 +43,7 @@ static void printEnumCreateBody( FILE *, const Type );
 static void printEnumAggrCrHdr( FILE *, const Type );
 static void printEnumAggrCrBody( FILE *, const Type );
 
-int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema );
+int TYPEget_RefTypeVarNm( const Type t, char * buf, size_t buflen, Schema schema );
 
 int isMultiDimAggregateType( const Type t );
 
@@ -121,7 +122,7 @@ void strcat_expr( Expression e, char * buf ) {
         strcat( buf, TYPEget_name( e ) );
     } else if( TYPEget_body( e->type )->type == integer_ ) {
         char tmpbuf[30];
-        sprintf( tmpbuf, "%d", e->u.integer );
+        snprintf( tmpbuf, sizeof(tmpbuf), "%d", e->u.integer );
         strcat( buf, tmpbuf );
     } else {
         strcat( buf, "??" );
@@ -161,7 +162,7 @@ void strcat_bounds( TypeBody b, char * buf ) {
  ******************************************************************/
 const char * EnumCElementName( Type type, Expression expr )  {
     static char buf [BUFSIZ+1];
-    sprintf( buf, "%s__",
+    snprintf( buf, sizeof(buf), "%s__",
              EnumName( TYPEget_name( type ) ) );
     strncat( buf, StrToLower( EXPget_name( expr ) ), BUFSIZ );
     return buf;
@@ -279,7 +280,7 @@ void TYPEenum_inc_print( const Type type, FILE * inc ) {
     /* DAS brandnew above */
 
     /*  print things for aggregate class  */
-    sprintf( enumAggrNm, "%s_agg", n );
+    snprintf( enumAggrNm, sizeof(enumAggrNm), "%s_agg", n );
 
     fprintf( inc, "\nclass %s_agg  :  public EnumAggregate  {\n", n );
 
@@ -609,7 +610,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
         return;
     }
 
-    if( !TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
+    if( !TYPEget_RefTypeVarNm( type, typename_buf, sizeof(typename_buf), schema ) ) {
         if( TYPEis_enumeration( type ) ) {
                 TYPEPrint( type, files, schema );
         } /* so we don't do anything for non-enums??? */
@@ -632,7 +633,7 @@ void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema 
     /* fill in the TD's values in the SchemaInit function (it is already
     declared with basic values) */
 
-    if( TYPEget_RefTypeVarNm( type, typename_buf, schema ) ) {
+    if( TYPEget_RefTypeVarNm( type, typename_buf, sizeof(typename_buf), schema ) ) {
         fprintf( impl, "        %s->ReferentType(%s);\n", tdnm, typename_buf );
     } else {
         switch( TYPEget_body( type )->type ) {
@@ -643,7 +644,7 @@ void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema 
             case list_: {
                 if( isMultiDimAggregateType( type ) ) {
                     print_typechain( header, impl, TYPEget_body( type )->base,
-                                     typename_buf, schema, type->symbol.name );
+                                     typename_buf, sizeof(typename_buf), schema, type->symbol.name );
                     fprintf( impl, "        %s->ReferentType(%s);\n", tdnm,
                              typename_buf );
                 }
@@ -763,7 +764,10 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR )
    Nov 2011 - MAP - modified to insert scope operator into variable name.
    Reason: use of namespace for global variables
 */
-int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
+int TYPEget_RefTypeVarNm( const Type t, char * buf, size_t buflen, Schema schema ) {
+
+    if (!buf || !buflen)
+	    return 0;
 
     /* It looks like TYPEget_head(t) is true when processing a type
        that refers to another type. e.g. when processing "name" in:
@@ -773,7 +777,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
            it refers to another Express TYPE stmt */
         /*  it would be a reference_ type */
         /*  a TypeDescriptor of the form <schema_name>t_<type_name_referred_to> */
-        sprintf( buf, "%s::%s%s",
+        snprintf( buf, buflen, "%s::%s%s",
                  SCHEMAget_name( TYPEget_head( t )->superscope ),
                  TYPEprefix( t ), TYPEget_name( TYPEget_head( t ) ) );
         return 1;
@@ -788,7 +792,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
             case number_:
                 /* one of the SCL builtin TypeDescriptors of the form
                    t_STRING_TYPE, or t_REAL_TYPE */
-                sprintf( buf, "%s%s", TD_PREFIX, FundamentalType( t, 0 ) );
+                snprintf( buf, buflen, "%s%s", TD_PREFIX, FundamentalType( t, 0 ) );
                 return 1;
                 break;
 
@@ -799,7 +803,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
                 break;
 
             case entity_:
-                sprintf( buf, "%s", TYPEtd_name( t ) );
+                snprintf( buf, buflen, "%s", TYPEtd_name( t ) );
                 /* following assumes we are not in a nested entity */
                 /* otherwise we should search upward for schema */
                 return 1;
@@ -815,7 +819,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
 
                 if( isMultiDimAggregateType( t ) ) {
                     if( TYPEget_name( TYPEget_body( t )->base ) ) {
-                        sprintf( buf, "%s::%s%s",
+                        snprintf( buf, buflen, "%s::%s%s",
                                  SCHEMAget_name( TYPEget_body( t )->base->superscope ),
                                  TYPEprefix( t ), TYPEget_name( TYPEget_body( t )->base ) );
                         return 1;
@@ -832,19 +836,19 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
                     if( TYPEget_body( TYPEget_body( t )->base )->type == enumeration_ ||
                             TYPEget_body( TYPEget_body( t )->base )->type == select_ ) {
 
-                        sprintf( buf, "%s", TYPEtd_name( TYPEget_body( t )->base ) );
+                        snprintf( buf, buflen, "%s", TYPEtd_name( TYPEget_body( t )->base ) );
                         return 1;
                     } else if( TYPEget_name( TYPEget_body( t )->base ) ) {
                         if( TYPEget_body( TYPEget_body( t )->base )->type == entity_ ) {
-                            sprintf( buf, "%s", TYPEtd_name( TYPEget_body( t )->base ) );
+                            snprintf( buf, buflen, "%s", TYPEtd_name( TYPEget_body( t )->base ) );
                             return 1;
                         }
-                        sprintf( buf, "%s::%s%s",
+                        snprintf( buf, buflen, "%s::%s%s",
                                  SCHEMAget_name( TYPEget_body( t )->base->superscope ),
                                  TYPEprefix( t ), TYPEget_name( TYPEget_body( t )->base ) );
                         return 1;
                     }
-                    return TYPEget_RefTypeVarNm( TYPEget_body( t )->base, buf, schema );
+                    return TYPEget_RefTypeVarNm( TYPEget_body( t )->base, buf, buflen, schema );
                 }
                 break;
             default:
@@ -882,7 +886,7 @@ int TYPEget_RefTypeVarNm( const Type t, char * buf, Schema schema ) {
         that can be referenced to refer to the type that was created for
     Type t.
 */
-void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Schema schema, const char * type_name ) {
+void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, size_t buflen, Schema schema, const char * type_name ) {
     /* if we've been called, current type has no name */
     /* nor is it a built-in type */
     /* the type_count variable is there for debugging purposes  */
@@ -907,7 +911,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
                      "        %s%d->AssignAggrCreator((AggregateCreator) create_%s);%s",
                      TD_PREFIX, count, ctype, "        // Creator function\n" );
 
-            s = sprintf( name_buf, "%s%d", TD_PREFIX, count );
+            s = snprintf( name_buf, sizeof(name_buf), "%s%d", TD_PREFIX, count );
             assert( ( s > 0 ) && ( s < MAX_LEN ) );
             AGGRprint_init( header, impl, t, name_buf, type_name );
 
@@ -930,7 +934,7 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
     /* DAS ORIG SCHEMA FIX */
     fprintf( impl, "        %s%d->OriginatingSchema(%s::schema);\n", TD_PREFIX, count, SCHEMAget_name( schema ) );
 
-    if( TYPEget_RefTypeVarNm( t, name_buf, schema ) ) {
+    if( TYPEget_RefTypeVarNm( t, name_buf, sizeof(name_buf), schema ) ) {
         fprintf( impl, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, name_buf );
     } else {
         Type base = 0;
@@ -939,10 +943,10 @@ void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Sche
         if( TYPEget_body( t ) ) {
             base = TYPEget_body( t )->base;
         }
-        print_typechain( header, impl, base, callee_buffer, schema, type_name );
+        print_typechain( header, impl, base, callee_buffer, sizeof(callee_buffer), schema, type_name );
         fprintf( impl, "        %s%d->ReferentType(%s);\n", TD_PREFIX, count, callee_buffer );
     }
-    sprintf( buf, "%s%d", TD_PREFIX, count );
+    snprintf( buf, buflen, "%s%d", TD_PREFIX, count );
 
     /* Types */
     fprintf( impl, "        %s::schema->AddUnnamedType(%s%d);\n", SCHEMAget_name( schema ), TD_PREFIX, count );
@@ -1324,7 +1328,7 @@ char * TYPEget_express_type( const Type t ) {
             aggr_type = "Bag";
         }
 
-        sprintf( retval, "%s of %s",
+        snprintf( retval, sizeof(retval), "%s of %s",
                  aggr_type, TYPEget_express_type( bt ) );
 
         /*  this will declare extra memory when aggregate is > 1D  */

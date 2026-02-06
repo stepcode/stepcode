@@ -115,11 +115,11 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
         if( !mn ) {
             ++errorCount;
             if( errorCount == 1 )
-                sprintf( errbuf,
+                snprintf( errbuf, sizeof(errbuf),
                          "VerifyInstances: Unable to verify the following instances: node %d",
                          i );
             else {
-                sprintf( errbuf, ", node %d", i );
+                snprintf( errbuf, sizeof(errbuf), ", node %d", i );
             }
 
             err.AppendToDetailMsg( errbuf );
@@ -139,18 +139,18 @@ InstMgr::VerifyInstances( ErrorDescriptor & err ) {
                 }
                 ++errorCount;
                 if( errorCount == 1 )
-                    sprintf( errbuf,
+                    snprintf( errbuf, sizeof(errbuf),
                              "VerifyInstances: Unable to verify the following instances: #%d",
                              se->StepFileId() );
                 else {
-                    sprintf( errbuf, ", #%d", se->StepFileId() );
+                    snprintf( errbuf, sizeof(errbuf), ", #%d", se->StepFileId() );
                 }
                 err.AppendToDetailMsg( errbuf );
             }
         }
     }
     if( errorCount ) {
-        sprintf( errbuf,
+        snprintf( errbuf, sizeof(errbuf),
                  "VerifyInstances: %d invalid instances in list.\n",
                  errorCount );
         err.AppendToUserMsg( errbuf );

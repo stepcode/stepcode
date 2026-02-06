@@ -47,7 +47,7 @@ struct freelist_head PCALL_fl;
 struct freelist_head RET_fl;
 struct freelist_head INCR_fl;
 
-void MEMORYinitialize() {
+void MEMORYinitialize(void) {
     _ALLOCinitialize();
     
     ALLOCinitialize( &HASH_Table_fl, sizeof( struct Hash_Table_ ), 50, 50 );

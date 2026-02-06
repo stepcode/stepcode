@@ -218,7 +218,7 @@ static int ERROR_printf( const char *format, ... ) {
     return result;
 }
 
-static void ERROR_nexterror() {
+static void ERROR_nexterror(void) {
     if( ERROR_string == ERROR_string_end ) {
         return;
     }
@@ -455,7 +455,7 @@ ERRORreport_with_symbol( enum ErrorCode errnum, Symbol * sym, ... ) {
     va_end( args );
 }
 
-void ERRORnospace() {
+void ERRORnospace(void) {
     fprintf( stderr, "%s: out of space\n", EXPRESSprogram_name );
     ERRORabort( 0 );
 }
@@ -536,6 +536,6 @@ void ERRORsafe( jmp_buf env ) {
     memcpy( ERROR_safe_env, env, sizeof( jmp_buf ) );
 }
 
-void ERRORunsafe() {
+void ERRORunsafe(void) {
     ERROR_unsafe = true;
 }

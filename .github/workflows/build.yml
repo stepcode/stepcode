@@ -48,7 +48,7 @@ jobs:
 
   linux:
     name: Ubuntu Latest GCC
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
     steps:
@@ -90,7 +90,7 @@ jobs:
 
   linux_clang:
     name: Ubuntu Latest Clang
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
     steps:
@@ -164,58 +164,64 @@ jobs:
 
   brlcad_linux:
     name: BRL-CAD Linux step-g Test
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
     steps:
       - name: Setup - CMake
         uses: lukka/get-cmake@latest
 
-      - name: Setup - Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Setup - System
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
           sudo apt-get update
-          # Install dev tools
-          sudo apt-get install re2c lemon
+          sudo apt-get install re2c astyle xsltproc libxml2-utils
+          sudo apt-get install xserver-xorg-dev libx11-dev libxi-dev libxext-dev libglu1-mesa-dev libfontconfig-dev
+          sudo apt-get install zlib1g-dev libpng-dev libjpeg-dev libtiff-dev libeigen3-dev libgdal-dev libassimp-dev libopencv-dev
           sudo apt-get clean
+
+      - name: Clone bext
+        run: |
+          git clone https://github.com/BRL-CAD/bext.git
+          cd bext/stepcode
+          cmake -E rm -r stepcode
+          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
+          cd ../..
+
+      - name: Build bext
+        run: |
+          cmake -E make_directory bext_build
+          cmake -S bext -B bext_build -DCMAKE_BUILD_TYPE=Release -DUSE_GDAL=OFF -DUSE_TCL=OFF -DUSE_QT=OFF -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}\bext_output
+          cmake --build bext_build --config Release -j2
+          # We only need the build ouputs (bext_output) after this point, so
+          # clean up to save space for the main BRL-CAD build.
+          cmake -E rm -rf bext
+          cmake -E rm -rf bext_build
+
 
       - name: Checkout
         run: |
           git clone --depth 1 https://github.com/BRL-CAD/brlcad.git -b main
-          cd brlcad/src/other/ext && rm -rf stepcode
-          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
-          # Ordinarily BRL-CAD keeps track of what files are supposed to be
-          # present in the repository.  In this case we're not interested in
-          # updating the list to the working stepcode filelist, so use an empty
-          # list instead
-          echo "set(stepcode_ignore_files)" > stepcode.dist
-          cd ../../../../
-
 
       - name: Configure
         run: |
-          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
-          cd brlcad
-          cmake -S . -G Ninja -B build -DENABLE_ALL=ON -DCMAKE_BUILD_TYPE=Release -DEXT_BUILD_VERBOSE=ON
+          cmake -E make_directory brlcad_build
+          cd brlcad_build
+          cmake -S ../brlcad -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLCAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -G Ninja
           cd ..
 
       - name: Build
         run: |
-          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
-          cd brlcad
-          cmake --build build --config Release --target step-g
+          cd brlcad_build
+          cmake --build . --target step-g
           cd ..
 
       - name: Test
         run: |
-          export PATH=$ENV{GITHUB_WORKSPACE}:$PATH
-          cd brlcad/build
-          ./bin/step-g ../db/nist/NIST_MBE_PMI_3.stp -o nist3.g
-          cd ../..
+          cd brlcad_build
+          ./bin/step-g ../brlcad/db/nist/NIST_MBE_PMI_3.stp -o nist3.g
+          cd ..
 
 
   brlcad_windows:
@@ -227,9 +233,6 @@ jobs:
       - name: Setup - CMake
         uses: lukka/get-cmake@latest
 
-      - name: Setup - Ninja
-        uses: seanmiddleditch/gha-setup-ninja@master
-
       - name: Add github workspace to path
         # https://github.community/t/deprecated-add-path/136621
         run: echo "$ENV{GITHUB_WORKSPACE}" | Out-File -Append -FilePath $env:GITHUB_PATH -Encoding utf8
@@ -240,38 +243,44 @@ jobs:
       - name: Add cl.exe to PATH
         uses: ilammy/msvc-dev-cmd@v1
 
+      - name: Clone bext
+        run: |
+          git clone https://github.com/BRL-CAD/bext.git
+          cd bext/stepcode
+          cmake -E rm -r stepcode
+          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
+          cd ../..
+
+      - name: Build bext
+        shell: powershell
+        run: |
+          cmake -E make_directory bext_build
+          cmake -S bext -B bext_build -DCMAKE_BUILD_TYPE=Release -DUSE_GDAL=OFF -DUSE_TCL=OFF -DUSE_QT=OFF -DCMAKE_INSTALL_PREFIX=${{ github.workspace }}\bext_output
+          cmake --build bext_build --config Release -j2
+          # We only need the build ouputs (bext_output) after this point, so
+          # clean up to save space for the main BRL-CAD build.
+          cmake -E rm -rf bext
+          cmake -E rm -rf bext_build
+
+
       - name: Checkout
         run: |
           git clone --depth 1 https://github.com/BRL-CAD/brlcad.git -b main
-          cd brlcad/src/other/ext
-          cmake -E rm -r stepcode
-          git clone --depth 1 https://github.com/stepcode/stepcode.git -b develop
-          # Ordinarily BRL-CAD keeps track of what files are supposed to be
-          # present in the repository.  In this case we're not interested in
-          # updating the list to the working stepcode filelist, so use an empty
-          # list instead
-          echo "set(stepcode_ignore_files)" > stepcode.dist
-          cd ../../../../
 
       - name: Configure
         run: |
-          cd brlcad && cmake -S . -B build -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe" -DSC_ENABLE_TESTING=ON
-          cd ..
-          # We do the following in order to help ensure files are "flushed"
-          # to disk before compilation is attempted
-          # https://superuser.com/a/1553374/1286142
-          powershell Write-VolumeCache C
-          powershell Write-VolumeCache D
+          cmake -E make_directory brlcad_build
+          cmake -S brlcad -B brlcad_build -DCMAKE_BUILD_TYPE=Release -DBRLCAD_EXT_DIR=${{ github.workspace }}\bext_output -DBRLCAD_ENABLE_GDAL=OFF -DBRLCAD_ENABLE_TCL=OFF -DBRLCAD_ENABLE_QT=OFF -G Ninja -DCMAKE_C_COMPILER="cl.exe" -DCMAKE_CXX_COMPILER="cl.exe"
 
       - name: Build
         run: |
-          cd brlcad/build
-          ninja -j1 -v step-g
-          cd ../..
+          cd brlcad_build
+          cmake --build . --config Release --target step-g
+          cd ..
 
       - name: Test
         run: |
-          cd brlcad/build
-          ./bin/step-g.exe ../db/nist/NIST_MBE_PMI_3.stp -o nist3.g
-          cd ../..
+          cd brlcad_build
+          ./bin/step-g.exe ../brlcad/db/nist/NIST_MBE_PMI_3.stp -o nist3.g
+          cd ..
 

@@ -383,6 +383,7 @@ void INITFileFinish( FILE * initfile, Schema schema ) {
  ******************************************************************/
 void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) {
     int ocnt = 0;
+    size_t remaining;
     char schnm[MAX_LEN+1], sufnm[MAX_LEN+1], fnm[MAX_LEN+1], *np;
     /* sufnm = schema name + suffix */
     FILE * libfile,
@@ -398,7 +399,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
-    sprintf( schnm, "%s%s", SCHEMA_FILE_PREFIX, StrToUpper( SCHEMAget_name( schema ) ) ); //TODO change file names to CamelCase?
+    snprintf( schnm, sizeof(schnm), "%s%s", SCHEMA_FILE_PREFIX, StrToUpper( SCHEMAget_name( schema ) ) ); //TODO change file names to CamelCase?
     if( suffix == 0 ) {
         ocnt = snprintf( sufnm, MAX_LEN, "%s", schnm );
         if( ocnt > MAX_LEN ) {
@@ -423,11 +424,12 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     fprintf( incfile, "#include \"schema.h\"\n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
+    remaining = (size_t)(fnm + sizeof(fnm) - np);
 
     /* 1.9 open/init unity files which allow faster compilation with fewer translation units */
     initUnityFiles( sufnm, files );
     /*  2.  class source file            */
-    sprintf( np, "cc" );
+    snprintf( np, remaining, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -436,7 +438,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
 //TODO: Looks like this switches between 'schema.h' and a non-generic name. What is that name,
 //and how do we fully enable this feature (i.e. how to write the file with different name)?
 #ifdef SCHEMA_HANDLING
-    sprintf( np, "h" );
+    snprintf( np, remaining, "h" );
     fprintf( libfile, "#include <%s.h> \n", sufnm );
 #else
     fprintf( libfile, "#include \"schema.h\"\n" );
@@ -623,6 +625,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
  ******************************************************************/
 void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     char fnm [MAX_LEN+1], *np;
+    size_t remaining;
     const char  * schnm;  /* schnm is really "express name" */
     FILE * libfile;
     FILE * incfile;
@@ -637,7 +640,7 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     /**********  create files based on name of schema   ***********/
     /*  return if failure           */
     /*  1.  header file             */
-    sprintf( fnm, "%s.h", schnm = ClassName( EXPRESSget_basename( express ) ) );
+    snprintf( fnm, sizeof(fnm), "%s.h", schnm = ClassName( EXPRESSget_basename( express ) ) );
     if( !( incfile = ( files -> inc ) = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -646,10 +649,11 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( incfile, "#include \"core/sdai.h\" \n" );
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
+    remaining = (size_t)(fnm + sizeof(fnm) - np);
     /*  1.9 init unity files (large translation units, faster compilation) */
     initUnityFiles( schnm, files );
     /*  2.  class source file            */
-    sprintf( np, "cc" );
+    snprintf( np, remaining, "cc" );
     if( !( libfile = ( files -> lib ) = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -658,7 +662,7 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     fprintf( libfile, "#include \"%s.h\" n", schnm );
 
     // 3. header for namespace to contain all formerly-global variables
-    sprintf( fnm, "%sNames.h", schnm );
+    snprintf( fnm, sizeof(fnm), "%sNames.h", schnm );
     if( !( files->names = FILEcreate( fnm ) ) ) {
         return;
     }
@@ -670,7 +674,7 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     /*  4.  source code to initialize entity registry   */
     /*  prints header of file for input function    */
 
-    sprintf( np, "init.cc" );
+    snprintf( np, remaining, "init.cc" );
     if( !( initfile = ( files -> init ) = FILEcreate( fnm ) ) ) {
         return;
     }

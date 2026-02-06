@@ -661,7 +661,7 @@ void STEPcomplex::CopyAs( SDAI_Application_instance * se ) {
         char errStr[BUFSIZ+1];
         cerr << "STEPcomplex::CopyAs() called with non-complex entity:  "
              << __FILE__ <<  __LINE__ << "\n" << _POC_ "\n";
-        sprintf( errStr,
+        snprintf( errStr, sizeof(errStr),
                  "STEPcomplex::CopyAs(): %s - entity #%d.\n",
                  "Programming ERROR -  called with non-complex entity",
                  STEPfile_id );
@@ -702,7 +702,7 @@ SDAI_Application_instance * STEPcomplex::Replicate() {
             char errStr[BUFSIZ+1];
             cerr << "STEPcomplex::Replicate() name buffer too small:  "
                  << __FILE__ <<  __LINE__ << "\n" << _POC_ "\n";
-            sprintf( errStr,
+            snprintf( errStr, sizeof(errStr),
                      "STEPcomplex::Replicate(): %s - entity #%d.\n",
                      "Programming ERROR - name buffer too small",
                      STEPfile_id );

@@ -26,6 +26,6 @@ void TYPEselect_lib_print( const Type type, FILE * f );
 
 void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_name, const char * aggr_name );
 
-void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, Schema schema, const char * type_name );
+void print_typechain( FILE * header, FILE * impl, const Type t, char * buf, size_t buflen, Schema schema, const char * type_name );
 
 #endif

@@ -1203,7 +1203,7 @@ int WHEREresolve( Linked_List list, Scope scope, int need_self ) {
     }
 }
 
-struct tag * TAGcreate_tags() {
+struct tag * TAGcreate_tags(void) {
     extern int tag_count;
 
     return( ( struct tag * )calloc( tag_count, sizeof( struct tag ) ) );

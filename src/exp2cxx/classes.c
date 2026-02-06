@@ -159,19 +159,19 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
                 first_time = false;
             }
             if( re->type == OBJ_TYPE ) {
-                sprintf( td_name, "%s", TYPEtd_name( ( Type )re->object ) );
+                snprintf( td_name, sizeof(td_name), "%s", TYPEtd_name( ( Type )re->object ) );
             } else if( re->type == OBJ_FUNCTION ) {
-                sprintf( td_name, "/* Function not implemented */ 0" );
+                snprintf( td_name, sizeof(td_name), "/* Function not implemented */ 0" );
             } else if( re->type == OBJ_PROCEDURE ) {
-                sprintf( td_name, "/* Procedure not implemented */ 0" );
+                snprintf( td_name, sizeof(td_name), "/* Procedure not implemented */ 0" );
             } else if( re->type == OBJ_RULE ) {
-                sprintf( td_name, "/* Rule not implemented */ 0" );
+                snprintf( td_name, sizeof(td_name), "/* Rule not implemented */ 0" );
             } else if( re->type == OBJ_ENTITY ) {
-                sprintf( td_name, "%s%s%s",
+                snprintf( td_name, sizeof(td_name), "%s%s%s",
                         SCOPEget_name( ( ( Entity )re->object )->superscope ),
                         ENT_PREFIX, ENTITYget_name( ( Entity )re->object ) );
             } else {
-                sprintf( td_name, "/* %c from OBJ_? in expbasic.h not implemented */ 0", re->type );
+                snprintf( td_name, sizeof(td_name), "/* %c from OBJ_? in expbasic.h not implemented */ 0", re->type );
             }
             if( re->old != re->nnew ) {
                 fprintf( file, "        // object %s AS %s\n", re->old->name,

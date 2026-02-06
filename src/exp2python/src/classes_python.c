@@ -24,7 +24,9 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 /* this is used to add new dictionary calls */
 /* #define NEWDICT */
 
+#define _POSIX_C_SOURCE 200809L
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #include "classes.h"
@@ -1768,7 +1770,7 @@ void strcat_expr( Expression e, char * buf ) {
         strcat( buf, TYPEget_name( e ) );
     } else if( TYPEget_body( e->type )->type == integer_ ) {
         char tmpbuf[30];
-        sprintf( tmpbuf, "%d", e->u.integer );
+        snprintf( tmpbuf, sizeof(tmpbuf), "%d", e->u.integer );
         strcat( buf, tmpbuf );
     } else {
         strcat( buf, "??" );

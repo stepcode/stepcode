@@ -76,7 +76,7 @@ Freelist * create_freelist( struct freelist_head * flh, int bytes ) {
 }
 
 void
-_ALLOCinitialize() {
+_ALLOCinitialize(void) {
 #ifdef DEBUG_MALLOC
     malloc_debug( 2 );
 #endif

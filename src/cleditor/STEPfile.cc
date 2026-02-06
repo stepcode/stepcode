@@ -528,7 +528,7 @@ int STEPfile::ReadData1( istream & in ) {
     } // end while loop
 
     if( _entsNotCreated ) {
-        sprintf( buf,
+        snprintf( buf, sizeof(buf),
                  "STEPfile Reading File: Unable to create %d instances.\n\tIn first pass through DATA section. Check for invalid entity types.\n",
                  _entsNotCreated );
         _error.AppendToUserMsg( buf );
@@ -647,7 +647,7 @@ int STEPfile::ReadData2( istream & in, bool useTechCor ) {
     } // end while loop
 
     if( _entsInvalid ) {
-        sprintf( buf,
+        snprintf( buf, sizeof(buf),
                  "%s \n\tTotal instances: %d \n\tInvalid instances: %d \n\tIncomplete instances (includes invalid instances): %d \n\t%s: %d.\n",
                  "Second pass complete - instance summary:", total_instances,
                  _entsInvalid, _entsIncomplete, "Warnings",
@@ -1321,7 +1321,7 @@ SDAI_Application_instance * STEPfile::ReadInstance( istream & in, ostream & out,
                 }
             } else {
                 if( node->CurrState() == completeSE ) {
-                    sprintf( errbuf, "WARNING in WORKING FILE: changing instance #%d state from completeSE to incompleteSE.\n", fileid );
+                    snprintf( errbuf, sizeof(errbuf), "WARNING in WORKING FILE: changing instance #%d state from completeSE to incompleteSE.\n", fileid );
                     _error.AppendToUserMsg( errbuf );
                     if( _fileType != WORKING_SESSION ) {
                         node->ChangeState( incompleteSE );
@@ -1643,7 +1643,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
         }
         SetFileType( WORKING_SESSION );
     } else {
-        sprintf( errbuf,
+        snprintf( errbuf, sizeof(errbuf),
                  "Faulty input at beginning of file. \"ISO-10303-21;\" or"
                  " \"STEP_WORKING_SESSION;\" expected. File not read: %s\n",
                  ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
@@ -1658,14 +1658,14 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     rval = ReadHeader( *in );
     cout << "\nHEADER read:";
     if( rval < SEVERITY_WARNING ) {
-        sprintf( errbuf,
+        snprintf( errbuf, sizeof(errbuf),
                  "Error: non-recoverable error in reading header section. "
                  "There were %d errors encountered. Rest of file is ignored.\n",
                  _errorCount );
         _error.AppendToUserMsg( errbuf );
         return rval;
     } else if( rval != SEVERITY_NULL ) {
-        sprintf( errbuf, "  %d  ERRORS\t  %d  WARNINGS\n\n",
+        snprintf( errbuf, sizeof(errbuf), "  %d  ERRORS\t  %d  WARNINGS\n\n",
                  _errorCount, _warningCount );
         cout << errbuf;
     } else {
@@ -1683,7 +1683,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     cout << "\nFIRST PASS complete:  " << total_insts
          << " instances created.\n";
-    sprintf( errbuf,
+    snprintf( errbuf, sizeof(errbuf),
              "  %d  ERRORS\t  %d  WARNINGS\n\n",
              _errorCount, _warningCount );
     cout << errbuf;
@@ -1727,7 +1727,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
     //check for "ENDSEC;"
     ReadTokenSeparator( *in2 );
     if( total_insts != valid_insts ) {
-        sprintf( errbuf, "%d invalid instances in file: %s\n",
+        snprintf( errbuf, sizeof(errbuf), "%d invalid instances in file: %s\n",
                  total_insts - valid_insts, ( ( FileName().compare( "-" ) == 0 ) ? "standard input" : FileName().c_str() ) );
         _error.AppendToUserMsg( errbuf );
         CloseInputFile( in2 );
@@ -1736,7 +1736,7 @@ Severity STEPfile::AppendFile( istream * in, bool useTechCor ) {
 
     cout << "\nSECOND PASS complete:  " << valid_insts
          << " instances valid.\n";
-    sprintf( errbuf,
+    snprintf( errbuf, sizeof(errbuf),
              "  %d  ERRORS\t  %d  WARNINGS\n\n",
              _errorCount, _warningCount );
     _error.AppendToUserMsg( errbuf );

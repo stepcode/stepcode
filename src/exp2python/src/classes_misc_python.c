@@ -1,5 +1,7 @@
 #define CLASSES_MISC_C
+#define _POSIX_C_SOURCE 200809L
 #include <stdlib.h>
+#include <string.h>
 #include "classes.h"
 /*******************************************************************
 ** FedEx parser output module for generating C++  class definitions
@@ -345,7 +347,7 @@ const char * TypeDescriptorName( Type t ) {
         ** by following through the entity they reference, as above. */
     }
 
-    sprintf( b, "%s%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
+    snprintf( b, sizeof(b), "%s%s%s", SCHEMAget_name( parent ), TYPEprefix( t ),
              TYPEget_name( t ) );
     return b;
 }

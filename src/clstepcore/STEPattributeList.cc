@@ -41,10 +41,14 @@ STEPattribute & STEPattributeList::operator []( int n ) {
         return *( a->attr );
     }
 
-    // else
+    // else - error case: return a static error object to avoid undefined behavior
+    // The error object allows calling code to detect the error condition
+    static STEPattribute errorAttr;
     cerr << "\nERROR in STEP Core library:  " << __FILE__ <<  ":"
          << __LINE__ << "\n" << _POC_ << "\n\n";
-    return *( STEPattribute * ) 0;
+    errorAttr.Error().AppendToDetailMsg( "STEPattributeList::operator[] - index out of bounds" );
+    errorAttr.Error().severity( SEVERITY_BUG );
+    return errorAttr;
 }
 
 int STEPattributeList::list_length() {

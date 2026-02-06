@@ -220,7 +220,7 @@ static void SCANpush_buffer( char * filename, FILE * fp ) {
     SCANbuffer.filename = current_filename = filename;
 }
 
-static void SCANpop_buffer() {
+static void SCANpop_buffer(void) {
     if( SCANbuffer.file != NULL ) {
         fclose( SCANbuffer.file );
     }
@@ -482,6 +482,6 @@ char * SCANstrdup( const char * s ) {
     return s2;
 }
 
-long SCANtell() {
+long SCANtell(void) {
     return yylineno;
 }
