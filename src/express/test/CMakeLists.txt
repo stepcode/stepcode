@@ -74,6 +74,21 @@ add_test(NAME test_plib_parse_err
 set_tests_properties( test_plib_parse_err PROPERTIES DEPENDS "build_check_express;$<TARGET_NAME:check-express>" )
 set_tests_properties( test_plib_parse_err build_check_express PROPERTIES LABELS parser )
 
+# Task 0 - Baseline instrumentation test for PE056 in AP242
+# This test captures the PE056 error at line 34148 in 242_mim_lf.exp
+# Expected to fail on current state, pass after later fixes
+# Error: "Query expression source must be an aggregate" at styled_item entity WR3
+add_test(NAME test_ap242_pe056_baseline
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND $<TARGET_FILE:check-express> "${CMAKE_SOURCE_DIR}/data/ap242/242_mim_lf.exp"
+  )
+
+set_tests_properties( test_ap242_pe056_baseline PROPERTIES 
+  DEPENDS "build_check_express;$<TARGET_NAME:check-express>" 
+  LABELS "parser;ap242;baseline"
+  WILL_FAIL true
+  )
+
 sc_addexec(print_schemas SOURCES ../fedex.c print_schemas.c LINK_LIBRARIES express)
 sc_addexec(print_attrs SOURCES ../fedex.c print_attrs.c LINK_LIBRARIES express)
 
