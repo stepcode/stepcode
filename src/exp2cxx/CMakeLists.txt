@@ -38,7 +38,11 @@ include_directories(
   ${SC_SOURCE_DIR}/include/express
   )
 
-SC_ADDEXEC(exp2cxx SOURCES ${exp2cxx_SOURCES} LINK_LIBRARIES libexppp express)
+if(BUILD_SHARED_LIBS)
+  SC_ADDEXEC(exp2cxx SOURCES ${exp2cxx_SOURCES} LINK_LIBRARIES libexppp express)
+else()
+  SC_ADDEXEC(exp2cxx SOURCES ${exp2cxx_SOURCES} LINK_LIBRARIES libexppp-static express-static)
+endif()
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)
