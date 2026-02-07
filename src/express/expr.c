@@ -87,6 +87,12 @@ Expression  LITERAL_ONE;
 
 void EXPop_init(void);
 Type EXPresolve_op_treat(Expression, Scope);
+Type EXPresolve_op_and(Expression, Scope);
+
+/* External declarations for refinement functions from resolve.c */
+extern Refinement collect_refinements_from_conjunction( Expression expr, Scope scope );
+extern void free_refinements( Refinement refs );
+extern RefinementContext active_refinements;
 
 static inline int OPget_number_of_operands( Op_Code op ) {
     if( ( op == OP_NEGATE ) || ( op == OP_NOT ) || ( op == OP_TREAT ) ) {
@@ -635,6 +641,49 @@ Type EXPresolve_op_logical( Expression e, Scope s ) {
     EXPresolve_op_default( e, s );
     return( Type_Logical );
 }
+
+/**
+ * Special resolver for AND operator that applies flow-sensitive narrowing
+ */
+Type EXPresolve_op_and( Expression e, Scope s ) {
+    
+    /* Resolve LHS normally */
+    EXPresolve( e->e.op1, s, Type_Dont_Care );
+    
+    if( is_resolve_failed( e->e.op1 ) ) {
+        resolve_failed( e );
+        return Type_Logical;
+    }
+    
+    /* Collect refinements from LHS */
+    Refinement refinements = collect_refinements_from_conjunction( e->e.op1, s );
+    
+    /* Create a temporary refinement context for resolving RHS */
+    struct RefinementContext_ temp_context;
+    temp_context.refinements = refinements;
+    
+    /* Save previous context and install new one */
+    RefinementContext saved_context = active_refinements;
+    active_refinements = &temp_context;
+    
+    /* Resolve RHS with refinements active */
+    EXPresolve( e->e.op2, s, Type_Dont_Care );
+    
+    /* Restore previous context */
+    active_refinements = saved_context;
+    
+    /* Free refinements */
+    free_refinements( refinements );
+    
+    if( is_resolve_failed( e->e.op2 ) ) {
+        resolve_failed( e );
+    } else {
+        resolved_all( e );
+    }
+    
+    return Type_Logical;
+}
+
 Type EXPresolve_op_array_like( Expression e, Scope s ) {
 
     Type op1type;
@@ -823,7 +872,7 @@ void EXPop_create( int token_number, char * string, Resolve_expr_func * resolve_
 }
 
 void EXPop_init(void) {
-    EXPop_create( OP_AND, "AND",      EXPresolve_op_logical );
+    EXPop_create( OP_AND, "AND",      EXPresolve_op_and );
     EXPop_create( OP_ANDOR, "ANDOR",      EXPresolve_op_logical );
     EXPop_create( OP_ARRAY_ELEMENT, "[array element]", EXPresolve_op_array_like );
     EXPop_create( OP_CONCAT, "||",        EXPresolve_op_entity_constructor );
