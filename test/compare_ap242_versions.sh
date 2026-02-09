@@ -56,10 +56,10 @@ fi
 # Test TREAT version (standards-compliant)
 echo ""
 echo -e "${BLUE}Testing TREAT-based AP242 schema (standards-compliant)...${NC}"
-echo "  Input: data/ap242/242_mim_lf_treat.exp"
+echo "  Input: data/ap242treat/242_mim_lf_treat.exp"
 echo "  Output: $TREAT_OUTPUT"
 
-if "$BUILD_DIR/bin/exp2cxx" "$REPO_ROOT/data/ap242/242_mim_lf_treat.exp" "$TREAT_OUTPUT" > "$TREAT_OUTPUT/exp2cxx.log" 2>&1; then
+if "$BUILD_DIR/bin/exp2cxx" "$REPO_ROOT/data/ap242treat/242_mim_lf_treat.exp" "$TREAT_OUTPUT" > "$TREAT_OUTPUT/exp2cxx.log" 2>&1; then
     echo -e "${GREEN}✓ TREAT version parsed successfully${NC}"
 else
     echo -e "${RED}✗ TREAT version failed to parse${NC}"

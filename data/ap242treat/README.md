@@ -1,20 +1,9 @@
-# AP242 Schema Files
+# AP242 TREAT Schema File
 
-This directory contains two versions of the AP242 (ISO 10303-242) schema.
+This directory contains an altered version of the AP242 (ISO 10303-242) schema.
 
-## Files
-
-### `242_mim_lf.exp` (Original)
-- **Status**: Original ISO schema with non-standard parsing requirement
-- **Size**: 54,756 lines
-- **Parsing**: Requires STEPcode's flow-sensitive type narrowing extension
-- **Standards**: Contains pattern that needs implicit type narrowing (non-standard)
-
-### `242_mim_lf_treat.exp` (Standards-Compliant)
-- **Status**: Corrected version using TREAT expression
-- **Size**: 54,756 lines
-- **Parsing**: Fully ISO 10303-11 compliant
-- **Standards**: Uses explicit TREAT expression for type narrowing
+It is corrected to avoid the non-standard parsing requirement of the original
+by using explicit TREAT expression for type narrowing
 
 ## The Difference
 
@@ -29,8 +18,6 @@ QUERY(it <* item | ...)
 ```express
 QUERY(it <* TREAT(item AS set_representation_item) | ...)
 ```
-
-## Why Two Versions?
 
 ### Historical Context
 The original AP242 schema contains a WHERE rule that:
@@ -67,13 +54,6 @@ Expected output:
 ```
 
 For detailed comparison, see `doc/ap242-comparison.md`.
-
-## Which Version to Use?
-
-- **For STEPcode**: Both work equally well
-- **For portability**: Use the TREAT version (`242_mim_lf_treat.exp`)
-- **For ISO compliance**: Use the TREAT version (`242_mim_lf_treat.exp`)
-- **For historical reference**: The original is preserved as `242_mim_lf.exp`
 
 ## Related Documentation
 
