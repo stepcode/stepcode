@@ -237,6 +237,9 @@ extern SC_EXPRESS_EXPORT struct freelist_head TYPEBODY_fl;
 #define TYPEis_oneof(t)     ((t)->u.type->body->type == oneof_)
 #define TYPEis_entity(t)    ((t)->u.type->body->type == entity_)
 #define TYPEis_enumeration(t)   ((t)->u.type->body->type == enumeration_)
+/** Shallow aggregate check - returns true if type has a base (characteristic of aggregates).
+ * Does NOT follow type definition chains. For deep unwrapping through typedef chains,
+ * use TYPEget_nonaggregate_base_type() or TYPEget_aggregate_base(). */
 #define TYPEis_aggregate(t) ((t)->u.type->body->base)
 #define TYPEis_aggregate_raw(t) ((t)->u.type->body->type == aggregate_)
 #define TYPEis_array(t)     ((t)->u.type->body->type == array_)
