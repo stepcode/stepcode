@@ -1,0 +1,43 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('AP242 styled_item test - exercises TREAT expression in styled_item WHERE rule WR3'),'2;1');
+FILE_NAME('test_ap242_styled_item.stp','2026-02-09T14:00:00',('STEPcode'),('STEPcode'),'exp2cxx','STEPcode','');
+FILE_SCHEMA(('AP242_MANAGED_MODEL_BASED_3D_ENGINEERING_MIM_LF'));
+ENDSEC;
+DATA;
+
+/* Application context */
+#1=APPLICATION_CONTEXT('mechanical design');
+
+/* Representation context with units */
+#10=(LENGTH_UNIT()NAMED_UNIT(*)SI_UNIT(.MILLI.,.METRE.));
+#11=(NAMED_UNIT(*)PLANE_ANGLE_UNIT()SI_UNIT($,.RADIAN.));
+#12=(NAMED_UNIT(*)SI_UNIT($,.STERADIAN.)SOLID_ANGLE_UNIT());
+#15=(GEOMETRIC_REPRESENTATION_CONTEXT(3)GLOBAL_UNIT_ASSIGNED_CONTEXT((#10,#11,#12))REPRESENTATION_CONTEXT('3D',''));
+
+/* Geometric items that can be styled */
+#20=CARTESIAN_POINT('origin',(0.0,0.0,0.0));
+#21=DIRECTION('dir',(0.0,0.0,1.0));
+
+/* Presentation styles using standard fill area style */
+#30=COLOUR_RGB('red',1.0,0.0,0.0);
+#31=FILL_AREA_STYLE_COLOUR('',#30);
+#32=FILL_AREA_STYLE('',(#31));
+#33=PRESENTATION_STYLE_ASSIGNMENT((#32));
+
+#40=COLOUR_RGB('blue',0.0,0.0,1.0);
+#41=FILL_AREA_STYLE_COLOUR('',#40);
+#42=FILL_AREA_STYLE('',(#41));
+#43=PRESENTATION_STYLE_ASSIGNMENT((#42));
+
+/* STYLED_ITEM instances - these exercise the WR3 WHERE rule with TREAT expression
+   WR3 validates that item is one of: mapped_item, geometric_representation_item, 
+   or set_representation_item (with TREAT expression for type narrowing) */
+#50=STYLED_ITEM('styled_point',(#33),#20);
+#51=STYLED_ITEM('styled_direction',(#43),#21);
+
+/* Representation containing the styled items */
+#100=GEOMETRICALLY_BOUNDED_WIREFRAME_SHAPE_REPRESENTATION('',(#50,#51),#15);
+
+ENDSEC;
+END-ISO-10303-21;
