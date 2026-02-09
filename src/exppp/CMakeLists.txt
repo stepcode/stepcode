@@ -42,7 +42,11 @@ if(BUILD_STATIC_LIBS)
   set_target_properties(libexppp-static PROPERTIES PREFIX "")
 endif()
 
-SC_ADDEXEC(exppp SOURCES ${EXPPP_SOURCES} LINK_LIBRARIES libexppp express)
+if(BUILD_SHARED_LIBS)
+  SC_ADDEXEC(exppp SOURCES ${EXPPP_SOURCES} LINK_LIBRARIES libexppp express)
+else()
+  SC_ADDEXEC(exppp SOURCES ${EXPPP_SOURCES} LINK_LIBRARIES libexppp-static express-static)
+endif()
 
 if(SC_ENABLE_TESTING)
   add_subdirectory(test)

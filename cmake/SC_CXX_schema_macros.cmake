@@ -92,9 +92,9 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
     ${SC_SOURCE_DIR}/src/clutils        ${SC_SOURCE_DIR}/src/clstepcore     ${SC_SOURCE_DIR}/src/cllazyfile
     ${SC_SOURCE_DIR}/src/cllazyfile/judy/src
   )
-  # if testing is enabled, "TESTABLE" sets property EXCLUDE_FROM_ALL and prevents installation
+  # Schema libraries should be installed by default
   if(BUILD_SHARED_LIBS)
-    SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${sourceFiles} LINK_LIBRARIES stepdai stepcore stepeditor steputils TESTABLE)
+    SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${sourceFiles} LINK_LIBRARIES stepdai stepcore stepeditor steputils)
     add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
     if(WIN32)
       target_compile_definitions("${PROJECT_NAME}" PRIVATE SC_SCHEMA_DLL_EXPORTS)
@@ -110,8 +110,8 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
     endif()
   endif()
 
-  if($CACHE{SC_BUILD_STATIC_LIBS})
-    SC_ADDLIB(${PROJECT_NAME}-static STATIC SOURCES ${sourceFiles} LINK_LIBRARIES stepdai-static stepcore-static stepeditor-static steputils-static TESTABLE)
+  if(BUILD_STATIC_LIBS)
+    SC_ADDLIB(${PROJECT_NAME}-static STATIC SOURCES ${sourceFiles} LINK_LIBRARIES stepdai-static stepcore-static stepeditor-static steputils-static)
     add_dependencies(${PROJECT_NAME}-static generate_cpp_${PROJECT_NAME})
     target_compile_definitions("${PROJECT_NAME}-static" PRIVATE SC_STATIC)
     if(MSVC)

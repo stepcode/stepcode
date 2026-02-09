@@ -51,7 +51,7 @@ Installation
   -DSC_BUILD_SCHEMAS=ALL
     - Added to make use of ctest easier. If SC_BUILD_SCHEMAS == ALL,
       then CMake adds each *.exp file found in data/.
-  -DSC_BUILD_TYPE=Release
+  -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
     - without this, cmake defaults to a Debug build
 
