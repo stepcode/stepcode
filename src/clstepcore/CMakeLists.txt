@@ -66,9 +66,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/include/stepcode
   )
 
-set(_libdeps steputils stepdai)
-
 if(BUILD_SHARED_LIBS)
+  set(_libdeps steputils stepdai)
   SC_ADDLIB(stepcore SHARED SOURCES ${CORE_SRCS} LINK_LIBRARIES ${_libdeps})
   if(WIN32)
     target_compile_definitions(stepcore PRIVATE SC_CORE_DLL_EXPORTS)
@@ -76,7 +75,8 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(stepcore-static STATIC SOURCES ${CORE_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static>-static)
+  set(_libdeps steputils-static stepdai-static)
+  SC_ADDLIB(stepcore-static STATIC SOURCES ${CORE_SRCS} LINK_LIBRARIES ${_libdeps})
 endif()
 
 if(SC_ENABLE_TESTING)

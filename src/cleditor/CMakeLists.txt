@@ -21,7 +21,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(stepeditor-static STATIC SOURCES ${EDITOR_SRCS} LINK_LIBRARIES stepcore-static stepdai-static steputils-static)
+  SC_ADDLIB(stepeditor-static STATIC SOURCES ${EDITOR_SRCS} LINK_LIBRARIES steputils-static stepdai-static stepcore-static)
 endif()
 
 # Local Variables:
