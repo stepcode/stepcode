@@ -70,15 +70,15 @@ macro(SC_ADDLIB _addlib_target)
             message(SEND_ERROR "SC_ADDLIB usage error - expected (static) LINK_LIBRARIES targets (${_lib})")
             endif()
         endif()
-        target_link_libraries(${_addlib_target} ${_lib})
     endforeach()
+    target_link_libraries(${_addlib_target} ${_lib})
   endif()
 
   if(NOT ${_arg_prefix}_NO_INSTALL AND NOT ${_arg_prefix}_TESTABLE)
     install(TARGETS ${_addlib_target}
       RUNTIME DESTINATION ${BIN_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
-      ARCHIVE DESTINATION ${LIB_DIR}	
+      ARCHIVE DESTINATION ${LIB_DIR}
     )
   endif()
 endmacro()
