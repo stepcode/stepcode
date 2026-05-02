@@ -10,6 +10,10 @@ macro(SC_ADDEXEC execname)
 
   add_executable(${execname} ${${_arg_prefix}_SOURCES})
 
+  if(BUILD_STATIC_LIBS)
+    target_compile_definitions(${execname} PRIVATE SC_STATIC)
+  endif()
+
   if(DEFINED "${_arg_prefix}_LINK_LIBRARIES")
     foreach(_lib ${${_arg_prefix}_LINK_LIBRARIES})
         if($CACHE{SC_STATIC_UTILS})

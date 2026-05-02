@@ -139,6 +139,7 @@ if(BUILD_SHARED_LIBS OR NOT BUILD_STATIC_LIBS)
   target_link_libraries(check-express express)
 else()
   target_link_libraries(check-express express-static)
+  target_compile_definitions(check-express PRIVATE SC_STATIC)
 endif()
 install(TARGETS check-express
   RUNTIME DESTINATION ${BIN_DIR}
