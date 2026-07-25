@@ -44,7 +44,7 @@ jobs:
 
       - name: Test
         run: |
-          cd build && ctest -j1 .
+          cd build && ctest --verbose -j1 .
 
   linux:
     name: Ubuntu Latest GCC
@@ -86,7 +86,7 @@ jobs:
 
       - name: Test
         run: |
-          cd build && ctest -j1 . -C Release
+          cd build && ctest --verbose -j1 . -C Release
 
   linux_clang:
     name: Ubuntu Latest Clang
@@ -128,7 +128,7 @@ jobs:
 
       - name: Test
         run: |
-          cd build && ctest -j1 . -C Release
+          cd build && ctest --verbose -j1 . -C Release
 
 
   osx:
@@ -160,7 +160,7 @@ jobs:
 
       - name: Test
         run: |
-          cd build && ctest -j1 . -C Release
+          cd build && ctest --verbose -j1 . -C Release
 
   brlcad_linux:
     name: BRL-CAD Linux step-g Test
