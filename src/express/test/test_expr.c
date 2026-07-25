@@ -9,6 +9,7 @@
 /* non-core */
 #include "express/dict.h"
 #include "express/variable.h"
+#include "express/resolve.h"
 
 #include "driver.h"
 #include "fff.h"
@@ -20,6 +21,7 @@
 char * EXPRESSprogram_name;
 int yylineno;
 int __SCOPE_search_id;
+RefinementContext active_refinements = 0;
 
 Error ERROR_warn_unsupported_lang_feat;
 Error WARNING_case_skip_label;
@@ -36,6 +38,9 @@ FAKE_VALUE_FUNC(Variable, ENTITYfind_inherited_attribute, struct Scope_ *, char 
 FAKE_VALUE_FUNC(Variable, ENTITYresolve_attr_ref, Entity, Symbol *, Symbol *)
 FAKE_VALUE_FUNC(struct Scope_ *, ENTITYfind_inherited_entity, struct Scope_ *, char *, int)
 FAKE_VOID_FUNC(EXP_resolve, Expression, Scope, Type)
+FAKE_VALUE_FUNC(void *, SCOPEfind, Scope, char *, int)
+FAKE_VALUE_FUNC(Refinement, collect_refinements_from_conjunction, Expression, Scope)
+FAKE_VOID_FUNC(free_refinements, Refinement)
 
 void setup() {
     EXPinitialize();
@@ -45,6 +50,9 @@ void setup() {
     RESET_FAKE(ENTITYresolve_attr_ref);
     RESET_FAKE(ENTITYfind_inherited_entity);
     RESET_FAKE(EXP_resolve);
+    RESET_FAKE(SCOPEfind);
+    RESET_FAKE(collect_refinements_from_conjunction);
+    RESET_FAKE(free_refinements);
 }
 
 /* TODO: remove DICTlookup after eliminating DICT_type */
