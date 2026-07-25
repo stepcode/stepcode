@@ -219,7 +219,7 @@ static void EXPRESS_PATHinit(void) {
                 continue;
             }
 
-            length = ( p - 1 ) - start;
+            length = (int)( ( p - 1 ) - start );
 
             /* if slash present at end, don't add another */
             slash = strrchr( start, '/' );
@@ -333,7 +333,7 @@ void EXPRESSparse( Express model, FILE * fp, char * filename ) {
         /* get beginning of basename */
         char * start = slash ? ( slash + 1 ) : filename;
 
-        int length = strlen( start );
+        int length = (int)strlen( start );
 
         /* drop .exp suffix if present */
         if( dot && !strcmp( dot, ".exp" ) ) {

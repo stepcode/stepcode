@@ -168,7 +168,7 @@ std::string WriteReal( SDAI_Real val ) {
             expon++;
             s += expon;
         } else {
-            int rindex = strlen( rbuf );
+            int rindex = (int)strlen( rbuf );
             rbuf[rindex] = '.';
             rbuf[rindex + 1] = '\0';
             s = rbuf;

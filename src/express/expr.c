@@ -817,13 +817,19 @@ Type EXPresolve_op_treat( Expression e, Scope s ) {
     
     /* Now resolve the target type name */
     if( e->symbol.name ) {
-        target_type = (Type)SCOPEfind( s, e->symbol.name, 
-                                       SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY );
-        if( !target_type ) {
+        Scope target_scope = SCOPEfind( s, e->symbol.name, 
+                                        SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY );
+        if( !target_scope ) {
             ERRORreport_with_symbol( UNDEFINED_TYPE, &e->symbol, 
                                     e->symbol.name );
             resolve_failed( e );
             return Type_Unknown;
+        }
+        
+        if( target_scope->type == OBJ_ENTITY ) {
+            target_type = target_scope->u.entity->type;
+        } else {
+            target_type = (Type)target_scope;
         }
     } else {
         ERRORreport_with_symbol( SYNTAX, &e->symbol,

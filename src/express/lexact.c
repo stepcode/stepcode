@@ -284,7 +284,7 @@ int SCANprocess_identifier_or_keyword( const char * yytext ) {
     int len;
 
     /* make uppercase copy */
-    len = strlen( yytext );
+    len = (int)strlen( yytext );
     dest = test_string = ( char * )malloc( len + 1 );
     for( src = yytext; *src; src++, dest++ ) {
         *dest = ( islower( *src ) ? toupper( *src ) : *src );
@@ -415,7 +415,7 @@ bool SCANread( void ) {
 
         /* check whether we've seen eof on this file */
         if( !SCANbuffer.readEof ) {
-            numRead = fread( SCANbuffer.text, sizeof( char ),
+            numRead = (int)fread( SCANbuffer.text, sizeof( char ),
                              SCAN_BUFFER_SIZE, SCANbuffer.file );
             if( numRead < SCAN_BUFFER_SIZE ) {
                 SCANbuffer.readEof = true;

@@ -1564,12 +1564,42 @@ void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
     strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
     n[BUFSIZ-1] = '\0';
 
-    /*  read StrToVal_content   */
     fprintf( f, "\nSeverity\n%s::StrToVal_content "
              "(const char * str, InstMgrBase * instances)"
              "\n{\n  (void)str;\n  (void)instances;\n", n );
 
-    fprintf( f, "  switch (base_type)  {\n" );
+    int num_cases = 0;
+    int enum_cnt_temp = 0;
+    LISTdo( data_members, t, Type ) {
+        switch( TYPEget_body( t )->type ) {
+            case real_:
+            case integer_:
+            case number_:
+            case select_:
+            case entity_:
+                break;
+            case binary_:
+            case logical_:
+            case boolean_:
+            case enumeration_:
+                if( !enum_cnt_temp ) { num_cases++; }
+                enum_cnt_temp++;
+                break;
+            case string_:
+            case aggregate_:
+            case array_:
+            case bag_:
+            case set_:
+            case list_:
+            default:
+                num_cases++;
+                break;
+        }
+    } LISTod;
+
+    if (num_cases > 0) {
+        fprintf( f, "  switch (base_type)  {\n" );
+    }
     LISTdo( data_members, t, Type )
     /*  fprintf (f, "  case %s :  \n",  FundamentalType (t, 0));*/
 
@@ -1632,12 +1662,16 @@ void TYPEselect_lib_StrToVal( const Type type, FILE * f ) {
     }
     LISTod;
 
-    fprintf( f, "  default:  // should never be here - done in Select class\n" );
-    PRINT_SELECTBUG_WARNING( f ) ;
-    fprintf( f, "#ifdef __SUNCPLUSPLUS__\n"
-             "std::cerr << str << \"  \" << instances << std::endl;\n"
-             "#endif\n" );
-    fprintf( f, "    return SEVERITY_WARNING;\n  }\n" );
+    if (num_cases > 0) {
+        fprintf( f, "  default:\n" );
+        PRINT_SELECTBUG_WARNING( f ) ;
+        fprintf( f, "#ifdef __SUNCPLUSPLUS__\n"
+                 "std::cerr << str << \"  \" << instances << std::endl;\n"
+                 "#endif\n" );
+        fprintf( f, "    return SEVERITY_WARNING;\n  }\n" );
+    } else {
+        fprintf( f, "    return SEVERITY_WARNING;\n" );
+    }
 
     LISTfree( data_members );
     fprintf( f,

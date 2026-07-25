@@ -79,14 +79,14 @@ void Schema::GenerateExpress( ostream & out ) const {
     }
     if( !_function_list.empty() ) {
         out << "(* *************FUNCTIONS************* *)" << endl;
-        count = _function_list.size();
+        count = (int)_function_list.size();
         for( i = 0; i <  count; i++ ) {
             out << endl << _function_list[i] << endl;
         }
     }
     if( !_procedure_list.empty() ) {
         out << "(* *************PROCEDURES************* *)" << endl;
-        count = _procedure_list.size();
+        count = (int)_procedure_list.size();
         for( i = 0; i <  count; i++ ) {
             out << endl << _procedure_list[i] << endl;
         }

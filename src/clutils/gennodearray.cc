@@ -44,7 +44,7 @@ GenNodeArray::~GenNodeArray() {
 }
 
 int GenNodeArray::Index( GenericNode ** gn ) {
-    return ( ( gn - _buf ) / sizeof( GenericNode * ) );
+    return (int)( gn - _buf );
 }
 
 void GenNodeArray::Append( GenericNode * gn ) {
