@@ -44,6 +44,8 @@ FAKE_VALUE_FUNC(Variable, ENTITYget_named_attribute, Entity, char *)
 FAKE_VALUE_FUNC(Variable, ENTITYresolve_attr_ref, Entity, Symbol *, Symbol *)
 FAKE_VALUE_FUNC(int, ENTITYdeclares_variable, Entity, Variable)
 FAKE_VALUE_FUNC(int, EXPRESS_fail, Express)
+FAKE_VALUE_FUNC(bool, TYPEinherits_from, Type, enum type_enum)
+FAKE_VALUE_FUNC(Type, TYPEget_aggregate_base, Type)
 
 void setup() {
     RESOLVEinitialize();
@@ -56,6 +58,8 @@ void setup() {
     RESET_FAKE(ENTITYget_named_attribute);
     RESET_FAKE(ENTITYdeclares_variable);
     RESET_FAKE(EXPRESS_fail);
+    RESET_FAKE(TYPEinherits_from);
+    RESET_FAKE(TYPEget_aggregate_base);
 }
 
 void * SCOPEfind_handler(Scope scope, char * name, int type) {
