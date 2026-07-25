@@ -1,11 +1,21 @@
+SCHEMA two_entities;
 TYPE permanent_attachment = SELECT(glue, weld);
 END_TYPE;
 
 TYPE temporary_attachment = SELECT(nail, screw);
 END_TYPE;
 
+ENTITY glue;
+END_ENTITY;
+
+ENTITY weld;
+END_ENTITY;
+
+ENTITY screw;
+END_ENTITY;
+
 ENTITY nail;
   body_length : REAL;
   head_area : REAL;
 END_ENTITY;
-
+END_SCHEMA;

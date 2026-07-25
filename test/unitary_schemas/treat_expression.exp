@@ -6,8 +6,11 @@ ENTITY set_representation_item;
   items : SET [0:?] OF STRING;
 END_ENTITY;
 
+TYPE my_int = INTEGER; END_TYPE;
+TYPE my_str = STRING; END_TYPE;
+
 -- Test TREAT with SELECT type narrowing
-TYPE representation_item = SELECT(set_representation_item, INTEGER, STRING);
+TYPE representation_item = SELECT(set_representation_item, my_int, my_str);
 END_TYPE;
 
 ENTITY representation;

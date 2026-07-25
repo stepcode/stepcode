@@ -5,7 +5,7 @@ ENTITY item_a;
 END_ENTITY;
 
 ENTITY item_b;
-  value : INTEGER;
+  val : INTEGER;
 END_ENTITY;
 
 TYPE my_select = SELECT(item_a, item_b);

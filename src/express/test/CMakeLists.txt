@@ -86,7 +86,6 @@ add_test(NAME test_ap242_pe056_baseline
 set_tests_properties( test_ap242_pe056_baseline PROPERTIES 
   DEPENDS "build_check_express;$<TARGET_NAME:check-express>" 
   LABELS "parser;ap242;baseline"
-  WILL_FAIL true
   )
 
 sc_addexec(print_schemas SOURCES ../fedex.c print_schemas.c LINK_LIBRARIES express)

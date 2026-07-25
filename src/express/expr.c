@@ -818,7 +818,7 @@ Type EXPresolve_op_treat( Expression e, Scope s ) {
     /* Now resolve the target type name */
     if( e->symbol.name ) {
         target_type = (Type)SCOPEfind( s, e->symbol.name, 
-                                       SCOPE_FIND_TYPE );
+                                       SCOPE_FIND_TYPE | SCOPE_FIND_ENTITY );
         if( !target_type ) {
             ERRORreport_with_symbol( UNDEFINED_TYPE, &e->symbol, 
                                     e->symbol.name );

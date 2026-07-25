@@ -5,7 +5,7 @@ ENTITY item_a;
 END_ENTITY;
 
 ENTITY item_b;
-  value : INTEGER;
+  val : INTEGER;
 END_ENTITY;
 
 END_SCHEMA;
