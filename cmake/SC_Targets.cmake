@@ -10,15 +10,20 @@ macro(SC_ADDEXEC execname)
 
   add_executable(${execname} ${${_arg_prefix}_SOURCES})
 
+  if(BUILD_STATIC_LIBS)
+    target_compile_definitions(${execname} PRIVATE SC_STATIC)
+  endif()
+
   if(DEFINED "${_arg_prefix}_LINK_LIBRARIES")
     foreach(_lib ${${_arg_prefix}_LINK_LIBRARIES})
         if($CACHE{SC_STATIC_UTILS})
-            if(NOT $<TARGET_PROPERTY:${_lib},TYPE> STREQUAL "STATIC_LIBRARY")
+            get_property(_lib_type TARGET ${_lib} PROPERTY TYPE)
+            if(NOT _lib_type STREQUAL "STATIC_LIBRARY")
                 message(SEND_ERROR "SC_ADDEXEC usage error - expected STATIC LINK_LIBRARIES targets (${_lib})")
             endif()
         endif()
-        target_link_libraries(${execname} ${_lib})
     endforeach()
+    target_link_libraries(${execname} PRIVATE ${${_arg_prefix}_LINK_LIBRARIES})
   endif()
 
   if(NOT ${_arg_prefix}_NO_INSTALL AND NOT ${_arg_prefix}_TESTABLE)
@@ -37,7 +42,7 @@ endmacro()
 macro(SC_ADDLIB _addlib_target)
   set(_addlib_opts SHARED STATIC NO_INSTALL TESTABLE)
   set(_addlib_multikw SOURCES LINK_LIBRARIES)
-  string(TOUPPER "SC_ADDLIB_${libname}_ARG" _arg_prefix)
+  string(TOUPPER "SC_ADDLIB_${_addlib_target}_ARG" _arg_prefix)
   cmake_parse_arguments(${_arg_prefix} "${_addlib_opts}" "" "${_addlib_multikw}" ${ARGN})
 
   if(NOT DEFINED ${_arg_prefix}_SOURCES)
@@ -64,20 +69,20 @@ macro(SC_ADDLIB _addlib_target)
   if(DEFINED ${_arg_prefix}_LINK_LIBRARIES)
     foreach(_lib ${${_arg_prefix}_LINK_LIBRARIES})
         if(${_arg_prefix}_STATIC AND TARGET ${_lib})
-	  get_property(_libtype TARGET ${_lib} PROPERTY TYPE)
-	  if(NOT ${_libtype} STREQUAL "STATIC_LIBRARY")
-	      message(SEND_ERROR "SC_ADDLIB usage error - expected (static) LINK_LIBRARIES targets (${_lib})")
+          get_property(_libtype TARGET ${_lib} PROPERTY TYPE)
+          if(NOT ${_libtype} STREQUAL "STATIC_LIBRARY")
+            message(SEND_ERROR "SC_ADDLIB usage error - expected (static) LINK_LIBRARIES targets (${_lib})")
             endif()
         endif()
-        target_link_libraries(${_addlib_target} ${_lib})
     endforeach()
+    target_link_libraries(${_addlib_target} ${_lib})
   endif()
 
   if(NOT ${_arg_prefix}_NO_INSTALL AND NOT ${_arg_prefix}_TESTABLE)
     install(TARGETS ${_addlib_target}
       RUNTIME DESTINATION ${BIN_DIR}
       LIBRARY DESTINATION ${LIB_DIR}
-      ARCHIVE DESTINATION ${LIB_DIR}	
+      ARCHIVE DESTINATION ${LIB_DIR}
     )
   endif()
 endmacro()
