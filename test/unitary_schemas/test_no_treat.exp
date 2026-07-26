@@ -1,0 +1,11 @@
+SCHEMA test_no_treat;
+
+ENTITY item_a;
+  name : STRING;
+END_ENTITY;
+
+ENTITY item_b;
+  val : INTEGER;
+END_ENTITY;
+
+END_SCHEMA;

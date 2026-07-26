@@ -16,7 +16,7 @@ unsigned int attrIndex = 0;
 
 /// uses depth-first recursion to add attrs in order; looks for derived attrs
 void populateAttrList( oaList & list, Entity ent ) {
-    unsigned int attrCount = list.size(); //use to figure out how many attrs on end of list need to be checked for duplicates
+    unsigned int attrCount = (unsigned int)list.size(); //use to figure out how many attrs on end of list need to be checked for duplicates
     //recurse through supertypes
     LISTdo( ent->u.entity->supertypes, super, Entity ) {
         populateAttrList( list, super );

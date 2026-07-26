@@ -1,0 +1,30 @@
+SCHEMA flow_narrowing_test;
+
+TYPE set_representation_item = SET OF INTEGER;
+END_TYPE;
+
+TYPE simple_int = INTEGER;
+END_TYPE;
+
+TYPE target = SELECT (
+    set_representation_item,
+    simple_int
+);
+END_TYPE;
+
+ENTITY test_entity;
+  item : target;
+WHERE
+  wr1: ('FLOW_NARROWING_TEST.SET_REPRESENTATION_ITEM' IN TYPEOF(item)) AND 
+       (SIZEOF(QUERY(x <* item | x > 0)) >= 0);
+END_ENTITY;
+
+ENTITY nested_and_test;
+  data : target;
+WHERE
+  wr1: ('FLOW_NARROWING_TEST.SET_REPRESENTATION_ITEM' IN TYPEOF(data)) AND 
+       (SIZEOF(data) > 0) AND
+       (SIZEOF(QUERY(y <* data | y < 100)) >= 0);
+END_ENTITY;
+
+END_SCHEMA;

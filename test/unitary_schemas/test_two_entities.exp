@@ -1,0 +1,11 @@
+SCHEMA test_two_entities;
+
+ENTITY first_item;
+  name : STRING;
+END_ENTITY;
+
+ENTITY second_item;
+  val : INTEGER;
+END_ENTITY;
+
+END_SCHEMA;

@@ -1,0 +1,28 @@
+SCHEMA test_treat;
+
+TYPE item_type = SELECT(string_data, integer_data);
+END_TYPE;
+
+ENTITY string_data;
+  val : STRING;
+END_ENTITY;
+
+ENTITY integer_data;
+  val : INTEGER;
+END_ENTITY;
+
+FUNCTION get_string(data : item_type) : STRING;
+  LOCAL
+    result : STRING;
+  END_LOCAL;
+  
+  result := '';
+  
+  IF ('TEST_TREAT.STRING_DATA' IN TYPEOF(data)) THEN
+    result := TREAT(data AS string_data).val;
+  END_IF;
+  
+  RETURN(result);
+END_FUNCTION;
+
+END_SCHEMA;

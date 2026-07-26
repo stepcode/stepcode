@@ -1,0 +1,41 @@
+SCHEMA test_treat_expression;
+
+-- Define entity first
+ENTITY set_representation_item;
+  name : STRING;
+  items : SET [0:?] OF STRING;
+END_ENTITY;
+
+TYPE my_int = INTEGER; END_TYPE;
+TYPE my_str = STRING; END_TYPE;
+
+-- Test TREAT with SELECT type narrowing
+TYPE representation_item = SELECT(set_representation_item, my_int, my_str);
+END_TYPE;
+
+ENTITY representation;
+  name : STRING;
+  items : SET [1:?] OF representation_item;
+WHERE
+  -- Test TREAT in WHERE clause with QUERY
+  WR1: SIZEOF(QUERY(x <* items | 
+                    SIZEOF(TREAT(x AS set_representation_item).items) > 0)) > 0;
+END_ENTITY;
+
+-- Test TREAT in FUNCTION
+FUNCTION get_set_items(data : representation_item) : STRING;
+  LOCAL
+    result : STRING;
+  END_LOCAL;
+  
+  result := '';
+  
+  -- Use TREAT to narrow from SELECT to specific type
+  IF ('TEST_TREAT_EXPRESSION.SET_REPRESENTATION_ITEM' IN TYPEOF(data)) THEN
+    result := TREAT(data AS set_representation_item).name;
+  END_IF;
+  
+  RETURN(result);
+END_FUNCTION;
+
+END_SCHEMA;

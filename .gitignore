@@ -3,7 +3,6 @@
 /build-*
 /.build
 
-
 # Temporary files
 *~
 \#*\#
@@ -21,3 +20,6 @@
 # Tool specific patterns
 *.kdev4
 .kdev_include_paths
+
+# Parser generator intermediate files
+*.out

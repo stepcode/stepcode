@@ -673,7 +673,9 @@ SDAI_Application_instance * ReadEntityRef( istream & in, ErrorDescriptor * err, 
             err->AppendToDetailMsg( "Use of @ instead of # to identify entity.\n" );
             err->GreaterSeverity( SEVERITY_WARNING );
             // no break statement here on purpose
+#if defined(__GNUC__) || defined(__clang__)
             [[gnu::fallthrough]];
+#endif
         case '#': {
             int id = -1;
             in >>  id;

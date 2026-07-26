@@ -97,7 +97,12 @@ macro(SCHEMA_CMLIST SCHEMA_FILE)
   string(STRIP "${_ss_out}" _ss_stripped)
   string(REGEX REPLACE "\\\n" ";" _list ${_ss_stripped})
   foreach(_dir ${_list})
-    add_subdirectory(${_dir} ${_dir}) #specify source and binary dirs as the same
+    get_property(_already_added GLOBAL PROPERTY _SC_SCHEMA_DIRS)
+    list(FIND _already_added "${_dir}" _idx)
+    if(${_idx} EQUAL -1)
+       set_property(GLOBAL APPEND PROPERTY _SC_SCHEMA_DIRS "${_dir}")
+       add_subdirectory(${_dir} ${_dir}) #specify source and binary dirs as the same
+    endif()
   endforeach(_dir ${_ss_out})
   # configure_file forces cmake to run again if the schema has been modified
   #if multiple schemas in one file, _schema is the last one printed.

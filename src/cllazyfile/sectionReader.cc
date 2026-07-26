@@ -1,5 +1,9 @@
+#ifndef SC_CORE_EXPORT
 #define SC_CORE_EXPORT
+#endif
+#ifndef SC_DAI_EXPORT
 #define SC_DAI_EXPORT
+#endif
 
 #include <algorithm>
 #include <set>

@@ -288,7 +288,7 @@ char * ERRORget_warnings_help(const char* prefix, const char *eol) {
     char *buf, *nbuf;
     Error err;
     
-    clen = strlen(prefix) + strlen(eol) + 1;
+    clen = (unsigned int)(strlen(prefix) + strlen(eol) + 1);
     
     buf = malloc(sz);
     if (!buf) {
@@ -299,7 +299,7 @@ char * ERRORget_warnings_help(const char* prefix, const char *eol) {
     for (unsigned int errnum = 0; errnum < (sizeof LibErrors / sizeof LibErrors[0]); errnum++) {
         err = &LibErrors[errnum];
         if (err->name) {
-            len = strlen(buf) + strlen(err->name) + clen;
+            len = (unsigned int)(strlen(buf) + strlen(err->name) + clen);
             if (len > sz) {
                 sz *= 2;
                 nbuf = realloc(buf, sz);

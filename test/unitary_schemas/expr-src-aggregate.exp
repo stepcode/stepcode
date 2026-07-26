@@ -48,7 +48,7 @@ END_ENTITY;
 
 ENTITY binary_representation_item
     SUBTYPE OF (representation_item);
-    binary_value : BINARY;
+    binary_val : BINARY;
 END_ENTITY;
 
 ENTITY point_and_vector

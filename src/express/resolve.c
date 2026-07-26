@@ -57,6 +57,8 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "express/resolve.h"
 #include "express/schema.h"
@@ -86,7 +88,7 @@ void RESOLVEcleanup( void ) {
 ** Retrieve the aggregate type from the underlying types of the select type t_select
 ** \param t_select the select type to retrieve the aggregate type from
 ** \param t_agg the current aggregate type
-** \return the aggregate type
+** \return the aggregate type (element type common to all aggregate members), or NULL if not all members are aggregates or have different element types
 */
 Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
     if( TYPEis_select( t_select ) ) {
@@ -94,16 +96,34 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
         LISTdo_links( t_select->u.type->body->list, link )
         /* the current underlying type */
         Type t = ( Type ) link->data;
+
         if( TYPEis_select( t ) ) {
             t_agg = TYPE_retrieve_aggregate( t, t_agg );
-        } else if( TYPEis_aggregate( t ) ) {
+        } else if( TYPEinherits_from( t, aggregate_ ) ) {
+            /* Deep aggregate detection: get element type through typedef chains */
+            Type member_base = TYPEget_aggregate_base( t );
+            if( !member_base ) {
+                /* Should not happen if TYPEinherits_from returned true, but be defensive */
+                return 0;
+            }
             if( t_agg ) {
-                if( t_agg != t->u.type->body->base ) {
-                    /* 2 underlying types do not have to the same base */
+                /* Compare element types.
+                 * We need to compare by body->type, not pointer equality,
+                 * because different aggregate definitions may create separate Type instances
+                 * for the same underlying type (e.g., INTEGER). */
+                if( t_agg->u.type->body->type != member_base->u.type->body->type ) {
+                    /* 2 underlying types do not have the same base type */
                     return 0;
                 }
+                /* Additional check: if they're both named types (entities, etc.),
+                 * make sure they refer to the same entity/type */
+                if( TYPEis_entity( t_agg ) && TYPEis_entity( member_base ) ) {
+                    if( t_agg->u.type->body->entity != member_base->u.type->body->entity ) {
+                        return 0;
+                    }
+                }
             } else {
-                t_agg = t->u.type->body->base;
+                t_agg = member_base;
             }
         } else {
             /* the underlying type is neither a select nor an aggregate */
@@ -114,6 +134,228 @@ Type TYPE_retrieve_aggregate( Type t_select, Type t_agg ) {
     }
 
     return t_agg;
+}
+
+/*********************************/
+/* Flow-sensitive type narrowing */
+/*********************************/
+
+/** Thread-local storage for refinement context during resolution */
+RefinementContext active_refinements = NULL;
+
+/**
+ * Check if a type is a member of a SELECT type (directly or via nested SELECT)
+ * \param select_type the SELECT type to search in
+ * \param member_type the type to look for
+ * \param scope the scope for resolving type names
+ * \return true if member_type is a member of select_type
+ */
+bool is_select_member( Type select_type, Type member_type, Scope scope ) {
+    if( !TYPEis_select( select_type ) || !member_type ) {
+        return false;
+    }
+    
+    LISTdo_links( select_type->u.type->body->list, link )
+    Type t = ( Type ) link->data;
+    
+    /* Direct match */
+    if( t == member_type ) {
+        return true;
+    }
+    
+    /* If member is a named type, compare by name too */
+    if( member_type->symbol.name && t->symbol.name ) {
+        if( strcmp( member_type->symbol.name, t->symbol.name ) == 0 ) {
+            return true;
+        }
+    }
+    
+    /* If the member is itself a SELECT, recurse */
+    if( TYPEis_select( t ) ) {
+        if( is_select_member( t, member_type, scope ) ) {
+            return true;
+        }
+    }
+    LISTod;
+    
+    return false;
+}
+
+/**
+ * Check if an expression matches the pattern: 'TypeName' IN TYPEOF(var)
+ * \param expr the expression to check
+ * \param out_var pointer to store the variable (if pattern matches)
+ * \param out_typename pointer to store the type name string (if pattern matches)
+ * \return true if the pattern matches
+ */
+bool match_typeof_guard( Expression expr, Variable *out_var, const char **out_typename ) {
+    
+    /* Pattern: expr is IN operator with two operands */
+    if( !expr || expr->type->u.type->body->type != op_ ) {
+        return false;
+    }
+    
+    if( expr->e.op_code != OP_IN ) {
+        return false;
+    }
+    
+    /* Left operand should be a string literal */
+    Expression lhs = expr->e.op1;
+    if( !lhs || lhs->type->u.type->body->type != string_ ) {
+        return false;
+    }
+    
+    /* Right operand should be a function call to TYPEOF */
+    Expression rhs = expr->e.op2;
+    if( !rhs || rhs->type->u.type->body->type != funcall_ ) {
+        return false;
+    }
+    
+    /* Check if function is TYPEOF (by name) */
+    if( !rhs->symbol.name || strcmp( rhs->symbol.name, "TYPEOF" ) != 0 ) {
+        return false;
+    }
+    
+    /* TYPEOF should have exactly one argument which is an identifier */
+    if( !rhs->u.funcall.list || LISTget_length( rhs->u.funcall.list ) != 1 ) {
+        return false;
+    }
+    
+    Expression arg = ( Expression ) LISTget_first( rhs->u.funcall.list );
+    if( !arg || arg->type->u.type->body->type != identifier_ ) {
+        return false;
+    }
+    
+    /* The identifier should resolve to a variable */
+    if( !arg->u.variable ) {
+        return false;
+    }
+    
+    /* Extract the results */
+    *out_var = arg->u.variable;
+    *out_typename = lhs->symbol.name;
+    return true;
+}
+
+/**
+ * Collect refinements from a conjunction (AND expression)
+ * \param expr the expression to collect refinements from
+ * \param scope the scope for resolving type names
+ * \return a linked list of refinements (or NULL if none)
+ */
+Refinement collect_refinements_from_conjunction( Expression expr, Scope scope ) {
+    if( !expr ) {
+        return NULL;
+    }
+    
+    /* If this is an AND node, recurse into both sides */
+    if( expr->type->u.type->body->type == op_ && expr->e.op_code == OP_AND ) {
+        Refinement left_refs = collect_refinements_from_conjunction( expr->e.op1, scope );
+        Refinement right_refs = collect_refinements_from_conjunction( expr->e.op2, scope );
+        
+        /* Chain the refinements together */
+        if( !left_refs ) {
+            return right_refs;
+        }
+        
+        Refinement tail = left_refs;
+        while( tail->next ) {
+            tail = tail->next;
+        }
+        tail->next = right_refs;
+        return left_refs;
+    }
+    
+    /* Check if this node matches the TYPEOF guard pattern */
+    Variable var = NULL;
+    const char *typename = NULL;
+    
+    if( match_typeof_guard( expr, &var, &typename ) ) {
+        
+        /* Validate: variable's type should be a SELECT */
+        if( !var->type || !TYPEis_select( var->type ) ) {
+            return NULL;
+        }
+        
+        /* Look up the target type */
+        Type target_type = NULL;
+        const char *lookup_name = typename;
+        
+        /* If typename contains '.', extract just the type part after the dot */
+        if( strchr( typename, '.' ) ) {
+            const char *dot = strrchr( typename, '.' );
+            if( dot && *( dot + 1 ) ) {
+                lookup_name = dot + 1;
+            }
+        }
+        
+        /* Normalize to lowercase (EXPRESS identifiers are stored lowercase) */
+        char lookup_name_lower[MAX_TYPE_NAME_LENGTH];
+        strncpy( lookup_name_lower, lookup_name, sizeof( lookup_name_lower ) - 1 );
+        lookup_name_lower[sizeof( lookup_name_lower ) - 1] = '\0';
+        for( char *p = lookup_name_lower; *p; p++ ) {
+            *p = tolower( ( unsigned char )*p );
+        }
+        
+        /* Try direct lookup */
+        target_type = ( Type ) SCOPEfind( scope, lookup_name_lower, SCOPE_FIND_TYPE );
+        
+        if( !target_type || DICT_type != OBJ_TYPE ) {
+            return NULL;
+        }
+        
+        /* Validate: target type should be a member of the SELECT */
+        if( !is_select_member( var->type, target_type, scope ) ) {
+            return NULL;
+        }
+        
+        /* Create a refinement */
+        Refinement ref = ( Refinement ) malloc( sizeof( struct Refinement_ ) );
+        if( !ref ) {
+            /* Memory allocation failed */
+            return NULL;
+        }
+        ref->variable = var;
+        ref->refined_type = target_type;
+        ref->next = NULL;
+        
+        return ref;
+    }
+    
+    /* Not an AND node and not a matching pattern - don't recurse further */
+    return NULL;
+}
+
+/**
+ * Free a list of refinements
+ */
+void free_refinements( Refinement refs ) {
+    while( refs ) {
+        Refinement next = refs->next;
+        free( refs );
+        refs = next;
+    }
+}
+
+/**
+ * Look up a refined type for a variable in the active refinement context
+ * \param var the variable to look up
+ * \return the refined type if found, NULL otherwise
+ */
+static Type lookup_refinement( Variable var ) {
+    if( !active_refinements || !var ) {
+        return NULL;
+    }
+    
+    Refinement ref = active_refinements->refinements;
+    while( ref ) {
+        if( ref->variable == var ) {
+            return ref->refined_type;
+        }
+        ref = ref->next;
+    }
+    
+    return NULL;
 }
 
 /**
@@ -281,6 +523,13 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
 #endif
                     /* Geez, don't wipe out original type! */
                     expr->return_type = expr->u.variable->type;
+                    
+                    /* Check if there's a refinement for this variable */
+                    Type refined_type = lookup_refinement( expr->u.variable );
+                    if( refined_type ) {
+                        expr->return_type = refined_type;
+                    }
+                    
                     if( expr->u.variable->flags.attribute ) {
                         found_self = true;
                     }
@@ -354,8 +603,16 @@ void EXP_resolve( Expression expr, Scope scope, Type typecheck ) {
                 resolve_failed( expr );
                 break;
             }
-            if( TYPEis_aggregate( expr->return_type ) ) {
-                t = expr->u.query->aggregate->return_type->u.type->body->base;
+            /* Deep aggregate detection: check if type inherits from aggregate_ (possibly through typedefs) */
+            if( TYPEinherits_from( expr->return_type, aggregate_ ) ) {
+                /* Use deep unwrapping to get element type */
+                t = TYPEget_aggregate_base( expr->return_type );
+                if( !t ) {
+                    /* Should not happen if TYPEinherits_from returned true, but be defensive */
+                    ERRORreport_with_symbol(QUERY_REQUIRES_AGGREGATE, &expr->u.query->aggregate->symbol );
+                    resolve_failed( expr );
+                    break;
+                }
             } else if( TYPEis_select( expr->return_type ) ) {
                 /* retrieve the common aggregate type */
                 t = TYPE_retrieve_aggregate( expr->return_type, 0 );

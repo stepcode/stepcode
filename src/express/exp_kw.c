@@ -105,6 +105,7 @@ char * KW_SUPERTYPE      = "SUPERTYPE";
 char * KW_TAN            = "TAN";
 char * KW_THEN           = "THEN";
 char * KW_TO             = "TO";
+char * KW_TREAT          = "TREAT";
 char * KW_TRUE           = "TRUE";
 char * KW_TYPE           = "TYPE";
 char * KW_TYPEOF         = "TYPEOF";

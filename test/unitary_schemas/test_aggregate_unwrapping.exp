@@ -1,0 +1,28 @@
+SCHEMA test_aggregate_unwrapping;
+
+(* Test that deep aggregate unwrapping works correctly for SELECT types
+   containing aggregates. This validates that TYPEget_nonaggregate_base_type
+   and TYPE_retrieve_aggregate properly handle typedef chains. *)
+
+TYPE int_list = LIST OF INTEGER;
+END_TYPE;
+
+TYPE named_int_list = int_list;
+END_TYPE;
+
+TYPE set_of_named_lists = SET OF named_int_list;
+END_TYPE;
+
+(* SELECT with multiple aggregate members - all should have INTEGER base *)
+TYPE aggregate_select = SELECT(int_list, named_int_list, set_of_named_lists);
+END_TYPE;
+
+ENTITY test_entity;
+  data : aggregate_select;
+WHERE
+  (* This WHERE rule should work because all SELECT members are aggregates
+     with compatible element types (ultimately INTEGER) *)
+  wr1: SIZEOF(data) >= 0;
+END_ENTITY;
+
+END_SCHEMA;

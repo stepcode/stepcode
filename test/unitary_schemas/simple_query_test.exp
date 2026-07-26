@@ -1,0 +1,15 @@
+SCHEMA simple_query_test;
+
+-- Simple test: Defined aggregate type
+TYPE my_set = SET OF INTEGER;
+END_TYPE;
+
+-- Entity using QUERY over defined aggregate type
+ENTITY test_simple;
+    my_numbers : my_set;
+WHERE
+    -- QUERY over defined aggregate type (not inline)
+    WR1 : SIZEOF(QUERY(n <* SELF.my_numbers | n > 0)) >= 0;
+END_ENTITY;
+
+END_SCHEMA;

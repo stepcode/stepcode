@@ -76,6 +76,8 @@ endfunction(add_schema_dependent_test name sdai_lib exe_args )
 set(SC_ENABLE_TESTING OFF)
 SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/array_bounds_expr.exp)
 SCHEMA_CMLIST(${SC_SOURCE_DIR}/test/unitary_schemas/inverse_attr.exp)
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/data/ap242/242_mim_lf.exp)
+SCHEMA_CMLIST(${SC_SOURCE_DIR}/data/ap242treat/242_mim_lf_treat.exp)
 set(SC_ENABLE_TESTING ON)
 
 add_schema_dependent_test("aggregate_bound_runtime" "array_bounds_expr"
@@ -104,6 +106,12 @@ if(HAVE_STD_THREAD)
   add_schema_dependent_test( "stepfile_rw_progress" "ap214e3" "${SC_SOURCE_DIR}/data/ap214e3/as1-oc-214.stp"
                             "" "${thread_flags}" "${thread_libs}")
 endif(HAVE_STD_THREAD)
+
+# AP242 styled_item tests - exercise WR3 WHERE rule with styled_item
+# Test with vanilla AP242 schema (uses flow-sensitive narrowing)
+add_schema_dependent_test( "ap242_vanilla_styled_item" "ap242" "${SC_SOURCE_DIR}/test/p21/test_ap242_styled_item.stp" )
+# Test with AP242 TREAT schema (uses explicit TREAT expression)
+add_schema_dependent_test( "ap242_styled_item" "ap242treat" "${SC_SOURCE_DIR}/test/p21/test_ap242_styled_item.stp" )
 
 # Local Variables:
 # tab-width: 8
