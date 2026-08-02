@@ -1,0 +1,25 @@
+SCHEMA lazy_test_schema;
+
+ENTITY b;
+END_ENTITY;
+
+ENTITY a;
+    opt : OPTIONAL STRING;
+    label : STRING;
+    ref : b;
+END_ENTITY;
+
+ENTITY c;
+END_ENTITY;
+
+ENTITY d
+    SUBTYPE OF (c);
+    ref : a;
+END_ENTITY;
+
+ENTITY e;
+    ref : d;
+    opt : OPTIONAL STRING;
+END_ENTITY;
+
+END_SCHEMA;

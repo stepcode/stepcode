@@ -8,22 +8,33 @@
 
 #include "clstepcore/sdaiApplication_instance.h"
 
+#include <algorithm>
+#include <climits>
+#include <sstream>
+
 lazyInstMgr::lazyInstMgr() {
     _headerRegistry = new Registry( HeaderSchemaInit );
     _instanceTypes = new instanceTypes_t( 255 ); //NOTE arbitrary max of 255 chars for a type name
     _lazyInstanceCount = 0;
     _loadedInstanceCount = 0;
+    _cacheHighWater = 0;
+    _cacheHits = 0;
+    _cacheMisses = 0;
+    _materializations = 0;
+    _evictions = 0;
+    _activeBatches = 0;
+    _batchLoadDepth = 0;
+    _cancelled = false;
     _longestTypeNameLen = 0;
     _mainRegistry = 0;
+    _ownsMainRegistry = false;
     _errors = new ErrorDescriptor();
     _ima = new instMgrAdapter( this );
 }
 
 lazyInstMgr::~lazyInstMgr() {
-    delete _headerRegistry;
-    delete _errors;
-    delete _ima;
-    //loop over files, sections, instances; delete header instances
+    // Keep registries and the adapter alive until their instances are gone.
+    _instancesLoaded.clear( true );
     lazyFileReaderVec_t::iterator fit = _files.begin();
     for( ; fit != _files.end(); ++fit ) {
         delete *fit;
@@ -32,8 +43,12 @@ lazyInstMgr::~lazyInstMgr() {
     for( ; sit != _dataSections.end(); ++sit ) {
         delete *sit;
     }
-    _instancesLoaded.clear();
     _instanceStreamPos.clear();
+    delete _instanceTypes;
+    delete _ima;
+    if( _ownsMainRegistry ) delete _mainRegistry;
+    delete _headerRegistry;
+    delete _errors;
 }
 
 sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
@@ -50,18 +65,32 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         _longestTypeName = inst.name;
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
-    /* store 16 bits of section id and 48 of instance offset into one 64-bit int
-    ** TODO: check and warn if anything is lost (in calling code?)
-    ** does 32bit need anything special?
-    **
-    ** create conversion class?
-    **  could then initialize conversion object with number of bits
-    **  also a good place to check for data loss
-    */
-    positionAndSection ps = inst.loc.section;
-    ps <<= 48;
-    ps |= ( inst.loc.begin & 0xFFFFFFFFFFFFULL );
-    _instanceStreamPos.insert( inst.loc.instance, ps );
+    if( inst.componentTypes ) {
+        std::vector<std::string>::const_iterator type = inst.componentTypes->begin();
+        for( ; type != inst.componentTypes->end(); ++type ) {
+            _instanceTypes->insert( type->c_str(), inst.loc.instance );
+            if( static_cast<int>( type->size() ) > _longestTypeNameLen ) {
+                _longestTypeNameLen = type->size();
+                _longestTypeName = *type;
+            }
+        }
+        delete inst.componentTypes;
+    }
+    const bool duplicate = _instanceStreamPos.find( inst.loc.instance ) != 0;
+    if( !duplicate ) _allInstances.push_back( inst.loc.instance );
+    instancePosition pos;
+    pos.begin = inst.loc.begin;
+    pos.section = inst.loc.section;
+    if( duplicate ) {
+        LazyDiagnostic diagnostic;
+        diagnostic.severity = LAZY_DIAGNOSTIC_WARNING;
+        diagnostic.entity = inst.loc.instance;
+        diagnostic.type = inst.name;
+        diagnostic.offset = inst.loc.begin;
+        diagnostic.message = "duplicate instance identifier";
+        emitDiagnostic( diagnostic );
+    }
+    _instanceStreamPos.insert( inst.loc.instance, pos );
 
     if( inst.refs ) {
         if( inst.refs->size() > 0 ) {
@@ -72,10 +101,80 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
                 //reverse refs
                 _revInstanceRefs.insert( *it, inst.loc.instance );
             }
-        } else {
-            delete inst.refs;
+        }
+        delete inst.refs;
+    }
+}
+
+LazyInstanceIdView lazyInstMgr::instancesByType( std::string type, bool caseSensitive ) {
+    if( !caseSensitive ) {
+        std::string::iterator it = type.begin();
+        for( ; it != type.end(); ++it ) {
+            *it = static_cast<char>( toupper( static_cast<unsigned char>( *it ) ) );
         }
     }
+    return LazyInstanceIdView( _instanceTypes->find( type.c_str() ) );
+}
+
+LazyInstanceIdView lazyInstMgr::forwardReferences( instanceID id ) {
+    return LazyInstanceIdView( _fwdInstanceRefs.find( id ) );
+}
+
+LazyInstanceIdView lazyInstMgr::reverseReferences( instanceID id ) {
+    return LazyInstanceIdView( _revInstanceRefs.find( id ) );
+}
+
+void lazyInstMgr::observeScan( fileID file, lazyFileOffset offset, lazyFileOffset fileSize ) {
+    if( _cancelled ) return;
+    if( _cancellationCallback && _cancellationCallback() ) {
+        _cancelled = true;
+        LazyDiagnostic diagnostic;
+        diagnostic.severity = LAZY_DIAGNOSTIC_INFO;
+        diagnostic.offset = offset;
+        diagnostic.message = "scan cancelled";
+        emitDiagnostic( diagnostic );
+        return;
+    }
+    if( _progressCallback && ( _lazyInstanceCount == 1 || ( _lazyInstanceCount % 4096 ) == 0 || offset >= fileSize ) ) {
+        LazyScanProgress progress;
+        progress.file = file;
+        progress.offset = offset;
+        progress.fileSize = fileSize;
+        progress.instancesScanned = _lazyInstanceCount;
+        _progressCallback( progress );
+    }
+}
+
+void lazyInstMgr::emitDiagnostic( LazyDiagnostic diagnostic ) {
+    std::ostringstream key;
+    key << diagnostic.type << '#' << diagnostic.entity << ':' << diagnostic.attribute << ':' << diagnostic.message;
+    uint64_t & count = _diagnosticCounts[key.str()];
+    ++count;
+    diagnostic.occurrences = count;
+    if( _diagnosticCallback && count == 1 ) {
+        _diagnosticCallback( diagnostic );
+    }
+}
+
+uint64_t lazyInstMgr::diagnosticCount( const std::string & key ) const {
+    std::map<std::string, uint64_t>::const_iterator found = _diagnosticCounts.find( key );
+    return found == _diagnosticCounts.end() ? 0 : found->second;
+}
+
+LazyCacheStatistics lazyInstMgr::cacheStatistics() const {
+    LazyCacheStatistics stats;
+    stats.instancesScanned = _lazyInstanceCount;
+    stats.instancesLoaded = _loadedInstanceCount;
+    stats.instancesPinned = _pinCounts.size();
+    stats.cacheHighWater = _cacheHighWater;
+    stats.cacheHits = _cacheHits;
+    stats.cacheMisses = _cacheMisses;
+    stats.materializations = _materializations;
+    stats.evictions = _evictions;
+    stats.activeBatches = _activeBatches;
+    stats.dataSections = _dataSections.size();
+    stats.cancelled = _cancelled;
+    return stats;
 }
 
 unsigned long lazyInstMgr::getNumTypes() const {
@@ -93,7 +192,7 @@ unsigned long lazyInstMgr::getNumTypes() const {
     return n ;
 }
 
-void lazyInstMgr::openFile( std::string fname ) {
+bool lazyInstMgr::openFile( std::string fname ) {
     //don't want to hold a lock for the entire time we're reading the file.
     //create a place in the vector and remember its location, then free lock
     ///FIXME begin atomic op
@@ -101,19 +200,59 @@ void lazyInstMgr::openFile( std::string fname ) {
     _files.push_back( (lazyFileReader * ) 0 );
     ///FIXME end atomic op
     lazyFileReader * lfr = new lazyFileReader( fname, this, i );
+    if( !lfr->valid() ) {
+        delete lfr;
+        _files.pop_back();
+        return false;
+    }
     _files[i] = lfr;
+    validateReferences();
     /// TODO resolve inverse attr references
     //between instances, or eDesc --> inst????
+    return true;
+}
+
+void lazyInstMgr::validateReferences() {
+    instanceRefs_t::cpair current = _fwdInstanceRefs.begin();
+    while( current.value ) {
+        instanceRefs_t::cvector::const_iterator ref = current.value->begin();
+        for( ; ref != current.value->end(); ++ref ) {
+            if( !_instanceStreamPos.find( *ref ) ) {
+                LazyDiagnostic diagnostic;
+                diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+                diagnostic.entity = current.key;
+                const char * type = typeFromFile( current.key );
+                if( type ) diagnostic.type = type;
+                instanceStreamPos_t::cvector * positions = _instanceStreamPos.find( current.key );
+                if( positions && !positions->empty() ) diagnostic.offset = positions->front().begin;
+                std::ostringstream message;
+                message << "reference to missing instance #" << *ref;
+                diagnostic.message = message.str();
+                emitDiagnostic( diagnostic );
+            }
+        }
+        current = _fwdInstanceRefs.next();
+    }
 }
 
 SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
     std::streampos oldPos;
-    positionAndSection ps;
-    sectionID sid;
+    instancePosition pos;
     SDAI_Application_instance * inst = _instancesLoaded.find( id );
     if( inst ) {
+        ++_cacheHits;
+        if( _batchLoadDepth == 0 ) _permanentlyLoadedInstances.insert( id );
         return inst;
+    }
+    ++_cacheMisses;
+    if( id > static_cast<instanceID>( INT_MAX ) ) {
+        LazyDiagnostic diagnostic;
+        diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+        diagnostic.entity = id;
+        diagnostic.message = "instance ID exceeds the current SDAI materialization limit";
+        emitDiagnostic( diagnostic );
+        return 0;
     }
     instanceStreamPos_t::cvector * cv;
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
@@ -122,35 +261,128 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 std::cerr << "Instance #" << id << " not found in any section." << std::endl;
                 break;
             case 1:
-                long int off;
-                ps = cv->at( 0 );
-                off = ps & 0xFFFFFFFFFFFFULL;
-                sid = ps >> 48;
-                assert( _dataSections.size() > sid );
+                pos = cv->at( 0 );
+                assert( _dataSections.size() > pos.section );
                 if( reSeek ) {
-                    oldPos = _dataSections[sid]->tellg();
+                    oldPos = _dataSections[pos.section]->tellg();
                 }
-                inst = _dataSections[sid]->getRealInstance( _mainRegistry, off, id );
+                inst = _dataSections[pos.section]->getRealInstance( _mainRegistry, pos.begin, id );
                 if( reSeek ) {
-                    _dataSections[sid]->seekg( oldPos );
+                    _dataSections[pos.section]->seekg( oldPos );
                 }
                 break;
             default:
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
+                {
+                    LazyDiagnostic diagnostic;
+                    diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+                    diagnostic.entity = id;
+                    diagnostic.message = "instance identifier occurs in multiple DATA sections";
+                    emitDiagnostic( diagnostic );
+                }
                 break;
         }
         if( !isNilSTEPentity( inst ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
-            lazyRefs lr( this, inst );
-            lazyRefs::referentInstances_t insts = lr.result();
+            ++_materializations;
+            _cacheHighWater = std::max<uint64_t>( _cacheHighWater, _loadedInstanceCount );
+            if( _batchLoadDepth ) {
+                _batchOwnedInstances.insert( id );
+            } else {
+                _permanentlyLoadedInstances.insert( id );
+                lazyRefs lr( this, inst );
+                lazyRefs::referentInstances_t insts = lr.result();
+            }
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
+            LazyDiagnostic diagnostic;
+            diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+            diagnostic.entity = id;
+            diagnostic.offset = pos.begin;
+            diagnostic.message = "SDAI instance materialization failed";
+            emitDiagnostic( diagnostic );
         }
     } else {
         std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+        LazyDiagnostic diagnostic;
+        diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+        diagnostic.entity = id;
+        diagnostic.message = "instance not found in any DATA section";
+        emitDiagnostic( diagnostic );
     }
     return inst;
+}
+
+SDAI_Application_instance * lazyInstMgr::cachedInstance( instanceID id ) {
+    return _instancesLoaded.find( id );
+}
+
+std::vector<instanceID> lazyInstMgr::dependencyClosure( const std::vector<instanceID> & roots ) {
+    std::set<instanceID> closure( roots.begin(), roots.end() );
+    std::vector<instanceID> queue( roots.begin(), roots.end() );
+    size_t current = 0;
+    while( current < queue.size() ) {
+        instanceRefs_t::cvector * refs = _fwdInstanceRefs.find( queue[current++] );
+        if( !refs ) continue;
+        instanceRefs_t::cvector::const_iterator ref = refs->begin();
+        for( ; ref != refs->end(); ++ref ) {
+            if( closure.insert( *ref ).second ) queue.push_back( *ref );
+        }
+    }
+    return std::vector<instanceID>( closure.begin(), closure.end() );
+}
+
+LazyInstanceBatch lazyInstMgr::loadBatch( instanceID root ) {
+    std::vector<instanceID> roots( 1, root );
+    return loadBatch( roots );
+}
+
+LazyInstanceBatch lazyInstMgr::loadBatch( const std::vector<instanceID> & roots ) {
+    std::vector<instanceID> closure = dependencyClosure( roots );
+    std::vector<instanceID>::const_iterator id = closure.begin();
+    for( ; id != closure.end(); ++id ) ++_pinCounts[*id];
+    ++_activeBatches;
+    ++_batchLoadDepth;
+    for( id = closure.begin(); id != closure.end(); ++id ) {
+        if( !loadInstance( *id, true ) ) {
+            LazyDiagnostic diagnostic;
+            diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+            diagnostic.entity = *id;
+            diagnostic.message = "dependency batch could not materialize instance";
+            emitDiagnostic( diagnostic );
+        }
+    }
+    --_batchLoadDepth;
+    return LazyInstanceBatch( this, roots, closure );
+}
+
+void lazyInstMgr::releaseBatch( const std::vector<instanceID> & instances ) {
+    std::vector<instanceID> evict;
+    std::vector<instanceID>::const_iterator id = instances.begin();
+    for( ; id != instances.end(); ++id ) {
+        std::map<instanceID, size_t>::iterator pin = _pinCounts.find( *id );
+        if( pin == _pinCounts.end() ) continue;
+        if( --pin->second == 0 ) {
+            _pinCounts.erase( pin );
+            if( _batchOwnedInstances.count( *id ) && !_permanentlyLoadedInstances.count( *id ) ) {
+                evict.push_back( *id );
+            }
+        }
+    }
+    std::vector<SDAI_Application_instance *> deleted;
+    for( id = evict.begin(); id != evict.end(); ++id ) {
+        SDAI_Application_instance * inst = _instancesLoaded.find( *id );
+        if( !inst ) continue;
+        _instancesLoaded.removeEntry( *id );
+        _batchOwnedInstances.erase( *id );
+        deleted.push_back( inst );
+        --_loadedInstanceCount;
+        ++_evictions;
+    }
+    std::vector<SDAI_Application_instance *>::iterator inst = deleted.begin();
+    for( ; inst != deleted.end(); ++inst ) delete *inst;
+    if( _activeBatches ) --_activeBatches;
 }
 
 
@@ -182,4 +414,3 @@ instanceSet * lazyInstMgr::instanceDependencies( instanceID id ) {
 
     return checkedDependencies;
 }
-

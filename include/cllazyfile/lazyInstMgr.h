@@ -2,12 +2,15 @@
 #define LAZYINSTMGR_H
 
 #include <map>
+#include <set>
 #include <string>
+#include <vector>
 #include <assert.h>
 
 #include "cllazyfile/lazyDataSectionReader.h"
 #include "cllazyfile/lazyFileReader.h"
 #include "cllazyfile/lazyTypes.h"
+#include "cllazyfile/lazySupport.h"
 
 #include "clstepcore/Registry.h"
 #include "sc_export.h"
@@ -61,14 +64,36 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 
         lazyFileReaderVec_t _files;
 
+        /** All indexed DATA instance IDs in deterministic file order. */
+        instanceRefs _allInstances;
+
         Registry * _headerRegistry, * _mainRegistry;
+        bool _ownsMainRegistry;
         ErrorDescriptor * _errors;
 
         unsigned long _lazyInstanceCount, _loadedInstanceCount;
+        uint64_t _cacheHighWater, _cacheHits, _cacheMisses, _materializations, _evictions;
+        uint64_t _activeBatches;
         int _longestTypeNameLen;
         std::string _longestTypeName;
 
+        std::map<instanceID, size_t> _pinCounts;
+        std::set<instanceID> _batchOwnedInstances;
+        std::set<instanceID> _permanentlyLoadedInstances;
+        size_t _batchLoadDepth;
+
+        LazyProgressCallback _progressCallback;
+        LazyCancellationCallback _cancellationCallback;
+        LazyDiagnosticCallback _diagnosticCallback;
+        std::map<std::string, uint64_t> _diagnosticCounts;
+        bool _cancelled;
+
         instMgrAdapter * _ima;
+
+        friend class LazyInstanceBatch;
+        void releaseBatch( const std::vector<instanceID> & instances );
+        SDAI_Application_instance * cachedInstance( instanceID id );
+        std::vector<instanceID> dependencyClosure( const std::vector<instanceID> & roots );
 
 #ifdef _MSC_VER
 #pragma warning( pop )
@@ -77,7 +102,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
     public:
         lazyInstMgr();
         ~lazyInstMgr();
-        void openFile( std::string fname );
+        bool openFile( std::string fname );
 
         void addLazyInstance( namedLazyInstance inst );
         InstMgrBase * getAdapter() {
@@ -91,19 +116,25 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         instanceRefs_t * getRevRefs() {
             return & _revInstanceRefs;
         }
+        LazyInstanceIdView instancesByType( std::string type, bool caseSensitive = false );
+        LazyInstanceIdView allInstances() const {
+            return LazyInstanceIdView( &_allInstances );
+        }
+        LazyInstanceIdView forwardReferences( instanceID id );
+        LazyInstanceIdView reverseReferences( instanceID id );
         /// returns a vector containing the instances that match `type`
         instanceTypes_t::cvector * getInstances( std::string type, bool caseSensitive = false ) { /*const*/
             if( !caseSensitive ) {
                 std::string::iterator it = type.begin();
                 for( ; it != type.end(); ++it ) {
-                    *it = toupper( *it );
+                    *it = static_cast<char>( toupper( static_cast<unsigned char>( *it ) ) );
                 }
             }
             return _instanceTypes->find( type.c_str() );
         }
         /// get the number of instances of a certain type
-        unsigned int countInstances( std::string type ) {
-            instanceTypes_t::cvector * v = _instanceTypes->find( type.c_str() );
+        unsigned int countInstances( std::string type, bool caseSensitive = false ) {
+            instanceTypes_t::cvector * v = getInstances( type, caseSensitive );
             if( !v ) {
                 return 0;
             }
@@ -123,6 +154,28 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
             return _loadedInstanceCount;
         }
 
+        LazyCacheStatistics cacheStatistics() const;
+
+        void setProgressCallback( const LazyProgressCallback & callback ) {
+            _progressCallback = callback;
+        }
+        void setCancellationCallback( const LazyCancellationCallback & callback ) {
+            _cancellationCallback = callback;
+        }
+        void setDiagnosticCallback( const LazyDiagnosticCallback & callback ) {
+            _diagnosticCallback = callback;
+        }
+        bool cancelled() const {
+            return _cancelled;
+        }
+        void observeScan( fileID file, lazyFileOffset offset, lazyFileOffset fileSize );
+        void emitDiagnostic( LazyDiagnostic diagnostic );
+        uint64_t diagnosticCount( const std::string & key ) const;
+        const std::map<std::string, uint64_t> & diagnosticCounts() const {
+            return _diagnosticCounts;
+        }
+        void validateReferences();
+
         /// get the number of data sections that have been identified
         unsigned int countDataSections() {
             return _dataSections.size();
@@ -130,7 +183,9 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 
         ///builds the registry using the given initFunct
         const Registry * initRegistry( CF_init initFunct ) {
-            setRegistry( new Registry( initFunct ) );
+            assert( _mainRegistry == 0 );
+            _mainRegistry = new Registry( initFunct );
+            _ownsMainRegistry = true;
             return _mainRegistry;
         }
 
@@ -138,6 +193,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         void setRegistry( Registry * reg ) {
             assert( _mainRegistry == 0 );
             _mainRegistry = reg;
+            _ownsMainRegistry = false;
         }
 
         const Registry * getHeaderRegistry() const {
@@ -168,6 +224,9 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
          */
         SDAI_Application_instance * loadInstance( instanceID id, bool reSeek = false );
 
+        LazyInstanceBatch loadBatch( instanceID root );
+        LazyInstanceBatch loadBatch( const std::vector<instanceID> & roots );
+
         //list all instances that one instance depends on (recursive)
         instanceSet * instanceDependencies( instanceID id );
         bool isLoaded( instanceID id ) {
@@ -183,11 +242,8 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
                     std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - multiple instances (" << cv->size() << ") with one instanceID (" << id << ") not supported yet." << std::endl;
                     return 0;
                 }
-                positionAndSection ps = cv->at( 0 );
-                //extract p, s, call
-                long int off = ps & 0xFFFFFFFFFFFFULL;
-                sectionID sid = ps >> 48;
-                return _dataSections[sid]->getType( off );
+                instancePosition pos = cv->at( 0 );
+                return _dataSections[pos.section]->getType( pos.begin );
             }
             std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - instanceID " << id << " not found." << std::endl;
             return 0;
@@ -218,4 +274,3 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 };
 
 #endif //LAZYINSTMGR_H
-

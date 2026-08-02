@@ -115,7 +115,7 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
         }
     }
     c = _file.peek();
-    if( !strchr( delimiters, c ) ) {
+    if( !strchr( delimiters, c ) && !isspace( static_cast<unsigned char>( c ) ) ) {
         std::cerr << SC_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
@@ -125,13 +125,15 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 /// search forward in the file for the end of the instance. Start position should
 /// be the opening parenthesis; otherwise, it is likely to fail.
 ///NOTE *must* check return value!
-std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
+std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs, std::vector<std::string> * componentTypes ) {
     int c;
     int parenDepth = 0;
+    bool expectComplexType = false;
     while( c = _file.get(), _file.good() ) {
         switch( c ) {
             case '(':
                 parenDepth++;
+                if( componentTypes && parenDepth == 1 ) expectComplexType = true;
                 break;
             case '/':
                 if( _file.peek() == '*' ) {
@@ -162,7 +164,8 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 }
                 break;
             case ')':
-                if( --parenDepth == 0 ) {
+                if( --parenDepth == 1 && componentTypes ) expectComplexType = true;
+                if( parenDepth == 0 ) {
                     skipWS();
                     if( _file.get() == ';' ) {
                         return _file.tellg();
@@ -170,7 +173,23 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                         _file.seekg( _file.tellg() - std::streampos(1) );
                     }
                 }
+                break;
             default:
+                if( componentTypes && parenDepth == 1 && expectComplexType &&
+                        ( isupper( c ) || c == '!' ) ) {
+                    std::string type( 1, static_cast<char>( c ) );
+                    while( _file.good() ) {
+                        int next = _file.get();
+                        if( next == '-' || next == '_' || isupper( next ) || isdigit( next ) ) {
+                            type.push_back( static_cast<char>( next ) );
+                        } else {
+                            _file.putback( static_cast<char>( next ) );
+                            break;
+                        }
+                    }
+                    componentTypes->push_back( type );
+                    expectComplexType = false;
+                }
                 break;
         }
     }
@@ -261,10 +280,11 @@ instanceID sectionReader::readInstanceNumber() {
 /** load an instance and return a pointer to it.
  * side effect: recursively loads any instances the specified instance depends upon
  */
-SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
+SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, lazyFileOffset begin, instanceID instance,
         const std::string & typeName, const std::string & schName, bool header ) {
     int c;
     const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
+    std::string normalizedSchema;
     std::string comment;
     Severity sev = SEVERITY_NULL;
     SDAI_Application_instance * inst = 0;
@@ -277,7 +297,10 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         if( fs ) {
             StringNode * sn = ( StringNode * ) fs->schema_identifiers_()->GetHead();
             if( sn ) {
-                sName = sn->value.c_str();
+                normalizedSchema = sn->value.c_str();
+                size_t qualifier = normalizedSchema.find_first_of( " {" );
+                if( qualifier != std::string::npos ) normalizedSchema.erase( qualifier );
+                sName = normalizedSchema.c_str();
                 if( sn->NextNode() ) {
                     std::cerr << "Warning - multiple schema names found. Only searching with first one." << std::endl;
                 }
@@ -287,7 +310,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         }
     }
 
-    _file.seekg( begin );
+    _file.seekg( static_cast<std::streamoff>( begin ) );
     skipWS();
     ReadTokenSeparator( _file, &comment );
     if( !header ) {
@@ -319,7 +342,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             inst->AddP21Comment( comment );
         }
         assert( inst->eDesc );
-        _file.seekg( begin );
+        _file.seekg( static_cast<std::streamoff>( begin ) );
         findNormalString( "(" );
         _file.seekg( _file.tellg() - std::streampos(1) );
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
@@ -360,7 +383,6 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     //TODO still need the schema name
     STEPcomplex * sc = new STEPcomplex( ( const_cast<Registry *>( reg ) ), names, ( int ) fileid /*, schnm*/ );
     delete[] names;
-    //TODO also delete contents of typeNames!
+    for( int i = 0; i < s; i++ ) delete typeNames[i];
     return sc;
 }
-

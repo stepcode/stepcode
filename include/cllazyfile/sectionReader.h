@@ -51,7 +51,7 @@ class SC_LAZYFILE_EXPORT sectionReader {
         const char * getDelimitedKeyword( const char * delimiters );
 
         /** Seek to the end of the current instance */
-        std::streampos seekInstanceEnd( instanceRefs ** refs );
+        std::streampos seekInstanceEnd( instanceRefs ** refs, std::vector<std::string> * componentTypes = 0 );
 
         /// operator>> is very slow?!
         inline void skipWS() {
@@ -63,7 +63,7 @@ class SC_LAZYFILE_EXPORT sectionReader {
         STEPcomplex * CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & sev );
 
     public:
-        SDAI_Application_instance * getRealInstance( const Registry * reg, long int begin, instanceID instance,
+        SDAI_Application_instance * getRealInstance( const Registry * reg, lazyFileOffset begin, instanceID instance,
                 const std::string & typeName = "", const std::string & schName = "", bool header = false );
 
         sectionID ID() const {
@@ -91,11 +91,11 @@ class SC_LAZYFILE_EXPORT sectionReader {
         /** returns the type string for an instance, read straight from the file
          * if this function changes, probably need to change nextInstance() as well
          * don't check errors - they would have been encountered during the initial file scan, and the file is still open so it can't have been modified */
-        const char * getType( long int offset ) {
+        const char * getType( lazyFileOffset offset ) {
             if( offset <= 0 ) {
                 return 0;
             }
-            _file.seekg( offset );
+            _file.seekg( static_cast<std::streamoff>( offset ) );
             readInstanceNumber();
             skipWS();
             return getDelimitedKeyword( ";( /\\" );
@@ -112,4 +112,3 @@ class SC_LAZYFILE_EXPORT sectionReader {
 };
 
 #endif //SECTIONREADER_H
-

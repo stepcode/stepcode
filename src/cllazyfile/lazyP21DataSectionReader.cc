@@ -3,13 +3,60 @@
 #include "cllazyfile/lazyP21DataSectionReader.h"
 #include "cllazyfile/lazyInstMgr.h"
 
+void lazyP21DataSectionReader::findSectionStart() {
+    std::streampos keywordEnd = findNormalString( "DATA" );
+    if( keywordEnd == std::streampos( -1 ) ) {
+        _sectionStart = -1;
+        return;
+    }
+    _file.seekg( keywordEnd );
+    skipWS();
+    int depth = 0;
+    int current = _file.get();
+    if( current == ';' ) {
+        _sectionStart = _file.tellg();
+        return;
+    }
+    if( current != '(' ) {
+        _sectionStart = -1;
+        return;
+    }
+    depth = 1;
+    while( depth && _file.good() ) {
+        current = _file.get();
+        if( current == '\'' ) {
+            _file.seekg( _file.tellg() - std::streampos( 1 ) );
+            GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+        } else if( current == '/' && _file.peek() == '*' ) {
+            findNormalString( "*/" );
+        } else if( current == '(' ) {
+            ++depth;
+        } else if( current == ')' ) {
+            --depth;
+        }
+    }
+    skipWS();
+    if( depth == 0 && _file.get() == ';' ) {
+        _sectionStart = _file.tellg();
+    } else {
+        _sectionStart = -1;
+    }
+}
+
 lazyP21DataSectionReader::lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file,
         std::streampos start, sectionID sid ):
     lazyDataSectionReader( parent, file, start, sid ) {
     findSectionStart();
+    if( _sectionStart == std::streampos( -1 ) ) {
+        _error = true;
+        return;
+    }
     namedLazyInstance nl;
     while( nl = nextInstance(), ( ( nl.loc.begin > 0 ) && ( nl.name != 0 ) ) ) {
         parent->getInstMgr()->addLazyInstance( nl );
+        parent->getInstMgr()->observeScan( parent->ID(),
+            static_cast<lazyFileOffset>( static_cast<std::streamoff>( _file.tellg() ) ), parent->fileSize() );
+        if( parent->getInstMgr()->cancelled() ) return;
     }
 
     if(  sectionReader::_error->severity() <= SEVERITY_WARNING ) {
@@ -49,26 +96,33 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     namedLazyInstance i;
 
     i.refs = 0;
+    i.componentTypes = 0;
     i.loc.section = 0;
-    i.loc.begin = _file.tellg();
+    std::streampos start = _file.tellg();
+    i.loc.begin = start == std::streampos( -1 ) ? 0 :
+        static_cast<lazyFileOffset>( static_cast<std::streamoff>( start ) );
     i.loc.instance = readInstanceNumber();
     if( ( _file.good() ) && ( i.loc.instance > 0 ) ) {
         skipWS();
         i.loc.section = _sectionID;
         i.name = getDelimitedKeyword( ";( /\\" );
         if( _file.good() ) {
-            end = seekInstanceEnd( & i.refs );
+            if( i.name[0] == '\0' ) i.componentTypes = new std::vector<std::string>;
+            end = seekInstanceEnd( & i.refs, i.componentTypes );
         }
     }
     if( ( i.loc.instance == 0 ) || ( !_file.good() ) || ( end == ( std::streampos ) - 1 ) ) {
         //invalid instance, so clear everything
         _file.seekg( i.loc.begin );
-        i.loc.begin = -1;
+        i.loc.begin = 0;
         if( i.refs ) {
             delete i.refs;
+        }
+        if( i.componentTypes ) {
+            delete i.componentTypes;
+            i.componentTypes = 0;
         }
         i.name = 0;
     }
     return i;
 }
-

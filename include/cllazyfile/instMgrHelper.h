@@ -58,4 +58,3 @@ class SC_LAZYFILE_EXPORT instMgrAdapter: public InstMgrBase {
 
 
 #endif //INSTMGRHELPER_H
-
