@@ -48,6 +48,15 @@ const AttrDescriptor * attributeFromSlot( const SchemaModuleSlot & record ) {
     }
 }
 
+void prepareLateBoundLayouts(
+    const std::vector<const EntityDescriptor *> & entities ) {
+    for( size_t i = 0; i < entities.size(); ++i ) {
+        if( entities[i] && !entities[i]->NewSTEPentity ) {
+            entities[i]->PrepareLateBoundLayout();
+        }
+    }
+}
+
 }
 
 SchemaModule::SchemaModule() : _schema( 0 ) {
@@ -65,6 +74,7 @@ void SchemaModule::Initialize(
     _entities.assign( entities, entities + entityCount );
     _types.assign( types, types + typeCount );
     _attributes.assign( attributes, attributes + attributeCount );
+    prepareLateBoundLayouts( _entities );
 }
 
 void SchemaModule::InitializeFromSlots(
@@ -73,19 +83,23 @@ void SchemaModule::InitializeFromSlots(
     const SchemaModuleSlot * types, size_t typeCount,
     const SchemaModuleSlot * attributes, size_t attributeCount ) {
     _schema = &schema;
+    _entities.clear();
     _entities.reserve( entityCount );
     for( size_t i = 0; i < entityCount; ++i ) {
         _entities.push_back(
             *static_cast<EntityDescriptor * const *>( entities[i].slot ) );
     }
+    _types.clear();
     _types.reserve( typeCount );
     for( size_t i = 0; i < typeCount; ++i ) {
         _types.push_back( typeFromSlot( types[i] ) );
     }
+    _attributes.clear();
     _attributes.reserve( attributeCount );
     for( size_t i = 0; i < attributeCount; ++i ) {
         _attributes.push_back( attributeFromSlot( attributes[i] ) );
     }
+    prepareLateBoundLayouts( _entities );
 }
 
 bool SchemaModule::IsInitialized() const {

@@ -52,3 +52,31 @@ files.
 The real AP242 exchange-file check created and validated 10,609 instances
 with zero errors and zero warnings.  Its 949,685-byte rewritten Part 21 file
 matched the baseline apart from the expected `FILE_NAME` timestamp.
+
+## Recommendation 5
+
+This stage resolves each late-bound entity's flattened attribute layout once
+after schema initialization.  Instance construction then follows descriptor
+and index records directly instead of recursively walking supertypes and
+repeating attribute-name searches.  The cache is external to
+`EntityDescriptor`, so its object layout and the API v1 ABI are unchanged.
+
+The construction benchmark uses the 1,531 `DIRECTION` instances in the real
+exchange file and repeats that population 1,000 times.  This isolates the
+work changed by this stage while retaining a type and frequency from the
+AP242 workload.  Results are the median of three runs.
+
+| Measurement | Recommendations 1--4 | Recommendation 5 | Change |
+|---|---:|---:|---:|
+| 1,531,000 entity constructions | 0.84 s | 0.63 s | -25.0% |
+| Construction user time | 0.82 s | 0.61 s | -25.6% |
+| Construction peak RSS | 68,956 KiB | 69,600 KiB | +0.9% |
+| 20 full read/write runs | 4.90 s | 4.91 s | no measurable change |
+| Full read/write peak RSS | 85,164 KiB | 85,732 KiB | +0.7% |
+| `libstepcore` size | 640,936 B | 651,312 B | +1.6% |
+
+The complete exchange-file check still created and validated 10,609
+instances with zero errors and zero warnings.  Its rewritten file remained
+949,685 bytes and differed from the previous stage only in the expected
+`FILE_NAME` timestamp.  Generated schema file counts, source size, and the
+schema shared library are unchanged because this is a shared-runtime change.

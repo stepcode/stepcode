@@ -13,6 +13,7 @@ EntityDescriptor * leafEntity = 0;
 AttrDescriptor * labelAttribute = 0;
 AttrDescriptor * lengthAttribute = 0;
 Derived_attribute * derivedLabel = 0;
+AttrDescriptor * redefinedLabel = 0;
 
 void initializeLateSchema( Registry & registry ) {
     const SchemaInitRecord schemas[] = {
@@ -108,6 +109,21 @@ int main() {
 
     delete copy;
     delete instance;
+
+    redefinedLabel = new AttrDescriptor(
+        "label", t_sdaiSTRING, LFalse, LFalse, AttrType_Redefining,
+        *leafEntity );
+    leafEntity->AddExplicitAttr( redefinedLabel );
+    SDAI_Application_instance * narrowed = registry.ObjCreate( "leaf" );
+    CHECK( narrowed && narrowed->AttributeCount() == 3 );
+    narrowed->ResetAttributes();
+    label = narrowed->NextAttribute();
+    narrowed->NextAttribute();
+    STEPattribute * narrowedLabel = narrowed->NextAttribute();
+    CHECK( label && narrowedLabel );
+    CHECK( label->IsDerived() );
+    CHECK( label->RedefiningAttr() == narrowedLabel );
+    delete narrowed;
 #undef CHECK
     return 0;
 }
