@@ -67,6 +67,9 @@ typedef  struct file_holder  {
                                 *    Nec. if ent1 of schemaA has attribute ent2 from schemaB.
                                 */
     FILE * names;               /**< MAP Nov 2011 - header with namespace for entity and attr descriptors */
+    FILE * schema_records;      /**< API v2 compact SchemaInitRecord rows */
+    FILE * entity_records;      /**< API v2 compact EntityDescriptorInitRecord rows */
+    FILE * type_records;        /**< API v2 compact TypeDescriptorInitRecord rows */
     struct {
         struct {
             FILE * impl;
@@ -128,6 +131,7 @@ extern "C" {
 extern unsigned long exp2cxx_entity_chunk_size;
 extern unsigned long exp2cxx_type_chunk_size;
 extern int exp2cxx_api_version;
+extern int exp2cxx_late_bound;
 void UNITYentityInclude( FILES * files, const char * implementation );
 void UNITYtypeInclude( FILES * files, const char * implementation );
 #ifdef __cplusplus

@@ -25,6 +25,7 @@ add_stepcore_test("operators_STEPattribute" "stepcore;steputils;stepeditor;stepd
 add_stepcore_test("operators_SDAI_Select" "stepcore;steputils;stepeditor;stepdai")
 add_stepcore_test("descriptor_SDAI_Select" "stepcore;steputils;stepeditor;stepdai")
 add_stepcore_test("null_attr" "stepcore;steputils;stepeditor;stepdai")
+add_stepcore_test("late_bound_entity" "stepcore;steputils;stepeditor;stepdai")
 
 # Local Variables:
 # tab-width: 8

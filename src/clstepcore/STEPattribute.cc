@@ -689,6 +689,10 @@ void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
 
 
 void STEPattribute::ShallowCopy( const STEPattribute * sa ) {
+    if( sa == this ) {
+        return;
+    }
+    DeleteOwnedPtr();
     _mustDeletePtr = false;
     aDesc = sa->aDesc;
     refCount = 0;
@@ -1367,6 +1371,71 @@ _redefAttr( a._redefAttr ), aDesc( a.aDesc ), refCount( a.refCount ) {
 */
 }
 
+STEPattribute::STEPattribute( const class AttrDescriptor & d ) : _derive( false ),
+_mustDeletePtr( true ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 ) {
+    memset( &ptr, 0, sizeof( ptr ) );
+
+    switch( d.NonRefType() ) {
+        case INTEGER_TYPE:
+            ptr.i = new SDAI_Integer;
+            break;
+        case REAL_TYPE:
+        case NUMBER_TYPE:
+            ptr.r = new SDAI_Real;
+            break;
+        case STRING_TYPE:
+            ptr.S = new SDAI_String;
+            break;
+        case BINARY_TYPE:
+            ptr.b = new SDAI_Binary;
+            break;
+        case ENTITY_TYPE:
+            ptr.c = new SDAI_Application_instance *;
+            *ptr.c = 0;
+            break;
+        case BOOLEAN_TYPE:
+            ptr.e = new SDAI_BOOLEAN;
+            break;
+        case LOGICAL_TYPE:
+            ptr.e = new SDAI_LOGICAL;
+            break;
+        case ENUM_TYPE: {
+            const EnumTypeDescriptor * etd =
+                dynamic_cast<const EnumTypeDescriptor *>( d.NonRefTypeDescriptor() );
+            ptr.e = etd ? etd->CreateEnum() : 0;
+            break;
+        }
+        case SELECT_TYPE: {
+            const SelectTypeDescriptor * std =
+                dynamic_cast<const SelectTypeDescriptor *>( d.NonRefTypeDescriptor() );
+            ptr.sh = std ? std->CreateSelect() : 0;
+            if( !ptr.sh && std ) {
+                ptr.sh = new SDAI_Select( std );
+            }
+            break;
+        }
+        case AGGREGATE_TYPE:
+        case ARRAY_TYPE:
+        case BAG_TYPE:
+        case SET_TYPE:
+        case LIST_TYPE: {
+            const AggrTypeDescriptor * atd =
+                dynamic_cast<const AggrTypeDescriptor *>( d.NonRefTypeDescriptor() );
+            ptr.a = atd ? atd->CreateAggregate() : 0;
+            if( !ptr.a ) {
+                ptr.a = new GenericAggregate;
+            }
+            break;
+        }
+        case UNKNOWN_TYPE:
+        case GENERIC_TYPE:
+        case REFERENCE_TYPE:
+        default:
+            ptr.u = new SCLundefined;
+            break;
+    }
+}
+
 ///  INTEGER
 STEPattribute::STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p ): _derive( false ),
 _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
@@ -1430,8 +1499,7 @@ _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
     assert( &d ); //ensure that the AttrDescriptor is not a null pointer
 }
 
-/// the destructor conditionally deletes the object in ptr
-STEPattribute::~STEPattribute() {
+void STEPattribute::DeleteOwnedPtr() {
     if( _mustDeletePtr ) {
         switch( NonRefType() ) {
             case AGGREGATE_TYPE:
@@ -1456,10 +1524,51 @@ STEPattribute::~STEPattribute() {
                     ptr.e = 0;
                 }
                 break;
+            case ENUM_TYPE:
+                delete ptr.e;
+                ptr.e = 0;
+                break;
+            case SELECT_TYPE:
+                delete ptr.sh;
+                ptr.sh = 0;
+                break;
+            case STRING_TYPE:
+                delete ptr.S;
+                ptr.S = 0;
+                break;
+            case BINARY_TYPE:
+                delete ptr.b;
+                ptr.b = 0;
+                break;
+            case INTEGER_TYPE:
+                delete ptr.i;
+                ptr.i = 0;
+                break;
+            case REAL_TYPE:
+            case NUMBER_TYPE:
+                delete ptr.r;
+                ptr.r = 0;
+                break;
+            case ENTITY_TYPE:
+                delete ptr.c;
+                ptr.c = 0;
+                break;
+            case UNKNOWN_TYPE:
+            case GENERIC_TYPE:
+            case REFERENCE_TYPE:
+                delete ptr.u;
+                ptr.u = 0;
+                break;
             default:
                 break;
         }
+        _mustDeletePtr = false;
     }
+}
+
+/// the destructor conditionally deletes the object in ptr
+STEPattribute::~STEPattribute() {
+    DeleteOwnedPtr();
 }
 
 /// name is the same even if redefined

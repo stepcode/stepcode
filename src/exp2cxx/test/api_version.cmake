@@ -3,8 +3,9 @@ cmake_minimum_required(VERSION 3.12)
 set(v1_default "${CMAKE_CURRENT_BINARY_DIR}/api_v1_default")
 set(v1_explicit "${CMAKE_CURRENT_BINARY_DIR}/api_v1_explicit")
 set(v2 "${CMAKE_CURRENT_BINARY_DIR}/api_v2")
-file(REMOVE_RECURSE "${v1_default}" "${v1_explicit}" "${v2}")
-file(MAKE_DIRECTORY "${v1_default}" "${v1_explicit}" "${v2}")
+set(late "${CMAKE_CURRENT_BINARY_DIR}/api_v2_late")
+file(REMOVE_RECURSE "${v1_default}" "${v1_explicit}" "${v2}" "${late}")
+file(MAKE_DIRECTORY "${v1_default}" "${v1_explicit}" "${v2}" "${late}")
 
 execute_process(COMMAND "${EXE}" "${INFILE}"
   WORKING_DIRECTORY "${v1_default}" RESULT_VARIABLE result)
@@ -54,6 +55,7 @@ file(READ "${v2}/SdaiTEST_SELECT_DATA_TYPE.h" v2_schema_header)
 file(READ "${v2}/entity/SdaiGlue.h" v2_entity_header)
 file(READ "${v2}/entity/SdaiGlue.cc" v2_entity_source)
 file(READ "${v2}/SdaiTEST_SELECT_DATA_TYPE_unity_entities_0001.cc" v2_entity_chunk)
+file(READ "${v2}/SdaiAll.cc" v2_all)
 if(v2_schema_header MATCHES "#include \"entity/")
   message(FATAL_ERROR "API v2 schema header still includes every entity definition")
 endif()
@@ -68,6 +70,15 @@ if(NOT v2_entity_source MATCHES "SdaiGlue \\* create_SdaiGlue\\(\\)")
 endif()
 if(v2_entity_chunk MATCHES "#include \"SdaiTEST_SELECT_DATA_TYPE_unity_entities.h\"")
   message(FATAL_ERROR "API v2 unity chunk still loads the all-entity header")
+endif()
+if(NOT v2_all MATCHES "InitializeSchemas" OR
+   NOT v2_all MATCHES "InitializeEntityDescriptors" OR
+   NOT v2_all MATCHES "InitializeTypeDescriptors")
+  message(FATAL_ERROR "API v2 schema, entity, and type descriptors are not table-driven")
+endif()
+if(NOT v2_entity_source MATCHES "AttributeInitRecord" OR
+   NOT v2_entity_source MATCHES "InitializeEntityMetadata")
+  message(FATAL_ERROR "API v2 entity metadata is not table-driven")
 endif()
 
 file(GLOB v1_types "${v1_default}/type/*")
@@ -85,6 +96,42 @@ endforeach()
 math(EXPR doubled_v2_size "${v2_size} * 2")
 if(NOT doubled_v2_size LESS v1_size)
   message(FATAL_ERROR "API v2 SELECT output was not reduced by at least 50%")
+endif()
+
+execute_process(COMMAND "${EXE}" --late-bound "${INFILE}"
+  WORKING_DIRECTORY "${late}" RESULT_VARIABLE result)
+if(NOT result EQUAL 0)
+  message(FATAL_ERROR "late-bound API v2 generation failed")
+endif()
+
+file(READ "${late}/Sdaiclasses.h" late_classes)
+file(READ "${late}/entity/SdaiGlue.h" late_entity_header)
+file(READ "${late}/entity/SdaiGlue.cc" late_entity_source)
+file(READ "${late}/SdaiAll.cc" late_all)
+if(NOT late_classes MATCHES "typedef SDAI_Application_instance SdaiGlue")
+  message(FATAL_ERROR "late-bound entity aliases do not use the generic runtime class")
+endif()
+if(late_entity_header MATCHES "class SdaiGlue")
+  message(FATAL_ERROR "late-bound output still declares an early-bound entity class")
+endif()
+if(late_entity_source MATCHES "SdaiGlue::")
+  message(FATAL_ERROR "late-bound output still defines early-bound entity methods")
+endif()
+if(NOT late_entity_source MATCHES "AttributeInitRecord")
+  message(FATAL_ERROR "late-bound entity metadata is not table-driven")
+endif()
+if(NOT late_all MATCHES "InitializeSchemas" OR
+   NOT late_all MATCHES "InitializeEntityDescriptors" OR
+   NOT late_all MATCHES "InitializeTypeDescriptors" OR
+   NOT late_all MATCHES "e_glue, \"Glue\".*LFalse, LFalse, 0")
+  message(FATAL_ERROR "late-bound descriptor records are missing or have an early-bound creator")
+endif()
+
+execute_process(COMMAND "${EXE}" --late-bound --api-version 1 "${INFILE}"
+  WORKING_DIRECTORY "${late}" RESULT_VARIABLE result
+  OUTPUT_QUIET ERROR_QUIET)
+if(result EQUAL 0)
+  message(FATAL_ERROR "late-bound output accepted incompatible API version 1")
 endif()
 
 execute_process(COMMAND "${EXE}" --api-version=3 "${INFILE}"

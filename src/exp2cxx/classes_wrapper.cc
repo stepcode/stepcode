@@ -35,6 +35,16 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 void use_ref( Schema, Express, FILES * );
 
+static void copyGeneratedBody( FILE * source, FILE * destination ) {
+    char buffer[16384];
+    size_t count;
+    fflush( source );
+    rewind( source );
+    while( ( count = fread( buffer, 1, sizeof( buffer ), source ) ) != 0 ) {
+        fwrite( buffer, 1, count, destination );
+    }
+}
+
 void create_builtin_type_decl( FILES * files, char * name ) {
     fprintf( files->incall, "extern SC_%s_EXPORT TypeDescriptor *%s%s_TYPE;\n",
              "SCHEMA", TD_PREFIX, name );
@@ -84,6 +94,9 @@ void print_file_header( FILES * files ) {
     fprintf( files->incall, "\n#include \"clstepcore/STEPundefined.h\"\n" );
     fprintf( files->incall, "\n#include \"clstepcore/ExpDict.h\"\n" );
     fprintf( files->incall, "\n#include \"clstepcore/STEPattribute.h\"\n" );
+    if( exp2cxx_api_version == 2 ) {
+        fprintf( files->incall, "\n#include \"clstepcore/schemaInit.h\"\n" );
+    }
 
     fprintf( files->incall, "\n#include <Sdaiclasses.h>\n" );
 
@@ -103,10 +116,24 @@ void print_file_header( FILES * files ) {
     // This file will contain instantiation statements for all the schemas and
     // entities in the express file.  (They must all be in separate function
     // called first by SchemaInit() so that all entities will exist
-    files -> create = FILEcreate( "SdaiAll.cc" );
-    fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
-    fprintf( files->create, "#include \"schema.h\"\n" );
-    fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+    if( exp2cxx_api_version == 2 ) {
+        /* API v2 collects compact records while the schemas are traversed.
+         * The final SdaiAll.cc is assembled after every record is known. */
+        files->create = tmpfile();
+        files->schema_records = tmpfile();
+        files->entity_records = tmpfile();
+        files->type_records = tmpfile();
+        assert( files->create && files->schema_records && files->entity_records &&
+                files->type_records );
+    } else {
+        files -> create = FILEcreate( "SdaiAll.cc" );
+        fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
+        fprintf( files->create, "#include \"schema.h\"\n" );
+        fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+        files->schema_records = 0;
+        files->entity_records = 0;
+        files->type_records = 0;
+    }
 
     // This file declares all entity classes as incomplete types.  This will
     // allow all the .h files to reference all .h's.  We can then have e.g.,
@@ -127,8 +154,35 @@ void print_file_header( FILES * files ) {
 void print_file_trailer( FILES * files ) {
     FILEclose( files->incall );
     FILEclose( files->initall );
-    fprintf( files->create, "}\n\n" );
-    FILEclose( files->create );
+    if( exp2cxx_api_version == 2 ) {
+        FILE * body = files->create;
+        FILE * output = FILEcreate( "SdaiAll.cc" );
+        fprintf( output, "\n// compact, table-driven API v2 schema initialization\n" );
+        fprintf( output, "#include \"schema.h\"\n" );
+        fprintf( output, "#include \"clstepcore/schemaInit.h\"\n\n" );
+        fprintf( output, "namespace {\n" );
+        fprintf( output, "const SchemaInitRecord schemaRecords[] = {\n    { 0, 0, 0 },\n" );
+        copyGeneratedBody( files->schema_records, output );
+        fprintf( output, "};\n\nconst EntityDescriptorInitRecord entityRecords[] = {\n    { 0, 0, 0, LFalse, LFalse, 0 },\n" );
+        copyGeneratedBody( files->entity_records, output );
+        fprintf( output, "};\n\nconst TypeDescriptorInitRecord typeRecords[] = {\n" );
+        fprintf( output, "    TypeDescriptorInitRecord( (TypeDescriptor **)0, 0, UNKNOWN_TYPE, (Schema **)0, 0 ),\n" );
+        copyGeneratedBody( files->type_records, output );
+        fprintf( output, "};\n}\n\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+        fprintf( output, "    InitializeSchemas( reg, schemaRecords + 1, sizeof(schemaRecords) / sizeof(schemaRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeEntityDescriptors( entityRecords + 1, sizeof(entityRecords) / sizeof(entityRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeTypeDescriptors( typeRecords + 1, sizeof(typeRecords) / sizeof(typeRecords[0]) - 1 );\n" );
+        copyGeneratedBody( body, output );
+        fprintf( output, "}\n\n" );
+        fclose( body );
+        fclose( files->schema_records );
+        fclose( files->entity_records );
+        fclose( files->type_records );
+        FILEclose( output );
+    } else {
+        fprintf( files->create, "}\n\n" );
+        FILEclose( files->create );
+    }
     fprintf( files->classes, "\n" );
     FILEclose( files->classes );
     fprintf( files->names, "\n}\n" );
@@ -189,6 +243,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
             TYPEprint_typedefs( t, files->classes );
             //print in namespace. Some logic copied from TypeDescriptorName()
             fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
+            if( exp2cxx_api_version == 2 ) {
+                TYPEprint_descriptor_record( t, files->type_records, schema );
+            }
         } SCOPEod
 
         fprintf( files->classes, "\n// Entity class typedefs:" );
@@ -285,6 +342,23 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 
         // Do the model stuff:
         fprintf( files->inc, "\n//        ***** generate Model related pieces\n" );
+        if( exp2cxx_late_bound ) {
+            fprintf( files->inc, "\ntypedef SDAI_Model_contents SdaiModel_contents_%s;\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( files->inc, "typedef SdaiModel_contents_%s * SdaiModel_contents_%s_ptr;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( files->inc, "typedef const SdaiModel_contents_%s * SdaiModel_contents_%s_ptr_c;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( files->inc, "typedef SdaiModel_contents_%s_ptr SdaiModel_contents_%s_var;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( files->inc, "SDAI_Model_contents_ptr create_SdaiModel_contents_%s();\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( files->lib, "\nSDAI_Model_contents_ptr create_SdaiModel_contents_%s() {\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( files->lib, "    return new SDAI_Model_contents;\n}\n" );
+            LISTfree( list );
+            return;
+        }
         fprintf( files->inc, "\nclass SdaiModel_contents_%s : public SDAI_Model_contents {\n", SCHEMAget_name( schema ) );
         fprintf( files -> inc, "\n  public:\n" );
         fprintf( files -> inc, "    SdaiModel_contents_%s();\n", SCHEMAget_name( schema ) );
@@ -563,14 +637,21 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
-        fprintf( createall, "    %s::schema = new Schema(\"%s\");\n", SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
+        if( exp2cxx_api_version == 2 ) {
+            fprintf( files->schema_records,
+                     "    { &%s::schema, \"%s\", (ModelContentsCreator) create_SdaiModel_contents_%s },\n",
+                     SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ),
+                     SCHEMAget_name( schema ) );
+        } else {
+            fprintf( createall, "    %s::schema = new Schema(\"%s\");\n", SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
 
-        /* Add the SdaiModel_contents_<schema_name> class constructor to the
-           schema descriptor create function for it */
-        fprintf( createall, "    %s::schema->AssignModelContentsCreator( (ModelContentsCreator) create_SdaiModel_contents_%s);\n",
-                 SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            /* Add the SdaiModel_contents_<schema_name> class constructor to the
+               schema descriptor create function for it */
+            fprintf( createall, "    %s::schema->AssignModelContentsCreator( (ModelContentsCreator) create_SdaiModel_contents_%s);\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
 
-        fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
+            fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
+        }
         /**************/
         /* add global RULEs to Schema dictionary entry */
         DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );

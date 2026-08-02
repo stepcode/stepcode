@@ -8,7 +8,11 @@ if(ONESHOT AND EXISTS "${SDIR}/schema.cc")
   message("WARNING: SC_GENERATE_CXX_ONESHOT is enabled. If generated code has been modified, it will NOT be rewritten!")
   message("This is ONLY for debugging STEPcode internals!")
 else()
-  execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} -V ${API_VERSION} ${EXP}
+  set(_exp2cxx_mode_args)
+  if(LATE_BOUND)
+    list(APPEND _exp2cxx_mode_args --late-bound)
+  endif()
+  execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} -V ${API_VERSION} ${_exp2cxx_mode_args} ${EXP}
     WORKING_DIRECTORY ${SDIR}
     RESULT_VARIABLE _res
     OUTPUT_FILE exp2cxx_stdout.txt

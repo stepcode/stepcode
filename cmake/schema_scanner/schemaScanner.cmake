@@ -31,6 +31,11 @@ if(NOT SC_EXP2CXX_API_VERSION MATCHES "^[12]$")
   message(FATAL_ERROR "SC_EXP2CXX_API_VERSION must be 1 or 2")
 endif()
 
+option(SC_EXP2CXX_LATE_BOUND "Generate descriptor-backed entities without early-bound C++ entity classes" OFF)
+if(SC_EXP2CXX_LATE_BOUND AND NOT SC_EXP2CXX_API_VERSION STREQUAL "2")
+  message(FATAL_ERROR "SC_EXP2CXX_LATE_BOUND requires SC_EXP2CXX_API_VERSION=2")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir

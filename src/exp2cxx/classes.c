@@ -38,6 +38,7 @@ int old_accessors = 0;
 unsigned long exp2cxx_entity_chunk_size = 64;
 unsigned long exp2cxx_type_chunk_size = 8;
 int exp2cxx_api_version = 1;
+int exp2cxx_late_bound = 0;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -250,7 +251,15 @@ int Handle_FedPlus_Args( int i, char * arg ) {
             fprintf( stderr, "exp2cxx: API version must be 1 or 2\n" );
             return 1;
         }
+        if( exp2cxx_late_bound && requested != 2 ) {
+            fprintf( stderr, "exp2cxx: late-bound output requires API version 2\n" );
+            return 1;
+        }
         exp2cxx_api_version = ( int )requested;
+    }
+    if( ( char )i == 'T' ) {
+        exp2cxx_late_bound = 1;
+        exp2cxx_api_version = 2;
     }
     return 0;
 }

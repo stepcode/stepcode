@@ -57,6 +57,13 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 
         virtual ~EntityDescriptor();
 
+        /** Create an instance of this entity.
+         *
+         * Uses the generated early-bound creator when one is installed and
+         * otherwise constructs a descriptor-backed late-bound instance.
+         */
+        SDAI_Application_instance * CreateEntity() const;
+
         void InitIAttrs( Registry & reg, const char * schNm );
 
         const char * GenerateExpress( std::string & buf ) const;

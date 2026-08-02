@@ -63,10 +63,16 @@ translation unit.  A single value applies to both entity and type chunks.
 .TP
 .B -V 1|2, --api-version 1|2
 Selects the generated C++ API.  Version 1 is the source-compatible default.
-Version 2 emits compact SELECT classes backed by shared descriptor-driven
-runtime code and dependency-bounded entity headers.  Version 2 clients include
-the individual entity headers they use; schema.h does not include every entity
-class definition.
+Version 2 emits compact SELECT classes, table-driven schema initialization, and
+dependency-bounded entity headers backed by shared runtime code.  Version 2
+clients include the individual entity headers they use; schema.h does not
+include every entity class definition.
+.TP
+.B -T, --late-bound
+Selects API version 2 and omits generated early-bound C++ entity classes.
+Entity instances are constructed at runtime from schema descriptors.  This mode
+is intended for conversion and inspection applications which do not require the
+conventional generated entity API.
 .TP
 .B -v
 Produces a version description.

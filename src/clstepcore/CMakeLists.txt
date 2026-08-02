@@ -34,6 +34,7 @@ set(CORE_SRCS
   read_func.cc
   Registry.cc
   schRename.cc
+  schemaInit.cc
   sdai.cc
   sdaiApplication_instance.cc
   sdaiSelect.cc
@@ -89,4 +90,3 @@ endif(SC_ENABLE_TESTING)
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

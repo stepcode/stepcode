@@ -1,3 +1,5 @@
+#include <cstring>
+#include <set>
 #include <string>
 
 #include "clstepcore/entityDescriptor.h"
@@ -5,6 +7,62 @@
 #include "clstepcore/attrDescriptor.h"
 #include "clstepcore/inverseAttribute.h"
 #include "clstepcore/SubSuperIterators.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/sdaiApplication_instance.h"
+
+namespace {
+
+class LateBoundEntity : public SDAI_Application_instance {
+    void appendAttributes( const EntityDescriptor * ed,
+                           std::set<const EntityDescriptor *> & visited ) {
+        if( !ed || !visited.insert( ed ).second ) {
+            return;
+        }
+
+        EntityDescItr supers( ed->Supertypes() );
+        const EntityDescriptor * super = 0;
+        while( ( super = supers.NextEntityDesc() ) ) {
+            appendAttributes( super, visited );
+        }
+
+        AttrDescItr attrs( ed->ExplicitAttr() );
+        const AttrDescriptor * ad = 0;
+        while( ( ad = attrs.NextAttrDesc() ) ) {
+            const char * simpleName = strrchr( ad->Name(), '.' );
+            simpleName = simpleName ? simpleName + 1 : ad->Name();
+            if( ad->AttrType() == AttrType_Deriving ) {
+                const char * ownerName = ed->Name();
+                std::string qualifiedOwner;
+                const char * separator = strrchr( ad->Name(), '.' );
+                if( separator ) {
+                    qualifiedOwner.assign( ad->Name(), separator - ad->Name() );
+                    ownerName = qualifiedOwner.c_str();
+                }
+                MakeDerived( simpleName, ownerName );
+                continue;
+            }
+            if( ad->AttrType() == AttrType_Inverse ) {
+                continue;
+            }
+
+            STEPattribute * attr = new STEPattribute( *ad );
+            attr->set_null();
+            attributes.push( attr );
+            if( ad->AttrType() == AttrType_Redefining ) {
+                MakeRedefined( attr, simpleName );
+            }
+        }
+    }
+
+public:
+    explicit LateBoundEntity( const EntityDescriptor * ed ) {
+        std::set<const EntityDescriptor *> visited;
+        eDesc = ed;
+        appendAttributes( ed, visited );
+    }
+};
+
+}
 
 EntityDescriptor::EntityDescriptor( )
     : _abstractEntity( LUnknown ), _extMapping( LUnknown ),
@@ -24,6 +82,13 @@ EntityDescriptor::EntityDescriptor( const char * name, // i.e. char *
 
 EntityDescriptor::~EntityDescriptor() {
     delete _uniqueness_rules;
+}
+
+SDAI_Application_instance * EntityDescriptor::CreateEntity() const {
+    if( NewSTEPentity ) {
+        return NewSTEPentity();
+    }
+    return new LateBoundEntity( this );
 }
 
 // initialize one inverse attr; used in InitIAttrs, below

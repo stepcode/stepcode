@@ -14,6 +14,7 @@ void TYPEprint_descriptions( const Type, FILES *, Schema );
 void TYPEprint_definition( Type, FILES *, Schema );
 void TYPEprint_typedefs( Type, FILE * );
 void TYPEprint_new( const Type type, FILE* create, Schema schema, bool needWR );
+void TYPEprint_descriptor_record( const Type type, FILE * records, Schema schema );
 void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema );
 
 void TYPEenum_inc_print( const Type type, FILE * inc );
