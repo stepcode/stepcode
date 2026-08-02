@@ -80,6 +80,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         std::map<instanceID, size_t> _pinCounts;
         std::set<instanceID> _batchOwnedInstances;
         std::set<instanceID> _permanentlyLoadedInstances;
+        std::set<instanceID> _instancesLoading;
         size_t _batchLoadDepth;
 
         LazyProgressCallback _progressCallback;

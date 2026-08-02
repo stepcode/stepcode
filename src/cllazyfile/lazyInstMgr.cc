@@ -254,6 +254,33 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
         emitDiagnostic( diagnostic );
         return 0;
     }
+    const std::pair<std::set<instanceID>::iterator, bool> loading_result = _instancesLoading.insert( id );
+    if( !loading_result.second ) {
+        LazyDiagnostic diagnostic;
+        diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+        diagnostic.entity = id;
+        const char * type = typeFromFile( id );
+        if( type ) diagnostic.type = type;
+        instanceStreamPos_t::cvector * positions = _instanceStreamPos.find( id );
+        if( positions && !positions->empty() ) {
+            diagnostic.offset = positions->front().begin;
+        }
+        diagnostic.message = "cyclic dependency encountered while materializing instance";
+        emitDiagnostic( diagnostic );
+        return 0;
+    }
+    /* sectionReader materializes referenced instances recursively.  Keep an
+     * explicit in-progress set because an instance is not cacheable until its
+     * STEPread() has completed. */
+    class LoadingGuard {
+      public:
+        LoadingGuard( std::set<instanceID> & loading, instanceID id )
+            : _loading( loading ), _id( id ) {}
+        ~LoadingGuard() { _loading.erase( _id ); }
+      private:
+        std::set<instanceID> & _loading;
+        instanceID _id;
+    } loading_guard( _instancesLoading, id );
     instanceStreamPos_t::cvector * cv;
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         switch( cv->size() ) {
