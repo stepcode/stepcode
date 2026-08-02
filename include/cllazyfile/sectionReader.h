@@ -46,6 +46,12 @@ class SC_LAZYFILE_EXPORT sectionReader {
          */
         std::streampos findNormalString( const std::string & str, bool semicolon = false );
 
+        /** Skip from immediately after a comment's opening slash and star
+         * through its closing star and slash.  Part 21 comments are opaque:
+         * apostrophes and string-control text inside them have no syntax.
+         */
+        bool skipComment();
+
         /** Get a keyword ending with one of delimiters.
          */
         const char * getDelimitedKeyword( const char * delimiters );

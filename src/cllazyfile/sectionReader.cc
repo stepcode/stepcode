@@ -39,6 +39,19 @@ sectionReader::~sectionReader() {
      delete _error;
 }
 
+bool sectionReader::skipComment() {
+    int previous = 0;
+    int current;
+    while( current = _file.get(), _file.good() ) {
+        if( previous == '*' && current == '/' ) {
+            return true;
+        }
+        previous = current;
+    }
+    return false;
+}
+
+
 std::streampos sectionReader::findNormalString( const std::string & str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
@@ -63,8 +76,11 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
             GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
-            //push past comment
-            findNormalString( "*/" );
+            _file.get(); // consume the opening star
+            if( !skipComment() ) {
+                return -1;
+            }
+            continue;
         }
         if( str[i] == c ) {
             i++;
@@ -106,7 +122,10 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
             str.append( 1, c );
         } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str.length() == 0 ) ) {
             //push past comment
-            findNormalString( "*/" );
+            _file.get(); // consume the opening star
+            if( !skipComment() ) {
+                break;
+            }
             skipWS();
             continue;
         } else {
@@ -137,7 +156,10 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs, std::vector
                 break;
             case '/':
                 if( _file.peek() == '*' ) {
-                    findNormalString( "*/" );
+                    _file.get(); // consume the opening star
+                    if( !skipComment() ) {
+                        return -1;
+                    }
                 } else {
                     return -1;
                 }
@@ -215,7 +237,10 @@ instanceID sectionReader::readInstanceNumber() {
     skipWS();
     c = _file.get();
     if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
-        findNormalString( "*/" );
+        _file.get(); // consume the opening star
+        if( !skipComment() ) {
+            return 0;
+        }
     } else {
         _file.seekg( _file.tellg() - std::streampos(1) );
     }
