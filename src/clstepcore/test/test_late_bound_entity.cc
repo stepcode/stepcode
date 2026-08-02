@@ -14,18 +14,33 @@ AttrDescriptor * labelAttribute = 0;
 AttrDescriptor * lengthAttribute = 0;
 Derived_attribute * derivedLabel = 0;
 AttrDescriptor * redefinedLabel = 0;
+TypeDescriptor * labelType = 0;
+TypeDescriptor * distanceType = 0;
 
 void initializeLateSchema( Registry & registry ) {
     const SchemaInitRecord schemas[] = {
         { &testSchema, "Late_Bound_Test", 0 }
     };
     InitializeSchemas( registry, schemas, 1 );
+    InitializeSchemaModuleImages( schemas, 1 );
 
     const EntityDescriptorInitRecord entities[] = {
         { &baseEntity, "Base", &testSchema, LFalse, LFalse, 0 },
         { &leafEntity, "Leaf", &testSchema, LFalse, LFalse, 0 }
     };
     InitializeEntityDescriptors( entities, 2 );
+
+    const TypeDescriptorInitRecord types[] = {
+        TypeDescriptorInitRecord( &labelType, "Label_Type", STRING_TYPE,
+                                  &testSchema, "STRING" ),
+        TypeDescriptorInitRecord( &distanceType, "Distance_Type", REAL_TYPE,
+                                  &testSchema, "REAL" )
+    };
+    InitializeTypeDescriptors( types, 2 );
+    InitializeTypeMetadata( registry, *testSchema, *distanceType, t_sdaiREAL,
+                            0, 0 );
+    InitializeTypeMetadata( registry, *testSchema, *labelType, t_sdaiSTRING,
+                            0, 0 );
 
     const AttributeInitRecord baseAttributes[] = {
         AttributeInitRecord( &labelAttribute, "label", t_sdaiSTRING,
@@ -65,6 +80,22 @@ int main() {
            module.Attribute( 2 ) == derivedLabel );
     CHECK( module.Entity( 2 ) == 0 && module.Type( 2 ) == 0 &&
            module.Attribute( 3 ) == 0 );
+
+    const SchemaModuleImage image = {
+        SchemaModuleImageVersion_1, 2, 2, 3
+    };
+    SchemaModule packedModule;
+    packedModule.InitializeFromImage( *testSchema, image );
+    CHECK( packedModule.EntityCount() == 2 );
+    CHECK( packedModule.Entity( 0 ) == baseEntity );
+    CHECK( packedModule.Entity( 1 ) == leafEntity );
+    CHECK( packedModule.TypeCount() == 2 );
+    CHECK( packedModule.Type( 0 ) == labelType );
+    CHECK( packedModule.Type( 1 ) == distanceType );
+    CHECK( packedModule.AttributeCount() == 3 );
+    CHECK( packedModule.Attribute( 0 ) == labelAttribute );
+    CHECK( packedModule.Attribute( 1 ) == lengthAttribute );
+    CHECK( packedModule.Attribute( 2 ) == derivedLabel );
 
     const size_t noNode = static_cast<size_t>( -1 );
     const ComplexNodeInitRecord complexNodes[] = {

@@ -52,32 +52,6 @@ static void printQuotedInitializer( FILE * destination, char * source ) {
     free( source );
 }
 
-static const char * schemaModuleTypeSlotKind( Type type ) {
-    const char * descriptor = GetTypeDescriptorName( type );
-    if( !strcmp( descriptor, "EnumTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_EnumType";
-    }
-    if( !strcmp( descriptor, "SelectTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_SelectType";
-    }
-    if( !strcmp( descriptor, "AggrTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_AggregateType";
-    }
-    if( !strcmp( descriptor, "ArrayTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_ArrayType";
-    }
-    if( !strcmp( descriptor, "ListTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_ListType";
-    }
-    if( !strcmp( descriptor, "SetTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_SetType";
-    }
-    if( !strcmp( descriptor, "BagTypeDescriptor" ) ) {
-        return "SchemaModuleSlot_BagType";
-    }
-    return "SchemaModuleSlot_Type";
-}
-
 void create_builtin_type_decl( FILES * files, char * name ) {
     fprintf( files->incall, "extern SC_%s_EXPORT TypeDescriptor *%s%s_TYPE;\n",
              "SCHEMA", TD_PREFIX, name );
@@ -204,6 +178,7 @@ void print_file_trailer( FILES * files ) {
         copyGeneratedBody( files->type_records, output );
         fprintf( output, "};\n}\n\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
         fprintf( output, "    InitializeSchemas( reg, schemaRecords + 1, sizeof(schemaRecords) / sizeof(schemaRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeSchemaModuleImages( schemaRecords + 1, sizeof(schemaRecords) / sizeof(schemaRecords[0]) - 1 );\n" );
         fprintf( output, "    InitializeEntityDescriptors( entityRecords + 1, sizeof(entityRecords) / sizeof(entityRecords[0]) - 1 );\n" );
         fprintf( output, "    InitializeTypeDescriptors( typeRecords + 1, sizeof(typeRecords) / sizeof(typeRecords[0]) - 1 );\n" );
         copyGeneratedBody( body, output );
@@ -312,63 +287,29 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 
         fprintf( files -> lib, "\nSchema * %s::schema = 0;\n", SCHEMAget_name( schema ) );
         if( exp2cxx_api_version == 2 ) {
+            int moduleEntityCount = LISTget_length( list );
+            int moduleTypeCount = 0;
+            int moduleAttributeCount = 0;
             fprintf( files->lib, "SchemaModule %s::schemaModule;\n",
                      SCHEMAget_name( schema ) );
+            SCOPEdo_types( scope, moduleType, de ) {
+                (void)moduleType;
+                ++moduleTypeCount;
+            } SCOPEod
+            LISTdo( list, moduleEntity, Entity ) {
+                moduleAttributeCount +=
+                    LISTget_length( ENTITYget_attributes( moduleEntity ) );
+            } LISTod
             fprintf( files->lib,
                      "\nnamespace {\n"
-                     "const SchemaModuleSlot moduleEntitySlots[] = {\n"
-                     "    { 0, SchemaModuleSlot_Entity },\n" );
-            LISTdo( list, moduleEntity, Entity ) {
-                fprintf( files->lib,
-                         "    { &%s::%s%s, SchemaModuleSlot_Entity },\n",
-                         SCHEMAget_name( schema ), ENT_PREFIX,
-                         ENTITYget_name( moduleEntity ) );
-            } LISTod
-            fprintf( files->lib,
-                     "};\n\nconst SchemaModuleSlot moduleTypeSlots[] = {\n"
-                     "    { 0, SchemaModuleSlot_Type },\n" );
-            SCOPEdo_types( scope, moduleType, de ) {
-                fprintf( files->lib, "    { &%s, %s },\n",
-                         TYPEtd_name( moduleType ),
-                         schemaModuleTypeSlotKind( moduleType ) );
-            } SCOPEod
-            fprintf( files->lib,
-                     "};\n\nconst SchemaModuleSlot moduleAttributeSlots[] = {\n"
-                     "    { 0, SchemaModuleSlot_Attribute },\n" );
-            LISTdo( list, moduleEntity, Entity ) {
-                LISTdo_n( ENTITYget_attributes( moduleEntity ), moduleAttr,
-                          Variable, b ) {
-                    char attributeName[BUFSIZ + 1];
-                    const char * suffix;
-                    const char * kind;
-                    generate_attribute_name( moduleAttr, attributeName );
-                    if( VARis_derived( moduleAttr ) ) {
-                        suffix = "D";
-                        kind = "SchemaModuleSlot_DerivedAttribute";
-                    } else if( VARget_inverse( moduleAttr ) ) {
-                        suffix = "I";
-                        kind = "SchemaModuleSlot_InverseAttribute";
-                    } else {
-                        suffix = VARis_type_shifter( moduleAttr ) ? "R" : "";
-                        kind = "SchemaModuleSlot_Attribute";
-                    }
-                    fprintf( files->lib, "    { &%s::%s%d%s%s, %s },\n",
-                             SCHEMAget_name( schema ), ATTR_PREFIX,
-                             moduleAttr->idx, suffix, attributeName, kind );
-                } LISTod
-            } LISTod
-            fprintf( files->lib,
+                     "const SchemaModuleImage moduleImage = {\n"
+                     "    SchemaModuleImageVersion_1, %d, %d, %d\n"
                      "};\n}\n\n"
                      "void InitializeSchemaModule_%s() {\n"
-                     "    %s::schemaModule.InitializeFromSlots( *%s::schema, "
-                     "moduleEntitySlots + 1, sizeof(moduleEntitySlots) / "
-                     "sizeof(moduleEntitySlots[0]) - 1, "
-                     "moduleTypeSlots + 1, sizeof(moduleTypeSlots) / "
-                     "sizeof(moduleTypeSlots[0]) - 1, "
-                     "moduleAttributeSlots + 1, "
-                     "sizeof(moduleAttributeSlots) / "
-                     "sizeof(moduleAttributeSlots[0]) - 1 );\n"
+                     "    %s::schemaModule.InitializeFromImage( "
+                     "*%s::schema, moduleImage );\n"
                      "}\n",
+                     moduleEntityCount, moduleTypeCount, moduleAttributeCount,
                      SCHEMAget_name( schema ), SCHEMAget_name( schema ),
                      SCHEMAget_name( schema ) );
         }

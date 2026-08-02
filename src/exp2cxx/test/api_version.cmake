@@ -109,6 +109,7 @@ endif()
 
 file(READ "${late}/Sdaiclasses.h" late_classes)
 file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE.h" late_schema_header)
+file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE.cc" late_schema_source)
 file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE_unity_entities_0001.cc"
   late_entity_source)
 file(READ "${late}/SdaiAll.cc" late_all)
@@ -131,7 +132,13 @@ if(NOT late_schema_header MATCHES "enum class EntityId" OR
    NOT late_schema_header MATCHES "SchemaModule schemaModule")
   message(FATAL_ERROR "late-bound schema module API is missing")
 endif()
+if(NOT late_schema_source MATCHES "SchemaModuleImage moduleImage" OR
+   NOT late_schema_source MATCHES "InitializeFromImage" OR
+   late_schema_source MATCHES "SchemaModuleSlot")
+  message(FATAL_ERROR "late-bound schema module image is not packed")
+endif()
 if(NOT late_all MATCHES "InitializeSchemas" OR
+   NOT late_all MATCHES "InitializeSchemaModuleImages" OR
    NOT late_all MATCHES "InitializeEntityDescriptors" OR
    NOT late_all MATCHES "InitializeTypeDescriptors" OR
    NOT late_all MATCHES "e_glue, \"Glue\".*LFalse, LFalse, 0")

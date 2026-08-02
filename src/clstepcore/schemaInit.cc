@@ -6,6 +6,7 @@
 #include "clstepcore/globalRule.h"
 #include "clstepcore/inverseAttribute.h"
 #include "clstepcore/selectTypeDescriptor.h"
+#include "clstepcore/schemaModule.h"
 #include "clstepcore/uniquenessRule.h"
 #include "clstepcore/whereRule.h"
 
@@ -99,6 +100,13 @@ void InitializeSchemas( Registry & reg, const SchemaInitRecord * records,
     }
 }
 
+void InitializeSchemaModuleImages( const SchemaInitRecord * records,
+                                   size_t count ) {
+    for( size_t i = 0; i < count; ++i ) {
+        BeginSchemaModuleImage( **records[i].slot );
+    }
+}
+
 void InitializeEntityDescriptors( const EntityDescriptorInitRecord * records,
                                   size_t count ) {
     for( size_t i = 0; i < count; ++i ) {
@@ -108,6 +116,7 @@ void InitializeEntityDescriptors( const EntityDescriptorInitRecord * records,
             record.externalMapping, record.creator );
         *record.slot = entity;
         ( *record.schemaSlot )->AddEntity( entity );
+        RecordSchemaModuleEntity( **record.schemaSlot, entity );
     }
 }
 
@@ -116,57 +125,73 @@ void InitializeTypeDescriptors( const TypeDescriptorInitRecord * records,
     for( size_t i = 0; i < count; ++i ) {
         const TypeDescriptorInitRecord & record = records[i];
         Schema * schema = *record.schemaSlot;
+        TypeDescriptor * type = 0;
         switch( record.kind ) {
-            case TypeDescriptorInit_Enum:
-                *static_cast<EnumTypeDescriptor **>( record.slot ) =
-                    new EnumTypeDescriptor( record.name, record.fundamentalType,
-                                            schema, record.description,
-                                            record.enumCreator );
+            case TypeDescriptorInit_Enum: {
+                EnumTypeDescriptor * descriptor = new EnumTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.enumCreator );
+                *static_cast<EnumTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_Select:
-                *static_cast<SelectTypeDescriptor **>( record.slot ) =
-                    new SelectTypeDescriptor( record.uniqueElements, record.name,
-                                              record.fundamentalType, schema,
-                                              record.description,
-                                              record.selectCreator );
+            }
+            case TypeDescriptorInit_Select: {
+                SelectTypeDescriptor * descriptor = new SelectTypeDescriptor(
+                    record.uniqueElements, record.name, record.fundamentalType,
+                    schema, record.description, record.selectCreator );
+                *static_cast<SelectTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_Aggregate:
-                *static_cast<AggrTypeDescriptor **>( record.slot ) =
-                    new AggrTypeDescriptor( record.name, record.fundamentalType,
-                                            schema, record.description,
-                                            record.aggregateCreator );
+            }
+            case TypeDescriptorInit_Aggregate: {
+                AggrTypeDescriptor * descriptor = new AggrTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.aggregateCreator );
+                *static_cast<AggrTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_Array:
-                *static_cast<ArrayTypeDescriptor **>( record.slot ) =
-                    new ArrayTypeDescriptor( record.name, record.fundamentalType,
-                                             schema, record.description,
-                                             record.aggregateCreator );
+            }
+            case TypeDescriptorInit_Array: {
+                ArrayTypeDescriptor * descriptor = new ArrayTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.aggregateCreator );
+                *static_cast<ArrayTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_List:
-                *static_cast<ListTypeDescriptor **>( record.slot ) =
-                    new ListTypeDescriptor( record.name, record.fundamentalType,
-                                            schema, record.description,
-                                            record.aggregateCreator );
+            }
+            case TypeDescriptorInit_List: {
+                ListTypeDescriptor * descriptor = new ListTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.aggregateCreator );
+                *static_cast<ListTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_Set:
-                *static_cast<SetTypeDescriptor **>( record.slot ) =
-                    new SetTypeDescriptor( record.name, record.fundamentalType,
-                                           schema, record.description,
-                                           record.aggregateCreator );
+            }
+            case TypeDescriptorInit_Set: {
+                SetTypeDescriptor * descriptor = new SetTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.aggregateCreator );
+                *static_cast<SetTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
-            case TypeDescriptorInit_Bag:
-                *static_cast<BagTypeDescriptor **>( record.slot ) =
-                    new BagTypeDescriptor( record.name, record.fundamentalType,
-                                           schema, record.description,
-                                           record.aggregateCreator );
+            }
+            case TypeDescriptorInit_Bag: {
+                BagTypeDescriptor * descriptor = new BagTypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description, record.aggregateCreator );
+                *static_cast<BagTypeDescriptor **>( record.slot ) = descriptor;
+                type = descriptor;
                 break;
+            }
             case TypeDescriptorInit_Base:
             default:
-                *static_cast<TypeDescriptor **>( record.slot ) =
-                    new TypeDescriptor( record.name, record.fundamentalType,
-                                        schema, record.description );
+                type = new TypeDescriptor(
+                    record.name, record.fundamentalType, schema,
+                    record.description );
+                *static_cast<TypeDescriptor **>( record.slot ) = type;
                 break;
         }
+        RecordSchemaModuleType( *schema, type );
     }
 }
 
@@ -210,6 +235,7 @@ void InitializeEntityMetadata(
             inverse->inverted_entity_id_( record.invertedEntity );
             *record.inverseSlot = inverse;
             entity.AddInverseAttr( inverse );
+            RecordSchemaModuleAttribute( schema, inverse );
             hasInverse = true;
         } else if( record.derivedSlot ) {
             Derived_attribute * derived = new Derived_attribute(
@@ -218,12 +244,14 @@ void InitializeEntityMetadata(
             derived->initializer_( record.initializer );
             *record.derivedSlot = derived;
             entity.AddExplicitAttr( derived );
+            RecordSchemaModuleAttribute( schema, derived );
         } else {
             AttrDescriptor * attribute = new AttrDescriptor(
                 record.name, record.domain, record.optional, record.unique,
                 record.attrType, entity );
             *record.attributeSlot = attribute;
             entity.AddExplicitAttr( attribute );
+            RecordSchemaModuleAttribute( schema, attribute );
         }
     }
 

@@ -151,6 +151,8 @@ struct SC_CORE_EXPORT GlobalRuleInitRecord {
 SC_CORE_EXPORT void InitializeSchemas( Registry & reg,
                                        const SchemaInitRecord * records,
                                        size_t count );
+SC_CORE_EXPORT void InitializeSchemaModuleImages(
+    const SchemaInitRecord * records, size_t count );
 SC_CORE_EXPORT void InitializeEntityDescriptors(
     const EntityDescriptorInitRecord * records, size_t count );
 SC_CORE_EXPORT void InitializeTypeDescriptors(

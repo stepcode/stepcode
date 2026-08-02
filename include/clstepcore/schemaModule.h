@@ -2,6 +2,7 @@
 #define SCHEMAMODULE_H
 
 #include <stddef.h>
+#include <stdint.h>
 #include <vector>
 
 #include "sc_export.h"
@@ -30,6 +31,32 @@ struct SC_CORE_EXPORT SchemaModuleSlot {
     const void * slot;
     SchemaModuleSlotKind kind;
 };
+
+enum SchemaModuleImageVersion {
+    SchemaModuleImageVersion_1 = 1
+};
+
+/**
+ * Relocation-free generated header for a schema module image.
+ *
+ * Descriptor initialization helpers record entities, types, and attributes
+ * in stable generated-ID order.  The image therefore needs only a version
+ * and counts rather than one relocated pointer per descriptor.
+ */
+struct SC_CORE_EXPORT SchemaModuleImage {
+    uint32_t version;
+    uint32_t entityCount;
+    uint32_t typeCount;
+    uint32_t attributeCount;
+};
+
+SC_CORE_EXPORT void RecordSchemaModuleEntity(
+    Schema & schema, const EntityDescriptor * entity );
+SC_CORE_EXPORT void RecordSchemaModuleType(
+    Schema & schema, const TypeDescriptor * type );
+SC_CORE_EXPORT void RecordSchemaModuleAttribute(
+    Schema & schema, const AttrDescriptor * attribute );
+SC_CORE_EXPORT void BeginSchemaModuleImage( Schema & schema );
 
 /**
  * Stable API v2 view of a generated schema.
@@ -66,6 +93,8 @@ public:
         const SchemaModuleSlot * entities, size_t entityCount,
         const SchemaModuleSlot * types, size_t typeCount,
         const SchemaModuleSlot * attributes, size_t attributeCount );
+    void InitializeFromImage( Schema & schema,
+                              const SchemaModuleImage & image );
 
     bool IsInitialized() const;
     const Schema & GetSchema() const;

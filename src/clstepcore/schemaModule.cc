@@ -1,6 +1,7 @@
 #include "clstepcore/schemaModule.h"
 
 #include <cassert>
+#include <unordered_map>
 
 #include "clstepcore/attrDescriptor.h"
 #include "clstepcore/aggrTypeDescriptor.h"
@@ -13,6 +14,85 @@
 #include "clstepcore/typeDescriptor.h"
 
 namespace {
+
+struct PendingSchemaModule {
+    std::vector<const EntityDescriptor *> entities;
+    std::vector<const TypeDescriptor *> types;
+    std::vector<const AttrDescriptor *> attributes;
+};
+
+class PendingSchemaModules {
+    typedef std::unordered_map<const Schema *, PendingSchemaModule> ModuleMap;
+
+    ModuleMap _modules;
+    const Schema * _lastSchema;
+    PendingSchemaModule * _lastModule;
+
+    PendingSchemaModule * Find( Schema & schema ) {
+        if( _lastSchema == &schema ) {
+            return _lastModule;
+        }
+        ModuleMap::iterator i = _modules.find( &schema );
+        _lastSchema = &schema;
+        _lastModule = i == _modules.end() ? 0 : &i->second;
+        return _lastModule;
+    }
+
+public:
+    PendingSchemaModules() : _lastSchema( 0 ), _lastModule( 0 ) {
+    }
+
+    void Begin( Schema & schema ) {
+        PendingSchemaModule & module = _modules[&schema];
+        module.entities.clear();
+        module.types.clear();
+        module.attributes.clear();
+        _lastSchema = &schema;
+        _lastModule = &module;
+    }
+
+    void RecordEntity( Schema & schema, const EntityDescriptor * entity ) {
+        PendingSchemaModule * module = Find( schema );
+        if( module ) {
+            module->entities.push_back( entity );
+        }
+    }
+
+    void RecordType( Schema & schema, const TypeDescriptor * type ) {
+        PendingSchemaModule * module = Find( schema );
+        if( module ) {
+            module->types.push_back( type );
+        }
+    }
+
+    void RecordAttribute( Schema & schema, const AttrDescriptor * attribute ) {
+        PendingSchemaModule * module = Find( schema );
+        if( module ) {
+            module->attributes.push_back( attribute );
+        }
+    }
+
+    bool Consume( Schema & schema, PendingSchemaModule & module ) {
+        ModuleMap::iterator i = _modules.find( &schema );
+        if( i == _modules.end() ) {
+            return false;
+        }
+        module.entities.swap( i->second.entities );
+        module.types.swap( i->second.types );
+        module.attributes.swap( i->second.attributes );
+        if( _lastSchema == &schema ) {
+            _lastSchema = 0;
+            _lastModule = 0;
+        }
+        _modules.erase( i );
+        return true;
+    }
+};
+
+PendingSchemaModules & pendingSchemaModules() {
+    static PendingSchemaModules modules;
+    return modules;
+}
 
 const TypeDescriptor * typeFromSlot( const SchemaModuleSlot & record ) {
     switch( record.kind ) {
@@ -59,6 +139,24 @@ void prepareLateBoundLayouts(
 
 }
 
+void BeginSchemaModuleImage( Schema & schema ) {
+    pendingSchemaModules().Begin( schema );
+}
+
+void RecordSchemaModuleEntity( Schema & schema,
+                               const EntityDescriptor * entity ) {
+    pendingSchemaModules().RecordEntity( schema, entity );
+}
+
+void RecordSchemaModuleType( Schema & schema, const TypeDescriptor * type ) {
+    pendingSchemaModules().RecordType( schema, type );
+}
+
+void RecordSchemaModuleAttribute( Schema & schema,
+                                  const AttrDescriptor * attribute ) {
+    pendingSchemaModules().RecordAttribute( schema, attribute );
+}
+
 SchemaModule::SchemaModule() : _schema( 0 ) {
 }
 
@@ -99,6 +197,30 @@ void SchemaModule::InitializeFromSlots(
     for( size_t i = 0; i < attributeCount; ++i ) {
         _attributes.push_back( attributeFromSlot( attributes[i] ) );
     }
+    prepareLateBoundLayouts( _entities );
+}
+
+void SchemaModule::InitializeFromImage( Schema & schema,
+                                        const SchemaModuleImage & image ) {
+    PendingSchemaModule module;
+    const bool found = pendingSchemaModules().Consume( schema, module );
+    const bool valid = found &&
+        image.version == SchemaModuleImageVersion_1 &&
+        module.entities.size() == image.entityCount &&
+        module.types.size() == image.typeCount &&
+        module.attributes.size() == image.attributeCount;
+    assert( valid );
+    if( !valid ) {
+        _schema = 0;
+        _entities.clear();
+        _types.clear();
+        _attributes.clear();
+        return;
+    }
+    _schema = &schema;
+    _entities.swap( module.entities );
+    _types.swap( module.types );
+    _attributes.swap( module.attributes );
     prepareLateBoundLayouts( _entities );
 }
 
