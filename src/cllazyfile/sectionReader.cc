@@ -386,6 +386,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             if( ( !header ) && ( typeName.size() == 0 ) ) {
                 tName = getDelimitedKeyword( ";( /\\" );
             }
+            std::string materializationType;
+            if( !header && tName ) {
+                materializationType = _lazyFile->getInstMgr()->materializationType( tName );
+                tName = materializationType.c_str();
+            }
             inst = reg->ObjCreate( tName, sName );
             break;
     }

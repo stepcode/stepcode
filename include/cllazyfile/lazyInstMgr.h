@@ -1,6 +1,7 @@
 #ifndef LAZYINSTMGR_H
 #define LAZYINSTMGR_H
 
+#include <cctype>
 #include <map>
 #include <set>
 #include <string>
@@ -80,6 +81,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 
         std::map<instanceID, size_t> _pinCounts;
         std::map<instanceID, uint64_t> _instanceSourceBytes;
+        std::map<std::string, std::string> _materializationTypeAliases;
         std::set<instanceID> _batchOwnedInstances;
         std::set<instanceID> _permanentlyLoadedInstances;
         std::set<instanceID> _instancesLoading;
@@ -110,6 +112,27 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         void addLazyInstance( namedLazyInstance inst );
         InstMgrBase * getAdapter() {
             return ( InstMgrBase * ) _ima;
+        }
+
+        /** Register an explicit source-keyword substitution used only when
+         * materializing an SDAI object.  The lazy type index retains the
+         * original Part 21 keyword.  This is intended for known,
+         * attribute-compatible exporter aliases, not arbitrary recovery. */
+        void setMaterializationTypeAlias( std::string source, const std::string & target ) {
+            for( std::string::iterator c = source.begin(); c != source.end(); ++c ) {
+                *c = static_cast<char>( toupper( static_cast<unsigned char>( *c ) ) );
+            }
+            _materializationTypeAliases[source] = target;
+        }
+
+        std::string materializationType( std::string source ) const {
+            std::string key = source;
+            for( std::string::iterator c = key.begin(); c != key.end(); ++c ) {
+                *c = static_cast<char>( toupper( static_cast<unsigned char>( *c ) ) );
+            }
+            std::map<std::string, std::string>::const_iterator alias =
+                _materializationTypeAliases.find( key );
+            return alias == _materializationTypeAliases.end() ? source : alias->second;
         }
 
         instanceRefs_t * getFwdRefs() {
