@@ -925,6 +925,9 @@ bool STEPattribute::is_null()  const {
 // these get the attr value
 
 SDAI_Integer * STEPattribute::Integer(){
+    if( _redefAttr ) {
+        return _redefAttr->Integer();
+    }
     if( NonRefType() == INTEGER_TYPE ) {
         return ptr.i;
     }
@@ -932,6 +935,9 @@ SDAI_Integer * STEPattribute::Integer(){
 }
 
 SDAI_Real * STEPattribute::Number() {
+    if( _redefAttr ) {
+        return _redefAttr->Number();
+    }
     if( NonRefType() == NUMBER_TYPE ) {
         return ptr.r;
     }
@@ -939,6 +945,9 @@ SDAI_Real * STEPattribute::Number() {
 }
 
 SDAI_Real * STEPattribute::Real() {
+    if( _redefAttr ) {
+        return _redefAttr->Real();
+    }
     if( NonRefType() == REAL_TYPE ) {
         return ptr.r;
     }
@@ -946,6 +955,9 @@ SDAI_Real * STEPattribute::Real() {
 }
 
 SDAI_Application_instance * STEPattribute::Entity() {
+    if( _redefAttr ) {
+        return _redefAttr->Entity();
+    }
     if( NonRefType() == ENTITY_TYPE ) {
         return *( ptr.c );
     }
@@ -953,6 +965,9 @@ SDAI_Application_instance * STEPattribute::Entity() {
 }
 
 SDAI_String * STEPattribute::String() {
+    if( _redefAttr ) {
+        return _redefAttr->String();
+    }
     if( NonRefType() == STRING_TYPE ) {
         return ptr.S;
     }
@@ -960,6 +975,9 @@ SDAI_String * STEPattribute::String() {
 }
 
 SDAI_Binary * STEPattribute::Binary() {
+    if( _redefAttr ) {
+        return _redefAttr->Binary();
+    }
     if( NonRefType() == BINARY_TYPE ) {
         return ptr.b;
     }
@@ -967,6 +985,9 @@ SDAI_Binary * STEPattribute::Binary() {
 }
 
 STEPaggregate * STEPattribute::Aggregate() {
+    if( _redefAttr ) {
+        return _redefAttr->Aggregate();
+    }
     if( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
         || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) ) {
         return ptr.a;
@@ -975,6 +996,9 @@ STEPaggregate * STEPattribute::Aggregate() {
 }
 
 SDAI_BOOLEAN * STEPattribute::Boolean() {
+    if( _redefAttr ) {
+        return _redefAttr->Boolean();
+    }
     if( NonRefType() == BOOLEAN_TYPE ) {
         return ( SDAI_BOOLEAN * ) ptr.e;
     }
@@ -982,6 +1006,9 @@ SDAI_BOOLEAN * STEPattribute::Boolean() {
 }
 
 SDAI_LOGICAL * STEPattribute::Logical() {
+    if( _redefAttr ) {
+        return _redefAttr->Logical();
+    }
     if( NonRefType() == LOGICAL_TYPE ) {
         return ( SDAI_LOGICAL * ) ptr.e;
     }
@@ -989,6 +1016,9 @@ SDAI_LOGICAL * STEPattribute::Logical() {
 }
 
 SDAI_Enum * STEPattribute::Enum() {
+    if( _redefAttr ) {
+        return _redefAttr->Enum();
+    }
     if( NonRefType() == ENUM_TYPE ) {
         return ptr.e;
     }
@@ -996,6 +1026,9 @@ SDAI_Enum * STEPattribute::Enum() {
 }
 
 SDAI_Select * STEPattribute::Select() {
+    if( _redefAttr ) {
+        return _redefAttr->Select();
+    }
     if( NonRefType() == SELECT_TYPE ) {
         return ptr.sh;
     }
@@ -1003,6 +1036,9 @@ SDAI_Select * STEPattribute::Select() {
 }
 
 SCLundefined * STEPattribute::Undefined() {
+    if( _redefAttr ) {
+        return _redefAttr->Undefined();
+    }
     if( ( NonRefType() != REFERENCE_TYPE ) && ( NonRefType() != GENERIC_TYPE ) ) {
         return ptr.u;
     }
@@ -1012,6 +1048,10 @@ SCLundefined * STEPattribute::Undefined() {
 // these set the attr value
 
 void STEPattribute::Integer( SDAI_Integer * n ) {
+    if( _redefAttr ) {
+        _redefAttr->Integer( n );
+        return;
+    }
     assert( NonRefType() == INTEGER_TYPE );
     if( ptr.i ) {
         *( ptr.i ) = * n;
@@ -1021,6 +1061,10 @@ void STEPattribute::Integer( SDAI_Integer * n ) {
 }
 
 void STEPattribute::Real( SDAI_Real * n ) {
+    if( _redefAttr ) {
+        _redefAttr->Real( n );
+        return;
+    }
     assert( NonRefType() == REAL_TYPE );
     if( ptr.r ) {
         *( ptr.r ) = * n;
@@ -1030,6 +1074,10 @@ void STEPattribute::Real( SDAI_Real * n ) {
 }
 
 void STEPattribute::Number( SDAI_Real * n ) {
+    if( _redefAttr ) {
+        _redefAttr->Number( n );
+        return;
+    }
     assert( NonRefType() == NUMBER_TYPE );
     if( ptr.r ) {
         *( ptr.r ) = * n;
@@ -1039,6 +1087,10 @@ void STEPattribute::Number( SDAI_Real * n ) {
 }
 
 void STEPattribute::String( SDAI_String * str ) {
+    if( _redefAttr ) {
+        _redefAttr->String( str );
+        return;
+    }
     assert( NonRefType() == STRING_TYPE );
     if( ptr.S ) {
         *( ptr.S ) = * str;
@@ -1048,6 +1100,10 @@ void STEPattribute::String( SDAI_String * str ) {
 }
 
 void STEPattribute::Binary( SDAI_Binary * bin ) {
+    if( _redefAttr ) {
+        _redefAttr->Binary( bin );
+        return;
+    }
     assert( NonRefType() == BINARY_TYPE );
     if( ptr.b ) {
         *( ptr.b ) = * bin;
@@ -1057,15 +1113,25 @@ void STEPattribute::Binary( SDAI_Binary * bin ) {
 }
 
 void STEPattribute::Entity( SDAI_Application_instance * ent ) {
+    if( _redefAttr ) {
+        _redefAttr->Entity( ent );
+        return;
+    }
     assert( NonRefType() == ENTITY_TYPE );
     if( ptr.c ) {
-        delete ptr.c;
+        *( ptr.c ) = ent;
+    } else {
+        ptr.c = new (SDAI_Application_instance * );
+        _mustDeletePtr = true;
+        *( ptr.c ) = ent;
     }
-    ptr.c = new (SDAI_Application_instance * );
-    *( ptr.c ) = ent;
 }
 
 void STEPattribute::Aggregate( STEPaggregate * aggr ) {
+    if( _redefAttr ) {
+        _redefAttr->Aggregate( aggr );
+        return;
+    }
     assert( ( NonRefType() == AGGREGATE_TYPE ) || ( NonRefType() == ARRAY_TYPE ) || ( NonRefType() == BAG_TYPE )
     || ( NonRefType() == SET_TYPE ) || ( NonRefType() == LIST_TYPE ) );
     if( ptr.a ) {
@@ -1076,6 +1142,10 @@ void STEPattribute::Aggregate( STEPaggregate * aggr ) {
 }
 
 void STEPattribute::Enum( SDAI_Enum * enu ) {
+    if( _redefAttr ) {
+        _redefAttr->Enum( enu );
+        return;
+    }
     assert( NonRefType() == ENUM_TYPE );
     if( ptr.e ) {
         ptr.e->set_null();
@@ -1086,6 +1156,10 @@ void STEPattribute::Enum( SDAI_Enum * enu ) {
 }
 
 void STEPattribute::Logical( SDAI_LOGICAL * log ) {
+    if( _redefAttr ) {
+        _redefAttr->Logical( log );
+        return;
+    }
     assert( NonRefType() == LOGICAL_TYPE );
     if( ptr.e ) {
         ptr.e->set_null();
@@ -1096,6 +1170,10 @@ void STEPattribute::Logical( SDAI_LOGICAL * log ) {
 }
 
 void STEPattribute::Boolean( SDAI_BOOLEAN * boo ) {
+    if( _redefAttr ) {
+        _redefAttr->Boolean( boo );
+        return;
+    }
     assert( NonRefType() == BOOLEAN_TYPE );
     if( ptr.e ) {
         ptr.e->set_null();
@@ -1106,6 +1184,10 @@ void STEPattribute::Boolean( SDAI_BOOLEAN * boo ) {
 }
 
 void STEPattribute::Select( SDAI_Select * sel ) {
+    if( _redefAttr ) {
+        _redefAttr->Select( sel );
+        return;
+    }
     assert( NonRefType() == SELECT_TYPE );
     if( ptr.sh ) {
         ptr.sh->set_null();
@@ -1116,6 +1198,10 @@ void STEPattribute::Select( SDAI_Select * sel ) {
 }
 
 void STEPattribute::Undefined( SCLundefined * undef ) {
+    if( _redefAttr ) {
+        _redefAttr->Undefined( undef );
+        return;
+    }
     //FIXME is this right, or is the Undefined() above right?
     assert( NonRefType() == REFERENCE_TYPE || NonRefType() == UNKNOWN_TYPE );
     if( ptr.u ) {
@@ -1501,7 +1587,10 @@ _mustDeletePtr( false ), _redefAttr( 0 ), aDesc( &d ), refCount( 0 )  {
 
 void STEPattribute::DeleteOwnedPtr() {
     if( _mustDeletePtr ) {
-        switch( NonRefType() ) {
+        // A redefined attribute delegates value operations to _redefAttr, but
+        // ptr still holds storage allocated for this attribute's descriptor.
+        // Use that original type when releasing the owned storage.
+        switch( aDesc ? aDesc->NonRefType() : UNKNOWN_TYPE ) {
             case AGGREGATE_TYPE:
             case ARRAY_TYPE:      // DAS
             case BAG_TYPE:        // DAS

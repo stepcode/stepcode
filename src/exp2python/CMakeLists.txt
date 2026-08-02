@@ -26,6 +26,7 @@ if(SC_PYTHON_GENERATOR)
     ../exp2cxx/match-ors.cc
     ../exp2cxx/trynext.cc
     ../exp2cxx/write.cc
+    ../exp2cxx/generated_output.cc
     ../exp2cxx/print.cc
    )
  if(BUILD_SHARED_LIBS)

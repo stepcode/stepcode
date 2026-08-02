@@ -256,6 +256,20 @@ int main() {
     CHECK( dynamic_cast<IntAggregate *>( integers ) != 0 );
     delete integers;
 
+    ListTypeDescriptor uninitializedList;
+    CHECK( uninitializedList.Bound1Type() == bound_unset );
+    CHECK( uninitializedList.Bound2Type() == bound_unset );
+    STEPaggregate * fallbackAggregate = uninitializedList.CreateAggregate();
+    CHECK( dynamic_cast<GenericAggregate *>( fallbackAggregate ) != 0 );
+    delete fallbackAggregate;
+
+    AggrTypeDescriptor boundedAggregate(
+        1, 4, LTrue, const_cast<TypeDescriptor *>( t_sdaiINTEGER ) );
+    CHECK( boundedAggregate.Bound1Type() == bound_constant );
+    CHECK( boundedAggregate.Bound2Type() == bound_constant );
+    CHECK( boundedAggregate.Bound1() == 1 );
+    CHECK( boundedAggregate.Bound2() == 4 );
+
     SDAI_Application_instance * instance = registry.ObjCreate( "leaf" );
     CHECK( instance );
     CHECK( instance->eDesc == leafEntity );
@@ -280,10 +294,19 @@ int main() {
     CHECK( *copiedLength->Real() > 12.49 && *copiedLength->Real() < 12.51 );
 
     delete copy;
+
+    AttrDescriptor entityAttribute(
+        "target", leafEntity, LFalse, LFalse, AttrType_Explicit,
+        *baseEntity );
+    SDAI_Application_instance * entitySlot = 0;
+    STEPattribute boundEntityAttribute( entityAttribute, &entitySlot );
+    boundEntityAttribute.Entity( instance );
+    CHECK( entitySlot == instance );
+
     delete instance;
 
     redefinedLabel = new AttrDescriptor(
-        "label", t_sdaiSTRING, LFalse, LFalse, AttrType_Redefining,
+        "label", t_sdaiREAL, LFalse, LFalse, AttrType_Redefining,
         *leafEntity );
     leafEntity->AddExplicitAttr( redefinedLabel );
     SDAI_Application_instance * narrowed = registry.ObjCreate( "leaf" );
@@ -295,6 +318,13 @@ int main() {
     CHECK( label && narrowedLabel );
     CHECK( label->IsDerived() );
     CHECK( label->RedefiningAttr() == narrowedLabel );
+    CHECK( label->String() == 0 );
+    CHECK( label->Real() == narrowedLabel->Real() );
+    SDAI_Real narrowedValue = 7.25;
+    label->Real( &narrowedValue );
+    CHECK( narrowedLabel->Real() &&
+           *narrowedLabel->Real() > 7.24 &&
+           *narrowedLabel->Real() < 7.26 );
     delete narrowed;
 #undef CHECK
     return 0;
