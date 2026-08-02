@@ -23,6 +23,7 @@
 
 class Registry;
 class instMgrAdapter;
+class lazyRefs;
 
 class SC_LAZYFILE_EXPORT lazyInstMgr {
     protected:
@@ -85,6 +86,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         std::set<instanceID> _batchOwnedInstances;
         std::set<instanceID> _permanentlyLoadedInstances;
         std::set<instanceID> _instancesLoading;
+        std::set<instanceID> _deferredInverseInstances;
         size_t _batchLoadDepth;
 
         LazyProgressCallback _progressCallback;
@@ -96,7 +98,15 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         instMgrAdapter * _ima;
 
         friend class LazyInstanceBatch;
+        friend class lazyRefs;
         void releaseBatch( const std::vector<instanceID> & instances );
+        void resolveDeferredInverses();
+        bool isMaterializing( instanceID id ) const {
+            return _instancesLoading.count( id ) != 0;
+        }
+        void deferInverseResolution( instanceID id ) {
+            _deferredInverseInstances.insert( id );
+        }
         SDAI_Application_instance * cachedInstance( instanceID id );
         std::vector<instanceID> dependencyClosure( const std::vector<instanceID> & roots );
 
