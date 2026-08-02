@@ -22,6 +22,9 @@ macro(SC_ADDEXEC execname)
                 message(SEND_ERROR "SC_ADDEXEC usage error - expected STATIC LINK_LIBRARIES targets (${_lib})")
             endif()
         endif()
+        # Executables consume their dependencies but do not publish an
+        # interface to downstream targets.
+        target_link_libraries(${execname} PRIVATE ${_lib})
     endforeach()
     target_link_libraries(${execname} PRIVATE ${${_arg_prefix}_LINK_LIBRARIES})
   endif()
@@ -74,6 +77,11 @@ macro(SC_ADDLIB _addlib_target)
             message(SEND_ERROR "SC_ADDLIB usage error - expected (static) LINK_LIBRARIES targets (${_lib})")
             endif()
         endif()
+        # Schema libraries are consumed directly by generated test programs.
+        # Publish their link requirements explicitly; the legacy unscoped
+        # signature does not reliably provide a transitive interface with
+        # current CMake versions.
+        target_link_libraries(${_addlib_target} PUBLIC ${_lib})
     endforeach()
     target_link_libraries(${_addlib_target} ${_lib})
   endif()
@@ -93,4 +101,3 @@ endmacro()
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-
