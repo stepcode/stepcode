@@ -2,6 +2,7 @@ set(LAZY_SRCS
   lazyDataSectionReader.cc
   lazyFileReader.cc
   lazyInstMgr.cc
+  lazySupport.cc
   p21HeaderSectionReader.cc
   sectionReader.cc
   lazyP21DataSectionReader.cc
@@ -42,3 +43,17 @@ endif()
 # End:
 # ex: shiftwidth=2 tabstop=8
 
+if(SC_ENABLE_TESTING)
+  if(BUILD_SHARED_LIBS)
+    set(_lazy_index_libs steplazyfile stepeditor stepcore stepdai steputils)
+  else()
+    set(_lazy_index_libs steplazyfile-static stepeditor-static
+      stepcore-static stepdai-static steputils-static)
+  endif()
+  SC_ADDEXEC(lazy_index_test SOURCES lazy_index_test.cc
+    LINK_LIBRARIES ${_lazy_index_libs} NO_INSTALL)
+  add_test(NAME lazy_index
+    COMMAND lazy_index_test
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_index.stp
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_scope.stp)
+endif()

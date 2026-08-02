@@ -46,12 +46,31 @@ class SC_LAZYFILE_EXPORT sectionReader {
          */
         std::streampos findNormalString( const std::string & str, bool semicolon = false );
 
+        /** Skip from immediately after a comment's opening slash and star
+         * through its closing star and slash.  Part 21 comments are opaque:
+         * apostrophes and string-control text inside them have no syntax.
+         */
+        bool skipComment();
+
+        /** Skip whitespace and Part 21 comments, leaving the next syntactic
+         * token unread. */
+        bool skipTokenSeparators();
+
+        /** Skip an Edition 1 SCOPE construct, including nested scopes and its
+         * optional export list.  The stream must initially point at '&' and
+         * is left at the owning entity's record. */
+        bool skipScope();
+
+        /** Skip an optional scope export list at the current stream
+         * position. */
+        bool skipScopeExportList();
+
         /** Get a keyword ending with one of delimiters.
          */
         const char * getDelimitedKeyword( const char * delimiters );
 
         /** Seek to the end of the current instance */
-        std::streampos seekInstanceEnd( instanceRefs ** refs );
+        std::streampos seekInstanceEnd( instanceRefs ** refs, std::vector<std::string> * componentTypes = 0 );
 
         /// operator>> is very slow?!
         inline void skipWS() {
@@ -63,8 +82,14 @@ class SC_LAZYFILE_EXPORT sectionReader {
         STEPcomplex * CreateSubSuperInstance( const Registry * reg, instanceID fileid, Severity & sev );
 
     public:
-        SDAI_Application_instance * getRealInstance( const Registry * reg, long int begin, instanceID instance,
+        SDAI_Application_instance * getRealInstance( const Registry * reg, lazyFileOffset begin, instanceID instance,
                 const std::string & typeName = "", const std::string & schName = "", bool header = false );
+
+        /** Return one indexed source record without materializing it.  The
+         * stream position is restored before returning.  This is intended
+         * for lightweight adapters which can detach scalar/reference data
+         * directly from Part 21 source. */
+        std::string sourceRecord( lazyFileOffset begin, uint64_t length );
 
         sectionID ID() const {
             return _sectionID;
@@ -91,13 +116,15 @@ class SC_LAZYFILE_EXPORT sectionReader {
         /** returns the type string for an instance, read straight from the file
          * if this function changes, probably need to change nextInstance() as well
          * don't check errors - they would have been encountered during the initial file scan, and the file is still open so it can't have been modified */
-        const char * getType( long int offset ) {
+        const char * getType( lazyFileOffset offset ) {
             if( offset <= 0 ) {
                 return 0;
             }
-            _file.seekg( offset );
+            _file.seekg( static_cast<std::streamoff>( offset ) );
             readInstanceNumber();
-            skipWS();
+            if( !skipTokenSeparators() ) return 0;
+            if( _file.peek() == '&' && !skipScope() ) return 0;
+            if( !skipTokenSeparators() ) return 0;
             return getDelimitedKeyword( ";( /\\" );
         }
 
@@ -112,4 +139,3 @@ class SC_LAZYFILE_EXPORT sectionReader {
 };
 
 #endif //SECTIONREADER_H
-

@@ -5,6 +5,7 @@ set(LAZY_HDRS
   p21HeaderSectionReader.h
   lazyDataSectionReader.h
   lazyInstMgr.h
+  lazySupport.h
   lazyTypes.h
   sectionReader.h
   instMgrHelper.h
@@ -24,4 +25,3 @@ install(FILES ${LAZY_HDRS}
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

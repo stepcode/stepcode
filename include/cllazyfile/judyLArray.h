@@ -159,8 +159,8 @@ class judyLArray {
          * getLastValue() will return the entry before the one that was deleted
          * \sa isEmpty()
          */
-        bool removeEntry( JudyKey * key ) {
-            if( judy_slot( _judyarray, key, _depth * JUDY_key_size ) ) {
+        bool removeEntry( JudyKey key ) {
+            if( judy_slot( _judyarray, reinterpret_cast<const unsigned char *>( &key ), _depth * JUDY_key_size ) ) {
                 _lastSlot = ( JudyValue * ) judy_del( _judyarray );
                 return true;
             } else {

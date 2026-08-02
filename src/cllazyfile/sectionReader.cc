@@ -10,6 +10,7 @@
 #include <string>
 #include <assert.h>
 #include <limits.h>
+#include <limits>
 
 #ifdef _WIN32
 #  define strtoull _strtoui64
@@ -39,6 +40,112 @@ sectionReader::~sectionReader() {
      delete _error;
 }
 
+bool sectionReader::skipComment() {
+    int previous = 0;
+    int current;
+    while( current = _file.get(), _file.good() ) {
+        if( previous == '*' && current == '/' ) {
+            return true;
+        }
+        previous = current;
+    }
+    return false;
+}
+
+
+bool sectionReader::skipTokenSeparators() {
+    while( _file.good() ) {
+        skipWS();
+        if( _file.peek() != '/' ) return _file.good();
+        const std::streampos slash = _file.tellg();
+        _file.get();
+        if( _file.peek() != '*' ) {
+            _file.seekg( slash );
+            return _file.good();
+        }
+        _file.get(); // consume the opening star
+        if( !skipComment() ) return false;
+    }
+    return false;
+}
+
+
+bool sectionReader::skipScopeExportList() {
+    if( !skipTokenSeparators() ) return false;
+    if( _file.peek() != '/' ) return true;
+    _file.get();
+
+    bool haveExport = false;
+    while( _file.good() ) {
+        if( !skipTokenSeparators() || _file.get() != '#' ) return false;
+        bool haveDigit = false;
+        bool haveNonzeroDigit = false;
+        while( _file.good() && isdigit( _file.peek() ) ) {
+            const int digit = _file.get();
+            haveDigit = true;
+            if( digit != '0' ) haveNonzeroDigit = true;
+        }
+        if( !haveDigit || !haveNonzeroDigit || !skipTokenSeparators() ) return false;
+        haveExport = true;
+        const int delimiter = _file.get();
+        if( delimiter == '/' ) return haveExport;
+        if( delimiter != ',' ) return false;
+    }
+    return false;
+}
+
+
+bool sectionReader::skipScope() {
+    if( !skipTokenSeparators() || _file.get() != '&' ) return false;
+    skipWS();
+    static const char scopeKeyword[] = "SCOPE";
+    for( size_t i = 0; scopeKeyword[i]; ++i ) {
+        if( _file.get() != scopeKeyword[i] ) return false;
+    }
+
+    int depth = 1;
+    while( depth > 0 && _file.good() ) {
+        const int current = _file.get();
+        if( current == '\'' ) {
+            _file.seekg( _file.tellg() - std::streampos( 1 ) );
+            GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+            continue;
+        }
+        if( current == '/' && _file.peek() == '*' ) {
+            _file.get();
+            if( !skipComment() ) return false;
+            continue;
+        }
+        if( current == '&' ) {
+            const std::streampos afterAmpersand = _file.tellg();
+            skipWS();
+            std::string keyword;
+            while( _file.good() && ( isupper( _file.peek() ) ||
+                    isdigit( _file.peek() ) || _file.peek() == '_' ||
+                    _file.peek() == '-' ) ) {
+                keyword.push_back( static_cast<char>( _file.get() ) );
+            }
+            if( keyword == "SCOPE" ) {
+                ++depth;
+            } else {
+                _file.seekg( afterAmpersand );
+            }
+            continue;
+        }
+        if( isupper( current ) ) {
+            std::string keyword( 1, static_cast<char>( current ) );
+            while( _file.good() && ( isupper( _file.peek() ) ||
+                    isdigit( _file.peek() ) || _file.peek() == '_' ||
+                    _file.peek() == '-' ) ) {
+                keyword.push_back( static_cast<char>( _file.get() ) );
+            }
+            if( keyword == "ENDSCOPE" ) --depth;
+        }
+    }
+    return depth == 0 && skipScopeExportList();
+}
+
+
 std::streampos sectionReader::findNormalString( const std::string & str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
@@ -63,8 +170,11 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
             GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
         }
         if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
-            //push past comment
-            findNormalString( "*/" );
+            _file.get(); // consume the opening star
+            if( !skipComment() ) {
+                return -1;
+            }
+            continue;
         }
         if( str[i] == c ) {
             i++;
@@ -92,6 +202,32 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
 }
 
 
+std::string sectionReader::sourceRecord( lazyFileOffset begin, uint64_t length ) {
+    if( begin == 0 || length == 0 ||
+            length > static_cast<uint64_t>( std::numeric_limits<std::streamsize>::max() ) ||
+            length > static_cast<uint64_t>( std::numeric_limits<size_t>::max() ) ) {
+        return std::string();
+    }
+
+    const std::streampos saved = _file.tellg();
+    _file.clear();
+    _file.seekg( static_cast<std::streamoff>( begin ) );
+    if( !_file.good() ) {
+        _file.clear();
+        if( saved != std::streampos( -1 ) ) _file.seekg( saved );
+        return std::string();
+    }
+
+    std::string source( static_cast<size_t>( length ), '\0' );
+    _file.read( &source[0], static_cast<std::streamsize>( length ) );
+    const bool complete = static_cast<uint64_t>( _file.gcount() ) == length;
+
+    _file.clear();
+    if( saved != std::streampos( -1 ) ) _file.seekg( saved );
+    return complete ? source : std::string();
+}
+
+
 //NOTE different behavior than const char * GetKeyword( istream & in, const char * delims, ErrorDescriptor & err ) in read_func.cc
 // returns pointer to the contents of a static std::string
 const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
@@ -106,7 +242,10 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
             str.append( 1, c );
         } else if( ( c == '/' ) && ( _file.peek() == '*' ) && ( str.length() == 0 ) ) {
             //push past comment
-            findNormalString( "*/" );
+            _file.get(); // consume the opening star
+            if( !skipComment() ) {
+                break;
+            }
             skipWS();
             continue;
         } else {
@@ -115,7 +254,7 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
         }
     }
     c = _file.peek();
-    if( !strchr( delimiters, c ) ) {
+    if( !strchr( delimiters, c ) && !isspace( static_cast<unsigned char>( c ) ) ) {
         std::cerr << SC_CURRENT_FUNCTION << ": missing delimiter. Found " << c << ", expected one of " << delimiters << " at end of keyword " << str << ". File offset: " << _file.tellg() << std::endl;
         abort();
     }
@@ -125,17 +264,22 @@ const char * sectionReader::getDelimitedKeyword( const char * delimiters ) {
 /// search forward in the file for the end of the instance. Start position should
 /// be the opening parenthesis; otherwise, it is likely to fail.
 ///NOTE *must* check return value!
-std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
+std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs, std::vector<std::string> * componentTypes ) {
     int c;
     int parenDepth = 0;
+    bool expectComplexType = false;
     while( c = _file.get(), _file.good() ) {
         switch( c ) {
             case '(':
                 parenDepth++;
+                if( componentTypes && parenDepth == 1 ) expectComplexType = true;
                 break;
             case '/':
                 if( _file.peek() == '*' ) {
-                    findNormalString( "*/" );
+                    _file.get(); // consume the opening star
+                    if( !skipComment() ) {
+                        return -1;
+                    }
                 } else {
                     return -1;
                 }
@@ -162,7 +306,8 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                 }
                 break;
             case ')':
-                if( --parenDepth == 0 ) {
+                if( --parenDepth == 1 && componentTypes ) expectComplexType = true;
+                if( parenDepth == 0 ) {
                     skipWS();
                     if( _file.get() == ';' ) {
                         return _file.tellg();
@@ -170,7 +315,23 @@ std::streampos sectionReader::seekInstanceEnd( instanceRefs ** refs ) {
                         _file.seekg( _file.tellg() - std::streampos(1) );
                     }
                 }
+                break;
             default:
+                if( componentTypes && parenDepth == 1 && expectComplexType &&
+                        ( isupper( c ) || c == '!' ) ) {
+                    std::string type( 1, static_cast<char>( c ) );
+                    while( _file.good() ) {
+                        int next = _file.get();
+                        if( next == '-' || next == '_' || isupper( next ) || isdigit( next ) ) {
+                            type.push_back( static_cast<char>( next ) );
+                        } else {
+                            _file.putback( static_cast<char>( next ) );
+                            break;
+                        }
+                    }
+                    componentTypes->push_back( type );
+                    expectComplexType = false;
+                }
                 break;
         }
     }
@@ -196,7 +357,10 @@ instanceID sectionReader::readInstanceNumber() {
     skipWS();
     c = _file.get();
     if( ( c == '/' ) && ( _file.peek() == '*' ) ) {
-        findNormalString( "*/" );
+        _file.get(); // consume the opening star
+        if( !skipComment() ) {
+            return 0;
+        }
     } else {
         _file.seekg( _file.tellg() - std::streampos(1) );
     }
@@ -261,10 +425,11 @@ instanceID sectionReader::readInstanceNumber() {
 /** load an instance and return a pointer to it.
  * side effect: recursively loads any instances the specified instance depends upon
  */
-SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, long int begin, instanceID instance,
+SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg, lazyFileOffset begin, instanceID instance,
         const std::string & typeName, const std::string & schName, bool header ) {
     int c;
     const char * tName = 0, * sName = 0; //these are necessary since typeName and schName are const
+    std::string normalizedSchema;
     std::string comment;
     Severity sev = SEVERITY_NULL;
     SDAI_Application_instance * inst = 0;
@@ -277,7 +442,10 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         if( fs ) {
             StringNode * sn = ( StringNode * ) fs->schema_identifiers_()->GetHead();
             if( sn ) {
-                sName = sn->value.c_str();
+                normalizedSchema = sn->value.c_str();
+                size_t qualifier = normalizedSchema.find_first_of( " {" );
+                if( qualifier != std::string::npos ) normalizedSchema.erase( qualifier );
+                sName = normalizedSchema.c_str();
                 if( sn->NextNode() ) {
                     std::cerr << "Warning - multiple schema names found. Only searching with first one." << std::endl;
                 }
@@ -287,7 +455,7 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         }
     }
 
-    _file.seekg( begin );
+    _file.seekg( static_cast<std::streamoff>( begin ) );
     skipWS();
     ReadTokenSeparator( _file, &comment );
     if( !header ) {
@@ -296,11 +464,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     skipWS();
     ReadTokenSeparator( _file, &comment );
     c = _file.peek();
+    if( c == '&' ) {
+        if( !skipScope() || !skipTokenSeparators() ) return 0;
+        c = _file.peek();
+    }
     switch( c ) {
-        case '&':
-            std::cerr << "Can't handle scope instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
-            // sev = CreateScopeInstances( in, &scopelist );
-            break;
         case '(':
             inst = CreateSubSuperInstance( reg, instance, sev );
             break;
@@ -311,6 +479,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             if( ( !header ) && ( typeName.size() == 0 ) ) {
                 tName = getDelimitedKeyword( ";( /\\" );
             }
+            std::string materializationType;
+            if( !header && tName ) {
+                materializationType = _lazyFile->getInstMgr()->materializationType( tName );
+                tName = materializationType.c_str();
+            }
             inst = reg->ObjCreate( tName, sName );
             break;
     }
@@ -319,7 +492,18 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
             inst->AddP21Comment( comment );
         }
         assert( inst->eDesc );
-        _file.seekg( begin );
+        _file.seekg( static_cast<std::streamoff>( begin ) );
+        if( !header ) {
+            if( findNormalString( "=" ) == std::streampos( -1 ) ||
+                    !skipTokenSeparators() ) {
+                delete inst;
+                return 0;
+            }
+            if( _file.peek() == '&' && ( !skipScope() || !skipTokenSeparators() ) ) {
+                delete inst;
+                return 0;
+            }
+        }
         findNormalString( "(" );
         _file.seekg( _file.tellg() - std::streampos(1) );
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );
@@ -360,7 +544,6 @@ STEPcomplex * sectionReader::CreateSubSuperInstance( const Registry * reg, insta
     //TODO still need the schema name
     STEPcomplex * sc = new STEPcomplex( ( const_cast<Registry *>( reg ) ), names, ( int ) fileid /*, schnm*/ );
     delete[] names;
-    //TODO also delete contents of typeNames!
+    for( int i = 0; i < s; i++ ) delete typeNames[i];
     return sc;
 }
-

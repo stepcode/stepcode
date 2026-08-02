@@ -34,7 +34,11 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
     static instanceID nextFreeInstance = 4; // 1-3 are reserved per 10303-21
 
     i.refs = 0;
-    i.loc.begin = _file.tellg();
+    i.componentTypes = 0;
+    i.loc.end = 0;
+    std::streampos start = _file.tellg();
+    i.loc.begin = start == std::streampos( -1 ) ? 0 :
+        static_cast<lazyFileOffset>( static_cast<std::streamoff>( start ) );
     i.loc.section = _sectionID;
     skipWS();
     if( i.loc.begin <= 0 ) {
@@ -55,12 +59,14 @@ const namedLazyInstance p21HeaderSectionReader::nextInstance() {
         assert( strlen( i.name ) > 0 );
 
         std::streampos end = seekInstanceEnd( 0 ); //no references in file header
+        if( end != std::streampos( -1 ) ) {
+            i.loc.end = static_cast<lazyFileOffset>( static_cast<std::streamoff>( end ) );
+        }
         if( ( (signed long int)end == -1 ) || ( end >= _sectionEnd ) ) {
             //invalid instance, so clear everything
-            i.loc.begin = -1;
+            i.loc.begin = 0;
             i.name = 0;
         }
     }
     return i;
 }
-

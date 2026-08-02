@@ -37,6 +37,8 @@ class SC_LAZYFILE_EXPORT lazyFileReader {
 #endif
         fileTypeEnum _fileType;
         fileID _fileID;
+        lazyFileOffset _fileSize;
+        bool _valid;
 
         void initP21();
 
@@ -47,6 +49,12 @@ class SC_LAZYFILE_EXPORT lazyFileReader {
     public:
         fileID ID() const {
             return _fileID;
+        }
+        lazyFileOffset fileSize() const {
+            return _fileSize;
+        }
+        bool valid() const {
+            return _valid;
         }
         instancesLoaded_t * getHeaderInstances();
 
@@ -64,4 +72,3 @@ class SC_LAZYFILE_EXPORT lazyFileReader {
 };
 
 #endif //LAZYFILEREADER_H
-

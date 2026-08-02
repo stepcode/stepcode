@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <string>
 
 #ifdef HAVE_STDINT_H
 #include <stdint.h>
@@ -29,6 +30,7 @@ enum fileTypeEnum { Part21, Part28 };
 // enum loadingEnum { immediate, lazy };
 
 typedef uint64_t instanceID;  ///< the number assigned to an instance in the file
+typedef uint64_t lazyFileOffset; ///< byte offset in an exchange file
 typedef uint16_t sectionID;   ///< globally unique index of a sectionReader in a sectionReaderVec_t
 typedef uint16_t fileID;      ///< the index of a lazyFileReader in a lazyFileReaderVec_t. Can be inferred from a sectionID
 
@@ -42,7 +44,10 @@ typedef uint16_t fileID;      ///< the index of a lazyFileReader in a lazyFileRe
  * section = ( ps >> 48 );
  * TODO: Also 8 bits of flags? Would allow files of 2^40 bytes, or ~1TB.
  */
-typedef uint64_t positionAndSection;
+typedef struct {
+    lazyFileOffset begin;
+    sectionID section;
+} instancePosition;
 
 typedef std::vector< instanceID > instanceRefs;
 
@@ -55,7 +60,8 @@ typedef std::set< instanceID > instanceSet;
  * situations, so the information should be kept up-to-date.
  */
 typedef struct {
-    long begin; ///< this is the result of tellg() before reading the instanceID; there may be whitespace or comments, but nothing else.
+    lazyFileOffset begin; ///< byte offset before the instance ID; whitespace or comments may precede it.
+    lazyFileOffset end; ///< byte offset immediately after the terminating semicolon.
     instanceID instance;
     sectionID section;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is
@@ -67,6 +73,7 @@ typedef struct {
     lazyInstanceLoc loc;
     const char * name;
     instanceRefs * refs;
+    std::vector<std::string> * componentTypes; ///< compositional types for a complex instance
 } namedLazyInstance;
 
 // instanceRefs - map between an instanceID and instances that refer to it
@@ -80,7 +87,7 @@ typedef judyLArray< instanceID, SDAI_Application_instance * > instancesLoaded_t;
 
 // instanceStreamPos - map instance id to a streampos and data section
 // there could be multiple instances with the same ID, but in different files (or different sections of the same file?)
-typedef judyL2Array< instanceID, positionAndSection > instanceStreamPos_t;
+typedef judyL2Array< instanceID, instancePosition > instanceStreamPos_t;
 
 
 // data sections
@@ -93,4 +100,3 @@ typedef std::vector< lazyFileReader * > lazyFileReaderVec_t;
 // NOTE not useful? typedef std::vector< lazyInstance > lazyInstanceVec_t;
 
 #endif //LAZYTYPES_H
-

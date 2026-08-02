@@ -87,6 +87,16 @@ class SC_LAZYFILE_EXPORT lazyRefs {
             }
             //3c - for each item in both _refMap and edL, add it to _referentInstances
             potentialReferentInsts( edL );
+            /* Do not partially populate an inverse attribute and then repeat
+             * the whole pass.  A referrer that is still being parsed cannot
+             * be inspected reliably, so defer this instance as a unit. */
+            referentInstances_t::const_iterator pending = _referentInstances.begin();
+            for( ; pending != _referentInstances.end(); ++pending ) {
+                if( _lim->isMaterializing( *pending ) ) {
+                    _lim->deferInverseResolution( _id );
+                    return;
+                }
+            }
             //3d - load each inst
             iAstruct ias = invAttr( _inst, ia );
             referentInstances_t::iterator insts = _referentInstances.begin();
@@ -98,7 +108,12 @@ class SC_LAZYFILE_EXPORT lazyRefs {
 
         void loadInstIFFreferent( instanceID inst, iAstruct ias, const Inverse_attribute * ia ) {
             bool prevLoaded = _lim->isLoaded( inst );
+            if( _lim->isMaterializing( inst ) ) {
+                _lim->deferInverseResolution( _id );
+                return;
+            }
             SDAI_Application_instance * rinst = _lim->loadInstance( inst );
+            if( !rinst ) return;
             bool ref = refersToCurrentInst( ia, rinst );
             if( ref ) {
                 if( ia->inverted_attr_()->IsAggrType() ) {
@@ -108,8 +123,16 @@ class SC_LAZYFILE_EXPORT lazyRefs {
                         assert( invAttr( _inst, ia ).a == ias.a );
                     }
                     EntityAggregate * ea = ias.a;
-                    //TODO check if duplicate
-                    ea->AddNode( new EntityNode( rinst ) );
+                    bool duplicate = false;
+                    EntityNode * existing = static_cast<EntityNode *>( ea->GetHead() );
+                    while( existing ) {
+                        if( existing->node == rinst ) {
+                            duplicate = true;
+                            break;
+                        }
+                        existing = static_cast<EntityNode *>( existing->NextNode() );
+                    }
+                    if( !duplicate ) ea->AddNode( new EntityNode( rinst ) );
                 } else {
                     SDAI_Application_instance * ai = ias.i;
                     if( !ai ) {
@@ -131,8 +154,10 @@ class SC_LAZYFILE_EXPORT lazyRefs {
 
         ///3e - check if actually inverse ref
         bool refersToCurrentInst( const Inverse_attribute * ia, SDAI_Application_instance * referrer ) {
+            if( !referrer ) return false;
             //find the attr
             int rindex = attrIndex( referrer, ia->_inverted_attr_id, ia->_inverted_entity_id );
+            if( rindex < 0 ) return false;
             STEPattribute sa = referrer->attributes[ rindex ];
             assert( sa.getADesc()->BaseType() == ENTITY_TYPE );
             bool found = false;
@@ -279,7 +304,7 @@ class SC_LAZYFILE_EXPORT lazyRefs {
 
 
             // 1. find inverse attrs with recursion
-            getInverseAttrs( ai->eDesc, _iaList );
+            getInverseAttrs( _inst->eDesc, _iaList );
 
             //2. find reverse refs, map id to type (stop if there are no inverse attrs or no refs)
             if( _iaList.size() == 0 || !mapRefsToTypes() ) {

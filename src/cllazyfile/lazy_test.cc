@@ -171,6 +171,34 @@ int main( int argc, char ** argv ) {
 #ifndef NO_REGISTRY
     if( instWithRef ) {
         std::cout << "Number of data section instances fully loaded: " << mgr->loadedInstanceCount() << std::endl;
+        {
+            LazyInstanceBatch first = mgr->loadBatch( instWithRef );
+            LazyInstanceBatch second = mgr->loadBatch( instWithRef );
+            size_t sharedSize = second.instances().size();
+            first.release();
+            if( mgr->loadedInstanceCount() != sharedSize || !second.get( instWithRef ) ) {
+                std::cerr << "Releasing one batch evicted instances pinned by another batch" << std::endl;
+                return EXIT_FAILURE;
+            }
+        }
+        if( mgr->loadedInstanceCount() != 0 ) {
+            std::cerr << "Shared dependency batches did not release their cache" << std::endl;
+            return EXIT_FAILURE;
+        }
+        for( int cycle = 0; cycle < 3; ++cycle ) {
+            {
+                LazyInstanceBatch batch = mgr->loadBatch( instWithRef );
+                if( !batch.valid() || !batch.get( instWithRef ) ) {
+                    std::cerr << "Unable to materialize dependency batch for #" << instWithRef << std::endl;
+                    return EXIT_FAILURE;
+                }
+                std::cout << "Batch-pinned instances: " << batch.instances().size() << std::endl;
+            }
+            if( mgr->loadedInstanceCount() != 0 ) {
+                std::cerr << "Dependency batch did not return the cache to its initial size" << std::endl;
+                return EXIT_FAILURE;
+            }
+        }
         std::cout << "Loading #" << instWithRef;
         SDAI_Application_instance * inst = mgr->loadInstance( instWithRef );
         std::cout << " which is of type " << inst->EntityName() << std::endl;
@@ -193,4 +221,3 @@ int main( int argc, char ** argv ) {
     delete mgr;
     //stats will print from its destructor
 }
-

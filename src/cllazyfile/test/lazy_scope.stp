@@ -1,0 +1,17 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('lazy scope test'),'1;1');
+FILE_NAME('lazy_scope.stp','2026-07-31T00:00:00',('STEPcode'),('STEPcode'),'','','');
+FILE_SCHEMA(('LAZY_TEST_SCHEMA { 1 0 10303 999 }'));
+ENDSEC;
+DATA;
+#10=&SCOPE
+#11=&SCOPE
+#12=B();
+ENDSCOPE /#12/ A($,'nested owner',#12);
+ENDSCOPE /#11/ A($,'outer owner',#12);
+#20=&SCOPE
+#21=A($,'complex child',#12);
+ENDSCOPE (C()D(#21));
+ENDSEC;
+END-ISO-10303-21;

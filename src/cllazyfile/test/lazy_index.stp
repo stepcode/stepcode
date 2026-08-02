@@ -1,0 +1,17 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('lazy index test'),'2;1');
+FILE_NAME('lazy_index.stp','2026-07-17T00:00:00',('STEPcode'),('STEPcode'),'','','');
+FILE_SCHEMA(('LAZY_TEST_SCHEMA { 1 0 10303 999 }'));
+ENDSEC;
+DATA('second',('LAZY_TEST_SCHEMA'));
+#1=A($,'escaped quote '' and unicode \X2\03A9\X0\',#2);
+#2=B();
+ENDSEC;
+/* A second data section must not be consumed by lookahead. */
+DATA;
+#3=(C()D(#1));
+#4=E(#3,$);
+#5=E(#99,$);
+ENDSEC;
+END-ISO-10303-21;
