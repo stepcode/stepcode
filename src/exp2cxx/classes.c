@@ -39,6 +39,7 @@ unsigned long exp2cxx_entity_chunk_size = 64;
 unsigned long exp2cxx_type_chunk_size = 8;
 int exp2cxx_api_version = 1;
 int exp2cxx_late_bound = 0;
+int exp2cxx_compat_names = 0;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -56,10 +57,13 @@ char * format_for_stringout( char * orig_buf, char * return_buf ) {
             *rptr = '\\';
             rptr++;
             *rptr = 'n';
-        } else if( *optr == '\\' ) {
+        } else if( *optr == '\\' || *optr == '"' ) {
             *rptr = '\\';
             rptr++;
             *rptr = '\\';
+            if( *optr == '"' ) {
+                *rptr = '"';
+            }
         } else {
             *rptr = *optr;
         }
@@ -260,6 +264,9 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     if( ( char )i == 'T' ) {
         exp2cxx_late_bound = 1;
         exp2cxx_api_version = 2;
+    }
+    if( ( char )i == 'N' ) {
+        exp2cxx_compat_names = 1;
     }
     return 0;
 }

@@ -394,7 +394,9 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     }
 
     fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
-    fprintf( impl, "    std::string str;\n" );
+    if( exp2cxx_api_version == 1 ) {
+        fprintf( impl, "    std::string str;\n" );
+    }
     /* moved from SCOPEPrint in classes_wrapper */
     TYPEprint_new( type, impl, schema, true );
     TYPEprint_init( type, hdr, impl, schema );

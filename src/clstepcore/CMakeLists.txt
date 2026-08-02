@@ -35,6 +35,7 @@ set(CORE_SRCS
   Registry.cc
   schRename.cc
   schemaInit.cc
+  schemaModule.cc
   sdai.cc
   sdaiApplication_instance.cc
   sdaiSelect.cc

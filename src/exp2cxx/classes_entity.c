@@ -724,23 +724,32 @@ static void ENTITYincode_print_v2( Entity entity, FILE * header, FILE * impl,
     const int supertypeCount = LISTget_length( ENTITYget_supertypes( entity ) );
     const int attributeCount = LISTget_length( ENTITYget_attributes( entity ) );
 
-    /* Large subtype expressions remain procedural strings; the repeated
-     * descriptor/link construction below is compact table data. */
+    /* Descriptor links and rule text are emitted as compact data. */
     if( ENTITYget_abstract( entity ) ) {
         if( entity->u.entity->subtype_expression ) {
-            fprintf( impl, "    str.clear();\n    str.append( \"ABSTRACT SUPERTYPE OF ( \" );\n" );
-            format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-            fprintf( impl, "    str.append( \")\" );\n" );
-            fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
+            tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
+            escaped = ( char * )malloc( strlen( tmp ) * 2 + BUFSIZ );
+            fprintf( impl,
+                     "    %s::%s%s->AddSupertype_Stmt( "
+                     "\"ABSTRACT SUPERTYPE OF ( %s)\" );\n",
+                     schema_name, ENT_PREFIX, entity_name,
+                     format_for_stringout( tmp, escaped ) );
+            free( tmp );
+            free( escaped );
         } else {
             fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( \"ABSTRACT SUPERTYPE\" );\n",
                      schema_name, ENT_PREFIX, entity_name );
         }
     } else if( entity->u.entity->subtype_expression ) {
-        fprintf( impl, "    str.clear();\n    str.append( \"SUPERTYPE OF ( \" );\n" );
-        format_for_std_stringout( impl, SUBTYPEto_string( entity->u.entity->subtype_expression ) );
-        fprintf( impl, "    str.append( \")\" );\n" );
-        fprintf( impl, "    %s::%s%s->AddSupertype_Stmt( str );\n", schema_name, ENT_PREFIX, entity_name );
+        tmp = SUBTYPEto_string( entity->u.entity->subtype_expression );
+        escaped = ( char * )malloc( strlen( tmp ) * 2 + BUFSIZ );
+        fprintf( impl,
+                 "    %s::%s%s->AddSupertype_Stmt( "
+                 "\"SUPERTYPE OF ( %s)\" );\n",
+                 schema_name, ENT_PREFIX, entity_name,
+                 format_for_stringout( tmp, escaped ) );
+        free( tmp );
+        free( escaped );
     }
 
     if( supertypeCount ) {
@@ -1159,7 +1168,9 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
-    fprintf( impl, "#include \"schema.h\"\n" );
+    if( !exp2cxx_late_bound ) {
+        fprintf( impl, "#include \"schema.h\"\n" );
+    }
     if( !exp2cxx_late_bound ) {
         fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
     } else {
@@ -1205,7 +1216,9 @@ void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE 
     }
     
     fprintf( impl, "void init_%s( Registry& reg ) {\n", name );
-    fprintf( impl, "    std::string str;\n\n" );
+    if( exp2cxx_api_version == 1 ) {
+        fprintf( impl, "    std::string str;\n\n" );
+    }
     ENTITYprint_descriptors( entity, createall, impl, schema, externMap );
     ENTITYincode_print( entity, header, impl, schema );
     fprintf( impl, "}\n\n" );
@@ -1314,7 +1327,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         LIST_destroy( existing );
         LIST_destroy( required );
     }
-    if( mkDirIfNone( "entity" ) == -1 ) {
+    if( !exp2cxx_late_bound && mkDirIfNone( "entity" ) == -1 ) {
         fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
         perror( 0 );
         abort();
@@ -1342,19 +1355,29 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         }
     }
 
-    hdr = FILEcreate( names.header );
-    impl = FILEcreate( names.impl );
-    assert( hdr && impl && "error creating files" );
-    fprintf( files->unity.entity.hdr, "#include \"%s\"\n", names.header ); /* TODO this is not necessary? */
-    UNITYentityInclude( files, names.impl );
-
-    ENTITYPrint_h( entity, hdr, remaining, schema );
-    ENTITYPrint_cc( entity, files->create, hdr, impl, remaining, schema, externMap );
-    FILEclose( hdr );
-    FILEclose( impl );
+    if( exp2cxx_late_bound ) {
+        impl = UNITYentityFile( files );
+        ENTITYPrint_cc( entity, files->create, files->inc, impl, remaining,
+                        schema, externMap );
+    } else {
+        hdr = FILEcreate( names.header );
+        impl = FILEcreate( names.impl );
+        assert( hdr && impl && "error creating files" );
+        fprintf( files->unity.entity.hdr, "#include \"%s\"\n", names.header );
+        UNITYentityInclude( files, names.impl );
+        ENTITYPrint_h( entity, hdr, remaining, schema );
+        ENTITYPrint_cc( entity, files->create, hdr, impl, remaining, schema,
+                        externMap );
+        FILEclose( hdr );
+        FILEclose( impl );
+    }
 
     if( exp2cxx_api_version != 2 ) {
         fprintf( files->inc, "#include \"entity/%s.h\"\n", ENTITYget_classname( entity ) );
+    }
+    if( exp2cxx_late_bound ) {
+        fprintf( files->init, "    extern void init_%s(Registry &);\n",
+                 ENTITYget_classname( entity ) );
     }
     fprintf( files->init, "    init_%s( reg );\n", ENTITYget_classname( entity ) );
 
@@ -1397,6 +1420,9 @@ void ENTITYprint_descriptors( Entity entity, FILE * createall, FILE * impl, Sche
 void ENTITYprint_classes( Entity entity, FILE * classes ) {
     const char * n = ENTITYget_classname( entity );
     if( exp2cxx_late_bound ) {
+        if( !exp2cxx_compat_names ) {
+            return;
+        }
         fprintf( classes, "\ntypedef SDAI_Application_instance %s;\n", n );
         fprintf( classes, "typedef %s *          %sH;\n", n, n );
         fprintf( classes, "typedef %s *          %s_ptr;\n", n, n );

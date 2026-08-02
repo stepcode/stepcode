@@ -10,12 +10,113 @@
  * Date:        01/09/97                                                     *
  *****************************************************************************/
 
+#include <string>
+#include <vector>
+
 #include "complexSupport.h"
 
 // Local function prototypes:
 static void writeheader( ostream &, int );
 
-void print_complex( ComplexCollect & collect, const char * filename )
+struct CompactComplexNode {
+    JoinType kind;
+    std::string name;
+    size_t firstChild;
+    size_t nextSibling;
+};
+
+static size_t appendCompactNode( EntList * node,
+                                 std::vector<CompactComplexNode> & nodes ) {
+    const size_t noNode = static_cast<size_t>( -1 );
+    const size_t index = nodes.size();
+    CompactComplexNode record = { node->join, "", noNode, noNode };
+    if( node->join == SIMPLE ) {
+        record.name = static_cast<SimpleList *>( node )->Name();
+    }
+    nodes.push_back( record );
+
+    if( node->multiple() ) {
+        MultList * parent = static_cast<MultList *>( node );
+        size_t previous = noNode;
+        for( int i = 0; i < parent->childCount(); ++i ) {
+            size_t child = appendCompactNode( parent->getChild( i ), nodes );
+            if( previous == noNode ) {
+                nodes[index].firstChild = child;
+            } else {
+                nodes[previous].nextSibling = child;
+            }
+            previous = child;
+        }
+    }
+    return index;
+}
+
+static const char * compactNodeKind( JoinType kind ) {
+    switch( kind ) {
+        case AND:
+            return "ComplexNodeInit_And";
+        case OR:
+            return "ComplexNodeInit_Or";
+        case ANDOR:
+            return "ComplexNodeInit_AndOr";
+        case SIMPLE:
+        default:
+            return "ComplexNodeInit_Simple";
+    }
+}
+
+static void writeCompactComplex( ostream & output, ComplexCollect & collect ) {
+    const size_t noNode = static_cast<size_t>( -1 );
+    std::vector<CompactComplexNode> nodes;
+    std::vector<size_t> roots;
+    for( ComplexList * list = collect.clists; list; list = list->next ) {
+        roots.push_back( appendCompactNode( list->head, nodes ) );
+    }
+
+    output << "// compact, table-driven API v2 complex metadata\n"
+           << "#include \"clstepcore/schemaInit.h\"\n\n"
+           << "namespace {\n"
+           << "const size_t noNode = static_cast<size_t>( -1 );\n"
+           << "const ComplexNodeInitRecord complexNodes[] = {\n";
+    if( nodes.empty() ) {
+        output << "    { ComplexNodeInit_Simple, 0, noNode, noNode },\n";
+    }
+    for( size_t i = 0; i < nodes.size(); ++i ) {
+        output << "    { " << compactNodeKind( nodes[i].kind ) << ", ";
+        if( nodes[i].kind == SIMPLE ) {
+            output << '"' << nodes[i].name << '"';
+        } else {
+            output << '0';
+        }
+        output << ", ";
+        if( nodes[i].firstChild == noNode ) {
+            output << "noNode";
+        } else {
+            output << nodes[i].firstChild;
+        }
+        output << ", ";
+        if( nodes[i].nextSibling == noNode ) {
+            output << "noNode";
+        } else {
+            output << nodes[i].nextSibling;
+        }
+        output << " },\n";
+    }
+    output << "};\n\nconst ComplexListInitRecord complexLists[] = {\n";
+    if( roots.empty() ) {
+        output << "    { 0 },\n";
+    }
+    for( size_t i = 0; i < roots.size(); ++i ) {
+        output << "    { " << roots[i] << " },\n";
+    }
+    output << "};\n}\n\nComplexCollect * gencomplex() {\n"
+           << "    return InitializeComplexSupport( complexNodes, "
+           << nodes.size() << ", complexLists, " << roots.size() << " );\n"
+           << "}\n";
+}
+
+void print_complex( ComplexCollect & collect, const char * filename,
+                    bool compact )
 /*
  * Standalone function called from exp2cxx.  Takes a ComplexCollect
  * and writes its contents to a file (filename) which can be used to
@@ -32,10 +133,10 @@ void print_complex( ComplexCollect & collect, const char * filename )
         }
     }
 #endif
-    collect.write( filename );
+    collect.write( filename, compact );
 }
 
-void ComplexCollect::write( const char * fname )
+void ComplexCollect::write( const char * fname, bool compactOutput )
 /*
  * Generates C++ code in os which may be compiled and run to create a
  * ComplexCollect structure.  Functions are called to write out the
@@ -52,6 +153,11 @@ void ComplexCollect::write( const char * fname )
         cerr << "ERROR: Could not create output file " << fname << endl;
         // yikes this is pretty drastic, Sun C++ doesn't like this anyway DAS
 //  exit(-1);
+        return;
+    }
+    if( compactOutput ) {
+        writeCompactComplex( complex, *this );
+        complex.close();
         return;
     }
     writeheader( complex, clists == NULL );

@@ -12,6 +12,9 @@ else()
   if(LATE_BOUND)
     list(APPEND _exp2cxx_mode_args --late-bound)
   endif()
+  if(COMPAT_NAMES)
+    list(APPEND _exp2cxx_mode_args --compat-names)
+  endif()
   execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} -V ${API_VERSION} ${_exp2cxx_mode_args} ${EXP}
     WORKING_DIRECTORY ${SDIR}
     RESULT_VARIABLE _res

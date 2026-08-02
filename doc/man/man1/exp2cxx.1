@@ -74,6 +74,10 @@ Entity instances are constructed at runtime from schema descriptors.  This mode
 is intended for conversion and inspection applications which do not require the
 conventional generated entity API.
 .TP
+.B --compat-names
+Retains the generated entity-name aliases in late-bound output.  Normal
+late-bound API v2 output uses schema module IDs instead and omits these aliases.
+.TP
 .B -v
 Produces a version description.
 .TP

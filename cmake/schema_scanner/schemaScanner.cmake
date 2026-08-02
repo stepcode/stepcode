@@ -36,6 +36,11 @@ if(SC_EXP2CXX_LATE_BOUND AND NOT SC_EXP2CXX_API_VERSION STREQUAL "2")
   message(FATAL_ERROR "SC_EXP2CXX_LATE_BOUND requires SC_EXP2CXX_API_VERSION=2")
 endif()
 
+option(SC_EXP2CXX_COMPAT_NAMES "Retain generated entity aliases in late-bound output" OFF)
+if(SC_EXP2CXX_COMPAT_NAMES AND NOT SC_EXP2CXX_LATE_BOUND)
+  message(FATAL_ERROR "SC_EXP2CXX_COMPAT_NAMES requires SC_EXP2CXX_LATE_BOUND=ON")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir

@@ -4,8 +4,11 @@ set(v1_default "${CMAKE_CURRENT_BINARY_DIR}/api_v1_default")
 set(v1_explicit "${CMAKE_CURRENT_BINARY_DIR}/api_v1_explicit")
 set(v2 "${CMAKE_CURRENT_BINARY_DIR}/api_v2")
 set(late "${CMAKE_CURRENT_BINARY_DIR}/api_v2_late")
-file(REMOVE_RECURSE "${v1_default}" "${v1_explicit}" "${v2}" "${late}")
-file(MAKE_DIRECTORY "${v1_default}" "${v1_explicit}" "${v2}" "${late}")
+set(late_compat "${CMAKE_CURRENT_BINARY_DIR}/api_v2_late_compat")
+file(REMOVE_RECURSE "${v1_default}" "${v1_explicit}" "${v2}" "${late}"
+  "${late_compat}")
+file(MAKE_DIRECTORY "${v1_default}" "${v1_explicit}" "${v2}" "${late}"
+  "${late_compat}")
 
 execute_process(COMMAND "${EXE}" "${INFILE}"
   WORKING_DIRECTORY "${v1_default}" RESULT_VARIABLE result)
@@ -105,14 +108,16 @@ if(NOT result EQUAL 0)
 endif()
 
 file(READ "${late}/Sdaiclasses.h" late_classes)
-file(READ "${late}/entity/SdaiGlue.h" late_entity_header)
-file(READ "${late}/entity/SdaiGlue.cc" late_entity_source)
+file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE.h" late_schema_header)
+file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE_unity_entities_0001.cc"
+  late_entity_source)
 file(READ "${late}/SdaiAll.cc" late_all)
-if(NOT late_classes MATCHES "typedef SDAI_Application_instance SdaiGlue")
-  message(FATAL_ERROR "late-bound entity aliases do not use the generic runtime class")
+file(READ "${late}/compstructs.cc" late_complex)
+if(late_classes MATCHES "typedef SDAI_Application_instance SdaiGlue")
+  message(FATAL_ERROR "late-bound output retained compatibility aliases by default")
 endif()
-if(late_entity_header MATCHES "class SdaiGlue")
-  message(FATAL_ERROR "late-bound output still declares an early-bound entity class")
+if(EXISTS "${late}/entity/SdaiGlue.h" OR EXISTS "${late}/entity/SdaiGlue.cc")
+  message(FATAL_ERROR "late-bound output still emits entity leaf files")
 endif()
 if(late_entity_source MATCHES "SdaiGlue::")
   message(FATAL_ERROR "late-bound output still defines early-bound entity methods")
@@ -120,11 +125,37 @@ endif()
 if(NOT late_entity_source MATCHES "AttributeInitRecord")
   message(FATAL_ERROR "late-bound entity metadata is not table-driven")
 endif()
+if(NOT late_schema_header MATCHES "enum class EntityId" OR
+   NOT late_schema_header MATCHES "enum class TypeId" OR
+   NOT late_schema_header MATCHES "enum class AttributeId" OR
+   NOT late_schema_header MATCHES "SchemaModule schemaModule")
+  message(FATAL_ERROR "late-bound schema module API is missing")
+endif()
 if(NOT late_all MATCHES "InitializeSchemas" OR
    NOT late_all MATCHES "InitializeEntityDescriptors" OR
    NOT late_all MATCHES "InitializeTypeDescriptors" OR
    NOT late_all MATCHES "e_glue, \"Glue\".*LFalse, LFalse, 0")
   message(FATAL_ERROR "late-bound descriptor records are missing or have an early-bound creator")
+endif()
+if(NOT late_all MATCHES "InitializeGlobalRules" OR
+   NOT late_all MATCHES "InitializeFunctions" OR
+   NOT late_all MATCHES "InitializeProcedures")
+  message(FATAL_ERROR "late-bound schema text metadata is not table-driven")
+endif()
+if(NOT late_complex MATCHES "ComplexNodeInitRecord" OR
+   NOT late_complex MATCHES "InitializeComplexSupport")
+  message(FATAL_ERROR "late-bound complex metadata is not table-driven")
+endif()
+
+execute_process(COMMAND "${EXE}" --late-bound --compat-names "${INFILE}"
+  WORKING_DIRECTORY "${late_compat}" RESULT_VARIABLE result)
+if(NOT result EQUAL 0)
+  message(FATAL_ERROR "late-bound compatibility generation failed")
+endif()
+file(READ "${late_compat}/Sdaiclasses.h" late_compat_classes)
+if(NOT late_compat_classes MATCHES
+   "typedef SDAI_Application_instance SdaiGlue")
+  message(FATAL_ERROR "--compat-names did not restore entity aliases")
 endif()
 
 execute_process(COMMAND "${EXE}" --late-bound --api-version 1 "${INFILE}"

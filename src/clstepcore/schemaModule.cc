@@ -1,0 +1,122 @@
+#include "clstepcore/schemaModule.h"
+
+#include <cassert>
+
+#include "clstepcore/attrDescriptor.h"
+#include "clstepcore/aggrTypeDescriptor.h"
+#include "clstepcore/derivedAttribute.h"
+#include "clstepcore/dictSchema.h"
+#include "clstepcore/entityDescriptor.h"
+#include "clstepcore/enumTypeDescriptor.h"
+#include "clstepcore/inverseAttribute.h"
+#include "clstepcore/selectTypeDescriptor.h"
+#include "clstepcore/typeDescriptor.h"
+
+namespace {
+
+const TypeDescriptor * typeFromSlot( const SchemaModuleSlot & record ) {
+    switch( record.kind ) {
+        case SchemaModuleSlot_EnumType:
+            return *static_cast<EnumTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_SelectType:
+            return *static_cast<SelectTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_AggregateType:
+            return *static_cast<AggrTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_ArrayType:
+            return *static_cast<ArrayTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_ListType:
+            return *static_cast<ListTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_SetType:
+            return *static_cast<SetTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_BagType:
+            return *static_cast<BagTypeDescriptor * const *>( record.slot );
+        case SchemaModuleSlot_Type:
+        default:
+            return *static_cast<TypeDescriptor * const *>( record.slot );
+    }
+}
+
+const AttrDescriptor * attributeFromSlot( const SchemaModuleSlot & record ) {
+    switch( record.kind ) {
+        case SchemaModuleSlot_DerivedAttribute:
+            return *static_cast<Derived_attribute * const *>( record.slot );
+        case SchemaModuleSlot_InverseAttribute:
+            return *static_cast<Inverse_attribute * const *>( record.slot );
+        case SchemaModuleSlot_Attribute:
+        default:
+            return *static_cast<AttrDescriptor * const *>( record.slot );
+    }
+}
+
+}
+
+SchemaModule::SchemaModule() : _schema( 0 ) {
+}
+
+SchemaModule::~SchemaModule() {
+}
+
+void SchemaModule::Initialize(
+    Schema & schema,
+    const EntityDescriptor * const * entities, size_t entityCount,
+    const TypeDescriptor * const * types, size_t typeCount,
+    const AttrDescriptor * const * attributes, size_t attributeCount ) {
+    _schema = &schema;
+    _entities.assign( entities, entities + entityCount );
+    _types.assign( types, types + typeCount );
+    _attributes.assign( attributes, attributes + attributeCount );
+}
+
+void SchemaModule::InitializeFromSlots(
+    Schema & schema,
+    const SchemaModuleSlot * entities, size_t entityCount,
+    const SchemaModuleSlot * types, size_t typeCount,
+    const SchemaModuleSlot * attributes, size_t attributeCount ) {
+    _schema = &schema;
+    _entities.reserve( entityCount );
+    for( size_t i = 0; i < entityCount; ++i ) {
+        _entities.push_back(
+            *static_cast<EntityDescriptor * const *>( entities[i].slot ) );
+    }
+    _types.reserve( typeCount );
+    for( size_t i = 0; i < typeCount; ++i ) {
+        _types.push_back( typeFromSlot( types[i] ) );
+    }
+    _attributes.reserve( attributeCount );
+    for( size_t i = 0; i < attributeCount; ++i ) {
+        _attributes.push_back( attributeFromSlot( attributes[i] ) );
+    }
+}
+
+bool SchemaModule::IsInitialized() const {
+    return _schema != 0;
+}
+
+const Schema & SchemaModule::GetSchema() const {
+    assert( _schema );
+    return *_schema;
+}
+
+const EntityDescriptor * SchemaModule::Entity( size_t id ) const {
+    return id < _entities.size() ? _entities[id] : 0;
+}
+
+const TypeDescriptor * SchemaModule::Type( size_t id ) const {
+    return id < _types.size() ? _types[id] : 0;
+}
+
+const AttrDescriptor * SchemaModule::Attribute( size_t id ) const {
+    return id < _attributes.size() ? _attributes[id] : 0;
+}
+
+size_t SchemaModule::EntityCount() const {
+    return _entities.size();
+}
+
+size_t SchemaModule::TypeCount() const {
+    return _types.size();
+}
+
+size_t SchemaModule::AttributeCount() const {
+    return _attributes.size();
+}

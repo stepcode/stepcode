@@ -13,6 +13,7 @@
 
 class Derived_attribute;
 class Inverse_attribute;
+class ComplexCollect;
 class Registry;
 
 /** Compact records used by API v2 generated schema initialization. */
@@ -124,6 +125,29 @@ struct SC_CORE_EXPORT AttributeInitRecord {
                          const char * invertedEnt );
 };
 
+enum ComplexNodeInitKind {
+    ComplexNodeInit_Simple,
+    ComplexNodeInit_And,
+    ComplexNodeInit_Or,
+    ComplexNodeInit_AndOr
+};
+
+struct SC_CORE_EXPORT ComplexNodeInitRecord {
+    ComplexNodeInitKind kind;
+    const char * name;
+    size_t firstChild;
+    size_t nextSibling;
+};
+
+struct SC_CORE_EXPORT ComplexListInitRecord {
+    size_t rootNode;
+};
+
+struct SC_CORE_EXPORT GlobalRuleInitRecord {
+    const char * name;
+    const char * text;
+};
+
 SC_CORE_EXPORT void InitializeSchemas( Registry & reg,
                                        const SchemaInitRecord * records,
                                        size_t count );
@@ -139,5 +163,18 @@ SC_CORE_EXPORT void InitializeEntityMetadata(
     Registry & reg, EntityDescriptor & entity, Schema & schema,
     const EntitySupertypeInitRecord * supertypes, size_t supertypeCount,
     const AttributeInitRecord * attributes, size_t attributeCount );
+SC_CORE_EXPORT void InitializeWhereRules(
+    TypeDescriptor & owner, const char * const * rules, size_t count );
+SC_CORE_EXPORT void InitializeUniquenessRules(
+    EntityDescriptor & owner, const char * const * rules, size_t count );
+SC_CORE_EXPORT void InitializeGlobalRules(
+    Schema & schema, const GlobalRuleInitRecord * rules, size_t count );
+SC_CORE_EXPORT void InitializeFunctions(
+    Schema & schema, const char * const * functions, size_t count );
+SC_CORE_EXPORT void InitializeProcedures(
+    Schema & schema, const char * const * procedures, size_t count );
+SC_CORE_EXPORT ComplexCollect * InitializeComplexSupport(
+    const ComplexNodeInitRecord * nodes, size_t nodeCount,
+    const ComplexListInitRecord * lists, size_t listCount );
 
 #endif

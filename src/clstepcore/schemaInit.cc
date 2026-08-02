@@ -1,9 +1,15 @@
 #include "clstepcore/schemaInit.h"
 
 #include "clstepcore/Registry.h"
+#include "clstepcore/complexSupport.h"
 #include "clstepcore/derivedAttribute.h"
+#include "clstepcore/globalRule.h"
 #include "clstepcore/inverseAttribute.h"
 #include "clstepcore/selectTypeDescriptor.h"
+#include "clstepcore/uniquenessRule.h"
+#include "clstepcore/whereRule.h"
+
+#include <vector>
 
 TypeDescriptorInitRecord::TypeDescriptorInitRecord(
     TypeDescriptor ** descriptorSlot, const char * typeName,
@@ -225,4 +231,101 @@ void InitializeEntityMetadata(
     if( hasInverse ) {
         schema.AddEntityWInverse( &entity );
     }
+}
+
+void InitializeWhereRules( TypeDescriptor & owner,
+                           const char * const * rules, size_t count ) {
+    if( !count ) {
+        return;
+    }
+    owner._where_rules = new Where_rule__list;
+    for( size_t i = 0; i < count; ++i ) {
+        owner._where_rules->Append( new Where_rule( rules[i] ) );
+    }
+}
+
+void InitializeUniquenessRules( EntityDescriptor & owner,
+                                const char * const * rules, size_t count ) {
+    if( !count ) {
+        return;
+    }
+    owner._uniqueness_rules = new Uniqueness_rule__set;
+    for( size_t i = 0; i < count; ++i ) {
+        owner._uniqueness_rules->Append( new Uniqueness_rule( rules[i] ) );
+    }
+}
+
+void InitializeGlobalRules( Schema & schema,
+                            const GlobalRuleInitRecord * rules,
+                            size_t count ) {
+    for( size_t i = 0; i < count; ++i ) {
+        schema.AddGlobal_rule(
+            new Global_rule( rules[i].name, &schema, rules[i].text ) );
+    }
+}
+
+void InitializeFunctions( Schema & schema,
+                          const char * const * functions, size_t count ) {
+    for( size_t i = 0; i < count; ++i ) {
+        schema.AddFunction( functions[i] );
+    }
+}
+
+void InitializeProcedures( Schema & schema,
+                           const char * const * procedures, size_t count ) {
+    for( size_t i = 0; i < count; ++i ) {
+        schema.AddProcedure( procedures[i] );
+    }
+}
+
+ComplexCollect * InitializeComplexSupport(
+    const ComplexNodeInitRecord * nodes, size_t nodeCount,
+    const ComplexListInitRecord * lists, size_t listCount ) {
+    if( !listCount ) {
+        return 0;
+    }
+
+    const size_t noNode = static_cast<size_t>( -1 );
+    std::vector<EntList *> runtimeNodes( nodeCount, 0 );
+    for( size_t i = 0; i < nodeCount; ++i ) {
+        switch( nodes[i].kind ) {
+            case ComplexNodeInit_And:
+                runtimeNodes[i] = new AndList;
+                break;
+            case ComplexNodeInit_Or:
+                runtimeNodes[i] = new OrList;
+                break;
+            case ComplexNodeInit_AndOr:
+                runtimeNodes[i] = new AndOrList;
+                break;
+            case ComplexNodeInit_Simple:
+            default:
+                runtimeNodes[i] = new SimpleList( nodes[i].name );
+                break;
+        }
+    }
+
+    for( size_t i = 0; i < nodeCount; ++i ) {
+        if( nodes[i].nextSibling != noNode ) {
+            runtimeNodes[i]->next = runtimeNodes[nodes[i].nextSibling];
+            runtimeNodes[nodes[i].nextSibling]->prev = runtimeNodes[i];
+        }
+    }
+    /* Sibling chains must be complete before appendList counts them. */
+    for( size_t i = 0; i < nodeCount; ++i ) {
+        if( nodes[i].firstChild != noNode ) {
+            MultList * parent = dynamic_cast<MultList *>( runtimeNodes[i] );
+            parent->appendList( runtimeNodes[nodes[i].firstChild] );
+        }
+    }
+
+    ComplexCollect * result = new ComplexCollect;
+    for( size_t i = 0; i < listCount; ++i ) {
+        AndList * root = dynamic_cast<AndList *>( runtimeNodes[lists[i].rootNode] );
+        ComplexList * list = new ComplexList( root );
+        list->buildList();
+        root->setLevel( 0 );
+        result->insert( list );
+    }
+    return result;
 }

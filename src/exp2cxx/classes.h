@@ -132,7 +132,9 @@ extern unsigned long exp2cxx_entity_chunk_size;
 extern unsigned long exp2cxx_type_chunk_size;
 extern int exp2cxx_api_version;
 extern int exp2cxx_late_bound;
+extern int exp2cxx_compat_names;
 void UNITYentityInclude( FILES * files, const char * implementation );
+FILE * UNITYentityFile( FILES * files );
 void UNITYtypeInclude( FILES * files, const char * implementation );
 #ifdef __cplusplus
 }

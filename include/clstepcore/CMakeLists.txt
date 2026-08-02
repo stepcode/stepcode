@@ -32,6 +32,7 @@ set(CORE_HDRS
   Registry.h
   schRename.h
   schemaInit.h
+  schemaModule.h
   sdai.h
   sdaiApplication_instance.h
   sdaiSelect.h
