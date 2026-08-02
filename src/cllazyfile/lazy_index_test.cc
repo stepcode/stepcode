@@ -46,6 +46,16 @@ int main( int argc, char ** argv ) {
         "forward reference index failed" );
     require( manager.reverseReferences( 1 ).size() == 1 && manager.reverseReferences( 1 )[0] == 3,
         "reverse reference index failed" );
+    const std::string firstSource = manager.sourceRecord( 1 );
+    const std::string secondSource = manager.sourceRecord( 2 );
+    require( firstSource.find( "#1=A(" ) != std::string::npos &&
+        !firstSource.empty() && firstSource[firstSource.size() - 1] == ';',
+        "first exact source record failed" );
+    require( secondSource.find( "#2=B();" ) != std::string::npos &&
+        !secondSource.empty() && secondSource[secondSource.size() - 1] == ';',
+        "second exact source record or stream restoration failed" );
+    require( manager.sourceRecord( 99 ).empty(),
+        "missing source record was not empty" );
 
     lazyInstMgr cancelled;
     uint64_t cancellationCalls = 0;

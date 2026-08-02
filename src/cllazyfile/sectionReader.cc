@@ -10,6 +10,7 @@
 #include <string>
 #include <assert.h>
 #include <limits.h>
+#include <limits>
 
 #ifdef _WIN32
 #  define strtoull _strtoui64
@@ -105,6 +106,32 @@ std::streampos sectionReader::findNormalString( const std::string & str, bool se
     } else {
         return -1;
     }
+}
+
+
+std::string sectionReader::sourceRecord( lazyFileOffset begin, uint64_t length ) {
+    if( begin == 0 || length == 0 ||
+            length > static_cast<uint64_t>( std::numeric_limits<std::streamsize>::max() ) ||
+            length > static_cast<uint64_t>( std::numeric_limits<size_t>::max() ) ) {
+        return std::string();
+    }
+
+    const std::streampos saved = _file.tellg();
+    _file.clear();
+    _file.seekg( static_cast<std::streamoff>( begin ) );
+    if( !_file.good() ) {
+        _file.clear();
+        if( saved != std::streampos( -1 ) ) _file.seekg( saved );
+        return std::string();
+    }
+
+    std::string source( static_cast<size_t>( length ), '\0' );
+    _file.read( &source[0], static_cast<std::streamsize>( length ) );
+    const bool complete = static_cast<uint64_t>( _file.gcount() ) == length;
+
+    _file.clear();
+    if( saved != std::streampos( -1 ) ) _file.seekg( saved );
+    return complete ? source : std::string();
 }
 
 

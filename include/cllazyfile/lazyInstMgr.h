@@ -125,6 +125,10 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         }
         LazyInstanceIdView forwardReferences( instanceID id );
         LazyInstanceIdView reverseReferences( instanceID id );
+        /** Copy the exact indexed source record for an instance.  Returns an
+         * empty string when the ID is missing or ambiguous. */
+        std::string sourceRecord( instanceID id );
+
         /// returns a vector containing the instances that match `type`
         instanceTypes_t::cvector * getInstances( std::string type, bool caseSensitive = false ) { /*const*/
             if( !caseSensitive ) {

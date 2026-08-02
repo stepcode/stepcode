@@ -129,6 +129,20 @@ LazyInstanceIdView lazyInstMgr::reverseReferences( instanceID id ) {
     return LazyInstanceIdView( _revInstanceRefs.find( id ) );
 }
 
+std::string lazyInstMgr::sourceRecord( instanceID id ) {
+    instanceStreamPos_t::cvector * positions = _instanceStreamPos.find( id );
+    std::map<instanceID, uint64_t>::const_iterator bytes = _instanceSourceBytes.find( id );
+    if( !positions || positions->size() != 1 || bytes == _instanceSourceBytes.end() ||
+            bytes->second == 0 ) {
+        return std::string();
+    }
+    const instancePosition & position = positions->front();
+    if( position.section >= _dataSections.size() || !_dataSections[position.section] ) {
+        return std::string();
+    }
+    return _dataSections[position.section]->sourceRecord( position.begin, bytes->second );
+}
+
 void lazyInstMgr::observeScan( fileID file, lazyFileOffset offset, lazyFileOffset fileSize ) {
     if( _cancelled ) return;
     if( _cancellationCallback && _cancellationCallback() ) {

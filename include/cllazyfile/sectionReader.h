@@ -72,6 +72,12 @@ class SC_LAZYFILE_EXPORT sectionReader {
         SDAI_Application_instance * getRealInstance( const Registry * reg, lazyFileOffset begin, instanceID instance,
                 const std::string & typeName = "", const std::string & schName = "", bool header = false );
 
+        /** Return one indexed source record without materializing it.  The
+         * stream position is restored before returning.  This is intended
+         * for lightweight adapters which can detach scalar/reference data
+         * directly from Part 21 source. */
+        std::string sourceRecord( lazyFileOffset begin, uint64_t length );
+
         sectionID ID() const {
             return _sectionID;
         }
