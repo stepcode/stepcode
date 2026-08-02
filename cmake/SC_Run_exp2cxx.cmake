@@ -3,6 +3,9 @@
 if(NOT DEFINED API_VERSION OR "${API_VERSION}" STREQUAL "")
   set(API_VERSION 1)
 endif()
+if(NOT DEFINED METADATA_PROFILE OR "${METADATA_PROFILE}" STREQUAL "")
+  set(METADATA_PROFILE full)
+endif()
 
 if(ONESHOT AND EXISTS "${SDIR}/schema.cc")
   message("WARNING: SC_GENERATE_CXX_ONESHOT is enabled. If generated code has been modified, it will NOT be rewritten!")
@@ -15,6 +18,7 @@ else()
   if(COMPAT_NAMES)
     list(APPEND _exp2cxx_mode_args --compat-names)
   endif()
+  list(APPEND _exp2cxx_mode_args --metadata ${METADATA_PROFILE})
   execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} -V ${API_VERSION} ${_exp2cxx_mode_args} ${EXP}
     WORKING_DIRECTORY ${SDIR}
     RESULT_VARIABLE _res

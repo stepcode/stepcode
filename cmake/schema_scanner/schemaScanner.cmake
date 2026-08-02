@@ -41,6 +41,21 @@ if(SC_EXP2CXX_COMPAT_NAMES AND NOT SC_EXP2CXX_LATE_BOUND)
   message(FATAL_ERROR "SC_EXP2CXX_COMPAT_NAMES requires SC_EXP2CXX_LATE_BOUND=ON")
 endif()
 
+if(NOT DEFINED SC_EXP2CXX_METADATA)
+  set(SC_EXP2CXX_METADATA "full")
+endif()
+set(SC_EXP2CXX_METADATA "${SC_EXP2CXX_METADATA}" CACHE STRING
+  "Generated schema metadata profile (full or structural)")
+set_property(CACHE SC_EXP2CXX_METADATA PROPERTY STRINGS full structural)
+if(NOT SC_EXP2CXX_METADATA MATCHES "^(full|structural)$")
+  message(FATAL_ERROR "SC_EXP2CXX_METADATA must be full or structural")
+endif()
+if(SC_EXP2CXX_METADATA STREQUAL "structural" AND
+   NOT SC_EXP2CXX_LATE_BOUND)
+  message(FATAL_ERROR
+    "SC_EXP2CXX_METADATA=structural requires SC_EXP2CXX_LATE_BOUND=ON")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir

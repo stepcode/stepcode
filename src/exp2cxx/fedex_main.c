@@ -84,7 +84,7 @@ extern void print_fedex_version( void );
 
 static void exp2cxx_usage( void ) {
     char *warnings_help_msg = ERRORget_warnings_help("\t", "\n");
-    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-L] [-T] [--compat-names] [-k entity-chunk-size[:type-chunk-size]] [-V 1|2] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-L] [-T] [--compat-names] [--metadata full|structural] [-k entity-chunk-size[:type-chunk-size]] [-V 1|2] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
     fprintf( stderr, "\t-L prints logging code in the generated C++ classes\n" );
@@ -92,6 +92,7 @@ static void exp2cxx_usage( void ) {
     fprintf( stderr, "\t-V, --api-version selects generated C++ API version 1 or 2 (default 1)\n" );
     fprintf( stderr, "\t-T, --late-bound omits generated entity classes and selects API version 2\n" );
     fprintf( stderr, "\t--compat-names retains entity aliases in late-bound output\n" );
+    fprintf( stderr, "\t--metadata selects full or conversion-oriented structural metadata\n" );
     fprintf( stderr, "\t-v produces the version description below\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
@@ -117,6 +118,7 @@ static void exp2cxx_usage( void ) {
 static void exp2cxx_init_args( int argc, char ** argv ) {
     int i;
     const char prefix[] = "--api-version=";
+    const char metadata_prefix[] = "--metadata=";
     for( i = 1; i < argc; ++i ) {
         if( strcmp( argv[i], "--api-version" ) == 0 ) {
             argv[i][0] = '-';
@@ -135,6 +137,17 @@ static void exp2cxx_init_args( int argc, char ** argv ) {
             argv[i][0] = '-';
             argv[i][1] = 'N';
             argv[i][2] = '\0';
+        } else if( strcmp( argv[i], "--metadata" ) == 0 ) {
+            argv[i][0] = '-';
+            argv[i][1] = 'M';
+            argv[i][2] = '\0';
+        } else if( strncmp( argv[i], metadata_prefix,
+                            sizeof( metadata_prefix ) - 1 ) == 0 ) {
+            memmove( argv[i] + 2,
+                     argv[i] + sizeof( metadata_prefix ) - 1,
+                     strlen( argv[i] + sizeof( metadata_prefix ) - 1 ) + 1 );
+            argv[i][0] = '-';
+            argv[i][1] = 'M';
         }
     }
 }
@@ -160,6 +173,6 @@ void EXPRESSinit_init( void ) {
     EXPRESSgetopt = Handle_FedPlus_Args;
     EXPRESSinit_args = exp2cxx_init_args;
     /* so the function getopt (see man 3 getopt) will not report an error */
-    strcat( EXPRESSgetopt_options, "sSlLaANTk:V:" );
+    strcat( EXPRESSgetopt_options, "sSlLaANTk:V:M:" );
     ERRORusage_function = exp2cxx_usage;
 }

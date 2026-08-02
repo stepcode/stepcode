@@ -1135,6 +1135,13 @@ void print_file( Express express ) {
     ComplexCollect col( express );
     File_holder files;
 
+    if( exp2cxx_metadata_profile == Exp2CxxMetadata_Structural &&
+            !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+        fprintf( stderr,
+                 "exp2cxx: structural metadata requires late-bound API v2\n" );
+        exit( EXIT_FAILURE );
+    }
+
     resolution_success();
 
     print_file_header( &files );

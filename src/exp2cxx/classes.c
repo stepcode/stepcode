@@ -40,6 +40,7 @@ unsigned long exp2cxx_type_chunk_size = 8;
 int exp2cxx_api_version = 1;
 int exp2cxx_late_bound = 0;
 int exp2cxx_compat_names = 0;
+int exp2cxx_metadata_profile = Exp2CxxMetadata_Full;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -267,6 +268,16 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     }
     if( ( char )i == 'N' ) {
         exp2cxx_compat_names = 1;
+    }
+    if( ( char )i == 'M' ) {
+        if( !arg || ( strcmp( arg, "full" ) &&
+                      strcmp( arg, "structural" ) ) ) {
+            fprintf( stderr,
+                     "exp2cxx: metadata profile must be full or structural\n" );
+            return 1;
+        }
+        exp2cxx_metadata_profile = !strcmp( arg, "structural" ) ?
+            Exp2CxxMetadata_Structural : Exp2CxxMetadata_Full;
     }
     return 0;
 }

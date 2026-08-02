@@ -166,6 +166,10 @@ class ImageBuilder {
     std::vector<uint32_t> _enumElements;
     std::vector<PackedRename> _renames;
 
+    static bool structuralMetadata() {
+        return exp2cxx_metadata_profile == Exp2CxxMetadata_Structural;
+    }
+
     static std::string primitiveToken( const Type type, int reportRef ) {
         return FundamentalType( type, reportRef );
     }
@@ -259,10 +263,12 @@ class ImageBuilder {
             value = expression->u.integer;
             return;
         }
-        char * expressionText = EXPRto_string( expression );
         kind = "bound_funcall";
-        text = _strings.Add( expressionText );
-        free( expressionText );
+        if( !structuralMetadata() ) {
+            char * expressionText = EXPRto_string( expression );
+            text = _strings.Add( expressionText );
+            free( expressionText );
+        }
     }
 
     uint32_t addAggregate( Type type, Schema schema ) {
@@ -275,7 +281,9 @@ class ImageBuilder {
         _aggregateLocations[type] = index;
         PackedAggregate record = {};
         record.schema = schemaFor( schema );
-        record.description = _strings.Add( TypeDescription( type ) );
+        if( !structuralMetadata() ) {
+            record.description = _strings.Add( TypeDescription( type ) );
+        }
         record.fundamentalType = primitiveToken( type, 1 );
         record.bound1Type = "bound_unset";
         record.bound2Type = "bound_unset";
@@ -424,8 +432,10 @@ class ImageBuilder {
         if( _externalMappings[entity] ) {
             record.flags |= 2u;
         }
-        const std::string statement = supertypeStatement( entity );
-        record.supertypeStatement = _strings.Add( statement.c_str() );
+        if( !structuralMetadata() ) {
+            const std::string statement = supertypeStatement( entity );
+            record.supertypeStatement = _strings.Add( statement.c_str() );
+        }
         record.firstSupertype = static_cast<uint32_t>( _references.size() );
         LISTdo( ENTITYget_supertypes( entity ), supertype, Entity ) {
             _references.push_back( entityReference( supertype ) );
@@ -459,7 +469,7 @@ class ImageBuilder {
                 attribute.invertedEntity = _strings.Add( inverseEntity );
             } else if( VARis_derived( variable ) ) {
                 attribute.attrType = "AttrType_Deriving";
-                if( variable->initializer ) {
+                if( variable->initializer && !structuralMetadata() ) {
                     char * initializer = EXPRto_string( variable->initializer );
                     attribute.initializer = _strings.Add( initializer );
                     free( initializer );
@@ -473,12 +483,16 @@ class ImageBuilder {
         } LISTod
         record.attributeCount = static_cast<uint32_t>( _attributes.size() ) -
             record.firstAttribute;
-        record.firstWhereRule = addWhereRules( TYPEget_where( entity ) );
-        record.whereRuleCount = static_cast<uint32_t>( _rules.size() ) -
-            record.firstWhereRule;
-        record.firstUniqueRule = addUniqueRules( entity );
-        record.uniqueRuleCount = static_cast<uint32_t>( _rules.size() ) -
-            record.firstUniqueRule;
+        record.firstWhereRule = static_cast<uint32_t>( _rules.size() );
+        record.firstUniqueRule = record.firstWhereRule;
+        if( !structuralMetadata() ) {
+            record.firstWhereRule = addWhereRules( TYPEget_where( entity ) );
+            record.whereRuleCount = static_cast<uint32_t>( _rules.size() ) -
+                record.firstWhereRule;
+            record.firstUniqueRule = addUniqueRules( entity );
+            record.uniqueRuleCount = static_cast<uint32_t>( _rules.size() ) -
+                record.firstUniqueRule;
+        }
         _entities.push_back( record );
     }
 
@@ -504,7 +518,9 @@ class ImageBuilder {
         PackedType record = {};
         record.schema = schemaFor( schema );
         record.name = _strings.Add( PrettyTmpName( TYPEget_name( type ) ) );
-        record.description = _strings.Add( TypeDescription( type ) );
+        if( !structuralMetadata() ) {
+            record.description = _strings.Add( TypeDescription( type ) );
+        }
         record.fundamentalType = primitiveToken( type, 1 );
         record.descriptorKind = descriptorKindValue( type );
         record.uniqueElements = "0";
@@ -542,14 +558,20 @@ class ImageBuilder {
         record.selectElementCount =
             static_cast<uint32_t>( _references.size() ) -
             record.firstSelectElement;
-        record.firstWhereRule = addWhereRules( TYPEget_where( type ) );
-        record.whereRuleCount = static_cast<uint32_t>( _rules.size() ) -
-            record.firstWhereRule;
+        record.firstWhereRule = static_cast<uint32_t>( _rules.size() );
+        if( !structuralMetadata() ) {
+            record.firstWhereRule = addWhereRules( TYPEget_where( type ) );
+            record.whereRuleCount = static_cast<uint32_t>( _rules.size() ) -
+                record.firstWhereRule;
+        }
         addEnumElements( type, record );
         _types.push_back( record );
     }
 
     void buildSchemaTexts( Schema schema, uint32_t schemaIndex ) {
+        if( structuralMetadata() ) {
+            return;
+        }
         DictionaryEntry entry;
         DICTdo_type_init( schema->symbol_table, &entry, OBJ_RULE );
         Rule rule;
@@ -779,8 +801,7 @@ public:
         fprintf( output,
             "const GeneratedSchemaImage generatedSchemaImage = {\n"
             "    { SchemaModuleImageVersion_2, %zu, %zu, %zu,\n"
-            "      sizeof(GeneratedSchemaImage), "
-            "SchemaModuleImage_FullMetadata, %zu, %zu,\n"
+            "      sizeof(GeneratedSchemaImage), %s, %zu, %zu,\n"
             "      offsetof(GeneratedSchemaImage, schemas),\n"
             "      offsetof(GeneratedSchemaImage, entities),\n"
             "      offsetof(GeneratedSchemaImage, types),\n"
@@ -794,6 +815,9 @@ public:
             "      UINT64_C(%" PRIu64 "),\n"
             "      %zu, offsetof(GeneratedSchemaImage, renames) },\n",
             _entities.size(), _types.size(), _attributes.size(),
+            structuralMetadata() ?
+                "SchemaModuleImage_StructuralMetadata" :
+                "SchemaModuleImage_FullMetadata",
             _schemas.size(), _strings.data.size(), _aggregates.size(),
             _references.size(), _rules.size(), _schemaTexts.size(),
             _enumElements.size(), fingerprint( _strings.data ),

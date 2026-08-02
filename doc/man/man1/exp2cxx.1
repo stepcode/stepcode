@@ -78,6 +78,13 @@ conventional generated entity API.
 Retains the generated entity-name aliases in late-bound output.  Normal
 late-bound API v2 output uses schema module IDs instead and omits these aliases.
 .TP
+.B --metadata full|structural
+Selects the generated schema metadata profile.  Full is the default and
+retains EXPRESS descriptions, constraints, and executable schema text.
+Structural is available with late-bound API version 2; it retains the entity,
+attribute, type, aggregate, enumeration, SELECT, inverse, and rename graph
+needed by conversion tools while omitting descriptive and constraint text.
+.TP
 .B -v
 Produces a version description.
 .TP

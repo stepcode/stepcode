@@ -5,10 +5,11 @@ set(v1_explicit "${CMAKE_CURRENT_BINARY_DIR}/api_v1_explicit")
 set(v2 "${CMAKE_CURRENT_BINARY_DIR}/api_v2")
 set(late "${CMAKE_CURRENT_BINARY_DIR}/api_v2_late")
 set(late_compat "${CMAKE_CURRENT_BINARY_DIR}/api_v2_late_compat")
+set(late_structural "${CMAKE_CURRENT_BINARY_DIR}/api_v2_structural")
 file(REMOVE_RECURSE "${v1_default}" "${v1_explicit}" "${v2}" "${late}"
-  "${late_compat}")
+  "${late_compat}" "${late_structural}")
 file(MAKE_DIRECTORY "${v1_default}" "${v1_explicit}" "${v2}" "${late}"
-  "${late_compat}")
+  "${late_compat}" "${late_structural}")
 
 execute_process(COMMAND "${EXE}" "${INFILE}"
   WORKING_DIRECTORY "${v1_default}" RESULT_VARIABLE result)
@@ -163,6 +164,33 @@ if(NOT late_complex MATCHES "struct GeneratedComplexImage" OR
    late_complex MATCHES "ComplexNodeInitRecord")
   message(FATAL_ERROR "late-bound complex metadata is not packed")
 endif()
+if(NOT late_all MATCHES "SchemaModuleImage_FullMetadata")
+  message(FATAL_ERROR "late-bound output no longer defaults to full metadata")
+endif()
+
+execute_process(
+  COMMAND "${EXE}" --late-bound --metadata=structural "${INFILE}"
+  WORKING_DIRECTORY "${late_structural}" RESULT_VARIABLE result)
+if(NOT result EQUAL 0)
+  message(FATAL_ERROR "structural late-bound generation failed")
+endif()
+file(READ "${late_structural}/SdaiAll.cc" structural_all)
+if(NOT structural_all MATCHES "SchemaModuleImage_StructuralMetadata")
+  message(FATAL_ERROR "structural metadata flag is missing")
+endif()
+if(NOT structural_all MATCHES
+   "[ \n]0, offsetof\\(GeneratedSchemaImage, rules\\)")
+  message(FATAL_ERROR "structural output retained descriptor rules")
+endif()
+if(NOT structural_all MATCHES
+   "[ \n]0, offsetof\\(GeneratedSchemaImage, schemaTexts\\)")
+  message(FATAL_ERROR "structural output retained schema text")
+endif()
+string(LENGTH "${late_all}" full_metadata_size)
+string(LENGTH "${structural_all}" structural_metadata_size)
+if(NOT structural_metadata_size LESS full_metadata_size)
+  message(FATAL_ERROR "structural metadata did not reduce the packed image")
+endif()
 
 execute_process(COMMAND "${EXE}" --late-bound --compat-names "${INFILE}"
   WORKING_DIRECTORY "${late_compat}" RESULT_VARIABLE result)
@@ -187,4 +215,18 @@ execute_process(COMMAND "${EXE}" --api-version=3 "${INFILE}"
   OUTPUT_QUIET ERROR_QUIET)
 if(result EQUAL 0)
   message(FATAL_ERROR "invalid API version was accepted")
+endif()
+
+execute_process(COMMAND "${EXE}" --metadata structural "${INFILE}"
+  WORKING_DIRECTORY "${v2}" RESULT_VARIABLE result
+  OUTPUT_QUIET ERROR_QUIET)
+if(result EQUAL 0)
+  message(FATAL_ERROR "structural metadata was accepted outside late API v2")
+endif()
+
+execute_process(COMMAND "${EXE}" --metadata compact "${INFILE}"
+  WORKING_DIRECTORY "${v2}" RESULT_VARIABLE result
+  OUTPUT_QUIET ERROR_QUIET)
+if(result EQUAL 0)
+  message(FATAL_ERROR "invalid metadata profile was accepted")
 endif()
