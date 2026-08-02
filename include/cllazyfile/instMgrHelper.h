@@ -31,7 +31,9 @@ class SC_LAZYFILE_EXPORT mgrNodeHelper: public MgrNodeBase {
             _id = id;
         }
         inline SDAI_Application_instance * GetSTEPentity() {
-            return _lim->loadInstance( _id, true );
+            /* Attribute resolution must not convert a batch-owned cache hit
+             * into a process-lifetime retained instance. */
+            return _lim->loadInstance( _id, true, false );
         }
 };
 

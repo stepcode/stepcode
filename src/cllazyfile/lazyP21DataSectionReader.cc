@@ -98,6 +98,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     i.refs = 0;
     i.componentTypes = 0;
     i.loc.section = 0;
+    i.loc.end = 0;
     std::streampos start = _file.tellg();
     i.loc.begin = start == std::streampos( -1 ) ? 0 :
         static_cast<lazyFileOffset>( static_cast<std::streamoff>( start ) );
@@ -109,6 +110,9 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
         if( _file.good() ) {
             if( i.name[0] == '\0' ) i.componentTypes = new std::vector<std::string>;
             end = seekInstanceEnd( & i.refs, i.componentTypes );
+            if( end != std::streampos( -1 ) ) {
+                i.loc.end = static_cast<lazyFileOffset>( static_cast<std::streamoff>( end ) );
+            }
         }
     }
     if( ( i.loc.instance == 0 ) || ( !_file.good() ) || ( end == ( std::streampos ) - 1 ) ) {

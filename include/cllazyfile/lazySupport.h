@@ -54,11 +54,14 @@ struct SC_LAZYFILE_EXPORT LazyCacheStatistics {
     uint64_t evictions;
     uint64_t activeBatches;
     uint64_t dataSections;
+    uint64_t residentSourceBytes;
+    uint64_t sourceBytesHighWater;
     bool cancelled;
 
     LazyCacheStatistics(): instancesScanned( 0 ), instancesLoaded( 0 ), instancesPinned( 0 ),
         cacheHighWater( 0 ), cacheHits( 0 ), cacheMisses( 0 ), materializations( 0 ),
-        evictions( 0 ), activeBatches( 0 ), dataSections( 0 ), cancelled( false ) {}
+        evictions( 0 ), activeBatches( 0 ), dataSections( 0 ), residentSourceBytes( 0 ),
+        sourceBytesHighWater( 0 ), cancelled( false ) {}
 };
 
 typedef std::function<void ( const LazyScanProgress & )> LazyProgressCallback;

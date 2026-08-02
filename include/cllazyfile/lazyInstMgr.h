@@ -74,10 +74,12 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         unsigned long _lazyInstanceCount, _loadedInstanceCount;
         uint64_t _cacheHighWater, _cacheHits, _cacheMisses, _materializations, _evictions;
         uint64_t _activeBatches;
+        uint64_t _residentSourceBytes, _sourceBytesHighWater;
         int _longestTypeNameLen;
         std::string _longestTypeName;
 
         std::map<instanceID, size_t> _pinCounts;
+        std::map<instanceID, uint64_t> _instanceSourceBytes;
         std::set<instanceID> _batchOwnedInstances;
         std::set<instanceID> _permanentlyLoadedInstances;
         std::set<instanceID> _instancesLoading;
@@ -222,8 +224,9 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         /** returns a pointer to an instance, loading it if necessary.
          * \param id the instance number to look for
          * \param reSeek if true, reset file position to current position when done. only necessary when loading an instance with dependencies; excessive use will cause a performance hit
+         * \param promoteCached if true, a cached instance requested outside a batch is retained for legacy callers
          */
-        SDAI_Application_instance * loadInstance( instanceID id, bool reSeek = false );
+        SDAI_Application_instance * loadInstance( instanceID id, bool reSeek = false, bool promoteCached = true );
 
         LazyInstanceBatch loadBatch( instanceID root );
         LazyInstanceBatch loadBatch( const std::vector<instanceID> & roots );

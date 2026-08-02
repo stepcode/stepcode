@@ -61,6 +61,7 @@ typedef std::set< instanceID > instanceSet;
  */
 typedef struct {
     lazyFileOffset begin; ///< byte offset before the instance ID; whitespace or comments may precede it.
+    lazyFileOffset end; ///< byte offset immediately after the terminating semicolon.
     instanceID instance;
     sectionID section;
     /* bool modified; */ /* this will be useful when writing instances - if an instance is

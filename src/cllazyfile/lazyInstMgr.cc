@@ -23,6 +23,8 @@ lazyInstMgr::lazyInstMgr() {
     _materializations = 0;
     _evictions = 0;
     _activeBatches = 0;
+    _residentSourceBytes = 0;
+    _sourceBytesHighWater = 0;
     _batchLoadDepth = 0;
     _cancelled = false;
     _longestTypeNameLen = 0;
@@ -91,6 +93,9 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         emitDiagnostic( diagnostic );
     }
     _instanceStreamPos.insert( inst.loc.instance, pos );
+    if( !duplicate && inst.loc.end >= inst.loc.begin ) {
+        _instanceSourceBytes[inst.loc.instance] = inst.loc.end - inst.loc.begin;
+    }
 
     if( inst.refs ) {
         if( inst.refs->size() > 0 ) {
@@ -173,6 +178,8 @@ LazyCacheStatistics lazyInstMgr::cacheStatistics() const {
     stats.evictions = _evictions;
     stats.activeBatches = _activeBatches;
     stats.dataSections = _dataSections.size();
+    stats.residentSourceBytes = _residentSourceBytes;
+    stats.sourceBytesHighWater = _sourceBytesHighWater;
     stats.cancelled = _cancelled;
     return stats;
 }
@@ -235,14 +242,14 @@ void lazyInstMgr::validateReferences() {
     }
 }
 
-SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek ) {
+SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek, bool promoteCached ) {
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
     std::streampos oldPos;
-    instancePosition pos;
+    instancePosition pos = instancePosition();
     SDAI_Application_instance * inst = _instancesLoaded.find( id );
     if( inst ) {
         ++_cacheHits;
-        if( _batchLoadDepth == 0 ) _permanentlyLoadedInstances.insert( id );
+        if( promoteCached && _batchLoadDepth == 0 ) _permanentlyLoadedInstances.insert( id );
         return inst;
     }
     ++_cacheMisses;
@@ -314,6 +321,12 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
             _loadedInstanceCount++;
             ++_materializations;
             _cacheHighWater = std::max<uint64_t>( _cacheHighWater, _loadedInstanceCount );
+            std::map<instanceID, uint64_t>::const_iterator source_size = _instanceSourceBytes.find( id );
+            if( source_size != _instanceSourceBytes.end() ) {
+                _residentSourceBytes += source_size->second;
+                _sourceBytesHighWater = std::max<uint64_t>( _sourceBytesHighWater,
+                    _residentSourceBytes );
+            }
             if( _batchLoadDepth ) {
                 _batchOwnedInstances.insert( id );
             } else {
@@ -405,6 +418,11 @@ void lazyInstMgr::releaseBatch( const std::vector<instanceID> & instances ) {
         _batchOwnedInstances.erase( *id );
         deleted.push_back( inst );
         --_loadedInstanceCount;
+        std::map<instanceID, uint64_t>::const_iterator source_size = _instanceSourceBytes.find( *id );
+        if( source_size != _instanceSourceBytes.end() ) {
+            _residentSourceBytes = source_size->second <= _residentSourceBytes ?
+                _residentSourceBytes - source_size->second : 0;
+        }
         ++_evictions;
     }
     std::vector<SDAI_Application_instance *>::iterator inst = deleted.begin();
