@@ -57,6 +57,17 @@ Generates C++ classes for use with CORBA (Orbix).
 .B -l|L
 Prints logging code in the generated C++ classes.
 .TP
+.B -k entity-chunk-size[:type-chunk-size]
+Limits the number of generated schema objects in each deterministic unity
+translation unit.  A single value applies to both entity and type chunks.
+.TP
+.B -V 1|2, --api-version 1|2
+Selects the generated C++ API.  Version 1 is the source-compatible default.
+Version 2 emits compact SELECT classes backed by shared descriptor-driven
+runtime code and dependency-bounded entity headers.  Version 2 clients include
+the individual entity headers they use; schema.h does not include every entity
+class definition.
+.TP
 .B -v
 Produces a version description.
 .TP
@@ -161,4 +172,3 @@ appropriate file to download).
 
 .SH BUGS
 See fedex(1).
-

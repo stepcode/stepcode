@@ -330,7 +330,10 @@ static void openUnityChunk( FILES * files, bool entity ) {
     const std::string name = chunkName.str();
     *impl = FILEcreate( name.c_str() );
     fprintf( *impl, "\n/** deterministic exp2cxx unity chunk %lu (maximum %lu schema objects) */\n", *chunk, limit );
-    fprintf( *impl, "#include \"schema.h\"\n#include \"%s.h\"\n", base );
+    fprintf( *impl, "#include \"schema.h\"\n" );
+    if( exp2cxx_api_version != 2 ) {
+        fprintf( *impl, "#include \"%s.h\"\n", base );
+    }
     fprintf( aggregate, "#include \"%s\"\n", name.c_str() );
 }
 

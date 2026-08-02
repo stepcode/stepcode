@@ -365,7 +365,11 @@ void TYPEPrint_h( const Type type, FILE * file ) {
     if ( TYPEis_enumeration( type ) ) {
         TYPEenum_inc_print( type, file );
     } else if ( TYPEis_select( type ) ) {
-        TYPEselect_inc_print( type, file );
+        if( exp2cxx_api_version == 2 ) {
+            TYPEselect_inc_print_v2( type, file );
+        } else {
+            TYPEselect_inc_print( type, file );
+        }
     }
 
     fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type ) );
@@ -382,7 +386,11 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     if ( TYPEis_enumeration( type ) ) {
         TYPEenum_lib_print( type, impl );
     } else if ( TYPEis_select( type ) ) {
-        TYPEselect_lib_print( type, impl );
+        if( exp2cxx_api_version == 2 ) {
+            TYPEselect_lib_print_v2( type, impl );
+        } else {
+            TYPEselect_lib_print( type, impl );
+        }
     }
 
     fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );

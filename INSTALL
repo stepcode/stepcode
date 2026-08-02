@@ -51,6 +51,12 @@ Installation
   -DSC_BUILD_SCHEMAS=ALL
     - Added to make use of ctest easier. If SC_BUILD_SCHEMAS == ALL,
       then CMake adds each *.exp file found in data/.
+  -DSC_EXP2CXX_API_VERSION=2
+    - opts in to compact descriptor-driven SELECTs and dependency-bounded
+      entity headers in the generated C++ API.
+    - clients include the entity headers they use (for example,
+      entity/SdaiProduct.h); schema.h no longer expands every entity class.
+    - version 1 remains the default for source compatibility.
   -DCMAKE_BUILD_TYPE=Release
     - this causes binaries to be built without debugging information
     - without this, cmake defaults to a Debug build

@@ -37,6 +37,7 @@ int print_logging = 0;
 int old_accessors = 0;
 unsigned long exp2cxx_entity_chunk_size = 64;
 unsigned long exp2cxx_type_chunk_size = 8;
+int exp2cxx_api_version = 1;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -241,6 +242,15 @@ int Handle_FedPlus_Args( int i, char * arg ) {
         }
         exp2cxx_entity_chunk_size = entity_requested;
         exp2cxx_type_chunk_size = type_requested;
+    }
+    if( ( char )i == 'V' ) {
+        char * end = 0;
+        long requested = arg ? strtol( arg, &end, 10 ) : 0;
+        if( !arg || !arg[0] || !end || *end || ( requested != 1 && requested != 2 ) ) {
+            fprintf( stderr, "exp2cxx: API version must be 1 or 2\n" );
+            return 1;
+        }
+        exp2cxx_api_version = ( int )requested;
     }
     return 0;
 }

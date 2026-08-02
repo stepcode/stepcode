@@ -48,7 +48,7 @@ public:
 
     void AssignAggrCreator( AggregateCreator f = 0 );
 
-    STEPaggregate * CreateAggregate();
+    STEPaggregate * CreateAggregate() const;
 
     AggrTypeDescriptor( );
     AggrTypeDescriptor( SDAI_Integer b1, SDAI_Integer b2,

@@ -23,6 +23,8 @@ void TYPEselect_print( Type, FILES *, Schema );
 void TYPEselect_init_print( const Type type, FILE* f );
 void TYPEselect_inc_print( const Type type, FILE * f );
 void TYPEselect_lib_print( const Type type, FILE * f );
+void TYPEselect_inc_print_v2( const Type type, FILE * f );
+void TYPEselect_lib_print_v2( const Type type, FILE * f );
 
 void AGGRprint_init( FILE * header, FILE * impl, const Type t, const char * var_name, const char * aggr_name );
 

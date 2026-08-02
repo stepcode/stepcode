@@ -28,7 +28,13 @@ add_test(NAME test_exp2cxx_chunked_output
   -DINFILE=${unitary_dir}/select_data_type.exp
   -P ${CMAKE_CURRENT_SOURCE_DIR}/chunked_output.cmake
  )
-set_tests_properties(test_exp2cxx_unique_qualifiers test_exp2cxx_inverse_qualifiers test_exp2cxx_chunked_output PROPERTIES DEPENDS build_exp2cxx)
+add_test(NAME test_exp2cxx_api_version
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+  COMMAND ${CMAKE_COMMAND} -DEXE=$<TARGET_FILE:exp2cxx>
+  -DINFILE=${unitary_dir}/select_data_type.exp
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/api_version.cmake
+ )
+set_tests_properties(test_exp2cxx_unique_qualifiers test_exp2cxx_inverse_qualifiers test_exp2cxx_chunked_output test_exp2cxx_api_version PROPERTIES DEPENDS build_exp2cxx)
 
 # Local Variables:
 # tab-width: 8

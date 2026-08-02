@@ -312,8 +312,12 @@ void MemberFunctionSign( Entity entity, Linked_List neededAttr, FILE * file ) {
     /* //////////////// */
     fprintf( file, "};\n\n" );
 
-    /*  print creation function for class */
-    fprintf( file, "inline %s * create_%s() {\n    return new %s;\n}\n\n", entnm, entnm, entnm );
+    /* API v2 keeps creator bodies out of every including translation unit. */
+    if( exp2cxx_api_version == 2 ) {
+        fprintf( file, "%s * create_%s();\n\n", entnm, entnm );
+    } else {
+        fprintf( file, "inline %s * create_%s() {\n    return new %s;\n}\n\n", entnm, entnm, entnm );
+    }
 }
 
 /** drives the generation of the c++ class definition code
@@ -962,8 +966,28 @@ void ENTITYincode_print( Entity entity, FILE * header, FILE * impl, Schema schem
 }
 
 void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, Schema schema ) {
-    const char *name = ENTITYget_classname( entity );
+    char name[BUFSIZ + 1];
+    strncpy( name, ENTITYget_classname( entity ), BUFSIZ );
+    name[BUFSIZ] = '\0';
     DEBUG( "Entering ENTITYPrint_h for %s\n", name );
+
+    if( exp2cxx_api_version == 2 ) {
+        Entity super = 0;
+        fprintf( header, "#include \"schema.h\"\n" );
+        if( multiple_inheritance ) {
+            Linked_List supers = ENTITYget_supertypes( entity );
+            if( !LISTempty( supers ) ) {
+                super = ( Entity )LISTpeek_first( supers );
+            }
+        } else {
+            super = ENTITYput_superclass( entity );
+        }
+        if( super ) {
+            fprintf( header, "#include \"entity/%s.h\"\n",
+                     ENTITYget_classname( super ) );
+        }
+        fprintf( header, "\n" );
+    }
 
     ENTITYhead_print( entity, header );
     DataMemberPrint( entity, neededAttr, header );
@@ -980,12 +1004,43 @@ void ENTITYPrint_h( const Entity entity, FILE * header, Linked_List neededAttr, 
 }
 
 void ENTITYPrint_cc( const Entity entity, FILE * createall, FILE * header, FILE * impl, Linked_List neededAttr, Schema schema, bool externMap ) {
-    const char * name = ENTITYget_classname( entity );
+    char name[BUFSIZ + 1];
+    strncpy( name, ENTITYget_classname( entity ), BUFSIZ );
+    name[BUFSIZ] = '\0';
     
     DEBUG( "Entering ENTITYPrint_cc for %s\n", name );
 
     fprintf( impl, "#include \"schema.h\"\n" );
     fprintf( impl, "#include \"entity/%s.h\"\n\n", name );
+
+    if( exp2cxx_api_version == 2 ) {
+        /* Accessor implementations construct entity-valued attributes, and
+         * multiple-inheritance constructors materialize secondary parents.
+         * Keep those complete-type dependencies in the source file. */
+        LISTdo( ENTITYget_supertypes( entity ), super, Entity ) {
+            fprintf( impl, "#include \"entity/%s.h\"\n",
+                     ENTITYget_classname( super ) );
+        } LISTod
+        LISTdo( ENTITYget_attributes( entity ), attr, Variable ) {
+            Type attr_type = VARget_type( attr );
+            if( TYPEis_entity( attr_type ) ) {
+                fprintf( impl, "#include \"entity/%s.h\"\n",
+                         ENTITYget_classname( ENT_TYPEget_entity( attr_type ) ) );
+            }
+        } LISTod
+        if( multiple_inheritance ) {
+            LISTdo( neededAttr, attr, Variable ) {
+                Type attr_type = VARget_type( attr );
+                if( TYPEis_entity( attr_type ) ) {
+                    fprintf( impl, "#include \"entity/%s.h\"\n",
+                             ENTITYget_classname( ENT_TYPEget_entity( attr_type ) ) );
+                }
+            } LISTod
+        }
+        fprintf( impl, "\n" );
+        fprintf( impl, "%s * create_%s() {\n    return new %s;\n}\n\n",
+                 name, name, name );
+    }
 
     LIBdescribe_entity( entity, impl, schema );
     LIBstructor_print( entity, neededAttr, impl, schema );
@@ -1110,6 +1165,13 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         abort();
     }
 
+    /* API v2's schema-level declaration graph must expose descriptors
+     * without pulling in every complete entity class definition. */
+    if( exp2cxx_api_version == 2 ) {
+        ENTITYnames_print( entity, files->names );
+        ATTRnames_print( entity, files->names );
+    }
+
     hdr = FILEcreate( names.header );
     impl = FILEcreate( names.impl );
     assert( hdr && impl && "error creating files" );
@@ -1121,7 +1183,9 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
     FILEclose( hdr );
     FILEclose( impl );
 
-    fprintf( files->inc, "#include \"entity/%s.h\"\n", ENTITYget_classname( entity ) );
+    if( exp2cxx_api_version != 2 ) {
+        fprintf( files->inc, "#include \"entity/%s.h\"\n", ENTITYget_classname( entity ) );
+    }
     fprintf( files->init, "    init_%s( reg );\n", ENTITYget_classname( entity ) );
 
     DEBUG( "DONE ENTITYPrint\n" );
@@ -1164,4 +1228,8 @@ void ENTITYprint_classes( Entity entity, FILE * classes ) {
     fprintf( classes, "typedef %s_ptr        %s_var;\n", n, n );
     fprintf( classes, "#define %s__set       SDAI_DAObject__set\n", n );
     fprintf( classes, "#define %s__set_var   SDAI_DAObject__set_var\n", n );
+    if( exp2cxx_api_version == 2 ) {
+        fprintf( classes, "%s * create_%s();\n", n, n );
+        fprintf( classes, "void init_%s(Registry& reg);\n", n );
+    }
 }

@@ -1,10 +1,14 @@
 
 # if oneshot is true, don't run exp2cxx if source files exist. if schema.cc exists, assume others do
+if(NOT DEFINED API_VERSION OR "${API_VERSION}" STREQUAL "")
+  set(API_VERSION 1)
+endif()
+
 if(ONESHOT AND EXISTS "${SDIR}/schema.cc")
   message("WARNING: SC_GENERATE_CXX_ONESHOT is enabled. If generated code has been modified, it will NOT be rewritten!")
   message("This is ONLY for debugging STEPcode internals!")
 else()
-  execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} ${EXP}
+  execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} -V ${API_VERSION} ${EXP}
     WORKING_DIRECTORY ${SDIR}
     RESULT_VARIABLE _res
     OUTPUT_FILE exp2cxx_stdout.txt

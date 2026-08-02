@@ -16,7 +16,7 @@ EnumTypeDescriptor::EnumTypeDescriptor( const char * nm, PrimitiveType ft,
     : TypeDescriptor( nm, ft, origSchema, d ), CreateNewEnum( f ) {
 }
 
-SDAI_Enum * EnumTypeDescriptor::CreateEnum() {
+SDAI_Enum * EnumTypeDescriptor::CreateEnum() const {
     if( CreateNewEnum ) {
         return CreateNewEnum();
     } else {

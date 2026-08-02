@@ -4,7 +4,7 @@
 // SelectTypeDescriptor functions
 ///////////////////////////////////////////////////////////////////////////////
 
-SDAI_Select * SelectTypeDescriptor::CreateSelect() {
+SDAI_Select * SelectTypeDescriptor::CreateSelect() const {
     if( CreateNewSelect ) {
         return CreateNewSelect();
     } else {

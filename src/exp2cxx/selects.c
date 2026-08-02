@@ -699,6 +699,47 @@ void TYPEselect_inc_print( const Type type, FILE * f ) {
     LISTfree( dups );
 }
 
+/**
+ * Emit the opt-in API v2 SELECT declaration.  The named class remains so
+ * entity accessors and descriptor creators retain schema-specific C++ types,
+ * but all value storage and Part 21 behavior live in SDAI_Select.
+ */
+void TYPEselect_inc_print_v2( const Type type, FILE * f ) {
+    char n[BUFSIZ+1];
+    char tdnm[BUFSIZ+1];
+
+    strncpy( n, SelectName( TYPEget_name( type ) ), BUFSIZ );
+    n[BUFSIZ-1] = '\0';
+    strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
+    tdnm[BUFSIZ-1] = '\0';
+
+    fprintf( f, "\n//////////  SELECT TYPE %s (API v2)\n", n );
+    fprintf( f, "class SC_SCHEMA_EXPORT %s : public SDAI_Select {\n", n );
+    fprintf( f, "  public:\n" );
+    fprintf( f, "    using SDAI_Select::operator=;\n" );
+    fprintf( f, "    explicit %s( const SelectTypeDescriptor * type = %s )\n", n, tdnm );
+    fprintf( f, "      : SDAI_Select( type ) {}\n" );
+    fprintf( f, "};\n\n" );
+
+    fprintf( f, "inline SDAI_Select * create_%s() { return new %s; }\n", n, n );
+    fprintf( f, "typedef %s * %sH;\n", n, n );
+    fprintf( f, "typedef %s_ptr %s_var;\n\n", n, n );
+
+    fprintf( f, "class %s_agg : public SelectAggregate {\n", n );
+    fprintf( f, "  public:\n" );
+    fprintf( f, "    explicit %s_agg( SelectTypeDescriptor * type = %s )\n", n, tdnm );
+    fprintf( f, "      : SelectAggregate( type ) {}\n" );
+    fprintf( f, "};\n" );
+    fprintf( f, "inline STEPaggregate * create_%s_agg() { return new %s_agg; }\n", n, n );
+    fprintf( f, "typedef %s_agg_ptr %s_agg_var;\n", n, n );
+    fprintf( f, "\n/////  END SELECT TYPE %s (API v2)\n\n", TYPEget_name( type ) );
+}
+
+void TYPEselect_lib_print_v2( const Type type, FILE * f ) {
+    fprintf( f, "\n// SELECT TYPE %s uses descriptor-driven SDAI_Select API v2.\n",
+             TYPEget_name( type ) );
+}
+
 
 /**
 * TYPEselect_lib_print_part_one prints constructor(s)/destructor of a select

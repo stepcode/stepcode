@@ -15,7 +15,7 @@ class SC_CORE_EXPORT EnumTypeDescriptor  :    public TypeDescriptor  {
             CreateNewEnum = f;
         }
 
-        SDAI_Enum * CreateEnum();
+        SDAI_Enum * CreateEnum() const;
 
         EnumTypeDescriptor( ) { }
         EnumTypeDescriptor( const char * nm, PrimitiveType ft,

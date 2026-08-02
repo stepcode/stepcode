@@ -22,6 +22,15 @@ if(NOT DEFINED SC_EXP2CXX_CHUNK_SIZE)
   set(SC_EXP2CXX_CHUNK_SIZE "64:8" CACHE STRING "Maximum entity:type objects in generated unity translation units")
 endif()
 
+if(NOT DEFINED SC_EXP2CXX_API_VERSION)
+  set(SC_EXP2CXX_API_VERSION "1")
+endif()
+set(SC_EXP2CXX_API_VERSION "${SC_EXP2CXX_API_VERSION}" CACHE STRING "Generated C++ API version (1 or 2)")
+set_property(CACHE SC_EXP2CXX_API_VERSION PROPERTY STRINGS 1 2)
+if(NOT SC_EXP2CXX_API_VERSION MATCHES "^[12]$")
+  message(FATAL_ERROR "SC_EXP2CXX_API_VERSION must be 1 or 2")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir

@@ -127,6 +127,7 @@ extern "C" {
 #endif
 extern unsigned long exp2cxx_entity_chunk_size;
 extern unsigned long exp2cxx_type_chunk_size;
+extern int exp2cxx_api_version;
 void UNITYentityInclude( FILES * files, const char * implementation );
 void UNITYtypeInclude( FILES * files, const char * implementation );
 #ifdef __cplusplus

@@ -4,6 +4,8 @@
 #include "clstepcore/STEPaggregate.h"
 #include <sc_export.h>
 
+class SelectTypeDescriptor;
+
 /** \file STEPaggrSelect.h
  * classes SelectAggregate, SelectNode
  */
@@ -14,6 +16,9 @@
  ** This is a minimal representation for a collection of SDAI_Select
  */
 class SC_CORE_EXPORT SelectAggregate  :  public STEPaggregate {
+protected:
+    const SelectTypeDescriptor * _select_type;
+
 public:
     virtual Severity ReadValue( istream & in, ErrorDescriptor * err,
                                 const TypeDescriptor * elem_type,
@@ -24,7 +29,7 @@ public:
     virtual SingleLinkNode * NewNode();
     virtual STEPaggregate & ShallowCopy( const STEPaggregate & );
 
-    SelectAggregate();
+    explicit SelectAggregate( const SelectTypeDescriptor * select_type = 0 );
     virtual ~SelectAggregate();
 };
 typedef        SelectAggregate  *   SelectAggregateH;

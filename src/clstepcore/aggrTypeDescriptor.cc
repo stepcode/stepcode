@@ -1,6 +1,6 @@
 #include "clstepcore/aggrTypeDescriptor.h"
 
-STEPaggregate * AggrTypeDescriptor::CreateAggregate() {
+STEPaggregate * AggrTypeDescriptor::CreateAggregate() const {
     if( CreateNewAggr ) {
         return CreateNewAggr();
     } else {

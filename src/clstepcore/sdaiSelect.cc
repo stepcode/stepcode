@@ -16,33 +16,218 @@
 #include <string>
 #include "clstepcore/sdai.h"
 #include "clstepcore/STEPattribute.h"
+#include "clstepcore/STEPaggregate.h"
+#include "clstepcore/read_func.h"
 
 #ifdef  SC_LOGGING
 #include <fstream.h>
 extern ofstream * logStream;
 #endif
 
+class SDAI_Select::Storage {
+public:
+    const TypeDescriptor * type;
+    SDAI_Integer integer_value;
+    SDAI_Real real_value;
+    SDAI_Application_instance * entity_value;
+    SDAI_String * string_value;
+    SDAI_Binary * binary_value;
+    SDAI_Enum * enum_value;
+    SDAI_Select * select_value;
+    STEPaggregate * aggregate_value;
+
+    Storage()
+        : type( 0 ), integer_value( 0 ), real_value( 0.0 ), entity_value( 0 ),
+          string_value( 0 ), binary_value( 0 ), enum_value( 0 ),
+          select_value( 0 ), aggregate_value( 0 ) {
+    }
+
+    ~Storage() {
+        Clear();
+    }
+
+    void Clear() {
+        delete string_value;
+        delete binary_value;
+        delete enum_value;
+        delete select_value;
+        delete aggregate_value;
+        type = 0;
+        integer_value = 0;
+        real_value = 0.0;
+        entity_value = 0;
+        string_value = 0;
+        binary_value = 0;
+        enum_value = 0;
+        select_value = 0;
+        aggregate_value = 0;
+    }
+
+    bool Reset( const TypeDescriptor * td ) {
+        Clear();
+        if( !td ) {
+            return true;
+        }
+
+        type = td;
+        const TypeDescriptor * concrete = td->NonRefTypeDescriptor();
+        switch( td->NonRefType() ) {
+            case sdaiSTRING:
+                string_value = new SDAI_String;
+                break;
+            case sdaiBINARY:
+                binary_value = new SDAI_Binary;
+                break;
+            case sdaiBOOLEAN:
+                enum_value = new SDAI_BOOLEAN;
+                break;
+            case sdaiLOGICAL:
+                enum_value = new SDAI_LOGICAL;
+                break;
+            case sdaiENUMERATION: {
+                const EnumTypeDescriptor * enum_type =
+                    dynamic_cast<const EnumTypeDescriptor *>( concrete );
+                enum_value = enum_type ? enum_type->CreateEnum() : 0;
+                break;
+            }
+            case sdaiSELECT: {
+                const SelectTypeDescriptor * select_type =
+                    dynamic_cast<const SelectTypeDescriptor *>( concrete );
+                select_value = select_type ? select_type->CreateSelect() : 0;
+                if( !select_value && select_type ) {
+                    select_value = new SDAI_Select( select_type );
+                }
+                break;
+            }
+            case sdaiAGGR:
+            case ARRAY_TYPE:
+            case BAG_TYPE:
+            case SET_TYPE:
+            case LIST_TYPE: {
+                const AggrTypeDescriptor * aggregate_type =
+                    dynamic_cast<const AggrTypeDescriptor *>( concrete );
+                aggregate_value = aggregate_type ? aggregate_type->CreateAggregate() : 0;
+                break;
+            }
+            default:
+                break;
+        }
+
+        if( ( td->NonRefType() == sdaiENUMERATION && !enum_value ) ||
+                ( td->NonRefType() == sdaiSELECT && !select_value ) ||
+                ( td->IsAggrType() && !aggregate_value ) ) {
+            Clear();
+            return false;
+        }
+        return true;
+    }
+
+    bool CopyFrom( const Storage & other ) {
+        if( !Reset( other.type ) ) {
+            return false;
+        }
+        if( !type ) {
+            return true;
+        }
+        switch( type->NonRefType() ) {
+            case sdaiINTEGER:
+                integer_value = other.integer_value;
+                break;
+            case sdaiREAL:
+            case sdaiNUMBER:
+                real_value = other.real_value;
+                break;
+            case sdaiINSTANCE:
+                entity_value = other.entity_value;
+                break;
+            case sdaiSTRING:
+                *string_value = *other.string_value;
+                break;
+            case sdaiBINARY:
+                *binary_value = *other.binary_value;
+                break;
+            case sdaiBOOLEAN:
+            case sdaiLOGICAL:
+            case sdaiENUMERATION:
+                *enum_value = *other.enum_value;
+                break;
+            case sdaiSELECT:
+                *select_value = *other.select_value;
+                break;
+            case sdaiAGGR:
+            case ARRAY_TYPE:
+            case BAG_TYPE:
+            case SET_TYPE:
+            case LIST_TYPE:
+                aggregate_value->ShallowCopy( *other.aggregate_value );
+                break;
+            default:
+                break;
+        }
+        return true;
+    }
+
+    void * Address() {
+        if( !type ) {
+            return 0;
+        }
+        switch( type->NonRefType() ) {
+            case sdaiINTEGER:
+                return &integer_value;
+            case sdaiREAL:
+            case sdaiNUMBER:
+                return &real_value;
+            case sdaiINSTANCE:
+                return entity_value;
+            case sdaiSTRING:
+                return string_value;
+            case sdaiBINARY:
+                return binary_value;
+            case sdaiBOOLEAN:
+            case sdaiLOGICAL:
+            case sdaiENUMERATION:
+                return enum_value;
+            case sdaiSELECT:
+                return select_value;
+            case sdaiAGGR:
+            case ARRAY_TYPE:
+            case BAG_TYPE:
+            case SET_TYPE:
+            case LIST_TYPE:
+                return aggregate_value;
+            default:
+                return 0;
+        }
+    }
+};
+
 /**********
     (member) functions for the select class SDAI_Select
 **********/
 SDAI_Select::SDAI_Select( const SelectTypeDescriptor * s,
                           const TypeDescriptor * td )
-    : _type( s ), underlying_type( td ) {
+    : _storage( 0 ), _type( s ), underlying_type( td ),
+      base_type( td ? td->NonRefType() : UNKNOWN_TYPE ) {
 #ifdef SC_LOGGING
     *logStream << "Exiting SDAI_Select constructor." << endl;
 #endif
 }
 
-SDAI_Select::SDAI_Select( const SDAI_Select & other ) {
-    underlying_type = other.underlying_type;
-    base_type = other.base_type;
-    _type = other._type;
+SDAI_Select::SDAI_Select( const SDAI_Select & other )
+    : _storage( 0 ), _type( other._type ),
+      underlying_type( other.underlying_type ), base_type( other.base_type ),
+      val( other.val ), _error( other._error ) {
+    if( other._storage ) {
+        _storage = new Storage;
+        _storage->CopyFrom( *other._storage );
+    }
 #ifdef SC_LOGGING
     *logStream << "Exiting SDAI_Select constructor." << endl;
 #endif
 }
 
 SDAI_Select::~SDAI_Select() {
+    delete _storage;
 }
 
 SDAI_Select & SDAI_Select::operator=( const SDAI_Select & other ) {
@@ -52,8 +237,34 @@ SDAI_Select & SDAI_Select::operator=( const SDAI_Select & other ) {
         base_type = other.base_type;
         underlying_type = other.underlying_type;
         val = other.val;
+        if( other._storage ) {
+            if( !_storage ) {
+                _storage = new Storage;
+            }
+            _storage->CopyFrom( *other._storage );
+        } else {
+            delete _storage;
+            _storage = 0;
+        }
     }
     return *this;
+}
+
+SDAI_Select & SDAI_Select::operator=( const SDAI_Select * other ) {
+    if( other ) {
+        return operator=( *other );
+    }
+    nullify();
+    return *this;
+}
+
+SDAI_Select * SDAI_Select::Clone() const {
+    SDAI_Select * result = _type ? _type->CreateSelect() : 0;
+    if( !result ) {
+        result = new SDAI_Select( _type );
+    }
+    *result = *this;
+    return result;
 }
 
 Severity SDAI_Select::severity() const {
@@ -137,13 +348,253 @@ const TypeDescriptor  * SDAI_Select::CurrentUnderlyingType() const {
 const TypeDescriptor *
 SDAI_Select::SetUnderlyingType( const TypeDescriptor * td ) {
     //  don\'t do anything if the descriptor is bad
-    if( !td || !( _type -> CanBe( td ) ) ) {
+    if( !td || ( _type && !( _type -> CanBe( td ) ) ) ) {
         return 0;
     }
 
+    if( _storage && _storage->type != td ) {
+        _storage->Clear();
+    }
     base_type = td -> NonRefType();
 
     return underlying_type = td;
+}
+
+void * SDAI_Select::ValueAddress() {
+    if( !underlying_type ) {
+        return 0;
+    }
+    if( !_storage ) {
+        _storage = new Storage;
+    }
+    if( _storage->type != underlying_type && !_storage->Reset( underlying_type ) ) {
+        Error( "Unable to create storage for SELECT value." );
+        severity( SEVERITY_BUG );
+        return 0;
+    }
+    return _storage->Address();
+}
+
+const void * SDAI_Select::ValueAddress() const {
+    return const_cast<SDAI_Select *>( this )->ValueAddress();
+}
+
+SDAI_Select * SDAI_Select::NewSelect() {
+    SDAI_Select * result = _type ? _type->CreateSelect() : 0;
+    return result ? result : new SDAI_Select( _type );
+}
+
+const TypeDescriptor *
+SDAI_Select::AssignEntity( SDAI_Application_instance * se ) {
+    if( !_type || !se ) {
+        return 0;
+    }
+
+    TypeDescItr elements( _type->GetElements() );
+    const TypeDescriptor * td;
+    while( ( td = elements.NextTypeDesc() ) ) {
+        const EntityDescriptor * entity_type =
+            dynamic_cast<const EntityDescriptor *>( td->NonRefTypeDescriptor() );
+        if( entity_type && se->IsA( entity_type ) ) {
+            SetUnderlyingType( td );
+            if( !_storage ) {
+                _storage = new Storage;
+            }
+            if( !_storage->Reset( td ) ) {
+                return 0;
+            }
+            _storage->entity_value = se;
+            return td;
+        }
+        if( td->NonRefType() == sdaiSELECT && td->CanBe( se->eDesc ) ) {
+            SetUnderlyingType( td );
+            SDAI_Select * nested = static_cast<SDAI_Select *>( ValueAddress() );
+            if( nested && nested->AssignEntity( se ) ) {
+                return td;
+            }
+        }
+    }
+
+    severity( SEVERITY_WARNING );
+    Error( "Mismatch in underlying type." );
+    return 0;
+}
+
+BASE_TYPE SDAI_Select::ValueType() const {
+    if( !underlying_type ) {
+        return UNKNOWN_TYPE;
+    }
+    if( underlying_type->NonRefType() == sdaiSELECT ) {
+        const SDAI_Select * nested =
+            static_cast<const SDAI_Select *>( ValueAddress() );
+        return nested ? nested->ValueType() : UNKNOWN_TYPE;
+    }
+    return underlying_type->NonRefType();
+}
+
+bool SDAI_Select::SetInteger( const TypeDescriptor * td, SDAI_Integer value ) {
+    if( !td || td->NonRefType() != sdaiINTEGER || !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_Integer * target = static_cast<SDAI_Integer *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetReal( const TypeDescriptor * td, SDAI_Real value ) {
+    if( !td || ( td->NonRefType() != sdaiREAL && td->NonRefType() != sdaiNUMBER ) ||
+            !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_Real * target = static_cast<SDAI_Real *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetString( const TypeDescriptor * td, const SDAI_String & value ) {
+    if( !td || td->NonRefType() != sdaiSTRING || !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_String * target = static_cast<SDAI_String *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetBinary( const TypeDescriptor * td, const SDAI_Binary & value ) {
+    if( !td || td->NonRefType() != sdaiBINARY || !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_Binary * target = static_cast<SDAI_Binary *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetEnum( const TypeDescriptor * td, const SDAI_Enum & value ) {
+    PrimitiveType kind = td ? td->NonRefType() : UNKNOWN_TYPE;
+    if( !td || ( kind != sdaiENUMERATION && kind != sdaiBOOLEAN && kind != sdaiLOGICAL ) ||
+            !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_Enum * target = static_cast<SDAI_Enum *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetSelect( const TypeDescriptor * td, const SDAI_Select & value ) {
+    if( !td || td->NonRefType() != sdaiSELECT || !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    SDAI_Select * target = static_cast<SDAI_Select *>( ValueAddress() );
+    if( target ) {
+        *target = value;
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetAggregate( const TypeDescriptor * td, const STEPaggregate & value ) {
+    if( !td || !td->IsAggrType() || !SetUnderlyingType( td ) ) {
+        return false;
+    }
+    STEPaggregate * target = static_cast<STEPaggregate *>( ValueAddress() );
+    if( target ) {
+        target->ShallowCopy( value );
+    }
+    return target != 0;
+}
+
+bool SDAI_Select::SetEntity( SDAI_Application_instance * value ) {
+    return AssignEntity( value ) != 0;
+}
+
+SDAI_Integer * SDAI_Select::IntegerValue() {
+    return underlying_type && underlying_type->NonRefType() == sdaiINTEGER ?
+        static_cast<SDAI_Integer *>( ValueAddress() ) : 0;
+}
+
+const SDAI_Integer * SDAI_Select::IntegerValue() const {
+    return underlying_type && underlying_type->NonRefType() == sdaiINTEGER ?
+        static_cast<const SDAI_Integer *>( ValueAddress() ) : 0;
+}
+
+SDAI_Real * SDAI_Select::RealValue() {
+    BASE_TYPE kind = underlying_type ? underlying_type->NonRefType() : UNKNOWN_TYPE;
+    return ( kind == sdaiREAL || kind == sdaiNUMBER ) ?
+        static_cast<SDAI_Real *>( ValueAddress() ) : 0;
+}
+
+const SDAI_Real * SDAI_Select::RealValue() const {
+    BASE_TYPE kind = underlying_type ? underlying_type->NonRefType() : UNKNOWN_TYPE;
+    return ( kind == sdaiREAL || kind == sdaiNUMBER ) ?
+        static_cast<const SDAI_Real *>( ValueAddress() ) : 0;
+}
+
+SDAI_String * SDAI_Select::StringValue() {
+    return underlying_type && underlying_type->NonRefType() == sdaiSTRING ?
+        static_cast<SDAI_String *>( ValueAddress() ) : 0;
+}
+
+const SDAI_String * SDAI_Select::StringValue() const {
+    return underlying_type && underlying_type->NonRefType() == sdaiSTRING ?
+        static_cast<const SDAI_String *>( ValueAddress() ) : 0;
+}
+
+SDAI_Binary * SDAI_Select::BinaryValue() {
+    return underlying_type && underlying_type->NonRefType() == sdaiBINARY ?
+        static_cast<SDAI_Binary *>( ValueAddress() ) : 0;
+}
+
+const SDAI_Binary * SDAI_Select::BinaryValue() const {
+    return underlying_type && underlying_type->NonRefType() == sdaiBINARY ?
+        static_cast<const SDAI_Binary *>( ValueAddress() ) : 0;
+}
+
+SDAI_Enum * SDAI_Select::EnumValue() {
+    BASE_TYPE kind = underlying_type ? underlying_type->NonRefType() : UNKNOWN_TYPE;
+    return ( kind == sdaiENUMERATION || kind == sdaiBOOLEAN || kind == sdaiLOGICAL ) ?
+        static_cast<SDAI_Enum *>( ValueAddress() ) : 0;
+}
+
+const SDAI_Enum * SDAI_Select::EnumValue() const {
+    BASE_TYPE kind = underlying_type ? underlying_type->NonRefType() : UNKNOWN_TYPE;
+    return ( kind == sdaiENUMERATION || kind == sdaiBOOLEAN || kind == sdaiLOGICAL ) ?
+        static_cast<const SDAI_Enum *>( ValueAddress() ) : 0;
+}
+
+SDAI_Select * SDAI_Select::SelectValue() {
+    return underlying_type && underlying_type->NonRefType() == sdaiSELECT ?
+        static_cast<SDAI_Select *>( ValueAddress() ) : 0;
+}
+
+const SDAI_Select * SDAI_Select::SelectValue() const {
+    return underlying_type && underlying_type->NonRefType() == sdaiSELECT ?
+        static_cast<const SDAI_Select *>( ValueAddress() ) : 0;
+}
+
+STEPaggregate * SDAI_Select::AggregateValue() {
+    return underlying_type && underlying_type->IsAggrType() ?
+        static_cast<STEPaggregate *>( ValueAddress() ) : 0;
+}
+
+const STEPaggregate * SDAI_Select::AggregateValue() const {
+    return underlying_type && underlying_type->IsAggrType() ?
+        static_cast<const STEPaggregate *>( ValueAddress() ) : 0;
+}
+
+SDAI_Application_instance * SDAI_Select::EntityValue() const {
+    if( !_storage || !underlying_type || underlying_type->NonRefType() != sdaiINSTANCE ) {
+        return 0;
+    }
+    return _storage->entity_value;
 }
 
 bool SDAI_Select::exists() const {
@@ -152,6 +603,10 @@ bool SDAI_Select::exists() const {
 
 void SDAI_Select::nullify() {
     underlying_type = 0;
+    base_type = UNKNOWN_TYPE;
+    if( _storage ) {
+        _storage->Clear();
+    }
 }
 
 Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor * err,
@@ -163,6 +618,155 @@ Severity SDAI_Select::SelectValidLevel( const char * attrValue, ErrorDescriptor 
     s = tmp -> STEPread( strtmp, err, im );
     delete tmp;
     return s;
+}
+
+void SDAI_Select::STEPwrite_content( ostream & out, const char * currSch ) const {
+    const void * value = ValueAddress();
+    if( !underlying_type || !value ) {
+        out << "$";
+        return;
+    }
+
+    switch( underlying_type->NonRefType() ) {
+        case sdaiINTEGER:
+            out << *static_cast<const SDAI_Integer *>( value );
+            break;
+        case sdaiREAL:
+        case sdaiNUMBER:
+            WriteReal( *static_cast<const SDAI_Real *>( value ), out );
+            break;
+        case sdaiINSTANCE:
+            static_cast<SDAI_Application_instance *>(
+                const_cast<void *>( value ) )->STEPwrite_reference( out );
+            break;
+        case sdaiSTRING:
+            static_cast<const SDAI_String *>( value )->STEPwrite( out );
+            break;
+        case sdaiBINARY:
+            static_cast<const SDAI_Binary *>( value )->STEPwrite( out );
+            break;
+        case sdaiBOOLEAN:
+        case sdaiLOGICAL:
+        case sdaiENUMERATION:
+            static_cast<const SDAI_Enum *>( value )->STEPwrite( out );
+            break;
+        case sdaiSELECT:
+            static_cast<const SDAI_Select *>( value )->STEPwrite( out, currSch );
+            break;
+        case sdaiAGGR:
+        case ARRAY_TYPE:
+        case BAG_TYPE:
+        case SET_TYPE:
+        case LIST_TYPE:
+            static_cast<const STEPaggregate *>( value )->STEPwrite( out, currSch );
+            break;
+        default:
+            out << "$";
+            break;
+    }
+}
+
+Severity SDAI_Select::STEPread_content( istream & in, InstMgrBase * instances,
+                                        const char * utype, int addFileId,
+                                        const char * currSch ) {
+    if( !underlying_type ) {
+        severity( SEVERITY_BUG );
+        Error( "Unable to create storage for SELECT value." );
+        return severity();
+    }
+
+    void * value = ValueAddress();
+    if( underlying_type->NonRefType() != sdaiINSTANCE && !value ) {
+        severity( SEVERITY_BUG );
+        Error( "Unable to create storage for SELECT value." );
+        return severity();
+    }
+
+    switch( underlying_type->NonRefType() ) {
+        case sdaiINTEGER:
+            ReadInteger( *static_cast<SDAI_Integer *>( value ), in, &_error, ")," );
+            break;
+        case sdaiREAL:
+        case sdaiNUMBER:
+            ReadReal( *static_cast<SDAI_Real *>( value ), in, &_error, ")," );
+            break;
+        case sdaiINSTANCE: {
+            SDAI_Application_instance * entity =
+                ReadEntityRef( in, &_error, ",)", instances, addFileId );
+            if( entity && entity != S_ENTITY_NULL && underlying_type->CanBe( entity->eDesc ) ) {
+                _storage->entity_value = entity;
+            } else {
+                Error( "Reference to instance that is not indicated type\n" );
+                nullify();
+                return severity( SEVERITY_USERMSG );
+            }
+            break;
+        }
+        case sdaiSTRING:
+            static_cast<SDAI_String *>( value )->STEPread( in, &_error );
+            break;
+        case sdaiBINARY:
+            static_cast<SDAI_Binary *>( value )->STEPread( in, &_error );
+            break;
+        case sdaiBOOLEAN:
+        case sdaiLOGICAL:
+        case sdaiENUMERATION:
+            static_cast<SDAI_Enum *>( value )->STEPread( in, &_error );
+            break;
+        case sdaiSELECT:
+            static_cast<SDAI_Select *>( value )->STEPread(
+                in, &_error, instances, utype, addFileId, currSch );
+            break;
+        case sdaiAGGR:
+        case ARRAY_TYPE:
+        case BAG_TYPE:
+        case SET_TYPE:
+        case LIST_TYPE:
+            static_cast<STEPaggregate *>( value )->STEPread(
+                in, &_error, underlying_type->AggrElemTypeDescriptor(),
+                instances, addFileId, currSch );
+            break;
+        default:
+            severity( SEVERITY_WARNING );
+            Error( "Mismatch in underlying type." );
+            break;
+    }
+    return severity();
+}
+
+Severity SDAI_Select::StrToVal_content( const char * str, InstMgrBase * instances ) {
+    if( !underlying_type ) {
+        return severity( SEVERITY_BUG );
+    }
+    void * value = ValueAddress();
+    if( underlying_type->NonRefType() != sdaiINSTANCE && !value ) {
+        return severity( SEVERITY_BUG );
+    }
+
+    switch( underlying_type->NonRefType() ) {
+        case sdaiSTRING:
+            return static_cast<SDAI_String *>( value )->StrToVal( str );
+        case sdaiBINARY:
+            return static_cast<SDAI_Binary *>( value )->StrToVal( str, &_error );
+        case sdaiBOOLEAN:
+        case sdaiLOGICAL:
+        case sdaiENUMERATION:
+            return static_cast<SDAI_Enum *>( value )->StrToVal( str, &_error );
+        case sdaiSELECT:
+            return static_cast<SDAI_Select *>( value )->StrToVal(
+                str, underlying_type->Name(), &_error, instances );
+        case sdaiAGGR:
+        case ARRAY_TYPE:
+        case BAG_TYPE:
+        case SET_TYPE:
+        case LIST_TYPE:
+            return static_cast<STEPaggregate *>( value )->StrToVal(
+                str, &_error, underlying_type->AggrElemTypeDescriptor(), instances );
+        default: {
+            istringstream input( str );
+            return STEPread_content( input, instances );
+        }
+    }
 }
 
 Severity SDAI_Select::StrToVal( const char * Val, const char * selectType,
@@ -580,7 +1184,7 @@ void SDAI_Select::STEPwrite( ostream & out, const char * currSch )  const {
 void SDAI_Select::STEPwrite_verbose( ostream & out, const char * currSch ) const {
     std::string tmp;
     out << StrToUpper( CurrentUnderlyingType()->Name( currSch ), tmp ) << "(";
-    STEPwrite_content( out );
+    STEPwrite_content( out, currSch );
     out << ")";
 }
 

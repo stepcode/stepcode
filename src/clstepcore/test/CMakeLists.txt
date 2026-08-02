@@ -23,6 +23,7 @@ endfunction(add_stepcore_test name libs)
 add_stepcore_test("SupertypesIterator" "stepcore;steputils;stepeditor;stepdai") #all these libs are necessary?
 add_stepcore_test("operators_STEPattribute" "stepcore;steputils;stepeditor;stepdai")
 add_stepcore_test("operators_SDAI_Select" "stepcore;steputils;stepeditor;stepdai")
+add_stepcore_test("descriptor_SDAI_Select" "stepcore;steputils;stepeditor;stepdai")
 add_stepcore_test("null_attr" "stepcore;steputils;stepeditor;stepdai")
 
 # Local Variables:

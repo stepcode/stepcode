@@ -17,7 +17,13 @@
 /**
  ** \file sdaiSelect.h class definition for the select superclass SDAI_Select.
  **/
+class STEPaggregate;
+
 class SC_CORE_EXPORT SDAI_Select {
+    private:
+        class Storage;
+        Storage * _storage;
+
     protected:
         const SelectTypeDescriptor * _type;
         const TypeDescriptor    *   underlying_type;
@@ -36,8 +42,11 @@ class SC_CORE_EXPORT SDAI_Select {
 
         int IsUnique( const BASE_TYPE bt ) const;
 
-        virtual const TypeDescriptor * AssignEntity( SDAI_Application_instance * se ) = 0;
-        virtual SDAI_Select * NewSelect() = 0;
+        virtual const TypeDescriptor * AssignEntity( SDAI_Application_instance * se );
+        virtual SDAI_Select * NewSelect();
+
+        void * ValueAddress();
+        const void * ValueAddress() const;
     public:
         Severity severity() const;
         Severity severity( Severity );
@@ -47,7 +56,7 @@ class SC_CORE_EXPORT SDAI_Select {
         void ClearError();
         // clears error
 
-        virtual BASE_TYPE ValueType() const = 0;
+        virtual BASE_TYPE ValueType() const;
 
         // constructors
         SDAI_Select( const SelectTypeDescriptor * s = 0,
@@ -72,28 +81,57 @@ class SC_CORE_EXPORT SDAI_Select {
         virtual void STEPwrite_verbose( ostream & out = cout, const char * = 0 )
         const;
 
-        virtual void STEPwrite_content( ostream & out, const char * = 0 ) const = 0;
+        virtual void STEPwrite_content( ostream & out, const char * = 0 ) const;
 
 
         Severity StrToVal( const char * val, const char * selectType,
                            ErrorDescriptor * err, InstMgrBase * instances = 0 );
         virtual Severity StrToVal_content( const char *,
-                                           InstMgrBase * instances = 0 ) = 0;
+                                           InstMgrBase * instances = 0 );
 
         Severity STEPread( istream & in, ErrorDescriptor * err,
                            InstMgrBase * instances = 0, const char * utype = 0,
                            int addFileId = 0, const char * = NULL );
 
-        // abstract function
+        // Descriptor-driven default; API v1 SELECTs may override it.
         virtual Severity STEPread_content( istream & in = cin,
                                            InstMgrBase * instances = 0,
                                            const char * utype = 0,
                                            int addFileId = 0,
-                                           const char * currSch = 0 ) = 0;
+                                           const char * currSch = 0 );
 
         //windows complains if operator= is pure virtual, perhaps because the impl is not in the lib with the definition
         //linux has a regression if the pure virtual operator= is commented out
         virtual SDAI_Select & operator =( const SDAI_Select & other );
+        SDAI_Select & operator =( const SDAI_Select * other );
+        SDAI_Select * Clone() const;
+
+        // Descriptor-driven value API used by generated API v2 classes and
+        // by applications that do not need per-choice early-bound members.
+        bool SetInteger( const TypeDescriptor *, SDAI_Integer );
+        bool SetReal( const TypeDescriptor *, SDAI_Real );
+        bool SetString( const TypeDescriptor *, const SDAI_String & );
+        bool SetBinary( const TypeDescriptor *, const SDAI_Binary & );
+        bool SetEnum( const TypeDescriptor *, const SDAI_Enum & );
+        bool SetSelect( const TypeDescriptor *, const SDAI_Select & );
+        bool SetAggregate( const TypeDescriptor *, const STEPaggregate & );
+        bool SetEntity( SDAI_Application_instance * );
+
+        SDAI_Integer * IntegerValue();
+        const SDAI_Integer * IntegerValue() const;
+        SDAI_Real * RealValue();
+        const SDAI_Real * RealValue() const;
+        SDAI_String * StringValue();
+        const SDAI_String * StringValue() const;
+        SDAI_Binary * BinaryValue();
+        const SDAI_Binary * BinaryValue() const;
+        SDAI_Enum * EnumValue();
+        const SDAI_Enum * EnumValue() const;
+        SDAI_Select * SelectValue();
+        const SDAI_Select * SelectValue() const;
+        STEPaggregate * AggregateValue();
+        const STEPaggregate * AggregateValue() const;
+        SDAI_Application_instance * EntityValue() const;
 
         //FIXME set_null always returns true. why not void?!
         bool set_null();

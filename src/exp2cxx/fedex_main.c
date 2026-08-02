@@ -74,6 +74,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "../express/express.h"
 #include "../express/resolve.h"
 
@@ -83,11 +84,12 @@ extern void print_fedex_version( void );
 
 static void exp2cxx_usage( void ) {
     char *warnings_help_msg = ERRORget_warnings_help("\t", "\n");
-    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-L] [-k entity-chunk-size[:type-chunk-size]] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
+    fprintf( stderr, "usage: %s [-s|-S] [-a|-A] [-L] [-k entity-chunk-size[:type-chunk-size]] [-V 1|2] [-v] [-d # | -d 9 -l nnn -u nnn] [-n] [-p <object_type>] {-w|-i <warning>} express_file\n", EXPRESSprogram_name );
     fprintf( stderr, "where\t-s or -S uses only single inheritance in the generated C++ classes\n" );
     fprintf( stderr, "\t-a or -A generates the early bound access functions for entity classes the old way (without an underscore)\n" );
     fprintf( stderr, "\t-L prints logging code in the generated C++ classes\n" );
     fprintf( stderr, "\t-k limits generated unity chunks by entity:type counts (default 64:8; N applies to both)\n" );
+    fprintf( stderr, "\t-V, --api-version selects generated C++ API version 1 or 2 (default 1)\n" );
     fprintf( stderr, "\t-v produces the version description below\n" );
     fprintf( stderr, "\t-d turns on debugging (\"-d 0\" describes this further\n" );
     fprintf( stderr, "\t-p turns on printing when processing certain objects (see below)\n" );
@@ -110,6 +112,23 @@ static void exp2cxx_usage( void ) {
     exit( 2 );
 }
 
+static void exp2cxx_init_args( int argc, char ** argv ) {
+    int i;
+    const char prefix[] = "--api-version=";
+    for( i = 1; i < argc; ++i ) {
+        if( strcmp( argv[i], "--api-version" ) == 0 ) {
+            argv[i][0] = '-';
+            argv[i][1] = 'V';
+            argv[i][2] = '\0';
+        } else if( strncmp( argv[i], prefix, sizeof( prefix ) - 1 ) == 0 ) {
+            memmove( argv[i] + 2, argv[i] + sizeof( prefix ) - 1,
+                     strlen( argv[i] + sizeof( prefix ) - 1 ) + 1 );
+            argv[i][0] = '-';
+            argv[i][1] = 'V';
+        }
+    }
+}
+
 int Handle_FedPlus_Args( int, char * );
 void print_file( Express );
 
@@ -129,7 +148,8 @@ void EXPRESSinit_init( void ) {
     EXPRESSbackend = print_file;
     EXPRESSsucceed = success;
     EXPRESSgetopt = Handle_FedPlus_Args;
+    EXPRESSinit_args = exp2cxx_init_args;
     /* so the function getopt (see man 3 getopt) will not report an error */
-    strcat( EXPRESSgetopt_options, "sSlLaAk:" );
+    strcat( EXPRESSgetopt_options, "sSlLaAk:V:" );
     ERRORusage_function = exp2cxx_usage;
 }

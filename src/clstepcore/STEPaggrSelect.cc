@@ -1,12 +1,13 @@
 #include "clstepcore/STEPaggrSelect.h"
-#include "clstepcore/typeDescriptor.h"
+#include "clstepcore/selectTypeDescriptor.h"
 #include <sstream>
 
 /** \file STEPaggrSelect.cc
  * implement classes SelectAggregate, SelectNode
  */
 
-SelectAggregate::SelectAggregate() {
+SelectAggregate::SelectAggregate( const SelectTypeDescriptor * select_type )
+    : _select_type( select_type ) {
 }
 
 SelectAggregate::~SelectAggregate() {
@@ -119,9 +120,10 @@ Severity SelectAggregate::ReadValue( istream & in, ErrorDescriptor * err,
 
 
 STEPaggregate & SelectAggregate::ShallowCopy( const STEPaggregate & a ) {
+    Empty();
     const SelectNode * tmp = ( const SelectNode * ) a.GetHead();
     while( tmp ) {
-        AddNode( new SelectNode( tmp -> node ) );
+        AddNode( new SelectNode( tmp->node ? tmp->node->Clone() : 0 ) );
 
         tmp = ( const SelectNode * ) tmp -> NextNode();
     }
@@ -136,14 +138,14 @@ STEPaggregate & SelectAggregate::ShallowCopy( const STEPaggregate & a ) {
 
 
 SingleLinkNode * SelectAggregate::NewNode() {
-    return new SelectNode();
+    return new SelectNode( _select_type ? _select_type->CreateSelect() : 0 );
 }
 
 
 SelectNode::SelectNode( SDAI_Select  * s ) :  node( s ) {
 }
 
-SelectNode::SelectNode() {
+SelectNode::SelectNode() : node( 0 ) {
 }
 
 SelectNode::~SelectNode() {
@@ -221,4 +223,3 @@ void SelectNode::STEPwrite( ostream & out ) {
     std::string s;
     out << asStr( s );
 }
-
