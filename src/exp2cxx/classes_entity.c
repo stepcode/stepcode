@@ -1336,16 +1336,11 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
     /* API v2's schema-level declaration graph must expose descriptors
      * without pulling in every complete entity class definition. */
     if( exp2cxx_api_version == 2 ) {
-        ENTITYnames_print( entity, files->names );
-        ATTRnames_print( entity, files->names );
         if( exp2cxx_late_bound ) {
-            fprintf( files->entity_records,
-                     "    { &%s::%s%s, \"%s\", &%s::schema, %s, %s, 0 },\n",
-                     SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ),
-                     PrettyTmpName( ENTITYget_name( entity ) ), SCHEMAget_name( schema ),
-                     ENTITYget_abstract( entity ) ? "LTrue" : "LFalse",
-                     externMap ? "LTrue" : "LFalse" );
+            SCHEMAimage_set_external_mapping( entity, externMap );
         } else {
+            ENTITYnames_print( entity, files->names );
+            ATTRnames_print( entity, files->names );
             fprintf( files->entity_records,
                      "    { &%s::%s%s, \"%s\", &%s::schema, %s, %s, (Creator) create_%s },\n",
                      SCHEMAget_name( schema ), ENT_PREFIX, ENTITYget_name( entity ),
@@ -1355,11 +1350,7 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
         }
     }
 
-    if( exp2cxx_late_bound ) {
-        impl = UNITYentityFile( files );
-        ENTITYPrint_cc( entity, files->create, files->inc, impl, remaining,
-                        schema, externMap );
-    } else {
+    if( !exp2cxx_late_bound ) {
         hdr = FILEcreate( names.header );
         impl = FILEcreate( names.impl );
         assert( hdr && impl && "error creating files" );
@@ -1375,11 +1366,10 @@ void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap ) 
     if( exp2cxx_api_version != 2 ) {
         fprintf( files->inc, "#include \"entity/%s.h\"\n", ENTITYget_classname( entity ) );
     }
-    if( exp2cxx_late_bound ) {
-        fprintf( files->init, "    extern void init_%s(Registry &);\n",
+    if( !exp2cxx_late_bound ) {
+        fprintf( files->init, "    init_%s( reg );\n",
                  ENTITYget_classname( entity ) );
     }
-    fprintf( files->init, "    init_%s( reg );\n", ENTITYget_classname( entity ) );
 
     DEBUG( "DONE ENTITYPrint\n" );
     LIST_destroy( remaining );

@@ -10,6 +10,9 @@
  * Date:        01/09/97                                                     *
  *****************************************************************************/
 
+#include <cstdint>
+#include <iomanip>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -20,26 +23,44 @@ static void writeheader( ostream &, int );
 
 struct CompactComplexNode {
     JoinType kind;
-    std::string name;
-    size_t firstChild;
-    size_t nextSibling;
+    uint32_t name;
+    uint32_t firstChild;
+    uint32_t nextSibling;
 };
 
-static size_t appendCompactNode( EntList * node,
-                                 std::vector<CompactComplexNode> & nodes ) {
-    const size_t noNode = static_cast<size_t>( -1 );
-    const size_t index = nodes.size();
-    CompactComplexNode record = { node->join, "", noNode, noNode };
+static uint32_t compactString( const std::string & value,
+                               std::string & strings,
+                               std::map<std::string, uint32_t> & offsets ) {
+    std::map<std::string, uint32_t>::const_iterator found =
+        offsets.find( value );
+    if( found != offsets.end() ) {
+        return found->second;
+    }
+    const uint32_t offset = static_cast<uint32_t>( strings.size() );
+    offsets[value] = offset;
+    strings.append( value );
+    strings.push_back( '\0' );
+    return offset;
+}
+
+static uint32_t appendCompactNode(
+    EntList * node, std::vector<CompactComplexNode> & nodes,
+    std::string & strings, std::map<std::string, uint32_t> & offsets ) {
+    const uint32_t noNode = UINT32_MAX;
+    const uint32_t index = static_cast<uint32_t>( nodes.size() );
+    CompactComplexNode record = { node->join, 0, noNode, noNode };
     if( node->join == SIMPLE ) {
-        record.name = static_cast<SimpleList *>( node )->Name();
+        record.name = compactString(
+            static_cast<SimpleList *>( node )->Name(), strings, offsets );
     }
     nodes.push_back( record );
 
     if( node->multiple() ) {
         MultList * parent = static_cast<MultList *>( node );
-        size_t previous = noNode;
+        uint32_t previous = noNode;
         for( int i = 0; i < parent->childCount(); ++i ) {
-            size_t child = appendCompactNode( parent->getChild( i ), nodes );
+            uint32_t child = appendCompactNode(
+                parent->getChild( i ), nodes, strings, offsets );
             if( previous == noNode ) {
                 nodes[index].firstChild = child;
             } else {
@@ -49,6 +70,22 @@ static size_t appendCompactNode( EntList * node,
         }
     }
     return index;
+}
+
+static void writeCompactString( ostream & output, const std::string & value ) {
+    output << '"';
+    for( size_t i = 0; i < value.size(); ++i ) {
+        const unsigned char c = static_cast<unsigned char>( value[i] );
+        if( c == '\\' || c == '"' ) {
+            output << '\\' << static_cast<char>( c );
+        } else if( c >= 32 && c < 127 ) {
+            output << static_cast<char>( c );
+        } else {
+            output << '\\' << std::oct << std::setw( 3 ) << std::setfill( '0' )
+                   << static_cast<unsigned>( c ) << std::dec;
+        }
+    }
+    output << '"';
 }
 
 static const char * compactNodeKind( JoinType kind ) {
@@ -66,52 +103,71 @@ static const char * compactNodeKind( JoinType kind ) {
 }
 
 static void writeCompactComplex( ostream & output, ComplexCollect & collect ) {
-    const size_t noNode = static_cast<size_t>( -1 );
+    const uint32_t noNode = UINT32_MAX;
     std::vector<CompactComplexNode> nodes;
-    std::vector<size_t> roots;
+    std::vector<uint32_t> roots;
+    std::string strings( 1, '\0' );
+    std::map<std::string, uint32_t> stringOffsets;
+    stringOffsets[""] = 0;
     for( ComplexList * list = collect.clists; list; list = list->next ) {
-        roots.push_back( appendCompactNode( list->head, nodes ) );
+        roots.push_back( appendCompactNode(
+            list->head, nodes, strings, stringOffsets ) );
     }
 
     output << "// compact, table-driven API v2 complex metadata\n"
-           << "#include \"clstepcore/schemaInit.h\"\n\n"
+           << "#include \"clstepcore/schemaInit.h\"\n"
+           << "#include <cstddef>\n"
+           << "#include <cstdint>\n\n"
            << "namespace {\n"
-           << "const size_t noNode = static_cast<size_t>( -1 );\n"
-           << "const ComplexNodeInitRecord complexNodes[] = {\n";
+           << "struct GeneratedComplexImage {\n"
+           << "    PackedComplexImage header;\n"
+           << "    PackedComplexNode nodes[" << ( nodes.empty() ? 1 : nodes.size() )
+           << "];\n"
+           << "    PackedComplexList lists[" << ( roots.empty() ? 1 : roots.size() )
+           << "];\n"
+           << "    char strings[" << strings.size() + 1 << "];\n"
+           << "};\n\n"
+           << "const GeneratedComplexImage generatedComplexImage = {\n"
+           << "    { PackedComplexImageVersion_1, "
+              "sizeof(GeneratedComplexImage),\n"
+           << "      offsetof(GeneratedComplexImage, strings), "
+           << strings.size() << ",\n"
+           << "      offsetof(GeneratedComplexImage, nodes), "
+           << nodes.size() << ",\n"
+           << "      offsetof(GeneratedComplexImage, lists), "
+           << roots.size() << " },\n"
+           << "    {\n";
     if( nodes.empty() ) {
-        output << "    { ComplexNodeInit_Simple, 0, noNode, noNode },\n";
+        output << "        {},\n";
     }
     for( size_t i = 0; i < nodes.size(); ++i ) {
-        output << "    { " << compactNodeKind( nodes[i].kind ) << ", ";
-        if( nodes[i].kind == SIMPLE ) {
-            output << '"' << nodes[i].name << '"';
-        } else {
-            output << '0';
-        }
-        output << ", ";
+        output << "        { " << compactNodeKind( nodes[i].kind ) << ", "
+               << nodes[i].name << ", ";
         if( nodes[i].firstChild == noNode ) {
-            output << "noNode";
+            output << "UINT32_MAX";
         } else {
             output << nodes[i].firstChild;
         }
         output << ", ";
         if( nodes[i].nextSibling == noNode ) {
-            output << "noNode";
+            output << "UINT32_MAX";
         } else {
             output << nodes[i].nextSibling;
         }
         output << " },\n";
     }
-    output << "};\n\nconst ComplexListInitRecord complexLists[] = {\n";
+    output << "    },\n    {\n";
     if( roots.empty() ) {
-        output << "    { 0 },\n";
+        output << "        {},\n";
     }
     for( size_t i = 0; i < roots.size(); ++i ) {
-        output << "    { " << roots[i] << " },\n";
+        output << "        { " << roots[i] << " },\n";
     }
-    output << "};\n}\n\nComplexCollect * gencomplex() {\n"
-           << "    return InitializeComplexSupport( complexNodes, "
-           << nodes.size() << ", complexLists, " << roots.size() << " );\n"
+    output << "    },\n    ";
+    writeCompactString( output, strings );
+    output << "\n};\n}\n\nComplexCollect * gencomplex() {\n"
+           << "    return InitializePackedComplexSupport(\n"
+           << "        generatedComplexImage.header );\n"
            << "}\n";
 }
 

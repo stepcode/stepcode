@@ -5,6 +5,7 @@ const char * ENTITYget_classname( Entity );
 Entity ENTITYget_superclass( Entity entity );
 Entity ENTITYput_superclass( Entity entity );
 int ENTITYhas_explicit_attributes( Entity e );
+char * generate_dict_attr_name( Variable a, char * out );
 void ENTITYget_first_attribs( Entity entity, Linked_List result );
 void ENTITYPrint( Entity entity, FILES * files, Schema schema, bool externMap );
 void ENTITYprint_descriptors( Entity entity, FILE * createall, FILE * impl, Schema schema, bool externMap );

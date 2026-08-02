@@ -158,5 +158,6 @@ void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflis
 #include "classes_attribute.h"
 #include "classes_type.h"
 #include "classes_entity.h"
+#include "schema_image.h"
 
 #endif

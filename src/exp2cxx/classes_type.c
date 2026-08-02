@@ -372,7 +372,10 @@ void TYPEPrint_h( const Type type, FILE * file ) {
         }
     }
 
-    fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type ) );
+    if( !exp2cxx_late_bound ) {
+        fprintf( file, "void init_%s(Registry& reg);\n\n",
+                 TYPEget_ctype( type ) );
+    }
 
     DEBUG( "DONE TYPEPrint_h\n" );
 }
@@ -393,14 +396,17 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
         }
     }
 
-    fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
-    if( exp2cxx_api_version == 1 ) {
-        fprintf( impl, "    std::string str;\n" );
+    if( !exp2cxx_late_bound ) {
+        fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n",
+                 TYPEget_ctype( type ) );
+        if( exp2cxx_api_version == 1 ) {
+            fprintf( impl, "    std::string str;\n" );
+        }
+        /* moved from SCOPEPrint in classes_wrapper */
+        TYPEprint_new( type, impl, schema, true );
+        TYPEprint_init( type, hdr, impl, schema );
+        fprintf( impl, "}\n\n" );
     }
-    /* moved from SCOPEPrint in classes_wrapper */
-    TYPEprint_new( type, impl, schema, true );
-    TYPEprint_init( type, hdr, impl, schema );
-    fprintf( impl, "}\n\n" );
 
     DEBUG( "DONE TYPEPrint_cc\n" );
 }
@@ -411,7 +417,10 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
 
     fprintf( files->inc, "#include \"%s\"\n", names.header );
 
-    fprintf( files->init, "    init_%s( reg );\n", TYPEget_ctype( type ) );
+    if( !exp2cxx_late_bound ) {
+        fprintf( files->init, "    init_%s( reg );\n",
+                 TYPEget_ctype( type ) );
+    }
 
     if( mkDirIfNone( "type" ) == -1 ) {
         fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
@@ -624,7 +633,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
         if( TYPEis_enumeration( type ) ) {
                 TYPEPrint( type, files, schema );
         } /* so we don't do anything for non-enums??? */
-    } else {
+    } else if( !exp2cxx_late_bound ) {
         TYPEprint_new( type, files->create, schema, false );
         TYPEprint_init( type, files->inc, files->init, schema );
     }
@@ -730,6 +739,47 @@ void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endC
 void TYPEprint_descriptor_record( const Type type, FILE * records, Schema schema ) {
     Type tmpType = TYPEget_head( type );
     Type bodyType = tmpType;
+
+    if( exp2cxx_late_bound ) {
+        fprintf( records, "    { &%s, ", TYPEtd_name( type ) );
+        if( TYPEis_select( type ) ) {
+            fprintf( records, "(SelectCreator) create_%s, 0, 0 },\n",
+                     SelectName( TYPEget_name( type ) ) );
+            return;
+        }
+        switch( TYPEget_body( type )->type ) {
+            case boolean_:
+                fprintf( records, "0, (EnumCreator) create_BOOLEAN, 0 },\n" );
+                return;
+            case logical_:
+                fprintf( records, "0, (EnumCreator) create_LOGICAL, 0 },\n" );
+                return;
+            case enumeration_:
+                if( tmpType ) {
+                    while( tmpType ) {
+                        bodyType = tmpType;
+                        tmpType = TYPEget_head( tmpType );
+                    }
+                } else {
+                    bodyType = ( Type )type;
+                }
+                fprintf( records, "0, (EnumCreator) create_%s, 0 },\n",
+                         TYPEget_ctype( bodyType ) );
+                return;
+            case aggregate_:
+            case array_:
+            case bag_:
+            case set_:
+            case list_:
+                fprintf( records,
+                         "0, 0, (AggregateCreator) create_%s },\n",
+                         ClassName( TYPEget_name( type ) ) );
+                return;
+            default:
+                fprintf( records, "0, 0, 0 },\n" );
+                return;
+        }
+    }
 
     fprintf( records, "    TypeDescriptorInitRecord( &%s, ", TYPEtd_name( type ) );
     if( TYPEis_select( type ) ) {

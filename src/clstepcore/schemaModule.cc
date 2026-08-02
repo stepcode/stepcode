@@ -139,6 +139,41 @@ void prepareLateBoundLayouts(
 
 }
 
+class SchemaLoadContext::Impl {
+public:
+    typedef std::unordered_map<const Schema *, PendingSchemaModule> ModuleMap;
+    ModuleMap modules;
+};
+
+SchemaLoadContext::SchemaLoadContext() : _impl( new Impl ) {
+}
+
+SchemaLoadContext::~SchemaLoadContext() {
+    delete _impl;
+}
+
+void SchemaLoadContext::Begin( Schema & schema ) {
+    PendingSchemaModule & module = _impl->modules[&schema];
+    module.entities.clear();
+    module.types.clear();
+    module.attributes.clear();
+}
+
+void SchemaLoadContext::RecordEntity(
+    Schema & schema, const EntityDescriptor * entity ) {
+    _impl->modules[&schema].entities.push_back( entity );
+}
+
+void SchemaLoadContext::RecordType(
+    Schema & schema, const TypeDescriptor * type ) {
+    _impl->modules[&schema].types.push_back( type );
+}
+
+void SchemaLoadContext::RecordAttribute(
+    Schema & schema, const AttrDescriptor * attribute ) {
+    _impl->modules[&schema].attributes.push_back( attribute );
+}
+
 void BeginSchemaModuleImage( Schema & schema ) {
     pendingSchemaModules().Begin( schema );
 }
@@ -157,7 +192,7 @@ void RecordSchemaModuleAttribute( Schema & schema,
     pendingSchemaModules().RecordAttribute( schema, attribute );
 }
 
-SchemaModule::SchemaModule() : _schema( 0 ) {
+SchemaModule::SchemaModule() : _schema( 0 ), _fingerprint( 0 ) {
 }
 
 SchemaModule::~SchemaModule() {
@@ -169,6 +204,7 @@ void SchemaModule::Initialize(
     const TypeDescriptor * const * types, size_t typeCount,
     const AttrDescriptor * const * attributes, size_t attributeCount ) {
     _schema = &schema;
+    _fingerprint = 0;
     _entities.assign( entities, entities + entityCount );
     _types.assign( types, types + typeCount );
     _attributes.assign( attributes, attributes + attributeCount );
@@ -181,6 +217,7 @@ void SchemaModule::InitializeFromSlots(
     const SchemaModuleSlot * types, size_t typeCount,
     const SchemaModuleSlot * attributes, size_t attributeCount ) {
     _schema = &schema;
+    _fingerprint = 0;
     _entities.clear();
     _entities.reserve( entityCount );
     for( size_t i = 0; i < entityCount; ++i ) {
@@ -218,10 +255,28 @@ void SchemaModule::InitializeFromImage( Schema & schema,
         return;
     }
     _schema = &schema;
+    _fingerprint = 0;
     _entities.swap( module.entities );
     _types.swap( module.types );
     _attributes.swap( module.attributes );
     prepareLateBoundLayouts( _entities );
+}
+
+bool SchemaModule::InitializeFromContext(
+    Schema & schema, SchemaLoadContext & context, uint64_t fingerprint ) {
+    SchemaLoadContext::Impl::ModuleMap::iterator i =
+        context._impl->modules.find( &schema );
+    if( i == context._impl->modules.end() ) {
+        return false;
+    }
+    _schema = &schema;
+    _entities.swap( i->second.entities );
+    _types.swap( i->second.types );
+    _attributes.swap( i->second.attributes );
+    _fingerprint = fingerprint;
+    context._impl->modules.erase( i );
+    prepareLateBoundLayouts( _entities );
+    return true;
 }
 
 bool SchemaModule::IsInitialized() const {
@@ -255,4 +310,8 @@ size_t SchemaModule::TypeCount() const {
 
 size_t SchemaModule::AttributeCount() const {
     return _attributes.size();
+}
+
+uint64_t SchemaModule::Fingerprint() const {
+    return _fingerprint;
 }

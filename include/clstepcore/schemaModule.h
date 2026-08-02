@@ -33,21 +33,77 @@ struct SC_CORE_EXPORT SchemaModuleSlot {
 };
 
 enum SchemaModuleImageVersion {
-    SchemaModuleImageVersion_1 = 1
+    SchemaModuleImageVersion_1 = 1,
+    SchemaModuleImageVersion_2 = 2
+};
+
+enum SchemaModuleImageFlags {
+    SchemaModuleImage_FullMetadata = 0,
+    SchemaModuleImage_StructuralMetadata = 1u << 0
 };
 
 /**
  * Relocation-free generated header for a schema module image.
  *
- * Descriptor initialization helpers record entities, types, and attributes
- * in stable generated-ID order.  The image therefore needs only a version
- * and counts rather than one relocated pointer per descriptor.
+ * Version 1 records only stable generated-ID counts.  Version 2 describes
+ * one bounded block of offset-based schemas, descriptors, metadata, and
+ * strings.  Runtime loading validates the complete block before constructing
+ * descriptors or changing a Registry.
  */
 struct SC_CORE_EXPORT SchemaModuleImage {
     uint32_t version;
     uint32_t entityCount;
     uint32_t typeCount;
     uint32_t attributeCount;
+
+    /* Version 2 fields.  Version 1 initializers leave these zero. */
+    uint32_t byteSize;
+    uint32_t flags;
+    uint32_t schemaCount;
+    uint32_t stringBytes;
+    uint32_t schemaOffset;
+    uint32_t entityOffset;
+    uint32_t typeOffset;
+    uint32_t attributeOffset;
+    uint32_t aggregateCount;
+    uint32_t aggregateOffset;
+    uint32_t referenceCount;
+    uint32_t referenceOffset;
+    uint32_t ruleCount;
+    uint32_t ruleOffset;
+    uint32_t schemaTextCount;
+    uint32_t schemaTextOffset;
+    uint32_t enumElementCount;
+    uint32_t enumElementOffset;
+    uint32_t stringOffset;
+    uint32_t reserved;
+    uint64_t fingerprint;
+};
+
+class SchemaModule;
+
+/**
+ * Per-load descriptor collection used by packed API v2 schema images.
+ *
+ * Keeping this state explicit makes independent schema loads reentrant and
+ * avoids the process-global capture map retained for version-1 images.
+ */
+class SC_CORE_EXPORT SchemaLoadContext {
+    class Impl;
+    Impl * _impl;
+
+    SchemaLoadContext( const SchemaLoadContext & );
+    SchemaLoadContext & operator=( const SchemaLoadContext & );
+    friend class SchemaModule;
+
+public:
+    SchemaLoadContext();
+    ~SchemaLoadContext();
+
+    void Begin( Schema & schema );
+    void RecordEntity( Schema & schema, const EntityDescriptor * entity );
+    void RecordType( Schema & schema, const TypeDescriptor * type );
+    void RecordAttribute( Schema & schema, const AttrDescriptor * attribute );
 };
 
 SC_CORE_EXPORT void RecordSchemaModuleEntity(
@@ -75,6 +131,7 @@ class SC_CORE_EXPORT SchemaModule {
     std::vector<const EntityDescriptor *> _entities;
     std::vector<const TypeDescriptor *> _types;
     std::vector<const AttrDescriptor *> _attributes;
+    uint64_t _fingerprint;
 #ifdef _MSC_VER
 #pragma warning( pop )
 #endif
@@ -95,6 +152,8 @@ public:
         const SchemaModuleSlot * attributes, size_t attributeCount );
     void InitializeFromImage( Schema & schema,
                               const SchemaModuleImage & image );
+    bool InitializeFromContext( Schema & schema, SchemaLoadContext & context,
+                                uint64_t fingerprint );
 
     bool IsInitialized() const;
     const Schema & GetSchema() const;
@@ -104,6 +163,7 @@ public:
     size_t EntityCount() const;
     size_t TypeCount() const;
     size_t AttributeCount() const;
+    uint64_t Fingerprint() const;
 };
 
 #endif

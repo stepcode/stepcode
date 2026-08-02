@@ -76,6 +76,10 @@ void create_builtin_type_defn( FILES * files, char * name ) {
  ******************************************************************/
 void print_file_header( FILES * files ) {
 
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        SCHEMAimage_reset();
+    }
+
     /*  open file which unifies all schema specific header files
     of input Express source */
     files -> incall = FILEcreate( "schema.h" );
@@ -162,7 +166,47 @@ void print_file_header( FILES * files ) {
 void print_file_trailer( FILES * files ) {
     FILEclose( files->incall );
     FILEclose( files->initall );
-    if( exp2cxx_api_version == 2 ) {
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        FILE * body = files->create;
+        FILE * output = FILEcreate( "SdaiAll.cc" );
+        fprintf( output,
+                 "\n// packed, offset-based API v2 schema image\n"
+                 "#include \"schema.h\"\n"
+                 "#include \"clstepcore/schemaInit.h\"\n"
+                 "#include <cstdint>\n"
+                 "#include <stdexcept>\n\n"
+                 "namespace {\n"
+                 "const SchemaImageSchemaBinding schemaBindings[] = {\n"
+                 "    { 0, 0, 0 },\n" );
+        copyGeneratedBody( files->schema_records, output );
+        fprintf( output,
+                 "};\n\n"
+                 "const SchemaImageTypeBinding typeBindings[] = {\n"
+                 "    { 0, 0, 0, 0 },\n" );
+        copyGeneratedBody( files->type_records, output );
+        fprintf( output, "};\n\n" );
+        SCHEMAimage_write( output );
+        fprintf( output,
+                 "}\n\n"
+                 "void InitSchemasAndEnts (Registry & reg) {\n"
+                 "    SchemaLoadContext context;\n"
+                 "    const SchemaLoadResult result = InitializeSchemaFromImage(\n"
+                 "        reg, generatedSchemaImage.header,\n"
+                 "        schemaBindings + 1, sizeof(schemaBindings) /\n"
+                 "            sizeof(schemaBindings[0]) - 1,\n"
+                 "        typeBindings + 1, sizeof(typeBindings) /\n"
+                 "            sizeof(typeBindings[0]) - 1, context );\n"
+                 "    if( !result.Succeeded() ) {\n"
+                 "        throw std::runtime_error( result.Message() );\n"
+                 "    }\n" );
+        copyGeneratedBody( body, output );
+        fprintf( output, "}\n\n" );
+        fclose( body );
+        fclose( files->schema_records );
+        fclose( files->entity_records );
+        fclose( files->type_records );
+        FILEclose( output );
+    } else if( exp2cxx_api_version == 2 ) {
         FILE * body = files->create;
         FILE * output = FILEcreate( "SdaiAll.cc" );
         fprintf( output, "\n// compact, table-driven API v2 schema initialization\n" );
@@ -233,6 +277,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     int redefs = 0;
 
     if( cnt <= 1 ) {
+        if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+            SCHEMAimage_register_schema( schema, list );
+        }
         if( exp2cxx_api_version == 2 ) {
             int typeId = 0;
             int attributeCount = 0;
@@ -286,7 +333,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         ** and the Sdaixxx.init.cc files. */
 
         fprintf( files -> lib, "\nSchema * %s::schema = 0;\n", SCHEMAget_name( schema ) );
-        if( exp2cxx_api_version == 2 ) {
+        if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
             int moduleEntityCount = LISTget_length( list );
             int moduleTypeCount = 0;
             int moduleAttributeCount = 0;
@@ -311,6 +358,9 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
                      "}\n",
                      moduleEntityCount, moduleTypeCount, moduleAttributeCount,
                      SCHEMAget_name( schema ), SCHEMAget_name( schema ),
+                     SCHEMAget_name( schema ) );
+        } else if( exp2cxx_api_version == 2 ) {
+            fprintf( files->lib, "SchemaModule %s::schemaModule;\n",
                      SCHEMAget_name( schema ) );
         }
 
@@ -532,14 +582,20 @@ void initUnityFiles( const char * schName, FILES * files ) {
     files->unity.entity.count = files->unity.type.count = 0;
     files->unity.entity.chunk = files->unity.type.chunk = 0;
 
-    std::string name = files->unity.entity.base;
-    name.append( ".cc" );
-    files->unity.entity.aggregate = FILEcreate( name.c_str() );
-    fprintf( files->unity.entity.aggregate, "%s", unity );
-    name = files->unity.entity.base;
-    name.append( ".h" );
-    files->unity.entity.hdr = FILEcreate( name.c_str() );
-    fprintf( files->unity.entity.hdr, "%s\n", unity );
+    std::string name;
+    files->unity.entity.aggregate = 0;
+    files->unity.entity.hdr = 0;
+    files->unity.entity.impl = 0;
+    if( !exp2cxx_late_bound ) {
+        name = files->unity.entity.base;
+        name.append( ".cc" );
+        files->unity.entity.aggregate = FILEcreate( name.c_str() );
+        fprintf( files->unity.entity.aggregate, "%s", unity );
+        name = files->unity.entity.base;
+        name.append( ".h" );
+        files->unity.entity.hdr = FILEcreate( name.c_str() );
+        fprintf( files->unity.entity.hdr, "%s\n", unity );
+    }
 
     name = files->unity.type.base;
     name.append( ".cc" );
@@ -552,7 +608,9 @@ void initUnityFiles( const char * schName, FILES * files ) {
 
     files->unity.manifest = 0;
     snprintf( files->unity.schema, sizeof( files->unity.schema ), "%s", schName );
-    openUnityChunk( files, true );
+    if( !exp2cxx_late_bound ) {
+        openUnityChunk( files, true );
+    }
     openUnityChunk( files, false );
 }
 
@@ -562,9 +620,11 @@ void initUnityFiles( const char * schName, FILES * files ) {
 void closeUnityFiles( FILES * files ) {
     FILEclose( files->unity.type.hdr );
     FILEclose( files->unity.type.impl );
-    FILEclose( files->unity.entity.hdr );
-    FILEclose( files->unity.entity.impl );
-    FILEclose( files->unity.entity.aggregate );
+    if( files->unity.entity.hdr ) {
+        FILEclose( files->unity.entity.hdr );
+        FILEclose( files->unity.entity.impl );
+        FILEclose( files->unity.entity.aggregate );
+    }
     FILEclose( files->unity.type.aggregate );
     std::string manifestName = files->unity.schema;
     manifestName.append( ".sources.cmake" );
@@ -585,7 +645,7 @@ void closeUnityFiles( FILES * files ) {
 
 ///write tail of initfile, close it
 void INITFileFinish( FILE * initfile, Schema schema ) {
-    if( exp2cxx_api_version == 2 ) {
+    if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
         fprintf( initfile,
                  "\n    extern void InitializeSchemaModule_%s();\n"
                  "    InitializeSchemaModule_%s();\n",
@@ -734,7 +794,13 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
-        if( exp2cxx_api_version == 2 ) {
+        if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+            fprintf( files->schema_records,
+                     "    { &%s::schema, (ModelContentsCreator) "
+                     "create_SdaiModel_contents_%s, &%s::schemaModule },\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ),
+                     SCHEMAget_name( schema ) );
+        } else if( exp2cxx_api_version == 2 ) {
             fprintf( files->schema_records,
                      "    { &%s::schema, \"%s\", (ModelContentsCreator) create_SdaiModel_contents_%s },\n",
                      SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ),
@@ -751,7 +817,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         }
         /**************/
         /* add schema rules and algorithms to the dictionary entry */
-        if( exp2cxx_api_version == 2 ) {
+        if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
             const char * schemaName = SCHEMAget_name( schema );
             fprintf( createall,
                      "    static const GlobalRuleInitRecord %sGlobalRules[] = {\n"
@@ -799,7 +865,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
                      "%sProcedures + 1, sizeof(%sProcedures) / "
                      "sizeof(%sProcedures[0]) - 1 );\n",
                      schemaName, schemaName, schemaName, schemaName );
-        } else {
+        } else if( exp2cxx_api_version != 2 ) {
             DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
             while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
                 fprintf( createall, "    str.clear();\n" );

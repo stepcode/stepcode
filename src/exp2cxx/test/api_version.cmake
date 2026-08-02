@@ -110,8 +110,6 @@ endif()
 file(READ "${late}/Sdaiclasses.h" late_classes)
 file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE.h" late_schema_header)
 file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE.cc" late_schema_source)
-file(READ "${late}/SdaiTEST_SELECT_DATA_TYPE_unity_entities_0001.cc"
-  late_entity_source)
 file(READ "${late}/SdaiAll.cc" late_all)
 file(READ "${late}/compstructs.cc" late_complex)
 if(late_classes MATCHES "typedef SDAI_Application_instance SdaiGlue")
@@ -120,11 +118,9 @@ endif()
 if(EXISTS "${late}/entity/SdaiGlue.h" OR EXISTS "${late}/entity/SdaiGlue.cc")
   message(FATAL_ERROR "late-bound output still emits entity leaf files")
 endif()
-if(late_entity_source MATCHES "SdaiGlue::")
-  message(FATAL_ERROR "late-bound output still defines early-bound entity methods")
-endif()
-if(NOT late_entity_source MATCHES "AttributeInitRecord")
-  message(FATAL_ERROR "late-bound entity metadata is not table-driven")
+file(GLOB late_entity_chunks "${late}/*unity_entities_*.cc")
+if(late_entity_chunks)
+  message(FATAL_ERROR "late-bound output still emits entity initialization chunks")
 endif()
 if(NOT late_schema_header MATCHES "enum class EntityId" OR
    NOT late_schema_header MATCHES "enum class TypeId" OR
@@ -132,26 +128,26 @@ if(NOT late_schema_header MATCHES "enum class EntityId" OR
    NOT late_schema_header MATCHES "SchemaModule schemaModule")
   message(FATAL_ERROR "late-bound schema module API is missing")
 endif()
-if(NOT late_schema_source MATCHES "SchemaModuleImage moduleImage" OR
-   NOT late_schema_source MATCHES "InitializeFromImage" OR
-   late_schema_source MATCHES "SchemaModuleSlot")
-  message(FATAL_ERROR "late-bound schema module image is not packed")
+if(NOT late_schema_source MATCHES "SchemaModule.*schemaModule" OR
+   late_schema_source MATCHES "SchemaModuleImage|InitializeFromImage")
+  message(FATAL_ERROR "late-bound schema module still owns a count-only image")
 endif()
-if(NOT late_all MATCHES "InitializeSchemas" OR
-   NOT late_all MATCHES "InitializeSchemaModuleImages" OR
-   NOT late_all MATCHES "InitializeEntityDescriptors" OR
-   NOT late_all MATCHES "InitializeTypeDescriptors" OR
-   NOT late_all MATCHES "e_glue, \"Glue\".*LFalse, LFalse, 0")
-  message(FATAL_ERROR "late-bound descriptor records are missing or have an early-bound creator")
+if(NOT late_all MATCHES "struct GeneratedSchemaImage" OR
+   NOT late_all MATCHES "SchemaImageEntityRecord" OR
+   NOT late_all MATCHES "SchemaImageAttributeRecord" OR
+   NOT late_all MATCHES "InitializeSchemaFromImage" OR
+   late_all MATCHES "InitializeEntityDescriptors|AttributeInitRecord")
+  message(FATAL_ERROR "late-bound descriptors are not in one packed image")
 endif()
-if(NOT late_all MATCHES "InitializeGlobalRules" OR
-   NOT late_all MATCHES "InitializeFunctions" OR
-   NOT late_all MATCHES "InitializeProcedures")
-  message(FATAL_ERROR "late-bound schema text metadata is not table-driven")
+if(NOT late_all MATCHES "SchemaImageSchemaTextRecord" OR
+   NOT late_all MATCHES "SchemaLoadContext context")
+  message(FATAL_ERROR "late-bound schema text or explicit load context is missing")
 endif()
-if(NOT late_complex MATCHES "ComplexNodeInitRecord" OR
-   NOT late_complex MATCHES "InitializeComplexSupport")
-  message(FATAL_ERROR "late-bound complex metadata is not table-driven")
+if(NOT late_complex MATCHES "struct GeneratedComplexImage" OR
+   NOT late_complex MATCHES "PackedComplexNode" OR
+   NOT late_complex MATCHES "InitializePackedComplexSupport" OR
+   late_complex MATCHES "ComplexNodeInitRecord")
+  message(FATAL_ERROR "late-bound complex metadata is not packed")
 endif()
 
 execute_process(COMMAND "${EXE}" --late-bound --compat-names "${INFILE}"
