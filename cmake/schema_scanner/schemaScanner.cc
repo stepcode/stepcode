@@ -51,7 +51,34 @@ using std::ofstream;
 using std::cerr;
 using std::cout;
 
-static unsigned long chunkSize = 256;
+static unsigned long entityChunkSize = 256;
+static unsigned long typeChunkSize = 256;
+
+static bool
+parseChunkSizes( const char * value )
+{
+    if( !value || !value[0] ) {
+        return false;
+    }
+    char * end = 0;
+    const unsigned long entities = strtoul( value, &end, 10 );
+    if( !end || entities == 0 ) {
+        return false;
+    }
+    unsigned long types = entities;
+    if( *end == ':' ) {
+        char * typeEnd = 0;
+        types = strtoul( end + 1, &typeEnd, 10 );
+        if( !end[1] || !typeEnd || *typeEnd || types == 0 ) {
+            return false;
+        }
+    } else if( *end ) {
+        return false;
+    }
+    entityChunkSize = entities;
+    typeChunkSize = types;
+    return true;
+}
 
 /** \return true for types that exp2cxx won't generate code for */
 bool notGenerated( const Type t ) {
@@ -189,8 +216,8 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
     cmLists << "include(${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake)" << endl;
 
-    const int entityChunks = std::max( 1, ( ecount + static_cast<int>( chunkSize ) - 1 ) / static_cast<int>( chunkSize ) );
-    const int typeChunks = std::max( 1, ( tcount + static_cast<int>( chunkSize ) - 1 ) / static_cast<int>( chunkSize ) );
+    const int entityChunks = std::max( 1, ( ecount + static_cast<int>( entityChunkSize ) - 1 ) / static_cast<int>( entityChunkSize ) );
+    const int typeChunks = std::max( 1, ( tcount + static_cast<int>( typeChunkSize ) - 1 ) / static_cast<int>( typeChunkSize ) );
     cmLists << "set(" << shortName << "_file_count " <<
         ( ecount + tcount ) * 2 + entityChunks + typeChunks + 11 << ")" << endl << endl;
 
@@ -347,20 +374,16 @@ int main( int argc, char ** argv ) {
     /* copied from fedex.c */
     Express model;
     if( ( argc != 2 && argc != 3 ) || ( strlen( argv[1] ) < 1 ) ) {
-        fprintf( stderr, "\nUsage: %s file.exp [chunk-size]\nOutput: a CMakeLists.txt to build the schema,", argv[0] );
+        fprintf( stderr, "\nUsage: %s file.exp [entity-chunk-size[:type-chunk-size]]\nOutput: a CMakeLists.txt to build the schema,", argv[0] );
         fprintf( stderr, " containing file names for entities, types, etc\n" );
         fprintf( stderr, "also prints (to stdout) the absolute path to the directory CMakeLists.txt was created in\n" );
         exit( EXIT_FAILURE );
     }
     EXPRESSprogram_name = argv[0];
     input_filename = argv[1];
-    if( argc == 3 ) {
-        char * end = 0;
-        chunkSize = strtoul( argv[2], &end, 10 );
-        if( !end || *end || chunkSize == 0 ) {
-            fprintf( stderr, "chunk-size must be a positive integer\n" );
-            exit( EXIT_FAILURE );
-        }
+    if( argc == 3 && !parseChunkSizes( argv[2] ) ) {
+        fprintf( stderr, "chunk sizes must be positive integers in N or N:N form\n" );
+        exit( EXIT_FAILURE );
     }
 
     EXPRESSinitialize();

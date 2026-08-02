@@ -323,18 +323,19 @@ static void openUnityChunk( FILES * files, bool entity ) {
     FILE * aggregate = entity ? files->unity.entity.aggregate : files->unity.type.aggregate;
     unsigned long * chunk = entity ? &files->unity.entity.chunk : &files->unity.type.chunk;
     const char * base = entity ? files->unity.entity.base : files->unity.type.base;
+    const unsigned long limit = entity ? exp2cxx_entity_chunk_size : exp2cxx_type_chunk_size;
     ++( *chunk );
     std::ostringstream chunkName;
     chunkName << base << "_" << std::setfill( '0' ) << std::setw( 4 ) << *chunk << ".cc";
     const std::string name = chunkName.str();
     *impl = FILEcreate( name.c_str() );
-    fprintf( *impl, "\n/** deterministic exp2cxx unity chunk %lu (maximum %lu schema objects) */\n", *chunk, exp2cxx_chunk_size );
+    fprintf( *impl, "\n/** deterministic exp2cxx unity chunk %lu (maximum %lu schema objects) */\n", *chunk, limit );
     fprintf( *impl, "#include \"schema.h\"\n#include \"%s.h\"\n", base );
     fprintf( aggregate, "#include \"%s\"\n", name.c_str() );
 }
 
 extern "C" void UNITYentityInclude( FILES * files, const char * implementation ) {
-    if( files->unity.entity.count && ( files->unity.entity.count % exp2cxx_chunk_size ) == 0 ) {
+    if( files->unity.entity.count && ( files->unity.entity.count % exp2cxx_entity_chunk_size ) == 0 ) {
         FILEclose( files->unity.entity.impl );
         openUnityChunk( files, true );
     }
@@ -343,7 +344,7 @@ extern "C" void UNITYentityInclude( FILES * files, const char * implementation )
 }
 
 extern "C" void UNITYtypeInclude( FILES * files, const char * implementation ) {
-    if( files->unity.type.count && ( files->unity.type.count % exp2cxx_chunk_size ) == 0 ) {
+    if( files->unity.type.count && ( files->unity.type.count % exp2cxx_type_chunk_size ) == 0 ) {
         FILEclose( files->unity.type.impl );
         openUnityChunk( files, false );
     }

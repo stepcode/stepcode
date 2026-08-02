@@ -125,7 +125,8 @@ void            numberAttributes( Scope scope );
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern unsigned long exp2cxx_chunk_size;
+extern unsigned long exp2cxx_entity_chunk_size;
+extern unsigned long exp2cxx_type_chunk_size;
 void UNITYentityInclude( FILES * files, const char * implementation );
 void UNITYtypeInclude( FILES * files, const char * implementation );
 #ifdef __cplusplus

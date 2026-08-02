@@ -19,7 +19,7 @@ else(NOT DEFINED SC_UNITY_BUILD)
 endif(NOT DEFINED SC_UNITY_BUILD)
 
 if(NOT DEFINED SC_EXP2CXX_CHUNK_SIZE)
-  set(SC_EXP2CXX_CHUNK_SIZE 256 CACHE STRING "Maximum schema objects in one generated unity translation unit")
+  set(SC_EXP2CXX_CHUNK_SIZE "64:8" CACHE STRING "Maximum entity:type objects in generated unity translation units")
 endif()
 
 

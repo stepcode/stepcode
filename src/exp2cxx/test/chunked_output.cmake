@@ -7,7 +7,7 @@ file(MAKE_DIRECTORY "${run_a}" "${run_b}")
 
 foreach(run "${run_a}" "${run_b}")
   execute_process(
-    COMMAND "${EXE}" -k 2 "${INFILE}"
+    COMMAND "${EXE}" -k 2:1 "${INFILE}"
     WORKING_DIRECTORY "${run}"
     RESULT_VARIABLE result
   )
@@ -42,6 +42,20 @@ foreach(chunk ${entity_chunks})
   list(LENGTH entity_includes include_count)
   if(include_count GREATER 2)
     message(FATAL_ERROR "generated chunk exceeds requested size: ${chunk}")
+  endif()
+endforeach()
+
+file(GLOB type_chunks "${run_a}/*_unity_types_[0-9][0-9][0-9][0-9].cc")
+list(LENGTH type_chunks type_chunk_count)
+if(type_chunk_count LESS 2)
+  message(FATAL_ERROR "fixture was not partitioned into multiple type chunks")
+endif()
+foreach(chunk ${type_chunks})
+  file(READ "${chunk}" chunk_text)
+  string(REGEX MATCHALL "#include \"type/[^\"]+\"" type_includes "${chunk_text}")
+  list(LENGTH type_includes include_count)
+  if(include_count GREATER 1)
+    message(FATAL_ERROR "generated type chunk exceeds requested size: ${chunk}")
   endif()
 endforeach()
 
