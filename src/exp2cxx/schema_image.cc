@@ -258,7 +258,8 @@ class ImageBuilder {
         if( !expression ) {
             return;
         }
-        if( expression->symbol.resolved && expression->type != Type_Funcall ) {
+        if( expression->symbol.resolved &&
+                expression->type == Type_Integer ) {
             kind = "bound_constant";
             value = expression->u.integer;
             return;

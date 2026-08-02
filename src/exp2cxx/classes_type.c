@@ -73,36 +73,6 @@ static int mkDirIfNone( const char * path ) {
     return -1;
 }
 
-#ifdef _WIN32
-/* for windows, rewrite backslashes in paths
- * that will be written to generated code
- */
-static const char * path2str_fn( const char * fileMacro ) {
-    static char * result = 0;
-    static size_t rlen = 0;
-    char * p;
-    if( rlen < strlen( fileMacro ) ) {
-        if( result ) {
-            free( result );
-        }
-        rlen = strlen( fileMacro );
-        result = ( char * )malloc( rlen * sizeof( char ) + 1 );
-    }
-    strcpy( result, fileMacro );
-    p = result;
-    while( *p ) {
-        if( *p == '\\' ) {
-            *p = '/';
-        }
-        p++;
-    }
-    return result;
-}
-#  define path2str(path) path2str_fn(path)
-#else
-#  define path2str(path) path
-#endif
-
 /** write representation of expression to end of buf
  *
  * TODO: add buflen arg and check for overflow
@@ -1529,8 +1499,9 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
         fprintf( header, "            break;\n" );
         fprintf( header, "        }\n" );
         fprintf( header, "    }\n" );
-        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", path2str( __FILE__ ),
-                 __LINE__, "(incorrect assumption of integer type?) Please report error to STEPcode: scl-dev at groups.google.com." );
+        fprintf( header,
+                 "    assert( a->NonRefType() == INTEGER_TYPE && "
+                 "\"Incorrect aggregate bound type in generated schema\" );\n" );
         fprintf( header, "    return *( a->Integer() );\n" ); /* always an integer? if not, would need to translate somehow due to return type... */
         fprintf( header, "}\n" );
     }

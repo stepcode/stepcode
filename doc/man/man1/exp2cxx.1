@@ -45,6 +45,11 @@ EXPRESS code into C++ source code.  The C++ source code is generated
 in files in the directory in which exp2cxx was run.  The files are
 named according to the schema names in the input EXPRESS file.
 
+Generated files are replaced only when their content changes.  exp2cxx records
+the files it owns in `.exp2cxx-manifest`; a later run removes obsolete files
+from that manifest while leaving unrelated files in the output directory
+untouched.
+
 .SH OPTIONS
 .TP
 .B -s|S

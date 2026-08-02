@@ -219,3 +219,33 @@ process; read/write times use matching 20-run batches.
 The structural profile created and validated all 10,609 instances in the
 real exchange file with zero errors and zero warnings.  It wrote the same
 949,685-byte semantic result as the full profile.
+
+## Recommendation 11
+
+This stage writes each generated file to a sibling temporary file and replaces
+the destination only when its content changes.  A compact generated-file
+manifest supports safe cleanup when an option change makes old entity, type,
+or unity files obsolete; files not named by the previous manifest are left
+alone.  The manifest itself is also content-stable.
+
+The deterministic-output audit also found that nonliteral aggregate bounds
+were being read through the integer member of the expression union.  Packed
+images now emit those bounds as expression records, eliminating process-address
+values from generated AP242 source as well as correcting the metadata kind.
+
+| Measurement after identical AP242 generation | Rewrite all | Stable output | Change |
+|---|---:|---:|---:|
+| Changed schema source/header timestamps | 10 of 10 | 0 of 10 | -100.0% |
+| Changed manifest timestamps | n/a | 0 of 1 | stable |
+| Generation wall time | 0.41 s | 0.40 s | no overhead |
+| Following CMake build wall time | 2.01 s | 0.06 s | -97.0% |
+| Following build peak RSS | 118,108 KiB | 18,432 KiB | -84.4% |
+
+The AP242 manifest is 390 bytes.  Switching the focused regression schema
+from early-bound API version 2 to compact late-bound output removes all stale
+entity, type, and unity files and their empty directories while preserving an
+unrelated file in the output directory.
+
+The real exchange-file check still created and validated all 10,609 instances
+with zero errors and zero warnings.  Its rewritten result remained 949,685
+bytes.

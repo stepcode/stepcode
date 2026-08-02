@@ -11,12 +11,15 @@
  *****************************************************************************/
 
 #include <cstdint>
+#include <cstdlib>
 #include <iomanip>
 #include <map>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "complexSupport.h"
+#include "generated_output.h"
 
 // Local function prototypes:
 static void writeheader( ostream &, int );
@@ -171,6 +174,17 @@ static void writeCompactComplex( ostream & output, ComplexCollect & collect ) {
            << "}\n";
 }
 
+static bool writeGeneratedComplex( const char * filename,
+                                   const std::ostringstream & output ) {
+    const std::string contents = output.str();
+    if( GENERATEDwrite( filename, contents.data(), contents.size() ) ) {
+        return true;
+    }
+    cerr << "ERROR: Could not create output file " << filename << endl;
+    exit( EXIT_FAILURE );
+    return false;
+}
+
 void print_complex( ComplexCollect & collect, const char * filename,
                     bool compact )
 /*
@@ -199,21 +213,13 @@ void ComplexCollect::write( const char * fname, bool compactOutput )
  * ComplexList structures contained in this.
  */
 {
-    ofstream complex;
+    std::ostringstream complex;
     ComplexList * clist;
     int maxlevel, listmax;
 
-    // Open the stream:
-    complex.open( fname );
-    if( !complex ) {
-        cerr << "ERROR: Could not create output file " << fname << endl;
-        // yikes this is pretty drastic, Sun C++ doesn't like this anyway DAS
-//  exit(-1);
-        return;
-    }
     if( compactOutput ) {
         writeCompactComplex( complex, *this );
-        complex.close();
+        writeGeneratedComplex( fname, complex );
         return;
     }
     writeheader( complex, clists == NULL );
@@ -223,7 +229,7 @@ void ComplexCollect::write( const char * fname, bool compactOutput )
     if( clists == NULL ) {
         complex << "    return 0;" << endl;
         complex << "}" << endl;
-        complex.close();
+        writeGeneratedComplex( fname, complex );
         return;
     }
 
@@ -261,7 +267,7 @@ void ComplexCollect::write( const char * fname, bool compactOutput )
     // Close up:
     complex << "\n    return cc;\n";
     complex << "}" << endl;
-    complex.close();
+    writeGeneratedComplex( fname, complex );
 }
 
 static void writeheader( ostream & os, int noLists )

@@ -7,6 +7,7 @@ set(exp2cxx_SOURCES
   ${FEDEX_COMMON_SRCS}
   trace_fprintf.c
   fedex_main.c
+  generated_output.cc
   classes_wrapper.cc
   schema_image.cc
   classes.c

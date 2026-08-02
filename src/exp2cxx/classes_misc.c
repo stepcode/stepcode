@@ -1,6 +1,7 @@
 #define CLASSES_MISC_C
 #include <stdlib.h>
 #include "classes.h"
+#include "generated_output.h"
 
 #include "class_strings.h"
 
@@ -32,7 +33,7 @@ FILE * FILEcreate( const char * filename ) {
     FILE * file;
     const char * fn;
 
-    if( ( file = fopen( filename, "w" ) ) == NULL ) {
+    if( ( file = GENERATEDopen( filename ) ) == NULL ) {
         fprintf( stderr, "**Error in SCHEMAprint:  unable to create file %s ** \n", filename );
         return ( NULL );
     }
@@ -51,7 +52,7 @@ FILE * FILEcreate( const char * filename ) {
 /** closes a file opened with FILEcreate */
 void FILEclose( FILE * file ) {
     fprintf( file, "#endif\n" );
-    fclose( file );
+    GENERATEDclose( file );
 }
 
 
