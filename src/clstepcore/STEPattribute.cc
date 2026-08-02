@@ -392,16 +392,17 @@ const char * STEPattribute::asStr( std::string & str, const char * currSch ) con
 
     str.clear();
 
+    // The attribute has been redefined by the attribute pointed
+    // to by _redefAttr so write the narrowed value in the inherited
+    // physical-file slot.  STEPread and StrToVal use this same precedence.
+    if( _redefAttr )  {
+        return _redefAttr->asStr( str, currSch );
+    }
+
     // The attribute has been derived by a subtype's attribute
     if( IsDerived() )  {
         str = "*";
         return const_cast<char *>( str.c_str() );
-    }
-
-    // The attribute has been redefined by the attribute pointed
-    // to by _redefAttr so write the redefined value.
-    if( _redefAttr )  {
-        return _redefAttr->asStr( str, currSch );
     }
 
     if( is_null() )  {
@@ -485,16 +486,17 @@ std::string STEPattribute::asStr( const char * currSch ) const {
     ostringstream ss;
     std::string str;
 
+    // The attribute has been redefined by the attribute pointed
+    // to by _redefAttr so write the narrowed value in the inherited
+    // physical-file slot.  STEPread and StrToVal use this same precedence.
+    if( _redefAttr )  {
+        return _redefAttr->asStr( currSch );
+    }
+
     // The attribute has been derived by a subtype's attribute
     if( IsDerived() )  {
         str = "*";
         return str;
-    }
-
-    // The attribute has been redefined by the attribute pointed
-    // to by _redefAttr so write the redefined value.
-    if( _redefAttr )  {
-        return _redefAttr->asStr( currSch );
     }
 
     if( is_null() )  {
@@ -587,15 +589,16 @@ void STEPattribute::STEPwriteError( ostream & out, unsigned int line, const char
  *
  */
 void STEPattribute::STEPwrite( ostream & out, const char * currSch ) {
+    // The attribute has been redefined by the attribute pointed
+    // to by _redefAttr so write the narrowed value in the inherited
+    // physical-file slot.  STEPread and StrToVal use this same precedence.
+    if( _redefAttr )  {
+        _redefAttr->STEPwrite( out, currSch );
+        return;
+    }
     // The attribute has been derived by a subtype's attribute
     if( IsDerived() ) {
         out << "*";
-        return;
-    }
-    // The attribute has been redefined by the attribute pointed
-    // to by _redefAttr so write the redefined value.
-    if( _redefAttr )  {
-        _redefAttr->STEPwrite( out );
         return;
     }
 

@@ -39,6 +39,35 @@ bool testEqu( const STEPattribute & a1, const STEPattribute & a2, bool invert, c
     return pass;
 }
 
+bool testRedefinedDerivedWrite( const AttrDescriptor & ad ) {
+    SDAI_Integer inherited_value = 123L;
+    SDAI_Integer narrowed_value = 456L;
+    STEPattribute inherited( ad, & inherited_value );
+    STEPattribute narrowed( ad, & narrowed_value );
+
+    // A redeclared explicit attribute occupies its inherited physical-file
+    // slot, which is also marked derived in the generated supertype class.
+    inherited.Derive();
+    inherited.RedefiningAttr( & narrowed );
+
+    bool pass = true;
+    std::string value;
+    inherited.asStr( value );
+    if( inherited.asStr() != "456" || value != "456" ) {
+        std::cerr << "redefined derived attribute asStr() failed" << std::endl;
+        pass = false;
+    }
+
+    std::ostringstream output;
+    inherited.STEPwrite( output );
+    if( output.str() != "456" ) {
+        std::cerr << "redefined derived attribute STEPwrite() failed" << std::endl;
+        pass = false;
+    }
+
+    return pass;
+}
+
 int main( int /*argc*/, char ** /*argv*/ ) {
     bool pass = true;
     EntityDescriptor ed( "ename", 0, LFalse, LFalse );
@@ -64,6 +93,7 @@ int main( int /*argc*/, char ** /*argv*/ ) {
 
     STEPattribute aii( adi, & s2int );
     pass &= testEqu( ai, aii, true, "ints !=" );
+    pass &= testRedefinedDerivedWrite( adi );
 
     if( pass ) {
         exit( EXIT_SUCCESS );
