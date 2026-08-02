@@ -104,9 +104,17 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
         static_cast<lazyFileOffset>( static_cast<std::streamoff>( start ) );
     i.loc.instance = readInstanceNumber();
     if( ( _file.good() ) && ( i.loc.instance > 0 ) ) {
-        skipWS();
+        if( !skipTokenSeparators() ) {
+            _file.setstate( std::ios::failbit );
+        }
+        if( _file.good() && _file.peek() == '&' && !indexScope() ) {
+            _file.setstate( std::ios::failbit );
+        }
+        if( _file.good() && !skipTokenSeparators() ) {
+            _file.setstate( std::ios::failbit );
+        }
         i.loc.section = _sectionID;
-        i.name = getDelimitedKeyword( ";( /\\" );
+        if( _file.good() ) i.name = getDelimitedKeyword( ";( /\\" );
         if( _file.good() ) {
             if( i.name[0] == '\0' ) i.componentTypes = new std::vector<std::string>;
             end = seekInstanceEnd( & i.refs, i.componentTypes );
@@ -130,3 +138,22 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     }
     return i;
 }
+bool lazyP21DataSectionReader::indexScope() {
+    if( !skipTokenSeparators() || _file.get() != '&' ) return false;
+    const std::string scopeKeyword = getDelimitedKeyword( "#/(;\\" );
+    if( scopeKeyword != "SCOPE" ) return false;
+
+    bool haveInstance = false;
+    while( skipTokenSeparators() && _file.peek() == '#' ) {
+        namedLazyInstance nested = nextInstance();
+        if( nested.loc.begin == 0 || !nested.name ) return false;
+        _lazyFile->getInstMgr()->addLazyInstance( nested );
+        haveInstance = true;
+    }
+    if( !haveInstance || !skipTokenSeparators() ) return false;
+
+    const std::string endKeyword = getDelimitedKeyword( "/#(;\\" );
+    if( endKeyword != "ENDSCOPE" ) return false;
+    return skipScopeExportList();
+}
+

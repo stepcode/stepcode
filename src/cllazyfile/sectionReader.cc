@@ -53,6 +53,99 @@ bool sectionReader::skipComment() {
 }
 
 
+bool sectionReader::skipTokenSeparators() {
+    while( _file.good() ) {
+        skipWS();
+        if( _file.peek() != '/' ) return _file.good();
+        const std::streampos slash = _file.tellg();
+        _file.get();
+        if( _file.peek() != '*' ) {
+            _file.seekg( slash );
+            return _file.good();
+        }
+        _file.get(); // consume the opening star
+        if( !skipComment() ) return false;
+    }
+    return false;
+}
+
+
+bool sectionReader::skipScopeExportList() {
+    if( !skipTokenSeparators() ) return false;
+    if( _file.peek() != '/' ) return true;
+    _file.get();
+
+    bool haveExport = false;
+    while( _file.good() ) {
+        if( !skipTokenSeparators() || _file.get() != '#' ) return false;
+        bool haveDigit = false;
+        bool haveNonzeroDigit = false;
+        while( _file.good() && isdigit( _file.peek() ) ) {
+            const int digit = _file.get();
+            haveDigit = true;
+            if( digit != '0' ) haveNonzeroDigit = true;
+        }
+        if( !haveDigit || !haveNonzeroDigit || !skipTokenSeparators() ) return false;
+        haveExport = true;
+        const int delimiter = _file.get();
+        if( delimiter == '/' ) return haveExport;
+        if( delimiter != ',' ) return false;
+    }
+    return false;
+}
+
+
+bool sectionReader::skipScope() {
+    if( !skipTokenSeparators() || _file.get() != '&' ) return false;
+    skipWS();
+    static const char scopeKeyword[] = "SCOPE";
+    for( size_t i = 0; scopeKeyword[i]; ++i ) {
+        if( _file.get() != scopeKeyword[i] ) return false;
+    }
+
+    int depth = 1;
+    while( depth > 0 && _file.good() ) {
+        const int current = _file.get();
+        if( current == '\'' ) {
+            _file.seekg( _file.tellg() - std::streampos( 1 ) );
+            GetLiteralStr( _file, _lazyFile->getInstMgr()->getErrorDesc() );
+            continue;
+        }
+        if( current == '/' && _file.peek() == '*' ) {
+            _file.get();
+            if( !skipComment() ) return false;
+            continue;
+        }
+        if( current == '&' ) {
+            const std::streampos afterAmpersand = _file.tellg();
+            skipWS();
+            std::string keyword;
+            while( _file.good() && ( isupper( _file.peek() ) ||
+                    isdigit( _file.peek() ) || _file.peek() == '_' ||
+                    _file.peek() == '-' ) ) {
+                keyword.push_back( static_cast<char>( _file.get() ) );
+            }
+            if( keyword == "SCOPE" ) {
+                ++depth;
+            } else {
+                _file.seekg( afterAmpersand );
+            }
+            continue;
+        }
+        if( isupper( current ) ) {
+            std::string keyword( 1, static_cast<char>( current ) );
+            while( _file.good() && ( isupper( _file.peek() ) ||
+                    isdigit( _file.peek() ) || _file.peek() == '_' ||
+                    _file.peek() == '-' ) ) {
+                keyword.push_back( static_cast<char>( _file.get() ) );
+            }
+            if( keyword == "ENDSCOPE" ) --depth;
+        }
+    }
+    return depth == 0 && skipScopeExportList();
+}
+
+
 std::streampos sectionReader::findNormalString( const std::string & str, bool semicolon ) {
     std::streampos found = -1, startPos = _file.tellg(), nextTry = startPos;
     int i = 0, l = str.length();
@@ -371,11 +464,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
     skipWS();
     ReadTokenSeparator( _file, &comment );
     c = _file.peek();
+    if( c == '&' ) {
+        if( !skipScope() || !skipTokenSeparators() ) return 0;
+        c = _file.peek();
+    }
     switch( c ) {
-        case '&':
-            std::cerr << "Can't handle scope instances. Skipping #" << instance << ", offset " << _file.tellg() << std::endl;
-            // sev = CreateScopeInstances( in, &scopelist );
-            break;
         case '(':
             inst = CreateSubSuperInstance( reg, instance, sev );
             break;
@@ -400,6 +493,17 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
         }
         assert( inst->eDesc );
         _file.seekg( static_cast<std::streamoff>( begin ) );
+        if( !header ) {
+            if( findNormalString( "=" ) == std::streampos( -1 ) ||
+                    !skipTokenSeparators() ) {
+                delete inst;
+                return 0;
+            }
+            if( _file.peek() == '&' && ( !skipScope() || !skipTokenSeparators() ) ) {
+                delete inst;
+                return 0;
+            }
+        }
         findNormalString( "(" );
         _file.seekg( _file.tellg() - std::streampos(1) );
         sev = inst->STEPread( instance, 0, _lazyFile->getInstMgr()->getAdapter(), _file, sName, true, false );

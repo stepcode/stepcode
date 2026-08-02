@@ -7,6 +7,9 @@
 
 class SC_LAZYFILE_EXPORT lazyP21DataSectionReader: public lazyDataSectionReader {
     protected:
+        /** Index the instances in an Edition 1 SCOPE and leave the stream at
+         * the owning entity's record. */
+        bool indexScope();
     public:
         lazyP21DataSectionReader( lazyFileReader * parent, std::ifstream & file, std::streampos start, sectionID sid );
 

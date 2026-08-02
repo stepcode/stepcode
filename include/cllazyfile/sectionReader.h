@@ -52,6 +52,19 @@ class SC_LAZYFILE_EXPORT sectionReader {
          */
         bool skipComment();
 
+        /** Skip whitespace and Part 21 comments, leaving the next syntactic
+         * token unread. */
+        bool skipTokenSeparators();
+
+        /** Skip an Edition 1 SCOPE construct, including nested scopes and its
+         * optional export list.  The stream must initially point at '&' and
+         * is left at the owning entity's record. */
+        bool skipScope();
+
+        /** Skip an optional scope export list at the current stream
+         * position. */
+        bool skipScopeExportList();
+
         /** Get a keyword ending with one of delimiters.
          */
         const char * getDelimitedKeyword( const char * delimiters );
@@ -109,7 +122,9 @@ class SC_LAZYFILE_EXPORT sectionReader {
             }
             _file.seekg( static_cast<std::streamoff>( offset ) );
             readInstanceNumber();
-            skipWS();
+            if( !skipTokenSeparators() ) return 0;
+            if( _file.peek() == '&' && !skipScope() ) return 0;
+            if( !skipTokenSeparators() ) return 0;
             return getDelimitedKeyword( ";( /\\" );
         }
 

@@ -53,5 +53,7 @@ if(SC_ENABLE_TESTING)
   SC_ADDEXEC(lazy_index_test SOURCES lazy_index_test.cc
     LINK_LIBRARIES ${_lazy_index_libs} NO_INSTALL)
   add_test(NAME lazy_index
-    COMMAND lazy_index_test ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_index.stp)
+    COMMAND lazy_index_test
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_index.stp
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_scope.stp)
 endif()

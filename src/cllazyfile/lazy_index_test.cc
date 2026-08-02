@@ -13,7 +13,7 @@ void require( bool condition, const char * message ) {
 }
 
 int main( int argc, char ** argv ) {
-    require( argc == 2, "expected fixture path" );
+    require( argc == 3, "expected ordinary and scoped fixture paths" );
 
     lazyInstMgr manager;
     uint64_t progressCalls = 0;
@@ -66,5 +66,34 @@ int main( int argc, char ** argv ) {
     stats = cancelled.cacheStatistics();
     require( stats.cancelled, "cancellation was not recorded" );
     require( stats.instancesScanned == 2, "scan did not stop at cancellation boundary" );
+
+    lazyInstMgr scoped;
+    require( scoped.openFile( argv[2] ), "scoped fixture did not open" );
+    stats = scoped.cacheStatistics();
+    require( stats.instancesScanned == 5, "wrong scoped scan count" );
+    require( scoped.instancesByType( "A" ).size() == 3,
+        "scoped simple instances were not indexed" );
+    require( scoped.instancesByType( "B" ).size() == 1,
+        "nested scoped instance was not indexed" );
+    require( scoped.instancesByType( "C" ).size() == 1 &&
+        scoped.instancesByType( "D" ).size() == 1 &&
+        scoped.instancesByType( "" ).size() == 1,
+        "scoped complex owner was not indexed" );
+    require( scoped.forwardReferences( 11 ).size() == 1 &&
+        scoped.forwardReferences( 11 )[0] == 12,
+        "nested scoped reference was not indexed" );
+    require( scoped.forwardReferences( 20 ).size() == 1 &&
+        scoped.forwardReferences( 20 )[0] == 21,
+        "complex scope-owner reference was not indexed" );
+    const std::string nestedOwner = scoped.sourceRecord( 11 );
+    const std::string complexOwner = scoped.sourceRecord( 20 );
+    require( nestedOwner.find( "#11=&SCOPE" ) != std::string::npos &&
+        nestedOwner.find( "ENDSCOPE /#12/ A(" ) != std::string::npos &&
+        !nestedOwner.empty() && nestedOwner[nestedOwner.size() - 1] == ';',
+        "nested scope source record was not preserved" );
+    require( complexOwner.find( "#20=&SCOPE" ) != std::string::npos &&
+        complexOwner.find( "ENDSCOPE (C()D(" ) != std::string::npos &&
+        !complexOwner.empty() && complexOwner[complexOwner.size() - 1] == ';',
+        "complex scope source record was not preserved" );
     return EXIT_SUCCESS;
 }
