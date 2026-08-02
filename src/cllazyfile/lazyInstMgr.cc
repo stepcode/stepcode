@@ -257,6 +257,11 @@ void lazyInstMgr::validateReferences() {
 }
 
 SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSeek, bool promoteCached ) {
+    if( _batchLoadDepth && ( _cancelled ||
+            ( _cancellationCallback && _cancellationCallback() ) ) ) {
+        _cancelled = true;
+        return 0;
+    }
     assert( _mainRegistry && "Main registry has not been initialized. Do so with initRegistry() or setRegistry()." );
     std::streampos oldPos;
     instancePosition pos = instancePosition();
@@ -318,6 +323,15 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 if( reSeek ) {
                     _dataSections[pos.section]->seekg( oldPos );
                 }
+                /* A recursive reference load may observe cancellation after
+                 * this instance began materializing.  Never cache that
+                 * partially resolved SDAI object. */
+                if( _batchLoadDepth && ( _cancelled ||
+                        ( _cancellationCallback && _cancellationCallback() ) ) ) {
+                    _cancelled = true;
+                    if( !isNilSTEPentity( inst ) ) delete inst;
+                    inst = 0;
+                }
                 break;
             default:
                 std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
@@ -377,6 +391,10 @@ std::vector<instanceID> lazyInstMgr::dependencyClosure( const std::vector<instan
     std::vector<instanceID> queue( roots.begin(), roots.end() );
     size_t current = 0;
     while( current < queue.size() ) {
+        if( _cancelled || ( _cancellationCallback && _cancellationCallback() ) ) {
+            _cancelled = true;
+            break;
+        }
         instanceRefs_t::cvector * refs = _fwdInstanceRefs.find( queue[current++] );
         if( !refs ) continue;
         instanceRefs_t::cvector::const_iterator ref = refs->begin();
@@ -395,10 +413,21 @@ LazyInstanceBatch lazyInstMgr::loadBatch( instanceID root ) {
 LazyInstanceBatch lazyInstMgr::loadBatch( const std::vector<instanceID> & roots ) {
     std::vector<instanceID> closure = dependencyClosure( roots );
     std::vector<instanceID>::const_iterator id = closure.begin();
-    for( ; id != closure.end(); ++id ) ++_pinCounts[*id];
+    for( ; id != closure.end(); ++id ) {
+        if( _cancelled || ( _cancellationCallback && _cancellationCallback() ) ) {
+            _cancelled = true;
+            closure.erase( id, closure.end() );
+            break;
+        }
+        ++_pinCounts[*id];
+    }
     ++_activeBatches;
     ++_batchLoadDepth;
     for( id = closure.begin(); id != closure.end(); ++id ) {
+        if( _cancelled || ( _cancellationCallback && _cancellationCallback() ) ) {
+            _cancelled = true;
+            break;
+        }
         if( !loadInstance( *id, true ) ) {
             LazyDiagnostic diagnostic;
             diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
