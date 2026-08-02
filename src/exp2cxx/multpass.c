@@ -147,14 +147,18 @@ void print_schemas_separate( Express express, void * complexCol, FILES * files )
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
         /* (These two tasks are totally unrelated but are done in the same loop
         // for efficiency.) */
-        addRenameTypedefs( schema, files->classes );
-        addUseRefNames( schema, files->create );
+        if( !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+            addRenameTypedefs( schema, files->classes );
+            addUseRefNames( schema, files->create );
+        }
     }
     /* Third situation:  (Must be dealt with after first, see header comments
     // of addAggrTypedefs.) */
     DICTdo_type_init( express->symbol_table, &de, OBJ_SCHEMA );
     while( ( schema = ( Scope )DICTdo( &de ) ) != 0 ) {
-        addAggrTypedefs( schema, files->classes );
+        if( !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+            addAggrTypedefs( schema, files->classes );
+        }
     }
 
     /* On our way out, print the necessary statements to add support for

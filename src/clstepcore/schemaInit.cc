@@ -366,6 +366,9 @@ SchemaLoadResult InitializeSchemaFromImage(
             image, image.schemaTextOffset, image.schemaTextCount, result );
     const uint32_t * enumElements = imageRecords<uint32_t>(
         image, image.enumElementOffset, image.enumElementCount, result );
+    const SchemaImageRenameRecord * renames =
+        imageRecords<SchemaImageRenameRecord>(
+            image, image.renameOffset, image.renameCount, result );
     const char * strings = imageStrings( image, result );
     if( !result.Succeeded() ) {
         return result;
@@ -511,6 +514,16 @@ SchemaLoadResult InitializeSchemaFromImage(
             return loadError( SchemaLoad_InvalidString, i );
         }
     }
+    for( uint32_t i = 0; i < image.renameCount; ++i ) {
+        if( renames[i].schema >= image.schemaCount ||
+                ( renames[i].descriptor.kind != SchemaImageRef_Entity &&
+                  renames[i].descriptor.kind != SchemaImageRef_Type ) ||
+                !validReference( renames[i].descriptor, schemaRecords,
+                                 image.schemaCount, image.aggregateCount ) ||
+                !validString( strings, image.stringBytes, renames[i].name ) ) {
+            return loadError( SchemaLoad_InvalidReference, i );
+        }
+    }
 
     std::vector<Schema *> schemas( image.schemaCount, 0 );
     for( uint32_t i = 0; i < image.schemaCount; ++i ) {
@@ -611,6 +624,18 @@ SchemaLoadResult InitializeSchemaFromImage(
                 array->OptionalElements(
                     packed.optionalElements ? LTrue : LFalse );
             }
+        }
+        EnumTypeDescriptor * enumeration =
+            dynamic_cast<EnumTypeDescriptor *>( type );
+        if( enumeration && record.enumElementCount ) {
+            std::vector<const char *> elements;
+            elements.reserve( record.enumElementCount );
+            for( uint32_t j = 0; j < record.enumElementCount; ++j ) {
+                elements.push_back(
+                    strings + enumElements[record.firstEnumElement + j] );
+            }
+            RegisterEnumDescriptorElements(
+                *enumeration, &elements[0], elements.size() );
         }
         if( record.whereRuleCount ) {
             type->_where_rules = new Where_rule__list;
@@ -718,6 +743,14 @@ SchemaLoadResult InitializeSchemaFromImage(
             default:
                 break;
         }
+    }
+
+    for( uint32_t i = 0; i < image.renameCount; ++i ) {
+        TypeDescriptor * descriptor = const_cast<TypeDescriptor *>(
+            resolveReference( renames[i].descriptor, schemaRecords,
+                              entities, types, aggregates ) );
+        descriptor->addAltName( schemas[renames[i].schema]->Name(),
+                                strings + renames[i].name );
     }
 
     for( uint32_t i = 0; i < image.schemaCount; ++i ) {

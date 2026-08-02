@@ -1,6 +1,8 @@
 #ifndef ENUMTYPEDESCRIPTOR_H
 #define ENUMTYPEDESCRIPTOR_H
 
+#include <stddef.h>
+
 #include "typeDescriptor.h"
 
 typedef SDAI_Enum * ( * EnumCreator )();
@@ -22,8 +24,12 @@ class SC_CORE_EXPORT EnumTypeDescriptor  :    public TypeDescriptor  {
                             Schema * origSchema, const char * d,
                             EnumCreator f = 0 );
 
-        virtual ~EnumTypeDescriptor() { }
+        virtual ~EnumTypeDescriptor();
 };
+
+SC_CORE_EXPORT void RegisterEnumDescriptorElements(
+    const EnumTypeDescriptor & descriptor,
+    const char * const * elements, size_t count );
 
 /** \class EnumerationTypeDescriptor
  * FIXME not implemented

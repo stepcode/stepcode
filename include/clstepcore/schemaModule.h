@@ -78,6 +78,8 @@ struct SC_CORE_EXPORT SchemaModuleImage {
     uint32_t stringOffset;
     uint32_t reserved;
     uint64_t fingerprint;
+    uint32_t renameCount;
+    uint32_t renameOffset;
 };
 
 class SchemaModule;

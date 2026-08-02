@@ -138,7 +138,11 @@ STEPaggregate & SelectAggregate::ShallowCopy( const STEPaggregate & a ) {
 
 
 SingleLinkNode * SelectAggregate::NewNode() {
-    return new SelectNode( _select_type ? _select_type->CreateSelect() : 0 );
+    SDAI_Select * select = _select_type ? _select_type->CreateSelect() : 0;
+    if( !select && _select_type ) {
+        select = new SDAI_Select( _select_type );
+    }
+    return new SelectNode( select );
 }
 
 

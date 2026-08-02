@@ -1,9 +1,11 @@
 #include "clstepcore/Registry.h"
+#include "clstepcore/STEPaggrInt.h"
 #include "clstepcore/STEPattribute.h"
 #include "clstepcore/derivedAttribute.h"
 #include "clstepcore/complexSupport.h"
 #include "clstepcore/schemaInit.h"
 #include "clstepcore/schemaModule.h"
+#include "clstepcore/sdaiSelect.h"
 
 #include <string>
 
@@ -29,18 +31,20 @@ struct PackedTestSchemaImage {
     SchemaImageEntityRecord entities[1];
     SchemaImageTypeRecord types[1];
     SchemaImageAttributeRecord attributes[1];
-    char strings[33];
+    SchemaImageRenameRecord renames[1];
+    char strings[39];
 };
 
 const PackedTestSchemaImage packedTestSchemaImage = {
     { SchemaModuleImageVersion_2, 1, 1, 1,
-      sizeof( PackedTestSchemaImage ), SchemaModuleImage_FullMetadata, 1, 32,
+      sizeof( PackedTestSchemaImage ), SchemaModuleImage_FullMetadata, 1, 38,
       offsetof( PackedTestSchemaImage, schemas ),
       offsetof( PackedTestSchemaImage, entities ),
       offsetof( PackedTestSchemaImage, types ),
       offsetof( PackedTestSchemaImage, attributes ),
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      offsetof( PackedTestSchemaImage, strings ), 0, 1234 },
+      offsetof( PackedTestSchemaImage, strings ), 0, 1234,
+      1, offsetof( PackedTestSchemaImage, renames ) },
     { { 1, 0, 1, 0, 1 } },
     { { 0, 8, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0 } },
     { { 0, 20, 27, sdaiREAL, TypeDescriptorInit_Base, 0,
@@ -48,7 +52,8 @@ const PackedTestSchemaImage packedTestSchemaImage = {
         0, 0, 0, 0, 0, 0 } },
     { { 14, { SchemaImageRef_Type, 0, 0 },
         0, 0, AttrType_Explicit, 0, 0, 0 } },
-    "\000Packed\000Thing\000value\000Length\000REAL\000"
+    { { { SchemaImageRef_Entity, 0, 0 }, 0, 32 } },
+    "\000Packed\000Thing\000value\000Length\000REAL\000Alias\000"
 };
 
 void initializePackedSchema( Registry & registry ) {
@@ -126,7 +131,8 @@ int main() {
 
     const SchemaModuleImage image = {
         SchemaModuleImageVersion_1, 2, 2, 3,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0
     };
     SchemaModule packedModule;
     packedModule.InitializeFromImage( *testSchema, image );
@@ -149,6 +155,9 @@ int main() {
     CHECK( packedSchemaModule.Entity( 0 )->Name() == std::string( "Thing" ) );
     CHECK( packedSchemaModule.TypeCount() == 1 );
     CHECK( packedSchemaModule.AttributeCount() == 1 );
+    CHECK( std::string(
+               packedSchemaModule.Entity( 0 )->Name( "Packed" ) ) ==
+           "Alias" );
     SDAI_Application_instance * packedInstance =
         packedRegistry.ObjCreate( "Thing" );
     CHECK( packedInstance != 0 );
@@ -216,6 +225,36 @@ int main() {
     complex = InitializePackedComplexSupport(
         cyclicComplex.header, &complexResult );
     CHECK( !complex && complexResult.error == SchemaLoad_InvalidReference );
+
+    EnumTypeDescriptor colorType(
+        "Color", sdaiENUMERATION, testSchema,
+        "ENUMERATION OF (RED, GREEN)", 0 );
+    const char * colorElements[] = { "RED", "GREEN" };
+    RegisterEnumDescriptorElements( colorType, colorElements, 2 );
+    SDAI_Enum * color = colorType.CreateEnum();
+    CHECK( color && color->no_elements() == 2 );
+    CHECK( std::string( color->get_value_at( 1 ) ) == "GREEN" );
+    CHECK( color->put( "RED" ) == 0 );
+    delete color;
+
+    SelectTypeDescriptor choiceType(
+        ~sdaiSTRING, "Choice", sdaiSELECT, testSchema, "SELECT (STRING)", 0 );
+    choiceType.Elements().AddNode(
+        const_cast<TypeDescriptor *>( t_sdaiSTRING ) );
+    SDAI_Select * genericChoice = choiceType.CreateSelect();
+    CHECK( genericChoice &&
+           genericChoice->SetString( t_sdaiSTRING, "generic" ) );
+    CHECK( genericChoice->StringValue() &&
+           *genericChoice->StringValue() == "generic" );
+    delete genericChoice;
+
+    ListTypeDescriptor integerList(
+        "Integer_List", LIST_TYPE, testSchema, "LIST OF INTEGER", 0 );
+    integerList.ReferentType(
+        const_cast<TypeDescriptor *>( t_sdaiINTEGER ) );
+    STEPaggregate * integers = integerList.CreateAggregate();
+    CHECK( dynamic_cast<IntAggregate *>( integers ) != 0 );
+    delete integers;
 
     SDAI_Application_instance * instance = registry.ObjCreate( "leaf" );
     CHECK( instance );

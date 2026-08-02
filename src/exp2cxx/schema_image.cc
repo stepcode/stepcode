@@ -129,6 +129,12 @@ struct PackedSchemaText {
     uint32_t text;
 };
 
+struct PackedRename {
+    PackedRef descriptor;
+    uint32_t schema;
+    uint32_t name;
+};
+
 struct RegisteredSchema {
     Schema schema;
     std::vector<Entity> entities;
@@ -158,6 +164,7 @@ class ImageBuilder {
     std::vector<uint32_t> _rules;
     std::vector<PackedSchemaText> _schemaTexts;
     std::vector<uint32_t> _enumElements;
+    std::vector<PackedRename> _renames;
 
     static std::string primitiveToken( const Type type, int reportRef ) {
         return FundamentalType( type, reportRef );
@@ -579,6 +586,39 @@ class ImageBuilder {
         }
     }
 
+    void buildRenames( Schema schema, uint32_t schemaIndex ) {
+        Dictionary dictionaries[] = {
+            schema->u.schema->usedict, schema->u.schema->refdict
+        };
+        for( size_t dictionary = 0; dictionary < 2; ++dictionary ) {
+            if( !dictionaries[dictionary] ) {
+                continue;
+            }
+            DictionaryEntry entry;
+            DICTdo_init( dictionaries[dictionary], &entry );
+            Rename * rename;
+            while( ( rename = ( Rename * )DICTdo( &entry ) ) != 0 ) {
+                const char * original =
+                    ( ( Scope )rename->object )->symbol.name;
+                if( !strcmp( original, rename->nnew->name ) ) {
+                    continue;
+                }
+                PackedRename record;
+                if( rename->type == OBJ_TYPE ) {
+                    record.descriptor = typeReference(
+                        ( Type )rename->object, schema );
+                } else {
+                    record.descriptor = entityReference(
+                        ( Entity )rename->object );
+                }
+                record.schema = schemaIndex;
+                record.name = _strings.Add(
+                    PrettyTmpName( rename->nnew->name ) );
+                _renames.push_back( record );
+            }
+        }
+    }
+
     static void writeRef( FILE * output, const PackedRef & reference ) {
         fprintf( output, "{ %u, %u, ", reference.kind, reference.schema );
         if( reference.indexToken.empty() ) {
@@ -648,6 +688,7 @@ public:
         _rules.clear();
         _schemaTexts.clear();
         _enumElements.clear();
+        _renames.clear();
     }
 
     void RegisterSchema( Schema schema, Linked_List entities ) {
@@ -708,6 +749,7 @@ public:
                 buildType( _registered[i].types[j], _registered[i].schema );
             }
             buildSchemaTexts( _registered[i].schema, i );
+            buildRenames( _registered[i].schema, i );
         }
     }
 
@@ -725,13 +767,15 @@ public:
             "    SchemaImageRuleRecord rules[%zu];\n"
             "    SchemaImageSchemaTextRecord schemaTexts[%zu];\n"
             "    uint32_t enumElements[%zu];\n"
+            "    SchemaImageRenameRecord renames[%zu];\n"
             "    char strings[%zu];\n"
             "};\n\n",
             arraySize( _schemas.size() ), arraySize( _entities.size() ),
             arraySize( _types.size() ), arraySize( _attributes.size() ),
             arraySize( _aggregates.size() ), arraySize( _references.size() ),
             arraySize( _rules.size() ), arraySize( _schemaTexts.size() ),
-            arraySize( _enumElements.size() ), _strings.data.size() + 1 );
+            arraySize( _enumElements.size() ), arraySize( _renames.size() ),
+            _strings.data.size() + 1 );
         fprintf( output,
             "const GeneratedSchemaImage generatedSchemaImage = {\n"
             "    { SchemaModuleImageVersion_2, %zu, %zu, %zu,\n"
@@ -747,11 +791,13 @@ public:
             "      %zu, offsetof(GeneratedSchemaImage, schemaTexts),\n"
             "      %zu, offsetof(GeneratedSchemaImage, enumElements),\n"
             "      offsetof(GeneratedSchemaImage, strings), 0,\n"
-            "      UINT64_C(%" PRIu64 ") },\n",
+            "      UINT64_C(%" PRIu64 "),\n"
+            "      %zu, offsetof(GeneratedSchemaImage, renames) },\n",
             _entities.size(), _types.size(), _attributes.size(),
             _schemas.size(), _strings.data.size(), _aggregates.size(),
             _references.size(), _rules.size(), _schemaTexts.size(),
-            _enumElements.size(), fingerprint( _strings.data ) );
+            _enumElements.size(), fingerprint( _strings.data ),
+            _renames.size() );
 
         fprintf( output, "    {\n" );
         for( size_t i = 0; i < _schemas.size(); ++i ) {
@@ -836,6 +882,14 @@ public:
             fprintf( output, "        %u,\n", _enumElements[i] );
         }
         if( _enumElements.empty() ) fprintf( output, "        0,\n" );
+        fprintf( output, "    },\n    {\n" );
+        for( size_t i = 0; i < _renames.size(); ++i ) {
+            fprintf( output, "        { " );
+            writeRef( output, _renames[i].descriptor );
+            fprintf( output, ", %u, %u },\n",
+                     _renames[i].schema, _renames[i].name );
+        }
+        if( _renames.empty() ) fprintf( output, "        {},\n" );
         fprintf( output, "    },\n" );
         writeStringPool( output, _strings.data );
         fprintf( output, "};\n\n" );

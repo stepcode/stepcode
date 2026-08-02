@@ -251,6 +251,12 @@ struct SC_CORE_EXPORT SchemaImageSchemaTextRecord {
     uint32_t text;
 };
 
+struct SC_CORE_EXPORT SchemaImageRenameRecord {
+    SchemaImageDescriptorRef descriptor;
+    uint32_t schema;
+    uint32_t name;
+};
+
 struct SC_CORE_EXPORT SchemaImageSchemaBinding {
     Schema ** schemaSlot;
     ModelContentsCreator modelContentsCreator;
