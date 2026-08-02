@@ -565,9 +565,6 @@ Severity SDAI_Application_instance::STEPread( int id,  int idIncr,
                 if( c == ')' ) { // assume you are at the end so read last char
                     in >> c;
                 }
-                cout << "Entity #" << STEPfile_id
-                     << " skipping redefined attribute "
-                     << attributes[i].aDesc->Name() << endl << endl << flush;
             }
             // increment counter to read following attr since these attrs
             // aren't written or read => there won't be a delimiter either
