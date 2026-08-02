@@ -1,8 +1,27 @@
 /** Lemon grammar for Express parser, based on SCL's expparse.y.  */
 %include {
 #include <assert.h>
+#include <stdlib.h>
 #include "token_type.h"
 #include "parse_data.h"
+
+/* Wrapper functions for modern lemon compatibility
+ * Modern lemon from starseeker/lemon uses a 3-parameter signature for memory
+ * allocation functions: void* realloc(void*, size_t, void*) and void free(void*, void*)
+ * The third parameter is a context pointer for custom allocators.
+ * These wrappers adapt the standard C library malloc/free/realloc to this signature
+ * by ignoring the context parameter. Error handling (NULL checks) is performed by
+ * the generated lemon code, not in these wrappers.
+ */
+static void *exp_realloc(void *ptr, size_t size, void *ctx) {
+    (void)ctx;  /* unused - no custom allocator context needed */
+    return realloc(ptr, size);
+}
+
+static void exp_free(void *ptr, void *ctx) {
+    (void)ctx;  /* unused - no custom allocator context needed */
+    free(ptr);
+}
 
 int yyerrstatus = 0;
 #define yyerrok (yyerrstatus = 0)
@@ -120,6 +139,8 @@ void parserInitState( void )
 } /* include */
 
 %extra_argument { parse_data_t parseData }
+%realloc exp_realloc
+%free exp_free
 
 %destructor statement_list {
     if (parseData.scanner == NULL) {
