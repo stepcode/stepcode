@@ -35,6 +35,7 @@ extern "C" {
 #endif
 }
 
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <iomanip>
@@ -49,6 +50,35 @@ using std::endl;
 using std::ofstream;
 using std::cerr;
 using std::cout;
+
+static unsigned long entityChunkSize = 256;
+static unsigned long typeChunkSize = 256;
+
+static bool
+parseChunkSizes( const char * value )
+{
+    if( !value || !value[0] ) {
+        return false;
+    }
+    char * end = 0;
+    const unsigned long entities = strtoul( value, &end, 10 );
+    if( !end || entities == 0 ) {
+        return false;
+    }
+    unsigned long types = entities;
+    if( *end == ':' ) {
+        char * typeEnd = 0;
+        types = strtoul( end + 1, &typeEnd, 10 );
+        if( !end[1] || !typeEnd || *typeEnd || types == 0 ) {
+            return false;
+        }
+    } else if( *end ) {
+        return false;
+    }
+    entityChunkSize = entities;
+    typeChunkSize = types;
+    return true;
+}
 
 /** \return true for types that exp2cxx won't generate code for */
 bool notGenerated( const Type t ) {
@@ -186,8 +216,10 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "# targets, logic, etc are within a set of macros shared by all schemas" << endl;
     cmLists << "include(${SC_CMAKE_DIR}/SC_CXX_schema_macros.cmake)" << endl;
 
-    // * 2 for headers, + 10 other files
-    cmLists << "set(" << shortName << "_file_count " << ( ( ecount + tcount ) * 2 ) + 10 << ")" << endl << endl;
+    const int entityChunks = std::max( 1, ( ecount + static_cast<int>( entityChunkSize ) - 1 ) / static_cast<int>( entityChunkSize ) );
+    const int typeChunks = std::max( 1, ( tcount + static_cast<int>( typeChunkSize ) - 1 ) / static_cast<int>( typeChunkSize ) );
+    cmLists << "set(" << shortName << "_file_count " <<
+        ( ecount + tcount ) * 2 + entityChunks + typeChunks + 11 << ")" << endl << endl;
 
 
     cmLists << "PROJECT(" << shortName << ")" << endl;
@@ -224,10 +256,20 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "# unity build: #include small .cc files to reduce the number" << endl;
     cmLists << "# of translation units that must be compiled" << endl;
-    cmLists << "if(SC_UNITY_BUILD)" << endl << "  # turns off include statements within type and entity .cc's - the unity T.U.'s include a unity header" << endl;
-    cmLists << "  add_definitions( -DSC_SDAI_UNITY_BUILD)" << endl;
-    cmLists << "  set(" << shortName << "_entity_impls Sdai" << schema_upper << "_unity_entities.cc)" << endl;
-    cmLists << "  set(" << shortName << "_type_impls Sdai" << schema_upper << "_unity_types.cc)" << endl;
+    cmLists << "if(SC_UNITY_BUILD)" << endl << "  # bounded unity chunks; definitions are target-local" << endl;
+    cmLists << "  set(" << shortName << "_unity_build TRUE)" << endl;
+    cmLists << "  set(" << shortName << "_entity_impls" << endl;
+    for( int chunk = 1; chunk <= entityChunks; ++chunk ) {
+        cmLists << "    Sdai" << schema_upper << "_unity_entities_" <<
+            std::setfill( '0' ) << std::setw( 4 ) << chunk << ".cc" << endl;
+    }
+    cmLists << "  )" << endl;
+    cmLists << "  set(" << shortName << "_type_impls" << endl;
+    for( int chunk = 1; chunk <= typeChunks; ++chunk ) {
+        cmLists << "    Sdai" << schema_upper << "_unity_types_" <<
+            std::setfill( '0' ) << std::setw( 4 ) << chunk << ".cc" << endl;
+    }
+    cmLists << "  )" << endl;
     cmLists << "else(SC_UNITY_BUILD)" << endl;
     cmLists << "  set(" << shortName << "_entity_impls" << endl;
     cmLists << ei.str();
@@ -241,7 +283,8 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "set( " << shortName << "_misc_impls" << endl;
     cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;
     cmLists << "     Sdai" << schema_upper << ".cc" << endl;
-    cmLists << "     Sdai" << schema_upper << ".init.cc   )" << endl << endl;
+    cmLists << "     Sdai" << schema_upper << ".init.cc" << endl;
+    cmLists << "     Sdai" << schema_upper << ".sources.cmake   )" << endl << endl;
 
     cmLists << "set(schema_target_files ${" << shortName << "_entity_impls} " << "${" << shortName << "_type_impls} " << "${" << shortName << "_misc_impls})" << endl;
     cmLists << "SCHEMA_TARGETS(\"" << input_filename << "\" \"" << schemaName << "\"" << endl;
@@ -330,14 +373,18 @@ int main( int argc, char ** argv ) {
     DictionaryEntry de;
     /* copied from fedex.c */
     Express model;
-    if( ( argc != 2 ) || ( strlen( argv[1] ) < 1 ) ) {
-        fprintf( stderr, "\nUsage: %s file.exp\nOutput: a CMakeLists.txt to build the schema,", argv[0] );
+    if( ( argc != 2 && argc != 3 ) || ( strlen( argv[1] ) < 1 ) ) {
+        fprintf( stderr, "\nUsage: %s file.exp [entity-chunk-size[:type-chunk-size]]\nOutput: a CMakeLists.txt to build the schema,", argv[0] );
         fprintf( stderr, " containing file names for entities, types, etc\n" );
         fprintf( stderr, "also prints (to stdout) the absolute path to the directory CMakeLists.txt was created in\n" );
         exit( EXIT_FAILURE );
     }
     EXPRESSprogram_name = argv[0];
     input_filename = argv[1];
+    if( argc == 3 && !parseChunkSizes( argv[2] ) ) {
+        fprintf( stderr, "chunk sizes must be positive integers in N or N:N form\n" );
+        exit( EXIT_FAILURE );
+    }
 
     EXPRESSinitialize();
 

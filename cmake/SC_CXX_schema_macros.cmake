@@ -89,25 +89,35 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
   # schema scanner comes up with a short schema name for PROJECT() (which sets ${PROJECT_NAME})
   message(STATUS "Will generate ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}.")
 
-  add_custom_target(generate_cpp_${PROJECT_NAME} DEPENDS exp2cxx ${expFile} ${sourceFiles} SOURCES ${sourceFiles})
+  set(_schema_generated_files)
+  foreach(_schema_source ${sourceFiles})
+    list(APPEND _schema_generated_files "${CMAKE_CURRENT_SOURCE_DIR}/${_schema_source}")
+  endforeach()
+  add_custom_target(generate_cpp_${PROJECT_NAME} DEPENDS exp2cxx ${expFile} ${_schema_generated_files} SOURCES ${_schema_generated_files})
   # this calls a cmake script because it doesn't seem to be possible
   # to divert stdout, stderr in cmake except via execute_process
-  add_custom_command(OUTPUT ${sourceFiles}
+  add_custom_command(OUTPUT ${_schema_generated_files}
     COMMAND ${CMAKE_COMMAND} -DEXE=\"$<TARGET_FILE:exp2cxx>\"  -DEXP=\"${expFile}\"
     -DONESHOT=\"${SC_GENERATE_CXX_ONESHOT}\" -DSDIR=\"${CMAKE_CURRENT_LIST_DIR}\"
+    -DCHUNK_SIZE=\"${SC_EXP2CXX_CHUNK_SIZE}\"
     -P ${SC_CMAKE_DIR}/SC_Run_exp2cxx.cmake
+    DEPENDS exp2cxx ${expFile}
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     COMMENT "[exp2cxx] Generating ${${PROJECT_NAME}_file_count} C++ files for ${PROJECT_NAME}."
   )
-  include_directories(
+  set(_schema_include_dirs
     ${CMAKE_CURRENT_SOURCE_DIR}         ${SC_SOURCE_DIR}/src/cldai          ${SC_SOURCE_DIR}/src/cleditor
     ${SC_SOURCE_DIR}/src/clutils        ${SC_SOURCE_DIR}/src/clstepcore     ${SC_SOURCE_DIR}/src/cllazyfile
     ${SC_SOURCE_DIR}/src/cllazyfile/judy/src
   )
   # Schema libraries should be installed by default
   if(BUILD_SHARED_LIBS)
-    SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${sourceFiles} LINK_LIBRARIES stepdai stepcore stepeditor steputils)
+    SC_ADDLIB(${PROJECT_NAME} SHARED SOURCES ${_schema_generated_files} LINK_LIBRARIES stepdai stepcore stepeditor steputils)
     add_dependencies(${PROJECT_NAME} generate_cpp_${PROJECT_NAME})
+    target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} PRIVATE ${_schema_include_dirs})
+    if(${PROJECT_NAME}_unity_build)
+      target_compile_definitions(${PROJECT_NAME} PRIVATE SC_SDAI_UNITY_BUILD)
+    endif()
     if(WIN32)
       target_compile_definitions("${PROJECT_NAME}" PRIVATE SC_SCHEMA_DLL_EXPORTS)
       if(MSVC)
@@ -123,9 +133,13 @@ macro(SCHEMA_TARGETS expFile schemaName sourceFiles)
   endif()
 
   if(BUILD_STATIC_LIBS)
-    SC_ADDLIB(${PROJECT_NAME}-static STATIC SOURCES ${sourceFiles} LINK_LIBRARIES stepcore-static stepdai-static stepeditor-static steputils-static)
+    SC_ADDLIB(${PROJECT_NAME}-static STATIC SOURCES ${_schema_generated_files} LINK_LIBRARIES stepcore-static stepdai-static stepeditor-static steputils-static)
     add_dependencies(${PROJECT_NAME}-static generate_cpp_${PROJECT_NAME})
+    target_include_directories(${PROJECT_NAME}-static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} PRIVATE ${_schema_include_dirs})
     target_compile_definitions("${PROJECT_NAME}-static" PRIVATE SC_STATIC)
+    if(${PROJECT_NAME}_unity_build)
+      target_compile_definitions(${PROJECT_NAME}-static PRIVATE SC_SDAI_UNITY_BUILD)
+    endif()
     if(MSVC)
       target_compile_options("${PROJECT_NAME}-static" PRIVATE "/bigobj")
     endif()
@@ -145,4 +159,3 @@ endmacro(SCHEMA_TARGETS expFile schemaName sourceFiles)
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

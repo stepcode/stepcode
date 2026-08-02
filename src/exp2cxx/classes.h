@@ -71,7 +71,13 @@ typedef  struct file_holder  {
         struct {
             FILE * impl;
             FILE * hdr;
+            FILE * aggregate;
+            unsigned long count;
+            unsigned long chunk;
+            char base[BUFSIZ+1];
         } entity, type;
+        FILE * manifest;
+        char schema[BUFSIZ+1];
     } unity;
 }  File_holder, FILES;
 
@@ -116,6 +122,16 @@ void            resolution_success( void );
 void            SCHEMAprint( Schema schema, FILES* files, void* complexCol, int suffix );
 const char   *  FundamentalType( const Type t, int report_reftypes );
 void            numberAttributes( Scope scope );
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern unsigned long exp2cxx_entity_chunk_size;
+extern unsigned long exp2cxx_type_chunk_size;
+void UNITYentityInclude( FILES * files, const char * implementation );
+void UNITYtypeInclude( FILES * files, const char * implementation );
+#ifdef __cplusplus
+}
+#endif
 
 /*Variable*/
 #define VARis_simple_explicit(a)  (!VARis_type_shifter(a))
@@ -137,4 +153,3 @@ void            USEREFout( Schema schema, Dictionary refdict, Linked_List reflis
 #include "classes_entity.h"
 
 #endif
-

@@ -35,6 +35,8 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 int multiple_inheritance = 1;
 int print_logging = 0;
 int old_accessors = 0;
+unsigned long exp2cxx_entity_chunk_size = 64;
+unsigned long exp2cxx_type_chunk_size = 8;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -203,7 +205,6 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
-    (void) arg; /* unused */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }
@@ -212,6 +213,34 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     }
     if( ( ( char )i == 'l' ) || ( ( char )i == 'L' ) ) {
         print_logging = 1;
+    }
+    if( ( char )i == 'k' ) {
+        char * end = 0;
+        unsigned long entity_requested;
+        unsigned long type_requested;
+        if( !arg || !arg[0] ) {
+            fprintf( stderr, "exp2cxx: chunk sizes must use N or N:N form\n" );
+            return 1;
+        }
+        entity_requested = strtoul( arg, &end, 10 );
+        if( !end || entity_requested == 0 ) {
+            fprintf( stderr, "exp2cxx: chunk sizes must be positive integers\n" );
+            return 1;
+        }
+        type_requested = entity_requested;
+        if( *end == ':' ) {
+            char * type_end = 0;
+            type_requested = strtoul( end + 1, &type_end, 10 );
+            if( !end[1] || !type_end || *type_end || type_requested == 0 ) {
+                fprintf( stderr, "exp2cxx: chunk sizes must use N or N:N form\n" );
+                return 1;
+            }
+        } else if( *end ) {
+            fprintf( stderr, "exp2cxx: chunk sizes must use N or N:N form\n" );
+            return 1;
+        }
+        exp2cxx_entity_chunk_size = entity_requested;
+        exp2cxx_type_chunk_size = type_requested;
     }
     return 0;
 }

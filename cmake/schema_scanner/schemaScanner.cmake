@@ -18,6 +18,10 @@ else(NOT DEFINED SC_UNITY_BUILD)
   message( STATUS "Respecting user-defined SC_UNITY_BUILD value of ${SC_UNITY_BUILD}.")
 endif(NOT DEFINED SC_UNITY_BUILD)
 
+if(NOT DEFINED SC_EXP2CXX_CHUNK_SIZE)
+  set(SC_EXP2CXX_CHUNK_SIZE "64:8" CACHE STRING "Maximum entity:type objects in generated unity translation units")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir
@@ -82,7 +86,7 @@ endif(WIN32)
 # SCHEMA_FILE - path to the schema
 # TODO should we have a result variable to return schema name(s) found?
 macro(SCHEMA_CMLIST SCHEMA_FILE)
-  execute_process(COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE}
+  execute_process(COMMAND ${SCANNER_OUT_DIR}/schema_scanner ${SCHEMA_FILE} ${SC_EXP2CXX_CHUNK_SIZE}
                    WORKING_DIRECTORY ${SC_BINARY_DIR}/schemas
                    RESULT_VARIABLE _ss_stat
                    OUTPUT_VARIABLE _ss_out
@@ -101,7 +105,11 @@ macro(SCHEMA_CMLIST SCHEMA_FILE)
     list(FIND _already_added "${_dir}" _idx)
     if(${_idx} EQUAL -1)
        set_property(GLOBAL APPEND PROPERTY _SC_SCHEMA_DIRS "${_dir}")
-       add_subdirectory(${_dir} ${_dir}) #specify source and binary dirs as the same
+       # Keep generated targets under the top-level binary tree.  Passing the
+       # absolute generated-source path as both arguments creates absolute
+       # make target names with newer CMake.
+       get_filename_component(_schema_dir_name "${_dir}" NAME)
+       add_subdirectory("${_dir}" "${SC_BINARY_DIR}/schema-targets/${_schema_dir_name}")
     endif()
   endforeach(_dir ${_ss_out})
   # configure_file forces cmake to run again if the schema has been modified
