@@ -301,11 +301,18 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
     class LoadingGuard {
       public:
         LoadingGuard( std::set<instanceID> & loading, instanceID id )
-            : _loading( loading ), _id( id ) {}
-        ~LoadingGuard() { _loading.erase( _id ); }
+            : _loading( loading ), _id( id ), _active( true ) {}
+        ~LoadingGuard() { release(); }
+        void release() {
+            if( _active ) {
+                _loading.erase( _id );
+                _active = false;
+            }
+        }
       private:
         std::set<instanceID> & _loading;
         instanceID _id;
+        bool _active;
     } loading_guard( _instancesLoading, id );
     instanceStreamPos_t::cvector * cv;
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
@@ -344,6 +351,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 }
                 break;
         }
+        /* Explicit attributes are now complete.  Inverse discovery may
+         * safely revisit this instance without tripping the materialization
+         * cycle detector. */
+        loading_guard.release();
         if( !isNilSTEPentity( inst ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
@@ -361,6 +372,7 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 _permanentlyLoadedInstances.insert( id );
                 lazyRefs lr( this, inst );
                 lazyRefs::referentInstances_t insts = lr.result();
+                resolveDeferredInverses();
             }
         } else {
             std::cerr << "Error loading instance #" << id << "." << std::endl;
@@ -380,6 +392,22 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
         emitDiagnostic( diagnostic );
     }
     return inst;
+}
+
+void lazyInstMgr::resolveDeferredInverses() {
+    if( !_instancesLoading.empty() ) return;
+
+    while( !_deferredInverseInstances.empty() ) {
+        std::set<instanceID> deferred;
+        deferred.swap( _deferredInverseInstances );
+        std::set<instanceID>::const_iterator id = deferred.begin();
+        for( ; id != deferred.end(); ++id ) {
+            SDAI_Application_instance * inst = cachedInstance( *id );
+            if( inst ) {
+                lazyRefs refs( this, inst );
+            }
+        }
+    }
 }
 
 SDAI_Application_instance * lazyInstMgr::cachedInstance( instanceID id ) {
