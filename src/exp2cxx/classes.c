@@ -35,6 +35,7 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 int multiple_inheritance = 1;
 int print_logging = 0;
 int old_accessors = 0;
+unsigned long exp2cxx_chunk_size = 256;
 
 /**
  * Turn the string into a new string that will be printed the same as the
@@ -203,7 +204,6 @@ void USEREFout( Schema schema, Dictionary refdict, Linked_List reflist, char * t
 }
 
 int Handle_FedPlus_Args( int i, char * arg ) {
-    (void) arg; /* unused */
     if( ( ( char )i == 's' ) || ( ( char )i == 'S' ) ) {
         multiple_inheritance = 0;
     }
@@ -212,6 +212,15 @@ int Handle_FedPlus_Args( int i, char * arg ) {
     }
     if( ( ( char )i == 'l' ) || ( ( char )i == 'L' ) ) {
         print_logging = 1;
+    }
+    if( ( char )i == 'k' ) {
+        char * end = 0;
+        unsigned long requested = strtoul( arg, &end, 10 );
+        if( !arg || !arg[0] || !end || *end || requested == 0 ) {
+            fprintf( stderr, "exp2cxx: chunk size must be a positive integer\n" );
+            return 1;
+        }
+        exp2cxx_chunk_size = requested;
     }
     return 0;
 }

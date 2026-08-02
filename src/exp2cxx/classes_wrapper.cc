@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <cassert>
+#include <iomanip>
+#include <sstream>
 
 #include "complexSupport.h"
 #include "class_strings.h"
@@ -315,35 +318,73 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     LISTfree( list );
 }
 
-/** open/init unity files which allow faster compilation with fewer translation units */
+static void openUnityChunk( FILES * files, bool entity ) {
+    FILE ** impl = entity ? &files->unity.entity.impl : &files->unity.type.impl;
+    FILE * aggregate = entity ? files->unity.entity.aggregate : files->unity.type.aggregate;
+    unsigned long * chunk = entity ? &files->unity.entity.chunk : &files->unity.type.chunk;
+    const char * base = entity ? files->unity.entity.base : files->unity.type.base;
+    ++( *chunk );
+    std::ostringstream chunkName;
+    chunkName << base << "_" << std::setfill( '0' ) << std::setw( 4 ) << *chunk << ".cc";
+    const std::string name = chunkName.str();
+    *impl = FILEcreate( name.c_str() );
+    fprintf( *impl, "\n/** deterministic exp2cxx unity chunk %lu (maximum %lu schema objects) */\n", *chunk, exp2cxx_chunk_size );
+    fprintf( *impl, "#include \"schema.h\"\n#include \"%s.h\"\n", base );
+    fprintf( aggregate, "#include \"%s\"\n", name.c_str() );
+}
+
+extern "C" void UNITYentityInclude( FILES * files, const char * implementation ) {
+    if( files->unity.entity.count && ( files->unity.entity.count % exp2cxx_chunk_size ) == 0 ) {
+        FILEclose( files->unity.entity.impl );
+        openUnityChunk( files, true );
+    }
+    fprintf( files->unity.entity.impl, "#include \"%s\"\n", implementation );
+    ++files->unity.entity.count;
+}
+
+extern "C" void UNITYtypeInclude( FILES * files, const char * implementation ) {
+    if( files->unity.type.count && ( files->unity.type.count % exp2cxx_chunk_size ) == 0 ) {
+        FILEclose( files->unity.type.impl );
+        openUnityChunk( files, false );
+    }
+    fprintf( files->unity.type.impl, "#include \"%s\"\n", implementation );
+    ++files->unity.type.count;
+}
+
+/** open/init deterministic, bounded unity files */
 void initUnityFiles( const char * schName, FILES * files ) {
     const char * unity = "\n/** this file is for unity builds, which allow faster compilation\n"
     " * with fewer translation units. not compatible with all compilers!\n */\n\n"
     "#include \"schema.h\"\n";
-    std::string name = schName;
-    name.append( "_unity_" );
-    size_t prefixLen = name.length();
+    std::string prefix = schName;
+    prefix.append( "_unity_" );
+    snprintf( files->unity.entity.base, sizeof( files->unity.entity.base ), "%sentities", prefix.c_str() );
+    snprintf( files->unity.type.base, sizeof( files->unity.type.base ), "%stypes", prefix.c_str() );
+    files->unity.entity.count = files->unity.type.count = 0;
+    files->unity.entity.chunk = files->unity.type.chunk = 0;
 
-    name.append( "entities.cc" );
-    files->unity.entity.impl = FILEcreate( name.c_str() );
-
-    name.resize( name.length() - 2 );
-    name.append( "h" );
-    fprintf( files->unity.entity.impl, "%s#include \"%s\"\n", unity, name.c_str() );
-
+    std::string name = files->unity.entity.base;
+    name.append( ".cc" );
+    files->unity.entity.aggregate = FILEcreate( name.c_str() );
+    fprintf( files->unity.entity.aggregate, "%s", unity );
+    name = files->unity.entity.base;
+    name.append( ".h" );
     files->unity.entity.hdr = FILEcreate( name.c_str() );
     fprintf( files->unity.entity.hdr, "%s\n", unity );
 
-    name.resize( prefixLen );
-    name.append( "types.cc" );
-    files->unity.type.impl = FILEcreate( name.c_str() );
-
-    name.resize( name.length() - 2 );
-    name.append( "h" );
-    fprintf( files->unity.type.impl, "%s#include \"%s\"\n", unity, name.c_str() );
-
+    name = files->unity.type.base;
+    name.append( ".cc" );
+    files->unity.type.aggregate = FILEcreate( name.c_str() );
+    fprintf( files->unity.type.aggregate, "%s", unity );
+    name = files->unity.type.base;
+    name.append( ".h" );
     files->unity.type.hdr = FILEcreate( name.c_str() );
     fprintf( files->unity.type.hdr, "%s\n", unity );
+
+    files->unity.manifest = 0;
+    snprintf( files->unity.schema, sizeof( files->unity.schema ), "%s", schName );
+    openUnityChunk( files, true );
+    openUnityChunk( files, false );
 }
 
 /** close unity files
@@ -354,6 +395,23 @@ void closeUnityFiles( FILES * files ) {
     FILEclose( files->unity.type.impl );
     FILEclose( files->unity.entity.hdr );
     FILEclose( files->unity.entity.impl );
+    FILEclose( files->unity.entity.aggregate );
+    FILEclose( files->unity.type.aggregate );
+    std::string manifestName = files->unity.schema;
+    manifestName.append( ".sources.cmake" );
+    files->unity.manifest = fopen( manifestName.c_str(), "w" );
+    assert( files->unity.manifest && "unable to create generated source manifest" );
+    fprintf( files->unity.manifest, "# Deterministic source manifest generated by exp2cxx.\nset(STEPCODE_GENERATED_SCHEMA_SOURCES\n" );
+    for( unsigned long chunk = 1; chunk <= files->unity.entity.chunk; ++chunk ) {
+        fprintf( files->unity.manifest, "  \"%s_%04lu.cc\"\n", files->unity.entity.base, chunk );
+    }
+    for( unsigned long chunk = 1; chunk <= files->unity.type.chunk; ++chunk ) {
+        fprintf( files->unity.manifest, "  \"%s_%04lu.cc\"\n", files->unity.type.base, chunk );
+    }
+    fprintf( files->unity.manifest,
+        "  \"SdaiAll.cc\"\n  \"compstructs.cc\"\n  \"schema.cc\"\n  \"%s.cc\"\n  \"%s.init.cc\"\n)\n",
+        files->unity.schema, files->unity.schema );
+    fclose( files->unity.manifest );
 }
 
 ///write tail of initfile, close it

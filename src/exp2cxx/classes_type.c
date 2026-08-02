@@ -412,7 +412,7 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
     impl = FILEcreate( names.impl );
     assert( hdr && impl && "error creating files" );
     fprintf( files->unity.type.hdr, "#include \"%s\"\n", names.header );
-    fprintf( files->unity.type.impl, "#include \"%s\"\n", names.impl );
+    UNITYtypeInclude( files, names.impl );
 
     TYPEPrint_h( type, hdr );
     TYPEPrint_cc( type, &names, hdr, impl, schema );

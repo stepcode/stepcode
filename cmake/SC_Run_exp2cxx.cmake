@@ -4,7 +4,7 @@ if(ONESHOT AND EXISTS "${SDIR}/schema.cc")
   message("WARNING: SC_GENERATE_CXX_ONESHOT is enabled. If generated code has been modified, it will NOT be rewritten!")
   message("This is ONLY for debugging STEPcode internals!")
 else()
-  execute_process(COMMAND ${EXE} ${EXP}
+  execute_process(COMMAND ${EXE} -k ${CHUNK_SIZE} ${EXP}
     WORKING_DIRECTORY ${SDIR}
     RESULT_VARIABLE _res
     OUTPUT_FILE exp2cxx_stdout.txt
@@ -22,4 +22,3 @@ endif()
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-
