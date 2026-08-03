@@ -85,6 +85,9 @@ int main( int argc, char ** argv ) {
         schemaWarnings.str().find( warningText, firstWarning + 1 ) ==
             std::string::npos,
         "multiple FILE_SCHEMA warning was not bounded per file" );
+    require( schemaWarnings.str().find( "Error loading instance" ) ==
+            std::string::npos,
+        "structured materialization diagnostic was also written to stderr" );
     secondBatch.release();
     missingBatch.release();
 

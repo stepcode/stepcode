@@ -328,7 +328,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         switch( cv->size() ) {
             case 0:
-                std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+                if( !_diagnosticCallback ) {
+                    std::cerr << "Instance #" << id
+                        << " not found in any section." << std::endl;
+                }
                 break;
             case 1:
                 pos = cv->at( 0 );
@@ -351,7 +354,11 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 }
                 break;
             default:
-                std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
+                if( !_diagnosticCallback ) {
+                    std::cerr << "Instance #" << id
+                        << " exists in multiple sections. This is not yet supported."
+                        << std::endl;
+                }
                 {
                     LazyDiagnostic diagnostic;
                     diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
@@ -385,7 +392,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 resolveDeferredInverses();
             }
         } else {
-            std::cerr << "Error loading instance #" << id << "." << std::endl;
+            if( !_diagnosticCallback ) {
+                std::cerr << "Error loading instance #" << id << "."
+                    << std::endl;
+            }
             LazyDiagnostic diagnostic;
             diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
             diagnostic.entity = id;
@@ -394,7 +404,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
             emitDiagnostic( diagnostic );
         }
     } else {
-        std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+        if( !_diagnosticCallback ) {
+            std::cerr << "Instance #" << id
+                << " not found in any section." << std::endl;
+        }
         LazyDiagnostic diagnostic;
         diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
         diagnostic.entity = id;
