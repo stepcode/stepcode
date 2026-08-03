@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include "cllazyfile/lazyInstMgr.h"
 
@@ -69,10 +70,22 @@ int main( int argc, char ** argv ) {
 
     Registry emptyRegistry( emptyRegistryInit );
     manager.setRegistry( &emptyRegistry );
+    std::ostringstream schemaWarnings;
+    std::streambuf * originalCerr = std::cerr.rdbuf( schemaWarnings.rdbuf() );
     LazyInstanceBatch missingBatch = manager.loadBatch( 5 );
+    LazyInstanceBatch secondBatch = manager.loadBatch( 1 );
+    std::cerr.rdbuf( originalCerr );
     require( missingBatch.instances().size() == 1 &&
         missingBatch.instances()[0] == 5,
         "missing reference leaked into materialization closure" );
+    const std::string warningText =
+        "Warning - multiple schema names found. Only searching with first one.";
+    const size_t firstWarning = schemaWarnings.str().find( warningText );
+    require( firstWarning != std::string::npos &&
+        schemaWarnings.str().find( warningText, firstWarning + 1 ) ==
+            std::string::npos,
+        "multiple FILE_SCHEMA warning was not bounded per file" );
+    secondBatch.release();
     missingBatch.release();
 
     lazyInstMgr cancelled;
