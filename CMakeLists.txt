@@ -206,6 +206,12 @@ if(SC_ENABLE_ADDRESS_SANITIZER OR
     sc_require_sanitizer("-fsanitize=address" SC_ASAN)
     list(APPEND _sc_sanitizer_compile_options -fsanitize=address)
     list(APPEND _sc_sanitizer_link_options -fsanitize=address)
+    # exp2cxx is executed during the build to generate schema bindings.  It
+    # remains address-instrumented, but leak checking a short-lived build
+    # tool is both outside the test scope and unsupported under common build
+    # tracers/sandboxes.  Limit this environment to schema generation; CTest
+    # and installed tools retain the user's normal ASan settings.
+    set(SC_SCHEMA_GENERATOR_ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0")
   endif()
 
   if(SC_ENABLE_UNDEFINED_SANITIZER)
