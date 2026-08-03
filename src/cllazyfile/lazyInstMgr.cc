@@ -61,6 +61,7 @@ sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
     assert( inst.loc.begin > 0 && inst.loc.instance > 0 );
+    const bool duplicate = _instanceStreamPos.find( inst.loc.instance ) != 0;
     int len = strlen( inst.name );
     if( len > _longestTypeNameLen ) {
         _longestTypeNameLen = len;
@@ -68,6 +69,9 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
     if( inst.componentTypes ) {
+        if( !duplicate && !inst.componentTypes->empty() ) {
+            _instanceComponentTypes[inst.loc.instance] = *inst.componentTypes;
+        }
         std::vector<std::string>::const_iterator type = inst.componentTypes->begin();
         for( ; type != inst.componentTypes->end(); ++type ) {
             _instanceTypes->insert( type->c_str(), inst.loc.instance );
@@ -78,7 +82,6 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         }
         delete inst.componentTypes;
     }
-    const bool duplicate = _instanceStreamPos.find( inst.loc.instance ) != 0;
     if( !duplicate ) _allInstances.push_back( inst.loc.instance );
     instancePosition pos;
     pos.begin = inst.loc.begin;
@@ -109,6 +112,13 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         }
         delete inst.refs;
     }
+}
+
+const std::vector<std::string> & lazyInstMgr::componentTypes( instanceID id ) const {
+    static const std::vector<std::string> empty;
+    std::map<instanceID, std::vector<std::string> >::const_iterator found =
+        _instanceComponentTypes.find( id );
+    return found == _instanceComponentTypes.end() ? empty : found->second;
 }
 
 LazyInstanceIdView lazyInstMgr::instancesByType( std::string type, bool caseSensitive ) {

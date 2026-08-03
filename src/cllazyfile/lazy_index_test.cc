@@ -41,6 +41,13 @@ int main( int argc, char ** argv ) {
     require( manager.instancesByType( "C" ).size() == 1, "first complex component not indexed" );
     require( manager.instancesByType( "D" ).size() == 1, "second complex component not indexed" );
     require( manager.instancesByType( "" ).size() == 1, "complex instance index failed" );
+    require( manager.componentTypes( 3 ).size() == 2 &&
+        manager.componentTypes( 3 )[0] == "C" &&
+        manager.componentTypes( 3 )[1] == "D",
+        "complex component source order was not preserved" );
+    require( manager.componentTypes( 1 ).empty() &&
+        manager.componentTypes( 99 ).empty(),
+        "ordinary or missing instance has complex components" );
     require( diagnosticCalls == 1, "structured diagnostic callback was not bounded" );
     require( missingReference.severity == LAZY_DIAGNOSTIC_ERROR && missingReference.offset > 0,
         "missing-reference diagnostic lacks structured context" );
@@ -96,6 +103,10 @@ int main( int argc, char ** argv ) {
     require( scoped.forwardReferences( 20 ).size() == 1 &&
         scoped.forwardReferences( 20 )[0] == 21,
         "complex scope-owner reference was not indexed" );
+    require( scoped.componentTypes( 20 ).size() == 2 &&
+        scoped.componentTypes( 20 )[0] == "C" &&
+        scoped.componentTypes( 20 )[1] == "D",
+        "scoped complex component order was not preserved" );
     const std::string nestedOwner = scoped.sourceRecord( 11 );
     const std::string complexOwner = scoped.sourceRecord( 20 );
     require( nestedOwner.find( "#11=&SCOPE" ) != std::string::npos &&
