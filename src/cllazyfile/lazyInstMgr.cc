@@ -427,6 +427,11 @@ std::vector<instanceID> lazyInstMgr::dependencyClosure( const std::vector<instan
         if( !refs ) continue;
         instanceRefs_t::cvector::const_iterator ref = refs->begin();
         for( ; ref != refs->end(); ++ref ) {
+            /* validateReferences() reports nonexistent targets when the file
+             * is opened.  They cannot be pinned or materialized, and adding
+             * them to a batch only produces a second, less useful error (or
+             * an integer-limit error for a malformed maximum-width ID). */
+            if( !_instanceStreamPos.find( *ref ) ) continue;
             if( closure.insert( *ref ).second ) queue.push_back( *ref );
         }
     }

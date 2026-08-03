@@ -10,6 +10,9 @@ void require( bool condition, const char * message ) {
         std::exit( EXIT_FAILURE );
     }
 }
+
+void emptyRegistryInit( Registry & ) {
+}
 }
 
 int main( int argc, char ** argv ) {
@@ -56,6 +59,14 @@ int main( int argc, char ** argv ) {
         "second exact source record or stream restoration failed" );
     require( manager.sourceRecord( 99 ).empty(),
         "missing source record was not empty" );
+
+    Registry emptyRegistry( emptyRegistryInit );
+    manager.setRegistry( &emptyRegistry );
+    LazyInstanceBatch missingBatch = manager.loadBatch( 5 );
+    require( missingBatch.instances().size() == 1 &&
+        missingBatch.instances()[0] == 5,
+        "missing reference leaked into materialization closure" );
+    missingBatch.release();
 
     lazyInstMgr cancelled;
     uint64_t cancellationCalls = 0;
