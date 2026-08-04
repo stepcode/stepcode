@@ -7,6 +7,7 @@
 
 #include "complexSupport.h"
 #include "class_strings.h"
+#include "generated_output.h"
 
 #include "./trace_fprintf.h"
 
@@ -35,6 +36,23 @@ N350 ( August 31, 1993 ) of ISO 10303 TC184/SC4/WG7.
 
 void use_ref( Schema, Express, FILES * );
 
+static void copyGeneratedBody( FILE * source, FILE * destination ) {
+    char buffer[16384];
+    size_t count;
+    fflush( source );
+    rewind( source );
+    while( ( count = fread( buffer, 1, sizeof( buffer ), source ) ) != 0 ) {
+        fwrite( buffer, 1, count, destination );
+    }
+}
+
+static void printQuotedInitializer( FILE * destination, char * source ) {
+    char * escaped = ( char * )malloc( strlen( source ) * 2 + BUFSIZ );
+    fprintf( destination, "\"%s\"", format_for_stringout( source, escaped ) );
+    free( escaped );
+    free( source );
+}
+
 void create_builtin_type_decl( FILES * files, char * name ) {
     fprintf( files->incall, "extern SC_%s_EXPORT TypeDescriptor *%s%s_TYPE;\n",
              "SCHEMA", TD_PREFIX, name );
@@ -58,6 +76,10 @@ void create_builtin_type_defn( FILES * files, char * name ) {
  ** Status:  ok 1/15/91
  ******************************************************************/
 void print_file_header( FILES * files ) {
+
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        SCHEMAimage_reset();
+    }
 
     /*  open file which unifies all schema specific header files
     of input Express source */
@@ -84,6 +106,10 @@ void print_file_header( FILES * files ) {
     fprintf( files->incall, "\n#include \"clstepcore/STEPundefined.h\"\n" );
     fprintf( files->incall, "\n#include \"clstepcore/ExpDict.h\"\n" );
     fprintf( files->incall, "\n#include \"clstepcore/STEPattribute.h\"\n" );
+    if( exp2cxx_api_version == 2 ) {
+        fprintf( files->incall, "\n#include \"clstepcore/schemaInit.h\"\n" );
+        fprintf( files->incall, "#include \"clstepcore/schemaModule.h\"\n" );
+    }
 
     fprintf( files->incall, "\n#include <Sdaiclasses.h>\n" );
 
@@ -103,17 +129,35 @@ void print_file_header( FILES * files ) {
     // This file will contain instantiation statements for all the schemas and
     // entities in the express file.  (They must all be in separate function
     // called first by SchemaInit() so that all entities will exist
-    files -> create = FILEcreate( "SdaiAll.cc" );
-    fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
-    fprintf( files->create, "#include \"schema.h\"\n" );
-    fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+    if( exp2cxx_api_version == 2 ) {
+        /* API v2 collects compact records while the schemas are traversed.
+         * The final SdaiAll.cc is assembled after every record is known. */
+        files->create = tmpfile();
+        files->schema_records = tmpfile();
+        files->entity_records = tmpfile();
+        files->type_records = tmpfile();
+        assert( files->create && files->schema_records && files->entity_records &&
+                files->type_records );
+    } else {
+        files -> create = FILEcreate( "SdaiAll.cc" );
+        fprintf( files->create, "\n// in the exp2cxx source code, this file is generally referred to as files->create or createall\n" );
+        fprintf( files->create, "#include \"schema.h\"\n" );
+        fprintf( files->create, "\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+        files->schema_records = 0;
+        files->entity_records = 0;
+        files->type_records = 0;
+    }
 
     // This file declares all entity classes as incomplete types.  This will
     // allow all the .h files to reference all .h's.  We can then have e.g.,
     // entX from schemaA have attribute attr1 = entY from schemaB.
     files -> classes = FILEcreate( "Sdaiclasses.h" );
     fprintf( files->classes, "\n// in the exp2cxx source code, this file is generally referred to as files->classes\n" );
-    fprintf( files->classes, "#include \"schema.h\"\n" );
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        fprintf( files->classes, "#include \"clstepcore/sdai.h\"\n" );
+    } else {
+        fprintf( files->classes, "#include \"schema.h\"\n" );
+    }
 }
 
 /** ****************************************************************
@@ -127,8 +171,71 @@ void print_file_header( FILES * files ) {
 void print_file_trailer( FILES * files ) {
     FILEclose( files->incall );
     FILEclose( files->initall );
-    fprintf( files->create, "}\n\n" );
-    FILEclose( files->create );
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        FILE * body = files->create;
+        FILE * output = FILEcreate( "SdaiAll.cc" );
+        fprintf( output,
+                 "\n// packed, offset-based API v2 schema image\n"
+                 "#include \"schema.h\"\n"
+                 "#include \"clstepcore/schemaInit.h\"\n"
+                 "#include <cstdint>\n"
+                 "#include <stdexcept>\n\n"
+                 "namespace {\n"
+                 "const SchemaImageSchemaBinding schemaBindings[] = {\n"
+                 "    { 0, 0, 0 },\n" );
+        copyGeneratedBody( files->schema_records, output );
+        fprintf( output,
+                 "};\n\n" );
+        SCHEMAimage_write( output );
+        fprintf( output,
+                 "}\n\n"
+                 "void InitSchemasAndEnts (Registry & reg) {\n"
+                 "    SchemaLoadContext context;\n"
+                 "    const SchemaLoadResult result = InitializeSchemaFromImage(\n"
+                 "        reg, generatedSchemaImage.header,\n"
+                 "        schemaBindings + 1, sizeof(schemaBindings) /\n"
+                 "            sizeof(schemaBindings[0]) - 1,\n"
+                 "        0, 0, context );\n"
+                 "    if( !result.Succeeded() ) {\n"
+                 "        throw std::runtime_error( result.Message() );\n"
+                 "    }\n" );
+        copyGeneratedBody( body, output );
+        fprintf( output, "}\n\n" );
+        fclose( body );
+        fclose( files->schema_records );
+        fclose( files->entity_records );
+        fclose( files->type_records );
+        FILEclose( output );
+    } else if( exp2cxx_api_version == 2 ) {
+        FILE * body = files->create;
+        FILE * output = FILEcreate( "SdaiAll.cc" );
+        fprintf( output, "\n// compact, table-driven API v2 schema initialization\n" );
+        fprintf( output, "#include \"schema.h\"\n" );
+        fprintf( output, "#include \"clstepcore/schemaInit.h\"\n\n" );
+        fprintf( output, "namespace {\n" );
+        fprintf( output, "const SchemaInitRecord schemaRecords[] = {\n    { 0, 0, 0 },\n" );
+        copyGeneratedBody( files->schema_records, output );
+        fprintf( output, "};\n\nconst EntityDescriptorInitRecord entityRecords[] = {\n    { 0, 0, 0, LFalse, LFalse, 0 },\n" );
+        copyGeneratedBody( files->entity_records, output );
+        fprintf( output, "};\n\nconst TypeDescriptorInitRecord typeRecords[] = {\n" );
+        fprintf( output, "    TypeDescriptorInitRecord( (TypeDescriptor **)0, 0, UNKNOWN_TYPE, (Schema **)0, 0 ),\n" );
+        copyGeneratedBody( files->type_records, output );
+        fprintf( output, "};\n}\n\nvoid InitSchemasAndEnts (Registry & reg) {\n" );
+        fprintf( output, "    InitializeSchemas( reg, schemaRecords + 1, sizeof(schemaRecords) / sizeof(schemaRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeSchemaModuleImages( schemaRecords + 1, sizeof(schemaRecords) / sizeof(schemaRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeEntityDescriptors( entityRecords + 1, sizeof(entityRecords) / sizeof(entityRecords[0]) - 1 );\n" );
+        fprintf( output, "    InitializeTypeDescriptors( typeRecords + 1, sizeof(typeRecords) / sizeof(typeRecords[0]) - 1 );\n" );
+        copyGeneratedBody( body, output );
+        fprintf( output, "}\n\n" );
+        fclose( body );
+        fclose( files->schema_records );
+        fclose( files->entity_records );
+        fclose( files->type_records );
+        FILEclose( output );
+    } else {
+        fprintf( files->create, "}\n\n" );
+        FILEclose( files->create );
+    }
     fprintf( files->classes, "\n" );
     FILEclose( files->classes );
     fprintf( files->names, "\n}\n" );
@@ -170,6 +277,54 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
     int redefs = 0;
 
     if( cnt <= 1 ) {
+        if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+            SCHEMAimage_register_schema( schema, list );
+        }
+        if( exp2cxx_api_version == 2 ) {
+            int typeId = 0;
+            int attributeCount = 0;
+            fprintf( files->inc, "\nnamespace %s {\n", SCHEMAget_name( schema ) );
+            fprintf( files->inc, "enum class EntityId : unsigned {\n" );
+            LISTdo( list, moduleEntity, Entity ) {
+                fprintf( files->inc, "    e_%s = %d,\n",
+                         ENTITYget_name( moduleEntity ), attributeCount++ );
+            } LISTod
+            fprintf( files->inc, "    count = %d\n};\n", attributeCount );
+
+            fprintf( files->inc, "enum class TypeId : unsigned {\n" );
+            SCOPEdo_types( scope, moduleType, de ) {
+                fprintf( files->inc, "    t_%s = %d,\n",
+                         TYPEget_name( moduleType ), typeId++ );
+            } SCOPEod
+            fprintf( files->inc, "    count = %d\n};\n", typeId );
+
+            attributeCount = 0;
+            fprintf( files->inc, "enum class AttributeId : unsigned {\n" );
+            LISTdo( list, moduleEntity, Entity ) {
+                LISTdo_n( ENTITYget_attributes( moduleEntity ), moduleAttr,
+                          Variable, b ) {
+                    char attributeName[BUFSIZ + 1];
+                    generate_attribute_name( moduleAttr, attributeName );
+                    fprintf( files->inc, "    a_%d_%s = %d,\n", moduleAttr->idx,
+                             attributeName, moduleAttr->idx );
+                    attributeCount = moduleAttr->idx + 1;
+                } LISTod
+            } LISTod
+            fprintf( files->inc, "    count = %d\n};\n", attributeCount );
+            fprintf( files->inc,
+                     "extern SC_SCHEMA_EXPORT SchemaModule schemaModule;\n"
+                     "inline const EntityDescriptor * GetEntity(EntityId id) {\n"
+                     "    return schemaModule.Entity(static_cast<unsigned>(id));\n"
+                     "}\n"
+                     "inline const TypeDescriptor * GetType(TypeId id) {\n"
+                     "    return schemaModule.Type(static_cast<unsigned>(id));\n"
+                     "}\n"
+                     "inline const AttrDescriptor * GetAttribute(AttributeId id) {\n"
+                     "    return schemaModule.Attribute(static_cast<unsigned>(id));\n"
+                     "}\n} // namespace %s\n",
+                     SCHEMAget_name( schema ) );
+        }
+
         /* This will be the case if this is the first time we are generating a
         ** file for this schema.  (cnt = the file suffix.  If it = 1, it's the
         ** first of multiple; if it = 0, it's the only one.)  Basically, this
@@ -178,6 +333,36 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         ** and the Sdaixxx.init.cc files. */
 
         fprintf( files -> lib, "\nSchema * %s::schema = 0;\n", SCHEMAget_name( schema ) );
+        if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
+            int moduleEntityCount = LISTget_length( list );
+            int moduleTypeCount = 0;
+            int moduleAttributeCount = 0;
+            fprintf( files->lib, "SchemaModule %s::schemaModule;\n",
+                     SCHEMAget_name( schema ) );
+            SCOPEdo_types( scope, moduleType, de ) {
+                (void)moduleType;
+                ++moduleTypeCount;
+            } SCOPEod
+            LISTdo( list, moduleEntity, Entity ) {
+                moduleAttributeCount +=
+                    LISTget_length( ENTITYget_attributes( moduleEntity ) );
+            } LISTod
+            fprintf( files->lib,
+                     "\nnamespace {\n"
+                     "const SchemaModuleImage moduleImage = {\n"
+                     "    SchemaModuleImageVersion_1, %d, %d, %d\n"
+                     "};\n}\n\n"
+                     "void InitializeSchemaModule_%s() {\n"
+                     "    %s::schemaModule.InitializeFromImage( "
+                     "*%s::schema, moduleImage );\n"
+                     "}\n",
+                     moduleEntityCount, moduleTypeCount, moduleAttributeCount,
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ),
+                     SCHEMAget_name( schema ) );
+        } else if( exp2cxx_api_version == 2 ) {
+            fprintf( files->lib, "SchemaModule %s::schemaModule;\n",
+                     SCHEMAget_name( schema ) );
+        }
 
         /* Do \'new\'s for types descriptors (in SdaiAll.cc (files->create)),
            and the externs typedefs, and incomplete descriptors (in Sdai-
@@ -186,9 +371,14 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         fprintf( files->classes, "\n// Types:\n" );
         SCOPEdo_types( scope, t, de ) {
             //TYPEprint_new moved to TYPEPrint_cc and TYPEprint_descriptions in classes_type.c
-            TYPEprint_typedefs( t, files->classes );
-            //print in namespace. Some logic copied from TypeDescriptorName()
-            fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
+            if( !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+                TYPEprint_typedefs( t, files->classes );
+                //print in namespace. Some logic copied from TypeDescriptorName()
+                fprintf( files->names, "    extern SC_SCHEMA_EXPORT %s * %s%s;\n", GetTypeDescriptorName( t ), TYPEprefix( t ), TYPEget_name( t ) );
+            }
+            if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
+                TYPEprint_descriptor_record( t, files->type_records, schema );
+            }
         } SCOPEod
 
         fprintf( files->classes, "\n// Entity class typedefs:" );
@@ -197,6 +387,11 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
         } LISTod
     }
 
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        SCOPEdo_types( scope, compactType, de ) {
+            compactType->search_id = PROCESSED;
+        } SCOPEod
+    } else {
     /* fill in the values for the type descriptors and print the enumerations */
     fprintf( files -> inc, "\n/*    **************  TYPES      */\n" );
     fprintf( files -> lib, "\n/*    **************  TYPES      */\n" );
@@ -268,6 +463,7 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
             t->search_id = PROCESSED;
         }
     } SCOPEod
+    }
 
     fprintf( files -> inc, "\n/*        **************  ENTITIES          */\n" );
     fprintf( files -> lib, "\n/*        **************  ENTITIES          */\n" );
@@ -285,6 +481,25 @@ void SCOPEPrint( Scope scope, FILES * files, Schema schema, ComplexCollect * col
 
         // Do the model stuff:
         fprintf( files->inc, "\n//        ***** generate Model related pieces\n" );
+        if( exp2cxx_late_bound ) {
+            FILE * modelHeader = exp2cxx_api_version == 2 ?
+                files->incall : files->inc;
+            fprintf( modelHeader, "\ntypedef SDAI_Model_contents SdaiModel_contents_%s;\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( modelHeader, "typedef SdaiModel_contents_%s * SdaiModel_contents_%s_ptr;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( modelHeader, "typedef const SdaiModel_contents_%s * SdaiModel_contents_%s_ptr_c;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( modelHeader, "typedef SdaiModel_contents_%s_ptr SdaiModel_contents_%s_var;\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            fprintf( modelHeader, "SDAI_Model_contents_ptr create_SdaiModel_contents_%s();\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( files->lib, "\nSDAI_Model_contents_ptr create_SdaiModel_contents_%s() {\n",
+                     SCHEMAget_name( schema ) );
+            fprintf( files->lib, "    return new SDAI_Model_contents;\n}\n" );
+            LISTfree( list );
+            return;
+        }
         fprintf( files->inc, "\nclass SdaiModel_contents_%s : public SDAI_Model_contents {\n", SCHEMAget_name( schema ) );
         fprintf( files -> inc, "\n  public:\n" );
         fprintf( files -> inc, "    SdaiModel_contents_%s();\n", SCHEMAget_name( schema ) );
@@ -330,7 +545,10 @@ static void openUnityChunk( FILES * files, bool entity ) {
     const std::string name = chunkName.str();
     *impl = FILEcreate( name.c_str() );
     fprintf( *impl, "\n/** deterministic exp2cxx unity chunk %lu (maximum %lu schema objects) */\n", *chunk, limit );
-    fprintf( *impl, "#include \"schema.h\"\n#include \"%s.h\"\n", base );
+    fprintf( *impl, "#include \"schema.h\"\n" );
+    if( exp2cxx_api_version != 2 ) {
+        fprintf( *impl, "#include \"%s.h\"\n", base );
+    }
     fprintf( aggregate, "#include \"%s\"\n", name.c_str() );
 }
 
@@ -341,6 +559,16 @@ extern "C" void UNITYentityInclude( FILES * files, const char * implementation )
     }
     fprintf( files->unity.entity.impl, "#include \"%s\"\n", implementation );
     ++files->unity.entity.count;
+}
+
+extern "C" FILE * UNITYentityFile( FILES * files ) {
+    if( files->unity.entity.count &&
+            ( files->unity.entity.count % exp2cxx_entity_chunk_size ) == 0 ) {
+        FILEclose( files->unity.entity.impl );
+        openUnityChunk( files, true );
+    }
+    ++files->unity.entity.count;
+    return files->unity.entity.impl;
 }
 
 extern "C" void UNITYtypeInclude( FILES * files, const char * implementation ) {
@@ -364,43 +592,64 @@ void initUnityFiles( const char * schName, FILES * files ) {
     files->unity.entity.count = files->unity.type.count = 0;
     files->unity.entity.chunk = files->unity.type.chunk = 0;
 
-    std::string name = files->unity.entity.base;
-    name.append( ".cc" );
-    files->unity.entity.aggregate = FILEcreate( name.c_str() );
-    fprintf( files->unity.entity.aggregate, "%s", unity );
-    name = files->unity.entity.base;
-    name.append( ".h" );
-    files->unity.entity.hdr = FILEcreate( name.c_str() );
-    fprintf( files->unity.entity.hdr, "%s\n", unity );
+    std::string name;
+    files->unity.entity.aggregate = 0;
+    files->unity.entity.hdr = 0;
+    files->unity.entity.impl = 0;
+    if( !exp2cxx_late_bound ) {
+        name = files->unity.entity.base;
+        name.append( ".cc" );
+        files->unity.entity.aggregate = FILEcreate( name.c_str() );
+        fprintf( files->unity.entity.aggregate, "%s", unity );
+        name = files->unity.entity.base;
+        name.append( ".h" );
+        files->unity.entity.hdr = FILEcreate( name.c_str() );
+        fprintf( files->unity.entity.hdr, "%s\n", unity );
+    }
 
-    name = files->unity.type.base;
-    name.append( ".cc" );
-    files->unity.type.aggregate = FILEcreate( name.c_str() );
-    fprintf( files->unity.type.aggregate, "%s", unity );
-    name = files->unity.type.base;
-    name.append( ".h" );
-    files->unity.type.hdr = FILEcreate( name.c_str() );
-    fprintf( files->unity.type.hdr, "%s\n", unity );
+    files->unity.type.aggregate = 0;
+    files->unity.type.hdr = 0;
+    files->unity.type.impl = 0;
+    if( !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+        name = files->unity.type.base;
+        name.append( ".cc" );
+        files->unity.type.aggregate = FILEcreate( name.c_str() );
+        fprintf( files->unity.type.aggregate, "%s", unity );
+        name = files->unity.type.base;
+        name.append( ".h" );
+        files->unity.type.hdr = FILEcreate( name.c_str() );
+        fprintf( files->unity.type.hdr, "%s\n", unity );
+    }
 
     files->unity.manifest = 0;
     snprintf( files->unity.schema, sizeof( files->unity.schema ), "%s", schName );
-    openUnityChunk( files, true );
-    openUnityChunk( files, false );
+    if( !exp2cxx_late_bound ) {
+        openUnityChunk( files, true );
+    }
+    if( files->unity.type.aggregate ) {
+        openUnityChunk( files, false );
+    }
 }
 
 /** close unity files
  * \sa initUnityFiles()
  */
 void closeUnityFiles( FILES * files ) {
-    FILEclose( files->unity.type.hdr );
-    FILEclose( files->unity.type.impl );
-    FILEclose( files->unity.entity.hdr );
-    FILEclose( files->unity.entity.impl );
-    FILEclose( files->unity.entity.aggregate );
-    FILEclose( files->unity.type.aggregate );
+    if( files->unity.type.hdr ) {
+        FILEclose( files->unity.type.hdr );
+        FILEclose( files->unity.type.impl );
+    }
+    if( files->unity.entity.hdr ) {
+        FILEclose( files->unity.entity.hdr );
+        FILEclose( files->unity.entity.impl );
+        FILEclose( files->unity.entity.aggregate );
+    }
+    if( files->unity.type.aggregate ) {
+        FILEclose( files->unity.type.aggregate );
+    }
     std::string manifestName = files->unity.schema;
     manifestName.append( ".sources.cmake" );
-    files->unity.manifest = fopen( manifestName.c_str(), "w" );
+    files->unity.manifest = GENERATEDopen( manifestName.c_str() );
     assert( files->unity.manifest && "unable to create generated source manifest" );
     fprintf( files->unity.manifest, "# Deterministic source manifest generated by exp2cxx.\nset(STEPCODE_GENERATED_SCHEMA_SOURCES\n" );
     for( unsigned long chunk = 1; chunk <= files->unity.entity.chunk; ++chunk ) {
@@ -412,11 +661,17 @@ void closeUnityFiles( FILES * files ) {
     fprintf( files->unity.manifest,
         "  \"SdaiAll.cc\"\n  \"compstructs.cc\"\n  \"schema.cc\"\n  \"%s.cc\"\n  \"%s.init.cc\"\n)\n",
         files->unity.schema, files->unity.schema );
-    fclose( files->unity.manifest );
+    GENERATEDclose( files->unity.manifest );
 }
 
 ///write tail of initfile, close it
 void INITFileFinish( FILE * initfile, Schema schema ) {
+    if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
+        fprintf( initfile,
+                 "\n    extern void InitializeSchemaModule_%s();\n"
+                 "    InitializeSchemaModule_%s();\n",
+                 SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+    }
     fprintf( initfile, "\n    /* loop through any entities with inverse attrs, calling InitIAttrs */\n");
     fprintf( initfile, "    EntityDescItr edi( *%s::schema->EntsWInverse() );\n", SCHEMAget_name( schema ) );
     fprintf( initfile, "    EntityDescriptor * ed;\n");
@@ -480,7 +735,23 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     }
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include \"schema.h\"\n" );
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        fprintf( incfile,
+                 "#include \"clstepcore/schemaModule.h\"\n\n"
+                 "#ifndef SC_SCHEMA_EXPORT\n"
+                 "# if !defined(SC_STATIC) && defined(_WIN32)\n"
+                 "#  if defined(SC_SCHEMA_DLL_EXPORTS)\n"
+                 "#   define SC_SCHEMA_EXPORT __declspec(dllexport)\n"
+                 "#  else\n"
+                 "#   define SC_SCHEMA_EXPORT __declspec(dllimport)\n"
+                 "#  endif\n"
+                 "# else\n"
+                 "#  define SC_SCHEMA_EXPORT\n"
+                 "# endif\n"
+                 "#endif\n" );
+    } else {
+        fprintf( incfile, "#include \"schema.h\"\n" );
+    }
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
     remaining = (size_t)(fnm + sizeof(fnm) - np);
@@ -522,7 +793,8 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         return;
     }
     fprintf( libfile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( files->names, "\n// In the exp2cxx source code, this file is referred to as files->names.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
+    fprintf( files->names,
+             "\n// In exp2cxx, this output is referred to as files->names.\n\n" );
     fprintf( files->names, "//this file contains a namespace for all formerly-global variables\n\n" );
     fprintf( files->names, "namespace %s {\n\n", SCHEMAget_name( schema ) );
     fprintf( files->names, "    extern Schema * schema;\n\n" );
@@ -560,38 +832,102 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
         fprintf( initfile, "\nvoid %sInit (Registry& reg) {\n", schnm );
 
         fprintf( createall, "// Schema:  %s\n", schnm );
-        fprintf( createall, "    %s::schema = new Schema(\"%s\");\n", SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
+        if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+            fprintf( files->schema_records,
+                     "    { &%s::schema, (ModelContentsCreator) "
+                     "create_SdaiModel_contents_%s, &%s::schemaModule },\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ),
+                     SCHEMAget_name( schema ) );
+        } else if( exp2cxx_api_version == 2 ) {
+            fprintf( files->schema_records,
+                     "    { &%s::schema, \"%s\", (ModelContentsCreator) create_SdaiModel_contents_%s },\n",
+                     SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ),
+                     SCHEMAget_name( schema ) );
+        } else {
+            fprintf( createall, "    %s::schema = new Schema(\"%s\");\n", SCHEMAget_name( schema ), PrettyTmpName( SCHEMAget_name( schema ) ) );
 
-        /* Add the SdaiModel_contents_<schema_name> class constructor to the
-           schema descriptor create function for it */
-        fprintf( createall, "    %s::schema->AssignModelContentsCreator( (ModelContentsCreator) create_SdaiModel_contents_%s);\n",
-                 SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
+            /* Add the SdaiModel_contents_<schema_name> class constructor to the
+               schema descriptor create function for it */
+            fprintf( createall, "    %s::schema->AssignModelContentsCreator( (ModelContentsCreator) create_SdaiModel_contents_%s);\n",
+                     SCHEMAget_name( schema ), SCHEMAget_name( schema ) );
 
-        fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
-        /**************/
-        /* add global RULEs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
-        while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
-            fprintf( createall, "    str.clear();\n" );
-            format_for_std_stringout( createall, RULEto_string( r ) );
-            fprintf( createall, "gr = new Global_rule(\"%s\",%s::schema, str );\n", r->symbol.name, SCHEMAget_name( schema ) );
-            fprintf( createall, "%s::schema->AddGlobal_rule(gr);\n", SCHEMAget_name( schema ) );
+            fprintf( createall, "    reg.AddSchema (*%s::schema);\n", SCHEMAget_name( schema ) );
         }
         /**************/
-        /* add FUNCTIONs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_FUNCTION );
-        while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
-            fprintf( createall, "    str.clear();\n" );
-            format_for_std_stringout( createall, FUNCto_string( f ) );
-            fprintf( createall, "%s::schema->AddFunction( str );\n", SCHEMAget_name( schema ) );
-        }
+        /* add schema rules and algorithms to the dictionary entry */
+        if( exp2cxx_api_version == 2 && !exp2cxx_late_bound ) {
+            const char * schemaName = SCHEMAget_name( schema );
+            fprintf( createall,
+                     "    static const GlobalRuleInitRecord %sGlobalRules[] = {\n"
+                     "        { 0, 0 },\n", schemaName );
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
+            while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
+                fprintf( createall, "        { \"%s\", ", r->symbol.name );
+                printQuotedInitializer( createall, RULEto_string( r ) );
+                fprintf( createall, " },\n" );
+            }
+            fprintf( createall,
+                     "    };\n"
+                     "    InitializeGlobalRules( *%s::schema, "
+                     "%sGlobalRules + 1, sizeof(%sGlobalRules) / "
+                     "sizeof(%sGlobalRules[0]) - 1 );\n",
+                     schemaName, schemaName, schemaName, schemaName );
 
-        /* add PROCEDUREs to Schema dictionary entry */
-        DICTdo_type_init( schema->symbol_table, &de, OBJ_PROCEDURE );
-        while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
-            fprintf( createall, "    str.clear();\n" );
-            format_for_std_stringout( createall, PROCto_string( p ) );
-            fprintf( createall, "%s::schema->AddProcedure( str );\n", SCHEMAget_name( schema ) );
+            fprintf( createall,
+                     "    static const char * const %sFunctions[] = { 0,\n",
+                     schemaName );
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_FUNCTION );
+            while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
+                fprintf( createall, "        " );
+                printQuotedInitializer( createall, FUNCto_string( f ) );
+                fprintf( createall, ",\n" );
+            }
+            fprintf( createall,
+                     "    };\n"
+                     "    InitializeFunctions( *%s::schema, %sFunctions + 1, "
+                     "sizeof(%sFunctions) / sizeof(%sFunctions[0]) - 1 );\n",
+                     schemaName, schemaName, schemaName, schemaName );
+
+            fprintf( createall,
+                     "    static const char * const %sProcedures[] = { 0,\n",
+                     schemaName );
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_PROCEDURE );
+            while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
+                fprintf( createall, "        " );
+                printQuotedInitializer( createall, PROCto_string( p ) );
+                fprintf( createall, ",\n" );
+            }
+            fprintf( createall,
+                     "    };\n"
+                     "    InitializeProcedures( *%s::schema, "
+                     "%sProcedures + 1, sizeof(%sProcedures) / "
+                     "sizeof(%sProcedures[0]) - 1 );\n",
+                     schemaName, schemaName, schemaName, schemaName );
+        } else if( exp2cxx_api_version != 2 ) {
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_RULE );
+            while( 0 != ( r = ( Rule )DICTdo( &de ) ) ) {
+                fprintf( createall, "    str.clear();\n" );
+                format_for_std_stringout( createall, RULEto_string( r ) );
+                fprintf( createall,
+                         "gr = new Global_rule(\"%s\",%s::schema, str );\n",
+                         r->symbol.name, SCHEMAget_name( schema ) );
+                fprintf( createall, "%s::schema->AddGlobal_rule(gr);\n",
+                         SCHEMAget_name( schema ) );
+            }
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_FUNCTION );
+            while( 0 != ( f = ( Function )DICTdo( &de ) ) ) {
+                fprintf( createall, "    str.clear();\n" );
+                format_for_std_stringout( createall, FUNCto_string( f ) );
+                fprintf( createall, "%s::schema->AddFunction( str );\n",
+                         SCHEMAget_name( schema ) );
+            }
+            DICTdo_type_init( schema->symbol_table, &de, OBJ_PROCEDURE );
+            while( 0 != ( p = ( Procedure )DICTdo( &de ) ) ) {
+                fprintf( createall, "    str.clear();\n" );
+                format_for_std_stringout( createall, PROCto_string( p ) );
+                fprintf( createall, "%s::schema->AddProcedure( str );\n",
+                         SCHEMAget_name( schema ) );
+            }
         }
 
         fprintf( files->classes, "\n// Schema:  %s", schnm );
@@ -603,7 +939,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
             std::cerr << "Warning - " << __FILE__ << " line " << __LINE__ << " - sufnm not large enough to hold string\n";
         }
 
-        initfile = files->init = fopen( fnm, "a" );
+        initfile = files->init = GENERATEDappend( fnm );
     }
 
     /**********  record in files relating to entire input   ***********/
@@ -630,7 +966,7 @@ void SCHEMAprint( Schema schema, FILES * files, void * complexCol, int suffix ) 
     if( schema->search_id == PROCESSED ) {
         INITFileFinish( initfile, schema );
     } else {
-        fclose( initfile );
+        GENERATEDclose( initfile );
     }
 }
 
@@ -652,7 +988,7 @@ void getMCPrint( Express express, FILE * schema_h, FILE * schema_cc ) {
     Schema schema;
 
     fprintf( schema_h, "\nSDAI_Model_contents_ptr GetModelContents(char *schemaName);\n" );
-    fprintf( schema_cc, "/*    Generated at %s:%d.    */\n\n", __FILE__, __LINE__ );
+    fprintf( schema_cc, "/* Generated by exp2cxx. */\n\n" );
     fprintf( schema_cc, "%s%s%s%s",
              "// Generate a function to be called by Model to help it\n",
              "// create the necessary Model_contents without the\n",
@@ -705,7 +1041,11 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
     }
     fprintf( files->inc, "\n// in the exp2cxx source code, this file is generally referred to as files->inc or incfile\n" );
 
-    fprintf( incfile, "#include \"core/sdai.h\" \n" );
+    if( exp2cxx_api_version == 2 && exp2cxx_late_bound ) {
+        fprintf( incfile, "#include \"clstepcore/schemaModule.h\"\n" );
+    } else {
+        fprintf( incfile, "#include \"core/sdai.h\" \n" );
+    }
 
     np = fnm + strlen( fnm ) - 1; /*  point to end of constant part of string  */
     remaining = (size_t)(fnm + sizeof(fnm) - np);
@@ -726,7 +1066,8 @@ void EXPRESSPrint( Express express, ComplexCollect & col, FILES * files ) {
         return;
     }
     fprintf( libfile, "#include \"%sNames.h\"\n", schnm );
-    fprintf( files->names, "\n// In the exp2cxx source code, this file is referred to as files->names.\n// This line printed at %s:%d (one of two possible locations).\n\n", __FILE__, __LINE__ );
+    fprintf( files->names,
+             "\n// In exp2cxx, this output is referred to as files->names.\n\n" );
     fprintf( files->names, "//this file contains a namespace for all formerly-global variables\n\n" );
     //the next line in this file depends on the schema name, so printing continues in the while loop ~25 lines below
 
@@ -797,7 +1138,15 @@ void print_file( Express express ) {
     ComplexCollect col( express );
     File_holder files;
 
+    if( exp2cxx_metadata_profile == Exp2CxxMetadata_Structural &&
+            !( exp2cxx_api_version == 2 && exp2cxx_late_bound ) ) {
+        fprintf( stderr,
+                 "exp2cxx: structural metadata requires late-bound API v2\n" );
+        exit( EXIT_FAILURE );
+    }
+
     resolution_success();
+    GENERATEDbegin();
 
     print_file_header( &files );
     if( separate_schemas ) {
@@ -806,5 +1155,9 @@ void print_file( Express express ) {
         print_schemas_combined( express, col, &files );
     }
     print_file_trailer( &files );
-    print_complex( col, "compstructs.cc" );
+    print_complex( col, "compstructs.cc", exp2cxx_api_version == 2 );
+    if( !GENERATEDfinish() ) {
+        fprintf( stderr, "exp2cxx: unable to commit generated output\n" );
+        exit( EXIT_FAILURE );
+    }
 }

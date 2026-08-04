@@ -112,6 +112,7 @@ class SC_CORE_EXPORT STEPattribute {
         char SkipBadAttr( istream & in, char * StopChars );
         void AddErrorInfo();
         void STEPwriteError( ostream& out, unsigned int line, const char* desc );
+        void DeleteOwnedPtr();
 
     public:
         void incrRefCount() {
@@ -232,6 +233,14 @@ class SC_CORE_EXPORT STEPattribute {
             memset( & ptr, 0, sizeof( ptr ) );
         }
         ~STEPattribute();
+        /** Construct storage owned by this attribute from its descriptor.
+         *
+         * Generated early-bound classes normally pass a pointer to one of
+         * their data members to the typed constructors below.  Late-bound
+         * instances have no generated data members, so this constructor
+         * allocates the corresponding value object instead.
+         */
+        explicit STEPattribute( const class AttrDescriptor & d );
         //  INTEGER
         STEPattribute( const class AttrDescriptor & d, SDAI_Integer * p );
         //  BINARY

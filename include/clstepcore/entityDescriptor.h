@@ -24,6 +24,9 @@ class Registry;
  */
 class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
 
+    private:
+        void InvalidateLateBoundLayout() const;
+
     protected:
 
         SDAI_LOGICAL _abstractEntity;
@@ -56,6 +59,22 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
                         );
 
         virtual ~EntityDescriptor();
+
+        /** Create an instance of this entity.
+         *
+         * Uses the generated early-bound creator when one is installed and
+         * otherwise constructs a descriptor-backed late-bound instance.
+         */
+        SDAI_Application_instance * CreateEntity() const;
+
+        /** Resolve the inherited attribute layout used by late-bound
+         * instances.
+         *
+         * SchemaModule calls this once after descriptor initialization.
+         * CreateEntity also calls it as a fallback for independently built
+         * descriptor graphs.
+         */
+        void PrepareLateBoundLayout() const;
 
         void InitIAttrs( Registry & reg, const char * schNm );
 
@@ -134,10 +153,12 @@ class SC_CORE_EXPORT EntityDescriptor  :    public TypeDescriptor  {
         }
 
         void AddSupertype( EntityDescriptor * ed ) {
+            InvalidateLateBoundLayout();
             _supertypes.AddNode( ed );
         }
 
         void AddExplicitAttr( AttrDescriptor * ad ) {
+            InvalidateLateBoundLayout();
             _explicitAttr.AddNode( ad );
         }
 

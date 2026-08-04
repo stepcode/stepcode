@@ -218,20 +218,32 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     const int entityChunks = std::max( 1, ( ecount + static_cast<int>( entityChunkSize ) - 1 ) / static_cast<int>( entityChunkSize ) );
     const int typeChunks = std::max( 1, ( tcount + static_cast<int>( typeChunkSize ) - 1 ) / static_cast<int>( typeChunkSize ) );
-    cmLists << "set(" << shortName << "_file_count " <<
-        ( ecount + tcount ) * 2 + entityChunks + typeChunks + 11 << ")" << endl << endl;
+    cmLists << "if(SC_EXP2CXX_LATE_BOUND)" << endl;
+    cmLists << "  set(" << shortName << "_file_count 10)" << endl;
+    cmLists << "else()" << endl;
+    cmLists << "  set(" << shortName << "_file_count " <<
+        ( ecount + tcount ) * 2 + entityChunks + typeChunks + 14 << ")" << endl;
+    cmLists << "endif()" << endl << endl;
 
 
     cmLists << "PROJECT(" << shortName << ")" << endl;
     cmLists << "# list headers so they can be installed - entity, type, misc" << endl;
 
-    cmLists << "set(" << shortName << "_entity_hdrs" << endl;
+    cmLists << "if(SC_EXP2CXX_LATE_BOUND)" << endl;
+    cmLists << "  set(" << shortName << "_entity_hdrs)" << endl;
+    cmLists << "else()" << endl;
+    cmLists << "  set(" << shortName << "_entity_hdrs" << endl;
     cmLists << eh.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "  )" << endl;
+    cmLists << "endif()" << endl << endl;
 
-    cmLists << "set(" << shortName << "_type_hdrs" << endl;
+    cmLists << "if(SC_EXP2CXX_LATE_BOUND)" << endl;
+    cmLists << "  set(" << shortName << "_type_hdrs)" << endl;
+    cmLists << "else()" << endl;
+    cmLists << "  set(" << shortName << "_type_hdrs" << endl;
     cmLists << th.str();
-    cmLists << "   )" << endl << endl;
+    cmLists << "  )" << endl;
+    cmLists << "endif()" << endl << endl;
 
     cmLists << "set(" << shortName << "_misc_hdrs" << endl;
     cmLists << "     Sdaiclasses.h   schema.h" << endl;
@@ -256,7 +268,12 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
 
     cmLists << "# unity build: #include small .cc files to reduce the number" << endl;
     cmLists << "# of translation units that must be compiled" << endl;
-    cmLists << "if(SC_UNITY_BUILD)" << endl << "  # bounded unity chunks; definitions are target-local" << endl;
+    cmLists << "if(SC_EXP2CXX_LATE_BOUND)" << endl;
+    cmLists << "  set(" << shortName << "_unity_build FALSE)" << endl;
+    cmLists << "  set(" << shortName << "_entity_impls)" << endl;
+    cmLists << "  set(" << shortName << "_type_impls)" << endl;
+    cmLists << "elseif(SC_UNITY_BUILD)" << endl;
+    cmLists << "  # bounded compact chunks; definitions are target-local" << endl;
     cmLists << "  set(" << shortName << "_unity_build TRUE)" << endl;
     cmLists << "  set(" << shortName << "_entity_impls" << endl;
     for( int chunk = 1; chunk <= entityChunks; ++chunk ) {
@@ -270,7 +287,7 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
             std::setfill( '0' ) << std::setw( 4 ) << chunk << ".cc" << endl;
     }
     cmLists << "  )" << endl;
-    cmLists << "else(SC_UNITY_BUILD)" << endl;
+    cmLists << "else()" << endl;
     cmLists << "  set(" << shortName << "_entity_impls" << endl;
     cmLists << ei.str();
     cmLists << "   )" << endl << endl;
@@ -278,7 +295,7 @@ void writeLists( const char * schemaName, stringstream & eh, stringstream & ei, 
     cmLists << "  set(" << shortName << "_type_impls" << endl;
     cmLists << ti.str();
     cmLists << "   )" << endl;
-    cmLists << "endif(SC_UNITY_BUILD)" << endl << endl;
+    cmLists << "endif()" << endl << endl;
 
     cmLists << "set( " << shortName << "_misc_impls" << endl;
     cmLists << "     SdaiAll.cc    compstructs.cc    schema.cc" << endl;

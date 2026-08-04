@@ -1,14 +1,15 @@
 #include "clstepcore/selectTypeDescriptor.h"
+#include "clstepcore/sdaiSelect.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // SelectTypeDescriptor functions
 ///////////////////////////////////////////////////////////////////////////////
 
-SDAI_Select * SelectTypeDescriptor::CreateSelect() {
+SDAI_Select * SelectTypeDescriptor::CreateSelect() const {
     if( CreateNewSelect ) {
         return CreateNewSelect();
     } else {
-        return 0;
+        return new SDAI_Select( this );
     }
 }
 

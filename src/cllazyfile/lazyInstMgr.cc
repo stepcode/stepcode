@@ -61,6 +61,7 @@ sectionID lazyInstMgr::registerDataSection( lazyDataSectionReader * sreader ) {
 void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     _lazyInstanceCount++;
     assert( inst.loc.begin > 0 && inst.loc.instance > 0 );
+    const bool duplicate = _instanceStreamPos.find( inst.loc.instance ) != 0;
     int len = strlen( inst.name );
     if( len > _longestTypeNameLen ) {
         _longestTypeNameLen = len;
@@ -68,6 +69,9 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
     }
     _instanceTypes->insert( inst.name, inst.loc.instance );
     if( inst.componentTypes ) {
+        if( !duplicate && !inst.componentTypes->empty() ) {
+            _instanceComponentTypes[inst.loc.instance] = *inst.componentTypes;
+        }
         std::vector<std::string>::const_iterator type = inst.componentTypes->begin();
         for( ; type != inst.componentTypes->end(); ++type ) {
             _instanceTypes->insert( type->c_str(), inst.loc.instance );
@@ -78,7 +82,6 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         }
         delete inst.componentTypes;
     }
-    const bool duplicate = _instanceStreamPos.find( inst.loc.instance ) != 0;
     if( !duplicate ) _allInstances.push_back( inst.loc.instance );
     instancePosition pos;
     pos.begin = inst.loc.begin;
@@ -109,6 +112,13 @@ void lazyInstMgr::addLazyInstance( namedLazyInstance inst ) {
         }
         delete inst.refs;
     }
+}
+
+const std::vector<std::string> & lazyInstMgr::componentTypes( instanceID id ) const {
+    static const std::vector<std::string> empty;
+    std::map<instanceID, std::vector<std::string> >::const_iterator found =
+        _instanceComponentTypes.find( id );
+    return found == _instanceComponentTypes.end() ? empty : found->second;
 }
 
 LazyInstanceIdView lazyInstMgr::instancesByType( std::string type, bool caseSensitive ) {
@@ -318,7 +328,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
     if( 0 != ( cv = _instanceStreamPos.find( id ) ) ) {
         switch( cv->size() ) {
             case 0:
-                std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+                if( !_diagnosticCallback ) {
+                    std::cerr << "Instance #" << id
+                        << " not found in any section." << std::endl;
+                }
                 break;
             case 1:
                 pos = cv->at( 0 );
@@ -341,7 +354,11 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 }
                 break;
             default:
-                std::cerr << "Instance #" << id << " exists in multiple sections. This is not yet supported." << std::endl;
+                if( !_diagnosticCallback ) {
+                    std::cerr << "Instance #" << id
+                        << " exists in multiple sections. This is not yet supported."
+                        << std::endl;
+                }
                 {
                     LazyDiagnostic diagnostic;
                     diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
@@ -375,7 +392,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 resolveDeferredInverses();
             }
         } else {
-            std::cerr << "Error loading instance #" << id << "." << std::endl;
+            if( !_diagnosticCallback ) {
+                std::cerr << "Error loading instance #" << id << "."
+                    << std::endl;
+            }
             LazyDiagnostic diagnostic;
             diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
             diagnostic.entity = id;
@@ -384,7 +404,10 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
             emitDiagnostic( diagnostic );
         }
     } else {
-        std::cerr << "Instance #" << id << " not found in any section." << std::endl;
+        if( !_diagnosticCallback ) {
+            std::cerr << "Instance #" << id
+                << " not found in any section." << std::endl;
+        }
         LazyDiagnostic diagnostic;
         diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
         diagnostic.entity = id;
@@ -427,6 +450,11 @@ std::vector<instanceID> lazyInstMgr::dependencyClosure( const std::vector<instan
         if( !refs ) continue;
         instanceRefs_t::cvector::const_iterator ref = refs->begin();
         for( ; ref != refs->end(); ++ref ) {
+            /* validateReferences() reports nonexistent targets when the file
+             * is opened.  They cannot be pinned or materialized, and adding
+             * them to a batch only produces a second, less useful error (or
+             * an integer-limit error for a malformed maximum-width ID). */
+            if( !_instanceStreamPos.find( *ref ) ) continue;
             if( closure.insert( *ref ).second ) queue.push_back( *ref );
         }
     }

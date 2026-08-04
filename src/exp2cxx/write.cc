@@ -10,12 +10,183 @@
  * Date:        01/09/97                                                     *
  *****************************************************************************/
 
+#include <cstdint>
+#include <cstdlib>
+#include <iomanip>
+#include <map>
+#include <sstream>
+#include <string>
+#include <vector>
+
 #include "complexSupport.h"
+#include "generated_output.h"
 
 // Local function prototypes:
 static void writeheader( ostream &, int );
 
-void print_complex( ComplexCollect & collect, const char * filename )
+struct CompactComplexNode {
+    JoinType kind;
+    uint32_t name;
+    uint32_t firstChild;
+    uint32_t nextSibling;
+};
+
+static uint32_t compactString( const std::string & value,
+                               std::string & strings,
+                               std::map<std::string, uint32_t> & offsets ) {
+    std::map<std::string, uint32_t>::const_iterator found =
+        offsets.find( value );
+    if( found != offsets.end() ) {
+        return found->second;
+    }
+    const uint32_t offset = static_cast<uint32_t>( strings.size() );
+    offsets[value] = offset;
+    strings.append( value );
+    strings.push_back( '\0' );
+    return offset;
+}
+
+static uint32_t appendCompactNode(
+    EntList * node, std::vector<CompactComplexNode> & nodes,
+    std::string & strings, std::map<std::string, uint32_t> & offsets ) {
+    const uint32_t noNode = UINT32_MAX;
+    const uint32_t index = static_cast<uint32_t>( nodes.size() );
+    CompactComplexNode record = { node->join, 0, noNode, noNode };
+    if( node->join == SIMPLE ) {
+        record.name = compactString(
+            static_cast<SimpleList *>( node )->Name(), strings, offsets );
+    }
+    nodes.push_back( record );
+
+    if( node->multiple() ) {
+        MultList * parent = static_cast<MultList *>( node );
+        uint32_t previous = noNode;
+        for( int i = 0; i < parent->childCount(); ++i ) {
+            uint32_t child = appendCompactNode(
+                parent->getChild( i ), nodes, strings, offsets );
+            if( previous == noNode ) {
+                nodes[index].firstChild = child;
+            } else {
+                nodes[previous].nextSibling = child;
+            }
+            previous = child;
+        }
+    }
+    return index;
+}
+
+static void writeCompactString( ostream & output, const std::string & value ) {
+    output << '"';
+    for( size_t i = 0; i < value.size(); ++i ) {
+        const unsigned char c = static_cast<unsigned char>( value[i] );
+        if( c == '\\' || c == '"' ) {
+            output << '\\' << static_cast<char>( c );
+        } else if( c >= 32 && c < 127 ) {
+            output << static_cast<char>( c );
+        } else {
+            output << '\\' << std::oct << std::setw( 3 ) << std::setfill( '0' )
+                   << static_cast<unsigned>( c ) << std::dec;
+        }
+    }
+    output << '"';
+}
+
+static const char * compactNodeKind( JoinType kind ) {
+    switch( kind ) {
+        case AND:
+            return "ComplexNodeInit_And";
+        case OR:
+            return "ComplexNodeInit_Or";
+        case ANDOR:
+            return "ComplexNodeInit_AndOr";
+        case SIMPLE:
+        default:
+            return "ComplexNodeInit_Simple";
+    }
+}
+
+static void writeCompactComplex( ostream & output, ComplexCollect & collect ) {
+    const uint32_t noNode = UINT32_MAX;
+    std::vector<CompactComplexNode> nodes;
+    std::vector<uint32_t> roots;
+    std::string strings( 1, '\0' );
+    std::map<std::string, uint32_t> stringOffsets;
+    stringOffsets[""] = 0;
+    for( ComplexList * list = collect.clists; list; list = list->next ) {
+        roots.push_back( appendCompactNode(
+            list->head, nodes, strings, stringOffsets ) );
+    }
+
+    output << "// compact, table-driven API v2 complex metadata\n"
+           << "#include \"clstepcore/schemaInit.h\"\n"
+           << "#include <cstddef>\n"
+           << "#include <cstdint>\n\n"
+           << "namespace {\n"
+           << "struct GeneratedComplexImage {\n"
+           << "    PackedComplexImage header;\n"
+           << "    PackedComplexNode nodes[" << ( nodes.empty() ? 1 : nodes.size() )
+           << "];\n"
+           << "    PackedComplexList lists[" << ( roots.empty() ? 1 : roots.size() )
+           << "];\n"
+           << "    char strings[" << strings.size() + 1 << "];\n"
+           << "};\n\n"
+           << "const GeneratedComplexImage generatedComplexImage = {\n"
+           << "    { PackedComplexImageVersion_1, "
+              "sizeof(GeneratedComplexImage),\n"
+           << "      offsetof(GeneratedComplexImage, strings), "
+           << strings.size() << ",\n"
+           << "      offsetof(GeneratedComplexImage, nodes), "
+           << nodes.size() << ",\n"
+           << "      offsetof(GeneratedComplexImage, lists), "
+           << roots.size() << " },\n"
+           << "    {\n";
+    if( nodes.empty() ) {
+        output << "        {},\n";
+    }
+    for( size_t i = 0; i < nodes.size(); ++i ) {
+        output << "        { " << compactNodeKind( nodes[i].kind ) << ", "
+               << nodes[i].name << ", ";
+        if( nodes[i].firstChild == noNode ) {
+            output << "UINT32_MAX";
+        } else {
+            output << nodes[i].firstChild;
+        }
+        output << ", ";
+        if( nodes[i].nextSibling == noNode ) {
+            output << "UINT32_MAX";
+        } else {
+            output << nodes[i].nextSibling;
+        }
+        output << " },\n";
+    }
+    output << "    },\n    {\n";
+    if( roots.empty() ) {
+        output << "        {},\n";
+    }
+    for( size_t i = 0; i < roots.size(); ++i ) {
+        output << "        { " << roots[i] << " },\n";
+    }
+    output << "    },\n    ";
+    writeCompactString( output, strings );
+    output << "\n};\n}\n\nComplexCollect * gencomplex() {\n"
+           << "    return InitializePackedComplexSupport(\n"
+           << "        generatedComplexImage.header );\n"
+           << "}\n";
+}
+
+static bool writeGeneratedComplex( const char * filename,
+                                   const std::ostringstream & output ) {
+    const std::string contents = output.str();
+    if( GENERATEDwrite( filename, contents.data(), contents.size() ) ) {
+        return true;
+    }
+    cerr << "ERROR: Could not create output file " << filename << endl;
+    exit( EXIT_FAILURE );
+    return false;
+}
+
+void print_complex( ComplexCollect & collect, const char * filename,
+                    bool compact )
 /*
  * Standalone function called from exp2cxx.  Takes a ComplexCollect
  * and writes its contents to a file (filename) which can be used to
@@ -32,26 +203,23 @@ void print_complex( ComplexCollect & collect, const char * filename )
         }
     }
 #endif
-    collect.write( filename );
+    collect.write( filename, compact );
 }
 
-void ComplexCollect::write( const char * fname )
+void ComplexCollect::write( const char * fname, bool compactOutput )
 /*
  * Generates C++ code in os which may be compiled and run to create a
  * ComplexCollect structure.  Functions are called to write out the
  * ComplexList structures contained in this.
  */
 {
-    ofstream complex;
+    std::ostringstream complex;
     ComplexList * clist;
     int maxlevel, listmax;
 
-    // Open the stream:
-    complex.open( fname );
-    if( !complex ) {
-        cerr << "ERROR: Could not create output file " << fname << endl;
-        // yikes this is pretty drastic, Sun C++ doesn't like this anyway DAS
-//  exit(-1);
+    if( compactOutput ) {
+        writeCompactComplex( complex, *this );
+        writeGeneratedComplex( fname, complex );
         return;
     }
     writeheader( complex, clists == NULL );
@@ -61,7 +229,7 @@ void ComplexCollect::write( const char * fname )
     if( clists == NULL ) {
         complex << "    return 0;" << endl;
         complex << "}" << endl;
-        complex.close();
+        writeGeneratedComplex( fname, complex );
         return;
     }
 
@@ -99,7 +267,7 @@ void ComplexCollect::write( const char * fname )
     // Close up:
     complex << "\n    return cc;\n";
     complex << "}" << endl;
-    complex.close();
+    writeGeneratedComplex( fname, complex );
 }
 
 static void writeheader( ostream & os, int noLists )

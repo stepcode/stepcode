@@ -31,6 +31,8 @@ set(CORE_HDRS
   realTypeDescriptor.h
   Registry.h
   schRename.h
+  schemaInit.h
+  schemaModule.h
   sdai.h
   sdaiApplication_instance.h
   sdaiSelect.h
@@ -68,4 +70,3 @@ install(FILES ${CORE_HDRS}
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

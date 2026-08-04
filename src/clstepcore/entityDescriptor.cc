@@ -1,10 +1,158 @@
+#include <cstring>
+#include <limits>
+#include <mutex>
+#include <set>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "clstepcore/entityDescriptor.h"
 #include "clstepcore/Registry.h"
 #include "clstepcore/attrDescriptor.h"
 #include "clstepcore/inverseAttribute.h"
 #include "clstepcore/SubSuperIterators.h"
+#include "clstepcore/STEPattribute.h"
+#include "clstepcore/sdaiApplication_instance.h"
+
+struct EntityAttributeLayoutEntry {
+    explicit EntityAttributeLayoutEntry(
+        const AttrDescriptor * attributeDescriptor )
+        : descriptor( attributeDescriptor ), derived( false ),
+          redefining( std::numeric_limits<size_t>::max() ) {
+    }
+
+    const AttrDescriptor * descriptor;
+    bool derived;
+    size_t redefining;
+};
+
+class EntityAttributeLayout {
+public:
+    EntityAttributeLayout() : hasRedefinitions( false ) {
+    }
+
+    std::vector<EntityAttributeLayoutEntry> attributes;
+    bool hasRedefinitions;
+};
+
+namespace {
+
+const size_t noAttribute = std::numeric_limits<size_t>::max();
+
+class EntityAttributeLayoutCache {
+    typedef std::unordered_map<const EntityDescriptor *,
+            EntityAttributeLayout *> LayoutMap;
+
+    LayoutMap _layouts;
+    std::mutex _mutex;
+
+public:
+    ~EntityAttributeLayoutCache() {
+        for( LayoutMap::iterator i = _layouts.begin();
+             i != _layouts.end(); ++i ) {
+            delete i->second;
+        }
+    }
+
+    EntityAttributeLayout * Find( const EntityDescriptor * entity ) {
+        std::lock_guard<std::mutex> lock( _mutex );
+        LayoutMap::iterator i = _layouts.find( entity );
+        return i == _layouts.end() ? 0 : i->second;
+    }
+
+    void Insert( const EntityDescriptor * entity,
+                 EntityAttributeLayout * layout ) {
+        std::lock_guard<std::mutex> lock( _mutex );
+        LayoutMap::iterator i = _layouts.find( entity );
+        if( i == _layouts.end() ) {
+            _layouts[entity] = layout;
+        } else {
+            delete layout;
+        }
+    }
+
+    void Erase( const EntityDescriptor * entity ) {
+        std::lock_guard<std::mutex> lock( _mutex );
+        LayoutMap::iterator i = _layouts.find( entity );
+        if( i != _layouts.end() ) {
+            delete i->second;
+            _layouts.erase( i );
+        }
+    }
+};
+
+EntityAttributeLayoutCache & layoutCache() {
+    static EntityAttributeLayoutCache cache;
+    return cache;
+}
+
+size_t findAttribute( const EntityAttributeLayout & layout,
+                      const char * name, const char * owner ) {
+    for( size_t i = 0; i < layout.attributes.size(); ++i ) {
+        const AttrDescriptor * candidate = layout.attributes[i].descriptor;
+        if( strcmp( name, candidate->Name() ) == 0 &&
+            ( !owner || candidate->Owner().IsA( owner ) ) ) {
+            return i;
+        }
+    }
+    return noAttribute;
+}
+
+void appendLayout( const EntityDescriptor * ed, EntityAttributeLayout & layout,
+                   std::set<const EntityDescriptor *> & visited ) {
+    if( !ed || !visited.insert( ed ).second ) {
+        return;
+    }
+
+    EntityDescItr supers( ed->Supertypes() );
+    const EntityDescriptor * super = 0;
+    while( ( super = supers.NextEntityDesc() ) ) {
+        appendLayout( super, layout, visited );
+    }
+
+    AttrDescItr attrs( ed->ExplicitAttr() );
+    const AttrDescriptor * ad = 0;
+    while( ( ad = attrs.NextAttrDesc() ) ) {
+        const char * separator = strrchr( ad->Name(), '.' );
+        const char * simpleName = separator ? separator + 1 : ad->Name();
+        if( ad->AttrType() == AttrType_Deriving ) {
+            const char * ownerName = ed->Name();
+            std::string qualifiedOwner;
+            if( separator ) {
+                qualifiedOwner.assign( ad->Name(), separator - ad->Name() );
+                ownerName = qualifiedOwner.c_str();
+            }
+            const size_t target =
+                findAttribute( layout, simpleName, ownerName );
+            if( target != noAttribute ) {
+                layout.attributes[target].derived = true;
+            }
+            continue;
+        }
+        if( ad->AttrType() == AttrType_Inverse ) {
+            continue;
+        }
+
+        layout.attributes.push_back( EntityAttributeLayoutEntry( ad ) );
+        if( ad->AttrType() == AttrType_Redefining ) {
+            const size_t target = findAttribute( layout, simpleName, 0 );
+            if( target != noAttribute ) {
+                layout.attributes[target].redefining =
+                    layout.attributes.size() - 1;
+                layout.hasRedefinitions = true;
+            }
+        }
+    }
+}
+
+class LateBoundEntity : public SDAI_Application_instance {
+public:
+    explicit LateBoundEntity( const EntityDescriptor * ed ) {
+        eDesc = ed;
+    }
+};
+
+}
 
 EntityDescriptor::EntityDescriptor( )
     : _abstractEntity( LUnknown ), _extMapping( LUnknown ),
@@ -23,7 +171,63 @@ EntityDescriptor::EntityDescriptor( const char * name, // i.e. char *
 }
 
 EntityDescriptor::~EntityDescriptor() {
+    layoutCache().Erase( this );
     delete _uniqueness_rules;
+}
+
+SDAI_Application_instance * EntityDescriptor::CreateEntity() const {
+    if( NewSTEPentity ) {
+        return NewSTEPentity();
+    }
+
+    PrepareLateBoundLayout();
+    EntityAttributeLayout * layout = layoutCache().Find( this );
+    LateBoundEntity * entity = new LateBoundEntity( this );
+    std::vector<STEPattribute *> attributes;
+    if( layout->hasRedefinitions ) {
+        attributes.reserve( layout->attributes.size() );
+    }
+    for( size_t i = 0; i < layout->attributes.size(); ++i ) {
+        const EntityAttributeLayoutEntry & entry = layout->attributes[i];
+        STEPattribute * attribute = new STEPattribute( *entry.descriptor );
+        attribute->set_null();
+        if( entry.derived ) {
+            attribute->Derive();
+        }
+        entity->attributes.push( attribute );
+        if( layout->hasRedefinitions ) {
+            attributes.push_back( attribute );
+        }
+    }
+    if( layout->hasRedefinitions ) {
+        for( size_t i = 0; i < layout->attributes.size(); ++i ) {
+            const size_t redefining = layout->attributes[i].redefining;
+            if( redefining != noAttribute ) {
+                attributes[i]->RedefiningAttr( attributes[redefining] );
+            }
+        }
+    }
+    return entity;
+}
+
+void EntityDescriptor::PrepareLateBoundLayout() const {
+    if( layoutCache().Find( this ) ) {
+        return;
+    }
+    EntityAttributeLayout * layout = new EntityAttributeLayout;
+    std::set<const EntityDescriptor *> visited;
+    appendLayout( this, *layout, visited );
+    layoutCache().Insert( this, layout );
+}
+
+void EntityDescriptor::InvalidateLateBoundLayout() const {
+    layoutCache().Erase( this );
+
+    EntityDescItr subtypes( _subtypes );
+    const EntityDescriptor * subtype = 0;
+    while( ( subtype = subtypes.NextEntityDesc() ) ) {
+        subtype->InvalidateLateBoundLayout();
+    }
 }
 
 // initialize one inverse attr; used in InitIAttrs, below

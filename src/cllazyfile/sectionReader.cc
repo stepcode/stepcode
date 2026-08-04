@@ -446,11 +446,11 @@ SDAI_Application_instance * sectionReader::getRealInstance( const Registry * reg
                 size_t qualifier = normalizedSchema.find_first_of( " {" );
                 if( qualifier != std::string::npos ) normalizedSchema.erase( qualifier );
                 sName = normalizedSchema.c_str();
-                if( sn->NextNode() ) {
+                if( sn->NextNode() && _lazyFile->claimSchemaWarning() ) {
                     std::cerr << "Warning - multiple schema names found. Only searching with first one." << std::endl;
                 }
             }
-        } else {
+        } else if( _lazyFile->claimSchemaWarning() ) {
             std::cerr << "Warning - no schema names found; the file is probably invalid. Looking for typeName in any loaded schema." << std::endl;
         }
     }

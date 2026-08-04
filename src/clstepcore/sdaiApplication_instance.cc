@@ -119,7 +119,10 @@ SDAI_Application_instance * SDAI_Application_instance::Replicate() {
             return S_ENTITY_NULL;
         }
 
-        SDAI_Application_instance * seNew = eDesc->NewSTEPentity();
+        SDAI_Application_instance * seNew = eDesc->CreateEntity();
+        if( !seNew ) {
+            return S_ENTITY_NULL;
+        }
         seNew -> CopyAs( this );
         return seNew;
     }

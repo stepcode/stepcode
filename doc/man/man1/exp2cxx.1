@@ -45,6 +45,11 @@ EXPRESS code into C++ source code.  The C++ source code is generated
 in files in the directory in which exp2cxx was run.  The files are
 named according to the schema names in the input EXPRESS file.
 
+Generated files are replaced only when their content changes.  exp2cxx records
+the files it owns in `.exp2cxx-manifest`; a later run removes obsolete files
+from that manifest while leaving unrelated files in the output directory
+untouched.
+
 .SH OPTIONS
 .TP
 .B -s|S
@@ -56,6 +61,34 @@ Generates C++ classes for use with CORBA (Orbix).
 .TP
 .B -l|L
 Prints logging code in the generated C++ classes.
+.TP
+.B -k entity-chunk-size[:type-chunk-size]
+Limits the number of generated schema objects in each deterministic unity
+translation unit.  A single value applies to both entity and type chunks.
+.TP
+.B -V 1|2, --api-version 1|2
+Selects the generated C++ API.  Version 1 is the source-compatible default.
+Version 2 emits compact SELECT classes, table-driven schema initialization, and
+dependency-bounded entity headers backed by shared runtime code.  Version 2
+clients include the individual entity headers they use; schema.h does not
+include every entity class definition.
+.TP
+.B -T, --late-bound
+Selects API version 2 and omits generated early-bound C++ entity classes.
+Entity instances are constructed at runtime from schema descriptors.  This mode
+is intended for conversion and inspection applications which do not require the
+conventional generated entity API.
+.TP
+.B --compat-names
+Retains the generated entity-name aliases in late-bound output.  Normal
+late-bound API v2 output uses schema module IDs instead and omits these aliases.
+.TP
+.B --metadata full|structural
+Selects the generated schema metadata profile.  Full is the default and
+retains EXPRESS descriptions, constraints, and executable schema text.
+Structural is available with late-bound API version 2; it retains the entity,
+attribute, type, aggregate, enumeration, SELECT, inverse, and rename graph
+needed by conversion tools while omitting descriptive and constraint text.
 .TP
 .B -v
 Produces a version description.
@@ -161,4 +194,3 @@ appropriate file to download).
 
 .SH BUGS
 See fedex(1).
-

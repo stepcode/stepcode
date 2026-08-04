@@ -65,6 +65,29 @@
 #include <string.h>
 #include <stdio.h>
 
+/*
+ * Judy keys are byte-packed: adjacent slots may start at an address that is
+ * not suitably aligned for judyvalue.  Callers are likewise permitted to
+ * supply byte buffers without judyvalue alignment.  Copy through an aligned
+ * local value rather than dereferencing a cast pointer.  Zero-filling any
+ * bytes not requested also makes partial loads deterministic.
+ */
+static judyvalue
+judy_load_value( const unsigned char * source, unsigned int size )
+{
+    judyvalue value = 0;
+
+    memcpy( &value, source, size );
+    return value;
+}
+
+static void
+judy_store_value( unsigned char * destination, judyvalue value,
+                  unsigned int size )
+{
+    memcpy( destination, &value, size );
+}
+
 #if defined(STANDALONE) || defined(ASKITIS)
 
 extern unsigned int MaxMem;
@@ -313,7 +336,6 @@ void judy_free( Judy * judy, void * block, int type ) {
 //    assemble key from current path
 
 unsigned int judy_key( Judy * judy, unsigned char * buff, unsigned int max ) {
-    judyvalue * dest = ( judyvalue * )buff;
     unsigned int len = 0, idx = 0, depth;
     int slot, off, type;
     judyvalue value;
@@ -333,7 +355,8 @@ unsigned int judy_key( Judy * judy, unsigned char * buff, unsigned int max ) {
 
         if( judy->depth )
             if( !( len & JUDY_key_mask ) ) {
-                dest[depth] = 0;
+                judy_store_value( buff + depth * JUDY_key_size, 0,
+                                  JUDY_key_size );
             }
 
         switch( type ) {
@@ -350,9 +373,14 @@ unsigned int judy_key( Judy * judy, unsigned char * buff, unsigned int max ) {
                 base = ( unsigned char * )( judy->stack[idx].next & JUDY_mask );
 
                 if( judy->depth ) {
-                    value = *( judyvalue * )( base + slot * keysize );
+                    value = judy_load_value( base + slot * keysize,
+                                             JUDY_key_size );
                     value &= JudyMask[keysize];
-                    dest[depth++] |= value;
+                    value |= judy_load_value( buff + depth * JUDY_key_size,
+                                              JUDY_key_size );
+                    judy_store_value( buff + depth * JUDY_key_size, value,
+                                      JUDY_key_size );
+                    depth++;
                     len += keysize;
 
                     if( depth < judy->depth ) {
@@ -383,7 +411,13 @@ unsigned int judy_key( Judy * judy, unsigned char * buff, unsigned int max ) {
 
             case JUDY_radix:
                 if( judy->depth ) {
-                    dest[depth] |= ( judyvalue )slot << ( JUDY_key_size - ( ++len & JUDY_key_mask ) ) * 8;
+                    value = judy_load_value( buff + depth * JUDY_key_size,
+                                             JUDY_key_size );
+                    value |= ( judyvalue )slot <<
+                             ( ( JUDY_key_size - ++len ) &
+                               JUDY_key_mask ) * 8;
+                    judy_store_value( buff + depth * JUDY_key_size, value,
+                                      JUDY_key_size );
                     if( !( len & JUDY_key_mask ) ) {
                         depth++;
                     }
@@ -419,7 +453,6 @@ unsigned int judy_key( Judy * judy, unsigned char * buff, unsigned int max ) {
 //    find slot & setup cursor
 
 JudySlot * judy_slot( Judy * judy, const unsigned char * buff, unsigned int max ) {
-    judyvalue * src = ( judyvalue * )buff;
     int slot, size, keysize, tst, cnt;
     JudySlot next = *judy->root;
     judyvalue value, test = 0;
@@ -463,7 +496,9 @@ JudySlot * judy_slot( Judy * judy, const unsigned char * buff, unsigned int max 
                 value = 0;
 
                 if( judy->depth ) {
-                    value = src[depth++];
+                    value = judy_load_value( buff + depth * JUDY_key_size,
+                                             JUDY_key_size );
+                    depth++;
                     off |= JUDY_key_mask;
                     off++;
                     value &= JudyMask[keysize];
@@ -478,7 +513,8 @@ JudySlot * judy_slot( Judy * judy, const unsigned char * buff, unsigned int max 
                 //  find slot > key
 
                 while( slot-- ) {
-                    test = *( judyvalue * )( base + slot * keysize );
+                    test = judy_load_value( base + slot * keysize,
+                                            JUDY_key_size );
 #if BYTE_ORDER == BIG_ENDIAN
                     test >>= 8 * ( JUDY_key_size - keysize );
 #else
@@ -509,7 +545,9 @@ JudySlot * judy_slot( Judy * judy, const unsigned char * buff, unsigned int max 
                 table = ( JudySlot * )( next & JUDY_mask ); // outer radix
 
                 if( judy->depth ) {
-                    slot = ( src[depth] >> ( (( JUDY_key_size - ++off) & JUDY_key_mask ) * 8 ) ) & 0xff;
+                    value = judy_load_value( buff + depth * JUDY_key_size,
+                                             JUDY_key_size );
+                    slot = ( value >> ( (( JUDY_key_size - ++off) & JUDY_key_mask ) * 8 ) ) & 0xff;
                 } else if( off < max ) {
                     slot = buff[off++];
                 } else {
@@ -1224,10 +1262,9 @@ void judy_splitspan( Judy * judy, JudySlot * next, unsigned char * base ) {
 //    judy_cell: add string to judy array
 
 JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max ) {
-    judyvalue * src = ( judyvalue * )buff;
     int size, idx, slot, cnt, tst;
     JudySlot * next = judy->root;
-    judyvalue test, value;
+    judyvalue test = 0, value;
     unsigned int off = 0, start;
     JudySlot * table;
     JudySlot * node;
@@ -1261,7 +1298,9 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
                 value = 0;
 
                 if( judy->depth ) {
-                    value = src[depth++];
+                    value = judy_load_value( buff + depth * JUDY_key_size,
+                                             JUDY_key_size );
+                    depth++;
                     off |= JUDY_key_mask;
                     off++;
                     value &= JudyMask[keysize];
@@ -1276,7 +1315,8 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
                 //  find slot > key
 
                 while( slot-- ) {
-                    test = *( judyvalue * )( base + slot * keysize );
+                    test = judy_load_value( base + slot * keysize,
+                                            JUDY_key_size );
 #if BYTE_ORDER == BIG_ENDIAN
                     test >>= 8 * ( JUDY_key_size - keysize );
 #else
@@ -1378,7 +1418,9 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
                 table = ( JudySlot * )( *next & JUDY_mask ); // outer radix
 
                 if( judy->depth ) {
-                    slot = ( src[depth] >> ( ( (JUDY_key_size - ++off) & JUDY_key_mask ) * 8 ) ) & 0xff;
+                    value = judy_load_value( buff + depth * JUDY_key_size,
+                                             JUDY_key_size );
+                    slot = ( value >> ( ( (JUDY_key_size - ++off) & JUDY_key_mask ) * 8 ) ) & 0xff;
                 } else if( off < max ) {
                     slot = buff[off++];
                 } else {
@@ -1464,7 +1506,8 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
             //    fill in slot 0 with bytes of key
 
             if( judy->depth ) {
-                value = src[depth];
+                value = judy_load_value( buff + depth * JUDY_key_size,
+                                         JUDY_key_size );
 #if BYTE_ORDER != BIG_ENDIAN
                 memcpy( base, &value, keysize );  // copy new key into slot
 #else
@@ -1542,7 +1585,9 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
 
             //    fill in slot 0 with bytes of key
 
-            *( judyvalue * )base = src[depth];
+            value = judy_load_value( buff + depth * JUDY_key_size,
+                                     JUDY_key_size );
+            judy_store_value( base, value, JUDY_key_size );
 
             if( judy->level < judy->max ) {
                 judy->level++;
@@ -1562,4 +1607,3 @@ JudySlot * judy_cell( Judy * judy, const unsigned char * buff, unsigned int max 
 #endif
     return next;
 }
-

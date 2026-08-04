@@ -7,7 +7,9 @@ set(exp2cxx_SOURCES
   ${FEDEX_COMMON_SRCS}
   trace_fprintf.c
   fedex_main.c
+  generated_output.cc
   classes_wrapper.cc
+  schema_image.cc
   classes.c
   classes_attribute.c
   classes_entity.c
@@ -54,4 +56,3 @@ endif(SC_ENABLE_TESTING)
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

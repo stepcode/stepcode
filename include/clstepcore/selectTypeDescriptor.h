@@ -19,7 +19,7 @@ public:
         CreateNewSelect = f;
     }
 
-    SDAI_Select * CreateSelect();
+    SDAI_Select * CreateSelect() const;
 
     SelectTypeDescriptor( int b, const char * nm, PrimitiveType ft,
                           Schema * origSchema,

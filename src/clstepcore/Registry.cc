@@ -248,8 +248,10 @@ void Registry::RemoveClones( const EntityDescriptor & e ) {
 SDAI_Application_instance * Registry::ObjCreate( const char * nm, const char * schnm, int check_case ) const {
     const EntityDescriptor  * entd = FindEntity( nm, schnm, check_case );
     if( entd ) {
-        SDAI_Application_instance * se =
-            ( ( EntityDescriptor * )entd ) -> NewSTEPentity();
+        SDAI_Application_instance * se = entd->CreateEntity();
+        if( !se ) {
+            return ENTITY_NULL;
+        }
 
         // See comment in previous function.
         if( entd->AbstractEntity().asInt() == 1 ) {

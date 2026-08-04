@@ -82,6 +82,7 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
 
         std::map<instanceID, size_t> _pinCounts;
         std::map<instanceID, uint64_t> _instanceSourceBytes;
+        std::map<instanceID, std::vector<std::string> > _instanceComponentTypes;
         std::map<std::string, std::string> _materializationTypeAliases;
         std::set<instanceID> _batchOwnedInstances;
         std::set<instanceID> _permanentlyLoadedInstances;
@@ -161,6 +162,10 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
         /** Copy the exact indexed source record for an instance.  Returns an
          * empty string when the ID is missing or ambiguous. */
         std::string sourceRecord( instanceID id );
+        /** Return the Part 21 component keywords of a complex instance in
+         * source order.  Ordinary and unknown instances return an empty
+         * vector. */
+        const std::vector<std::string> & componentTypes( instanceID id ) const;
 
         /// returns a vector containing the instances that match `type`
         instanceTypes_t::cvector * getInstances( std::string type, bool caseSensitive = false ) { /*const*/

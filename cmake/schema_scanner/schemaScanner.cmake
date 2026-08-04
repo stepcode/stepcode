@@ -22,6 +22,40 @@ if(NOT DEFINED SC_EXP2CXX_CHUNK_SIZE)
   set(SC_EXP2CXX_CHUNK_SIZE "64:8" CACHE STRING "Maximum entity:type objects in generated unity translation units")
 endif()
 
+if(NOT DEFINED SC_EXP2CXX_API_VERSION)
+  set(SC_EXP2CXX_API_VERSION "1")
+endif()
+set(SC_EXP2CXX_API_VERSION "${SC_EXP2CXX_API_VERSION}" CACHE STRING "Generated C++ API version (1 or 2)")
+set_property(CACHE SC_EXP2CXX_API_VERSION PROPERTY STRINGS 1 2)
+if(NOT SC_EXP2CXX_API_VERSION MATCHES "^[12]$")
+  message(FATAL_ERROR "SC_EXP2CXX_API_VERSION must be 1 or 2")
+endif()
+
+option(SC_EXP2CXX_LATE_BOUND "Generate descriptor-backed entities without early-bound C++ entity classes" OFF)
+if(SC_EXP2CXX_LATE_BOUND AND NOT SC_EXP2CXX_API_VERSION STREQUAL "2")
+  message(FATAL_ERROR "SC_EXP2CXX_LATE_BOUND requires SC_EXP2CXX_API_VERSION=2")
+endif()
+
+option(SC_EXP2CXX_COMPAT_NAMES "Retain generated entity aliases in late-bound output" OFF)
+if(SC_EXP2CXX_COMPAT_NAMES AND NOT SC_EXP2CXX_LATE_BOUND)
+  message(FATAL_ERROR "SC_EXP2CXX_COMPAT_NAMES requires SC_EXP2CXX_LATE_BOUND=ON")
+endif()
+
+if(NOT DEFINED SC_EXP2CXX_METADATA)
+  set(SC_EXP2CXX_METADATA "full")
+endif()
+set(SC_EXP2CXX_METADATA "${SC_EXP2CXX_METADATA}" CACHE STRING
+  "Generated schema metadata profile (full or structural)")
+set_property(CACHE SC_EXP2CXX_METADATA PROPERTY STRINGS full structural)
+if(NOT SC_EXP2CXX_METADATA MATCHES "^(full|structural)$")
+  message(FATAL_ERROR "SC_EXP2CXX_METADATA must be full or structural")
+endif()
+if(SC_EXP2CXX_METADATA STREQUAL "structural" AND
+   NOT SC_EXP2CXX_LATE_BOUND)
+  message(FATAL_ERROR
+    "SC_EXP2CXX_METADATA=structural requires SC_EXP2CXX_LATE_BOUND=ON")
+endif()
+
 
 # --- variables ---
 # SC_ROOT: SC root dir

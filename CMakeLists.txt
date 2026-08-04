@@ -129,6 +129,18 @@ if (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
   set(CMAKE_MODULE_LINKER_FLAGS_DEBUG "-fprofile-arcs -ftest-coverage" CACHE STRING "Extra linker flags required by code coverage" FORCE)
 endif (SC_ENABLE_COVERAGE AND ${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
 
+option(SC_ENABLE_ADDRESS_SANITIZER "Enable AddressSanitizer instrumentation" OFF)
+option(SC_ENABLE_UNDEFINED_SANITIZER "Enable UndefinedBehaviorSanitizer instrumentation" OFF)
+option(SC_ENABLE_THREAD_SANITIZER "Enable ThreadSanitizer instrumentation" OFF)
+
+if(SC_ENABLE_THREAD_SANITIZER AND
+   (SC_ENABLE_ADDRESS_SANITIZER OR SC_ENABLE_UNDEFINED_SANITIZER))
+  message(FATAL_ERROR
+    "SC_ENABLE_THREAD_SANITIZER must use a separate build from "
+    "AddressSanitizer and UndefinedBehaviorSanitizer"
+  )
+endif()
+
 option(SC_BUILD_EXPRESS_ONLY "Only build express parser." OFF)
 mark_as_advanced(SC_BUILD_EXPRESS_ONLY)
 
@@ -154,6 +166,111 @@ include(SC_Regenerate)
 
 # create config.h header
 include(SC_Config_Headers)
+
+# Apply sanitizer instrumentation after configure-time feature tests so their
+# try-compile executables do not depend on sanitizer runtime behavior.  Keep
+# link flags explicit for CMake 3.12 compatibility (add_link_options was added
+# in CMake 3.13).
+if(SC_ENABLE_ADDRESS_SANITIZER OR
+   SC_ENABLE_UNDEFINED_SANITIZER OR
+   SC_ENABLE_THREAD_SANITIZER)
+  if(MSVC)
+    message(FATAL_ERROR "STEPcode sanitizer builds are not yet supported with MSVC")
+  endif()
+
+  include(CMakePushCheckState)
+  include(CheckCSourceCompiles)
+  include(CheckCXXSourceCompiles)
+  include(CheckCCompilerFlag)
+  include(CheckCXXCompilerFlag)
+
+  set(_sc_sanitizer_compile_options)
+  set(_sc_sanitizer_link_options)
+
+  function(sc_require_sanitizer FLAG RESULT_PREFIX)
+    cmake_push_check_state()
+    set(CMAKE_REQUIRED_FLAGS "${FLAG}")
+    list(APPEND CMAKE_REQUIRED_LIBRARIES "${FLAG}")
+    check_c_source_compiles("int main(void) { return 0; }" ${RESULT_PREFIX}_C_SUPPORTED)
+    check_cxx_source_compiles("int main() { return 0; }" ${RESULT_PREFIX}_CXX_SUPPORTED)
+    cmake_pop_check_state()
+    if(NOT ${RESULT_PREFIX}_C_SUPPORTED OR NOT ${RESULT_PREFIX}_CXX_SUPPORTED)
+      message(FATAL_ERROR
+        "STEPcode sanitizer mode was requested, but the C/C++ compiler and "
+        "linker do not support ${FLAG}"
+      )
+    endif()
+  endfunction()
+
+  if(SC_ENABLE_ADDRESS_SANITIZER)
+    sc_require_sanitizer("-fsanitize=address" SC_ASAN)
+    list(APPEND _sc_sanitizer_compile_options -fsanitize=address)
+    list(APPEND _sc_sanitizer_link_options -fsanitize=address)
+    # exp2cxx is executed during the build to generate schema bindings.  It
+    # remains address-instrumented, but leak checking a short-lived build
+    # tool is both outside the test scope and unsupported under common build
+    # tracers/sandboxes.  Limit this environment to schema generation; CTest
+    # and installed tools retain the user's normal ASan settings.
+    set(SC_SCHEMA_GENERATOR_ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0")
+  endif()
+
+  if(SC_ENABLE_UNDEFINED_SANITIZER)
+    sc_require_sanitizer("-fsanitize=undefined" SC_UBSAN)
+    cmake_push_check_state()
+    set(CMAKE_REQUIRED_FLAGS "-fsanitize=undefined")
+    list(APPEND CMAKE_REQUIRED_LIBRARIES "-fsanitize=undefined")
+    check_c_compiler_flag(
+      "-fno-sanitize-recover=undefined"
+      SC_UBSAN_C_NO_RECOVER_SUPPORTED
+    )
+    check_cxx_compiler_flag(
+      "-fno-sanitize-recover=undefined"
+      SC_UBSAN_CXX_NO_RECOVER_SUPPORTED
+    )
+    cmake_pop_check_state()
+    if(NOT SC_UBSAN_C_NO_RECOVER_SUPPORTED OR
+       NOT SC_UBSAN_CXX_NO_RECOVER_SUPPORTED)
+      message(FATAL_ERROR
+        "STEPcode's fail-fast UndefinedBehaviorSanitizer mode was requested, "
+        "but the C/C++ compiler does not support "
+        "-fno-sanitize-recover=undefined"
+      )
+    endif()
+    list(APPEND _sc_sanitizer_compile_options
+      -fsanitize=undefined
+      -fno-sanitize-recover=undefined
+    )
+    list(APPEND _sc_sanitizer_link_options -fsanitize=undefined)
+  endif()
+
+  if(SC_ENABLE_THREAD_SANITIZER)
+    sc_require_sanitizer("-fsanitize=thread" SC_TSAN)
+    list(APPEND _sc_sanitizer_compile_options -fsanitize=thread)
+    list(APPEND _sc_sanitizer_link_options -fsanitize=thread)
+  endif()
+
+  check_c_compiler_flag("-fno-omit-frame-pointer" SC_SANITIZER_C_FRAME_POINTER_SUPPORTED)
+  check_cxx_compiler_flag("-fno-omit-frame-pointer" SC_SANITIZER_CXX_FRAME_POINTER_SUPPORTED)
+  if(SC_SANITIZER_C_FRAME_POINTER_SUPPORTED)
+    list(APPEND _sc_sanitizer_compile_options
+      $<$<COMPILE_LANGUAGE:C>:-fno-omit-frame-pointer>
+    )
+  endif()
+  if(SC_SANITIZER_CXX_FRAME_POINTER_SUPPORTED)
+    list(APPEND _sc_sanitizer_compile_options
+      $<$<COMPILE_LANGUAGE:CXX>:-fno-omit-frame-pointer>
+    )
+  endif()
+
+  add_compile_options(${_sc_sanitizer_compile_options})
+  string(JOIN " " _sc_sanitizer_link_flags ${_sc_sanitizer_link_options})
+  foreach(_sc_link_type EXE SHARED MODULE)
+    set(
+      CMAKE_${_sc_link_type}_LINKER_FLAGS
+      "${CMAKE_${_sc_link_type}_LINKER_FLAGS} ${_sc_sanitizer_link_flags}"
+    )
+  endforeach()
+endif()
 
 if(NOT DEFINED SC_SDAI_ADDITIONAL_EXES_SRCS)
   set(SC_SDAI_ADDITIONAL_EXES_SRCS "" CACHE STRING "Source files for additional executables to be linked with SDAI libs")
@@ -230,4 +347,3 @@ endforeach(_msg ${CONFIG_END_MESSAGES})
 # indent-tabs-mode: t
 # End:
 # ex: shiftwidth=2 tabstop=8
-

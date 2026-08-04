@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include "cllazyfile/lazyInstMgr.h"
 
@@ -9,6 +10,9 @@ void require( bool condition, const char * message ) {
         std::cerr << "lazy_index_test: " << message << std::endl;
         std::exit( EXIT_FAILURE );
     }
+}
+
+void emptyRegistryInit( Registry & ) {
 }
 }
 
@@ -38,6 +42,13 @@ int main( int argc, char ** argv ) {
     require( manager.instancesByType( "C" ).size() == 1, "first complex component not indexed" );
     require( manager.instancesByType( "D" ).size() == 1, "second complex component not indexed" );
     require( manager.instancesByType( "" ).size() == 1, "complex instance index failed" );
+    require( manager.componentTypes( 3 ).size() == 2 &&
+        manager.componentTypes( 3 )[0] == "C" &&
+        manager.componentTypes( 3 )[1] == "D",
+        "complex component source order was not preserved" );
+    require( manager.componentTypes( 1 ).empty() &&
+        manager.componentTypes( 99 ).empty(),
+        "ordinary or missing instance has complex components" );
     require( diagnosticCalls == 1, "structured diagnostic callback was not bounded" );
     require( missingReference.severity == LAZY_DIAGNOSTIC_ERROR && missingReference.offset > 0,
         "missing-reference diagnostic lacks structured context" );
@@ -56,6 +67,29 @@ int main( int argc, char ** argv ) {
         "second exact source record or stream restoration failed" );
     require( manager.sourceRecord( 99 ).empty(),
         "missing source record was not empty" );
+
+    Registry emptyRegistry( emptyRegistryInit );
+    manager.setRegistry( &emptyRegistry );
+    std::ostringstream schemaWarnings;
+    std::streambuf * originalCerr = std::cerr.rdbuf( schemaWarnings.rdbuf() );
+    LazyInstanceBatch missingBatch = manager.loadBatch( 5 );
+    LazyInstanceBatch secondBatch = manager.loadBatch( 1 );
+    std::cerr.rdbuf( originalCerr );
+    require( missingBatch.instances().size() == 1 &&
+        missingBatch.instances()[0] == 5,
+        "missing reference leaked into materialization closure" );
+    const std::string warningText =
+        "Warning - multiple schema names found. Only searching with first one.";
+    const size_t firstWarning = schemaWarnings.str().find( warningText );
+    require( firstWarning != std::string::npos &&
+        schemaWarnings.str().find( warningText, firstWarning + 1 ) ==
+            std::string::npos,
+        "multiple FILE_SCHEMA warning was not bounded per file" );
+    require( schemaWarnings.str().find( "Error loading instance" ) ==
+            std::string::npos,
+        "structured materialization diagnostic was also written to stderr" );
+    secondBatch.release();
+    missingBatch.release();
 
     lazyInstMgr cancelled;
     uint64_t cancellationCalls = 0;
@@ -85,6 +119,10 @@ int main( int argc, char ** argv ) {
     require( scoped.forwardReferences( 20 ).size() == 1 &&
         scoped.forwardReferences( 20 )[0] == 21,
         "complex scope-owner reference was not indexed" );
+    require( scoped.componentTypes( 20 ).size() == 2 &&
+        scoped.componentTypes( 20 )[0] == "C" &&
+        scoped.componentTypes( 20 )[1] == "D",
+        "scoped complex component order was not preserved" );
     const std::string nestedOwner = scoped.sourceRecord( 11 );
     const std::string complexOwner = scoped.sourceRecord( 20 );
     require( nestedOwner.find( "#11=&SCOPE" ) != std::string::npos &&

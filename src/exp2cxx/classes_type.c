@@ -73,36 +73,6 @@ static int mkDirIfNone( const char * path ) {
     return -1;
 }
 
-#ifdef _WIN32
-/* for windows, rewrite backslashes in paths
- * that will be written to generated code
- */
-static const char * path2str_fn( const char * fileMacro ) {
-    static char * result = 0;
-    static size_t rlen = 0;
-    char * p;
-    if( rlen < strlen( fileMacro ) ) {
-        if( result ) {
-            free( result );
-        }
-        rlen = strlen( fileMacro );
-        result = ( char * )malloc( rlen * sizeof( char ) + 1 );
-    }
-    strcpy( result, fileMacro );
-    p = result;
-    while( *p ) {
-        if( *p == '\\' ) {
-            *p = '/';
-        }
-        p++;
-    }
-    return result;
-}
-#  define path2str(path) path2str_fn(path)
-#else
-#  define path2str(path) path
-#endif
-
 /** write representation of expression to end of buf
  *
  * TODO: add buflen arg and check for overflow
@@ -365,10 +335,17 @@ void TYPEPrint_h( const Type type, FILE * file ) {
     if ( TYPEis_enumeration( type ) ) {
         TYPEenum_inc_print( type, file );
     } else if ( TYPEis_select( type ) ) {
-        TYPEselect_inc_print( type, file );
+        if( exp2cxx_api_version == 2 ) {
+            TYPEselect_inc_print_v2( type, file );
+        } else {
+            TYPEselect_inc_print( type, file );
+        }
     }
 
-    fprintf( file, "void init_%s(Registry& reg);\n\n", TYPEget_ctype( type ) );
+    if( !exp2cxx_late_bound ) {
+        fprintf( file, "void init_%s(Registry& reg);\n\n",
+                 TYPEget_ctype( type ) );
+    }
 
     DEBUG( "DONE TYPEPrint_h\n" );
 }
@@ -382,15 +359,24 @@ void TYPEPrint_cc( const Type type, const filenames_t * names, FILE * hdr, FILE 
     if ( TYPEis_enumeration( type ) ) {
         TYPEenum_lib_print( type, impl );
     } else if ( TYPEis_select( type ) ) {
-        TYPEselect_lib_print( type, impl );
+        if( exp2cxx_api_version == 2 ) {
+            TYPEselect_lib_print_v2( type, impl );
+        } else {
+            TYPEselect_lib_print( type, impl );
+        }
     }
 
-    fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n", TYPEget_ctype( type ) );
-    fprintf( impl, "    std::string str;\n" );
-    /* moved from SCOPEPrint in classes_wrapper */
-    TYPEprint_new( type, impl, schema, true );
-    TYPEprint_init( type, hdr, impl, schema );
-    fprintf( impl, "}\n\n" );
+    if( !exp2cxx_late_bound ) {
+        fprintf( impl, "\nvoid init_%s( Registry& reg ) {\n",
+                 TYPEget_ctype( type ) );
+        if( exp2cxx_api_version == 1 ) {
+            fprintf( impl, "    std::string str;\n" );
+        }
+        /* moved from SCOPEPrint in classes_wrapper */
+        TYPEprint_new( type, impl, schema, true );
+        TYPEprint_init( type, hdr, impl, schema );
+        fprintf( impl, "}\n\n" );
+    }
 
     DEBUG( "DONE TYPEPrint_cc\n" );
 }
@@ -401,7 +387,10 @@ void TYPEPrint( const Type type, FILES *files, Schema schema ) {
 
     fprintf( files->inc, "#include \"%s\"\n", names.header );
 
-    fprintf( files->init, "    init_%s( reg );\n", TYPEget_ctype( type ) );
+    if( !exp2cxx_late_bound ) {
+        fprintf( files->init, "    init_%s( reg );\n",
+                 TYPEget_ctype( type ) );
+    }
 
     if( mkDirIfNone( "type" ) == -1 ) {
         fprintf( stderr, "At %s:%d - mkdir() failed with error ", __FILE__, __LINE__);
@@ -614,7 +603,7 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
         if( TYPEis_enumeration( type ) ) {
                 TYPEPrint( type, files, schema );
         } /* so we don't do anything for non-enums??? */
-    } else {
+    } else if( !exp2cxx_late_bound ) {
         TYPEprint_new( type, files->create, schema, false );
         TYPEprint_init( type, files->inc, files->init, schema );
     }
@@ -623,11 +612,46 @@ void TYPEprint_descriptions( const Type type, FILES * files, Schema schema ) {
 void TYPEprint_init( const Type type, FILE * header, FILE * impl, Schema schema ) {
     char tdnm [BUFSIZ+1];
     char typename_buf[MAX_LEN+1];
+    char select_elements_name[MAX_LEN+1];
 
     strncpy( tdnm, TYPEtd_name( type ), BUFSIZ );
 
     if( isAggregateType( type ) ) {
         AGGRprint_init( header, impl, type, tdnm, type->symbol.name );
+    }
+
+    if( exp2cxx_api_version == 2 ) {
+        int hasReferent = TYPEget_RefTypeVarNm( type, typename_buf,
+                                               sizeof( typename_buf ), schema );
+        if( !hasReferent && isAggregateType( type ) &&
+            isMultiDimAggregateType( type ) ) {
+            print_typechain( header, impl, TYPEget_body( type )->base,
+                             typename_buf, sizeof( typename_buf ), schema,
+                             type->symbol.name );
+            hasReferent = 1;
+        }
+
+        if( TYPEis_select( type ) ) {
+            snprintf( select_elements_name, sizeof( select_elements_name ),
+                      "selectElements_%s", TYPEget_ctype( type ) );
+            fprintf( impl, "    const TypeDescriptor * %s[] = {\n",
+                     select_elements_name );
+            LISTdo( SEL_TYPEget_items( type ), element, Type ) {
+                fprintf( impl, "        %s,\n", TYPEtd_name( element ) );
+            } LISTod
+            fprintf( impl, "    };\n" );
+        }
+        fprintf( impl, "    InitializeTypeMetadata( reg, *%s::schema, *%s, %s, ",
+                 SCHEMAget_name( schema ), tdnm,
+                 hasReferent ? typename_buf : "0" );
+        if( TYPEis_select( type ) ) {
+            fprintf( impl, "%s, sizeof(%s) / sizeof(%s[0]) );\n",
+                     select_elements_name, select_elements_name,
+                     select_elements_name );
+        } else {
+            fprintf( impl, "0, 0 );\n" );
+        }
+        return;
     }
 
     /* fill in the TD's values in the SchemaInit function (it is already
@@ -682,9 +706,113 @@ void TYPEprint_nm_ft_desc( Schema schema, const Type type, FILE * f, char * endC
 /** new space for a variable of type TypeDescriptor (or subtype).  This
  *  function is called for Types that have an Express name.
  */
+void TYPEprint_descriptor_record( const Type type, FILE * records, Schema schema ) {
+    Type tmpType = TYPEget_head( type );
+    Type bodyType = tmpType;
+
+    if( exp2cxx_late_bound ) {
+        fprintf( records, "    { &%s, ", TYPEtd_name( type ) );
+        if( TYPEis_select( type ) ) {
+            fprintf( records, "(SelectCreator) create_%s, 0, 0 },\n",
+                     SelectName( TYPEget_name( type ) ) );
+            return;
+        }
+        switch( TYPEget_body( type )->type ) {
+            case boolean_:
+                fprintf( records, "0, (EnumCreator) create_BOOLEAN, 0 },\n" );
+                return;
+            case logical_:
+                fprintf( records, "0, (EnumCreator) create_LOGICAL, 0 },\n" );
+                return;
+            case enumeration_:
+                if( tmpType ) {
+                    while( tmpType ) {
+                        bodyType = tmpType;
+                        tmpType = TYPEget_head( tmpType );
+                    }
+                } else {
+                    bodyType = ( Type )type;
+                }
+                fprintf( records, "0, (EnumCreator) create_%s, 0 },\n",
+                         TYPEget_ctype( bodyType ) );
+                return;
+            case aggregate_:
+            case array_:
+            case bag_:
+            case set_:
+            case list_:
+                fprintf( records,
+                         "0, 0, (AggregateCreator) create_%s },\n",
+                         ClassName( TYPEget_name( type ) ) );
+                return;
+            default:
+                fprintf( records, "0, 0, 0 },\n" );
+                return;
+        }
+    }
+
+    fprintf( records, "    TypeDescriptorInitRecord( &%s, ", TYPEtd_name( type ) );
+    if( TYPEis_select( type ) ) {
+        char * nonUnique = non_unique_types_string( type );
+        fprintf( records, "~%s, \"%s\", %s, &%s::schema, \"%s\", (SelectCreator) create_%s ),\n",
+                 nonUnique, PrettyTmpName( TYPEget_name( type ) ),
+                 FundamentalType( type, 1 ), SCHEMAget_name( schema ),
+                 TypeDescription( type ), SelectName( TYPEget_name( type ) ) );
+        free( nonUnique );
+        return;
+    }
+
+    switch( TYPEget_body( type )->type ) {
+        case boolean_:
+            fprintf( records, "\"%s\", %s, &%s::schema, \"%s\", (EnumCreator) create_BOOLEAN ),\n",
+                     PrettyTmpName( TYPEget_name( type ) ), FundamentalType( type, 1 ),
+                     SCHEMAget_name( schema ), TypeDescription( type ) );
+            break;
+        case logical_:
+            fprintf( records, "\"%s\", %s, &%s::schema, \"%s\", (EnumCreator) create_LOGICAL ),\n",
+                     PrettyTmpName( TYPEget_name( type ) ), FundamentalType( type, 1 ),
+                     SCHEMAget_name( schema ), TypeDescription( type ) );
+            break;
+        case enumeration_:
+            if( tmpType ) {
+                while( tmpType ) {
+                    bodyType = tmpType;
+                    tmpType = TYPEget_head( tmpType );
+                }
+            } else {
+                bodyType = ( Type )type;
+            }
+            fprintf( records, "\"%s\", %s, &%s::schema, \"%s\", (EnumCreator) create_%s ),\n",
+                     PrettyTmpName( TYPEget_name( type ) ), FundamentalType( type, 1 ),
+                     SCHEMAget_name( schema ), TypeDescription( type ),
+                     TYPEget_ctype( bodyType ) );
+            break;
+        case aggregate_:
+        case array_:
+        case bag_:
+        case set_:
+        case list_:
+            fprintf( records, "\"%s\", %s, &%s::schema, \"%s\", (AggregateCreator) create_%s ),\n",
+                     PrettyTmpName( TYPEget_name( type ) ), FundamentalType( type, 1 ),
+                     SCHEMAget_name( schema ), TypeDescription( type ),
+                     ClassName( TYPEget_name( type ) ) );
+            break;
+        default:
+            fprintf( records, "\"%s\", %s, &%s::schema, \"%s\" ),\n",
+                     PrettyTmpName( TYPEget_name( type ) ), FundamentalType( type, 1 ),
+                     SCHEMAget_name( schema ), TypeDescription( type ) );
+            break;
+    }
+}
+
 void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR ) {
     Type tmpType = TYPEget_head( type );
     Type bodyType = tmpType;
+
+    if( exp2cxx_api_version == 2 ) {
+        WHEREprint( TYPEtd_name( type ), type->where, create, 0, needWR );
+        return;
+    }
 
     /* define type definition */
     /*  in source - the real definition of the TypeDescriptor   */
@@ -740,7 +868,9 @@ void TYPEprint_new( const Type type, FILE * create, Schema schema, bool needWR )
         }
     }
     /* add the type to the Schema dictionary entry */
-    fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
+    if( exp2cxx_api_version != 2 ) {
+        fprintf( create, "        %s::schema->AddType(%s);\n", SCHEMAget_name( schema ), TYPEtd_name( type ) );
+    }
 
     WHEREprint( TYPEtd_name( type ), type->where, create, 0, needWR );
 }
@@ -1369,8 +1499,9 @@ void AGGRprint_bound( FILE * header, FILE * impl, const char * var_name, const c
         fprintf( header, "            break;\n" );
         fprintf( header, "        }\n" );
         fprintf( header, "    }\n" );
-        fprintf( header, "    assert( a->NonRefType() == INTEGER_TYPE && \"Error in schema or in exp2cxx at %s:%d %s\" );\n", path2str( __FILE__ ),
-                 __LINE__, "(incorrect assumption of integer type?) Please report error to STEPcode: scl-dev at groups.google.com." );
+        fprintf( header,
+                 "    assert( a->NonRefType() == INTEGER_TYPE && "
+                 "\"Incorrect aggregate bound type in generated schema\" );\n" );
         fprintf( header, "    return *( a->Integer() );\n" ); /* always an integer? if not, would need to translate somehow due to return type... */
         fprintf( header, "}\n" );
     }
