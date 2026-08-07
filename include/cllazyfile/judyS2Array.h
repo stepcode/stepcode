@@ -25,7 +25,7 @@ struct judys2KVpair {
 
 /** A judyS2 array maps a set of strings to multiple JudyValue's, similar to std::multimap.
  * Internally, this is a judyS array of std::vector< JudyValue >.
- *  \param JudyValue the type of the value, i.e. int, pointer-to-object, etc.
+ *  \tparam JudyValue the type of the value, i.e. int, pointer-to-object, etc.
  */
 template< typename JudyValue >
 class judyS2Array {

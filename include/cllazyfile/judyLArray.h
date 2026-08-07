@@ -24,8 +24,8 @@ struct judylKVpair {
  * a JudyValue. Each cell must be set to a non-zero value by the caller.
  *
  * Both template parameters must be the same size as a void*
- *  \param JudyKey the type of the key, i.e. uint64_t, pointer-to-object, etc
- *  \param JudyValue the type of the value
+ *  \tparam JudyKey the type of the key, i.e. uint64_t, pointer-to-object, etc
+ *  \tparam JudyValue the type of the value
  */
 template< typename JudyKey, typename JudyValue >
 class judyLArray {
