@@ -151,6 +151,10 @@ if(NOT late_all MATCHES "struct GeneratedSchemaImage" OR
    late_all MATCHES "InitializeEntityDescriptors|AttributeInitRecord")
   message(FATAL_ERROR "late-bound descriptors are not in one packed image")
 endif()
+if(NOT late_all MATCHES "uint8_t strings\\[[0-9]+\\]" OR
+   NOT late_all MATCHES "0x00, 0x[0-9a-f][0-9a-f]")
+  message(FATAL_ERROR "late-bound string pool is not byte-initialized")
+endif()
 if(late_all MATCHES "SchemaImageTypeBinding|create_SdaiAttachment_method")
   message(FATAL_ERROR "late-bound image still uses generated type factories")
 endif()

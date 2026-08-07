@@ -25,8 +25,8 @@ struct judyl2KVpair {
 /** A judyL2 array maps JudyKey's to multiple JudyValue's, similar to std::multimap.
  * Internally, this is a judyL array of std::vector< JudyValue >.
  * The first template parameter must be the same size as a void*
- *  \param JudyKey the type of the key, i.e. uint64_t, etc
- *  \param JudyValue the type of the value, i.e. int, pointer-to-object, etc. With judyL2Array, the size of this value can vary.
+ *  \tparam JudyKey the type of the key, i.e. uint64_t, etc
+ *  \tparam JudyValue the type of the value, i.e. int, pointer-to-object, etc. With judyL2Array, the size of this value can vary.
  */
 template< typename JudyKey, typename JudyValue >
 class judyL2Array {

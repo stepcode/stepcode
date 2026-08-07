@@ -666,29 +666,24 @@ class ImageBuilder {
     }
 
     static void writeStringPool( FILE * output, const std::string & data ) {
-        fprintf( output, "    \"" );
-        size_t column = 5;
+        fprintf( output, "    {\n        " );
+        size_t column = 8;
         for( size_t i = 0; i < data.size(); ++i ) {
             const unsigned char value =
                 static_cast<unsigned char>( data[i] );
-            char escaped[8];
-            if( value == '"' || value == '\\' ) {
-                snprintf( escaped, sizeof( escaped ), "\\%c", value );
-            } else if( value >= 32 && value < 127 ) {
-                escaped[0] = static_cast<char>( value );
-                escaped[1] = '\0';
-            } else {
-                snprintf( escaped, sizeof( escaped ), "\\%03o", value );
+            if( i ) {
+                if( column + 6 > 76 ) {
+                    fprintf( output, ",\n        " );
+                    column = 8;
+                } else {
+                    fprintf( output, ", " );
+                    column += 2;
+                }
             }
-            const size_t length = strlen( escaped );
-            if( column + length > 76 ) {
-                fprintf( output, "\"\n    \"" );
-                column = 5;
-            }
-            fprintf( output, "%s", escaped );
-            column += length;
+            fprintf( output, "0x%02x", value );
+            column += 4;
         }
-        fprintf( output, "\"\n" );
+        fprintf( output, "\n    }\n" );
     }
 
 public:
@@ -791,7 +786,7 @@ public:
             "    SchemaImageSchemaTextRecord schemaTexts[%zu];\n"
             "    uint32_t enumElements[%zu];\n"
             "    SchemaImageRenameRecord renames[%zu];\n"
-            "    char strings[%zu];\n"
+            "    uint8_t strings[%zu];\n"
             "};\n\n",
             arraySize( _schemas.size() ), arraySize( _entities.size() ),
             arraySize( _types.size() ), arraySize( _attributes.size() ),
