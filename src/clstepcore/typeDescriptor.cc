@@ -3,6 +3,7 @@
 TypeDescriptor::TypeDescriptor( )
     : _name( 0 ), altNames( 0 ), _fundamentalType( UNKNOWN_TYPE ),
       _originatingSchema( 0 ), _referentType( 0 ), _description( 0 ), _where_rules( 0 ) {
+    _altname[0] = '\0';
 }
 
 TypeDescriptor::TypeDescriptor
@@ -11,6 +12,7 @@ TypeDescriptor::TypeDescriptor
     :  _name( nm ), altNames( 0 ), _fundamentalType( ft ),
        _originatingSchema( origSchema ), _referentType( 0 ), _description( d ),
        _where_rules( 0 ) {
+    _altname[0] = '\0';
 }
 
 TypeDescriptor::~TypeDescriptor() {
