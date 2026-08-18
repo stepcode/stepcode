@@ -743,6 +743,15 @@ int STEPfile::FindHeaderSection( istream & in ) {
             return 0;
         }
         in.getline( buf, BUFSIZ, ';' ); // reads but does not store the ;
+        if( in.fail() ) {
+            // A file with no ';' in its first BUFSIZ bytes - a binary file that
+            // is not STEP at all, say - sets failbit and leaves buf unchanged.
+            // eof() then never becomes true and the loop above spins forever.
+            _error.AppendToUserMsg(
+                "Error: Unable to find HEADER section. File not read.\n" );
+            _error.GreaterSeverity( SEVERITY_INPUT_ERROR );
+            return 0;
+        }
     }
     return 1;
 }
