@@ -169,14 +169,17 @@ Severity EntityNode::StrToVal( const char * s, ErrorDescriptor * err,
         ErrorDescriptor error;
         if( EntityValidLevel( se, elem_type, &error ) == SEVERITY_NULL ) {
             node = se;
+            _null = 0;
         } else {
             node = S_ENTITY_NULL;
             err->AppendToDetailMsg( error.DetailMsg() );
             err->AppendToUserMsg( error.UserMsg() );
             err->GreaterSeverity( error.severity() );
+            _null = 1;
         }
     } else {
         node = S_ENTITY_NULL;
+        _null = 1;
     }
     return err->severity();
 }
@@ -203,14 +206,17 @@ Severity EntityNode::STEPread( istream & in, ErrorDescriptor * err,
         ErrorDescriptor error;
         if( EntityValidLevel( se, elem_type, &error ) == SEVERITY_NULL ) {
             node = se;
+            _null = 0;
         } else {
             node = S_ENTITY_NULL;
             err->AppendToDetailMsg( error.DetailMsg() );
             err->AppendToUserMsg( error.UserMsg() );
             err->GreaterSeverity( error.severity() );
+            _null = 1;
         }
     } else {
         node = S_ENTITY_NULL;
+        _null = 1;
     }
     return err->severity();
 }

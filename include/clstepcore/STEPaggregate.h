@@ -88,6 +88,11 @@ class SC_CORE_EXPORT STEPnode :  public SingleLinkNode  {
 protected:
     int _null;
 
+    /// nodes must start out null; several StrToVal/STEPread paths leave
+    /// _null untouched on failure and would otherwise read uninitialised.
+    STEPnode() : _null( 1 ) {
+    }
+
 public:
     int is_null() {
         return _null;
