@@ -289,6 +289,14 @@ class SC_LAZYFILE_EXPORT lazyInstMgr {
                     return 0;
                 }
                 instancePosition pos = cv->at( 0 );
+                //a data section indexes its instances from its own constructor and is
+                //registered only afterwards, and only if it succeeded - so an instance
+                //can name a section that was never registered. Same test sourceRecord()
+                //already makes.
+                if( pos.section >= _dataSections.size() || !_dataSections[pos.section] ) {
+                    std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - instanceID " << id << " names data section " << pos.section << ", which failed to index." << std::endl;
+                    return 0;
+                }
                 return _dataSections[pos.section]->getType( pos.begin );
             }
             std::cerr << "Error at " << __FILE__ << ":" << __LINE__ << " - instanceID " << id << " not found." << std::endl;

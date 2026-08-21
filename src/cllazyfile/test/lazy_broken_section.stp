@@ -1,0 +1,13 @@
+ISO-10303-21;
+HEADER;
+FILE_DESCRIPTION(('lazy broken section test'),'2;1');
+FILE_NAME('lazy_broken_section.stp','2026-08-21T00:00:00',('STEPcode'),('STEPcode'),'','','');
+FILE_SCHEMA(('LAZY_TEST_SCHEMA { 1 0 10303 999 }'));
+ENDSEC;
+/* The DATA section indexes #1 and then fails: no ENDSEC; follows. The
+   section is therefore never registered, while #1 is already in the
+   instance index naming it. */
+DATA;
+#1=A();
+not a step instance
+END-ISO-10303-21;

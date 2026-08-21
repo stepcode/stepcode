@@ -55,5 +55,6 @@ if(SC_ENABLE_TESTING)
   add_test(NAME lazy_index
     COMMAND lazy_index_test
       ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_index.stp
-      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_scope.stp)
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_scope.stp
+      ${CMAKE_CURRENT_SOURCE_DIR}/test/lazy_broken_section.stp)
 endif()
