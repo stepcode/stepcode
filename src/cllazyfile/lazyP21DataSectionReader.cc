@@ -95,6 +95,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
     std::streampos end = -1;
     namedLazyInstance i;
 
+    i.name = 0;
     i.refs = 0;
     i.componentTypes = 0;
     i.loc.section = 0;
