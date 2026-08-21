@@ -130,6 +130,7 @@ const namedLazyInstance lazyP21DataSectionReader::nextInstance() {
         i.loc.begin = 0;
         if( i.refs ) {
             delete i.refs;
+            i.refs = 0;
         }
         if( i.componentTypes ) {
             delete i.componentTypes;
