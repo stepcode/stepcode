@@ -372,7 +372,9 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
          * safely revisit this instance without tripping the materialization
          * cycle detector. */
         loading_guard.release();
-        if( !isNilSTEPentity( inst ) ) {
+        /* isNilSTEPentity( 0 ) is false, so a null has to be tested for
+         * separately - every branch of the switch above can leave one. */
+        if( inst && !isNilSTEPentity( inst ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
             ++_materializations;
