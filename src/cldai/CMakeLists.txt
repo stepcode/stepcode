@@ -27,7 +27,16 @@ if(BUILD_SHARED_LIBS)
 endif()
 
 if(BUILD_STATIC_LIBS)
-  SC_ADDLIB(stepdai-static STATIC SOURCES ${DAI_SRCS} LINK_LIBRARIES $<JOIN:${_libdeps},-static >-static)
+  # Spell the static dependency names out rather than composing them with a
+  # generator expression. Since 0b950dd1 SC_ADDLIB publishes LINK_LIBRARIES as
+  # PUBLIC, so anything given here lands in INTERFACE_LINK_LIBRARIES and is
+  # re-evaluated in each consumer - where a nested $<JOIN:...> comes back out
+  # mangled and reaches the linker verbatim.
+  set(_static_libdeps)
+  foreach(_libdep ${_libdeps})
+    list(APPEND _static_libdeps ${_libdep}-static)
+  endforeach()
+  SC_ADDLIB(stepdai-static STATIC SOURCES ${DAI_SRCS} LINK_LIBRARIES ${_static_libdeps})
 endif()
 
 # Local Variables:
