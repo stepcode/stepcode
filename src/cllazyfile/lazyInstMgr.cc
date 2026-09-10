@@ -335,7 +335,24 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
                 break;
             case 1:
                 pos = cv->at( 0 );
-                assert( _dataSections.size() > pos.section );
+                //not an assert: a section that failed part way through its scan has
+                //already indexed the instances before the error under its id, and is
+                //then never registered. Those entries are bad input, not a programming
+                //error, and in Release the assert was compiled out and this indexed an
+                //empty vector. Same test sourceRecord() already makes.
+                if( pos.section >= _dataSections.size() || !_dataSections[pos.section] ) {
+                    if( !_diagnosticCallback ) {
+                        std::cerr << "Instance #" << id << " names data section "
+                            << pos.section << ", which failed to index." << std::endl;
+                    }
+                    LazyDiagnostic diagnostic;
+                    diagnostic.severity = LAZY_DIAGNOSTIC_ERROR;
+                    diagnostic.entity = id;
+                    diagnostic.offset = pos.begin;
+                    diagnostic.message = "instance belongs to a DATA section that failed to index";
+                    emitDiagnostic( diagnostic );
+                    break;
+                }
                 if( reSeek ) {
                     oldPos = _dataSections[pos.section]->tellg();
                 }
@@ -372,7 +389,9 @@ SDAI_Application_instance * lazyInstMgr::loadInstance( instanceID id, bool reSee
          * safely revisit this instance without tripping the materialization
          * cycle detector. */
         loading_guard.release();
-        if( !isNilSTEPentity( inst ) ) {
+        /* isNilSTEPentity( 0 ) is false, so a null has to be tested for
+         * separately - every branch of the switch above can leave one. */
+        if( inst && !isNilSTEPentity( inst ) ) {
             _instancesLoaded.insert( id, inst );
             _loadedInstanceCount++;
             ++_materializations;

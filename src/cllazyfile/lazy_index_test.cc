@@ -17,7 +17,7 @@ void emptyRegistryInit( Registry & ) {
 }
 
 int main( int argc, char ** argv ) {
-    require( argc == 3, "expected ordinary and scoped fixture paths" );
+    require( argc == 4, "expected ordinary, scoped and broken-section fixture paths" );
 
     lazyInstMgr manager;
     uint64_t progressCalls = 0;
@@ -133,5 +133,31 @@ int main( int argc, char ** argv ) {
         complexOwner.find( "ENDSCOPE (C()D(" ) != std::string::npos &&
         !complexOwner.empty() && complexOwner[complexOwner.size() - 1] == ';',
         "complex scope source record was not preserved" );
+    /* A DATA section indexes its instances from its own constructor, under the
+     * id it will be given, and is registered only afterwards and only if the
+     * scan succeeded. A section that fails part way through therefore leaves
+     * every instance it had already indexed naming a section that does not
+     * exist. Asking for one of those must fail like any other unloadable
+     * instance rather than index an empty vector. */
+    lazyInstMgr broken;
+    broken.setRegistry( &emptyRegistry );
+    uint64_t brokenDiagnostics = 0;
+    broken.setDiagnosticCallback( [&brokenDiagnostics]( const LazyDiagnostic & ) {
+        ++brokenDiagnostics;
+    } );
+    broken.openFile( argv[3] );
+    stats = broken.cacheStatistics();
+    require( stats.dataSections == 0, "the failed data section was registered anyway" );
+    require( broken.totalInstanceCount() == 1,
+        "the instance indexed before the failure was dropped from the index" );
+    require( broken.typeFromFile( 1 ) == 0,
+        "type of an instance in an unregistered section was not refused" );
+    require( broken.loadInstance( 1 ) == 0,
+        "instance in an unregistered section was not refused" );
+    require( brokenDiagnostics > 0,
+        "refusing the instance produced no diagnostic" );
+    require( broken.sourceRecord( 1 ).empty(),
+        "source record of an instance in an unregistered section was not empty" );
+
     return EXIT_SUCCESS;
 }
