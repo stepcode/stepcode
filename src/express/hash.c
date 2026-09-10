@@ -157,11 +157,12 @@ HASHcreate( unsigned count ) {
     /*
     ** Allocate initial 'i' segments of buckets
     */
-    for( i = 0; i < count; i++ )
+    for( i = 0; i < count; i++ ) {
         CALLOC( table->Directory[i], SEGMENT_SIZE, Element )
         /*,   "segment in HASHcreate");*/
+    }
 
-        table->SegmentCount = count;
+    table->SegmentCount = count;
     table->maxp = MUL( count, SEGMENT_SIZE_SHIFT );
     table->MinLoadFactor = 1;
     table->MaxLoadFactor = MAX_LOAD_FACTOR;

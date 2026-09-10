@@ -310,16 +310,16 @@ Refinement collect_refinements_from_conjunction( Expression expr, Scope scope ) 
         }
         
         /* Create a refinement */
-        Refinement ref = ( Refinement ) malloc( sizeof( struct Refinement_ ) );
-        if( !ref ) {
+        Refinement refinement = ( Refinement ) malloc( sizeof( struct Refinement_ ) );
+        if( !refinement ) {
             /* Memory allocation failed */
             return NULL;
         }
-        ref->variable = var;
-        ref->refined_type = target_type;
-        ref->next = NULL;
+        refinement->variable = var;
+        refinement->refined_type = target_type;
+        refinement->next = NULL;
         
-        return ref;
+        return refinement;
     }
     
     /* Not an AND node and not a matching pattern - don't recurse further */
@@ -347,12 +347,12 @@ static Type lookup_refinement( Variable var ) {
         return NULL;
     }
     
-    Refinement ref = active_refinements->refinements;
-    while( ref ) {
-        if( ref->variable == var ) {
-            return ref->refined_type;
+    Refinement refinement = active_refinements->refinements;
+    while( refinement ) {
+        if( refinement->variable == var ) {
+            return refinement->refined_type;
         }
-        ref = ref->next;
+        refinement = refinement->next;
     }
     
     return NULL;
