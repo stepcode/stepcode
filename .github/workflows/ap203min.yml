@@ -1,0 +1,90 @@
+name: AP203Min static ExternalProject
+
+# Builds example/ap203min/ExternalProjectBuild, which builds STEPCode as a
+# static-only ExternalProject the same way OpenVSP does, then runs the result.
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+
+jobs:
+  ap203min:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Ubuntu GCC
+            os: ubuntu-latest
+            cc: gcc
+            cxx: g++
+            generator: Ninja
+          - name: Ubuntu Clang
+            os: ubuntu-latest
+            cc: clang
+            cxx: clang++
+            generator: Ninja
+          - name: macOS Clang
+            os: macos-latest
+            cc: clang
+            cxx: clang++
+            generator: Ninja
+          - name: Windows MSVC Ninja
+            os: windows-latest
+            cc: cl
+            cxx: cl
+            generator: Ninja
+          - name: Windows Visual Studio
+            os: windows-latest
+            # Empty generator: CMake picks the newest installed Visual Studio.
+            generator: ""
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Setup - CMake and Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Setup - MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configure
+        run: |
+          # Build outside the checkout: the ExternalProject copies the whole source tree.
+          BUILD_DIR="$(cd .. && pwd)/ap203min-build"
+          echo "BUILD_DIR=$BUILD_DIR" >> "$GITHUB_ENV"
+          args=(-S example/ap203min/ExternalProjectBuild -B "$BUILD_DIR")
+          if [ -n "${{ matrix.generator }}" ]; then
+            args+=(-G "${{ matrix.generator }}")
+          fi
+          if [ -n "${{ matrix.cc }}" ]; then
+            args+=(-DCMAKE_C_COMPILER=${{ matrix.cc }} -DCMAKE_CXX_COMPILER=${{ matrix.cxx }})
+          fi
+          if [ "${{ matrix.generator }}" = "Ninja" ]; then
+            args+=(-DCMAKE_BUILD_TYPE=Release)
+          fi
+          cmake --version
+          cmake "${args[@]}"
+          grep CMAKE_GENERATOR: "$BUILD_DIR/CMakeCache.txt"
+
+      - name: Build
+        run: cmake --build "$BUILD_DIR" --config Release
+
+      - name: No shared libraries built
+        run: |
+          ls -l "$BUILD_DIR"/sc-install/lib
+          if ls "$BUILD_DIR"/sc-install/lib | grep -Ei '\.(so|dylib|dll)'; then exit 1; fi
+          if ls "$BUILD_DIR"/sc-install/bin | grep -Ei '\.dll$'; then exit 1; fi
+
+      - name: Test (run, and check for non-system dynamic dependencies)
+        run: |
+          cd "$BUILD_DIR"
+          ctest -C Release -V --output-on-failure
+          test -s outfile.stp
+          head -20 outfile.stp

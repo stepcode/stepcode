@@ -2012,7 +2012,8 @@ void TYPEselect_print( Type t, FILES * files, Schema schema ) {
        DAR - moved to TYPEprint_init() - to keep init info together. */
     tag -> complete = 1;
 
-    free( tag );
+    /* Don't free tag: it stays in the type's clientData as the marker that
+       this type has been processed, which the checks above rely on. */
 }
 #undef BASE_SELECT
 
